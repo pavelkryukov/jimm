@@ -32,7 +32,6 @@ import java.io.DataOutputStream;
 
 import jimm.Jimm;
 import jimm.ContactList;
-import jimm.util.ResourceBundle;
 
 
 public class Util
