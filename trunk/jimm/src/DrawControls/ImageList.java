@@ -96,7 +96,7 @@ public class ImageList
     int size = resImage.getWidth()/width;
     for (int i = 0; i < size; i++)
     {
-//      #sijapp cond.if target is "MIDP2" | target is "SIEMENS"#
+//      #sijapp cond.if target is "MIDP2"#
         Image newImage = Image.createImage(Image.createImage(resImage, i * width, 0, width, height, Sprite.TRANS_NONE));
 //      #sijapp cond.else#
         Image newImage = Image.createImage(width, height);
