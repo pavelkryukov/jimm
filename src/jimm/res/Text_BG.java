@@ -55,6 +55,7 @@ public class Text_BG extends ResourceBundle
 		resources.put("city",                        "Град");
 		resources.put("close",                       "Затвори");
 		resources.put("conn_type",                   "Тип на връзката");
+		resources.put("con_wait",                    "Изчакване между връзките(сек)");
 		resources.put("connect",                     "Свържи");
 		resources.put("connecting",                  "Свързване");
 		resources.put("contact_list",                "Лист");
@@ -62,6 +63,7 @@ public class Text_BG extends ResourceBundle
 		resources.put("cpd",                         "Цена за ден");
 		resources.put("cpp",                         "Цена за пакет");
 		resources.put("currency",                    "Валута");
+		resources.put("del_group",                   "Изтрий група");
 		resources.put("delete_chat",                 "Изтрий чат");
 		resources.put("deny",						 "Откажи оторизация");
 		resources.put("denyedby",					 "Беше ви отказана оторизация от: ");
@@ -103,8 +105,9 @@ public class Text_BG extends ResourceBundle
 		resources.put("lang_LT",                     "Литовски");
 		resources.put("lang_RU",                     "Руски");
 		resources.put("lang_SE",                     "Шведски");
-		resources.put("lang_SR",                     "??N€??N?????");
-		resources.put("lang_HE", 					 "???‘???™??");
+		resources.put("lang_SR",                     "Сръбски");
+		resources.put("lang_HE", 					 "Еврейски");
+		resources.put("lang_BG", 					 "Български");
 		resources.put("lastname",                    "Фамилия");
 		resources.put("loading",                     "Зареждане");
 		resources.put("male",                        "M");
@@ -119,6 +122,7 @@ public class Text_BG extends ResourceBundle
 		resources.put("nick",                        "Псевдоним");
 		resources.put("no",                          "Не");
 		resources.put("no_results",                  "Няма резултати");
+		resources.put("no_not_empty_gr",             "Премахването на непразни групи все още не се поддържа");
 		resources.put("not_implemented",             "Тази функция още не е включена.");
 		resources.put("noreason",             		 "Не е зададена причина.");
 		resources.put("notice",                      "Нотификация");
@@ -142,6 +146,7 @@ public class Text_BG extends ResourceBundle
 		resources.put("prev",						 "Предишен");
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Изтрий от листа");
+		resources.put("rename",                      "Преименувай");
 		resources.put("reply",                       "Отговори");
 		resources.put("requauth",                    "Поискай отор.");
 		resources.put("requ",                        "Изискван(и)");
@@ -257,6 +262,7 @@ public class Text_BG extends ResourceBundle
 		resources.put("error_158",                   "Опитахте се да добавите ICQ контакт към AIM лист (#158.EXT)");
 		resources.put("error_159",                   "Сървърът не отговаря на търсената заявка. Опитайте отново (#159.EXT)");
 		resources.put("error_160",                   "Грешка при търсене (#160.EXT)");
+		resources.put("error_161",                   "Няма намерени групи. Моля добавете група (#161.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Вероятна недостатъчност на сумарна памет (#170.EXT)");

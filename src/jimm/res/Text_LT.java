@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/res/Text_LT.java
  Version: ###VERSION###  Date: ###DATE###
- Based on CVS 1.17 Text_EN (2004.06.23 10:14)
+ Based on CVS 1.37 Text_EN (2004.12.20 16:28)
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Linas Gricius 
  *******************************************************************************/
 
@@ -56,6 +56,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("city",                        "Miestas");		
 		resources.put("close",                       "Uždaryti");
 		resources.put("conn_type",                   "Prisijungimo tipas");
+		resources.put("con_wait",                    "Laukti tarp prisijungimų (sec)");
 		resources.put("connect",                     "Prisijungti");
 		resources.put("connecting",                  "Jungiamasi");
 		resources.put("contact_list",                "Sąrašas");
@@ -63,6 +64,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("cpd",                         "Kaina per dieną");
 		resources.put("cpp",                         "Kaina per paketą");
 		resources.put("currency",                    "Valiuta");
+		resources.put("del_group",                   "Ištrinti vartotojų grupę");
 		resources.put("delete_chat",                 "Ištrinti istoriją");
 		resources.put("deny",						 "Atmesti autorizavimą");
 		resources.put("denyedby",					 "Atorizavimas atmestas: ");
@@ -106,6 +108,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("lang_SE",                     "Švedų");
 		resources.put("lang_SR",                     "Serbų");
 		resources.put("lang_HE", 					 "Hebrajų");
+		resources.put("lang_BG", 					 "Bulgarian");
 		resources.put("lastname",                    "Pavardė");		
 		resources.put("loading",                     "Kraunasi");
 		resources.put("male",                        "V");		
@@ -119,7 +122,8 @@ public class Text_LT extends ResourceBundle
 		resources.put("next",						 "Toliau");		
 		resources.put("nick",                        "Slapyvardis");
 		resources.put("no",                          "Ne");
-		resources.put("no_results",                  "Nerasta");
+		resources.put("no_results",                  "be rezultatų");
+		resources.put("no_not_empty_gr",             "Tik tuščias grupes galima trinti (kol kas)");
 		resources.put("not_implemented",             "Funkcija dar neveikia.");
 		resources.put("noreason",                    "Nepateikė priežasties.");
 		resources.put("notice",                      "Pranešimas");
@@ -143,6 +147,7 @@ public class Text_LT extends ResourceBundle
   	    resources.put("prev",                        "Ankstesnis");
 		resources.put("reason",						 "Priežastis");		
 		resources.put("remove",                      "Pašalinti iš sąrašo");
+		resources.put("rename",                      "Pervadinti");
 		resources.put("reply",                       "Atsakyti");
 		resources.put("requauth",                    "Prašyti autorizavimo");
   	    resources.put("requ",                        "Reikalingas");
@@ -192,6 +197,8 @@ public class Text_LT extends ResourceBundle
 		resources.put("youwereadded",				 "Įtraukas į sąrašą pas: ");
 		resources.put("chat_small_font",			 "Mažas šrifto dydis");
 		resources.put("select",                      "Pasirinkti");
+		resources.put("attention",                   "Dėmėsio!");
+  	    resources.put("have_unread_mess",            "Dar turite neperskaitytų žinučių. Norite vis tiek išeiti?");
 		
 		// User management ********
 		resources.put("group_is_not_empty",          "Pasirinkta grupė nėra tuščia!\nPerkelkite visus vartotojus į kitas grupes!");
@@ -256,6 +263,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_158",                   "Jūs bandėt įtraukti ICQ kontaktą į AIM sąrašą (#158.EXT)");
 		resources.put("error_159",                   "Nėra atsakymo iš serverio. Bandykite vėliau (#159.EXT)");
 		resources.put("error_160",                   "Klaida atliekant paiešką (#160.EXT)");
+		resources.put("error_161",                   "Nėra sukurtų vartotojų grupių. Sukurkite grupę! (#161.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Greičiausiai neužtenka meta atminties (#160.EXT)");
