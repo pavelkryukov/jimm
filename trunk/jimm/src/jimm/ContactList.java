@@ -1349,6 +1349,15 @@ public class ContactList implements CommandListener
             if (oldItem != null) cItem.copyChatHistory(oldItem);
         }
     }
+    
+    // Adds new group
+    public synchronized void addGroup(ContactListGroupItem gItem)
+    {
+    	gItems.addElement(gItem);
+    	if ( !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USER_GROUPS) ) return;
+		TreeNode groupNode = tree.addNode(null, gItem);
+		gNodes.put(new Integer(gItem.getId()), groupNode);
+    }
 
     // Adds the given message to the message queue of the contact item
     // identified by the given UIN
