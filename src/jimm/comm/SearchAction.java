@@ -335,7 +335,7 @@ public class SearchAction extends Action
             if (calledBy == CALLED_BY_SEARCHUSER)
             	cont.getSearchForm().activate(false);
             else if (calledBy == CALLED_BY_ADDUSER)
-            	Jimm.display.setCurrent(Jimm.jimm.getMainMenuRef().addUser);
+            	Jimm.display.setCurrent(Jimm.jimm.getMainMenuRef().addUserOrGroup);
             Thread.yield();
             if (this.state == STATE_FIRSTRESULT_RECEIVED)
             {

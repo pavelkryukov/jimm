@@ -114,14 +114,7 @@ public class Icq implements Runnable
 
 	// Adds a ContactListContactItem to the server saved contact list
 	public synchronized void addToContactList(ContactListContactItem cItem)
-	{
-        Random rand = new Random(System.currentTimeMillis());
-        int randint = rand.nextInt();
-        
-        // Give it a new ID if it is 0
-        if(cItem.getId() ==0)
-            cItem.setId(randint);
-        
+	{        
         // Display splash canvas
         SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
         wait2.setMessage(ResourceBundle.getString("wait"));

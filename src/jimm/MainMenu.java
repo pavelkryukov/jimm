@@ -35,8 +35,10 @@ import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+import jimm.comm.Action;
 import jimm.comm.SearchAction;
 import jimm.comm.SetOnlineStatusAction;
+import jimm.comm.UpdateContactListAction;
 import jimm.util.ResourceBundle;
 
 public class MainMenu implements CommandListener
@@ -72,7 +74,10 @@ public class MainMenu implements CommandListener
     private List groupList;
 
     // Form for the adding users dialog
-    static public Form addUser;
+    static public Form addUserOrGroup;
+    
+    // Flag if we we are adding user or group
+    static private boolean addUserFlag;
 
     // Text box for adding users to the contact list
     static private TextField uinTextField;
@@ -114,6 +119,7 @@ public class MainMenu implements CommandListener
                 this.list.append(ResourceBundle.getString("set_status"), getStatusImage());
                 this.list.append(ResourceBundle.getString("add_user"), null);
                 this.list.append(ResourceBundle.getString("search_user"), null);
+                this.list.append(ResourceBundle.getString("add_group"), null);
                 this.list.append(ResourceBundle.getString("options"), null);
                 // #sijapp cond.if modules_TRAFFIC is "true" #
                 this.list.append(ResourceBundle.getString("traffic"), null);
@@ -148,24 +154,34 @@ public class MainMenu implements CommandListener
     }
 
     // Show form for adding user
-    public static void addUserCmd(String uin)
+    public static void addUserOrGroupCmd(String uin,boolean userFlag)
 	{
-        // Reset and display textbox for entering uin to add
-        addUser = new Form(ResourceBundle.getString("add_user"));
+        addUserFlag = userFlag;
+        // Reset and display textbox for entering uin or group name to add
+        if (addUserFlag)
+        {
+        addUserOrGroup = new Form(ResourceBundle.getString("add_user"));
         uinTextField = new TextField(ResourceBundle.getString("uin"), uin, 16, TextField.NUMERIC);
         nameTextField = new TextField(ResourceBundle.getString("name"), "", 32, TextField.ANY);
         if (uin == null) 
-        	addUser.append(uinTextField);
+            addUserOrGroup.append(uinTextField);
         else 
         {
         	StringItem si = new StringItem(ResourceBundle.getString("uin"), uin);
-        	addUser.append(si);
+        	addUserOrGroup.append(si);
         }
-        addUser.append(nameTextField);
-        addUser.addCommand(sendCommand);
-        addUser.addCommand(backCommand);
-        addUser.setCommandListener( Jimm.jimm.getMainMenuRef() );
-        Jimm.display.setCurrent(addUser);
+        addUserOrGroup.append(nameTextField);
+        }
+        else
+        {
+            addUserOrGroup = new Form(ResourceBundle.getString("add_group"));
+            uinTextField = new TextField(ResourceBundle.getString("group_name"), uin, 16, TextField.ANY);
+            addUserOrGroup.append(uinTextField);
+        }
+        addUserOrGroup.addCommand(sendCommand);
+        addUserOrGroup.addCommand(backCommand);
+        addUserOrGroup.setCommandListener( Jimm.jimm.getMainMenuRef() );
+        Jimm.display.setCurrent(addUserOrGroup);
 	}
     
     private void doExit()
@@ -236,35 +252,56 @@ public class MainMenu implements CommandListener
         // Return to contact list
         if (c == MainMenu.backCommand)
         {
-            if ((d == this.groupList) || (d == MainMenu.addUser) || (d == statusList))
+            if ((d == this.groupList) || (d == MainMenu.addUserOrGroup) || (d == statusList))
                 this.activate();
             else
                 Jimm.jimm.getContactListRef().activate();
-        } else if ((c == sendCommand) && (d == MainMenu.addUser))
+        } else if ((c == sendCommand) && (d == MainMenu.addUserOrGroup))
         {
             // Display splash canvas
             SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
             wait2.setMessage(ResourceBundle.getString("wait"));
             wait2.setProgress(0);
             Jimm.display.setCurrent(wait2);
+
+            SearchAction act1;
+            UpdateContactListAction act2;
             
-            Search search = new Search();
-            search.setSearchRequest(uinTextField.getString(),"","","","","","",false);
-            
-            SearchAction act = new SearchAction(search,SearchAction.CALLED_BY_ADDUSER);
-            
+            if (addUserFlag) // Make a search for the given UIN
+            {
+                Search search = new Search();
+                search.setSearchRequest(uinTextField.getString(), "", "", "", "", "", "", false);
+
+                act1 = new SearchAction(search, SearchAction.CALLED_BY_ADDUSER);
+                act2 = null;
+            }
+            else // Add the group
+            {
+                ContactListGroupItem newGroup = new ContactListGroupItem(uinTextField.getString());
+
+                act1 = null;
+                act2 = new UpdateContactListAction(newGroup, true);
+            }
             try
             {
-                Jimm.jimm.getIcqRef().requestAction(act);
+                if (addUserFlag)
+                    Jimm.jimm.getIcqRef().requestAction(act1);
+                else
+                    Jimm.jimm.getIcqRef().requestAction(act2);
 
             } catch (JimmException e)
             {
                 JimmException.handleException(e);
                 if (e.isCritical()) return;
             }
+
+            DebugLog.addText("Send action");
             
             // Start timer
-            Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
+            if (addUserFlag)
+                Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act1), 1000, 1000);
+            else
+                Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
         }
         
         // User select command YES in exit alert
@@ -328,21 +365,24 @@ public class MainMenu implements CommandListener
 
                     break;
                 case 3: // Add user
-                	addUserCmd(null);
+                	addUserOrGroupCmd(null,true);
                     break;
                     
-                case 4:
-                    // Search for User
+                case 4: // Search for User
                     Search searchf = new Search();
                     searchf.getSearchForm().activate(false);
                     break;
-                case 5:
+                case 5: // Add group
+                    addUserOrGroupCmd(null,false);
+                    break;
+                    
+                case 6:
                     // Options
                     Jimm.jimm.getOptionsRef().optionsForm.activate();
 
                     break;
                 // #sijapp cond.if modules_TRAFFIC is "true" #
-                case 6:
+                case 7:
                     // Traffic
 
                     // Display an traffic alert
@@ -350,6 +390,22 @@ public class MainMenu implements CommandListener
                     traffic.trafficScreen.activate();
 
                     break;
+                case 8:
+                    // About
+
+                    // Display an info alert
+                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
+                            .getString("about_info"), null, AlertType.INFO);
+                    about.setTimeout(Alert.FOREVER);
+                    Jimm.jimm.getContactListRef().activate(about);
+
+                    break;
+                case 9:
+                    // Exit
+                	menuExit();
+
+                    break;
+                // #sijapp cond.else#
                 case 7:
                     // About
 
@@ -361,22 +417,6 @@ public class MainMenu implements CommandListener
 
                     break;
                 case 8:
-                    // Exit
-                	menuExit();
-
-                    break;
-                // #sijapp cond.else#
-                case 6:
-                    // About
-
-                    // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
-                            .getString("about_info"), null, AlertType.INFO);
-                    about.setTimeout(Alert.FOREVER);
-                    Jimm.jimm.getContactListRef().activate(about);
-
-                    break;
-                case 7:
                     // Exit
              	
                 	menuExit();

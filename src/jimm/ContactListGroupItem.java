@@ -18,11 +18,13 @@
  ********************************************************************************
  File: src/jimm/ContactListGroupItem.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Artyomov Denis
+ Author(s): Manuel Linsmayer, Artyomov Denis, Andreas Rossbacher
  *******************************************************************************/
 
 
 package jimm;
+
+import java.util.Random;
 
 
 public class ContactListGroupItem extends ContactListItem
@@ -40,10 +42,19 @@ public class ContactListGroupItem extends ContactListItem
 		// counter for total users in group
 		totalCount;
 	
-	// Constructor
+	// Constructor for an existing group item
 	public ContactListGroupItem(int id, String name)
 	{
 		this.id = id;
+		this.name = new String(name);
+		onlineCount = totalCount = 0;
+	}
+	
+	// Constructor for a new group item
+	public ContactListGroupItem(String name)
+	{
+        Random rand = new Random(System.currentTimeMillis());
+	    this.id = rand.nextInt();
 		this.name = new String(name);
 		onlineCount = totalCount = 0;
 	}

@@ -28,6 +28,7 @@ import java.util.Vector;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
+import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.JimmException;
 
@@ -50,6 +51,9 @@ public class UpdateContactListAction extends Action
 
     // Contact item
     private ContactListContactItem cItem;
+    
+    // Group item
+    private ContactListGroupItem gItem;
 
     // Action state
     private int state;
@@ -63,12 +67,23 @@ public class UpdateContactListAction extends Action
     // Last activity
     private Date lastActivity = new Date();
 
-    // Constructor (removes given contact item)
+    // Constructor (removes or adds given contact item)
     public UpdateContactListAction(ContactListContactItem cItem, boolean add)
     {
         this.add = add;
         this.cItem = cItem;
+        this.gItem = null;
         this.error = 0;
+    }
+    
+    // Constructor (removes or adds given group)
+    public UpdateContactListAction(ContactListGroupItem gItem, boolean add)
+    {
+        this.add = add;
+        this.gItem = gItem;
+        this.cItem = null;
+        this.error = 0;
+        DebugLog.addText("Action created");
     }
 
     // Returns true if the action can be performed
@@ -86,58 +101,95 @@ public class UpdateContactListAction extends Action
     // Init action
     protected void init() throws JimmException
     {
-
         error = 0;
+        
         int marker = 0;
         
         SnacPacket packet;
         
-        byte[] uinRaw = Util.stringToByteArray(this.cItem.getUin());
-        byte[] nameRaw = Util.stringToByteArray(this.cItem.getName());
+        byte[] buf;
+        byte[] idRaw;
+        byte[] nameRaw;
         
+        if (cItem != null)
+        {
+            idRaw = Util.stringToByteArray(this.cItem.getUin());
+            nameRaw = Util.stringToByteArray(this.cItem.getName());
+        }
+        else
+        {
+            idRaw = Util.stringToByteArray(this.gItem.getName());
+            nameRaw = null;
+        }
         
-        // Pack and send CLI_BUDDYLIST_REMOVE or CLI_BUDDYLIST_ADD package
-        
-        byte[] buf = new byte[1+uinRaw.length];
-        
-        Util.putByte(buf, marker, uinRaw.length);
-        System.arraycopy(uinRaw, 0, buf, 1, uinRaw.length);
-        
-        if (!add)
-            packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_REMOVE_FAMILY, SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND,SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND, new byte[0], buf);
-        else	
-            packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_ADD_FAMILY, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND,SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, new byte[0], buf);
-        
-        this.icq.c.sendPacket(packet);
-        
+        // Send a buddy add or delete packet if this update deals with a contact
+        if (cItem != null)
+        {
+            nameRaw = Util.stringToByteArray(this.cItem.getName());
+            // Pack and send CLI_BUDDYLIST_REMOVE or CLI_BUDDYLIST_ADD package
+            buf = new byte[1 + idRaw.length];
+
+            Util.putByte(buf, marker, idRaw.length);
+            System.arraycopy(idRaw, 0, buf, 1, idRaw.length);
+
+            if (!add)
+                packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_REMOVE_FAMILY, SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND,
+                        SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND, new byte[0], buf);
+            else
+                packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_ADD_FAMILY, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND,
+                        SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, new byte[0], buf);
+
+            this.icq.c.sendPacket(packet);
+        }
         // Send a CLI_ADDSTART packet
         packet = new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY, SnacPacket.CLI_ADDSTART_COMMAND,SnacPacket.CLI_ADDSTART_COMMAND, new byte[0], new byte[0]);
 
         this.icq.c.sendPacket(packet);
-
         if (!add)
         {
             
             // Pack CLI_ROSTERDELETE packet
-            buf = new byte[2 + uinRaw.length + 8 + 4 + nameRaw.length];
-            
+            int length;
+            if (cItem != null)
+                length = 2 + idRaw.length + 8 + 4 + nameRaw.length;
+            else
+                length = 2 + idRaw.length + 8;
+                
+            buf = new byte[length];
+                
             marker = 0;
             
-            Util.putWord(buf, marker, uinRaw.length);
-            System.arraycopy(uinRaw, 0, buf, marker + 2, uinRaw.length);
-            marker += 2 + uinRaw.length;
-            Util.putWord(buf, marker, this.cItem.getGroup());
+            Util.putWord(buf, marker, idRaw.length);
+            System.arraycopy(idRaw, 0, buf, marker + 2, idRaw.length);
+            marker += 2 + idRaw.length;
+            if (cItem != null)
+            {
+                Util.putWord(buf, marker, this.cItem.getGroup());
+                marker += 2;
+                Util.putWord(buf, marker, this.cItem.getId());
+                marker += 2;
+                Util.putWord(buf, marker, 0x0000);
+            } else
+            {
+                DebugLog.addText("Pack group del item");
+                Util.putWord(buf, marker, this.gItem.getId());
+                marker += 2;
+                Util.putWord(buf, marker, 0x0000);
+                marker += 2;
+                Util.putWord(buf, marker, 0x0001);
+                marker += 2;
+                Util.putWord(buf, marker, 0x0000);
+            }
             marker += 2;
-            Util.putWord(buf, marker, this.cItem.getId());
-            marker += 2;
-            Util.putWord(buf, marker, 0x0000);
-            marker += 2;
-            Util.putWord(buf, marker, 4 + nameRaw.length);
-            marker += 2;
-            Util.putWord(buf, marker, 0x0131);
-            Util.putWord(buf, marker + 2, nameRaw.length);
-            System.arraycopy(nameRaw, 0, buf, marker + 4, nameRaw.length);
-            marker += 4 + nameRaw.length;
+            if (cItem != null)
+            {
+                Util.putWord(buf, marker, 4 + nameRaw.length);
+                marker += 2;
+                Util.putWord(buf, marker, 0x0131);
+                Util.putWord(buf, marker + 2, nameRaw.length);
+                System.arraycopy(nameRaw, 0, buf, marker + 4, nameRaw.length);
+                marker += 4 + nameRaw.length;
+            }
             // Send a CLI_ROSTERDELETE packet
             packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY, SnacPacket.CLI_ROSTERDELETE_COMMAND,
                     SnacPacket.CLI_ROSTERDELETE_COMMAND, new byte[0], buf);
@@ -145,45 +197,65 @@ public class UpdateContactListAction extends Action
         {
             // Pack CLI_ROSTERADDpacket
             // System.out.println("Pack CLI_ROSTERADDpacket");
+            int length;
             
-            if (cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
-                buf = new byte[2 + uinRaw.length + 6 + 6 + 4 + nameRaw.length];
+            if (cItem != null)
+                if (cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
+                    length = 2 + idRaw.length + 6 + 6 + 4 + nameRaw.length;
+                else
+                    length = 2 + idRaw.length + 6 + 2 + 4 + nameRaw.length;
             else
-                buf = new byte[2 + uinRaw.length + 6 + 2 + 4 + nameRaw.length];
+                length = 2 + idRaw.length + 8;
+
+            buf = new byte[length];
             
             marker = 0;
             
-            Util.putWord(buf, marker, uinRaw.length);
-            System.arraycopy(uinRaw, 0, buf, marker + 2, uinRaw.length);
-            marker += 2 + uinRaw.length;
-            Util.putWord(buf, marker, this.cItem.getGroup());
-            marker += 2;
-            Util.putWord(buf, marker, this.cItem.getId());
-            marker += 2;
-            Util.putWord(buf, marker, 0x0000);
-            marker += 2;
-            if (cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
+            Util.putWord(buf, marker, idRaw.length);
+            System.arraycopy(idRaw, 0, buf, marker + 2, idRaw.length);
+            marker += 2 + idRaw.length;
+            if (cItem != null)
             {
-                // Add length of TLVs and 0x066 packet
-                Util.putWord(buf, marker, 8 + nameRaw.length);
+                Util.putWord(buf, marker, this.cItem.getGroup());
                 marker += 2;
-
-                Util.putWord(buf, marker, 0x0066);
+                Util.putWord(buf, marker, this.cItem.getId());
                 marker += 2;
                 Util.putWord(buf, marker, 0x0000);
-                marker += 2;
             } else
             {
-                // Add only length of TLVs
-                Util.putWord(buf, marker, 4 + nameRaw.length);
+                DebugLog.addText("Pack group add item");
+                Util.putWord(buf, marker, this.gItem.getId());
                 marker += 2;
+                Util.putDWord(buf, marker, 0x0000);
+                marker += 2;
+                Util.putWord(buf, marker, 0x0001);
+                marker += 2;
+                Util.putWord(buf, marker, 0x0000);
             }
-            Util.putWord(buf, marker, 0x0131);
             marker += 2;
-            Util.putWord(buf, marker, nameRaw.length);
-            marker += 2;
-            System.arraycopy(nameRaw, 0, buf, marker, nameRaw.length);
-
+            if (cItem != null)
+            {
+                if (cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
+                {
+                    // Add length of TLVs and 0x066 packet
+                    Util.putWord(buf, marker, 8 + nameRaw.length);
+                    marker += 2;
+                    Util.putWord(buf, marker, 0x0066);
+                    marker += 2;
+                    Util.putWord(buf, marker, 0x0000);
+                    marker += 2;
+                } else
+                {
+                    // Add only length of TLVs
+                    Util.putWord(buf, marker, 4 + nameRaw.length);
+                    marker += 2;
+                }
+                Util.putWord(buf, marker, 0x0131);
+                marker += 2;
+                Util.putWord(buf, marker, nameRaw.length);
+                marker += 2;
+                System.arraycopy(nameRaw, 0, buf, marker, nameRaw.length);
+            }
             // Send CLI_ROSTERADDpacket
             packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY, SnacPacket.CLI_ROSTERADD_COMMAND, SnacPacket.CLI_ROSTERADD_COMMAND,
                     new byte[0], buf);
@@ -225,112 +297,152 @@ public class UpdateContactListAction extends Action
 
                         // Check error code, see ICQv8 specification
                         SnacPacket packet2;
-                        switch (Util.getWord(snacPacket.getData(), 0)){
-                        
+                        switch (Util.getWord(snacPacket.getData(), 0))
+                        {
+
                         case 0x002:
                             error = 2;
                             throw (new JimmException(154, 0, true));
                         case 0x003:
                             error = 3;
                             throw (new JimmException(155, 0, true));
-                            
+
                         case 0x00A:
                             error = 10;
                             throw (new JimmException(156, 0, true));
-                            
+
                         case 0x00C:
                             error = 12;
                             throw (new JimmException(157, 0, true));
-                            
+
                         case 0x00D:
                             error = 13;
                             throw (new JimmException(158, 0, true));
-                            
+
                         case 0x00E:
-                            cItem.setBoolValue(ContactListContactItem.VALUE_NO_AUTH,true);
+                            cItem.setBoolValue(ContactListContactItem.VALUE_NO_AUTH, true);
                             // System.out.println("Added");
                             Jimm.jimm.getContactListRef().addContactItem(this.cItem);
                             this.state = UpdateContactListAction.STATE_SRV_REPLYED_AUTH;
                             break;
-                        
+
                         default:
-                            cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP,false);
-
-                        // Get all contact items and group items as aray
-                        ContactListContactItem[] cItems = Jimm.jimm.getContactListRef().getContactItems();
-                        ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
-
-                        // Get group of contact item to be removed or added to
-                        ContactListGroupItem gItem = null;
-                        for (int i = 0; i < gItems.length; i++)
-                        {
-                            if (gItems[i].getId() == this.cItem.getGroup())
+                            Vector cItemsRemaining = null;
+                            // Get all group items as aray
+                            ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
+                            if (this.cItem != null)
                             {
-                                gItem = gItems[i];
-                                break;
+                                cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP, false);
+
+                                // Get all contact items as aray
+                                ContactListContactItem[] cItems = Jimm.jimm.getContactListRef().getContactItems();
+
+                                // Get group of contact item to be removed or added to
+                                ContactListGroupItem gItem = null;
+                                for (int i = 0; i < gItems.length; i++)
+                                {
+                                    if (gItems[i].getId() == this.cItem.getGroup())
+                                    {
+                                        gItem = gItems[i];
+                                        break;
+                                    }
+                                }
+                                if (gItem == null) { throw (new JimmException(154, 1, true)); }
+
+                                // Get all contact items in this group 
+                                // Either this is the whole group plus the new item (adding) or
+                                // it is the old list without the to be removed item
+                                cItemsRemaining = new Vector();
+
+                                for (int i = 0; i < cItems.length; i++)
+                                {
+                                    if ((gItem.getId() == cItems[i].getGroup())
+                                            && ((this.cItem != cItems[i]) || cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)))
+                                    {
+                                        cItemsRemaining.addElement(cItems[i]);
+                                    }
+                                }
+                                if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP))
+                                {
+                                    cItemsRemaining.addElement(cItem);
+                                }
                             }
-                        }
-                        if (gItem == null) { throw (new JimmException(154, 1, true)); }
 
-                        // Get all contact items in this group
-                        // Either this is the whole group plus the new item
-                        // (adding or
-                        // it is the old list without the to be removed item
-                        Vector cItemsRemaining = new Vector();
+                            // Pack CLI_ROSTERUPDATE packet
+                            byte[] nameRaw;
+                            byte[] buf;
 
-                        for (int i = 0; i < cItems.length; i++)
-                        {
-                            if ((gItem.getId() == cItems[i].getGroup())
-                                    && ((this.cItem != cItems[i]) || cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)))
+                            if (cItem != null)
                             {
-                                cItemsRemaining.addElement(cItems[i]);
+                                nameRaw = Util.stringToByteArray(gItem.getName());
+                                buf = new byte[2 + nameRaw.length + 8 + 4 + cItemsRemaining.size() * 2];
+                            } else
+                            {
+                                nameRaw = new byte[0];
+                                buf = new byte[2 + nameRaw.length + 8 + 4 + gItems.length * 2 + 2];
                             }
-                        }
-                        if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP))
-                        {
-                            cItemsRemaining.addElement(cItem);
-                        }
+                            int marker = 0;
 
-                        // Pack CLI_ROSTERUPDATE packet
-                        byte[] nameRaw = Util.stringToByteArray(gItem.getName());
-                        byte[] buf = new byte[2 + nameRaw.length + 8 + 4 + cItemsRemaining.size() * 2];
-                        int marker = 0;
-                        Util.putWord(buf, marker, nameRaw.length);
-                        System.arraycopy(nameRaw, 0, buf, marker + 2, nameRaw.length);
-                        marker += 2 + nameRaw.length;
-                        Util.putWord(buf, marker, gItem.getId());
-                        marker += 2;
-                        Util.putWord(buf, marker, 0x0000);
-                        marker += 2;
-                        Util.putWord(buf, marker, 0x0001);
-                        marker += 2;
-                        Util.putWord(buf, marker, 4 + cItemsRemaining.size() * 2);
-                        marker += 2;
-                        Util.putWord(buf, marker, 0x00C8);
-                        Util.putWord(buf, marker + 2, cItemsRemaining.size() * 2);
-                        marker += 4;
-                        for (int i = 0; i < cItemsRemaining.size(); i++)
-                        {
-                            Util.putWord(buf, marker, ((ContactListContactItem) cItemsRemaining.elementAt(i)).getId());
+                            Util.putWord(buf, marker, nameRaw.length);
+                            System.arraycopy(nameRaw, 0, buf, marker + 2, nameRaw.length);
+                            marker += 2 + nameRaw.length;
+                            
+                            if (cItem != null)
+                                Util.putWord(buf, marker, gItem.getId());
+                            else
+                                Util.putWord(buf, marker, 0x0000);
                             marker += 2;
+                            
+                            Util.putWord(buf, marker, 0x0000);
+                            marker += 2;
+                            Util.putWord(buf, marker, 0x0001);
+                            marker += 2;
+                            
+                            if (cItem != null)
+                                Util.putWord(buf, marker, 4 + cItemsRemaining.size() * 2);
+                            else
+                                Util.putWord(buf, marker, 4 + gItems.length * 2 + 2);
+                            marker += 2;
+
+                            Util.putWord(buf, marker, 0x00C8);
+                            if (cItem != null)
+                                Util.putWord(buf, marker + 2, cItemsRemaining.size() * 2);
+                            else
+                                Util.putWord(buf, marker + 2, gItems.length * 2  + 2);
+                            marker += 4;
+
+                            if (cItem != null)
+                                for (int i = 0; i < cItemsRemaining.size(); i++)
+                                {
+                                    Util.putWord(buf, marker, ((ContactListContactItem) cItemsRemaining.elementAt(i)).getId());
+                                    marker += 2;
+                                }
+                            else
+                            {
+                                for (int i = 0; i < gItems.length; i++)
+                                {
+                                    Util.putWord(buf, marker, gItems[i].getId());
+                                    marker += 2;
+                                }
+                                Util.putWord(buf, marker, this.gItem.getId());
+                                marker += 2;
+                            }
+                            // System.out.println("Send CLI_ROSTERUPDATE");
+                            // Send CLI_ROSTERUPDATE packet
+                            SnacPacket packet1 = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY, SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+                                    SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], buf);
+                            this.icq.c.sendPacket(packet1);
+
+                            // Move to next state
+                            this.state = UpdateContactListAction.STATE_CLI_ADDEND_SENT;
                         }
 
-                        // System.out.println("Send CLI_ROSTERUPDATE");
-                        // Send CLI_ROSTERUPDATE packet
-                        SnacPacket packet1 = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-                                SnacPacket.CLI_ROSTERUPDATE_COMMAND,SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], buf);
-                        this.icq.c.sendPacket(packet1);
-
-                        // Move to next state
-                        this.state = UpdateContactListAction.STATE_CLI_ADDEND_SENT;
-                        }
-                        
                         // System.out.println("CLI_ADDEND");
                         // Send a CLI_ADDEND packet
-                        packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
+                        packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY, SnacPacket.CLI_ADDEND_COMMAND,
+                                SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
                         this.icq.c.sendPacket(packet2);
-                                                    
+
                         // Packet has been consumed
                         consumed = true;
                     }
@@ -355,6 +467,7 @@ public class UpdateContactListAction extends Action
                         if (Util.getWord(snacPacket.getData(), 0) != 0x0000) { throw (new JimmException(154, 0, true)); }
 
                         // Delete or add contact item from internal list
+                        if (cItem != null)
                         if (!add)
                         {
                             // System.out.println("Removed");
@@ -363,6 +476,10 @@ public class UpdateContactListAction extends Action
                         {
                             // System.out.println("Added");
                             Jimm.jimm.getContactListRef().addContactItem(this.cItem);
+                        }
+                        else
+                        {
+                            Jimm.jimm.getContactListRef().addGroup(this.gItem);
                         }
 
                         // Move to next state
