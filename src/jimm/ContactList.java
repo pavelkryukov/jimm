@@ -221,18 +221,6 @@ public class ContactList implements CommandListener
         return (cItems);
     }
     
-    // Return the current online status
-    public long getOnlineStatus()
-    {
-        return this.onlineStatus;
-    }
-    
-    // Set the current online status
-    public void setOnlineStatus(long onlineStatus)
-    {
-        this.onlineStatus = onlineStatus;
-    }
-
     // Returns all group items as array
     public synchronized ContactListGroupItem[] getGroupItems()
     {
