@@ -114,7 +114,7 @@ public class TextList extends VirtualList
     int fontSize,     /*!< Font size for list items and caption. 
                            Can be VirtualList.SMALL_FONT, VirtualList.MEDIUM_FONT 
                            or VirtualList.LARGE_FONT */
-    int cursorMode    //!< Cursor mode. Can be VirtualList.SEL_INVERTED or VirtualList.SEL_DOTTED
+    int cursorMode    //!< Cursor mode. Can be VirtualList.SEL_INVERTED, VirtualList.SEL_DOTTED, VirtualList.SEL_NONE
   )
   {
     super(capt, capBackColor, capTextColor, backColor, fontSize, cursorMode);
@@ -122,8 +122,8 @@ public class TextList extends VirtualList
  
   //! Add big multiline text. 
   /*! Text visial width can be larger then screen width.
-      Method addBigText automaticalli divide text to lines 
-      and add lines to text list */
+      Method addBigText automatically divides text to short lines 
+      and adds lines to text list */
   public void addBigText
   (
     String text,  //!< Text to add
@@ -131,64 +131,65 @@ public class TextList extends VirtualList
     int fontStyle //!< Text font style. See MID profile for details
   )
   {
-    Font font = createFont(fontStyle);
-    int textLen = text.length();
-    int startPos, curPos, width, last_word_end, test_width;
-    String test_line;
-    
+    Font font;
+    int textLen, curPos, lastWordEnd, startPos, width;
+    char curChar;
+    boolean lineBreak, wordEnd, textEnd;
+    String testString;
+
     width = getWidth()-getScrollerWidth()-3;
-    
     startPos = 0;
-    last_word_end = -1;
-    for (curPos = 0; curPos < textLen; curPos++)
+    lastWordEnd = -1;
+    font = createFont(fontStyle);
+    textLen = text.length();
+    for (curPos = 0; curPos < textLen;)
     {
-      char currChar = text.charAt(curPos);
-      boolean textEnd = (curPos == textLen-1);
-      boolean lineBreak = ((currChar == '\n') || (currChar == '\r'));
+      curChar   = text.charAt(curPos);
+      wordEnd   = (curChar == ' ');
+      lineBreak = (curChar == '\n') || (curChar == '\r'); // ???
+      textEnd   = (curPos == (textLen-1));
+      if (textEnd) curPos++;
       
-      if ((currChar == ' ') || textEnd || lineBreak)
+      if (lineBreak || textEnd) // simply add line
       {
-        if (textEnd) curPos++;
-        test_line = text.substring(startPos, curPos);
-        test_width = font.stringWidth(test_line);
-        
-        if ((textEnd||lineBreak) && (test_width < width))
+        testString = text.substring(startPos, curPos);
+        if (font.stringWidth(testString) <= width)
         {
-           internAdd(test_line.trim(), color, -1, fontStyle);
-           startPos = curPos;
-           last_word_end = -1;
-        }
-        
-        else if ((test_width > width) || lineBreak)
-        {
-          if (last_word_end != -1)
-          {
-            //System.out.println("1: "+text.substring(startPos, last_word_end));
-          
-            internAdd(text.substring(startPos, last_word_end).trim(), color, -1, fontStyle);
-            curPos = last_word_end+1;
-            if (!textEnd) for (; curPos < textLen; curPos++) { if (text.charAt(curPos) != ' ') break; }
-          }
-          else
-          {
-            for (; curPos >= startPos; curPos--)
-            {
-              test_line = text.substring(startPos, curPos);
-              test_width = font.stringWidth(test_line);
-              if (test_width <= width) 
-              {
-                //System.out.println("2: "+test_line); 
-                internAdd(test_line.trim(), color, -1, fontStyle);
-                break;
-              }
-            }
-          }
-          last_word_end = -1;
+          internAdd(testString, color, -1, fontStyle);
+          curPos++;
           startPos = curPos;
+          lastWordEnd = -1;
+          continue;
         }
-        else last_word_end = curPos;
-      }  
+      }
+      
+      if (wordEnd || lineBreak || textEnd)
+      {
+        testString = text.substring(startPos, curPos);
+        if (font.stringWidth(testString) > width)
+        {
+          if (lastWordEnd != -1) // several words in line
+          {
+            internAdd(text.substring(startPos, lastWordEnd), color, -1, fontStyle);
+            curPos = lastWordEnd+1;
+            startPos = curPos;
+          }
+          else // divide big word to several lines
+          {
+            for (;curPos >= 1; curPos--)
+            {
+              testString = text.substring(startPos, curPos);
+              if (font.stringWidth(testString) <= width) break;
+            }
+            internAdd(testString, color, -1, fontStyle);
+            startPos = curPos;
+          }
+          lastWordEnd = -1;
+          continue;
+        }
+      }
+      if (wordEnd) lastWordEnd = curPos;
+      curPos++;
     }
-    invalidate();
   }
 }
