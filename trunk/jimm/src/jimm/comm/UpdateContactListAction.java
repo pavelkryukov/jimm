@@ -199,7 +199,7 @@ public class UpdateContactListAction extends Action
                         default:
                             
                             // Send an ROOSTER_UPDATE packet if contact/group was added/deleted
-                            if (!modify)
+                            if (!this.modify)
                             {
                                 Vector cItemsRemaining = null;
                                 
@@ -252,8 +252,11 @@ public class UpdateContactListAction extends Action
                         this.icq.c.sendPacket(packet);
 
                         // Move to next state
-                        this.state = UpdateContactListAction.STATE_CLI_ADDEND_SENT;
-
+                        if (!this.modify)
+                            this.state = UpdateContactListAction.STATE_CLI_ADDEND_SENT;
+                        else
+                            this.state = UpdateContactListAction.STATE_SRV_UPDATEACK_RCVD;
+                        
                         // Packet has been consumed
                         consumed = true;
                     }
