@@ -1,28 +1,28 @@
-﻿/*******************************************************************************
- Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+/*******************************************************************************
+Jimm - Mobile Messaging - J2ME ICQ clone
+Copyright (C) 2003-05  Jimm Project
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- ********************************************************************************
- File: src/jimm/res/Text_DE.java
- Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher
- *******************************************************************************/
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+********************************************************************************
+File: src/jimm/res/Text_DE.java
+Version: ###VERSION###  Date: ###DATE###
+Author(s): Manuel Linsmayer, Andreas Rossbacher
+*******************************************************************************/
 
 
-// #sijapp cond.if lang_DE is "true" #
+//#sijapp cond.if lang_DE is "true" #
 
 
 package jimm.res;
@@ -41,19 +41,23 @@ public class Text_DE extends ResourceBundle
 		// Labels
 		resources.put(".",                           ",");
 		resources.put("about",                       "Über");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\nVersion 0.3.1\nSiehe http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\nVersion ###VERSION###\nSiehe http://www.jimm.org/");
 		resources.put("account",                     "Account");
+		resources.put("add_group",                   "Gruppe hinzufügen");
 		resources.put("add_user",                    "Benutzer hinzufügen");
 		resources.put("add_to_list",                 "Zur Liste hinzuf.");
 		resources.put("age",                         "Alter");
 		resources.put("async",                       "Async");
-		resources.put("auth",				     	 "Auth");
 		resources.put("attention",                   "Achtung!");
+		resources.put("auth",				     	 "Auth");
+		resources.put("auto_connect",				 "Nach dem Start automatisch verbinden");
 		resources.put("back",                        "Zurück");
 		resources.put("beep",                        "Beep");
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Abbrechen");
+		resources.put("chat_small_font",			 "Kleiner font im Chat");
 		resources.put("city",                        "Stadt");
+		resources.put("clear",                       "Löschen");                        
 		resources.put("close",                       "Schließen");
 		resources.put("con_wait",                    "Verzögerung zwischen Verbindungen(sek)");
 		resources.put("conn_type",                   "Verbindungsart");
@@ -73,42 +77,56 @@ public class Text_DE extends ResourceBundle
 		resources.put("user_menu",                   "Benutzer Menü");	
 		resources.put("disconnect",                  "Trennen");
 		resources.put("disconnecting",               "Trenne");
-		resources.put("display_advertisement",       "Füge Jimm-Tipp hinzu?");
 		resources.put("display_date",                "Datum auf dem Splash-Screen anzeigen?");
 		resources.put("email",                       "E-Mail");
 		resources.put("error",                       "Fehler");
+		resources.put("exec",                        "Ausführen");
 		resources.put("exit",                        "Beenden");
 		resources.put("filetransfer",                "Dateiübertragung");	
 		resources.put("filepath",                    "Dateipfad");
+		resources.put("find",                        "Finden");
 		resources.put("firstname",                   "Vorname");
+		resources.put("free_heap",                   "Freier Heap");
 		resources.put("ft_name",                     "Datei senden");		
 		resources.put("ft_cam",                      "Kamerabild senden");		
-		resources.put("hide_offline",                "Offline-Kontakte verbergen");
 		resources.put("gender",                      "Geschlecht");
 		resources.put("grant",						 "Auth genehmigen");
 		resources.put("grantedby",					 "Ihre Authorisierungsanfrage wurde genehmingt durch");
+		resources.put("group_name",                  "Gruppenname");
+		resources.put("group_is_not_empty",          "Gewählte Gruppe ist leer!\nAlle Kontakte in andere Gruppe verschieben?");
 		resources.put("have_unread_mess",            "Sie haben ungelesene Nachrichten. Trotzdem verlassen?");
+		resources.put("hide_offline",                "Offline-Kontakte verbergen");
+		resources.put("history_info",                "Speicherdetails");
+		resources.put("hist_cur",                    "Derzeitige Nachrichten pro Kontakt");
+		resources.put("hist_rc",                     "Anzahl aller Nachrichten");
+		resources.put("hist_size",                   "Benutzer Speicher (kB)");
+		resources.put("hist_avail",                  "Gesamter Speicher (kB)"); 
+		resources.put("history",                     "Gespeicherte history");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initialisierung");
 		resources.put("kb",                          "kB");
 		resources.put("keep_chat",                   "Chat-History behalten?");
 		resources.put("keep_conn_alive",             "Verbindung erhalten?");
+		resources.put("keylock",                     "Tastensperre");
+		resources.put("keylock_message",             "\"#\" zum lösen der Tastenspeere halten");
 		resources.put("keylock_enable",              "Tastensperre aktivieren");
 		resources.put("keylock_enabled",             "Tastensperre aktiv");
 		resources.put("keyword",                     "Schlüsselwort");
 		resources.put("language",                    "Sprache");
+		resources.put("lang_BG", 					 "Bulgarisch");
 		resources.put("lang_BR",                     "Portugiesisch (Brasilien)");
 		resources.put("lang_CZ",                     "Tschechisch");
 		resources.put("lang_DE",                     "Deutsch");
 		resources.put("lang_EN",                     "Englisch");
 		resources.put("lang_ES",                     "Spanisch");
+		resources.put("lang_HE", 					 "Hebräisch");
 		resources.put("lang_IT",                     "Italienisch");
 		resources.put("lang_LT",                     "Litauisch");
+		resources.put("lang_PL",                     "Polnisch");
 		resources.put("lang_RU",                     "Russisch");
 		resources.put("lang_SE",                     "Schwedisch");
-		resources.put("lang_SR",                     "Српски");
-		resources.put("lang_BG", 					 "Bulgarisch");
-		resources.put("lang_HE", 					 "עברית");
+		resources.put("lang_SR",                     "Serbisch");
+		resources.put("lang_UA", 					 "Ukrainisch");
 		resources.put("lastname",                    "Nachname");
 		resources.put("loading",                     "Lade");
 		resources.put("male",                        "M");
@@ -148,6 +166,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("prev",						 "Voheriges");
 		resources.put("reason",						 "Grund");
 		resources.put("remove",                      "Aus der Liste entfernen");
+		resources.put("remove_group",                "Gruppe löschen");
+		resources.put("remove_user",                 "Kontakt löschen");
 		resources.put("rename",                      "Umbenennen");
 		resources.put("reply",                       "Antworten");
 		resources.put("requauth",                    "Beantrage Auth");
@@ -168,6 +188,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("server_port",                 "Port");
 		resources.put("session",                     "Sitzung");
 		resources.put("set_status",                  "Status festlegen");
+		resources.put("show_user_groups",            "Gruppen anzeigen");	
 		resources.put("since",                       "Seit dem");
 		resources.put("sound",                       "Sounddatei");
 		resources.put("sound_file_name",             "Sound File Name");
@@ -187,6 +208,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
+		resources.put("use_history",                 "Speichere history");
 		resources.put("user_add",                    "Benutzer hinzufügen");
 		resources.put("user_search",                 "Benutzer suchen");
 		resources.put("vibration",                   "Vibration");
@@ -200,16 +222,6 @@ public class Text_DE extends ResourceBundle
 		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
 
 
-
-		// User management ********
-		resources.put("group_is_not_empty",          "Gewählte Gruppe ist leer!\nAlle Kontakte in andere Gruppe verschieben?");
-		resources.put("add_group",                   "Gruppe hinzufügen");
-		resources.put("group_name",                  "Gruppenname");
-		resources.put("exec",                        "Ausführen");
-		resources.put("remove_user",                 "Kontakt löschen");
-		resources.put("remove_group",                "Gruppe löschen");
-		resources.put("show_user_groups",            "Gruppen anzeigen");		
-		
 		// Generic errors
 		resources.put("error_100",                   "Unbekannter Fehler (#100.EXT)");
 
@@ -283,9 +295,6 @@ public class Text_DE extends ResourceBundle
 		resources.put("error_192",                   "Fehler beim lesen der Datei. Pfad falsch oder nicht unterstützt(#192.EXT)");
 
 	}
-
-
 }
 
-
-// #sijapp cond.end #
+//#sijapp cond.end #
