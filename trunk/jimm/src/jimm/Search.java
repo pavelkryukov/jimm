@@ -343,7 +343,13 @@ public class Search
                 // Draw status image
                 resultScreen.setImageList(ContactList.getImageList());
                 resultScreen.addBigText(ResourceBundle.getString("status") + ": ",0x0,Font.STYLE_BOLD);
-                resultScreen.add("",0xffffff,Search.this.getResult(n).getStatus());
+                if (Search.this.getResult(n).getStatus() == 0)
+                    resultScreen.add("",0xffffff,6);
+                else if (Search.this.getResult(n).getStatus() == 1)
+                    resultScreen.add("",0xffffff,7);
+                else if (Search.this.getResult(n).getStatus() == 2)
+                    resultScreen.add("",0xffffff,3);
+                
                 resultScreen.unlock();
                 
             } else
