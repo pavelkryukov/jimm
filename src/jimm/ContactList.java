@@ -1392,10 +1392,8 @@ public class ContactList implements CommandListener
         
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();
-        // #sijapp cond.else#
-        Jimm.display.flashBacklight(1000);
         // #sijapp cond.end#
-        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
+        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR) && (notType == SOUND_TYPE_MESSAGE))
         {
             // #sijapp cond.if target is "SIEMENS"#
             Vibrator.triggerVibrator(500);
