@@ -38,8 +38,8 @@ public class JimmException extends Exception
 	// Returns the error description for the given error code
 	public static String getErrDesc(int errCode, int extErrCode)
 	{
-		String errDesc = ResourceBundle.getString("jimm.res.Text", "error_" + errCode);
-		if (errDesc == null) errDesc = ResourceBundle.getString("ord.jimm.res.Text", "error_100");
+		String errDesc = ResourceBundle.getString("error_" + errCode);
+		if (errDesc == null) errDesc = ResourceBundle.getString("error_100");
 		int ext = errDesc.indexOf("EXT");
 		return (errDesc.substring(0, ext) + extErrCode + errDesc.substring(ext + 3));
 	}
@@ -100,7 +100,7 @@ public class JimmException extends Exception
 			Jimm.jimm.getIcqRef().reset();
 
 			// Display error message
-			Alert errorMsg = new Alert(ResourceBundle.getString("jimm.res.Text", "error"), e.getMessage(), null, AlertType.ERROR);
+			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
 			errorMsg.setTimeout(Alert.FOREVER);
 			Jimm.jimm.getMainMenuRef().activate(errorMsg);
 
@@ -112,7 +112,7 @@ public class JimmException extends Exception
 			// Display error message, if required
 			if (e.isDisplayMsg())
 			{
-				Alert errorMsg = new Alert(ResourceBundle.getString("jimm.res.Text", "warning"), e.getMessage(), null, AlertType.WARNING);
+				Alert errorMsg = new Alert(ResourceBundle.getString("warning"), e.getMessage(), null, AlertType.WARNING);
 				errorMsg.setTimeout(Alert.FOREVER);
 				Jimm.display.setCurrent(errorMsg, Jimm.display.getCurrent());
 			}

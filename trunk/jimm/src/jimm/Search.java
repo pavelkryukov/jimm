@@ -228,34 +228,34 @@ public class Search
         public SearchForm()
         {
             // Commands
-            this.searchCommand = new Command(ResourceBundle.getString("jimm.res.Text", "search_user"), Command.OK, 1);
-            this.backCommand = new Command(ResourceBundle.getString("jimm.res.Text", "back"), Command.BACK, 2);
-            this.addCommand = new Command(ResourceBundle.getString("jimm.res.Text", "add_to_list"), Command.ITEM, 2);
-            this.previousComamnd = new Command(ResourceBundle.getString("jimm.res.Text", "prev"), Command.ITEM, 1);
-            this.nextCommand = new Command(ResourceBundle.getString("jimm.res.Text", "next"), Command.ITEM, 1);
+            this.searchCommand = new Command(ResourceBundle.getString("search_user"), Command.OK, 1);
+            this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
+            this.addCommand = new Command(ResourceBundle.getString("add_to_list"), Command.ITEM, 2);
+            this.previousComamnd = new Command(ResourceBundle.getString("prev"), Command.ITEM, 1);
+            this.nextCommand = new Command(ResourceBundle.getString("next"), Command.ITEM, 1);
 
             // Form
-            this.searchForm = new Form(ResourceBundle.getString("jimm.res.Text", "search_user"));
+            this.searchForm = new Form(ResourceBundle.getString("search_user"));
 
             // TextFields
-            this.uinSearchTextBox = new TextField(ResourceBundle.getString("jimm.res.Text", "uin"), "", 32,
+            this.uinSearchTextBox = new TextField(ResourceBundle.getString("uin"), "", 32,
                     TextField.NUMERIC);
-            this.nickSearchTextBox = new TextField(ResourceBundle.getString("jimm.res.Text", "nick"), "", 32,
+            this.nickSearchTextBox = new TextField(ResourceBundle.getString("nick"), "", 32,
                     TextField.ANY);
-            this.firstnameSearchTextBox = new TextField(ResourceBundle.getString("jimm.res.Text", "firstname"), "", 32,
+            this.firstnameSearchTextBox = new TextField(ResourceBundle.getString("firstname"), "", 32,
                     TextField.ANY);
-            this.lastnameSearchTextBox = new TextField(ResourceBundle.getString("jimm.res.Text", "lastname"), "", 32,
+            this.lastnameSearchTextBox = new TextField(ResourceBundle.getString("lastname"), "", 32,
                     TextField.ANY);
-            this.emailSearchTextBox = new TextField(ResourceBundle.getString("jimm.res.Text", "email"), "", 32,
+            this.emailSearchTextBox = new TextField(ResourceBundle.getString("email"), "", 32,
                     TextField.EMAILADDR);
-            this.citySearchTextBox = new TextField(ResourceBundle.getString("jimm.res.Text", "city"), "", 32,
+            this.citySearchTextBox = new TextField(ResourceBundle.getString("city"), "", 32,
                     TextField.ANY);
-            this.keywordSearchTextBox = new TextField(ResourceBundle.getString("jimm.res.Text", "keyword"), "", 32,
+            this.keywordSearchTextBox = new TextField(ResourceBundle.getString("keyword"), "", 32,
                     TextField.ANY);
             
             // Choice Group
             this.onlyOnline = new ChoiceGroup("",Choice.MULTIPLE);
-            this.onlyOnline.append(ResourceBundle.getString("jimm.res.Text", "only_online"),null);
+            this.onlyOnline.append(ResourceBundle.getString("only_online"),null);
 
             this.searchForm.append(this.onlyOnline);
             this.searchForm.append(this.uinSearchTextBox);
@@ -271,7 +271,7 @@ public class Search
             this.searchForm.setCommandListener(this);
 
             // Result Screen
-            resultScreen = new Form(ResourceBundle.getString("jimm.res.Text", "results"));
+            resultScreen = new Form(ResourceBundle.getString("results"));
 
             resultScreen.addCommand(this.previousComamnd);
             resultScreen.addCommand(this.nextCommand);
@@ -328,32 +328,32 @@ public class Search
                 g.setFont(typeFont);
                 
                 // Draw "Nr.: "
-                g.drawString(ResourceBundle.getString("jimm.res.Text", "nr") + ".: ", 0, 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("nr") + ".: ", 0, 2, Graphics.TOP | Graphics.LEFT);
                 // Draw "UIN: "
-                g.drawString(" " + ResourceBundle.getString("jimm.res.Text", "uin") + ": ", typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "nr")+ ".: ") + contentFont.stringWidth(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString()), 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(" " + ResourceBundle.getString("uin") + ": ", typeFont.stringWidth(ResourceBundle.getString("nr")+ ".: ") + contentFont.stringWidth(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString()), 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw "Nick: "
-                g.drawString(ResourceBundle.getString("jimm.res.Text", "nick") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("nick") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 // Draw "Auth: "
-                g.drawString(ResourceBundle.getString("jimm.res.Text", "auth") + ": ", typeFont.stringWidth(ResourceBundle.getString( "jimm.res.Text", "nick") + ": ") + contentFont.stringWidth(Search.this.getNick(n)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("auth") + ": ", typeFont.stringWidth(ResourceBundle.getString("nick") + ": ") + contentFont.stringWidth(Search.this.getNick(n)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker += 1;
                 
                 // Draw "Name: "
-                g.drawString(ResourceBundle.getString("jimm.res.Text", "name") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("name") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw "Email: " only of there is an email adress
                 if (Search.this.getEmail(n).length() > 0)
                 {
-                    g.drawString(ResourceBundle.getString("jimm.res.Text", "email") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                    g.drawString(ResourceBundle.getString("email") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                     lineMarker+=1;
                 }
                 
                 // Draw "Gender: "
-                g.drawString(ResourceBundle.getString("jimm.res.Text", "gender") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("gender") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 // Draw "Age: "
-                g.drawString(ResourceBundle.getString("jimm.res.Text", "age") + ": ", typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "gender") + ": ") + contentFont.stringWidth(Search.this.getGender(n)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("age") + ": ", typeFont.stringWidth(ResourceBundle.getString("gender") + ": ") + contentFont.stringWidth(Search.this.getGender(n)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
 
                 g.setFont(contentFont);
                 g.setColor(0, 0, 255);
@@ -361,32 +361,32 @@ public class Search
                 lineMarker = 0;
 
                 // Draw counter
-                g.drawString(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString(), typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "nr") + ".: "), 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString(), typeFont.stringWidth(ResourceBundle.getString("nr") + ".: "), 2, Graphics.TOP | Graphics.LEFT);
                 // Draw UIN
-                g.drawString(Search.this.getUIN(n), typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "nr") + ".: ") + contentFont.stringWidth(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size())) + typeFont.stringWidth(" " + ResourceBundle.getString("jimm.res.Text", "uin") + ": "), 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getUIN(n), typeFont.stringWidth(ResourceBundle.getString("nr") + ".: ") + contentFont.stringWidth(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size())) + typeFont.stringWidth(" " + ResourceBundle.getString("uin") + ": "), 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw nick
-                g.drawString(Search.this.getNick(n), typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "nick") + ": "),(typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getNick(n), typeFont.stringWidth(ResourceBundle.getString("nick") + ": "),(typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 // Draw auth string
-                g.drawString(Search.this.getAuthString(n), typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "nick") + ": ") + contentFont.stringWidth(Search.this.getNick(n)) + typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "nick") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getAuthString(n), typeFont.stringWidth(ResourceBundle.getString("nick") + ": ") + contentFont.stringWidth(Search.this.getNick(n)) + typeFont.stringWidth(ResourceBundle.getString("nick") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw name
-                g.drawString(Search.this.getName(n), typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "name") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getName(n), typeFont.stringWidth(ResourceBundle.getString("name") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw email adress if there is one
                 if (Search.this.getEmail(n).length() > 0)
                 {
-                    g.drawString(Search.this.getEmail(n), typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "email") + ": "), (typeFont.getHeight() * lineMarker)+ 2, Graphics.TOP | Graphics.LEFT);
+                    g.drawString(Search.this.getEmail(n), typeFont.stringWidth(ResourceBundle.getString("email") + ": "), (typeFont.getHeight() * lineMarker)+ 2, Graphics.TOP | Graphics.LEFT);
                     lineMarker+=1;
                 }
                 
                 // Draw gender
-                g.drawString(Search.this.getGender(n), typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "gender") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getGender(n), typeFont.stringWidth(ResourceBundle.getString("gender") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 // Draw age
-                g.drawString(Search.this.getAge(n), typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "gender") + ": ") + contentFont.stringWidth(Search.this.getGender(n)) + typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "age") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getAge(n), typeFont.stringWidth(ResourceBundle.getString("gender") + ": ") + contentFont.stringWidth(Search.this.getGender(n)) + typeFont.stringWidth(ResourceBundle.getString("age") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw status image
@@ -412,7 +412,7 @@ public class Search
 
                 g.setColor(0, 0, 0);
                 g.setFont(typeFont);
-                g.drawString(ResourceBundle.getString("jimm.res.Text", "no_results"), 0, 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("no_results"), 0, 2, Graphics.TOP | Graphics.LEFT);
 
                 copy = Image.createImage(resultImage);
 
@@ -434,7 +434,7 @@ public class Search
             {
                 // Display splash canvas
                 SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
-                wait.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
+                wait.setMessage(ResourceBundle.getString("wait"));
                 wait.setProgress(0);
                 Jimm.display.setCurrent(wait);
                 
@@ -478,7 +478,7 @@ public class Search
             if (c == this.addCommand && d == this.resultScreen)
             {
                 // Show list of groups to select which group to add to
-                groupList = new List(ResourceBundle.getString("jimm.res.Text", "whichgroup"), List.EXCLUSIVE);
+                groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
                 for (int i = 0; i < Jimm.jimm.getContactListRef().getGroupItems().length; i++)
                 {
                     groupList.append(Jimm.jimm.getContactListRef().getGroupItems()[i].getName(), null);

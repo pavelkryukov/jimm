@@ -98,12 +98,12 @@ public class Jimm extends MIDlet
 
 		// Create splash canvas object
 		this.sc = new SplashCanvas();
-		this.sc.setMessage(ResourceBundle.getString("jimm.res.Text", "loading"));
+		this.sc.setMessage(ResourceBundle.getString("loading"));
 
 		// Check available heap memory, display warning if less then 250 KB
 		if (Runtime.getRuntime().totalMemory() < 256000)
 		{
-			Alert errorMsg = new Alert(ResourceBundle.getString("jimm.res.Text", "warning"), JimmException.getErrDesc(160, 0), null, AlertType.WARNING);
+			Alert errorMsg = new Alert(ResourceBundle.getString("warning"), JimmException.getErrDesc(160, 0), null, AlertType.WARNING);
 			errorMsg.setTimeout(Alert.FOREVER);
 			Display.getDisplay(this).setCurrent(errorMsg, this.sc);
 			try

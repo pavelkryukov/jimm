@@ -185,17 +185,17 @@ public class Traffic
 		String traffic = new String();
 		Calendar time = Calendar.getInstance();
 		time.setTime(this.getSavedSinceDate());
-		traffic = ResourceBundle.getString("jimm.res.Text", "session") + ":\n" +
-				this.getSessionTraffic(false) + " " + ResourceBundle.getString("jimm.res.Text", "byte") + "\n" +
-				this.getSessionTraffic(true) + " " + ResourceBundle.getString("jimm.res.Text", "kb") + "\n" +
+		traffic = ResourceBundle.getString("session") + ":\n" +
+				this.getSessionTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
+				this.getSessionTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
 				this.getString(this.generateCostSum(true)) + " " + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CURRENCY) + "\n" +
-				ResourceBundle.getString("jimm.res.Text", "since") + ": " + this.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
+				ResourceBundle.getString("since") + ": " + this.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
 				this.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
 				time.get(Calendar.YEAR) + " " +
 				this.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" +
 				this.makeTwo(time.get(Calendar.MINUTE)) + "\n" +
-				this.getAllTraffic(false) + " " + ResourceBundle.getString("jimm.res.Text", "byte") + "\n" +
-				this.getAllTraffic(true) + " " + ResourceBundle.getString("jimm.res.Text", "kb") + "\n" +
+				this.getAllTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
+				this.getAllTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
 				this.getString(this.generateCostSum(false))+ " " + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CURRENCY);
 		return (traffic);
 
@@ -457,12 +457,12 @@ public class Traffic
 
 			// Initialize command
 
-			this.resetCommand = new Command(ResourceBundle.getString("jimm.res.Text", "reset"), Command.SCREEN, 2);
-			this.okCommand = new Command(ResourceBundle.getString("jimm.res.Text", "ok"), Command.SCREEN, 1);
+			this.resetCommand = new Command(ResourceBundle.getString("reset"), Command.SCREEN, 2);
+			this.okCommand = new Command(ResourceBundle.getString("ok"), Command.SCREEN, 1);
 
 			// Initialize traffic screen
 
-			this.trafficScreen = new Form(ResourceBundle.getString("jimm.res.Text", "traffic"));
+			this.trafficScreen = new Form(ResourceBundle.getString("traffic"));
 			this.trafficScreen.addCommand(this.resetCommand);
 			this.trafficScreen.addCommand(this.okCommand);
 			this.trafficScreen.setCommandListener(this);

@@ -136,7 +136,7 @@ public class ContactList implements CommandListener
     }
 
     // Main menu command
-    private static Command mainMenuCommand = new Command(ResourceBundle.getString("jimm.res.Text", "menu"),
+    private static Command mainMenuCommand = new Command(ResourceBundle.getString("menu"),
             Command.ITEM, 1);
 
     /** ************************************************************************* */
@@ -183,7 +183,7 @@ public class ContactList implements CommandListener
         onlineCount = 0;
         changed = true;
         // Initialize contact list
-        this.contactList = new List(ResourceBundle.getString("jimm.res.Text", "contact_list"), Choice.IMPLICIT);
+        this.contactList = new List(ResourceBundle.getString("contact_list"), Choice.IMPLICIT);
         //		#sijapp cond.if modules_TRAFFIC is "true" #
         this.updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
         //		#sijapp cond.else #
@@ -673,11 +673,11 @@ public class ContactList implements CommandListener
     public void updateTitle(int traffic)
     {
         if (traffic != 0)
-            contactList.setTitle(ResourceBundle.getString("jimm.res.Text", "contact_list") + " - " + traffic
-                    + ResourceBundle.getString("jimm.res.Text", "kb") + " - "
+            contactList.setTitle(ResourceBundle.getString("contact_list") + " - " + traffic
+                    + ResourceBundle.getString("kb") + " - "
                     + Jimm.jimm.getSplashCanvasRef().getDateString(true));
         else
-            contactList.setTitle(ResourceBundle.getString("jimm.res.Text", "contact_list") + " - "
+            contactList.setTitle(ResourceBundle.getString("contact_list") + " - "
                     + Jimm.jimm.getSplashCanvasRef().getDateString(true));
     }
 
