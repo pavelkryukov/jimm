@@ -262,24 +262,26 @@ public class Options
     this.setMsgNotificationMode(dis.readInt());
     this.setSoundFileName(dis.readUTF());
 	// #sijapp cond.else#
-//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+	 dis.readInt();
+	 dis.readBoolean();
+	// #sijapp cond.end#
+	//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
     this.setVibrator(dis.readBoolean());
-    // #sijapp cond.else#
-    dis.readInt();
-    dis.readBoolean();
+	//	#sijapp cond.else#
+	dis.readBoolean();
     // #sijapp cond.end#
     this.setKeepChat(dis.readBoolean());
-//	#sijapp cond.if mod_TRAF is "true" #
+	//	#sijapp cond.if mod_TRAF is "true" #
     this.setCostPerPacket(dis.readInt());
     this.setCostPerDay(dis.readInt());
     this.setCostPacketLength(dis.readInt());
     this.setCurrency(dis.readUTF());
-//	#sijapp cond.else#
+	//	#sijapp cond.else#
 	dis.readInt();
 	dis.readInt();
 	dis.readInt();
 	dis.readUTF();
-//	#sijapp cond.end#
+	//	#sijapp cond.end#
     this.setDisplayAdvertisementMode(dis.readInt());
     this.setOnlineStatus(dis.readLong());
 
@@ -342,19 +344,21 @@ public class Options
     dos.writeInt(this.getMsgNotificationMode());
     dos.writeUTF(this.getSoundFileName());
 	// #sijapp cond.else#
-//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+	dos.writeInt(0);
+	dos.writeBoolean(false);
+	//	#sijapp cond.end#
+	//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
     dos.writeBoolean(this.isVibrator());
     // #sijapp cond.else#
-    dos.writeInt(0);
     dos.writeBoolean(false);
     // #sijapp cond.end#
     dos.writeBoolean(this.keepChat());
-//	#sijapp cond.if mod_TRAF is "true" #
+	//	#sijapp cond.if mod_TRAF is "true" #
     dos.writeInt(this.getCostPerPacket());
     dos.writeInt(this.getCostPerDay());
     dos.writeInt(this.getCostPacketLength());
     dos.writeUTF(this.getCurrency());
-//	#sijapp cond.else#
+	//	#sijapp cond.else#
 	dos.writeInt(0);
 	   dos.writeInt(0);
 	   dos.writeInt(0);
