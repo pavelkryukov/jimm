@@ -25,6 +25,7 @@ package jimm;
 
 import java.util.Vector;
 
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
@@ -32,7 +33,6 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 
@@ -129,7 +129,7 @@ public class Search
     /** ************************************************************************* */
     
     // Class for search result entries
-    public class SearchResult
+    private class SearchResult
     {
         
         // Return types
@@ -192,11 +192,33 @@ public class Search
     /** ************************************************************************* */
     /** ************************************************************************* */
     /** ************************************************************************* */
+    
+    // Class for show user info and react to left or right keys 
+    private class SearchTextList extends RichTextList  
+	{
+    	public SearchTextList()
+    	{
+    		super(null);
+    	}
+    	
+    	protected void userPressKey(int keyCode) 
+    	{
+    		switch (getGameAction(keyCode))
+			{
+    		case Canvas.LEFT:
+    			searchForm.nextOrPrev(true);
+    			break;
+    		
+    		case Canvas.RIGHT:
+    			searchForm.nextOrPrev(false);
+    			break;
+			}
+    	}
+	}
 
     // Class for the search forms
     public class SearchForm implements CommandListener
     {
-
         // Commands
         private Command backCommand;
         private Command searchCommand;
@@ -273,7 +295,7 @@ public class Search
             this.searchForm.setCommandListener(this);
 
             // Result Screen
-            screen = new RichTextList(null);
+            screen = new SearchTextList();
             screen.addCommand(this.previousComamnd);
             screen.addCommand(this.nextCommand);
             screen.addCommand(this.addCommand);
@@ -314,6 +336,8 @@ public class Search
                     screen.removeCommand(this.nextCommand);
                     screen.removeCommand(this.previousComamnd);
                 }
+                
+                screen.lock();
                 
 // #sijapp cond.if target is "MIDP2"#
                 screen.setFullScreenMode(false);
@@ -359,10 +383,12 @@ public class Search
 					 		ContactList.getImageList().elementAt(imgIndex),
 							true
 					 );
+                screen.unlock();
             } else
             {
                 // Draw a result entry
             	
+            	screen.lock();
             	// #sijapp cond.if target is "MIDP2"#
                 screen.setFullScreenMode(false);
                 screen.setTitle(ResourceBundle.getString("results")+" 0/0");
@@ -371,11 +397,32 @@ public class Search
                 // #sijapp cond.end#
             	
                 screen.println(ResourceBundle.getString("no_results")+": ",0x0,Font.STYLE_BOLD);
+                screen.unlock();
             }
 
             screen.addCommand(this.backCommand);
 
             screen.setCommandListener(this);
+        }
+        
+        public void nextOrPrev(boolean next)
+        {
+            if (next)
+            {
+                selectedIndex = (selectedIndex + 1) % Search.this.size();
+                this.activate(true);
+            }
+            else
+            {
+                if (selectedIndex == 0)
+                    selectedIndex = Search.this.size() - 1;
+                else
+                {
+                    selectedIndex = (selectedIndex - 1) % Search.this.size();
+                }
+                this.activate(true);
+            }
+      	
         }
 
         public void commandAction(Command c, Displayable d)
@@ -411,21 +458,8 @@ public class Search
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
 
             }
-            if (c == this.nextCommand)
-            {
-                selectedIndex = (selectedIndex + 1) % Search.this.size();
-                this.activate(true);
-            }
-            if (c == this.previousComamnd)
-            {
-                if (selectedIndex == 0)
-                    selectedIndex = Search.this.size() - 1;
-                else
-                {
-                    selectedIndex = (selectedIndex - 1) % Search.this.size();
-                }
-                this.activate(true);
-            }
+            if (c == this.nextCommand) nextOrPrev(true);
+            if (c == this.previousComamnd) nextOrPrev(false);
             if (c == this.addCommand && d == screen)
             {
                 // Show list of groups to select which group to add to
