@@ -34,16 +34,16 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- use both the slash and the backslash for separating path            -->
 	<!-- components.                                                         -->
 	<property name="DEFAULT/midp"     value="CHANGE ME"                       />
-	<property name="SIEMENS/midp"     value="CHANGE ME"                       />
 	<property name="MIDP2/midp"       value="CHANGE ME"                       />
 	<property name="RIM/midp"         value="CHANGE ME"                       />
+	<property name="SIEMENS/midp"     value="CHANGE ME"                       />
 	<!-- ******************************************************************* -->
 	<!-- This property must point at the MIDP API classes and all extension  -->
 	<!-- classes required by the chosen target.                              -->
-	<property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/midp.jar"    />
-	<property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/api.jar"     />
-	<property name="MIDP2/midp/lib"   value="${MIDP2/midp}/lib/midp.jar"      />
+	<property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar"/>
+	<property name="MIDP2/midp/lib"   value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar"/>
 	<property name="RIM/midp/lib"     value="${RIM/midp}/lib/net_rim_api.jar" />
+	<property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/API.jar"     />
 	<!-- ******************************************************************* -->
 	<!-- Change this to the directory where ProGuard is installed. You can   -->
 	<!-- use both the slash and the backslash for separating path            -->
@@ -253,20 +253,17 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- Internal target: obfuscate -->
 	<target name="obfuscate" depends="compile" unless="skip-obfuscate">
 		<mkdir dir="${build}/obfuscate/classes"/>
-		<mkdir dir="${build}/obfuscate/temp"/>
-		<proguard outjar="${build}/obfuscate/temp/Jimm.jar"
-			note="off"
+		<proguard note="off"
 			defaultpackage=""
-			usemixedclassnames="off"
+			usemixedcaseclassnames="off"
 			overloadaggressively="off">
 			<injar name="${build}/compile/classes"/>
-			<keep access="public" type="class" name="*" extends="javax.microedition.midlet.MIDlet"/>
-			<keep access="public" type="class" name="ResourceBundle"/>
-			<keep access="public" type="class" name="*" extends="jimm.util.ResourceBundle"/>
-			<libraryjar name="${midp/lib}"/>
+			<outjar name="${build}/obfuscate/classes"/>
+			<keep access="public" type="class" extends="javax.microedition.midlet.MIDlet"/>
+			<keep access="public" type="class" name="jimm.util.ResourceBundle"/>
+			<keep access="public" type="class" extends="jimm.util.ResourceBundle"/>
+			<libraryjar path="${midp/lib}"/>
 		</proguard>
-		<unjar src="${build}/obfuscate/temp/Jimm.jar"
-			dest="${build}/obfuscate/classes"/>
 	</target>
 
 
