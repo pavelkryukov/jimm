@@ -72,9 +72,12 @@ ________________________________________________________________________________
 HOW TO INSTALL
 
 Copy Jimm.jad and Jimm.jar (found inside the bin directory) to your mobile
-phone. If you have a Siemens Mobile, use the files found inside the bin/siemens
-directory. Follow the instructions in your mobile phone manual to start the Java
-application.
+phone. If you have a Siemens Mobile residing bellow the XX65 line (eg. S55, 
+M55...), use the files found inside the bin/siemens directory. If you have a
+phone which is capable of running MIDP2 applications (e.g. Siemens XX65 and
+above) please use the files found inside the bin/midp2 directory. For 
+Blackberry handhelds please use the bin/rim directory. Follow the 
+instructions in your mobile phone manual to start the Java application.
 
 At first start-up, select 'Options' and set your UIN and password. The default
 values for the ICQ server host and port should be okay. Option values are
