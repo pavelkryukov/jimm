@@ -56,6 +56,9 @@ public class SplashCanvas extends Canvas
 
   // Image object, holds the splash image
   private static Image splash;
+  
+  // Image object, holds the background image
+  private static Image background;
 
 
   // Location of the notice image (inside the JAR file)
@@ -125,6 +128,20 @@ public class SplashCanvas extends Canvas
   {
     this.message = new String(message);
     this.progress = 0;
+    background = Image.createImage(this.getWidth(),this.getHeight());
+    System.out.println(this.getWidth()+" "+this.getHeight());
+    int r,g;
+    Graphics bg_graph = background.getGraphics();
+    for(int x=0;x<this.getWidth();x+=2)
+    {
+    	for(int y=0;y<this.getWidth();y+=2)
+    	{
+    		r=x*y / (y+x+1) % 256;
+    		g=(r^x^y) % 256;
+    		bg_graph.setColor(r,g,(r+g) % 256);
+    		bg_graph.fillRect(x,y,2,2);
+    	}
+    }
   }
 
 
@@ -249,13 +266,14 @@ public class SplashCanvas extends Canvas
   // Render the splash image
   protected void paint(Graphics g)
   {
-
+  	
+  	System.out.println("paint");
     // Do we need to draw the splash image?
     if (g.getClipY() < this.getHeight() - SplashCanvas.height - 2)
     {
-	  // Clear background
-      g.setColor(0, 0, 0);
-      g.fillRect(0, 0, this.getWidth(), this.getHeight());
+	  // Draw background
+      g.drawImage(background,0,0, Graphics.LEFT | Graphics.TOP);
+
 	  // Display splash image (or text)
       if (SplashCanvas.splash != null)
       {
@@ -284,8 +302,9 @@ public class SplashCanvas extends Canvas
 	    if (Jimm.jimm.getOptionsRef().isDisplayDate())
 	    {
 		  // Draw white bottom bar
-	      g.setColor(0, 0, 0);
-		  g.fillRect(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), SplashCanvas.height + 2);
+	      //g.setColor(0, 0, 0);
+		  //g.fillRect(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), SplashCanvas.height + 2);
+
 	      g.setColor(255, 255, 255);
 	      g.setStrokeStyle(Graphics.DOTTED);
 	      g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), this.getHeight() - SplashCanvas.height - 2);
@@ -310,8 +329,8 @@ public class SplashCanvas extends Canvas
     if ((this.message != null) && (this.message.length() > 0))
     {
 	  // Draw white bottom bar
-      g.setColor(0, 0, 0);
-      g.fillRect(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), SplashCanvas.height + 2);
+      //g.setColor(0, 0, 0);
+      //g.fillRect(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), SplashCanvas.height + 2);
       g.setColor(255, 255, 255);
       g.setStrokeStyle(Graphics.DOTTED);
       g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), this.getHeight() - SplashCanvas.height - 2);
