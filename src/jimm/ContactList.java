@@ -55,7 +55,7 @@ import com.siemens.mp.media.control.VolumeControl;
 import java.io.InputStream;
 // #sijapp cond.end#
 
-//#sijapp cond.if target is "MIDP2"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 import javax.microedition.media.PlayerListener;
 import javax.microedition.lcdui.game.Sprite;
 import javax.microedition.media.Manager;
@@ -162,7 +162,7 @@ class Tree extends VirtualTree
 
 //////////////////////////////////////////////////////////////////////////////////
 public class ContactList implements CommandListener 
-//#sijapp cond.if target is "MIDP2"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                                     , PlayerListener
 //#sijapp cond.end#
 {
@@ -195,7 +195,11 @@ public class ContactList implements CommandListener
 	
     // Main menu command
     private static Command 
+                   // #sijapp cond.if lang_RU is "true" | lang_EN is "true" & target is "MOTOROLA" #
+                   mainMenuCommand    = new Command(ResourceBundle.getString("menu_button"),         Command.SCREEN, 3),
+                  // #sijapp cond.else #    
     	mainMenuCommand    = new Command(ResourceBundle.getString("menu"),         Command.SCREEN, 3),
+                  // #sijapp cond.end #
 		selectCommand      = new Command(ResourceBundle.getString("select"),       Command.ITEM, 1),
 		newUserCommand     = new Command(ResourceBundle.getString("add_user"),     Command.SCREEN, 2),
 		searchUserCommand  = new Command(ResourceBundle.getString("search_user"),  Command.SCREEN, 2),
@@ -307,7 +311,7 @@ public class ContactList implements CommandListener
 		
 		tree = new Tree(null);
 		
-//#sijapp cond.if target is "MIDP2"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		tree.setFullScreenMode(false);
 //#sijapp cond.end#
 		
@@ -986,7 +990,7 @@ public class ContactList implements CommandListener
     
     // Updates the client-side contact list (called when a contact changes
     // status)
-    //  #sijapp cond.if target is "MIDP2"#
+    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
     public synchronized void update(String uin, long status, int capabilities,
             byte[] internalIP, long dcPort, int dcType, int icqProt,
             long authCookie)
@@ -1072,7 +1076,7 @@ public class ContactList implements CommandListener
     public synchronized void update(String uin, long status)
     {
         //System.out.println("update(String uin, long status)");
-        //  #sijapp cond.if target is "MIDP2"#
+        //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
         this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,new byte[0],0,0,-1,0);
         //  #sijapp cond.else#
         this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL);
@@ -1112,7 +1116,7 @@ public class ContactList implements CommandListener
         } else
             text = ResourceBundle.getString("contact_list") + sep + Util.getDateString(true);
 
-        //#sijapp cond.if target is "MIDP2"#
+        //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
         tree.setTitle(text);
         //#sijapp cond.else#
         tree.setCaption(text);
@@ -1220,7 +1224,7 @@ public class ContactList implements CommandListener
         contactChanged(cItem, true, false, false);
     }
 
-    //#sijapp cond.if target is"MIDP2"#    
+    //#sijapp cond.if target is"MIDP2" | target is "MOTOROLA"#    
     
     // Reaction to player events. (Thanks to Alexander Barannik for idea!)
     public void playerUpdate(final Player player, final String event, Object eventData)
@@ -1296,7 +1300,7 @@ public class ContactList implements CommandListener
 	//#sijapp cond.end#
 	
 	
-	//#sijapp cond.if target is"MIDP2" | target is"SIEMENS"#
+	//#sijapp cond.if target is"MIDP2" | target is"SIEMENS" | target is "MOTOROLA"#
 	// sets volume for player
 	static private void setVolume(Player p, int value)
 	{
@@ -1323,7 +1327,7 @@ public class ContactList implements CommandListener
     {
     	if (!treeBuilt) return;
     	
-        // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+        // #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA"#
         
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();
@@ -1540,3 +1544,4 @@ public class ContactList implements CommandListener
     }
 
 }
+
