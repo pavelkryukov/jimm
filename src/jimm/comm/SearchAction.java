@@ -23,6 +23,8 @@ Author(s): Andreas Rossbacher
 
 package jimm.comm;
 
+import java.util.Date;
+
 import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Search;
@@ -48,16 +50,27 @@ public class SearchAction extends Action
     public static final int TLV_TYPE_EMAIL               = 0x5E01; // String (2 byte length + string + 1 byte email code)
     public static final int TLV_TYPE_CITY                = 0x9A01; // String (2 byte length + string)
     public static final int TLV_TYPE_KEYWORD             = 0x2602; // String (2 byte length + string)
+
+    // Timeout
+    public static final int TIMEOUT = 10 * 1000; // milliseconds
     
     /****************************************************************************/
 
     // Action state
     private int state;
     
+    // Search object as container for request and results
     private Search cont;
+    
+    // Last activity
+    private Date lastActivity = new Date();
+    
+    // Excpetion handeled;
+    private boolean handeled;
     
     public SearchAction(Search _cont){
         cont = _cont;
+        handeled = false;
     }
 
     // Returns true if the action can be performed
@@ -176,7 +189,7 @@ public class SearchAction extends Action
     
 
     // Forwards received packet, returns true if packet was consumed
-    protected boolean forward(Packet packet) throws JimmException
+    protected synchronized boolean forward(Packet packet) throws JimmException
     {
         // Flag indicates whether packet has been consumed or not
         boolean consumed = false;
@@ -254,18 +267,38 @@ public class SearchAction extends Action
                             marker += 2;
                             long foundleft = Util.getDWord(data,marker,false);
                             System.out.println("foundleft: "+foundleft);
-                            cont.getSearchForm().activate(true);
                             this.state = STATE_SEARCH_FINISHED;
                         }
                     }
                     else
                     {
-                        this.cont.getSearchForm().activate(true);
-                        this.state = STATE_ERROR;
+                        this.state = ConnectAction.STATE_ERROR;
                     }
                 }
             }
+        
+        // Update activity timestamp
+        this.lastActivity = new Date();
+        
         return consumed;
+    }
+    
+    // Activates the result screen
+    public void activateResult()
+    {
+    	this.cont.getSearchForm().activate(true);
+    }
+    
+    // Activates the result screen
+    public void activateSearchForm()
+    {
+    	this.cont.getSearchForm().activate(false);
+    }
+    
+    // Return if exception already handeled
+    public boolean excepHandled()
+    {
+    	return handeled;
     }
 
     // Returns true if the action is completed
@@ -277,7 +310,20 @@ public class SearchAction extends Action
     // Returns true if an error has occured
     public boolean isError()
     {
-        // TODO Auto-generated method stub
-        return false;
+        if ((this.state != ConnectAction.STATE_ERROR) && (this.lastActivity.getTime() + SearchAction.TIMEOUT < System.currentTimeMillis()))
+        {
+            if (this.state == STATE_FIRSTRESULT_RECEIVED)
+            {
+            	JimmException.handleException(new JimmException(159, 0, true));
+            	handeled = true;
+            }
+            else
+            {
+            	JimmException.handleException(new JimmException(159, 1, true));
+            	handeled = true;
+            }
+            this.state = ConnectAction.STATE_ERROR;
+        }
+        return (this.state == ConnectAction.STATE_ERROR);
     }
 }

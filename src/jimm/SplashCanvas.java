@@ -28,6 +28,7 @@ package jimm;
 import jimm.comm.ConnectAction;
 import jimm.comm.DisconnectAction;
 import jimm.comm.RequestInfoAction;
+import jimm.comm.SearchAction;
 import jimm.comm.UpdateContactListAction;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
@@ -471,7 +472,7 @@ public class SplashCanvas extends Canvas
       else if (this.requestInfoAct.isError())
       {
         Jimm.jimm.getContactListRef().activate();
-        JimmException.handleException(new JimmException(161, 0, true));
+        JimmException.handleException(new JimmException(160, 0, true));
         this.cancel();
       }
     }
@@ -521,6 +522,45 @@ public class SplashCanvas extends Canvas
     }
 
   }
+  
+  /****************************************************************************/
+  /****************************************************************************/
+  /****************************************************************************/
 
+
+  // Waits until contact listupdate is completed
+  public static class SearchTimerTask extends TimerTask
+  {
+
+
+    // Reference to UpdateContactListAction
+    private SearchAction searchAct;
+
+
+    // Constructor
+    public SearchTimerTask(SearchAction _searchAct)
+    {
+      this.searchAct = _searchAct;
+    }
+
+
+    // Timer routine
+    public void run()
+    {
+      if (this.searchAct.isCompleted())
+      {
+        searchAct.activateResult();
+        this.cancel();
+      }
+      else if (this.searchAct.isError())
+      {
+        searchAct.activateSearchForm();
+        if (!searchAct.excepHandled())
+            JimmException.handleException(new JimmException(154, 2, true));
+        this.cancel();
+      }
+    }
+
+  }
 
 }
