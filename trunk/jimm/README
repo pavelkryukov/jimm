@@ -24,13 +24,10 @@ the following features:
   *  Receive status updates (user is away, n/a, etc.)
   *  Request information about another user
   *  Remove users from the server side contact list
-  *  Multilingual user interface
-
-Some of the projected features are as follows:
-
   *  Search for users
   *  Add users to the server side contact list
   *  Answer authorization requests
+  *  Multilingual user interface
 
 Jimm does not support peer to peer connections (and will never do so), all
 messages are routed through the central ICQ/AIM server by using a single
@@ -52,7 +49,11 @@ PACKAGE CONTENTS
   |   |   '- [List of included languages]
   |   |        |- Jimm.jar (obfuscated Java archive, Siemens mobiles only)
   |   |        '- Jimm.jad (archive descriptor, Siemens mobiles only)
-  |   '- NOKIAS40
+  |   |- RIM
+  |   |   '- [List of included languages]
+  |   |        |- Jimm.jar (obfuscated Java archive, RIM mobiles only)
+  |   |        '- Jimm.jad (archive descriptor, RIM mobiles only)
+  |   '- MIDP2
   |       '- [List of included languages]
   |            |- Jimm.jar (obfusc. Java archive, Nokia Series 40 mobiles only)
   |            '- Jimm.jad (archive descriptor, Nokia Series 40 mobiles only)
@@ -194,6 +195,9 @@ Core development team:
   *  Andreas Rossbacher <rossi771 at users.sourceforge.net>
 
 Contributors:
+  *  Mathias Hülsbusch (Mathematical art used for splash screen)
+  *  David Ethell (RIM sound and vibra support)
+  *  Alexei Solonets (Russian translation)
   *  Andrey B. Ivlev (Russian translation, Cyrillic character support)
   *  Sergey Chernov (Russian translation, Cyrillic character support)
   *  Miloslav Vorlieek (Czech translation)
