@@ -413,7 +413,7 @@ public class Options
 		{
 
 			// Initialize commands
-			this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
+			this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
 			this.saveCommand = new Command(ResourceBundle.getString("save"), Command.SCREEN, 1);
 
 			// Initialize options menu
@@ -434,6 +434,7 @@ public class Options
 			// Initialize options form
 			this.optionsForm = new Form(ResourceBundle.getString("options"));
 			this.optionsForm.addCommand(this.saveCommand);
+			this.optionsForm.addCommand(this.backCommand);
 			this.optionsForm.setCommandListener(this);
 
 			// Initialize elements (account section)
@@ -621,19 +622,24 @@ public class Options
 
 			// Look for back command
 			else if (c == this.backCommand)
-			{
+            {
+                if (d == this.optionsForm)
+                {
+                    Jimm.display.setCurrent(this.optionsMenu);
+                }
+                else
+                {
+                    // Active MM/CL
+                    if (Jimm.jimm.getIcqRef().isConnected())
+                    {
+                        Jimm.jimm.getContactListRef().activate();
+                    } else
+                    {
+                        Jimm.jimm.getMainMenuRef().activate();
+                    }
+                }
 
-				// Active MM/CL
-				if (Jimm.jimm.getIcqRef().isConnected())
-				{
-					Jimm.jimm.getContactListRef().activate();
-				}
-				else
-				{
-					Jimm.jimm.getMainMenuRef().activate();
-				}
-
-			}
+            }
 
 			// Look for save command
 			else if (c == this.saveCommand)
