@@ -164,5 +164,8 @@ VERSION 0.3.1
 ________________________________________________________________________________
 VERSION 0.3.2
 
+  * BUGFIX: Sending messages was not possible after renaming a contact
+  * BUGFIX: Time bug (hopefully) fixed
+  * ContactList title is now different depending on the length of the word "list"
   * Added Polish translation
   
