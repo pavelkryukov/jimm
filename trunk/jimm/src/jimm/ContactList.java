@@ -825,6 +825,7 @@ public class ContactList implements CommandListener
         {
             System.out.println("Clear ContactList");
             cItems.removeAllElements();
+            gItems.removeAllElements();
             this.updated = false;
         }
         
@@ -863,6 +864,7 @@ public class ContactList implements CommandListener
         {
             try
             {
+                System.out.println("List saved");
                 this.save();
             } catch (Exception e)
             {
