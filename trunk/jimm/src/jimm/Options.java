@@ -543,7 +543,12 @@ public class Options
 				lastSortMethod = Options.this.getIntOption(Options.OPTION_CL_SORT_BY);
 
 				// Delete all items
+				//#sijapp cond.if target is "MIDP2"#
+				this.optionsForm.deleteAll();
+				//#sijapp cond.else #
 				while (this.optionsForm.size() > 0) { this.optionsForm.delete(0); }
+				//#sijapp cond.end#
+				
 
 				// Add elements, depending on selected option menu item
 				switch (this.optionsMenu.getSelectedIndex())
@@ -572,15 +577,17 @@ public class Options
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
 						this.optionsForm.append(this.messageNotificationSoundVolume);
 						this.optionsForm.append(this.messageNotificationSoundfileTextField);
+						this.optionsForm.append(this.vibratorChoiceGroup);
 						this.optionsForm.append(this.onlineNotificationModeChoiceGroup);
 						this.optionsForm.append(this.onlineNotificationSoundVolume);
 						this.optionsForm.append(this.onlineNotificationSoundfileTextField);
 						// #sijapp cond.elseif target is "RIM"#
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
+						this.optionsForm.append(this.vibratorChoiceGroup);
 						this.optionsForm.append(this.onlineNotificationModeChoiceGroup);
 						// #sijapp cond.end#
+						
 						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
-						this.optionsForm.append(this.vibratorChoiceGroup);
 						break;
 						// #sijapp cond.end#
 
