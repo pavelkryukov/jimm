@@ -640,6 +640,24 @@ public class ActionListener
         }
 
       }
+      
+		//	  Watch out for SRV_ADDEDYOU
+		if ((snacPacket.getFamily() == SnacPacket.SRV_ADDEDYOU_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_ADDEDYOU_COMMAND))
+		{
+			// Get data
+			byte[] buf = snacPacket.getData();
+
+			// Get UIN of the contact changing status
+			int uinLen = Util.getByte(buf, 0);
+			String uin = Util.byteArrayToString(buf, 1, uinLen);
+			
+			// Create a new system notice
+			SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_YOUWEREADDED,uin,false," ");
+			
+			// Handle the new system notice
+			Jimm.jimm.getContactListRef().addMessage(notice);
+
+		}
 
     }
 
