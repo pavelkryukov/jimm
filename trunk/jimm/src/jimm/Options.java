@@ -374,7 +374,7 @@ public class Options
 		private ChoiceGroup messageNotificationModeChoiceGroup;
 		private ChoiceGroup onlineNotificationModeChoiceGroup;
 		// #sijapp cond.end#
-		// #sijapp cond.if target is "SIEMENS" | target is "RIM"#
+		// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
 		private ChoiceGroup vibratorChoiceGroup;
 		// #sijapp cond.end#
 		private ChoiceGroup keepchatChoiceGroup;
@@ -482,7 +482,7 @@ public class Options
 			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
 			this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE), true);
 			// #sijapp cond.end#
-			// #sijapp cond.if target is "SIEMENS" | target is "RIM"#
+			// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
 			this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration")+"?", Choice.MULTIPLE);
 			this.vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.vibratorChoiceGroup.setSelectedIndex(0,Options.this.getBooleanOption(Options.OPTION_VIBRATOR));
@@ -547,7 +547,7 @@ public class Options
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
 						this.optionsForm.append(this.onlineNotificationModeChoiceGroup);
 						// #sijapp cond.end#
-						// #sijapp cond.if target is "SIEMENS" | target is "RIM"#
+						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
 						this.optionsForm.append(this.vibratorChoiceGroup);
 						// #sijapp cond.end#
 						break;
@@ -627,7 +627,7 @@ public class Options
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());
 						// #sijapp cond.end#
-						// #sijapp cond.if target is "SIEMENS" | target is "RIM"#
+						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
 						Options.this.setBooleanOption(Options.OPTION_VIBRATOR,this.vibratorChoiceGroup.isSelected(0));
 						// #sijapp cond.end#
 						Options.this.setBooleanOption(Options.OPTION_KEEPCHAT,this.keepchatChoiceGroup.isSelected(0));

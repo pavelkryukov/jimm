@@ -37,6 +37,7 @@ import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
@@ -816,6 +817,10 @@ public class ContactList implements CommandListener
         Light.setLightOff();
         // #sijapp cond.end#
         // #sijapp cond.if target is "MIDP2"#
+        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
+        {
+            Display.getDisplay(Jimm.jimm).vibrate(500);
+        }
         int mode_m2;
         if (notType == SOUND_TYPE_MESSAGE)
             mode_m2 = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
