@@ -25,25 +25,25 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 <project name="Jimm" default="release-part1">
 
-	<!-- ******************************************************************* -->
-	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR LOCAL ENV.    -->
-	<!-- ******************************************************************* -->
-	<property name="DEFAULT/midp"       value="CHANGE ME"                     />
-	<property name="DEFAULT/midp/lib"   value="${DEFAULT/midp}/lib/midp.jar"  />
-	<property name="SIEMENS/midp"       value="CHANGE ME"                     />
-	<property name="SIEMENS/midp/lib"   value="${SIEMENS/midp}/lib/api.jar"   />
-	<property name="NOKIAS40/midp"      value="CHANGE ME"                     />
-	<property name="NOKIAS40/midp/lib"  value="${NOKIAS40/midp}/lib/midp.jar" />
-	<property name="proguard"           value="CHANGE ME"                     />
-	<property name="proguard/lib"       value="${proguard}/lib/proguard.jar"  />
-	<!-- ******************************************************************* -->
-	<!-- RELEASE VERSION SECTION - EVERY RELEASE HAS A UNIQUE VERSION NUMBER -->
-	<!-- ******************************************************************* -->
-	<property name="version"            value="0.1latest"                     />
-	<property name="version/java"       value="0.1"                           />
-	<!-- ******************************************************************* -->
-	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
-	<!-- ******************************************************************* -->
+	<!-- ********************************************************************* -->
+	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR LOCAL ENV.      -->
+	<!-- ********************************************************************* -->
+	<property name="DEFAULT/midp"      value="CHANGE ME"                        />
+	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/midp.jar"     />
+	<property name="SIEMENS/midp"      value="CHANGE ME"                        />
+	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/api.jar"      />
+	<property name="NOKIAS40/midp"     value="CHANGE ME"                        />
+	<property name="NOKIAS40/midp/lib" value="${NOKIAS40/midp}/lib/classes.zip" />
+	<property name="proguard"          value="CHANGE ME"                        />
+	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"     />
+	<!-- ********************************************************************* -->
+	<!-- RELEASE VERSION SECTION - EVERY RELEASE HAS A UNIQUE VERSION NUMBER   -->
+	<!-- ********************************************************************* -->
+	<property name="version"           value="0.1latest"                        />
+	<property name="version/java"      value="0.1"                              />
+	<!-- ********************************************************************* -->
+	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
+	<!-- ********************************************************************* -->
 
 	<!-- Buildfile description -->
 	<description>This buildfile is used to build a Jimm release.</description>
