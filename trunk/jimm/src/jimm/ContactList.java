@@ -800,10 +800,14 @@ public class ContactList implements CommandListener
         //DebugLog.addText("Contact list saved!");
     }
     
+    // called before jimm start to connect to server
     protected void beforeConnect()
     {
     	tree.clear();
     	treeBuilded = treeSorted = false;
+    	int count = cItems.size();
+    	for (int i = 0; i < count; i++) 
+    		((ContactListContactItem)cItems.elementAt(i)).setStatus(ContactList.STATUS_OFFLINE);
     }
     
     // Updates the client-side conact list (called when a new roster has been
@@ -1042,10 +1046,11 @@ public class ContactList implements CommandListener
     	
     	haveToAdd = contactExistsInList && !contactExistInTree;
     	if (only_online && !contactExistInTree) 
-    		haveToAdd |= item.getStatus() != STATUS_OFFLINE | item.mustBeShownAnyWay(); 
+    		haveToAdd |= ((item.getStatus() != STATUS_OFFLINE) | item.mustBeShownAnyWay()); 
     	
     	haveToDelete = !contactExistsInList && contactExistInTree;
-    	if (only_online && contactExistInTree) haveToDelete |= item.getStatus() == STATUS_OFFLINE;
+    	if (only_online && contactExistInTree) 
+    		haveToDelete |= ((item.getStatus() == STATUS_OFFLINE) && !item.mustBeShownAnyWay());
     	
     	// if have to add new contact
     	if (haveToAdd)

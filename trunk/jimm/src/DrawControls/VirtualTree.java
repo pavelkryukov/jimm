@@ -50,7 +50,7 @@ public abstract class VirtualTree extends VirtualList
     int capBackColor, //!< Caption background color
     int capTextColor, //!< Caption text color
     int backColor,    //!< Control back color
-    int fontSize,      /*!< Control font size. This font size if used both 
+    int fontSize,     /*!< Control font size. This font size if used both 
                            for caption and text in tree nodes */
 	boolean autoExpand
   )
