@@ -435,8 +435,8 @@ public class MainMenu implements CommandListener
                     // About
 
                     // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
-                            .getString("about_info"), null, AlertType.INFO);
+                    System.gc();
+                    Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
                     about.setTimeout(Alert.FOREVER);
                     Jimm.jimm.getContactListRef().activate(about);
 
@@ -451,8 +451,8 @@ public class MainMenu implements CommandListener
                     // About
 
                     // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
-                            .getString("about_info"), null, AlertType.INFO);
+                    System.gc();
+                    Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
                     about.setTimeout(Alert.FOREVER);
                     Jimm.jimm.getContactListRef().activate(about);
 
@@ -498,8 +498,8 @@ public class MainMenu implements CommandListener
                     // About
 
                     // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
-                            .getString("about_info"), null, AlertType.INFO);
+                    System.gc();
+                    Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
                     about.setTimeout(Alert.FOREVER);
                     this.activate(about);
 
@@ -517,8 +517,8 @@ public class MainMenu implements CommandListener
                     // About
 
                     // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
-                            .getString("about_info"), null, AlertType.INFO);
+                    System.gc();
+                    Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
                     about.setTimeout(Alert.FOREVER);
                     this.activate(about);
 
