@@ -41,7 +41,7 @@ public class Text_DE extends ResourceBundle
 		// Labels
 		resources.put(".",                           ",");
 		resources.put("about",                       "Über");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\nVersion ###VERSION###\nSiehe http://jimm.sourceforge.net/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\nVersion ###VERSION###\nSiehe http://www.jimm.org/");
 		resources.put("account",                     "Account");
 		resources.put("add_user",                    "Benutzer hinzufügen");
 		resources.put("add_to_list",                 "Zur Liste hinzuf.");
@@ -64,6 +64,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("cpd",                         "Tagesnutzungsgebühr(cent)");
 		resources.put("cpp",                         "Paketgebühr(cent");
 		resources.put("currency",                    "Währung");
+		resources.put("del_group",                   "Gruppe löschen");
 		resources.put("delete_chat",                 "Lösche Chat");
 		resources.put("deny",						 "Auth ablehnen");
 		resources.put("denyedby",					 "Ihre Authorisierungsanfrage wurde abgelehnt durch: ");

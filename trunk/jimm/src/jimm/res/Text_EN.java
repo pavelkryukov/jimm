@@ -41,7 +41,7 @@ public class Text_EN extends ResourceBundle
 		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "About");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://jimm.sourceforge.net/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
 		resources.put("account",                     "Account");
 		resources.put("add_user",                    "Add User");
 		resources.put("add_to_list",                 "Add to list");
@@ -63,6 +63,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("cpd",                         "Cost per day");
 		resources.put("cpp",                         "Cost per packet");
 		resources.put("currency",                    "Currency");
+		resources.put("del_group",                   "Delete group");
 		resources.put("delete_chat",                 "Delete chat");
 		resources.put("deny",						 "Deny Auth");
 		resources.put("denyedby",					 "Your auth request was denyed by: ");

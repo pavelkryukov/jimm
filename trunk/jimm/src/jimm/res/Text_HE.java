@@ -42,7 +42,7 @@ public class Text_HE extends ResourceBundle
 		resources.put("ID_x", "");
 		resources.put(".", ".");
 		resources.put("about", "אודות");
-		resources.put("about_info", "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://jimm.sourceforge.net/");
+		resources.put("about_info", "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
 		resources.put("account", "חשבון");
 		resources.put("add_user", "הוסף משתמש");
 		resources.put("add_to_list", "הוסף לרשימה");

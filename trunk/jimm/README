@@ -1,6 +1,6 @@
                              Jimm - Mobile Messaging
                        Version ###VERSION### - released ###DATE###
-                         <http://jimm.sourceforge.net/>
+                              <http://www.jimm.org/>
 
 ================================================================================
 README
@@ -82,7 +82,7 @@ automatically saved and loaded on subsequent start-ups.
 
 You can also download Jimm.jad and Jimm.jar via WAP. Open the following URL with
 your WAP device and select the desired version:
-<http://jimm.sourceforge.net/download/>
+<http://www.jimm.org/download/>
 
 ________________________________________________________________________________
 KNOWN BUGS
@@ -181,7 +181,7 @@ Tip 2: Check the network consumption regularly.
 ________________________________________________________________________________
 GET INVOLVED
 
-Give feedback: <http://jimm.sourceforge.net/forum/>
+Give feedback: <http://www.jimm.org/forum/>
 Contr. code and documentation patches: <http://sourceforge.net/projects/jimm/>
 
 ________________________________________________________________________________
@@ -200,9 +200,9 @@ ________________________________________________________________________________
 CREDITS
 
 Core development team:
-  *  Manuel Linsmayer <linsmayer at users.sourceforge.net>
-  *  Andreas Rossbacher <rossi771 at users.sourceforge.net>
-  *  Artyomov Denis <arty333 at users.sourceforge.net>
+  *  Manuel Linsmayer <manuel at jimm.org>
+  *  Andreas Rossbacher <andreas at jimm.org>
+  *  Artyomov Denis <artyomov at jimm.org>
 
 Contributors:
   *  Sergey Mymrikov (Contact status and program icons)

@@ -41,7 +41,7 @@ public class Text_CZ extends ResourceBundle
 		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "O programu");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client pro J2ME\nVerze ###VERSION###\nBližší info\nhttp://jimm.sourceforge.netd/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client pro J2ME\nVerze ###VERSION###\nBližší info\nhttp://www.jimm.org/");
 		resources.put("account",                     "Úcet");
 		resources.put("add_user",                    "Pridání uživatele");
 		resources.put("async",                       "Async");

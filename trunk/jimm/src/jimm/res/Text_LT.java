@@ -42,7 +42,7 @@ public class Text_LT extends ResourceBundle
 		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "Apie");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://jimm.sourceforge.net/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
 		resources.put("account",                     "Paskyra");
 		resources.put("add_user",                    "Pridėti vartotoją");
 		resources.put("add_to_list",                 "Įtraukti į sarašą");
