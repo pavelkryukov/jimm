@@ -330,6 +330,8 @@ public class UpdateContactListAction extends Action
                             Vector cItemsRemaining = null;
                             // Get all group items as aray
                             ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
+                            ContactListGroupItem gItem = null;
+                            
                             if (this.cItem != null)
                             {
                                 cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP, false);
@@ -338,7 +340,7 @@ public class UpdateContactListAction extends Action
                                 ContactListContactItem[] cItems = Jimm.jimm.getContactListRef().getContactItems();
 
                                 // Get group of contact item to be removed or added to
-                                ContactListGroupItem gItem = null;
+
                                 for (int i = 0; i < gItems.length; i++)
                                 {
                                     if (gItems[i].getId() == this.cItem.getGroup())
@@ -371,7 +373,6 @@ public class UpdateContactListAction extends Action
                             // Pack CLI_ROSTERUPDATE packet
                             byte[] nameRaw;
                             byte[] buf;
-
                             if (cItem != null)
                             {
                                 nameRaw = Util.stringToByteArray(gItem.getName());
