@@ -27,52 +27,64 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 <project name="Jimm" default="dist">
 
 
-	<!-- ********************************************************************* -->
-	<!-- CONFIGURATION SECTION - CHANGE THESE VALUES TO REFLECT YOUR LOCAL ENV -->
-	<!-- ********************************************************************* -->
-	<!-- Change this to the directory where MIDP SDK 1.0.3 is installed. You   -->
-	<!-- can use both the slash and the backslash for separating path          -->
-	<!-- components.                                                           -->
-	<property name="DEFAULT/midp"      value="CHANGE ME"                  	    />
-	<property name="SIEMENS/midp"      value="CHANGE ME"                        />
-	<property name="RIM/midp"          value="CHANGE ME"                        />
-	<!-- ********************************************************************* -->
-	<!-- This property must point at the MIDP API classes and all extension    -->
-	<!-- classes required by the chosen target.                                -->
-	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/midp.jar"     />
-	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/api.jar"      />
-	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar"  />
-	<!-- ********************************************************************* -->
-	<!-- Change this to the directory where ProGuard is installed. You can     -->
-	<!-- use both the slash and the backslash for separating path components.  -->
-	<property name="proguard"     value="CHANGE ME"                             />
-	<!-- ********************************************************************* -->
-	<!-- This property must point at the ProGuard JAR file, normally found in  -->
-	<!-- the lib directory of the ProGuard distribution.                       -->
-	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"     />
-	<!-- ********************************************************************* -->
-	<!-- CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD        -->
-	<!-- ********************************************************************* -->
-	<!-- Build target. If you have a Siemens mobile, set this property to      -->
-	<!-- SIEMENS. If you have a MIDP2 compartible mobile, set this property to -->
-	<!-- MIDP2. If you have a Blackberry, set this property to RIM.            -->
-	<!-- Otherwise go with the default value (DEFAULT).                        -->
-	<property name="target"            value="DEFAULT"                          />
-	<!-- ********************************************************************* -->
-	<!-- This value is a comma separated list of modules which should be       -->
-	<!-- included in the build. Currently, the distribution includes only a    -->
-	<!-- module for traffic (TRAFFIC) display.                                 -->
-	<property name="modules"           value="TRAFFIC"                          />
-	<!-- ********************************************************************* -->
-	<!-- This value is a comma separated list of languages packs which should  -->
-	<!-- be included in the build. Currently, the distribution includes        -->
-	<!-- English ("EN"), German ("DE"), Russian ("RU"), Spanish ("ES")         -->
-	<!-- Brasilian ("BR") Chechz ("CZ") Swedish ("SE"), Lithuanian ("LT")      -->
-	<!-- and Italien ("IT") language packs.                                    -->
-	<property name="lang"              value="EN,DE,RU,ES,BR,CZ,SE,LT,IT"       />
-	<!-- ********************************************************************* -->
-	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
-	<!-- ********************************************************************* -->
+	<!-- ******************************************************************* -->
+	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   -->
+	<!-- ******************************************************************* -->
+	<!-- Change this to the directory where a MIDP SDK is installed. You can -->
+	<!-- use both the slash and the backslash for separating path            -->
+	<!-- components.                                                         -->
+	<property name="DEFAULT/midp"     value="CHANGE ME"                       />
+	<property name="SIEMENS/midp"     value="CHANGE ME"                       />
+	<property name="MIDP2/midp"       value="CHANGE ME"                       />
+	<property name="RIM/midp"         value="CHANGE ME"                       />
+	<!-- ******************************************************************* -->
+	<!-- This property must point at the MIDP API classes and all extension  -->
+	<!-- classes required by the chosen target.                              -->
+	<property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/midp.jar"    />
+	<property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/api.jar"     />
+	<property name="MIDP2/midp/lib"   value="${MIDP2/midp}/lib/midp.jar"      />
+	<property name="RIM/midp/lib"     value="${RIM/midp}/lib/net_rim_api.jar" />
+	<!-- ******************************************************************* -->
+	<!-- Change this to the directory where ProGuard is installed. You can   -->
+	<!-- use both the slash and the backslash for separating path            -->
+	<!-- components.                                                         -->
+	<property name="proguard"         value="CHANGE ME"                       />
+	<!-- ******************************************************************* -->
+	<!-- This property must point at the ProGuard JAR file, normally found   -->
+	<!-- in the lib directory of the ProGuard distribution.                  -->
+	<property name="proguard/lib"     value="${proguard}/lib/proguard.jar"    />
+	<!-- ******************************************************************* -->
+	<!-- CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD      -->
+	<!-- ******************************************************************* -->
+	<!-- Build target. If you have a Siemens mobile, set this property to    -->
+	<!-- SIEMENS. If you have a MIDP2 compartible mobile, set this property  -->
+	<!-- to MIDP2. If you have a Blackberry, set this property to RIM.       -->
+	<!-- Otherwise go with the default value (DEFAULT).                      -->
+	<property name="target"           value="DEFAULT"                         />
+	<!-- ******************************************************************* -->
+	<!-- This value is a comma separated list of modules which should be     -->
+	<!-- included in the build. Currently, the distribution includes only a  -->
+	<!-- module for traffic (TRAFFIC) display.                               -->
+	<property name="modules"          value="TRAFFIC"                         />
+	<!-- ******************************************************************* -->
+	<!-- This value is a comma separated list of languages packs which       -->
+	<!-- should be included in the build. Currently, the distribution        -->
+	<!-- includes English (EN), Brazilian Portuguese (BR), Czech (CZ),       -->
+	<!-- German (DE), Spanish (ES), Italian (IT), Lithuanian (LT),           -->
+	<!-- Russian (RU) and Swedish (SE) language packs.                       -->
+	<property name="lang"             value="EN,BR,CZ,DE,ES,IT,LT,RU,SE"      />
+	<!-- ******************************************************************* -->
+	<!-- Version number of the build. The value can be in any format (e.g.   -->
+	<!-- 0.2cvs).                                                            -->
+	<property name="version"          value="###VERSION###"                   />
+	<!-- ******************************************************************* -->
+	<!-- Version number of the build in the standardized format              -->
+	<!-- <major>[.<minor>[.<micro>]] (e.g. 0.2). This value should           -->
+	<!-- correspond to the version property (see above).                     -->
+	<property name="version/java"     value="###VERSION-JAVA###"              />
+	<!-- ******************************************************************* -->
+	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
+	<!-- ******************************************************************* -->
 
 
 	<!-- Buildfile description -->
@@ -90,11 +102,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="util/sijapp/lib" location="${util/sijapp}/dist/lib/sijapp.jar"/>
 	<property name="util/jarsizetask" location="${util}/jarsizetask"/>
 	<property name="util/jarsizetask/lib" location="${util/jarsizetask}/dist/lib/jarsizetask.jar"/>
-
-
-	<!-- Set default version number -->
-	<property name="version" value="0.2pre3"/>
-	<property name="version/java" value="0.1"/>
 
 
 	<!-- Auxiliary property -->
@@ -117,11 +124,11 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp" value="${DEFAULT/midp}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
-		<condition property="midp" value="${DEFAULT/midp}">
-			<equals arg1="${target}" arg2="MIDP2"/>
-		</condition>
 		<condition property="midp" value="${SIEMENS/midp}">
 			<equals arg1="${target}" arg2="SIEMENS"/>
+		</condition>
+		<condition property="midp" value="${MIDP2/midp}">
+			<equals arg1="${target}" arg2="MIDP2"/>
 		</condition>
 		<condition property="midp" value="${RIM/midp}">
 			<equals arg1="${target}" arg2="RIM"/>
@@ -129,11 +136,11 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
-		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
-			<equals arg1="${target}" arg2="MIDP2"/>
-		</condition>
 		<condition property="midp/lib" value="${SIEMENS/midp/lib}">
 			<equals arg1="${target}" arg2="SIEMENS"/>
+		</condition>
+		<condition property="midp/lib" value="${MIDP2/midp/lib}">
+			<equals arg1="${target}" arg2="MIDP2"/>
 		</condition>
 		<condition property="midp/lib" value="${RIM/midp/lib}">
 		    <equals arg1="${target}" arg2="RIM"/>
@@ -170,8 +177,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/ES" value="true">
 			<contains string="${lang}" substring="ES"/>
 		</condition>
-		<condition property="lang/ES" value="true">
-			<contains string="${lang}" substring="ES"/>
+		<condition property="lang/IT" value="true">
+			<contains string="${lang}" substring="IT"/>
 		</condition>
 		<condition property="lang/LT" value="true">
 			<contains string="${lang}" substring="LT"/>
@@ -182,25 +189,20 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/SE" value="true">
 			<contains string="${lang}" substring="SE"/>
 		</condition>
-		<condition property="lang/IT" value="true">
-			<contains string="${lang}" substring="IT"/>
-		</condition>
 		<mkdir dir="${build}/init/src"/>
 		<sijapp srcdir="${src}"
 			destdir="${build}/init/src">
 			<define name="target" value="${target}"/>
-			<define name="connection" value="${connection}"/>
 			<define name="modules_TRAFFIC" value="${modules/TRAFFIC}"/>
 			<define name="lang_EN" value="${lang/EN}"/>
 			<define name="lang_BR" value="${lang/BR}"/>
 			<define name="lang_CZ" value="${lang/CZ}"/>
 			<define name="lang_DE" value="${lang/DE}"/>
 			<define name="lang_ES" value="${lang/ES}"/>
+			<define name="lang_IT" value="${lang/IT}"/>
 			<define name="lang_LT" value="${lang/LT}"/>
 			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
-			<define name="lang_LT" value="${lang/LT}"/>
-			<define name="lang_IT" value="${lang/IT}"/>
 		</sijapp>
 		<replace dir="${build}/init/src"
 			encoding="UTF-8">
