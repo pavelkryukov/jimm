@@ -317,6 +317,7 @@ public class ContactListContactItem extends ContactListItem
         Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
         // #sijapp cond.if target is "MIDP2"#
         Image prequel = Image.createImage(msgDisplay.getWidth(), prequelFont.getHeight() + 2);
+        Font textFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
         // #sijapp cond.else#
         Image prequel = Image.createImage(120, prequelFont.getHeight() + 2);
         // #sijapp cond.end#
@@ -333,8 +334,18 @@ public class ContactListContactItem extends ContactListItem
         msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
                 + ImageItem.LAYOUT_NEWLINE_AFTER, null));
         if (url.length() > 0)
-            msgDisplay.append(new StringItem(null,ResourceBundle.getString("url")+": "+url));    
-        msgDisplay.append(new StringItem(null, message));
+        {
+            StringItem urlItem = new StringItem(null,ResourceBundle.getString("url")+": "+url);
+//          #sijapp cond.if target is "MIDP2"#
+            urlItem.setFont(textFont);
+//          #sijapp cond.end#
+            msgDisplay.append(urlItem);
+        }
+        StringItem messageItem = new StringItem(null, message);
+//      #sijapp cond.if target is "MIDP2"#
+        messageItem.setFont(textFont);
+//      #sijapp cond.end#
+        msgDisplay.append(messageItem);
     }
 
     // Returns if the chat hisotry screen is shown
@@ -575,9 +586,8 @@ public class ContactListContactItem extends ContactListItem
                                 ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
 
                         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
-                        {
-                        	ContactListContactItem.this.addTextToForm(ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),true);                        }
-                        	SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
+                        	ContactListContactItem.this.addTextToForm(ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
+                        SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
                         try
                         {
                             Jimm.jimm.getIcqRef().requestAction(sendMsgAct);
