@@ -554,7 +554,6 @@ public class SplashCanvas extends Canvas
       }
       else if (this.searchAct.isError())
       {
-        searchAct.activateSearchForm();
         if (!searchAct.excepHandled())
             JimmException.handleException(new JimmException(154, 2, true));
         this.cancel();

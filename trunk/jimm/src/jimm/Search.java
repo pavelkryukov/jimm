@@ -395,10 +395,10 @@ public class Search
             if (c == this.searchCommand)
             {
                 // Display splash canvas
-                SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-                wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
-                wait2.setProgress(0);
-                Jimm.display.setCurrent(wait2);
+                SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
+                wait.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
+                wait.setProgress(0);
+                Jimm.display.setCurrent(wait);
                 
                 selectedIndex = 0;
 
