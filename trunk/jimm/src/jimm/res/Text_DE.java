@@ -93,6 +93,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("loading",                     "Lade");
 		resources.put("me",                          "Ich");
 		resources.put("menu",                        "Menü");
+		resources.put("msg_notification",            "Hinweis bei Nachricht");
+		resources.put("msg_sound_file_name",         "Nachricht Sound Datei");
 		resources.put("message",                     "Nachricht");
 		resources.put("message_from",                "Nachricht von");
 		// #sijapp cond.if target is "SIEMENS" #
@@ -106,6 +108,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("notice",                      "Hinweis");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Einmal pro Sitzung");
+		resources.put("onl_notification",            "Hinweis bei Onlinewechsel");
+		resources.put("onl_sound_file_name",         "Online Sound Datei");
 		resources.put("options",                     "Einstellungen");
 		resources.put("options_account",             "Benutzer");
 		resources.put("options_cost",                "Kosten");
@@ -132,7 +136,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("session",                     "Sitzung");
 		resources.put("set_status",                  "Status festlegen");
 		resources.put("since",                       "Seit dem");
-		resources.put("sound",                       "ICQ Sound");
+		resources.put("sound",                       "Sounddatei");
 		resources.put("sound_file_name",             "Sound File Name");
 		resources.put("sort_by",                     "Sortiere Kontaktliste");
 		resources.put("sort_by_name",                "Nach Name");

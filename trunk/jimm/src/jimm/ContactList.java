@@ -41,6 +41,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Graphics;
+
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
@@ -54,31 +55,31 @@ import com.siemens.mp.media.MediaException;
 import com.siemens.mp.media.Player;
 // #sijapp cond.end#
 
-// #sijapp cond.if target is "NOKIAS40"#
-import com.nokia.mid.ui.DirectUtils;
-import com.nokia.mid.ui.DeviceControl;
-// #sijapp cond.end#
+//#sijapp cond.if target is "MIDP2"#
+import javax.microedition.media.Manager;
+import javax.microedition.media.MediaException;
+import javax.microedition.media.Player;
+import javax.microedition.media.control.ToneControl;
+import java.io.InputStream;
+//#sijapp cond.end#
 
 public class ContactList implements CommandListener
 {
 
     // Status (all are mutual exclusive)
     public static final long STATUS_AWAY = 0x00000001;
-
     public static final long STATUS_CHAT = 0x00000020;
-
     public static final long STATUS_DND = 0x00000002;
-
     public static final long STATUS_INVISIBLE = 0x00000100;
-
     public static final long STATUS_NA = 0x00000004;
-
     public static final long STATUS_OCCUPIED = 0x00000010;
-
     public static final long STATUS_OFFLINE = 0xFFFFFFFF;
-
     public static final long STATUS_ONLINE = 0x00000000;
 
+    // Sound notification typs
+    public static final int SOUND_TYPE_MESSAGE = 1;
+    public static final int SOUND_TYPE_ONLINE = 2;
+    
     // Image objects
     static Image images[];
 
@@ -107,18 +108,7 @@ public class ContactList implements CommandListener
             images = new Image[imagenum];
             for (int i = 0; i < imagenum; i++)
             {
-                // #sijapp cond.if target is "NOKIAS40"#
-                try
-                {
-                    Class.forName("com.nokia.mid.ui.DirectUtils");
-                    dImage = DirectUtils.createImage(16, 16, 0);
-                } catch (ClassNotFoundException e)
-                {
-                    dImage = Image.createImage(16, 16);
-                }
-                //	#sijapp cond.else#
                 dImage = Image.createImage(16, 16);
-                // #sijapp cond.end#
                 dImage.getGraphics().drawImage(iconsImage, -i << 4, 0, Graphics.TOP | Graphics.LEFT);
                 images[i] = Image.createImage(dImage);
             }
@@ -595,6 +585,7 @@ public class ContactList implements CommandListener
         // System.out.println("update: status change");
         //Do we have an offline to online change?
         boolean wasoffline = false;
+        boolean onoffchange = false;
 
         // Save selected contact entry
         this.saveListPosition();
@@ -612,6 +603,7 @@ public class ContactList implements CommandListener
                 {
                     onlineCount++;
                     wasoffline = true;
+                    onoffchange = true;
                 }
                 if (status == STATUS_OFFLINE)
                 {
@@ -627,12 +619,12 @@ public class ContactList implements CommandListener
         // Update list only if the item is in our list (was in the rooster)
         if (i < this.cItems.size())
         {
+            // Play sound notice if selected
+            if (onoffchange)
+                this.playSoundNotivication(SOUND_TYPE_ONLINE);
             // Update visual list (sorting only if it was on online offline or
             // vice versa change
-            if (wasoffline)
-                this.refreshList(false, false, i);
-            else
-                this.refreshList(true, false, i);
+            this.refreshList(!wasoffline, false, i);
         }
     }
 
@@ -755,20 +747,19 @@ public class ContactList implements CommandListener
         // Notify splash canvas
         Jimm.jimm.getSplashCanvasRef().messageAvailable();
         // Notify user
-        // #sijapp cond.if target is "NOKIAS40"#
-        if (Jimm.jimm.getOptionsRef().isVibrator())
-        {
-            DeviceControl.startVibra(50, 500);
-        }
-        DeviceControl.flashLights(500);
-        //		  #sijapp cond.end#
+        this.playSoundNotivication(SOUND_TYPE_MESSAGE);
+    }
+
+    // Play a sound notification
+    private void playSoundNotivication(int notType)
+    {
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();
         if (Jimm.jimm.getOptionsRef().isVibrator())
         {
             Vibrator.triggerVibrator(500);
         }
-        switch (Jimm.jimm.getOptionsRef().getMsgNotificationMode())
+        switch (Jimm.jimm.getOptionsRef().getNotificationMode(notType))
         {
         case 1:
             Sound.playTone(1000, 1000);
@@ -776,7 +767,7 @@ public class ContactList implements CommandListener
         case 2:
             try
             {
-                Player p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getSoundFileName());
+                Player p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getSoundFileName(notType));
                 p.start();
             } catch (IOException e)
             {
@@ -790,9 +781,46 @@ public class ContactList implements CommandListener
         }
         Light.setLightOff();
         // #sijapp cond.end#
+        // #sijapp cond.if target is "MIDP2"#
+        switch (Jimm.jimm.getOptionsRef().getNotificationMode(notType))
+        {
+        case 1:
+            try
+            {
+                switch(notType)
+                {
+                case SOUND_TYPE_MESSAGE:
+                    Manager.playTone(ToneControl.C4, 500, 100);
+                    break;
+                case SOUND_TYPE_ONLINE:
+                    Manager.playTone(ToneControl.C4+7, 500, 100);
+                }
+                
+            } catch (MediaException e)
+            {
+                // Do nothing
+            }
+            break;
+        case 2:
+            try
+            {
+                InputStream is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getSoundFileName(notType));
+                Player p = Manager.createPlayer(is, "audio/X-wav");
+                p.start();
+            } catch (IOException ioe)
+            {
+            } catch (MediaException me)
+            {
+                // Do nothing
+            }
+
+            break;
+
+        }
+        // #sijapp cond.end#
 
     }
-
+    
     // Save reference to currently selected contact item
     private void saveListPosition()
     {

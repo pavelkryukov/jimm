@@ -93,11 +93,10 @@ public class Text_EN extends ResourceBundle
 		resources.put("loading",                     "Loading");
 		resources.put("me",                          "me");
 		resources.put("menu",                        "Menu");
+		resources.put("msg_sound_file_name",         "Message Sound File");
+		resources.put("message_notification",        "Message Notice");
 		resources.put("message",                     "Message");
 		resources.put("message_from",                "Message from");
-		// #sijapp cond.if target is "SIEMENS" #
-		resources.put("message_notification",        "Message notification");
-		// #sijapp cond.end #
 		resources.put("name",                        "Name");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
@@ -106,6 +105,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("notice",                      "Notice");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Once a session");
+		resources.put("onl_notification",            "Notice for upcoming contact");
+		resources.put("onl_sound_file_name",         "Online Sound File");
 		resources.put("options",                     "Options");
 		resources.put("options_account",             "Account");
 		resources.put("options_cost",                "Cost");
@@ -132,8 +133,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("session",                     "Session");
 		resources.put("set_status",                  "Set status");
 		resources.put("since",                       "Since");
-		resources.put("sound",                       "ICQ Sound");
-		resources.put("sound_file_name",             "Sound File Name");
+		resources.put("sound",                       "Sound file");
 		resources.put("sort_by",                     "Sort contact list");
 		resources.put("sort_by_name",                "By name");
 		resources.put("sort_by_status",              "By status");
