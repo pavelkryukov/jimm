@@ -38,13 +38,11 @@ public class UpdateContactListAction extends Action
     // Action states
     public static final int STATE_ERROR = -1;
     public static final int STATE_INIT = 0;
-    public static final int STATE_CLI_ROSTERDELETE_SENT = 1;
-    public static final int STATE_CLI_ROSTERADD_SENT = 2;
-    public static final int STATE_CLI_ADDEND_SENT = 3;
-    public static final int STATE_SRV_UPDATEACK_RCVD = 4;
-    public static final int STATE_SRV_REPLYED_AUTH = 5;
+    public static final int STATE_CLI_ROSTERMODIFY_SENT = 1;;
+    public static final int STATE_CLI_ADDEND_SENT = 2;
+    public static final int STATE_SRV_UPDATEACK_RCVD = 3;
+    public static final int STATE_SRV_REPLYED_AUTH = 4;
     
-
     // Timeout
     public static final int TIMEOUT = 10 * 1000; // milliseconds
 
@@ -111,67 +109,50 @@ public class UpdateContactListAction extends Action
     // Init action
     protected void init() throws JimmException
     {
-        error = 0;
-
-        int marker = 0;
-
         SnacPacket packet;
 
-        if (this.modify)
-        {
-            // Send a CLI_ADDSTART packet
-            packet = new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY, SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND,new byte[0], new byte[0]);
-            this.icq.c.sendPacket(packet);
-
-            packet = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY, SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(),new byte[0], this.packRoosterItem(null, null, null));
-        } 
-        else
+        // Send a buddy add or delete packet if this update deals with a contact
+        if (cItem != null && !modify)
         {
             byte[] buf;
+            int marker = 0;
 
-            // Send a buddy add or delete packet if this update deals with a
-            // contact
-            if (cItem != null)
-            {
-                nameRaw = Util.stringToByteArray(this.cItem.getName());
-                // Pack and send CLI_BUDDYLIST_REMOVE or CLI_BUDDYLIST_ADD
-                // package
-                buf = new byte[1 + idRaw.length];
+            // Pack and send CLI_BUDDYLIST_REMOVE or CLI_BUDDYLIST_ADD packet
+            buf = new byte[1 + idRaw.length];
 
-                Util.putByte(buf, marker, idRaw.length);
-                System.arraycopy(idRaw, 0, buf, 1, idRaw.length);
-
-                if (!add)
-                    packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_REMOVE_FAMILY, SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND,SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND, new byte[0], buf);
-                else
-                    packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_ADD_FAMILY, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND,SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, new byte[0], buf);
-
-                this.icq.c.sendPacket(packet);
-            }
-
-            // Send a CLI_ADDSTART packet
-            packet = new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY, SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND,new byte[0], new byte[0]);
-
-            this.icq.c.sendPacket(packet);
+            Util.putByte(buf, marker, idRaw.length);
+            System.arraycopy(idRaw, 0, buf, 1, idRaw.length);
 
             if (!add)
-            {
-                // Send a CLI_ROSTERDELETE packet
-                packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY, SnacPacket.CLI_ROSTERDELETE_COMMAND,SnacPacket.CLI_ROSTERDELETE_COMMAND, new byte[0], this.packRoosterItem(null, null, null));
-            } else
+                packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_REMOVE_FAMILY, SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND, SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND, new byte[0], buf);
+            else
+                packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_ADD_FAMILY, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, new byte[0], buf);
+
+            this.icq.c.sendPacket(packet);
+        }
+
+        // Send a CLI_ADDSTART packet
+        packet = new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY, SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND, new byte[0], new byte[0]);
+        this.icq.c.sendPacket(packet);
+
+        if (modify)
+            packet = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY, SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(), new byte[0], this.packRoosterItem(null, null, null));
+        else
+            if (add)
             {
                 // Send CLI_ROSTERADDpacket
-                packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY, SnacPacket.CLI_ROSTERADD_COMMAND, Util.getCounter(), new byte[0],this.packRoosterItem(null, null, null));
+                packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY, SnacPacket.CLI_ROSTERADD_COMMAND, Util.getCounter(), new byte[0], this.packRoosterItem(null, null, null));
             }
-        }
+            else
+            {
+                // Send a CLI_ROSTERDELETE packet
+                packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY, SnacPacket.CLI_ROSTERDELETE_COMMAND, SnacPacket.CLI_ROSTERDELETE_COMMAND, new byte[0], this.packRoosterItem(null, null, null));
+            }
+
         this.icq.c.sendPacket(packet);
 
         // Set state
-        if (!add)
-            this.state = UpdateContactListAction.STATE_CLI_ROSTERDELETE_SENT;
-        else
-            this.state = UpdateContactListAction.STATE_CLI_ROSTERADD_SENT;
-
+        this.state = UpdateContactListAction.STATE_CLI_ROSTERMODIFY_SENT;
     }
 
     // Forwards received packet, returns true if packet was consumed
@@ -183,52 +164,45 @@ public class UpdateContactListAction extends Action
             // Flag indicates whether packet has been consumed or not
             boolean consumed = false;
 
-            // Watch out for STATE_CLI_ROSTERDELETE_SENT or
-            // STATE_CLI_ROSTERADD_SENT
-            if (this.state == UpdateContactListAction.STATE_CLI_ROSTERDELETE_SENT
-                    || this.state == UpdateContactListAction.STATE_CLI_ROSTERADD_SENT)
+            // Watch out for STATE_CLI_ROSTERMODIFY_SENT
+            if (this.state == UpdateContactListAction.STATE_CLI_ROSTERMODIFY_SENT)
             {
                 // Watch out for SRV_UPDATEACK packet type
                 if (packet instanceof SnacPacket)
                 {
                     SnacPacket snacPacket = (SnacPacket) packet;
-                    if ((snacPacket.getFamily() == SnacPacket.SRV_UPDATEACK_FAMILY)
-                            && (snacPacket.getCommand() == SnacPacket.SRV_UPDATEACK_COMMAND))
+                    if ((snacPacket.getFamily() == SnacPacket.SRV_UPDATEACK_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_UPDATEACK_COMMAND))
                     {
                         // Check error code, see ICQv8 specification
                         switch (Util.getWord(snacPacket.getData(), 0))
                         {
-
                         case 0x002:
                             error = 2;
-                            throw (new JimmException(154, 0, true));
+                            throw (new JimmException(154, 0, true));                            
                         case 0x003:
                             error = 3;
                             throw (new JimmException(155, 0, true));
-
                         case 0x00A:
                             error = 10;
                             throw (new JimmException(156, 0, true));
-
                         case 0x00C:
                             error = 12;
                             throw (new JimmException(157, 0, true));
-
                         case 0x00D:
                             error = 13;
                             throw (new JimmException(158, 0, true));
-
                         case 0x00E:
                             cItem.setBoolValue(ContactListContactItem.VALUE_NO_AUTH, true);
                             Jimm.jimm.getContactListRef().addContactItem(this.cItem);
                             this.state = UpdateContactListAction.STATE_SRV_REPLYED_AUTH;
                             break;
-
                         default:
-
+                            
+                            // Send an ROOSTER_UPDATE packet if contact/group was added/deleted
                             if (!modify)
                             {
                                 Vector cItemsRemaining = null;
+                                
                                 // Get all group items as aray
                                 ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
                                 ContactListGroupItem gItem = null;
@@ -240,9 +214,7 @@ public class UpdateContactListAction extends Action
                                     // Get all contact items as aray
                                     ContactListContactItem[] cItems = Jimm.jimm.getContactListRef().getContactItems();
 
-                                    // Get group of contact item to be removed
-                                    // or added to
-
+                                    // Get group of contact item to be removed or added to
                                     for (int i = 0; i < gItems.length; i++)
                                     {
                                         if (gItems[i].getId() == this.cItem.getGroup())
@@ -286,7 +258,6 @@ public class UpdateContactListAction extends Action
                         consumed = true;
                     }
                 }
-
             }
             // Watch out for STATE_CLI_ADDEND_SENT
             else if (this.state == UpdateContactListAction.STATE_CLI_ADDEND_SENT)
@@ -298,40 +269,28 @@ public class UpdateContactListAction extends Action
                     SnacPacket snacPacket = (SnacPacket) packet;
                     if ((snacPacket.getFamily() == SnacPacket.SRV_UPDATEACK_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_UPDATEACK_COMMAND))
                     {
-
                         // Check error code, see ICQv8 specification
                         if (Util.getWord(snacPacket.getData(), 0) != 0x0000) { throw (new JimmException(154, 0, true)); }
 
                         // Delete or add contact or group item from internal list
                         if (cItem != null)
                             if (!add)
-                            {
                                 Jimm.jimm.getContactListRef().removeContactItem(this.cItem);
-                            } else
-                            {
+                            else
                                 Jimm.jimm.getContactListRef().addContactItem(this.cItem);
-                            }
                         else
-                        {
                             if (!add)
-                            {
                                 Jimm.jimm.getContactListRef().removeGroup(this.gItem);
-                            } else
-                            {
+                            else
                                 Jimm.jimm.getContactListRef().addGroup(this.gItem);
-                            }
-
-                        }
 
                         // Move to next state
                         this.state = UpdateContactListAction.STATE_SRV_UPDATEACK_RCVD;
 
                         // Packet has been consumed
                         consumed = true;
-
                     }
                 }
-
             }
 
             // Update activity timestamp
@@ -339,12 +298,10 @@ public class UpdateContactListAction extends Action
 
             // Return consumption flag
             return (consumed);
-
         }
         // Catch JimmExceptions
         catch (JimmException e)
         {
-
             // Send a CLI_ADDEND packet
             packet = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
             this.icq.c.sendPacket(packet);
@@ -353,7 +310,8 @@ public class UpdateContactListAction extends Action
             this.lastActivity = new Date();
 
             // Set error state if exception is critical
-            if (e.isCritical() || (error != 0)) this.state = ConnectAction.STATE_ERROR;
+            if (e.isCritical() || (error != 0)) 
+                this.state = ConnectAction.STATE_ERROR;
             
             while (!Jimm.jimm.getContactListRef().getVisibleContactListRef().isShown())
                 try
@@ -365,9 +323,7 @@ public class UpdateContactListAction extends Action
                 }
             // Forward exception
             throw (e);
-
         }
-
     }
 
     // Returns type of the error that happend
@@ -524,7 +480,6 @@ public class UpdateContactListAction extends Action
                 marker += 2;
             }
         }
-
         return buf;
     }
 }
