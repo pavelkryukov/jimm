@@ -41,7 +41,7 @@ public class Text_EN extends ResourceBundle
     // Labels
     resources.put(".",                           ".");
     resources.put("about",                       "About");
-    resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
+    resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://jimm.sourceforge.net/");
     resources.put("account",                     "Account");
     resources.put("add_user",                    "Add User");
     resources.put("back",                        "Back");
