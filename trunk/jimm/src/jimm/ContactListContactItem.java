@@ -262,33 +262,37 @@ public class ContactListContactItem extends ContactListItem
     // Adds a message to the message display
     protected synchronized void addMessage(Message message)
     {
+        
         Calendar stamp = Calendar.getInstance();
         stamp.setTime(message.getDate());
+        
+        // The font we want to use for the prequel (name and time)
         Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
+       
+        // The Image object we want to use for drawing plus the Grapics object to draw in
         Image prequel = Image.createImage(120, prequelFont.getHeight() + 2);
         Graphics g = prequel.getGraphics();
+        
         g.setColor(255, 0, 0);
         g.setFont(prequelFont);
         Image copy;
 
-        if (message instanceof PlainMessage)
+        if ((message instanceof PlainMessage) || (message instanceof UrlMessage))
         {
-            g.drawString(this.getName() + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":"
-                    + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
+            g.drawString(this.getName() + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":"+ Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):"
+                    , 0, 10, Graphics.BASELINE | Graphics.LEFT);
             copy = Image.createImage(prequel);
             msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
-                    + ImageItem.LAYOUT_NEWLINE_AFTER, null));
+                    + ImageItem.LAYOUT_NEWLINE_AFTER, null)); 
+        }
+        { 
             PlainMessage plainMsg = (PlainMessage) message;
             if (!msgDisplay.isShown()) plainMessages++;
-            msgDisplay.append(new StringItem(null, plainMsg.getText()));
+            	msgDisplay.append(new StringItem(null, plainMsg.getText()));
         }
         if (message instanceof UrlMessage)
         {
-            g.drawString(this.getName() + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":"
-                    + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
-            copy = Image.createImage(prequel);
-            msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
-                    + ImageItem.LAYOUT_NEWLINE_AFTER, null));
+
             UrlMessage urlMsg = (UrlMessage) message;
             if (!msgDisplay.isShown()) urlMessages++;
             msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "url") + ": "
@@ -304,7 +308,8 @@ public class ContactListContactItem extends ContactListItem
             msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
                     + ImageItem.LAYOUT_NEWLINE_AFTER, null));
             SystemNotice notice = (SystemNotice) message;
-            if (!msgDisplay.isShown()) sysNotices++;
+            if (!msgDisplay.isShown()) 
+                sysNotices++;
             if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
             {
                 msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "youwereadded")
@@ -530,46 +535,7 @@ public class ContactListContactItem extends ContactListItem
                 case 3:
                     // Remove
 
-                    // Check whether contact item is temporary
-                    if (ContactListContactItem.this.isTemporary())
-                    {
-
-                        // Remove this temporary contact item
-                        Jimm.jimm.getContactListRef().removeContactItem(ContactListContactItem.this);
-
-                        if (!Jimm.jimm.getOptionsRef().keepChat())
-                        {
-                            ContactListContactItem.this.deleteChatHistory();
-                        }
-
-                        // Update and activate contact list
-                        Jimm.jimm.getContactListRef().update();
-                        Jimm.jimm.getContactListRef().activate();
-
-                    } else
-                    {
-
-                        // Display splash canvas
-                        SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-                        wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
-                        wait2.setProgress(0);
-                        Jimm.display.setCurrent(wait2);
-
-                        // Request contact item removal
-                        UpdateContactListAction act2 = new UpdateContactListAction(ContactListContactItem.this, false);
-                        try
-                        {
-                            Jimm.jimm.getIcqRef().requestAction(act2);
-                        } catch (JimmException e)
-                        {
-                            JimmException.handleException(e);
-                            if (e.isCritical()) return;
-                        }
-
-                        // Start timer
-                        Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
-
-                    }
+                    Jimm.jimm.getIcqRef().delFromContactList(ContactListContactItem.this);
 
                     break;
 

@@ -23,7 +23,6 @@
 
 package jimm;
 
-import java.util.Random;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -35,11 +34,8 @@ import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 import jimm.ContactListContactItem;
-import jimm.comm.ConnectAction;
-import jimm.comm.DisconnectAction;
-import jimm.comm.Icq;
+import jimm.comm.SearchAction;
 import jimm.comm.SetOnlineStatusAction;
-import jimm.comm.UpdateContactListAction;
 import jimm.util.ResourceBundle;
 
 public class MainMenu implements CommandListener
@@ -142,15 +138,13 @@ public class MainMenu implements CommandListener
     // Command listener
     public void commandAction(Command c, Displayable d)
     {
-        // Get ICQ object
-        Icq icq = Jimm.jimm.getIcqRef();
 
         // Get options container
         Options options = Jimm.jimm.getOptionsRef();
 
         // #sijapp cond.if modules_TRAFFIC is "true" #
+        
         //Get traffic container
-
         Traffic traffic = Jimm.jimm.getTrafficRef();
         // #sijapp cond.end#
 
@@ -163,53 +157,22 @@ public class MainMenu implements CommandListener
                 Jimm.jimm.getContactListRef().activate();
         } else if ((c == sendCommand) && (d == this.addUser))
         {
-            System.out.println("Show group list");
-            // Show list of groups to select which group to add to
-            groupList = new List(ResourceBundle.getString("jimm.res.Text", "whichgroup"), List.EXCLUSIVE);
-            for (int i = 0; i < Jimm.jimm.getContactListRef().getGroupItems().length; i++)
-            {
-                groupList.append(Jimm.jimm.getContactListRef().getGroupItems()[i].getName(), null);
-            }
-            groupList.addCommand(backCommand);
-            groupList.addCommand(sendCommand);
-            groupList.setCommandListener(this);
-            Jimm.display.setCurrent(groupList);
-
-        } else if ((c == sendCommand) && (d == this.groupList))
-        {
-            System.out.println("Send new contact item to server");
-            // Make a new ContactListContact item and try to send it to the
-            // server
-            Random rand = new Random(System.currentTimeMillis());
-            int randint = rand.nextInt();
-            ContactListContactItem cItem = new ContactListContactItem(randint, Jimm.jimm.getContactListRef()
-                    .getGroupItems()[this.groupList.getSelectedIndex()].getId(), uinTextField.getString(),
-                    nameTextField.getString(), false, false);
-            cItem.setTemporary(true);
-
-            System.out.println(cItem.toString());
-
-            // Display splash canvas
-            SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-            wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
-            wait2.setProgress(0);
-            Jimm.display.setCurrent(wait2);
-
-            // Request contact item removal
-            UpdateContactListAction act = new UpdateContactListAction(cItem, true);
+            Search search = new Search();
+            search.setSearchRequest(uinTextField.getString(),"","","","","","");
+            
+            SearchAction act = new SearchAction(search);
+            
             try
             {
                 Jimm.jimm.getIcqRef().requestAction(act);
+
             } catch (JimmException e)
             {
                 JimmException.handleException(e);
                 if (e.isCritical()) return;
             }
 
-            // Start timer
-            Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act), 1000, 1000);
-
-        }
+        } 
         // Menu item has been selected
         else if ((c == List.SELECT_COMMAND) && (d == this.list))
         {
@@ -223,34 +186,7 @@ public class MainMenu implements CommandListener
                     break;
                 case 1:
                     // Disconnect
-
-                    // Display splash canvas
-                    SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
-                    wait.setMessage(ResourceBundle.getString("jimm.res.Text", "disconnecting"));
-                    wait.setProgress(0);
-                    Jimm.display.setCurrent(wait);
-
-                    // Disconnect
-                    DisconnectAction act = new DisconnectAction();
-                    try
-                    {
-                        icq.requestAction(act);
-                    } catch (JimmException e)
-                    {
-                        JimmException.handleException(e);
-                        if (e.isCritical()) return;
-                    }
-
-                    // Start timer
-                    Jimm.jimm.getTimerRef().schedule(new SplashCanvas.DisconnectTimerTask(act, false), 1000, 1000);
-                    // #sijapp cond.if modules_TRAFFIC is "true" #
-                    try
-                    {
-                        traffic.save();
-                    } catch (Exception e)
-                    { // Do nothing
-                    }
-                    // #sijapp cond.end#
+                    Jimm.jimm.getIcqRef().disconnect();
                     break;
 
                 case 2:
@@ -296,7 +232,6 @@ public class MainMenu implements CommandListener
                     nameTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "name"), "", 32,
                             TextField.ANY);
                     addUser.append(uinTextField);
-                    addUser.append(nameTextField);
                     addUser.addCommand(sendCommand);
                     addUser.addCommand(backCommand);
                     addUser.setCommandListener(this);
@@ -306,11 +241,8 @@ public class MainMenu implements CommandListener
                 case 4:
                     // Search for User
 
-                    // Not implemented yet
-                    Alert notImplemented3 = new Alert(ResourceBundle.getString("jimm.res.Text", "error"),
-                            ResourceBundle.getString("jimm.res.Text", "not_implemented"), null, AlertType.ERROR);
-                    notImplemented3.setTimeout(Alert.FOREVER);
-                    Jimm.jimm.getContactListRef().activate(notImplemented3);
+                    Search search = new Search();
+                    search.getSearchForm().activate(false);
 
                     break;
                 case 5:
@@ -341,24 +273,7 @@ public class MainMenu implements CommandListener
                     // Exit
 
                     // Disconnect
-                    DisconnectAction act2 = new DisconnectAction();
-                    try
-                    {
-                        icq.requestAction(act2);
-                    } catch (JimmException e)
-                    {
-                        JimmException.handleException(e);
-                        if (e.isCritical()) return;
-                    }
-
-                    // Start timer
-                    Jimm.jimm.getTimerRef().schedule(new SplashCanvas.DisconnectTimerTask(act2, true), 1000, 1000);
-                    try
-                    {
-                        traffic.save();
-                    } catch (Exception e)
-                    { // Do nothing
-                    }
+                    Jimm.jimm.getIcqRef().disconnect();
                     break;
                 // #sijapp cond.else#
                 case 6:
@@ -375,15 +290,7 @@ public class MainMenu implements CommandListener
                     // Exit
 
                     // Disconnect
-                    DisconnectAction act2 = new DisconnectAction();
-                    try
-                    {
-                        icq.requestAction(act2);
-                    } catch (JimmException e)
-                    {
-                        JimmException.handleException(e);
-                        if (e.isCritical()) return;
-                    }
+                    Jimm.jimm.getIcqRef().disconnect();
 
                     break;
                 // #sijapp cond.end#
@@ -394,28 +301,7 @@ public class MainMenu implements CommandListener
                 {
                 case 0:
                     // Connect
-
-                    // Display splash canvas
-                    SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
-                    wait.setMessage(ResourceBundle.getString("jimm.res.Text", "connecting"));
-                    wait.setProgress(0);
-                    Jimm.display.setCurrent(wait);
-
-                    // Connect
-                    ConnectAction act = new ConnectAction(options.getUin(), options.getPassword(),
-                            options.getSrvHost(), options.getSrvPort());
-                    try
-                    {
-                        icq.requestAction(act);
-
-                    } catch (JimmException e)
-                    {
-                        JimmException.handleException(e);
-                        if (e.isCritical()) return;
-                    }
-
-                    // Start timer
-                    Jimm.jimm.getTimerRef().schedule(new SplashCanvas.ConnectTimerTask(act), 1000, 1000);
+                    Jimm.jimm.getIcqRef().connect();
 
                     break;
                 case 1:
@@ -518,7 +404,7 @@ public class MainMenu implements CommandListener
             try
             {
                 SetOnlineStatusAction act = new SetOnlineStatusAction(onlineStatus);
-                icq.requestAction(act);
+                Jimm.jimm.getIcqRef().requestAction(act);
             } catch (JimmException e)
             {
                 JimmException.handleException(e);
