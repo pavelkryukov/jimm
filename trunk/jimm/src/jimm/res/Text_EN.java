@@ -51,7 +51,11 @@ public class Text_EN extends ResourceBundle
                                           resources.put("menu_button",        "      Menu");
                                           resources.put("save",                       "Save      ");
                                           resources.put("ok",                            "OK        ");
+                                          resources.put("reply",                       "Reply    ");
+                                           resources.put("close",                       "   Close");
                                            // #sijapp cond.else#
+                                          resources.put("reply",                       "Reply");
+                                          resources.put("close",                       "Close");
                                            resources.put("select",                      "Select");
                                            resources.put("reset",                       "Reset");
                                            resources.put("cancel",                        "Cancel");
@@ -78,7 +82,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("chat_small_font",			 "Small font in chat");
 		resources.put("city",                        "City");
 		resources.put("clear",                       "Clear");
-		resources.put("close",                       "Close");
+		
 		resources.put("conn_type",                   "Connection type");
 		resources.put("con_wait",                    "Delay between connections(sec)");
 		resources.put("connect",                     "Connect");
@@ -189,7 +193,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("remove_group",                "Remove group");
 		resources.put("remove_user",                 "Remove user");
 		resources.put("rename",                      "Rename");
-		resources.put("reply",                       "Reply");
+		
 		resources.put("requauth",                    "Request auth");
 		resources.put("requ",                        "Required");
 		resources.put("requno",                      "Not req");
