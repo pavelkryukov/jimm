@@ -122,6 +122,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("once_a_session",              "Einmal pro Sitzung");
 		resources.put("onl_notification",            "Hinweis bei Onlinewechsel");
 		resources.put("onl_sound_file_name",         "Online Sound Datei");
+		resources.put("only_online",                 "Nur Online Kontakte zeigen");
 		resources.put("options",                     "Einstellungen");
 		resources.put("options_account",             "Benutzer");
 		resources.put("options_cost",                "Kosten");
@@ -222,7 +223,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("error_153",                   "Empfangene Nachricht vom Typ 4 war unverständlich (#153.EXT)");
 		resources.put("error_154",                   "Fehler beim aktualisieren der Kontaktliste (#154.EXT)");
 		resources.put("error_155",                   "Objekt ist bereits auf dem Server vorhanden  (#155.EXT)");
-		resources.put("error_156",                   "Fehler beim Hinzufügen (#156.EXT)");
+		resources.put("error_156",                   "Fehler beim Hinzufügen. Nochmal versuchen (#156.EXT)");
 		resources.put("error_157",                   "Keine weiteren Objekte dieses Typs zulässig (#157.EXT)");
 		resources.put("error_158",                   "Versuch einen ICQ-Kontact einer AIM-Liste hinzuzufügen (#158.EXT)");
 		resources.put("error_159",                   "Server antwortete nicht auf Suchanfrage. Nochmal versuchen(#159.EXT)");
