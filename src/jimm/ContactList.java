@@ -74,6 +74,7 @@ import net.rim.device.api.system.LED;
 import DrawControls.*;
 import jimm.Options;
 
+/*
 abstract class UserManagementBase implements CommandListener
 {
     private static Form 
@@ -235,6 +236,7 @@ class RemoveGroupForm extends UserManagementBase
     }
 }
 
+*/
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -269,7 +271,8 @@ class NodeComparer implements TreeNodeComparer
 		obj = node.getData();
 		if ( !(obj instanceof ContactListContactItem) ) return 10;
 		cItem = (ContactListContactItem)obj;
-		if (cItem.getStatus() != ContactList.STATUS_OFFLINE) return 0; 
+		if (cItem.getStatus() != ContactList.STATUS_OFFLINE) return 0;
+		if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)) return 20;
 	
 		return 10;
 	}
@@ -308,6 +311,7 @@ class Tree extends VirtualTree
 		ContactListItem item = (ContactListItem)src.getData();
 		dst.text = item.getText();
 		dst.imageIndex = item.getImageIndex();
+		dst.color = item.getTextColor();
 	}
 
 	public Tree(String caption)
@@ -382,7 +386,8 @@ public class ContactList implements CommandListener
     // Group items
     private Vector gItems;
     
-    private boolean contactsChanged;
+    private boolean treeBuilded = false, treeSorted = false;
+    //private boolean contactsChanged;
 	
     // Contains tree nodes by groip ids
 	Hashtable gNodes = new Hashtable();
@@ -490,8 +495,8 @@ public class ContactList implements CommandListener
         //		#sijapp cond.end#
         this.tree.addCommand(ContactList.mainMenuCommand);
 		this.tree.addCommand(selectCommand);
-		this.tree.addCommand(newUserCommand);
-		this.tree.addCommand(searchUserCommand);
+		//this.tree.addCommand(newUserCommand);
+		//this.tree.addCommand(searchUserCommand);
 		//this.tree.addCommand(removeUserCommand);
 		//this.tree.addCommand(newGroupCommand);
 		//this.tree.addCommand(removeGroupCommand);
@@ -549,7 +554,7 @@ public class ContactList implements CommandListener
     // Request display of the main menu
     public void activate()
     {
-    	//DebugLog.addText("Contact list activated!");
+    	DebugLog.addText("Contact list activated");
     	
         //System.out.println("Show the contact list");
         //		#sijapp cond.if modules_TRAFFIC is "true" #
@@ -580,24 +585,10 @@ public class ContactList implements CommandListener
     }
     
     // is called by options form when options changed
-    public void optionsChanged(boolean groupsChanged, boolean needToSortContacts)
+    public void optionsChanged(boolean needToRebuildTree, boolean needToSortContacts)
     {
-    	/*
-    	DebugLog.addText
-		(
-			"optionsChanged: groupsChanged="+new Boolean(groupsChanged).toString()+
-			" needToSortContact="+new Boolean(needToSortContacts).toString()
-		);
-		*/
-    	
-    	if (groupsChanged) treeBuilded = false;
-    	if (needToSortContacts)
-    	{
-    		contactsChanged = true;
-            for (int i = 0; i < gItems.size(); i++)
-    		    ((ContactListGroupItem)gItems.elementAt(i)).setChanged(true);
-    		
-    	}
+    	if (needToRebuildTree) treeBuilded = false;
+    	if (needToSortContacts) treeSorted = false;
     }
     
     // Tries to load contact list from record store
@@ -812,7 +803,7 @@ public class ContactList implements CommandListener
     protected void beforeConnect()
     {
     	tree.clear();
-    	treeBuilded = false;
+    	treeBuilded = treeSorted = false;
     }
     
     // Updates the client-side conact list (called when a new roster has been
@@ -866,30 +857,21 @@ public class ContactList implements CommandListener
     // Sorts the contacts and calc online counters
     private void sortAll()
     {
+    	if (treeSorted) return;
     	if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USER_GROUPS))
     	{
             for (int i = 0; i < gItems.size(); i++)
     		{
     		    ContactListGroupItem gItem = (ContactListGroupItem)gItems.elementAt(i);
     		    TreeNode groupNode = (TreeNode)gNodes.get( new Integer(gItem.getId()) );
-    		    if ( gItem.getChanged() )
-    		    {
-    		    	 gItem.setChanged(false);
-    		    	 tree.sortNode( groupNode, createNodeComparer() );
-    		    	 calcGroupData(groupNode, gItem);
-    		    	 //DebugLog.addText("Group is sorted: "+gItem.getText()+"...");
-    		    }	 
+    		    tree.sortNode( groupNode, createNodeComparer() );
+    		    calcGroupData(groupNode, gItem);
     		}
     	}
-    	else
-    	{
-    		if (contactsChanged)
-    		{
-    			tree.sortNode( null, createNodeComparer() );
-    			contactsChanged = false;
-    			//DebugLog.addText("All contacts is sorted...");
-    		}
-    	}
+    	else tree.sortNode( null, createNodeComparer() );
+    	treeSorted = true;
+    	
+    	DebugLog.addText("Tree sorted");
     }
     
     // creates node comparer for node sorting 
@@ -905,15 +887,13 @@ public class ContactList implements CommandListener
         }
         return null;
     }
-   
-    
-    private boolean treeBuilded = false;
     
     // Builds contacts tree (without sorting) 
 	private void buildTree()
 	{
 	    int i, gCount, cCount;
-	    boolean use_groups = Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USER_GROUPS);
+	    boolean use_groups  = Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USER_GROUPS),
+		        only_online = Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 			    
 		cCount = cItems.size();
 		if (treeBuilded || (cCount == 0)) return;
@@ -932,7 +912,6 @@ public class ContactList implements CommandListener
 			for (i = 0; i < gCount; i++)
 			{
 				ContactListGroupItem item = (ContactListGroupItem)gItems.elementAt(i);
-				item.setChanged(true);
 				TreeNode groupNode = tree.addNode(null, item);
 				gNodes.put(new Integer(item.getId()), groupNode);
 			}
@@ -941,7 +920,12 @@ public class ContactList implements CommandListener
 		// add contacts
 		for (i = 0; i < cCount; i++)
 		{
-			ContactListContactItem cItem = (ContactListContactItem)cItems.elementAt(i); 
+			ContactListContactItem cItem = (ContactListContactItem)cItems.elementAt(i);
+			
+			if (only_online && 
+			    (cItem.getStatus() == STATUS_OFFLINE) &&
+				 !cItem.mustBeShownAnyWay()) continue;
+			
 			if (use_groups)
 			{
 			    ContactListGroupItem group = getGroupById( cItem.getGroup() );
@@ -954,8 +938,10 @@ public class ContactList implements CommandListener
 			}
 		}    
 	
-		contactsChanged = true;
+		treeSorted = false;
 		treeBuilded = true;
+		
+		DebugLog.addText("Tree builded");
 	}
 
 	// Returns reference to group with id or null if group not found
@@ -1010,7 +996,10 @@ public class ContactList implements CommandListener
     {
     	boolean contactExistInTree = false,
 		        contactExistsInList,
-		        fullyChanged = false;
+		        fullyChanged = false,
+				wasDeleted = false,
+				haveToAdd = false,
+				haveToDelete = false;
     	TreeNode cItemNode = null;
     	int i, count, groupId;
     	
@@ -1027,12 +1016,7 @@ public class ContactList implements CommandListener
 	    // which group ?
 	    ContactListGroupItem group = getGroupById(groupId);
 	    
-		if (!tree.isShown())
-		{
-			if (needSorting && (group != null)) group.setChanged(true);
-	    	contactsChanged |= needSorting;			
-			return;
-		}
+		boolean only_online = Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
     	
     	// Whitch group node? 
     	TreeNode groupNode = (TreeNode)gNodes.get( new Integer(groupId) );
@@ -1051,27 +1035,34 @@ public class ContactList implements CommandListener
    		}
     	
     	// Does contact exists in internal list? 
-    	contactExistsInList = (getItembyUIN(uin) != null);
+    	contactExistsInList = (cItems.indexOf(item) != -1);
     	
     	// Lock tree repainting
     	tree.lock();
     	
+    	haveToAdd = contactExistsInList && !contactExistInTree;
+    	if (only_online && !contactExistInTree) 
+    		haveToAdd |= item.getStatus() != STATUS_OFFLINE | item.mustBeShownAnyWay(); 
+    	
+    	haveToDelete = !contactExistsInList && contactExistInTree;
+    	if (only_online && contactExistInTree) haveToDelete |= item.getStatus() == STATUS_OFFLINE;
+    	
     	// if have to add new contact
-    	if (contactExistsInList && !contactExistInTree)
+    	if (haveToAdd)
     	{
     		cItemNode = tree.addNode(groupNode, item);
     	    fullyChanged = !item.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP);
     	}
     	
     	// if have to delete contact
-    	else if (!contactExistsInList && contactExistInTree)
+    	else if (haveToDelete)
     	{
     		tree.removeNode(cItemNode);
-    		fullyChanged = true;
+    		wasDeleted = true;
     	}
     	
     	// sort group
-    	if (needSorting)
+    	if (needSorting && !wasDeleted)
     	{
     		boolean isCurrent = (tree.getCurrentItem() == cItemNode),
 			        inserted = false;
@@ -1096,7 +1087,7 @@ public class ContactList implements CommandListener
     	if (setCurrent) tree.setCurrentItem(cItemNode);
     	
     	// if calc group online/total data
-    	if (fullyChanged || needCalcGroupData) calcGroupData(groupNode, group);
+    	if (fullyChanged || needCalcGroupData || wasDeleted) calcGroupData(groupNode, group);
     	
     	// unlock tree and repaint
     	tree.unlock();
@@ -1141,16 +1132,7 @@ public class ContactList implements CommandListener
     {
         ContactListContactItem cItem = getItembyUIN(uin);
         if (cItem == null) return; // error ???
-        
-        /*
-    	DebugLog.addText
-		(
-				cItem.getText()+" "+
-				Integer.toString((int)cItem.getStatus())+"->"+
-				Integer.toString((int)Util.translateStatusReceived(status))
-		);
-		*/
-    	
+	
     	long trueStatus = Util.translateStatusReceived(status);
     	boolean statusChanged = (cItem.getStatus() != trueStatus);
         boolean wasNotOffline = (cItem.getStatus() != STATUS_OFFLINE);
@@ -1529,6 +1511,7 @@ public class ContactList implements CommandListener
         	itemClicked();
         }
 
+        /*
         // "new user" menu item selected
         else if (c == newUserCommand)
         {
@@ -1553,6 +1536,7 @@ public class ContactList implements CommandListener
         {
             (new RemoveGroupForm()).go();
         }
+        */
         
 //#sijapp cond.if modules_DEBUGLOG is "true" #
         else if (c == debugListCommand)

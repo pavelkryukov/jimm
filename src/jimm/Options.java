@@ -350,7 +350,7 @@ public class Options
 	// Form for editing option values
 	public class OptionsForm implements CommandListener
 	{
-		boolean lastGroupsUsed;
+		boolean lastGroupsUsed, lastHideOffline;
 		int lastSortMethod;
 
 		// Commands
@@ -544,6 +544,7 @@ public class Options
 			// Look for select command
 			if (c == List.SELECT_COMMAND)
 			{
+				lastHideOffline = Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 				lastGroupsUsed = Options.this.getBooleanOption(Options.OPTION_USER_GROUPS);
 				lastSortMethod = Options.this.getIntOption(Options.OPTION_CL_SORT_BY);
 
@@ -672,9 +673,11 @@ public class Options
 						
 						boolean newUseGroups = this.showUserGroups.isSelected(0);
 						Options.this.setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);
+						
+						boolean newHideOffline = Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 						Jimm.jimm.getContactListRef().optionsChanged
 						(
-							(newUseGroups != lastGroupsUsed),
+							(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline),
 							(newSortMethod != lastSortMethod)
 						);
 						break;

@@ -347,6 +347,7 @@ public abstract class VirtualTree extends VirtualList
     TreeNode node //!< Node to be removed
   )
   {
+  	storeLastNode();
     TreeNode parent = findParent(root, node);
     if (parent == null) return false;
     int index = parent.findItem(node);
@@ -355,9 +356,9 @@ public abstract class VirtualTree extends VirtualList
     checkCurrItem();
     wasChanged();
     invalidate();
+    restoreLastNode();
     return true;
   }
-  
  
   //! Move one tree node to another. Returns true if moving is successful.
   public boolean moveNode

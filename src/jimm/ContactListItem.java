@@ -35,4 +35,6 @@ public abstract class ContactListItem
 	
 	// returns image index of tree node. Is used for visual tree
 	public abstract int getImageIndex();
+	
+	public abstract int getTextColor();
 }
