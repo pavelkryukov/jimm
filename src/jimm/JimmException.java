@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/JimmException.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
@@ -55,7 +55,7 @@ public class JimmException extends Exception
 	// True, if an error message should be presented to the user
 	protected boolean displayMsg;
 	
-	//  #sijapp cond.if target is "MIDP2"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 	// True, if this is an exceptuion for an peer connection
 	protected boolean peer;
 	//  #sijapp cond.end#
@@ -67,7 +67,7 @@ public class JimmException extends Exception
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this.critical = true;
 		this.displayMsg = true;
-		//  #sijapp cond.if target is "MIDP2"#
+		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		this.peer = false;
 		//  #sijapp cond.end#
 	}
@@ -79,12 +79,12 @@ public class JimmException extends Exception
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this.critical = false;
 		this.displayMsg = displayMsg;
-		//  #sijapp cond.if target is "MIDP2"#
+		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		this.peer = false;
 		//  #sijapp cond.end#
 	}
 	
-	//  #sijapp cond.if target is "MIDP2"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 	// Constructs a non-critical JimmException with peer info
 	public JimmException(int errCode, int extErrCode, boolean displayMsg, boolean _peer)
 	{
@@ -109,7 +109,7 @@ public class JimmException extends Exception
 		return (this.critical);
 	}
 	
-	//  #sijapp cond.if target is "MIDP2"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 	// Returns true if this is a peer exception
 	public boolean isPeer()
 	{
@@ -127,7 +127,7 @@ public class JimmException extends Exception
 		{
 
 			// Reset comm. subsystem
-			//  #sijapp cond.if target is "MIDP2"#
+			//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			if (e.isPeer())
 			    Jimm.jimm.getIcqRef().resetPeerCon();
 			else

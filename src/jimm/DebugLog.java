@@ -54,7 +54,7 @@ public class DebugLog
 		list.setCommandListener( new Helper() );
 		list.setFontSize(TextList.SMALL_FONT);
       
-//#sijapp cond.if target is "MIDP2"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
       list.setTitle("Debug log");
       list.setFullScreenMode(false);
 //#sijapp cond.else#
