@@ -281,14 +281,9 @@ public class ConnectPacket extends Packet
 			marker += 4 + uinRaw.length;
 
 			// HELLO.PASSWORD
-			String password = this.password;
-			if (this.password.length() > 8)
-			{
-				password = this.password.substring(0, 8);
-			}
 			Util.putWord(buf, marker, 0x0002);
-			Util.putWord(buf, marker + 2, password.length());
-			byte[] passwordRaw = Util.decipherPassword(Util.stringToByteArray(password));
+			Util.putWord(buf, marker + 2, this.password.length());
+			byte[] passwordRaw = Util.decipherPassword(Util.stringToByteArray(this.password));
 			System.arraycopy(passwordRaw, 0, buf, marker + 4, passwordRaw.length);
 			marker += 4 + passwordRaw.length;
 
