@@ -150,6 +150,7 @@ public class Jimm extends MIDlet
 
 		// Create contact list object (and update progress indicator)
 		this.cl = new ContactList();
+		this.cl.beforeConnect();
 		this.sc.setProgress(70);
 		
 		// Create chat hisotry object (and update progress indicator)
