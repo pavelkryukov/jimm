@@ -652,11 +652,79 @@ public class ActionListener
 			String uin = Util.byteArrayToString(buf, 1, uinLen);
 			
 			// Create a new system notice
-			SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_YOUWEREADDED,uin,false," ");
+			SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_YOUWEREADDED,uin,false,null);
 			
 			// Handle the new system notice
 			Jimm.jimm.getContactListRef().addMessage(notice);
 
+		}
+		
+		//	  Watch out for SRV_AUTHREQ
+		if ((snacPacket.getFamily() == SnacPacket.SRV_AUTHREQ_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_AUTHREQ_COMMAND))
+		{
+			
+			int authMarker = 0;
+			// Get data
+			byte[] buf = snacPacket.getData();
+
+			// Get UIN of the contact changing status
+			int length = Util.getByte(buf, 0);
+			authMarker +=1;
+			String uin = Util.byteArrayToString(buf,authMarker, length);
+			authMarker += length;
+			
+			// Get reason
+			length = Util.getWord(buf,authMarker);
+			String reason = Util.byteArrayToString(buf,authMarker,length+2);
+			
+			// Create a new system notice
+			SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHREQ,uin,false,reason);
+			
+			// Handle the new system notice
+			Jimm.jimm.getContactListRef().addMessage(notice);
+
+		}
+		
+		//	  Watch out for SRV_AUTHREPLY
+		if ((snacPacket.getFamily() == SnacPacket.SRV_AUTHREPLY_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_AUTHREPLY_COMMAND))
+		{
+			
+			int authMarker = 0;
+			// Get data
+			byte[] buf = snacPacket.getData();
+
+			// Get UIN of the contact changing status
+			int length = Util.getByte(buf, 0);
+			authMarker +=1;
+			String uin = Util.byteArrayToString(buf,authMarker, length);
+			authMarker += length;
+			
+			// Get granted boolean
+			boolean granted = false;
+			if (Util.getByte(buf,authMarker) == 0x01)
+			{
+				granted = true;
+			}
+			authMarker +=1;
+			
+			// Get reason only of not granted
+			SystemNotice notice;
+			if (!granted)
+			{
+				length = Util.getWord(buf,authMarker);
+				String reason = Util.byteArrayToString(buf,authMarker,length+2);
+				
+				// Create a new system notice
+				notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHREQ,uin,granted,reason);
+			}
+			else
+			{
+				// Create a new system notice
+				notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHREQ,uin,granted,null);
+			}
+			
+			// Handle the new system notice
+			Jimm.jimm.getContactListRef().addMessage(notice);
 		}
 
     }
