@@ -67,18 +67,18 @@ public class ContactList implements CommandListener
 {
 
     // Status (all are mutual exclusive)
-    public static final long STATUS_AWAY = 0x00000001;
-    public static final long STATUS_CHAT = 0x00000020;
-    public static final long STATUS_DND = 0x00000002;
+    public static final long STATUS_AWAY      = 0x00000001;
+    public static final long STATUS_CHAT      = 0x00000020;
+    public static final long STATUS_DND       = 0x00000002;
     public static final long STATUS_INVISIBLE = 0x00000100;
-    public static final long STATUS_NA = 0x00000004;
-    public static final long STATUS_OCCUPIED = 0x00000010;
-    public static final long STATUS_OFFLINE = 0xFFFFFFFF;
-    public static final long STATUS_ONLINE = 0x00000000;
+    public static final long STATUS_NA        = 0x00000004;
+    public static final long STATUS_OCCUPIED  = 0x00000010;
+    public static final long STATUS_OFFLINE   = 0xFFFFFFFF;
+    public static final long STATUS_ONLINE    = 0x00000000;
 
     // Sound notification typs
     public static final int SOUND_TYPE_MESSAGE = 1;
-    public static final int SOUND_TYPE_ONLINE = 2;
+    public static final int SOUND_TYPE_ONLINE  = 2;
     
     // Image objects
     static Image images[];
