@@ -10,6 +10,7 @@ package DrawControls;
 
 import java.util.Vector;
 import java.lang.String;
+import java.lang.Integer;
 import java.io.IOException;
 
 import javax.microedition.lcdui.Image;
@@ -51,6 +52,11 @@ public class ImageList
     return (Image)items.elementAt(index);
   }
   
+  public void setImage(Image image, int index)
+  {
+  	items.setElementAt(Image.createImage(image), index);
+  }
+  
   //! Return number of stored images
   public int size() 
   { 
@@ -85,13 +91,38 @@ public class ImageList
     Image resImage = Image.createImage(resName);
     height = resImage.getHeight();
     int size = resImage.getWidth()/width;
-    items.removeAllElements();
     for (int i = 0; i < size; i++)
     {
       Image newImage = Image.createImage(width, height);
       newImage.getGraphics().drawImage(resImage, -width*i, 0, Graphics.TOP|Graphics.LEFT);
-      items.addElement(newImage);
+      items.addElement( Image.createImage(newImage) );
     }
     this.width = width;
+  }
+  
+  public void load
+  (
+    String firstLine,
+	String extention,
+	int from,
+	int to
+  ) throws IOException
+  {
+    Image image = null;
+  
+    for (int i = from; i <= to; i++)
+	{
+	  image = Image.createImage(firstLine+Integer.toString(i)+"."+extention);
+	  items.addElement(image);
+	}
+	if (image != null)
+	{
+	  height = image.getHeight();
+	  width = image.getWidth();
+	}
+	else
+	{
+	  height = width = 0;
+	}
   }
 }
