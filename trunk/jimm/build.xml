@@ -69,11 +69,11 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ******************************************************************* -->
 	<!-- This value is a comma separated list of languages packs which       -->
 	<!-- should be included in the build. Currently, the distribution        -->
-	<!-- includes English (EN), Brazilian Portuguese (BR), Czech (CZ),       -->
-	<!-- German (DE), Spanish (ES), Hewbrew (HE), Italian (IT),              -->
+	<!-- includes English (EN), Bulgarian (BG), Brazilian Portuguese (BR),   -->
+	<!-- Czech (CZ), German (DE), Spanish (ES), Hewbrew (HE), Italian (IT),  -->
 	<!-- Lithuanian (LT), Russian (RU), Swedish (SE) and Serbian (SR)        --> 
 	<!-- language packs.                                                     -->
-	<property name="lang"             value="EN,BR,CZ,DE,ES,HE,IT,LT,RU,SE,SR"/>
+	<property name="lang"             value="EN,BG,BR,CZ,DE,ES,HE,IT,LT,RU,SE,SR"/>
 	<!-- ******************************************************************* -->
 	<!-- Version number of the build. The value can be in any format (e.g.   -->
 	<!-- 0.2cvs).                                                            -->
@@ -86,6 +86,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ******************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
 	<!-- ******************************************************************* -->
+
 
 
 	<!-- Buildfile description -->
@@ -178,6 +179,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/EN" value="true">
 			<contains string="${lang}" substring="EN"/>
 		</condition>
+		<condition property="lang/BG" value="true">
+			<contains string="${lang}" substring="BG"/>
+		</condition>
 		<condition property="lang/BR" value="true">
 			<contains string="${lang}" substring="BR"/>
 		</condition>
@@ -214,6 +218,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="target" value="${target}"/>
 			<define name="modules_TRAFFIC" value="${modules/TRAFFIC}"/>
 			<define name="lang_EN" value="${lang/EN}"/>
+			<define name="lang_BG" value="${lang/BG}"/>
 			<define name="lang_BR" value="${lang/BR}"/>
 			<define name="lang_CZ" value="${lang/CZ}"/>
 			<define name="lang_DE" value="${lang/DE}"/>

@@ -98,10 +98,8 @@ On Siemens S55 mobiles there are the following graphical errors:
   * The background of the flowers if there is an active chat is no longer
     transparent.
 
-On Nokia 6230 with FW > 3.15 you have to set "Communication-Network access" for
-Jimm to "Ask everytime". When the phone asks you to accept the connection the
-second time just wait about 5 seconds till the GRPS connection is ready for the
-new connection. (you can see this by the changing "G" symbol on the phone)
+On Nokia 6230 with FW > 3.15 you have to set the "Delay between connections" in
+the "Network" menu in the "Options section" to a value above 4 seconds at least.
 
 ________________________________________________________________________________
 HOW TO BUILD
@@ -220,3 +218,4 @@ Contributors:
   *  Mario B. Napoli (Italian translation)
   *  Urukalo Milan (Serbian translation)
   *  Guy Aroshas (Hebrew translation)
+  *  Ivaylo Donchev (Bulgarian translation)
