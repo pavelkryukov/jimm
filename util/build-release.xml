@@ -55,7 +55,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="bin" value="bin"/>
 	<property name="targetlist" value="DEFAULT;SIEMENS;NOKIAS40"/>
 	<property name="connectionlist" value="RAWSOCKET"/>
-	<property name="langlist" value="EN,DE,RU,ES,BR,CZ,SE;EN,DE;EN,RU;EN,ES;EN,BR;EN,CZ;EN,SE;EN;DE;RU;ES;BR;CZ;SE"/>
+	<property name="langlist" value="EN,DE,RU,ES,BR,CZ,SE,LT;EN,DE;EN,RU;EN,ES;EN,BR;EN,CZ;EN,SE;EN,LT;EN;DE;RU;ES;BR;CZ;SE;LT"/>
 
 	<!-- Auxiliary property -->
 	<property name="3ns" value="###"/>
