@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -544,12 +544,22 @@ public class ContactListContactItem extends ContactListItem
                 ContactListContactItem.this.setName(MenuUtil.messageTextbox.getString());
                 try 
                 {
+                    // Save ContactList
                     Jimm.jimm.getContactListRef().save();
+                    
+                    // Try to save ContactList to server
+                    UpdateContactListAction action = new UpdateContactListAction(ContactListContactItem.this,false,true);
+                    Jimm.jimm.getIcqRef().requestAction(action);
+                }
+                catch (JimmException je)
+                {
+                    if (je.isCritical()) return;
                 }
                 catch (Exception e)
                 {
-                    // Do nothing 
+                    // Do nothing
                 }
+                
                 MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message"));
                 Jimm.jimm.getContactListRef().activate();
             }
@@ -825,7 +835,7 @@ public class ContactListContactItem extends ContactListItem
 
                     // Assemble the sysNotAction and request it
                     SysNoticeAction sysNotAct = new SysNoticeAction(notice);
-                    UpdateContactListAction updateAct = new UpdateContactListAction(ContactListContactItem.this, true);
+                    UpdateContactListAction updateAct = new UpdateContactListAction(ContactListContactItem.this, true, false);
 
                     try
                     {

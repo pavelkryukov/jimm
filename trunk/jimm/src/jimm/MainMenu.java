@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -270,7 +270,7 @@ public class MainMenu implements CommandListener
                 ContactListGroupItem newGroup = new ContactListGroupItem(uinTextField.getString());
 
                 act1 = null;
-                act2 = new UpdateContactListAction(newGroup, true);
+                act2 = new UpdateContactListAction(newGroup, true, false);
             }
             try
             {
@@ -318,7 +318,7 @@ public class MainMenu implements CommandListener
                 Jimm.display.setCurrent(wait2);
                 
                 // Create and request action to delete the group
-                UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[this.groupList.getSelectedIndex()],false);
+                UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[this.groupList.getSelectedIndex()],false,false);
                 try 
                 {
                     Jimm.jimm.getIcqRef().requestAction(act);

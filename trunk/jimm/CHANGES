@@ -179,5 +179,6 @@ VERSION 0.3.3
   * Free heap mem can be seen at the bottom of about page
   * Name of recipient is shown on top of message edit field
   * On the ChatHistory screen you can now see how many chats are open and in which one you are
+  * Contact names are now also updated on server list if renamed in Jimm
   * Added Ukrainian translation
   
