@@ -114,7 +114,7 @@ public class ChatHistory
           red ? 0xFF0000 : 0xFF, 
           Font.STYLE_BOLD
         );
-        
+
         if (url.length() > 0)
         {
             msgDisplay.addBigText(ResourceBundle.getString("url")+": "+url, 0x00FF00, Font.STYLE_PLAIN);
