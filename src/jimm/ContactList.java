@@ -167,7 +167,11 @@ public class ContactList implements CommandListener {
 		changed = false;
 		// Initialize contact list
 		this.contactList = new List(ResourceBundle.getString("jimm.res.Text", "contact_list"), Choice.IMPLICIT);
+//		#sijapp cond.if mod_TRAF is "true" #
 		this.updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
+//		#sijapp cond.else #
+		this.updateTitle(0);
+//		#sijapp cond.end#
 		this.contactList.addCommand(ContactList.mainMenuCommand);
 		this.contactList.setCommandListener(this);
 
@@ -205,7 +209,11 @@ public class ContactList implements CommandListener {
 	// Request display of the main menu
 	public void activate() {
 		//System.out.println("Show the contact list");
+//		#sijapp cond.if mod_TRAF is "true" #
 		Jimm.jimm.getContactListRef().updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
+//		#sijapp cond.else #
+		this.updateTitle(0);
+//		#sijapp cond.end#
 		if (changed) {
 			this.refreshVisibleList(true);
 		}
@@ -583,6 +591,16 @@ public class ContactList implements CommandListener {
 		return img;
 	}
 
+	//Updates the title of the list
+	public void updateTitle(int traffic){
+		if (traffic != 0)
+			contactList.setTitle(ResourceBundle.getString("jimm.res.Text", "contact_list")+
+			" - " + traffic +  ResourceBundle.getString("jimm.res.Text", "kb")+" - " +Jimm.jimm.getSplashCanvasRef().getDateString(true));
+		else
+		contactList.setTitle(ResourceBundle.getString("jimm.res.Text", "contact_list")+
+					" - " +Jimm.jimm.getSplashCanvasRef().getDateString(true));
+	}
+
 	// Removes a contact list item
 	public synchronized void removeContactItem(ContactListContactItem cItem) {
 
@@ -895,12 +913,6 @@ public class ContactList implements CommandListener {
 		}
 		//printContactList(true);
 		//printContactList(false);
-	}
-
-	//Updates the title of the list
-	public void updateTitle(int traffic){
-		contactList.setTitle(ResourceBundle.getString("jimm.res.Text", "contact_list")+
-		" - " + traffic +  ResourceBundle.getString("jimm.res.Text", "kb")+" - " +Jimm.jimm.getSplashCanvasRef().getDateString(true));
 	}
 
 	// Command listener
