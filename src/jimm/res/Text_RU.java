@@ -49,7 +49,9 @@ public class Text_RU extends ResourceBundle
 		resources.put("async",                       "Асинхронная передача");
 		resources.put("auth",				     	 "Авторизация");
 		resources.put("back",                        "Назад");
+		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Гудок");
+		// #sijapp cond.end #
 		resources.put("byte",                        "Байт");
 		resources.put("cancel",                      "Отмена");
 		resources.put("city",                        "Город");
@@ -132,7 +134,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("prev",						 "Предыдущий");
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Удалить из списка");
-		resources.put("reply",                       "Ответить");
+		resources.put("reply",                       "Ответ");
 		resources.put("requauth",                    "Запрос авторизации");
 		resources.put("requ",                        "Требуется");
 		resources.put("requno",                      "Не требуется");
@@ -167,7 +169,9 @@ public class Text_RU extends ResourceBundle
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Добавить пользователя");
 		resources.put("user_search",                 "Найти пользователя");
+		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Вибрация");
+		// #sijapp cond.end #
 		resources.put("wait",                        "Пожалуйста, ждите ...");
 		resources.put("warning",                     "Предупреждение");
 		resources.put("wantsyourauth",				 " хочет авторизироваться. Причина: ");
@@ -223,8 +227,8 @@ public class Text_RU extends ResourceBundle
 		resources.put("error_160",                   "Ошибка поиска (#160.EXT)");
 
 		// Other errors
-		resources.put("error_160",                   "Возможно, недостаточно памяти (#160.EXT)");
-		resources.put("error_161",                   "Невозможно получить мета информацию (#161.EXT)");
+		resources.put("error_170",                   "Возможно, недостаточно памяти (#160.EXT)");
+		resources.put("error_171",                   "Невозможно получить мета информацию (#161.EXT)");
 
 	}
 

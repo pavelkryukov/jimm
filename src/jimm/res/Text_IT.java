@@ -1,4 +1,4 @@
-/********************************************************************************
+/*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
  Copyright (C) 2003-04  Jimm Project
 
@@ -44,13 +44,15 @@ public class Text_IT extends ResourceBundle
 		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nClient ICQ per Java J2ME\nVersione ###VERSION###\nVedi http://jimm.sourceforge.net/");
 		resources.put("account",                     "Account");
 		resources.put("add_user",                    "Aggiungi Utente");
+		resources.put("add_to_list",                 "Aggiungi alla lista");
+		resources.put("age",                         "Eta'");
 		resources.put("async",                       "Async");
+		resources.put("auth",                        "Autorizzazione");
 		resources.put("back",                        "Indietro");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Beep");
-		// #sijapp cond.end #
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Annulla");
+		resources.put("city",                        "Citta'");
 		resources.put("close",                       "Chiudi");
 		resources.put("conn_type",                   "Tipo di connessione");
 		resources.put("connect",                     "Connettiti");
@@ -60,7 +62,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("cpd",                         "Costo giornaliero");
 		resources.put("cpp",                         "Costo per pacchetto");
 		resources.put("currency",                    "Valuta");
-		resources.put("delete_chat",                 "Cancella chat");
+		resources.put("delete_chat",                 "Cancella");
 		resources.put("deny",						 "Nega Autorizzazione");
 		resources.put("denyedby",					 "La tua richiesta di autorizzazione è stata rifiutata da: ");
 		resources.put("user_menu",                   "Menu Utente");
@@ -71,6 +73,9 @@ public class Text_IT extends ResourceBundle
 		resources.put("email",                       "Email");
 		resources.put("error",                       "Errore");
 		resources.put("exit",                        "Esci");
+		resources.put("female",                      "F");
+		resources.put("firstname",                   "Nome");
+		resources.put("gender",                      "Sesso");
 		resources.put("grant",						 "Concedi Autorizzazione");
 		resources.put("grantedby",					 "La tua richiesta di autorizzazione è stata accettata da:");
 		resources.put("hide_offline",                "Nascondere contatti non connessi");
@@ -80,6 +85,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("keep_conn_alive",             "Mantenere attiva la connessione?");
 		resources.put("keylock_enable",              "Attiva blocco tasti");
 		resources.put("keylock_enabled",             "Blocco tasti attivato");
+		resources.put("keyword",                     "Parola chiave");
 		resources.put("language",                    "Lingua");
 		resources.put("lang_BR",                     "Portugues (Brazil)");
 		resources.put("lang_CZ",                     "Czech");
@@ -90,22 +96,29 @@ public class Text_IT extends ResourceBundle
 		resources.put("lang_LT",                     "Lithuanian");
 		resources.put("lang_RU",                     "Russian");
 		resources.put("lang_SE",                     "Svensk");
+		resources.put("lastname",                    "Cognome");
 		resources.put("loading",                     "Caricamento");
+		resources.put("male",                        "M");
 		resources.put("me",                          "io");
 		resources.put("menu",                        "Menu");
+		resources.put("msg_sound_file_name",         "File Audio per Messaggio");
+		resources.put("message_notification",        "Notifica messaggio");
 		resources.put("message",                     "Messaggio");
 		resources.put("message_from",                "Messaggio da");
-		// #sijapp cond.if target is "SIEMENS" #
-		resources.put("message_notification",        "Notifica messaggio");
-		// #sijapp cond.end #
 		resources.put("name",                        "Nome");
+		resources.put("next",                        "Successivo");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
+		resources.put("no_results",                  "Nessun risultato");
 		resources.put("not_implemented",             "Funzione non ancora implementata.");
 		resources.put("noreason",             		 "Motivo omesso.");
 		resources.put("notice",                      "Avviso");
+		resources.put("nr",                          "N.");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Una volta a sessione");
+		resources.put("onl_notification",            "Notifica contatti in arrivo");
+		resources.put("onl_sound_file_name",         "File Audio per Connessione Contatto");
+		resources.put("only_online",                 "Mostra solo contatti connessi");
 		resources.put("options",                     "Opzioni");
 		resources.put("options_account",             "Account");
 		resources.put("options_cost",                "Costi");
@@ -116,11 +129,15 @@ public class Text_IT extends ResourceBundle
 		resources.put("password",                    "Password");
 		resources.put("plength",                     "Dimensione del pacchetto addebitato in kB");
 		resources.put("plsauthme",                   "Ciao! Per favore autorizzami per aggiungerti alla mia Lista Contatti.");
+		resources.put("prev",                        "Precedente");
 		resources.put("reason",						 "Motivo");
 		resources.put("remove",                      "Rimuovi dalla Lista");
 		resources.put("reply",                       "Rispondi");
 		resources.put("requauth",                    "Chiedi autorizzazione");
+		resources.put("requ",                        "Richiesto");
+		resources.put("requno",                      "Non richiesto");
 		resources.put("reset",                       "Azzera");
+		resources.put("results",                     "Risultati");
 		resources.put("save",                        "Salva");
 		resources.put("search_user",                 "Cerca Utente");
 		resources.put("send",                        "Invia");
@@ -132,8 +149,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("session",                     "Sessione");
 		resources.put("set_status",                  "Imposta stato");
 		resources.put("since",                       "Dal");
-		resources.put("sound",                       "Suono di ICQ");
-		resources.put("sound_file_name",             "Nome del file audio");
+		resources.put("sound",                       "File Audio");
 		resources.put("sort_by",                     "Ordinare lista contatti");
 		resources.put("sort_by_name",                "Per nome");
 		resources.put("sort_by_status",              "Per stato");
@@ -150,10 +166,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Aggiungi utente");
-		resources.put("user_search",                 "Cerca utente");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Vibrazione");
-		// #sijapp cond.end #
 		resources.put("wait",                        "Attendere prego...");
 		resources.put("warning",                     "Attenzione");
 		resources.put("wantsyourauth",				 " vuole la tua Autorizzazione. Motivo: ");
@@ -179,7 +192,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("error_120",                   "Errore di I/O (#120.EXT)");
 		resources.put("error_121",                   "Impossibile effettuare la connessione TCP richiesta (#121.EXT)");
 		resources.put("error_122",                   "Indirizzo e/o porta del server specificati non validi (#122.EXT)");
-		resources.put("error_123",                   "La connessione non è stata stabilita (#123.EXT)");
+		resources.put("error_123",                   "Impossibile stabilire la connessione (#123.EXT)");
 		resources.put("error_124",                   "Il flusso in ingresso è fuori sincronia (#124.EXT)");
 
 		// Parsing specific errors
@@ -201,14 +214,16 @@ public class Text_IT extends ResourceBundle
 		resources.put("error_152",                   "Impossibile interpretare il messaggio di tipo 2 ricevuto (#152.EXT)");
 		resources.put("error_153",                   "Impossibile interpretare il messaggio di tipo 4 ricevuto (#153.EXT)");
 		resources.put("error_154",                   "Aggiornamento della Lista Contatti fallito (#154.EXT)");
-		resources.put("error_155",                   "L'oggetto è già nella tua Lista sul server (#155.EXT)");
+		resources.put("error_155",                   "L'oggetto è già nella Lista sul server (#155.EXT)");
 		resources.put("error_156",                   "Errore durante l'aggiunta (#156.EXT)");
 		resources.put("error_157",                   "Raggiunto limite massimo di elementi per questo tipo (#157.EXT)");
-		resources.put("error_158",                   "Hai provato ad aggiunger un contatto ICQ a una lista AIM (#158.EXT)");
+		resources.put("error_158",                   "Hai provato ad aggiungere un contatto ICQ a una lista AIM (#158.EXT)");
+ 		resources.put("error_159",                   "Nessuna risposta del server circa la ricerca. Riprovare (#159.EXT)");
+ 		resources.put("error_160",                   "Errore durante la ricerca (#160.EXT)");
 
 		// Other errors
-		resources.put("error_160",                   "Probabile insufficienza di memoria heap disponibile (#160.EXT)");
-		resources.put("error_161",                   "Impossibile leggere le metainfo (#161.EXT)");
+		resources.put("error_170",                   "Probabile insufficienza di memoria heap disponibile (#160.EXT)");
+		resources.put("error_171",                   "Impossibile leggere le metainfo (#161.EXT)");
 
 	}
 
