@@ -564,6 +564,19 @@ public class ContactList implements CommandListener
         sortAll();
         tree.unlock();
         Jimm.display.setCurrent(this.tree);
+
+        // play sound notifications after connecting 
+        if (needPlayOnlineNotif)
+        {
+        	needPlayOnlineNotif = false;
+        	playSoundNotivication(SOUND_TYPE_ONLINE);
+        }
+        
+        if (needPlayMessNotif)
+        {
+        	needPlayMessNotif = false;
+        	playSoundNotivication(SOUND_TYPE_MESSAGE);
+        }
     }
     
     // is called by options form when options changed
@@ -1114,6 +1127,15 @@ public class ContactList implements CommandListener
         System.out.println("update: back form msg display");
         System.out.println("THIS IS EMPTY METHOD!!!");
     }
+    
+    boolean 
+		needPlayOnlineNotif = false, 
+		needPlayMessNotif = false; 
+    
+    private boolean isNowConnecting()
+    {
+    	return !treeBuilded; // TODO: make true connecting mode check!!!!!!!
+    }
 
     // Updates the client-side contact list (called when a contact changes
     // status)
@@ -1150,8 +1172,13 @@ public class ContactList implements CommandListener
         }
 
         // Play sound notice if selected
-        if (status == STATUS_ONLINE)
-            this.playSoundNotivication(SOUND_TYPE_ONLINE);
+        if (trueStatus == STATUS_ONLINE)
+        {
+            if ( !isNowConnecting() ) 
+            	this.playSoundNotivication(SOUND_TYPE_ONLINE);
+            else
+            	needPlayOnlineNotif |= true;
+        }
 
         // Update visual list
         if (statusChanged) contactChanged
@@ -1182,8 +1209,13 @@ public class ContactList implements CommandListener
         cItem.setCapabilities(capabilities);
 
         // Play sound notice if selected
-        if (status == STATUS_ONLINE)
-            this.playSoundNotivication(SOUND_TYPE_ONLINE);
+        if (trueStatus == STATUS_ONLINE)
+        {
+            if ( !isNowConnecting() ) 
+            	this.playSoundNotivication(SOUND_TYPE_ONLINE);
+            else
+            	needPlayOnlineNotif |= true;
+        }
 
         // Update visual list
         if (statusChanged) contactChanged
@@ -1308,8 +1340,10 @@ public class ContactList implements CommandListener
 
         // Notify splash canvas
         Jimm.jimm.getSplashCanvasRef().messageAvailable();
+        
         // Notify user
-        this.playSoundNotivication(SOUND_TYPE_MESSAGE);
+        if ( isNowConnecting() ) needPlayMessNotif |= true;
+        else this.playSoundNotivication(SOUND_TYPE_MESSAGE);
         
         // Update tree
         contactChanged(cItem, true, false, false);
@@ -1318,6 +1352,8 @@ public class ContactList implements CommandListener
     // Play a sound notification
     private void playSoundNotivication(int notType)
     {
+    	if (!treeBuilded) return;
+    	
         // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
         
         // #sijapp cond.if target is "SIEMENS"#
