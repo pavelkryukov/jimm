@@ -42,18 +42,18 @@ PACKAGE CONTENTS
   |   |   '- [List of included languages]
   |   |        |- Jimm.jar (obfuscated Java archive)
   |   |        '- Jimm.jad (archive descriptor)
-  |   |- SIEMENS
+  |   |- MIDP2
   |   |   '- [List of included languages]
-  |   |        |- Jimm.jar (obfuscated Java archive, Siemens mobiles only)
-  |   |        '- Jimm.jad (archive descriptor, Siemens mobiles only)
+  |   |        |- Jimm.jar (obfusc. Java archive, MIDP2 compatible mobiles only)
+  |   |        '- Jimm.jad (archive descriptor, MIDP2 compatible mobiles only)
   |   |- RIM
   |   |   '- [List of included languages]
   |   |        |- Jimm.jar (obfuscated Java archive, RIM mobiles only)
   |   |        '- Jimm.jad (archive descriptor, RIM mobiles only)
-  |   '- MIDP2
+  |   '- SIEMENS
   |       '- [List of included languages]
-  |            |- Jimm.jar (obfusc. Java archive, MIDP2 compatible mobiles only)
-  |            '- Jimm.jad (archive descriptor, MIDP2 compatible mobiles only)
+  |            |- Jimm.jar (obfuscated Java archive, Siemens mobiles only)
+  |            '- Jimm.jad (archive descriptor, Siemens mobiles only)
   |- res
   |   |- MANIFEST.MF
   |   '- [Target]
@@ -97,7 +97,7 @@ On Siemens S55 mobiles there are the following graphical errors:
     run stable with less than 40 contacts.
   * The background of the flowers if there is an active chat is no longer
     transparent.
-  
+
 On Nokia 6230 with FW > 3.15 you have to set "Communication-Network access" for
 Jimm to "Ask everytime". When the phone asks you to accept the connection the
 second time just wait about 5 seconds till the GRPS connection is ready for the
@@ -110,36 +110,36 @@ Jimm uses Apache Ant for building. You can download Apache Ant from
 <http://ant.apache.org/>. Follow the instructions in the Apache Ant manual to
 install Apache Ant.
 
-You also must have a Java 2 Platform Standard Edition (J2SE) SDK.
-Depending on the version you want to build you also need the following:
+You also must have a Java 2 Platform Standard Edition (J2SE) SDK. Depending on
+the selected target you also need the following:
 
-  * Default version: MIDP Reference Implementation (RI) 1.0.3
-      <http://java.sun.com/>
-  * MIDP2 version: MIDP Reference Implementation (RI) 2.0
-      <http://java.sun.com/>
-  * Siemens version: Latest version of the Siemens Mobility Toolkit (SMTK)
+  * DEFAULT target: MIDP Reference Implementation (RI) 1.0.3
+      <http://java.sun.com/j2me/>
+  * MIDP2 target: MIDP Reference Implementation (RI) 2.0
+      <http://java.sun.com/j2me/>
+  * RIM target: Latest version of the Blackberry SDK
+      <http://www.blackberry.com/developers/>
+  * SIEMENS target: Latest version of the Siemens Mobility Toolkit (SMTK)
       <http://communication-market.siemens.de/>
-  * RIM version: Latest version of the Blackberry SDK
-      <http://www.blackberry.net>
 		
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
 instructions in the ProGuard manual to install ProGuard.
 
-At first, open the Apache ant buildfiles (build.xml, util/sijapp/build.xml)
-and change the properties in the configuration/customization section. You can
-use both the slash and the backslash for separating path components.
+At first, open the Apache ant buildfile (build.xml) and change the properties in
+the configuration/customization section. You can use both the slash and the
+backslash for separating path components.
 
-If you are using the Sun WirelessToolkit newer than 2.0 you have to join the 
-midpapi20.jar or midpapi10.jar file with the corresponding cldcapi1x.jar file. 
-If you want to build the MIDP2 target you also have to include the content of 
-mmapi.jar in the main .jar archive you link to in the path you entered in 
-build.xml 
+If you are using the J2ME Wireless Toolkit 2.0 (or later) from Sun, you have to
+join the midpapi20.jar or midpapi10.jar file with the corresponding
+cldcapi1x.jar file. If you want to build the MIDP2 target, you also have to
+include the contents of mmapi.jar in the main .jar archive you link to in the
+path you entered in build.xml
 
-To build Jimm, just type 'ant' or 'ant dist'. To disable class file
-obfuscation, add '-Dskip-obfuscate=1' to the before mentioned command. If
-everything goes well, look at the newly created directory dist/bin for
-Jimm.jar and Jimm.jad files.
+To build Jimm, just type 'ant' or 'ant dist'. To disable class file obfuscation,
+add '-Dskip-obfuscate=1' to the before mentioned command. If everything goes
+well, look at the newly created directory dist/bin for Jimm.jar and Jimm.jad
+files.
 
 To clean the distribution, type 'ant clean'.
 
