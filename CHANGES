@@ -167,5 +167,6 @@ VERSION 0.3.2
   * BUGFIX: Sending messages was not possible after renaming a contact
   * BUGFIX: Time bug (hopefully) fixed
   * ContactList title is now different depending on the length of the word "list"
+  * Options subpages now have a back button so you can go back without saving
   * Added Polish translation
   
