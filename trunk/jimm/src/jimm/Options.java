@@ -96,6 +96,7 @@ public class Options
 	public static final int OPTION_COST_PACKET_LENGTH             =  70;   /* int     */
 	public static final int OPTION_CURRENCY                       =   6;   /* String  */
 	public static final int OPTION_ONLINE_STATUS                  = 192;   /* long    */
+	public static final int OPTION_CHAT_SMALL_FONT                = 134;   /* boolean */
 
 
 	/**************************************************************************/
@@ -157,11 +158,12 @@ public class Options
 			this.setIntOption    (Options.OPTION_COST_PACKET_LENGTH,             1024);
 			this.setStringOption (Options.OPTION_CURRENCY,                       "$");
 			this.setLongOption   (Options.OPTION_ONLINE_STATUS,                  ContactList.STATUS_ONLINE);
+			
+			this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
 		}
 
 		// Construct option form
 		this.optionsForm = new OptionsForm();
-
 	}
 
 
@@ -385,7 +387,7 @@ public class Options
 		private TextField costPacketLengthTextField;
 		private TextField currencyTextField;
 		// #sijapp cond.end#
-
+		private ChoiceGroup useSmallFont;
 
 		// Constructor
 		public OptionsForm()
@@ -458,18 +460,22 @@ public class Options
 			this.cp1251HackChoiceGroup = new ChoiceGroup(ResourceBundle.getString("cp1251"), Choice.MULTIPLE);
 			this.cp1251HackChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.cp1251HackChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CP1251_HACK));
+			this.useSmallFont = new ChoiceGroup(ResourceBundle.getString("chat_small_font"), Choice.MULTIPLE);
+			this.useSmallFont.append(ResourceBundle.getString("yes"), null);
+			this.useSmallFont.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT));
+			
 			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
 			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
 			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
 			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
-			this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
+			this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE), true);
 			this.onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("onl_sound_file_name"), Options.this.getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);		
 			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("message_notification"), Choice.EXCLUSIVE);
 			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
 			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
 			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
-			this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE), true);
+			this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
 			this.messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.this.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
 			// #sijapp cond.end#
 			// #sijapp cond.if target is "RIM"#
@@ -538,6 +544,7 @@ public class Options
 						this.optionsForm.append(this.clHideOfflineChoiceGroup);
 						this.optionsForm.append(this.keepchatChoiceGroup);
 						this.optionsForm.append(this.cp1251HackChoiceGroup);
+						this.optionsForm.append(this.useSmallFont);
 						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
 						this.optionsForm.append(this.messageNotificationSoundfileTextField);
@@ -632,6 +639,7 @@ public class Options
 						// #sijapp cond.end#
 						Options.this.setBooleanOption(Options.OPTION_KEEPCHAT,this.keepchatChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CP1251_HACK,this.cp1251HackChoiceGroup.isSelected(0));
+						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.useSmallFont.isSelected(0));
 						Jimm.jimm.getContactListRef().sortAll();
 						break;
 					// #sijapp cond.if modules_TRAFFIC is "true" #

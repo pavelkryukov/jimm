@@ -176,6 +176,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("whichgroup",				 	 "Which group?");
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
+		resources.put("chat_small_font",			 "Small font in chat");
 
 		// Generic errors
 		resources.put("error_100",                   "Unknown error (#100.EXT)");

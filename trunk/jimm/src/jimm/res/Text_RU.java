@@ -175,6 +175,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("whichgroup",				 	 "В какой группе?");
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Вас добавил: ");
+		resources.put("chat_small_font",             "Мелкий шрифт в чате");
 
 		// Generic errors
 		resources.put("error_100",                   "Неизвестная ошибка (#100.EXT)");

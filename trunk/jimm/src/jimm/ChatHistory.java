@@ -19,6 +19,7 @@
  File: src/jimm/ChatHistory.java
  Version: ###VERSION###  Date: ###DATE###
  Author(s): Andreas Rossbacher
+            Artyomov Denis (text chat)
  *******************************************************************************/
 
 package jimm;
@@ -28,6 +29,8 @@ import java.util.Date;
 import java.util.Vector;
 import javax.microedition.lcdui.Font;
 
+import jimm.Jimm;
+import jimm.Options;
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.SystemNotice;
@@ -40,6 +43,7 @@ import DrawControls.TextList;
 public class ChatHistory
 {
     private Vector historyVector;
+	private Options options;
     
     public ChatHistory()
     {
@@ -103,6 +107,8 @@ public class ChatHistory
         TextList msgDisplay = (TextList) historyVector.elementAt(nr);
         int color, lastSize;
         
+		
+		
         Calendar stamp = Calendar.getInstance();
         stamp.setTime(time);
         
@@ -184,11 +190,11 @@ public class ChatHistory
                               TextList.getDefCapColor(),
                               TextList.getDefCapFontColor(),
                               TextList.getDefBackColor(),
-                              TextList.SMALL_FONT,
+							  Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CHAT_SMALL_FONT) 
+							    ? TextList.SMALL_FONT : TextList.MEDIUM_FONT,
                               TextList.SEL_NONE
                             );
         historyVector.addElement(chatForm);
         return historyVector.size()-1;
     }
-
 }
