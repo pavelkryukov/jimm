@@ -266,9 +266,15 @@ public class ContactListContactItem extends ContactListItem
 			   temporary; 
     }
     
+    // Returns total count of all unread messages (messages, sys notices, urls, auths)
+    protected int getUnreadMessCount()
+    {
+    	return plainMessages+urlMessages+sysNotices+authRequest;
+    }
+    
     public int getTextColor()
     {
-    	return temporary ? 0x808080 : 0x000000; 
+    	return temporary ? 0x808080 : 0x000000;
     }
 
     // Returns imaghe index for contact

@@ -35,7 +35,7 @@ public class DebugLog
       list.setTitle("Debug log");
       list.setFullScreenMode(false);
 //#sijapp cond.else#
-      list.setCaption("Ddebug log");
+      list.setCaption("Debug log");
 //#sijapp cond.end#
       
   }
