@@ -51,8 +51,8 @@ public class Text_RU extends ResourceBundle
                                            resources.put("menu_button", "     Меню");
                                            resources.put("save",                        "Сохранить ");
                                            resources.put("ok",                          "OK       ");
-                                           resources.put("reply",                       "Ответ    ");
-                                           resources.put("close",                       "  Закрыть");
+                                           resources.put("reply",                       "Ответ      ");
+                                           resources.put("close",                       "    Закрыть");
                                           // #sijapp cond.else#
 		resources.put("select",                      "Выбрать");
                                            resources.put("reset",                       "Сброс");
@@ -78,7 +78,6 @@ public class Text_RU extends ResourceBundle
 		
 		resources.put("city",                        "Город");
 		resources.put("clear",                       "Стереть всё");
-		resources.put("close",                       "Закрыть");
 		resources.put("conn_type",                   "Тип подключения");
 		resources.put("con_wait",                    "Задержка между подключениями (секунд)");
 		resources.put("connect",                     "Подключиться");
