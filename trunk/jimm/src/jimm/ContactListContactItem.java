@@ -527,6 +527,8 @@ public class ContactListContactItem extends ContactListItem
             // User wants to rename Contact
             else if (c == MenuUtil.renameOkCommand)
             {
+                MenuUtil.messageTextbox.removeCommand(MenuUtil.renameOkCommand);
+                MenuUtil.messageTextbox.addCommand(MenuUtil.textboxOkCommand);
                 ContactListContactItem.this.setName(MenuUtil.messageTextbox.getString());
                 try 
                 {
