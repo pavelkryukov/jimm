@@ -55,7 +55,7 @@ public class MainMenu implements CommandListener
     // Select command
     private static Command selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
 
-// #sijapp cond.if lang_RU is "true | lang_EN is true #
+// #sijapp cond.if lang_RU is "true" | lang_EN is "true" #
 
     private static Command exitCommand = new Command(ResourceBundle.getString("send_button"), Command.EXIT, 1);
 
