@@ -66,11 +66,11 @@ public class SearchAction extends Action
     private Date lastActivity = new Date();
     
     // Excpetion handeled;
-    private boolean handeled;
+    private boolean handeld;
     
     public SearchAction(Search _cont){
         cont = _cont;
-        handeled = false;
+        handeld = false;
     }
 
     // Returns true if the action can be performed
@@ -298,7 +298,7 @@ public class SearchAction extends Action
     // Return if exception already handeled
     public boolean excepHandled()
     {
-    	return handeled;
+    	return handeld;
     }
 
     // Returns true if the action is completed
@@ -308,19 +308,21 @@ public class SearchAction extends Action
     }
 
     // Returns true if an error has occured
-    public boolean isError()
+    public synchronized boolean isError()
     {
         if ((this.state != ConnectAction.STATE_ERROR) && (this.lastActivity.getTime() + SearchAction.TIMEOUT < System.currentTimeMillis()))
         {
+            cont.getSearchForm().activate(false);
+            Thread.yield();
             if (this.state == STATE_FIRSTRESULT_RECEIVED)
             {
             	JimmException.handleException(new JimmException(159, 0, true));
-            	handeled = true;
+            	handeld = true;
             }
             else
             {
             	JimmException.handleException(new JimmException(159, 1, true));
-            	handeled = true;
+            	handeld = true;
             }
             this.state = ConnectAction.STATE_ERROR;
         }
