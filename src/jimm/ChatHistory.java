@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/ChatHistory.java
  Version: 0.2.2  Date: 2004/07/12
- Author(s): Andreas Rossbacher
+ Author(s): Andreas Rossbacher, Artyomov Denis
  *******************************************************************************/
 
 package jimm;
@@ -68,7 +68,6 @@ class ChatTextList extends TextList
 		}
 		
 	}
-	
 }
 
 public class ChatHistory
