@@ -171,7 +171,7 @@ public class ActionListener
                     marker += 2 + 2 + tlvData.length;
                 }
 
-                 // Update contact list
+                // Update contact list
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                 Jimm.jimm.getContactListRef().update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie);
                 // #sijapp cond.else#
@@ -548,7 +548,7 @@ public class ActionListener
                         msg2Marker += textLen;
 
                         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-                       // #sijapp cond.if modules_FILES is "true"#
+                        // #sijapp cond.if modules_FILES is "true"#
                         // File transfer message
                         if (plugin.equals("File") && Jimm.jimm.getSplashCanvasRef().isShown())
                         {
@@ -614,7 +614,7 @@ public class ActionListener
                         // URL message
                         else 
                         // #sijapp cond.end#
-                         // #sijapp cond.end#
+                        // #sijapp cond.end#
                         if (plugin.equals("Send Web Page Address (URL)"))
                         {
 

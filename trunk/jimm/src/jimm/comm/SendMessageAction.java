@@ -132,16 +132,16 @@ public class SendMessageAction extends Action
     // Get receiver object
     ContactListContactItem rcvr;
         
-     // #sijapp cond.if modules_FILES is "true"# 
+    // #sijapp cond.if modules_FILES is "true"# 
       if (this.plainMsg != null)
           rcvr = this.plainMsg.getRcvr();
       else
           rcvr = this.fileTrans.getRcvr();
      
-     // #sijapp cond.else#
+    // #sijapp cond.else#
      rcvr = this.plainMsg.getRcvr();
      
-     // #sijapp cond.end#
+    // #sijapp cond.end#
     // What message format/encoding should we use?
     int type = 1;
  
@@ -153,13 +153,13 @@ public class SendMessageAction extends Action
      {
        type = 2;
      }
-     // #sijapp cond.end#
+    // #sijapp cond.end#
     // #sijapp cond.else#
      if (!utf8  && ((rcvr.getStatus() != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL)))
      {
        type = 2;
      }
-     // #sijapp cond.end#
+    // #sijapp cond.end#
      
 //     if (utf8)
 //     {
@@ -180,7 +180,7 @@ public class SendMessageAction extends Action
     {
 
       // System.out.println("Send TYPE 1");
-        // Get UIN
+      // Get UIN
       byte[] uinRaw = Util.stringToByteArray(rcvr.getUin());
 
       // Get text
@@ -276,7 +276,7 @@ public class SendMessageAction extends Action
             filenameRaw = Util.stringToByteArray(this.fileTrans.getFilename());
         }
         // #sijapp cond.end#
-       // #sijapp cond.else#
+        // #sijapp cond.else#
         textRaw = Util.stringToByteArray(this.plainMsg.getText());
     	filenameRaw = new byte[0];
         // #sijapp cond.end#
@@ -299,7 +299,7 @@ public class SendMessageAction extends Action
             p_sz = 192 + uinRaw.length + textRaw.length + filenameRaw.length+1;
         }
         // #sijapp cond.end#
-       // #sijapp cond.else#
+        // #sijapp cond.else#
         p_sz = 163 + uinRaw.length + textRaw.length;
         // #sijapp cond.end#
         
@@ -368,7 +368,7 @@ public class SendMessageAction extends Action
         marker += 4;
         
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-         // #sijapp cond.if modules_FILES is "true"#
+        // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans != null) 
         {
             // Set TLV 0x03 (IP)
@@ -384,13 +384,13 @@ public class SendMessageAction extends Action
             marker+=6;
         }
         // #sijapp cond.end#
-         // #sijapp cond.end#  
+        // #sijapp cond.end#  
         // Set TLV 0x2711
         Util.putWord(buf,marker, 0x2711); 
         marker += 2;
         
         // Length of TLV2711 differs betweeen normal message and file requst
-       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
         // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans == null) 
         {
@@ -400,7 +400,7 @@ public class SendMessageAction extends Action
         {
             Util.putWord(buf, marker, 119 + textRaw.length + filenameRaw.length+1);
         }
-         // #sijapp cond.end#
+        // #sijapp cond.end#
         // #sijapp cond.else#
         Util.putWord(buf, marker, 104+textRaw.length, true);
         // #sijapp cond.end#
@@ -438,7 +438,7 @@ public class SendMessageAction extends Action
             Util.putDWord(buf,marker, 0x00000000);
         else
             Util.putDWord(buf,marker, 0x00000004);
-         // #sijapp cond.end#
+        // #sijapp cond.end#
         // #sijapp cond.else#
         Util.putDWord(buf,marker, 0x00000000);
         // #sijapp cond.end#
@@ -461,8 +461,8 @@ public class SendMessageAction extends Action
         marker +=4;
         
         // Put message type 0x01 if normal message else 0x1a for file request
-       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-       // #sijapp cond.if modules_FILES is "true"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans == null) 
             Util.putByte(buf, marker, 0x01); 
         else

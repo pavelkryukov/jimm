@@ -70,7 +70,7 @@ public class FileTransferMessage extends Message
         return file.length;
     }
 
-    // Is another segmen available?
+    // Is another segment available?
     public boolean segmentAvail(int i)
     {
         return (i <= (file.length / 2048));

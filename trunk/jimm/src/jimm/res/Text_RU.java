@@ -37,33 +37,31 @@ public class Text_RU extends ResourceBundle
 
 	public Text_RU()
 	{
-
 		// Labels
 
-
 		// MOTOROLA formatted buttons
-                                          // #sijapp cond.if target is "MOTOROLA"#
+        // #sijapp cond.if target is "MOTOROLA"#
 		resources.put("select",                      "Выбор     ");
-                                           resources.put("reset",                       "  Сброс");
-                                           resources.put("cancel",                      "    Отмена");
-                                           resources.put("exit_button",                        "     Выход");
-                                           resources.put("back", "     Назад");
-                                           resources.put("menu_button", "     Меню");
-                                           resources.put("save",                        "Сохранить ");
-                                           resources.put("ok",                          "OK       ");
-                                           resources.put("reply",                       "Ответ      ");
-                                           resources.put("close",                       "    Закрыть");
-                                          // #sijapp cond.else#
+        resources.put("reset",                       "  Сброс");
+        resources.put("cancel",                      "    Отмена");
+        resources.put("exit_button",                 "     Выход");
+        resources.put("back",                        "     Назад");
+        resources.put("menu_button",                 "     Меню");
+        resources.put("save",                        "Сохранить ");
+        resources.put("ok",                          "OK       ");
+        resources.put("reply",                       "Ответ      ");
+        resources.put("close",                       "    Закрыть");
+        // #sijapp cond.else#
 		resources.put("select",                      "Выбрать");
-                                           resources.put("reset",                       "Сброс");
-                                           resources.put("cancel",                      "Отмена");
-                                           resources.put("back", "Назад");
-                                           resources.put("save",                        "Сохр.");
-                                           resources.put("ok",                          "OK");
-                                           resources.put("reply",                       "Ответ");
-                                           resources.put("close",                       "Закрыть");
-                                          // #sijapp cond.end#
-                                           resources.put(".",                           ".");
+        resources.put("reset",                       "Сброс");
+        resources.put("cancel",                      "Отмена");
+        resources.put("back", "Назад");
+        resources.put("save",                        "Сохр.");
+        resources.put("ok",                          "OK");
+        resources.put("reply",                       "Ответ");
+        resources.put("close",                       "Закрыть");
+        // #sijapp cond.end#
+        resources.put(".",                           ".");
 		resources.put("about",                       "О программе");
 		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\n http://www.jimm.org/");
 		resources.put("account",                     "Учетная запись");
@@ -75,7 +73,6 @@ public class Text_RU extends ResourceBundle
 		resources.put("auto_connect",				 "Подключаться автоматически");
 		resources.put("beep",                        "Гудок");
 		resources.put("byte",                        "Байт");
-		
 		resources.put("city",                        "Город");
 		resources.put("clear",                       "Стереть всё");
 		resources.put("conn_type",                   "Тип подключения");
@@ -89,7 +86,6 @@ public class Text_RU extends ResourceBundle
 		resources.put("currency",                    "Валюта");
 		resources.put("del_group",                   "Удалить группу");
 		resources.put("delete_chat",                 "Удалить чат");
-
 		resources.put("deny",						 "Отклонить авторизацию");
 		resources.put("denyedby",					 "Ваш запрос на авторизацию отклонил: ");
 		resources.put("description",                 "Описание");
@@ -103,14 +99,12 @@ public class Text_RU extends ResourceBundle
 		resources.put("error",                       "Ошибка");
 		resources.put("exit",                        "Выход");
 		resources.put("female",                      "Ж");
-		
 		resources.put("filename",                    "Имя файла");
 		resources.put("filetransfer",                "Передача файла");
 		resources.put("filepath",                    "Путь к файлу");
 		resources.put("find",                        "Поиск");
 		resources.put("ft_name",                     "Послать файл");		
 		resources.put("ft_cam",                      "Послать фото с камеры");		
-		
 		resources.put("firstname",                   "Имя");
 		resources.put("free_heap",                   "Свободная память");
 		resources.put("gender",                      "Пол");
@@ -162,8 +156,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("not_implemented",             "Функция не поддерживается");
 		resources.put("noreason",             		 "Причина не дана");
 		resources.put("notice",                      "Уведомление");
-		resources.put("nr",				     		 "Номер");
-		
+		resources.put("nr",				     		 "Номер");	
 		resources.put("once_a_session",              "Один раз за сессию");
 		resources.put("onl_notification",            "Информировать о подключившемся контакте");
 		resources.put("onl_sound_file_name",         "Файл звука подключения");
@@ -183,14 +176,11 @@ public class Text_RU extends ResourceBundle
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Удалить из списка");
 		resources.put("rename",                      "Переименовать");
-		
 		resources.put("requauth",                    "Запрос авторизации");
 		resources.put("requ",                        "Требуется");
 		resources.put("requno",                      "Не требуется");
-		
 		resources.put("res",                         "Разрешение");
-		resources.put("results",                     "Результаты");
-		
+		resources.put("results",                     "Результаты");		
 		resources.put("search_user",                 "Найти пользователя");
 		resources.put("send",                        "Отправить");
 		resources.put("send_message",                "Новое сообщение");
@@ -230,13 +220,8 @@ public class Text_RU extends ResourceBundle
 		resources.put("whichgroup",				 	 "В какой группе?");
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Вас добавил: ");
-		resources.put("chat_small_font",             "Мелкий шрифт в чате");
-                                          
-
-                                           
-		
-                                           resources.put("use_history",                 "Хранить историю сообщений");
-		
+		resources.put("chat_small_font",             "Мелкий шрифт в чате");                                          
+        resources.put("use_history",                 "Хранить историю сообщений");
 		resources.put("attention",                   "Внимание!"); 
 		resources.put("have_unread_mess",            "У Вас остались непрочитанные сообщения. Выйти из программы?");
 		

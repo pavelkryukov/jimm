@@ -38,29 +38,29 @@ public class Text_EN extends ResourceBundle
 	public Text_EN()
 	{
 
-		// Labels
-                                          //MOTOROLA formatted buttons
-                                          // #sijapp cond.if target is "MOTOROLA"#
-                                          resources.put("select",                     "Select    ");
-                                          resources.put("reset",                       "     Reset");
-                                          resources.put("cancel",                    "    Cancel");
-                                          resources.put("back",                       "      Back");
-                                          resources.put("exit_button",            "       Exit");
-                                          resources.put("menu_button",        "      Menu");
-                                          resources.put("save",                       "Save      ");
-                                          resources.put("ok",                            "OK        ");
-                                          resources.put("reply",                       "Reply    ");
-                                           resources.put("close",                       "   Close");
-                                           // #sijapp cond.else#
-                                          resources.put("reply",                       "Reply");
-                                          resources.put("close",                       "Close");
-                                           resources.put("select",                      "Select");
-                                           resources.put("reset",                       "Reset");
-                                           resources.put("cancel",                        "Cancel");
-                                           resources.put("back",                        "Back");
-                                           resources.put("save",                        "Save");
-                                           resources.put("ok",                          "OK");
-		 // #sijapp cond.end#
+        // Labels
+        // MOTOROLA formatted buttons
+        // #sijapp cond.if target is "MOTOROLA"#
+        resources.put("select",                      "Select    ");
+        resources.put("reset",                       "     Reset");
+        resources.put("cancel",                      "    Cancel");
+        resources.put("back",                        "      Back");
+        resources.put("exit_button",                 "       Exit");
+        resources.put("menu_button",                 "      Menu");
+        resources.put("save",                        "Save      ");
+        resources.put("ok",                          "OK        ");
+        resources.put("reply",                       "Reply    ");
+        resources.put("close",                       "   Close");
+        // #sijapp cond.else# 
+        resources.put("reply",                       "Reply");
+        resources.put("close",                       "Close");
+        resources.put("select",                      "Select");
+        resources.put("reset",                       "Reset");
+        resources.put("cancel",                      "Cancel");
+        resources.put("back",                        "Back");
+        resources.put("save",                        "Save");
+        resources.put("ok",                          "OK");
+    	// #sijapp cond.end#
 
                                           
 		resources.put(".",                           ".");
