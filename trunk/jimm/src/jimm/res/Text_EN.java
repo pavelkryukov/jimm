@@ -83,6 +83,7 @@ public class Text_EN extends ResourceBundle
     resources.put("lang_ES",                     "Spanish");
     resources.put("lang_RU",                     "Russian");
     resources.put("lang_SE",                     "Swedish");
+	resources.put("lang_LT",                     "Lithuanian");
     resources.put("loading",                     "Loading");
     resources.put("me",                          "me");
     resources.put("menu",                        "Menu");
