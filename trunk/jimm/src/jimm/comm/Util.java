@@ -79,12 +79,14 @@ public class Util
 		String datestr = new String("failed");
 		if (TimeZone.getDefault().useDaylightTime())
 		{
-			datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+			datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)+1) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
 		}
 		else
 		{
-			datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)+1) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+			datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
 		}
+		if (datestr.substring(0,1) == "24")
+		    datestr = "00"+ datestr.substring(2);
 		if (!onlyTime)
 		{
 			datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
