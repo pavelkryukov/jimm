@@ -523,7 +523,6 @@ public class ContactListContactItem extends ContactListItem
                 // Reset and display textbox for entering messages
                 MenuUtil.messageTextbox.setString(null);
                 MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
-                MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxOkCommand);
                 MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                 MenuUtil.messageTextbox.setCommandListener(this);
                 Jimm.display.setCurrent(MenuUtil.messageTextbox);
@@ -540,7 +539,6 @@ public class ContactListContactItem extends ContactListItem
             else if (c == MenuUtil.renameOkCommand)
             {
                 MenuUtil.messageTextbox.removeCommand(MenuUtil.renameOkCommand);
-                MenuUtil.messageTextbox.addCommand(MenuUtil.textboxOkCommand);
                 ContactListContactItem.this.setName(MenuUtil.messageTextbox.getString());
                 try 
                 {
@@ -575,7 +573,6 @@ public class ContactListContactItem extends ContactListItem
                     // Reset and display textbox for entering messages
                     MenuUtil.messageTextbox.setString(null);
                     MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
-                    MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxOkCommand);
                     MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
@@ -586,7 +583,6 @@ public class ContactListContactItem extends ContactListItem
             	{
                     // Reset and display textbox for entering messages
                     MenuUtil.messageTextbox.setString(null);
-                    MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.messageTextbox.addCommand(MenuUtil.textboxOkCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
@@ -692,7 +688,6 @@ public class ContactListContactItem extends ContactListItem
                     // Reset and display textbox for entering name
                     MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("rename"));
                     MenuUtil.messageTextbox.setString(ContactListContactItem.this.getName());
-                    MenuUtil.messageTextbox.removeCommand(MenuUtil.backCommand);
                     MenuUtil.messageTextbox.addCommand(MenuUtil.renameOkCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
@@ -717,6 +712,8 @@ public class ContactListContactItem extends ContactListItem
                 // Message has been entered
                 if (d == MenuUtil.messageTextbox)
                 {
+                    MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxOkCommand);
+                    MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxSendCommand);
                     
                     // Abort if nothing has been entered
                     if (MenuUtil.messageTextbox.getString().length() < 1)
@@ -728,8 +725,7 @@ public class ContactListContactItem extends ContactListItem
                     if ((MenuUtil.menuList.getSelectedIndex() == MenuUtil.send_message_idx) 
                     		&& !MenuUtil.messageTextbox.getString().equals(""))
                     {
-                        // Construct plain message object and request new
-                        // SendMessageAction
+                        // Construct plain message object and request new SendMessageAction
                         // Add the new message to the chat history
                         PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
                                 ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
