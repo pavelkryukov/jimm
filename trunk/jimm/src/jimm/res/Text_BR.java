@@ -69,16 +69,18 @@ public class Text_BR extends ResourceBundle
     resources.put("hide_offline",                "Esconder contatos desconectados");
     resources.put("info",                        "Info");
     resources.put("kb",                          "kB");
+    resources.put("keep_chat",                   "Keep chat histroy?");
     resources.put("keep_conn_alive",             "manter conexão viva?");
     resources.put("keylock_enable",              "Habilitar keylock");
     resources.put("keylock_enabled",             "Keylock habilitado");
     resources.put("language",                    "Linguagem");
-    resources.put("lang_EN",                     "Inglês");
-    resources.put("lang_DE",                     "Alemão");
-    resources.put("lang_RU",                     "Russo");
-    resources.put("lang_ES",                     "Espanhol");
     resources.put("lang_BR",                     "Português (Brasil)");
-	resources.put("lang_SE",                     "Svenska");
+    resources.put("lang_CZ",                     "Tcheco");
+    resources.put("lang_DE",                     "Alemão");
+    resources.put("lang_EN",                     "Inglês");
+    resources.put("lang_ES",                     "Espanhol");
+    resources.put("lang_RU",                     "Russo");
+    resources.put("lang_SE",                     "Sueco");
     resources.put("loading",                     "Carregando");
     resources.put("me",                          "eu");
     resources.put("menu",                        "Menu");
@@ -118,6 +120,7 @@ public class Text_BR extends ResourceBundle
     resources.put("set_status",                  "Colocar status");
     resources.put("since",                       "Desde");
     resources.put("sound",                       "Som do ICQ");
+    resources.put("sound_file_name",             "Sound File Name");
     resources.put("sort_by",                     "Ordernar lista de contatos");
     resources.put("sort_by_name",                "Por nome");
     resources.put("sort_by_status",              "Por status");
@@ -193,4 +196,3 @@ public class Text_BR extends ResourceBundle
 
 
 // #sijapp cond.end #
-

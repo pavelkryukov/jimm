@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
  Copyright (C) 2003-04  Manuel Linsmayer
 
@@ -68,19 +68,19 @@ public class Text_CZ extends ResourceBundle
     resources.put("exit",                        "Konec");
     resources.put("hide_offline",                "Skrýt odpojené kontakty");
     resources.put("info",                        "Info");
-    resources.put("keep_chat",                   "Zaznamenávat historii?");
     resources.put("kb",                          "kB");
+    resources.put("keep_chat",                   "Zaznamenávat historii?");
     resources.put("keep_conn_alive",             "Udržovat spojení?");
     resources.put("keylock_enable",              "Blokování kláves");
     resources.put("keylock_enabled",             "Klávesy blokovány");
     resources.put("language",                    "Jazyk");
-    resources.put("lang_EN",                     "English");
-    resources.put("lang_DE",                     "German");
-    resources.put("lang_RU",                     "Russian");
-    resources.put("lang_ES",                     "Spanish");
-    resources.put("lang_BR",                     "Portuguese (Brazil)");
-    resources.put("lang_CZ",                     "Česky (Czech)");	
-	resources.put("lang_SE",                     "Svenska"); 
+    resources.put("lang_BR",                     "Portugalštině Brazilské");
+    resources.put("lang_CZ",                     "Ĉesky");
+    resources.put("lang_DE",                     "Německy");
+    resources.put("lang_EN",                     "Anglicky");
+    resources.put("lang_ES",                     "Španělsky");
+    resources.put("lang_RU",                     "Rusky");
+    resources.put("lang_SE",                     "Svenska"); 
     resources.put("loading",                     "Nahrávám");
     resources.put("me",                          "já");
     resources.put("menu",                        "Menu");
@@ -120,7 +120,7 @@ public class Text_CZ extends ResourceBundle
     resources.put("set_status",                  "Nastavení stavu");
     resources.put("since",                       "Celkem od");
     resources.put("sound",                       "ICQ Zvuk");
-    resources.put("sound_file_name",			 "Jméno zvukového souboru");
+    resources.put("sound_file_name",             "Jméno zvukového souboru");
     resources.put("sort_by",                     "Seřadit seznam");
     resources.put("sort_by_name",                "Dle jména");
     resources.put("sort_by_status",              "Dle stavu");
