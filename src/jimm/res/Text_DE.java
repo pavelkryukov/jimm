@@ -65,7 +65,9 @@ public class Text_DE extends ResourceBundle
 		resources.put("delete_chat",                 "Lösche Chat");
 		resources.put("deny",						 "Auth ablehnen");
 		resources.put("denyedby",					 "Ihre Authorisierungsanfrage wurde abgelehnt durch: ");
-		resources.put("user_menu",                   "Benutzer Menü");
+		resources.put("description",                 "Beschreibung");
+		resources.put("name_desc",                   "Dateiname und Beschreibung");
+		resources.put("user_menu",                   "Benutzer Menü");	
 		resources.put("disconnect",                  "Trennen");
 		resources.put("disconnecting",               "Trenne");
 		resources.put("display_advertisement",       "Füge Jimm-Tipp hinzu?");
@@ -73,12 +75,17 @@ public class Text_DE extends ResourceBundle
 		resources.put("email",                       "E-Mail");
 		resources.put("error",                       "Fehler");
 		resources.put("exit",                        "Beenden");
+		resources.put("filetransfer",                "Dateiübertragung");	
+		resources.put("filepath",                    "Dateipfad");
 		resources.put("firstname",                   "Vorname");
+		resources.put("ft_name",                     "Datei senden");		
+		resources.put("ft_cam",                      "Kamerabild senden");		
 		resources.put("hide_offline",                "Offline-Kontakte verbergen");
 		resources.put("gender",                      "Geschlecht");
 		resources.put("grant",						 "Auth genehmigen");
 		resources.put("grantedby",					 "Ihre Authorisierungsanfrage wurde genehmingt durch");
 		resources.put("info",                        "Info");
+		resources.put("init_ft",                     "Initialisierung");
 		resources.put("kb",                          "kB");
 		resources.put("keep_chat",                   "Chat-History behalten?");
 		resources.put("keep_conn_alive",             "Verbindung erhalten?");
@@ -138,10 +145,12 @@ public class Text_DE extends ResourceBundle
 		resources.put("requ",                        "Benötigt");
 		resources.put("requno",                      "Nicht Ben.");
 		resources.put("reset",                       "Zurücks.");
+		resources.put("res",                         "Auflösung");
 		resources.put("results",                     "Ergebnisse");
 		resources.put("save",                        "Sichern");
 		resources.put("search_user",                 "Benutzer suchen");
 		resources.put("send",                        "Senden");
+		resources.put("send_img",                    "Bild senden");
 		resources.put("send_message",                "Neue Nachricht");
 		resources.put("send_url",                    "Neue URL");
 		resources.put("server",                      "Login-Server");
@@ -170,6 +179,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("user_add",                    "Benutzer hinzufügen");
 		resources.put("user_search",                 "Benutzer suchen");
 		resources.put("vibration",                   "Vibration");
+		resources.put("viewfinder",                  "Sucher");		
 		resources.put("wait",                        "Bitte warten ...");
 		resources.put("warning",                     "Warnung");
 		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
@@ -192,12 +202,20 @@ public class Text_DE extends ResourceBundle
 		resources.put("error_118",                   "Keine Antwort vom Server (#118.EXT)");
 
 		// Network communication specific exceptions
+		// Connection to server
 		resources.put("error_120",                   "Ein I/O-Fehler ist aufgetreten (#120.EXT)");
 		resources.put("error_121",                   "Angeforderte TCP-Verbindung konnte nicht hergestellt werden (#121.EXT)");
 		resources.put("error_122",                   "Angegebener Serverhost und/oder -port sind ungültig (#122.EXT)");
 		resources.put("error_123",                   "Verbindung wurde nicht hergestellt (#123.EXT)");
 		resources.put("error_124",                   "Eingangsdatenstrom ist unsynchronisiert (#124.EXT)");
-
+		
+		// Peer connection
+		resources.put("error_125",                   "Ein I/O-Fehler ist aufgetreten (#125.EXT)");
+		resources.put("error_126",                   "Angeforderte TCP-Verbindung konnte nicht hergestellt werden (#126.EXT)");
+		resources.put("error_127",                   "Angegebener Serverhost und/oder -port sind ungültig (#127.EXT)");
+		resources.put("error_128",                   "Verbindung wurde nicht hergestellt (#128.EXT)");
+		resources.put("error_129",                   "Eingangsdatenstrom ist unsynchronisiert (#129.EXT)");
+		
 		// Parsing specific errors
 		resources.put("error_130",                   "FLAP-Header konnte nicht verarbeitet werden (#130.EXT)");
 		resources.put("error_131",                   "Unbekannter Kanal (#131.EXT)");
@@ -225,8 +243,20 @@ public class Text_DE extends ResourceBundle
 		resources.put("error_160",                   "Fehler beim Suchen (#160.EXT)");
 		
 		// other errors
-		resources.put("error_170",                   "Möglicherweise nicht genügend Heap-Speicher verfügbar (#160.EXT)");
-		resources.put("error_171",                   "Meta-Informationen nicht verfügbar (#161.EXT)");
+		resources.put("error_170",                   "Möglicherweise nicht genügend Heap-Speicher verfügbar (#170.EXT)");
+		resources.put("error_171",                   "Meta-Informationen nicht verfügbar (#171.EXT)");
+		
+		// Camera errors
+		resources.put("error_180",                   "Fehler beim Erstellen der VideoControl (#180.EXT)");
+		resources.put("error_181",                   "Fehler beim Initialisieren des Suchers (#181.EXT)");
+		resources.put("error_182",                   "Fehler beim Starten des Suchers (#182.EXT)");
+		resources.put("error_183",                   "Fehler beim Erfassen des Bildes (#183.EXT)");
+		resources.put("error_185",                   "Bilder erstellen wird nicht unterstzützt (#185.EXT)");
+		
+		// File transfer errors
+		resources.put("error_190",                   "Dateiübertragung zu < ICQv8 Clients nicht unterstützt (#190.EXT)");
+		resources.put("error_191",                   "Fehler beim Lesen der Datei. Möglichwerweise nicht unterstützt (#191.EXT)");
+		resources.put("error_192",                   "Fehler beim lesen der Datei. Pfad falsch oder nicht unterstützt(#192.EXT)");
 
 	}
 

@@ -71,10 +71,11 @@ public class SetOnlineStatusAction extends Action
 	{
 
 		// Convert online status
-		long onlineStatus = Util.translateStatusSend(this.onlineStatus);
+		int onlineStatus = Util.translateStatusSend(this.onlineStatus);
 
 		// Send a CLI_SETSTATUS packet
-		Util.putDWord(SetOnlineStatusAction.CLI_SETSTATUS_DATA, 4, onlineStatus);
+		Util.putWord(SetOnlineStatusAction.CLI_SETSTATUS_DATA, 4, 0x0000);
+		Util.putWord(SetOnlineStatusAction.CLI_SETSTATUS_DATA, 6, onlineStatus);
 		SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY,
 										   SnacPacket.CLI_SETSTATUS_COMMAND,
 										   0x00000000,

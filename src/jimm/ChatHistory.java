@@ -18,8 +18,7 @@
  ********************************************************************************
  File: src/jimm/ChatHistory.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Andreas Rossbacher
-            Artyomov Denis (text chat)
+ Author(s): Andreas Rossbacher, Artyomov Denis
  *******************************************************************************/
 
 package jimm;

@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/JimmException.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 
@@ -54,6 +54,11 @@ public class JimmException extends Exception
 
 	// True, if an error message should be presented to the user
 	protected boolean displayMsg;
+	
+	//  #sijapp cond.if target is "MIDP2"#
+	// True, if this is an exceptuion for an peer connection
+	protected boolean peer;
+	//  #sijapp cond.end#
 
 
 	// Constructs a critical JimmException
@@ -62,6 +67,9 @@ public class JimmException extends Exception
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this.critical = true;
 		this.displayMsg = true;
+		//  #sijapp cond.if target is "MIDP2"#
+		this.peer = false;
+		//  #sijapp cond.end#
 	}
 
 
@@ -71,7 +79,21 @@ public class JimmException extends Exception
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this.critical = false;
 		this.displayMsg = displayMsg;
+		//  #sijapp cond.if target is "MIDP2"#
+		this.peer = false;
+		//  #sijapp cond.end#
 	}
+	
+	//  #sijapp cond.if target is "MIDP2"#
+	// Constructs a non-critical JimmException with peer info
+	public JimmException(int errCode, int extErrCode, boolean displayMsg, boolean _peer)
+	{
+		super(JimmException.getErrDesc(errCode, extErrCode));
+		this.critical = false;
+		this.displayMsg = displayMsg;
+		this.peer = _peer;
+	}
+	//  #sijapp cond.end#
 
 
 	// Returns true if an error message should be presented to the user
@@ -86,6 +108,14 @@ public class JimmException extends Exception
 	{
 		return (this.critical);
 	}
+	
+	//  #sijapp cond.if target is "MIDP2"#
+	// Returns true if this is a peer exception
+	public boolean isPeer()
+	{
+		return (this.peer);
+	}
+	//  #sijapp cond.end#
 
 
 	// Exception handler
@@ -93,11 +123,18 @@ public class JimmException extends Exception
 	{
 
 		// Critical exception
-		if (e.isCritical())
+	    if (e.isCritical())
 		{
 
 			// Reset comm. subsystem
-			Jimm.jimm.getIcqRef().reset();
+			//  #sijapp cond.if target is "MIDP2"#
+			if (e.isPeer())
+			    Jimm.jimm.getIcqRef().resetPeerCon();
+			else
+			    Jimm.jimm.getIcqRef().resetServerCon();
+			//  #sijapp cond.else#
+			Jimm.jimm.getIcqRef().resetServerCon();
+			//  #sijapp cond.end#
 
 			// Display error message
 			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);

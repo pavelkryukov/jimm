@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/DisconnectAction.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 
@@ -60,7 +60,10 @@ public class DisconnectAction extends Action
 	// Init action
 	protected void init() throws JimmException
 	{
-		this.icq.reset();
+		this.icq.resetServerCon();
+		// #sijapp cond.if target is "MIDP2"#
+		this.icq.resetPeerCon();
+		// #sijapp cond.end#
 		this.state = DisconnectAction.STATE_INIT_DONE;
 	}
 

@@ -213,6 +213,12 @@ public class ContactList implements CommandListener
     {
         return (this.versionId2);
     }
+    
+    // Returns the current status
+    public long getOnlineStatus()
+    {
+        return (this.onlineStatus);
+    }
 
     // Returns all contact items as array
     public synchronized ContactListContactItem[] getContactItems()
@@ -603,7 +609,8 @@ public class ContactList implements CommandListener
 
     // Updates the client-side contact list (called when a contact changes
     // status)
-    public synchronized void update(String uin, long status, int capabilities)
+    //  #sijapp cond.if target is "MIDP2"#
+    public synchronized void update(String uin, long status, int capabilities,byte[] internalIP,long dcPort,int dcType,int icqProt,long authCookie)
     {
 
         // System.out.println("\n");
@@ -615,7 +622,7 @@ public class ContactList implements CommandListener
         // Save selected contact entry
         this.saveListPosition();
 
-        // Update status
+        // Find the right itme
         ContactListContactItem cItem;
         int i;
         for (i = 0; i < this.cItems.size(); i++)
@@ -635,8 +642,15 @@ public class ContactList implements CommandListener
                     onlineCount--;
                     wasoffline = true;
                 }
+                // Set Status
                 cItem.setStatus(status);
                 cItem.setCapabilities(capabilities);
+                
+                // Update DC values
+                if (dcType != -1)
+                {
+                    cItem.setDCValues(internalIP,Long.toString(dcPort),dcType,icqProt,authCookie);
+                }
                 break;
             }
         }
@@ -652,12 +666,70 @@ public class ContactList implements CommandListener
             this.refreshList(!wasoffline, false, i);
         }
     }
+    // #sijapp cond.else#
+    public synchronized void update(String uin, long status, int capabilities)
+    {
+
+        // System.out.println("\n");
+        // System.out.println("update: status change");
+        //Do we have an offline to online change?
+        boolean wasoffline = false;
+        boolean onoffchange = false;
+
+        // Save selected contact entry
+        this.saveListPosition();
+
+        // Find the right itme
+        ContactListContactItem cItem;
+        int i;
+        for (i = 0; i < this.cItems.size(); i++)
+        {
+            cItem = (ContactListContactItem) this.cItems.elementAt(i);
+            if (cItem.getUin().equals(uin))
+            {
+                //Do we have on offline<->online change?
+                if (cItem.getStatus() == STATUS_OFFLINE)
+                {
+                    onlineCount++;
+                    wasoffline = true;
+                    onoffchange = true;
+                }
+                if (status == STATUS_OFFLINE)
+                {
+                    onlineCount--;
+                    wasoffline = true;
+                }
+                // Set Status
+                cItem.setStatus(status);
+                cItem.setCapabilities(capabilities);
+               
+                break;
+            }
+        }
+
+        // Update list only if the item is in our list (was in the rooster)
+        if (i < this.cItems.size())
+        {
+            // Play sound notice if selected
+            if (onoffchange)
+                this.playSoundNotivication(SOUND_TYPE_ONLINE);
+
+            // Update visual list (sorting only if it was on online offline or vice versa change
+            this.refreshList(!wasoffline, false, i);
+        }
+    }
+    // #sijapp cond.end#
 
     // Updates the client-side contact list (called when a contact changes
     // status)
     public synchronized void update(String uin, long status)
     {
+        
+        //  #sijapp cond.if target is "MIDP2"#
+        this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,new byte[0],0,0,-1,0);
+        //  #sijapp cond.else#
         this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL);
+        //  #sijapp cond.end#
     }
 
     // Adds a "c" to the contact list image to show that there is an active chat
@@ -935,6 +1007,20 @@ public class ContactList implements CommandListener
         this.currSelCItem = null;
         this.refreshList(true, false, Integer.MAX_VALUE);
     }
+    
+    // Returns the ContactListContactItem which fits to the given UIN
+    public ContactListContactItem getItembyUIN(String uin)
+    {
+        ContactListContactItem cItem = (ContactListContactItem) this.cItems.elementAt(0);
+        for (int i = 0; i < this.cItems.size(); i++)
+        {
+            cItem = (ContactListContactItem) this.cItems.elementAt(i);
+            if (cItem.getUin().equals(uin))
+                return (cItem);
+        }
+        return (null);
+    }
+    
     
     // Return status image
     public Image getStatusImage(long status)

@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/Util.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher / Sergey Chernov / Andrey B. Ivlev
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Sergey Chernov, Andrey B. Ivlev
  *******************************************************************************/
 
 
@@ -46,15 +46,42 @@ public class Util
 
 
 	// Online status (set values)
-	public static final long SET_STATUS_AWAY = 0x00000001;
-	public static final long SET_STATUS_CHAT = 0x00000020;
-	public static final long SET_STATUS_DND = 0x00000013;
-	public static final long SET_STATUS_INVISIBLE = 0x00000100;
-	public static final long SET_STATUS_NA = 0x00000005;
-	public static final long SET_STATUS_OCCUPIED = 0x00000011;
-	public static final long SET_STATUS_ONLINE = 0x00000000;
+	public static final int SET_STATUS_AWAY = 0x0001;
+	public static final int SET_STATUS_CHAT = 0x0020;
+	public static final int SET_STATUS_DND = 0x0013;
+	public static final int SET_STATUS_INVISIBLE = 0x0100;
+	public static final int SET_STATUS_NA = 0x0005;
+	public static final int SET_STATUS_OCCUPIED = 0x0011;
+	public static final int SET_STATUS_ONLINE = 0x0000;
+	
+	// Counter variable
+	private static int counter = 0;
 
+	public synchronized static int getCounter()
+	{
+	    counter++;
+	    return (counter);
+	    
+	}
+	public static String toHexString(byte[] b) {
+		StringBuffer sb = new StringBuffer(b.length * 2);
+		for (int i = 0; i < b.length; i++) {
+			//	look up high nibble char
+			sb.append(hexChar[(b[i] & 0xf0) >>> 4]);
 
+			//	look up low nibble char
+			sb.append(hexChar[b[i] & 0x0f]);
+			sb.append(" ");
+			if ((i != 0) && ((i % 15) == 0))
+			    sb.append("\n");
+		}
+		return sb.toString();
+	}
+
+	//	table to convert a nibble to a hex char.
+	private static char[] hexChar = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	
+	
 	// Extracts the byte from the buffer (buf) at position off
 	public static int getByte(byte[] buf, int off)
 	{
@@ -186,7 +213,7 @@ public class Util
 		return (value);
 	}
 
-
+	
 	// Extracts a string from the buffer (buf) starting at position off, ending at position off+len
 	public static String byteArrayToString(byte[] buf, int off, int len, boolean utf8)
 	{
@@ -415,7 +442,7 @@ public class Util
 
 
 	// Get online status set value
-	public static long translateStatusSend(long status)
+	public static int translateStatusSend(long status)
 	{
 		if (status == ContactList.STATUS_AWAY) return (Util.SET_STATUS_AWAY);
 		if (status == ContactList.STATUS_CHAT) return (Util.SET_STATUS_CHAT);
@@ -439,6 +466,40 @@ public class Util
 			return (String.valueOf(number));
 		}
 	}
+	
+	// Byte array IP to String
+	public static String ipToString(byte[] ip)
+	{
+	    String strIP = new String();
+	    
+	    for (int i=0;i<3;i++)
+	    {
+	        strIP = strIP + new Byte(ip[i]).toString() + ".";
+	    }
+	    strIP = strIP + new Byte(ip[3]).toString();
+	    
+	    return strIP;
+	}
+	
+	// String IP to byte array
+    public static byte[] ipToByteArray(String ip)
+    {
+        byte[] arrIP = new byte[4];
+        int i;
+
+        for (int j = 0; j < 3; j++)
+        {
+
+            for (i = 0; i < 2; i++)
+            {
+                if (ip.charAt(i) == new String(".").charAt(0)) break;
+            }
+            arrIP[j] = Byte.parseByte(ip.substring(0, i));
+            ip = ip.substring(i + 1);
+        }
+
+        return arrIP;
+    }
   
 
 	// #sijapp cond.if modules_TRAFFIC is "true" #
