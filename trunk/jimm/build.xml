@@ -68,7 +68,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--      TRAFFIC - module for traffic calculation                          -->
 	<!--      HISTORY - module for storing history of text messages             -->
 	<!--      FILES   - module for transferring files                           -->
-	<property name="modules"           value="TRAFFIC,HISTORY"                   />
+	<property name="modules"           value="TRAFFIC,HISTORY,FILES"             />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of languages packs which         -->
 	<!--  should be included in the build. Currently, the distribution          -->
@@ -235,6 +235,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="modules_TRAFFIC" value="${modules/TRAFFIC}" />
 			<define name="modules_DEBUGLOG" value="${modules/DEBUGLOG}" />
 			<define name="modules_HISTORY" value="${modules/HISTORY}" />
+			<define name="modules_FILES" value="${modules/FILES}" />
 			<define name="lang_EN" value="${lang/EN}" />
 			<define name="lang_BG" value="${lang/BG}" />
 			<define name="lang_BR" value="${lang/BR}" />
