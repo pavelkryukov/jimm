@@ -101,6 +101,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("kb",                          "kB");
 		resources.put("keep_chat",                   "Keep chat history?");
 		resources.put("keep_conn_alive",             "Keep connection alive?");
+		resources.put("keylock",                     "Keylock");
+		resources.put("keylock_message",             "Hold \"#\" to disable keylock");
 		resources.put("keylock_enable",              "Enable keylock");
 		resources.put("keylock_enabled",             "Keylock enabled");
 		resources.put("keyword",                     "Keyword");

@@ -82,7 +82,7 @@ public class SplashCanvas extends Canvas
 	// Font (and font height in pixels) used to display informational messages
 	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, Font.SIZE_SMALL);
 	private static int height = font.getHeight();
-
+	
 
 	// Initializer block
 	static
@@ -119,6 +119,10 @@ public class SplashCanvas extends Canvas
 
 	// True if at least one message is available
 	private boolean isMessageAvailable; // = false
+	
+
+	// Alert needed if any other key then the # is pressed during keylock
+	private Alert keylockMessage;
 
 
 	// Timestamp
@@ -131,6 +135,8 @@ public class SplashCanvas extends Canvas
 		this.setFullScreenMode(true);
 		//  #sijapp cond.end#
 		this.message = new String(message);
+		this.keylockMessage = new Alert(ResourceBundle.getString("keylock"),ResourceBundle.getString("keylock_message"),null,AlertType.INFO);
+		this.keylockMessage.setTimeout(1000);
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight());
 		int r, g;
 		Graphics bg_graph = background.getGraphics();
@@ -217,9 +223,12 @@ public class SplashCanvas extends Canvas
 	// Called when a key is pressed
 	protected void keyPressed(int keyCode)
 	{
-		if (this.isLocked && (keyCode == Canvas.KEY_POUND))
+		if (this.isLocked)
 		{
-			this.pressed = new Date();
+		    if (keyCode == Canvas.KEY_POUND)
+		        this.pressed = new Date();
+		    else
+		        Jimm.display.setCurrent(this.keylockMessage);
 		}
 	}
 

@@ -175,5 +175,6 @@ VERSION 0.3.3
   * New module: Text messages history storing
   * There now is a back (cancel) option on the options pages
   * New option: Auto connect on startup
+  * A message how to disable keylock is shown on splash screen if trying it the wrong way
   * Added Ukrainian translation
   
