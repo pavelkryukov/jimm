@@ -203,6 +203,7 @@ public class ContactList implements CommandListener {
 	// Request display of the main menu
 	public void activate() {
 		//System.out.println("Show the contact list");
+		Jimm.jimm.getContactListRef().updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
 		if (changed) {
 			this.refreshVisibleList(true);
 		}
@@ -891,7 +892,7 @@ public class ContactList implements CommandListener {
 	//Updates the title of the list
 	public void updateTitle(int traffic){
 		contactList.setTitle(ResourceBundle.getString("jimm.res.Text", "contact_list")+
-		" - " + traffic +  ResourceBundle.getString("jimm.res.Text", "kb")+" - " +Jimm.jimm.getSplashCanvasRef().getDateString());
+		" - " + traffic +  ResourceBundle.getString("jimm.res.Text", "kb")+" - " +Jimm.jimm.getSplashCanvasRef().getDateString(true));
 	}
 
 	// Command listener

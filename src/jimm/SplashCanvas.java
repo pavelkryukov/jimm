@@ -231,16 +231,17 @@ public class SplashCanvas extends Canvas
 
 
   // Called to get a date String
-  protected String getDateString()
+  public String getDateString(boolean onlyTime)
   {
-    time.setTime(new Date());
-    String datestr = new String("failed");
-    datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
-        Util.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
-        String.valueOf(time.get(Calendar.YEAR)) + " " +
-        Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" +
-        Util.makeTwo(time.get(Calendar.MINUTE));
-    return datestr;
+	time.setTime(new Date());
+	String datestr = new String("failed");
+	datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+	if (! onlyTime){
+		datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." + 
+				  Util.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
+				  String.valueOf(time.get(Calendar.YEAR)) + " " + datestr;
+	}
+	return datestr;
   }
 
 
@@ -298,7 +299,7 @@ public class SplashCanvas extends Canvas
       // Draw message
       g.setColor(255, 255, 255);
       g.setFont(SplashCanvas.font);
-      g.drawString(this.getDateString(), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+      g.drawString(this.getDateString(false), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 
       // Draw current progress
       int progressPx = this.getWidth() / 100 * this.progress;
@@ -306,7 +307,7 @@ public class SplashCanvas extends Canvas
       g.setColor(255, 255, 255);
       g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
       g.setColor(0, 0, 0);
-      g.drawString(this.getDateString(), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+      g.drawString(this.getDateString(false), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 
     }
 

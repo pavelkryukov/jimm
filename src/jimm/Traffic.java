@@ -479,6 +479,7 @@ public class Traffic
 
 		public void update(boolean doIt)
 		{
+			Jimm.jimm.getContactListRef().updateTitle(Traffic.this.getSessionTraffic(true));
 			if (((Traffic.this.getSessionTraffic(true) - compareTraffic) >= updateThreshold) | doIt)
 			{
 				this.trafficScreen.append(Traffic.this.generateTrafficString());
