@@ -157,8 +157,8 @@ public class Options
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.wav");
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-                                                                // #sijapp cond.elseif target is "MOTOROLA"#
-                                                                this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
+            // #sijapp cond.elseif target is "MOTOROLA"#
+            this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mp3");
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
@@ -375,9 +375,9 @@ public class Options
 		// Commands
 		private Command backCommand;
 		private Command saveCommand;
-                                           //#sijapp cond.if target is "MOTOROLA"#
-                                           private Command selectCommand;
-                                           //#sijapp cond.end#
+        //#sijapp cond.if target is "MOTOROLA"#
+        private Command selectCommand;
+        //#sijapp cond.end#
 
 		// Options menu
 		private List optionsMenu;
@@ -451,9 +451,9 @@ public class Options
 			this.optionsMenu.append(ResourceBundle.getString("options_cost"), null);
 			// #sijapp cond.end#
 			// #sijapp cond.if target is "MOTOROLA"#
-                                                                this.optionsMenu.addCommand(this.selectCommand);
-                                                                // #sijapp cond.end#
-                                                                this.optionsMenu.addCommand(this.backCommand);
+            this.optionsMenu.addCommand(this.selectCommand);
+            // #sijapp cond.end#
+            this.optionsMenu.addCommand(this.backCommand);
 			this.optionsMenu.setCommandListener(this);
 
 			// Initialize options form
@@ -612,11 +612,10 @@ public class Options
 		{
 			// Look for select command
 			// #sijapp cond.if target is "MOTOROLA"#
-                                                                if ((c == List.SELECT_COMMAND) || (c == this.selectCommand))
-                                                                // #sijapp cond.else#
-
-                                                                if (c == List.SELECT_COMMAND)
-                                                                // #sijapp cond.end#
+            if ((c == List.SELECT_COMMAND) || (c == this.selectCommand))
+            // #sijapp cond.else#
+            if (c == List.SELECT_COMMAND)
+            // #sijapp cond.end#
 			{
 				lastHideOffline = Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 				lastGroupsUsed = Options.this.getBooleanOption(Options.OPTION_USER_GROUPS);
@@ -801,7 +800,7 @@ public class Options
 					// #sijapp cond.if modules_TRAFFIC is "true" #
 				    // #sijapp cond.if target isnot "DEFAULT"#
 					case 4:
-                   // #sijapp cond.end#
+                    // #sijapp cond.end#
 						Options.this.setIntOption(Options.OPTION_COST_PER_PACKET,Util.decimalToInt(this.costPerPacketTextField.getString()));
 						this.costPerPacketTextField.setString(Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_PACKET)));
 						Options.this.setIntOption(Options.OPTION_COST_PER_DAY,Util.decimalToInt(this.costPerDayTextField.getString()));
