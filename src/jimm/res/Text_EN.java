@@ -120,6 +120,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("once_a_session",              "Once a session");
 		resources.put("onl_notification",            "Notice for upcoming contact");
 		resources.put("onl_sound_file_name",         "Online Sound File");
+		resources.put("only_online",                 "Show only online contacts");
 		resources.put("options",                     "Options");
 		resources.put("options_account",             "Account");
 		resources.put("options_cost",                "Cost");
@@ -219,7 +220,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_153",                   "Received type 4 message could not be understood (#153.EXT)");
 		resources.put("error_154",                   "Error updating your contact list (#154.EXT)");
 		resources.put("error_155",                   "Object is already in your server list (#155.EXT)");
-		resources.put("error_156",                   "Error while adding (#156.EXT)");
+		resources.put("error_156",                   "Error while adding. Try again (#156.EXT)");
 		resources.put("error_157",                   "No more elements of this type allowed (#157.EXT)");
 		resources.put("error_158",                   "You did try to add an ICQ contact to an AIM list (#158.EXT)");
 		resources.put("error_159",                   "Server did not answer on search request. Try again (#159.EXT)");
