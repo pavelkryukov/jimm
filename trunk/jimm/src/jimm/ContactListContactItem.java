@@ -249,6 +249,22 @@ public class ContactListContactItem extends ContactListItem
     {
         return name;
     }
+    
+    // Returns true if contact must be shown even user offline
+    // and "hide offline" is on
+    protected boolean mustBeShownAnyWay()
+    {
+    	return (plainMessages > 0) |
+		       (urlMessages > 0)   | 
+			   (sysNotices > 0)    |
+			   (authRequest > 0)   | 
+			   temporary; 
+    }
+    
+    public int getTextColor()
+    {
+    	return temporary ? 0x808080 : 0x000000; 
+    }
 
     // Returns imaghe index for contact
     public int getImageIndex()

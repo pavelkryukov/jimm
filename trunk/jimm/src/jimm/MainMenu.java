@@ -40,9 +40,11 @@ import jimm.util.ResourceBundle;
 
 public class MainMenu implements CommandListener
 {
-
     // Abort command
     private static Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
+    
+    // Send command
+    private static Command sendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
     // List for selecting a online status
     private static List statusList;
@@ -212,10 +214,23 @@ public class MainMenu implements CommandListener
 
                     break;
                 case 3: // Add user
-                    
+                    // Reset and display textbox for entering uin to add
+                    addUser = new Form(ResourceBundle.getString("add_user"));
+                    uinTextField = new TextField(ResourceBundle.getString("uin"), "", 16,
+                            TextField.NUMERIC);
+                    nameTextField = new TextField(ResourceBundle.getString("name"), "", 32,
+                            TextField.ANY);
+                    addUser.append(uinTextField);
+                    addUser.addCommand(sendCommand);
+                    addUser.addCommand(backCommand);
+                    addUser.setCommandListener(this);
+                    Jimm.display.setCurrent(addUser);
                     break;
+                    
                 case 4:
                     // Search for User
+                    Search searchf = new Search();
+                    searchf.getSearchForm().activate(false);
                     break;
                 case 5:
                     // Options

@@ -32,8 +32,6 @@ public class ContactListGroupItem extends ContactListItem
 	// Persistent variables
 	private int id;
 	private String name;
-	private boolean changed = true;
-	
 	
 	private int
 		// Counter for online users
@@ -50,16 +48,6 @@ public class ContactListGroupItem extends ContactListItem
 		onlineCount = totalCount = 0;
 	}
 
-	public void setChanged(boolean value)
-	{
-		changed = value;
-	}
-	
-	public boolean getChanged()
-	{
-		return changed;
-	}
-	
 	public void setCounters(int online, int total)
 	{
 	    onlineCount = online;
@@ -74,7 +62,9 @@ public class ContactListGroupItem extends ContactListItem
     public String getText()
     {
         String result;
-        if (onlineCount != 0) 
+        
+        if ((onlineCount != 0) && 
+        	 !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) 
             result = name+" ("+Integer.toString(onlineCount)+"/"
                          +Integer.toString(totalCount)+")";
         else result = name;
@@ -84,6 +74,11 @@ public class ContactListGroupItem extends ContactListItem
     public int getImageIndex()
     {
         return -1;
+    }
+    
+    public int getTextColor()
+    {
+    	return 0x000000; 
     }
 
 	// Returns the group item id
