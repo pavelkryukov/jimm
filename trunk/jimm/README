@@ -162,10 +162,6 @@ seconds, which includes 6 bytes payload. This can be disabled. Each time one of
 your buddies changes status, you'll receive at least a notification and,
 depending on the ICQ client you buddy uses, some capability messages.
 
-Jimm adds a 20 bytes long string to all outgoing instant messages, stating
-that the message was sent using Jimm. Go to the options form to disable this.
-The more people use Jimm, the faster Jimm becomes stable - think about it.
-
 Tip 1: Reduce your contact list size to save network traffic.
 Tip 2: Check the network consumption regularly.
 
