@@ -150,7 +150,7 @@ public class Options
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mmf");
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-			// #sijapp cond.elseif target is "MIDP2"#
+			// #sijapp cond.elseif target is "MIDP2" | target is "MOTOROLA"#
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.wav");
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
@@ -368,7 +368,9 @@ public class Options
 		// Commands
 		private Command backCommand;
 		private Command saveCommand;
-
+                                           //#sijapp cond.if target is "MOTOROLA"#
+                                           private Command selectCommand;
+                                           //#sijapp cond.end#
 
 		// Options menu
 		private List optionsMenu;
@@ -391,7 +393,7 @@ public class Options
 		private ChoiceGroup displayDateChoiceGroup;
 		private ChoiceGroup clSortByChoiceGroup;
 		private ChoiceGroup clHideOfflineChoiceGroup;
-		// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+		// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA"#
 		private ChoiceGroup messageNotificationModeChoiceGroup;
 		private TextField messageNotificationSoundfileTextField;
 		private Gauge messageNotificationSoundVolume;
@@ -402,7 +404,7 @@ public class Options
 		private ChoiceGroup messageNotificationModeChoiceGroup;
 		private ChoiceGroup onlineNotificationModeChoiceGroup;
 		// #sijapp cond.end#
-		// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
+		// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA"#
 		private ChoiceGroup vibratorChoiceGroup;
 		// #sijapp cond.end#
 		private ChoiceGroup cp1251HackChoiceGroup;
@@ -426,20 +428,25 @@ public class Options
 			// Initialize commands
 			this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
 			this.saveCommand = new Command(ResourceBundle.getString("save"), Command.SCREEN, 1);
-
+                                                                // #sijapp cond.if target is "MOTOROLA"#
+                                                                 this.selectCommand=new Command(ResourceBundle.getString("select"), Command.OK, 1);
+                                                                // #sijapp cond.end#
 			// Initialize options menu
 			this.optionsMenu = new List(ResourceBundle.getString("options"), Choice.IMPLICIT);
 			this.optionsMenu.append(ResourceBundle.getString("options_account"), null);
 			this.optionsMenu.append(ResourceBundle.getString("options_network"), null);
 			this.optionsMenu.append(ResourceBundle.getString("options_interface"), null);
-			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA"#
 			this.optionsMenu.append(ResourceBundle.getString("options_signaling"), null);
-           // #sijapp cond.end#
+                                                                // #sijapp cond.end#
 			
 			// #sijapp cond.if modules_TRAFFIC is "true" #
 			this.optionsMenu.append(ResourceBundle.getString("options_cost"), null);
 			// #sijapp cond.end#
-			this.optionsMenu.addCommand(this.backCommand);
+			// #sijapp cond.if target is "MOTOROLA"#
+                                                                this.optionsMenu.addCommand(this.selectCommand);
+                                                                // #sijapp cond.end#
+                                                                this.optionsMenu.addCommand(this.backCommand);
 			this.optionsMenu.setCommandListener(this);
 
 			// Initialize options form
@@ -536,7 +543,7 @@ public class Options
 
                 // Initialize elements (Signaling section)
 
-                // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+                // #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA"#
                 this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
                 this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
                 this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
@@ -561,13 +568,13 @@ public class Options
                 this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
                 this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE),true);
                 // #sijapp cond.end#
-                // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
+                // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA"#
                 this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration") + "?", Choice.MULTIPLE);
                 this.vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.vibratorChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_VIBRATOR));
                 // #sijapp cond.end#
 
-                // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
+                // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA"#
                 break;
             // #sijapp cond.end#
 
@@ -597,14 +604,19 @@ public class Options
 		public void commandAction(Command c, Displayable d)
 		{
 			// Look for select command
-			if (c == List.SELECT_COMMAND)
+			// #sijapp cond.if target is "MOTOROLA"#
+                                                                if ((c == List.SELECT_COMMAND) || (c == this.selectCommand))
+                                                                // #sijapp cond.else#
+
+                                                                if (c == List.SELECT_COMMAND)
+                                                                // #sijapp cond.end#
 			{
 				lastHideOffline = Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 				lastGroupsUsed = Options.this.getBooleanOption(Options.OPTION_USER_GROUPS);
 				lastSortMethod = Options.this.getIntOption(Options.OPTION_CL_SORT_BY);
 
 				// Delete all items
-				//#sijapp cond.if target is "MIDP2"#
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 				this.optionsForm.deleteAll();
 				//#sijapp cond.else #
 				while (this.optionsForm.size() > 0) { this.optionsForm.delete(0); }
@@ -642,7 +654,7 @@ public class Options
 						
 						break;
 					case 3:
-						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA"#
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
 						this.optionsForm.append(this.messageNotificationSoundVolume);
 						this.optionsForm.append(this.messageNotificationSoundfileTextField);
@@ -656,7 +668,7 @@ public class Options
 						this.optionsForm.append(this.onlineNotificationModeChoiceGroup);
 						// #sijapp cond.end#
 						
-						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
+						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA"#
 						break;
 						// #sijapp cond.end#
 
@@ -762,7 +774,7 @@ public class Options
 						break;
 						
 					case 3:
-						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA"#
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
 						Options.this.setStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE,this.messageNotificationSoundfileTextField.getString());
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,this.messageNotificationSoundVolume.getValue()*10);
@@ -775,7 +787,7 @@ public class Options
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());
 						// #sijapp cond.end#
-						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
+						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA"#
 						Options.this.setBooleanOption(Options.OPTION_VIBRATOR,this.vibratorChoiceGroup.isSelected(0));
 						break;
 						// #sijapp cond.end#
@@ -816,3 +828,4 @@ public class Options
 		}
 	}
 }
+
