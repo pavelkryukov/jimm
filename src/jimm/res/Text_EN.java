@@ -160,7 +160,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("server_port",                 "Port");
 		resources.put("session",                     "Session");
 		resources.put("set_status",                  "Set status");
-		resources.put("options_signaling",           "Signaling");
 		resources.put("since",                       "Since");
 		resources.put("sound",                       "Sound file");
 		resources.put("sort_by",                     "Sort contact list");
