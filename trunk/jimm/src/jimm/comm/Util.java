@@ -72,37 +72,40 @@ public class Util
 	}
 	
 	// Called to get a date String
-	public static String getDateString(boolean onlyTime)
-	{
-		Calendar time = Calendar.getInstance();
-	    
-	    // Get time an apply time zone correction
-		Date date = new Date();
-		// #sijapp cond.if target isnot "SIEMENS"#
-	    date.setTime(date.getTime()+TimeZone.getDefault().getRawOffset());
-	    // #sijapp cond.end#
-		time.setTime(date);
-		
-		// Construct the string for the display
-		String datestr = new String("failed");
-		if (TimeZone.getDefault().useDaylightTime())
-		{
-			datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)+1) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
-		}
-		else
-		{
-			datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
-		}
-		if (datestr.substring(0,1) == "24")
-		    datestr = "00"+ datestr.substring(2);
-		if (!onlyTime)
-		{
-			datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
-			          Util.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
-			          String.valueOf(time.get(Calendar.YEAR)) + " " + datestr;
-		}
-		return datestr;
-	}
+    public static String getDateString(boolean onlyTime)
+    {
+        Calendar time = Calendar.getInstance();
+
+        // Get time an apply time zone correction
+        Date date = new Date();
+        // #sijapp cond.if target isnot "SIEMENS"#
+        date.setTime(date.getTime() + TimeZone.getDefault().getRawOffset());
+        // #sijapp cond.end#
+        time.setTime(date);
+
+        // Construct the string for the display
+
+        // #sijapp cond.if target isnot "SIEMENS"#
+        String datestr = new String("failed");
+        if (TimeZone.getDefault().useDaylightTime())
+        {
+            datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY) + 1) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+        } else
+        {
+            datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+        }
+        // #sijapp cond.else#
+        String datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+        // #sijapp cond.end#
+
+        if (datestr.substring(0, 1) == "24") datestr = "00" + datestr.substring(2);
+        if (!onlyTime)
+        {
+            datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." + Util.makeTwo(time.get(Calendar.MONTH) + 1) + "."
+                    + String.valueOf(time.get(Calendar.YEAR)) + " " + datestr;
+        }
+        return datestr;
+    }
 	
 	public static String toHexString(byte[] b) {
 		StringBuffer sb = new StringBuffer(b.length * 2);
