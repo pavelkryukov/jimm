@@ -48,6 +48,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("age",                         "Alter");
 		resources.put("async",                       "Async");
 		resources.put("auth",				     	 "Auth");
+		resources.put("attention",                   "Achtung!");
 		resources.put("back",                        "Zurück");
 		resources.put("beep",                        "Beep");
 		resources.put("byte",                        "Byte");
@@ -84,6 +85,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("gender",                      "Geschlecht");
 		resources.put("grant",						 "Auth genehmigen");
 		resources.put("grantedby",					 "Ihre Authorisierungsanfrage wurde genehmingt durch");
+		resources.put("have_unread_mess",            "Sie haben ungelesene Nachrichten. Trotzdem verlassen?");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initialisierung");
 		resources.put("kb",                          "kB");
@@ -190,6 +192,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("whichgroup",				 	 "Welche Gruppe?");
 		resources.put("yes",                         "Ja");
 		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
+
+
 
 		// User management ********
 		resources.put("group_is_not_empty",          "Gewählte Gruppe ist leer!\nAlle Kontakte in andere Gruppe verschieben?");
