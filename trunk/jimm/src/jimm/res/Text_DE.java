@@ -87,7 +87,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("lang_SE",                     "Schwedisch");
 		resources.put("loading",                     "Lade");
 		resources.put("me",                          "Ich");
-		resources.put("menu",                        "Menu");
+		resources.put("menu",                        "Menü");
 		resources.put("message",                     "Nachricht");
 		resources.put("message_from",                "Nachricht von");
 		// #sijapp cond.if target is "SIEMENS" #
