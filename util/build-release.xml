@@ -23,45 +23,53 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 ********************************************************************************
 -->
 
+
 <project name="Jimm" default="release-part1">
 
-	<!-- ********************************************************************* -->
-	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR LOCAL ENV.      -->
-	<!-- ********************************************************************* -->
-	<property name="DEFAULT/midp"      value="CHANGE ME"                        />
-	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/midp.jar"     />
-	<property name="SIEMENS/midp"      value="CHANGE ME"                        />
-	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/api.jar"      />
-	<property name="RIM/midp"          value="CHANGE ME"                        />
-	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar"  />
-	<property name="proguard"          value="CHANGE ME"                        />
-	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"     />
-	<!-- ********************************************************************* -->
-	<!-- RELEASE VERSION SECTION - EVERY RELEASE HAS A UNIQUE VERSION NUMBER   -->
-	<!-- ********************************************************************* -->
-	<property name="version"           value="0.2"                              />
-	<property name="version/java"      value="0.1"                              />
-	<!-- ********************************************************************* -->
-	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
-	<!-- ********************************************************************* -->
+
+	<!-- ******************************************************************* -->
+	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   -->
+	<!-- ******************************************************************* -->
+	<property name="DEFAULT/midp"     value="CHANGE ME"                       />
+	<property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/midp.jar"    />
+	<property name="SIEMENS/midp"     value="CHANGE ME"                       />
+	<property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/api.jar"     />
+	<property name="MIDP2/midp"       value="CHANGE ME"                       />
+	<property name="MIDP2/midp/lib"   value="${MIDP2/midp}/lib/midp.jar"      />
+	<property name="RIM/midp"         value="CHANGE ME"                       />
+	<property name="RIM/midp/lib"     value="${RIM/midp}/lib/net_rim_api.jar" />
+	<property name="proguard"         value="CHANGE ME"                       />
+	<property name="proguard/lib"     value="${proguard}/lib/proguard.jar"    />
+	<!-- ******************************************************************* -->
+	<!-- RELEASE VERSION SECTION - EVERY RELEASE HAS A UNIQUE VERSION NUMBER -->
+	<!-- ******************************************************************* -->
+	<property name="version"           value="CHANGE ME"                      />
+	<property name="version/java"      value="CHANGE ME"                      />
+	<!-- ******************************************************************* -->
+	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
+	<!-- ******************************************************************* -->
+
 
 	<!-- Buildfile description -->
 	<description>This buildfile is used to build a Jimm release.</description>
+
 
 	<!-- Set global properties for this build -->
 	<property name="cvsroot" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/jimm"/>
 	<property name="cvsdir" location="cvs"/>
 	<property name="package" value="jimm"/>
 	<property name="bin" value="bin"/>
-	<property name="targetlist" value="DEFAULT;SIEMENS;MIDP2"/>
-	<property name="connectionlist" value="RAWSOCKET"/>
-	<property name="langlist" value="EN,DE,RU,ES,BR,CZ,SE,LT,IT;EN,DE;EN,RU;EN,ES;EN,BR;EN,CZ;EN,SE;EN,LT;EN,IT;EN;DE;RU;ES;BR;CZ;SE;LT;IT"/>
+	<property name="targetlist" value="DEFAULT;SIEMENS;MIDP2;RIM"/>
+	<property name="langlist" value="EN,BR;EN,CZ;EN,DE;EN,ES;EN,IT;EN,LT;EN,RU;EN,SE;EN;BR;CZ;DE;ES;IT;LT;RU;SE"/>
+
 
 	<!-- Auxiliary property -->
 	<property name="3ns" value="###"/>
 
+
 	<!-- Include Ant-Contrib Tasks -->
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
 
 	<!-- Internal target: init -->
 	<target name="init">
@@ -77,6 +85,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</tstamp>
 	</target>
 
+
 	<!-- Internal target: export -->
 	<target name="export" depends="init">
 		<mkdir dir="${cvsdir}"/>
@@ -88,6 +97,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			failonerror="true"/>
 	</target>
 
+
 	<!-- Internal targets: build/build-target/build-target-connection/build-target-connection-lang -->
 	<target name="build" depends="export">
 		<foreach list="${targetlist}"
@@ -97,22 +107,16 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			inheritall="true"/>
 	</target>
 	<target name="build-target">
-		<foreach list="${connectionlist}"
-			target="build-target-connection"
-			param="connection"
-			delimiter=";"
-			inheritall="true"/>
-	</target>
-	<target name="build-target-connection">
 		<foreach list="${langlist}"
-			target="build-target-connection-lang"
+			target="build-target-lang"
 			param="lang"
 			delimiter=";"
 			inheritall="true"/>
 	</target>
-	<target name="build-target-connection-lang">
+	<target name="build-target-lang">
 		<antcall target="dist"/>
 	</target>
+
 
 	<!-- Internal target: dist -->
 	<target name="dist">
@@ -120,15 +124,20 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<propertycopy name="midp/lib" from="${target}/midp/lib"/>
 		<ant dir="${cvsdir}/${package}"
 			inheritAll="false">
-			<property name="midp"         value="${midp}"/>
-			<property name="midp/lib"     value="${midp/lib}"/>
-			<property name="proguard"     value="${proguard}"/>
-			<property name="proguard/lib" value="${proguard/lib}"/>
-			<property name="target"       value="${target}"/>
-			<property name="connection"   value="${connection}"/>
-			<property name="lang"         value="${lang}"/>
-			<property name="version"      value="${version}"/>
-			<property name="version/java" value="${version/java}"/>
+			<property name="DEFAULT/midp"     value="${DEFAULT/midp}"/>
+			<property name="DEFAULT/midp/lib" value="${DEFAULT/midp/lib}"/>
+			<property name="SIEMENS/midp"     value="${SIEMENS/midp}"/>
+			<property name="SIEMENS/midp/lib" value="${SIEMENS/midp/lib}"/>
+			<property name="MIDP2/midp"       value="${MIDP2/midp}"/>
+			<property name="MIDP2/midp/lib"   value="${MIDP2/midp/lib}"/>
+			<property name="RIM/midp"         value="${RIM/midp}"/>
+			<property name="RIM/midp/lib"     value="${RIM/midp/lib}"/>
+			<property name="proguard"         value="${proguard}"/>
+			<property name="proguard/lib"     value="${proguard/lib}"/>
+			<property name="target"           value="${target}"/>
+			<property name="lang"             value="${lang}"/>
+			<property name="version"          value="${version}"/>
+			<property name="version/java"     value="${version/java}"/>
 		</ant>
 		<mkdir dir="${cvsdir}/${package}/${bin}/${target}/${lang}"/>
 		<copy file="${cvsdir}/${package}/dist/bin/Jimm.jad"
@@ -138,23 +147,30 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<ant dir="${cvsdir}/${package}"
 			target="clean"
 			inheritAll="false">
-			<property name="midp"         value="${midp}"/>
-			<property name="midp/lib"     value="${midp/lib}"/>
-			<property name="proguard"     value="${proguard}"/>
-			<property name="proguard/lib" value="${proguard/lib}"/>
-			<property name="target"       value="${target}"/>
-			<property name="connection"   value="${connection}"/>
-			<property name="lang"         value="${lang}"/>
-			<property name="version"      value="${version}"/>
-			<property name="version/java" value="${version/java}"/>
+			<property name="DEFAULT/midp"     value="${DEFAULT/midp}"/>
+			<property name="DEFAULT/midp/lib" value="${DEFAULT/midp/lib}"/>
+			<property name="SIEMENS/midp"     value="${SIEMENS/midp}"/>
+			<property name="SIEMENS/midp/lib" value="${SIEMENS/midp/lib}"/>
+			<property name="MIDP2/midp"       value="${MIDP2/midp}"/>
+			<property name="MIDP2/midp/lib"   value="${MIDP2/midp/lib}"/>
+			<property name="RIM/midp"         value="${RIM/midp}"/>
+			<property name="RIM/midp/lib"     value="${RIM/midp/lib}"/>
+			<property name="proguard"         value="${proguard}"/>
+			<property name="proguard/lib"     value="${proguard/lib}"/>
+			<property name="target"           value="${target}"/>
+			<property name="lang"             value="${lang}"/>
+			<property name="version"          value="${version}"/>
+			<property name="version/java"     value="${version/java}"/>
 		</ant>
 	</target>
+
 
 	<!-- Target: release-part1 -->
 	<target name="release-part1" description="Generates the release (part 1)">
 		<antcall target="build"/>
 		<echo message="Build target release-part2 to complete build process!"/>
 	</target>
+
 
 	<!-- Target: release-part2 -->
 	<target name="release-part2" depends="init" description="Generate the release (part 2)">
@@ -195,6 +211,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			datetime="${touchdate} 00:00 AM"/>
   	</target>
 
+
 	<!-- Target: clean -->
 	<target name="clean" description="Delete the release">
 		<delete dir="${cvsdir}"/>
@@ -202,5 +219,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<delete file="${package}-${version}.tar.gz"/>
 		<delete file="${package}-${version}.tar.bz2"/>
 	</target>
+
 
 </project>
