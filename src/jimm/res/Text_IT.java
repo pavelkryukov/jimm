@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/res/Text_IT.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher,  Mario B. Napoli
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Mario B. Napoli
  *******************************************************************************/
 
 
@@ -65,6 +65,8 @@ public class Text_IT extends ResourceBundle
 		resources.put("delete_chat",                 "Cancella");
 		resources.put("deny",						 "Nega Autorizzazione");
 		resources.put("denyedby",					 "La tua richiesta di autorizzazione è stata rifiutata da: ");
+        resources.put("description",                 "Descrizione"); 
+        resources.put("name_desc",                   "Nome File e descrizione"); 
 		resources.put("user_menu",                   "Menu Utente");
 		resources.put("disconnect",                  "Disconnettiti");
 		resources.put("disconnecting",               "Disconnessione in corso");
@@ -74,12 +76,17 @@ public class Text_IT extends ResourceBundle
 		resources.put("error",                       "Errore");
 		resources.put("exit",                        "Esci");
 		resources.put("female",                      "F");
+        resources.put("filetransfer",                "Trasferimento File"); 
+        resources.put("filepath",                    "Percorso File"); 
 		resources.put("firstname",                   "Nome");
+        resources.put("ft_name",                     "Invia file"); 
+        resources.put("ft_cam",                     "Invia immagine Camera"); 
 		resources.put("gender",                      "Sesso");
 		resources.put("grant",						 "Concedi Autorizzazione");
 		resources.put("grantedby",					 "La tua richiesta di autorizzazione è stata accettata da:");
 		resources.put("hide_offline",                "Nascondere contatti non connessi");
 		resources.put("info",                        "Info");
+        resources.put("init_ft",                     "Inizializzazione...");
 		resources.put("kb",                          "kB");
 		resources.put("keep_chat",                   "Mantenere cronologia delle chat?");
 		resources.put("keep_conn_alive",             "Mantenere attiva la connessione?");
@@ -92,11 +99,12 @@ public class Text_IT extends ResourceBundle
 		resources.put("lang_DE",                     "Deutsch");
 		resources.put("lang_EN",                     "English");
 		resources.put("lang_ES",                     "Espanol");
-		resources.put("lang_IT",                     "Italiano");
+		resources.put("lang_IT",                     "Italiano");		
 		resources.put("lang_LT",                     "Lithuanian");
 		resources.put("lang_RU",                     "Russian");
 		resources.put("lang_SE",                     "Svensk");
-		resources.put("lang_SR",                     "??????");
+        resources.put("lang_SR",                     "Serbian"); 
+        resources.put("lang_HE",                     "Hebrew"); 
 		resources.put("lastname",                    "Cognome");
 		resources.put("loading",                     "Caricamento");
 		resources.put("male",                        "M");
@@ -127,6 +135,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("options_interface",           "Interfaccia");
 		resources.put("options_network",             "Rete");
 		resources.put("options_other",               "Altro");
+        resources.put("options_signaling",           "Notifiche");
 		resources.put("password",                    "Password");
 		resources.put("plength",                     "Dimensione del pacchetto addebitato in kB");
 		resources.put("plsauthme",                   "Ciao! Per favore autorizzami per aggiungerti alla mia Lista Contatti.");
@@ -154,6 +163,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("sort_by",                     "Ordinare lista contatti");
 		resources.put("sort_by_name",                "Per nome");
 		resources.put("sort_by_status",              "Per stato");
+		resources.put("status",                      "Stato");
 		resources.put("status_away",                 "Assente");
 		resources.put("status_chat",                 "Disposto a Chattare");
 		resources.put("status_dnd",                  "Non Disturbare");
@@ -167,13 +177,27 @@ public class Text_IT extends ResourceBundle
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Aggiungi utente");
+		resources.put("user_search",                 "Cerca utente");
 		resources.put("vibration",                   "Vibrazione");
+        resources.put("viewfinder",                  "Anteprima"); 
+        resources.put("volume",                      "Volume"); 
 		resources.put("wait",                        "Attendere prego...");
 		resources.put("warning",                     "Attenzione");
 		resources.put("wantsyourauth",				 " vuole la tua Autorizzazione. Motivo: ");
 		resources.put("whichgroup",				 	 "Quale gruppo?");
 		resources.put("yes",                         "Sì");
 		resources.put("youwereadded",				 "Sei stato aggiunto da UIN: ");
+        resources.put("chat_small_font",             "Font piccolo nella chat"); 
+        resources.put("select",                      "Scegli"); 
+
+        // User management ******** 
+        resources.put("group_is_not_empty",          "Il gruppo non è vuoto!\nSposta gli utenti in altri gruppi!"); 
+        resources.put("add_group",                   "Aggiungi gruppo"); 
+        resources.put("group_name",                  "Nome Gruppo"); 
+        resources.put("exec",                        "Esegui"); 
+        resources.put("remove_user",                 "Rimuovi utente"); 
+        resources.put("remove_group",                "Rimuovi gruppo"); 
+        resources.put("show_user_groups",            "Mostra gruppi utenti"); 
 
 		// Generic errors
 		resources.put("error_100",                   "Errore sconosciuto (#100.EXT)");
@@ -190,11 +214,19 @@ public class Text_IT extends ResourceBundle
 		resources.put("error_118",                   "Nessuna risposta dal server (#118.EXT)");
 
 		// Network communication specific exceptions
+		// Connection to server
 		resources.put("error_120",                   "Errore di I/O (#120.EXT)");
 		resources.put("error_121",                   "Impossibile effettuare la connessione TCP richiesta (#121.EXT)");
 		resources.put("error_122",                   "Indirizzo e/o porta del server specificati non validi (#122.EXT)");
 		resources.put("error_123",                   "Impossibile stabilire la connessione (#123.EXT)");
 		resources.put("error_124",                   "Il flusso in ingresso è fuori sincronia (#124.EXT)");
+
+        // Peer connection 
+        resources.put("error_125",                   "Errore di I/O (#125.EXT)"); 
+        resources.put("error_126",                   "Impossibile effettuare la connessione TCP richiesta (#126.EXT)"); 
+        resources.put("error_127",                   "Indirizzo e/o porta del server specificati non validi (#127.EXT)"); 
+        resources.put("error_128",                   "Impossibile stabilire la connessione (#128.EXT)"); 
+        resources.put("error_129",                   "Il flusso in ingresso è fuori sincronia (#129.EXT)"); 
 
 		// Parsing specific errors
 		resources.put("error_130",                   "Impossibile processare l'header FLAP (#130.EXT)");
@@ -223,8 +255,20 @@ public class Text_IT extends ResourceBundle
  		resources.put("error_160",                   "Errore durante la ricerca (#160.EXT)");
 
 		// Other errors
-		resources.put("error_170",                   "Probabile insufficienza di memoria heap disponibile (#160.EXT)");
-		resources.put("error_171",                   "Impossibile leggere le metainfo (#161.EXT)");
+		resources.put("error_170",                   "Probabile insufficienza di memoria heap disponibile (#170.EXT)");
+		resources.put("error_171",                   "Impossibile leggere le metainfo (#171.EXT)");
+
+        // Camera errors 
+        resources.put("error_180",                   "Errore nella creazione del VideoControl (#180.EXT)"); 
+        resources.put("error_181",                   "Errore nell'inizializzazione dell'anteprima (#181.EXT)"); 
+        resources.put("error_182",                   "Errore nell'avvio dell'anteprima (#182.EXT)"); 
+        resources.put("error_183",                   "Errore nella cattura (#183.EXT)"); 
+        resources.put("error_185",                   "Cattura immagini non supportata (#185.EXT)"); 
+
+        // File transfer errors 
+        resources.put("error_190",                   "Trasferimento con client precedenti a ICQv8 non supportato (#190.EXT)"); 
+        resources.put("error_191",                   "Errore di lettura del file. Funzione forse non supportata (#191.EXT)"); 
+        resources.put("error_192",                   "Errore di lettura del file. Percorso sbagliato o funzione non supportata (#192.EXT)"); 
 
 	}
 
