@@ -33,7 +33,7 @@ import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
-// #sijapp cond.if target is "MIDP2"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 import javax.microedition.io.SocketConnection;
 // #sijapp cond.else#
 import javax.microedition.io.StreamConnection;
@@ -277,7 +277,7 @@ public class Icq implements Runnable
 
 	}
 	
-	// #sijapp cond.if target is "MIDP2"#
+	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 	
 	// Resets the comm. subsystem
 	public synchronized void resetPeerCon()
@@ -313,7 +313,7 @@ public class Icq implements Runnable
 	// Connection to the ICQ server
 	Connection c;
 	
-	// #sijapp cond.if target is "MIDP2"#
+	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 	// Connection to peer
 	PeerConnection peerC;
 	// #sijapp cond.end#
@@ -333,7 +333,7 @@ public class Icq implements Runnable
 	// Main loop
 	public void run()
 	{
-	    // #sijapp cond.if target is "MIDP2"#
+	    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 	    // Is a DC packet Available
 	    boolean dcPacketAvailable;
 	    // #sijapp cond.end#
@@ -428,7 +428,7 @@ public class Icq implements Runnable
 				
 
 				// Set dcPacketAvailable to true if the peerC is not null and there is an packet waiting
-				// #sijapp cond.if target is "MIDP2"#
+				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 				if(this.peerC != null)
 				{
 				    if (this.peerC.available() > 0)
@@ -442,7 +442,7 @@ public class Icq implements Runnable
 
 				// Read next packet, if available
 				
-				// #sijapp cond.if target is "MIDP2"#
+				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 				while ((this.c.available() > 0) || dcPacketAvailable)
 				{
 					// Try to get packet
@@ -590,7 +590,7 @@ public class Icq implements Runnable
 
 
 		// Connection variables
-		// #sijapp cond.if target is "MIDP2"#
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		private SocketConnection sc;
 		// #sijapp cond.else#
 		private StreamConnection sc;
@@ -624,7 +624,7 @@ public class Icq implements Runnable
 		{
 			try
 			{
-			    // #sijapp cond.if target is "MIDP2"#
+			    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			    this.sc = (SocketConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
 			    // #sijapp cond.else#
 			    this.sc = (StreamConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
@@ -748,7 +748,7 @@ public class Icq implements Runnable
 
 		}
 		
-		// #sijapp cond.if target is "MIDP2"#
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
         // Retun the port this connection is running on
         public int getLocalPort()
         {
@@ -908,7 +908,7 @@ public class Icq implements Runnable
 	/**************************************************************************/
 	/**************************************************************************/
 
-// #sijapp cond.if target is "MIDP2"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 
 	// PeerConnection
     public class PeerConnection implements Runnable
@@ -1183,3 +1183,4 @@ public class Icq implements Runnable
 	// #sijapp cond.end#
 
 }
+
