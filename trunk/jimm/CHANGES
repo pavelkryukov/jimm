@@ -63,10 +63,10 @@ VERSION 0.1 BETA-6
 
   *  NEW FEATURE: There is now a chat history feature available
   *  NEW FEATURE: ICQ sound can be played on S55
-  *  NEW FEATURE: Light is switched on on Siemens phones when new message arrives
+  *  NEW FEATURE: Light is switched on on Siemens phones when message arrives
   *  NEW FEATURE: Russian character and menu text support
   *  NEW FEATURE: The display of offline contacts can be switched off now
-  *  NEW FEATURE: By name or by staus sorting order of contact list is now switchable
+  *  NEW FEATURE: By name/staus sorting order of contact list is now switchable
   *  NEW FEATURE: Language module can be selected manually
   *  New Splash screen and Options pane
   *  Nokia 6800 is now own distribution set
@@ -83,7 +83,7 @@ ________________________________________________________________________________
 VERSION 0.1 BETA-8
 
   *  NEW FEATURE: Soundfile name in Siemens version is now configureable
-  *  NEW FEATURE:Traffic and time now displayed in the title line of the contact list screen
+  *  NEW FEATURE: Traffic and time displayed as title of the contact list screen
   *  NEW FEATURE: The chat history feature can be disabled
   *  Images are stored in one file except of different
   *  Nokia build does not include traffic monitor anymore
@@ -104,3 +104,8 @@ VERSION 0.2.0
   * Options are handled in a different more efficient way.
   * Some bug fixes
  
+________________________________________________________________________________
+VERSION 0.2.1
+
+  * Login procedure has been updated
+  * Some minor optimizations
