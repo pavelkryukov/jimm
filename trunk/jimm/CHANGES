@@ -118,21 +118,21 @@ VERSION 0.2.2
 ________________________________________________________________________________
 VERSION 0.2.3
 
-  * Added mp3 soundfile support for MIDP2 build. (Only if your device can play mp3)
-
-________________________________________________________________________________
-VERSION 0.2.4
-
+  * NEW FEATURE: Added mp3 soundfile support for MIDP2 build. (Only if your device can play mp3)
+  * NEW FEATURE: Added vibrator support for MIDP2 build.
   * NEW FEATURE: Current online status can be seen in main menu when online
   * NEW FEATURE: Contact list can be shown even if offline
+  * NEW FEATURE: Supports sending of Type 2 messages
+  * Bugfix: City field is now taken itno account which searching
   * Before removing a contact form the list the user is asked if he really wants to
   * Sending a message now leads to the chat history not to the contact list
   * Added Hebrew translation
   * Added back button to the status selet screen
-  * Bugfix: City field is now taken itno account which searching
   
 ________________________________________________________________________________
-VERSION 0.2.5
+VERSION 0.3.0
 
-  * New chat history is added
+  * NEW FEATURE: File transfer to other > ICQ v8 clients
+  * NEW FEATURE: New chat history is added
   * New option "Small font in chat"
+  * Many minor bugfixes

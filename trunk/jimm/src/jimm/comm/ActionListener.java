@@ -18,30 +18,43 @@
  ********************************************************************************
  File: src/jimm/comm/ActionListener.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Spassky Alexander
  *******************************************************************************/
 
 package jimm.comm;
+
+import java.util.Date;
+
+import javax.microedition.lcdui.Display;
 
 import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.Jimm;
 import jimm.JimmException;
-
-import java.util.Date;
+import jimm.SplashCanvas;
+import jimm.util.ResourceBundle;
 
 public class ActionListener
 {
 
     // Capability denotes that the client support type-2 messages
     public static final byte[] CAP_AIM_SERVERRELAY =
-    { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x49, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1,
-            (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
+    { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x49, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22,
+            (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
 
     // Capability deontes that the client supports UTF-8 messages
     public static final byte[] CAP_UTF8 =
-    { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x4E, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1,
-            (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
+    { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x4E, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22,
+            (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
+
+    public static final byte[] CAP_UTF8_GUID =
+    { (byte) 0x7b, (byte) 0x30, (byte) 0x39, (byte) 0x34, (byte) 0x36, (byte) 0x31, (byte) 0x33, (byte) 0x34, (byte) 0x45, (byte) 0x2D,
+            (byte) 0x34, (byte) 0x43, (byte) 0x37, (byte) 0x46, (byte) 0x2D, (byte) 0x31, (byte) 0x31, (byte) 0x44, (byte) 0x31,
+            (byte) 0x2D, (byte) 0x38, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x2D, (byte) 0x34, (byte) 0x34, (byte) 0x34,
+            (byte) 0x35, (byte) 0x35, (byte) 0x33, (byte) 0x35, (byte) 0x34, (byte) 0x30, (byte) 0x30, (byte) 0x30, (byte) 0x30,
+            (byte) 0x7D};
+
+
 
     /** ************************************************************************* */
 
@@ -85,7 +98,16 @@ public class ActionListener
             if ((snacPacket.getFamily() == SnacPacket.SRV_USERONLINE_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.SRV_USERONLINE_COMMAND))
             {
-
+                
+                // #sijapp cond.if target is "MIDP2"#
+                // DC variables
+                byte[] internalIP = new byte[4];
+                long dcPort = 0;
+                int dcType = -1;
+                int icqProt = 0;
+                long authCookie = 0;
+                // #sijapp cond.end#
+                
                 // Get data
                 byte[] buf = snacPacket.getData();
 
@@ -119,12 +141,47 @@ public class ActionListener
                             }
                         }
 
+                    } 
+                    // #sijapp cond.if target is "MIDP2"#
+                    else if (tlvType == 0x000c) // DC Infos
+                    {                        
+                        // dcMarker
+                        int dcMarker = 0;
+                        
+                        // Get internal IP
+                        System.arraycopy(tlvData,dcMarker,internalIP,0,4);
+                        dcMarker += 4;
+                        
+                        // Get tcp port
+                        dcPort = Util.getDWord(tlvData,dcMarker);
+                        dcMarker += 4;
+                        
+                        // Get DC type
+                        dcType = Util.getByte(tlvData,dcMarker);
+                        dcMarker ++;
+                        
+                        // Get protocol version
+                        icqProt = Util.getWord(tlvData,dcMarker);
+                        dcMarker += 2;
+                        
+                        // Get auth cookie
+                        authCookie = Util.getDWord(tlvData,dcMarker);
+
+                        System.out.println("length: "+tlvData.length+"IP: "+Util.ipToString(internalIP)+" Port: "+dcPort+" Type: "+dcType+" Version: "+icqProt+" Cookie: "+authCookie);
+
                     }
+                    // #sijapp cond.end#
                     marker += 2 + 2 + tlvData.length;
                 }
 
-                // Update contact list
+                 // Update contact list
+                // #sijapp cond.if target is "MIDP2"#
+                Jimm.jimm.getContactListRef().update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie);
+                // #sijapp cond.else#
                 Jimm.jimm.getContactListRef().update(uin, status, capabilities);
+                // #sijapp cond.end#
+                
+                
 
             }
 
@@ -274,12 +331,16 @@ public class ActionListener
                 else if (format == 0x0002)
                 {
 
+        			// TLV(A): Acktype 0x0000 - normal message
+        			//                 0x0001 - file request / abort request
+        			//                 0x0002 - file ack
+                    
                     // Check length
                     if (msgBuf.length < 10) { throw (new JimmException(152, 0, false)); }
 
-                    // Get and validate SUB_MSG_TYPE2.ACKTYPE
-                    int ackType = Util.getWord(msgBuf, msgMarker);
-                    if (ackType != 0x0000) return; // Only normal messages are
+                    // Get and validate SUB_MSG_TYPE2.COMMAND
+                    int command = Util.getWord(msgBuf, msgMarker);
+                    if (command != 0x0000) return; // Only normal messages are
                                                    // supported yet
                     msgMarker += 2;
 
@@ -294,13 +355,31 @@ public class ActionListener
 
                     // Get message data and initialize marker
                     byte[] msg2Buf;
+                    // #sijapp cond.if target is "MIDP2"#
+                    int ackType = -1;
+                    byte[] extIP = new byte[4];
+                    byte[] ip = new byte[4];
+                    String port = "0";
+                    int status = -1;
+                    // #sijapp cond.end#
+                    
                     do
                     {
                         msg2Buf = Util.getTlv(msgBuf, msgMarker);
                         if (msg2Buf == null) { throw (new JimmException(152, 2, false)); }
                         tlvType = Util.getWord(msgBuf, msgMarker);
+                        // #sijapp cond.if target is "MIDP2"#
+                        switch (tlvType)
+                        {
+                        	case 0x0003: System.arraycopy(msg2Buf,0,extIP,0,4); break;
+                            case 0x0004: System.arraycopy(msg2Buf,0,ip,0,4);break;
+                            case 0x0005: port = Util.byteArrayToString(msg2Buf); break;
+                            case 0x000a: ackType = Util.getWord(msg2Buf,0);break;
+                        }
+                        // #sijapp cond.end#
                         msgMarker += 4 + msg2Buf.length;
                     } while (tlvType != 0x2711);
+                    
                     int msg2Marker = 0;
 
                     // Check length
@@ -316,8 +395,13 @@ public class ActionListener
                     msg2Marker += 2;
                     if ((msgType != 0x0001) && (msgType != 0x0004) && (msgType != 0x001A)) return;
 
-                    // Skip UNKNOWN and PRIORITY
-                    msg2Marker += 2 + 2;
+                    // #sijapp cond.if target is "MIDP2"#
+                    status = Util.getWord(msg2Buf,msg2Marker);
+                    // #sijapp cond.end#
+                    msg2Marker += 2;
+                    
+                    // Skip PRIORITY
+                    msg2Marker += 2;
 
                     // Get length of text
                     int textLen = Util.getWord(msg2Buf, msg2Marker, false);
@@ -330,7 +414,7 @@ public class ActionListener
                     byte[] rawText = new byte[textLen];
                     System.arraycopy(msg2Buf, msg2Marker, rawText, 0, textLen);
                     msg2Marker += textLen;
-
+                    
                     // Plain message or URL message
                     if (((msgType == 0x0001) || (msgType == 0x0004)) && (rawText.length > 1))
                     {
@@ -430,7 +514,7 @@ public class ActionListener
                     // Extended message
                     else if (msgType == 0x001A)
                     {
-
+                        
                         // Check length
                         if (msg2Buf.length < msg2Marker + 2 + 18 + 4) { throw (new JimmException(152, 5, false)); }
 
@@ -466,7 +550,73 @@ public class ActionListener
                         String text = Util.crlfToCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
                         msg2Marker += textLen;
 
+                        // #sijapp cond.if target is "MIDP2"#
+                        // File transfer message
+                        if (plugin.equals("File"))
+                        {
+                         if (ackType == 2)
+                         {
+                             
+                             // Get the port we should connect to
+                             port = Integer.toString(Util.getWord(msg2Buf,msg2Marker));
+                             msg2Marker += 2;
+                             
+                             // Skip unknwon stuff
+                             msg2Marker += 2;
+                             
+                             // Get filename
+                             textLen = Util.getWord(msg2Buf, msg2Marker, false);
+                             msg2Marker += 2;
+
+                             // Check length
+                             if (msg2Buf.length < msg2Marker + textLen) { throw (new JimmException(152, 8, false)); }
+
+                             // Get text
+                             String filename = Util.crlfToCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
+                             msg2Marker += textLen;
+                             
+                             // Get filesize
+                             long filesize = Util.getDWord(msg2Buf,msg2Marker,false);
+                             msg2Marker += 4;
+                             
+                             // Get IP if possible
+                             // Check length
+                             System.out.println("msgBuf len: "+msgBuf.length+" msgMarker: "+msgMarker);
+                             if (msgBuf.length < + 8) { throw (new JimmException(152, 9, false)); }
+                             
+                             msg2Buf = Util.getTlv(msgBuf, msgMarker);
+                             if (msg2Buf == null) { throw (new JimmException(152, 2, false)); }
+                             tlvType = Util.getWord(msgBuf, msgMarker);
+                             if (tlvType == 0x0004)
+                                 System.arraycopy(msg2Buf,0,ip,0,4);
+                             msgMarker += 4 + msg2Buf.length;
+                             
+                             ContactListContactItem sender = Jimm.jimm.getContactListRef().getItembyUIN(uin);
+                             sender.updateIPsandPort(ip,extIP,port);
+                                                       
+                             System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
+                             
+                             DirectConnectionAction dcAct = new DirectConnectionAction(sender.getFT());
+                             try
+                             {
+                                 Jimm.jimm.getIcqRef().requestAction(dcAct);
+                                 } catch (JimmException e)
+                             {
+                                 JimmException.handleException(e);
+                                 if (e.isCritical()) return;
+                             }
+                                 
+                                 // Activate the splash screen
+                                 Jimm.jimm.getSplashCanvasRef().setMessage(ResourceBundle.getString("filetransfer"));
+                                 Display.getDisplay(Jimm.jimm).setCurrent(Jimm.jimm.getSplashCanvasRef());
+                                 
+                                 // Start timer
+                                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.FileTransferTimerTask(dcAct), 1000, 1000);
+                         }
+                        }
                         // URL message
+                        else 
+                        // #sijapp cond.end#
                         if (plugin.equals("Send Web Page Address (URL)"))
                         {
 
@@ -516,8 +666,15 @@ public class ActionListener
                             this.icq.c.sendPacket(ackPacket);
 
                         }
+                        // #sijapp cond.if target is "MIDP2"#
+                        // File transfer request or request ack
+                        else  if (msgType == 0x001A)
+                        {
+                         
+                        }
+                        // #sijapp cond.end#
                         // Other messages
-                        else
+                        else 
                         {
                             // Discard
                         }
@@ -686,7 +843,7 @@ public class ActionListener
                 Jimm.jimm.getContactListRef().addMessage(notice);
             }
 
-        }
+        }       
 
     }
 

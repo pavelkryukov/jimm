@@ -65,6 +65,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("delete_chat",                 "Delete chat");
 		resources.put("deny",						 "Deny Auth");
 		resources.put("denyedby",					 "Your auth request was denyed by: ");
+		resources.put("description",                 "Description");
+		resources.put("name_desc",                   "File name and description");
 		resources.put("user_menu",                   "User Menu");
 		resources.put("disconnect",                  "Disconnect");
 		resources.put("disconnecting",               "Disconnecting");
@@ -73,13 +75,18 @@ public class Text_EN extends ResourceBundle
 		resources.put("email",                       "Email");
 		resources.put("error",                       "Error");
 		resources.put("exit",                        "Exit");
-		resources.put("female",                      "F");
+		resources.put("female",                      "Filetransfer");
+		resources.put("filetransfer",                "File transfer");
+		resources.put("filepath",                    "File path");
 		resources.put("firstname",                   "First name");
+		resources.put("ft_name",                     "Send file");		
+		resources.put("ft_cam",                      "Send camera image");		
 		resources.put("gender",                      "Gender");
 		resources.put("grant",						 "Grant Auth");
 		resources.put("grantedby",					 "Your auth request was granted by:");
 		resources.put("hide_offline",                "Hide offline contacts");
 		resources.put("info",                        "Info");
+		resources.put("init_ft",                     "Initializeing");
 		resources.put("kb",                          "kB");
 		resources.put("keep_chat",                   "Keep chat history?");
 		resources.put("keep_conn_alive",             "Keep connection alive?");
@@ -139,11 +146,13 @@ public class Text_EN extends ResourceBundle
 		resources.put("requ",                        "Required");
 		resources.put("requno",                      "Not req");
 		resources.put("reset",                       "Reset");
+		resources.put("res",                         "Resolution");
 		resources.put("results",                     "Results");
 		resources.put("save",                        "Save");
 		resources.put("search_user",                 "Search for User");
 		resources.put("send",                        "Send");
 		resources.put("send_message",                "New Message");
+		resources.put("send_img",                    "Send image");				
 		resources.put("send_url",                    "New URL");
 		resources.put("server",                      "Login server");
 		resources.put("server_host",                 "Hostname");
@@ -170,6 +179,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("user_add",                    "Add user");
 		resources.put("user_search",                 "Search for user");
 		resources.put("vibration",                   "Vibration");
+		resources.put("viewfinder",                  "Viewfinder");		
 		resources.put("wait",                        "Please wait ...");
 		resources.put("warning",                     "Warning");
 		resources.put("wantsyourauth",				 " wants your Authorisation. Reason: ");
@@ -193,11 +203,19 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_118",                   "No response from server (#118.EXT)");
 
 		// Network communication specific exceptions
+		// Connection to server
 		resources.put("error_120",                   "An I/O error occured (#120.EXT)");
 		resources.put("error_121",                   "Requested TCP connection cannot be made (#121.EXT)");
 		resources.put("error_122",                   "Specified server host and/or port is invalid (#122.EXT)");
 		resources.put("error_123",                   "Connection has not been established (#123.EXT)");
 		resources.put("error_124",                   "Input stream is out of sync (#124.EXT)");
+		
+		// Peer connection
+		resources.put("error_125",                   "An I/O error occured (#125.EXT)");
+		resources.put("error_126",                   "Requested TCP connection cannot be made (#126.EXT)");
+		resources.put("error_127",                   "Specified server host and/or port is invalid (#127.EXT)");
+		resources.put("error_128",                   "Connection has not been established (#128.EXT)");
+		resources.put("error_129",                   "Input stream is out of sync (#129.EXT)");
 
 		// Parsing specific errors
 		resources.put("error_130",                   "FLAP header could not be parsed (#130.EXT)");
@@ -226,8 +244,20 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_160",                   "Error while searching (#160.EXT)");
 
 		// Other errors
-		resources.put("error_170",                   "Possibly not enough heap memory available (#160.EXT)");
-		resources.put("error_171",                   "Could not fetch meta info (#161.EXT)");
+		resources.put("error_170",                   "Possibly not enough heap memory available (#170.EXT)");
+		resources.put("error_171",                   "Could not fetch meta info (#171.EXT)");
+		
+		// Camera errors
+		resources.put("error_180",                   "Error creating the VideoControl (#180.EXT)");
+		resources.put("error_181",                   "Viewfinder initialization error (#181.EXT)");
+		resources.put("error_182",                   "Viewfinder start error (#182.EXT)");
+		resources.put("error_183",                   "Snapshot error (#183.EXT)");
+		resources.put("error_185",                   "Taking pictures not supported (#185.EXT)");
+		
+		// File transfer errors
+		resources.put("error_190",                   "File transfer with < ICQv8 clients not supported (#190.EXT)");
+		resources.put("error_191",                   "Error reading the file. Possibly not supported (#191.EXT)");
+		resources.put("error_192",                   "Error reading the file. Wrong path or not supported (#192.EXT)");
 
 	}
 

@@ -26,6 +26,9 @@ package jimm;
 
 
 import jimm.comm.ConnectAction;
+//  #sijapp cond.if target is "MIDP2"#
+import jimm.comm.DirectConnectionAction;
+//  #sijapp cond.end#
 import jimm.comm.DisconnectAction;
 import jimm.comm.RequestInfoAction;
 import jimm.comm.SearchAction;
@@ -342,7 +345,48 @@ public class SplashCanvas extends Canvas
 
     }
   }
+  
+  /****************************************************************************/
+  /****************************************************************************/
+  /****************************************************************************/
 
+//  #sijapp cond.if target is "MIDP2"#
+  // Activates the contact list after connection has been established
+  public static class FileTransferTimerTask extends TimerTask
+  {
+
+
+    // Reference to ConnectAction
+    private DirectConnectionAction dcAct;
+
+
+    // Constructor
+    public FileTransferTimerTask(DirectConnectionAction _dcAct)
+    {
+      this.dcAct = _dcAct;
+    }
+
+
+    // Timer routine
+    public void run()
+    {
+      Jimm.jimm.getSplashCanvasRef().setProgress(this.dcAct.getProgress());
+      if (this.dcAct.isCompleted())
+      {
+        Jimm.jimm.getContactListRef().resetListPosition();
+        Jimm.jimm.getContactListRef().activate();
+        this.cancel();
+      }
+      else if (this.dcAct.isError())
+      {
+        this.cancel();
+      }
+    }
+
+
+  }
+
+//  #sijapp cond.end#
 
   /****************************************************************************/
   /****************************************************************************/

@@ -61,13 +61,17 @@ abstract class Packet
 	// Returns the package as byte array
 	public abstract byte[] toByteArray();
 
-
+	
 	// Parses given byte array and returns a Packet object
 	public static Packet parse(byte[] buf, int off, int len) throws JimmException
 	{
 
 		// Check length (min. 6 bytes)
+		// #sijapp cond.if target is "MIDP2"#
+		if (len < 2)
+		// #sijapp cond.else#
 		if (len < 6)
+		// #sijapp cond.end#
 		{
 			throw (new JimmException(130, 0));
 		}
@@ -75,7 +79,11 @@ abstract class Packet
 		// Verify FLAP.ID
 		if (Util.getByte(buf, off) != 0x2A)
 		{
+			// #sijapp cond.if target is "MIDP2"#
+			return (DCPacket.parse(buf, off, len));
+			// #sijapp cond.else#
 			throw (new JimmException(130, 1));
+			// #sijapp cond.end#
 		}
 
 		// Get and verify FLAP.CHANNEL

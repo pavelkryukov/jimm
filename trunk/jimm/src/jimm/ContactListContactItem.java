@@ -31,17 +31,19 @@ import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 
+// #sijapp cond.if target is "MIDP2"#
+import jimm.comm.FileTransferMessage;
+// #sijapp cond.end#
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.RequestInfoAction;
 import jimm.comm.SendMessageAction;
-import jimm.comm.SystemNotice;
 import jimm.comm.SysNoticeAction;
+import jimm.comm.SystemNotice;
 import jimm.comm.UpdateContactListAction;
 import jimm.comm.UrlMessage;
 import jimm.comm.Util;
@@ -89,14 +91,25 @@ public class ContactListContactItem extends ContactListItem
     private int capabilities;
     private int chatHistoryDisplayNr;
     
-
+    
     // Message count
     private int outgoingPlainMessagesCnt;
     private int plainMessages;
     private int urlMessages;
     private int sysNotices;
     private int authRequest;
-
+    
+    //  #sijapp cond.if target is "MIDP2"#
+    // DC values
+    private byte[] internalIP;
+    private byte[] externalIP;
+    private String dcPort;
+    private int dcType;
+    private int icqProt;
+    private long authCookie;
+    private FileTransferMessage ft;
+    //  #sijapp cond.end#
+    
     // Menu
     private Menu menu;
 
@@ -118,6 +131,15 @@ public class ContactListContactItem extends ContactListItem
         this.urlMessages = 0;
         this.sysNotices = 0;
         this.authRequest = 0;
+        //  #sijapp cond.if target is "MIDP2"#
+        this.internalIP = new byte[4];
+        this.externalIP = new byte[4];
+        this.dcPort = "";
+        this.dcType = -1;
+        this.icqProt = 0;
+        this.authCookie = 0;
+        this.ft = null;
+        //  #sijapp cond.end#
         this.menu = new Menu();
         this.requReason = false;
     }
@@ -221,7 +243,75 @@ public class ContactListContactItem extends ContactListItem
     {
         this.capabilities = capabilities;
     }
-
+    
+    //  #sijapp cond.if target is "MIDP2"#
+    // Sets the DC values
+    public void setDCValues(byte[] _internalIP,String _dcPort,int _dcType,int _icqProt,long _authCookie)
+    {
+        this.internalIP = _internalIP;
+        this.dcPort = _dcPort;
+        this.dcType = _dcType;
+        this.icqProt = _icqProt;
+        this.authCookie = _authCookie;
+    }
+    
+    // Update ip and port values
+    public void updateIPsandPort(byte[] _ip,byte[] _extIP,String _port)
+    {
+        this.internalIP = _ip;
+        this.externalIP = _extIP;
+        this.dcPort = _port;
+    }
+    
+    // Return the DC auth cookie
+    public long getDCAuthCookie()
+    {
+        return this.authCookie;
+    }
+    
+    // Return ICQ version of this ContactListContactITem
+    public int getICQVersion()
+    {
+        return this.icqProt;
+    }
+    
+    // Return IP
+    public byte[] getInternalIP()
+    {
+        return (this.internalIP);
+    }
+    
+    // Return IP
+    public byte[] getExternalIP()
+    {
+        return (this.externalIP);
+    }
+    
+    // Return IP
+    public int getDCType()
+    {
+        return (this.dcType);
+    }
+    
+    // Return port
+    public String getPort()
+    {
+        return (this.dcPort);
+    }
+    
+    // Returns the fileTransferObject of this contact
+    public FileTransferMessage getFT()
+    {
+        return this.ft;
+    }
+    
+    // Set the fileTransferOBject of this contact
+    public void setFT(FileTransferMessage _ft)
+    {
+        this.ft = _ft;
+    }    
+    // #sijapp cond.end#
+    
     // Returns true if the next available message is a message of given type
     // Returns false if no message at all is available, or if the next available
     // message is of another type
@@ -351,7 +441,7 @@ public class ContactListContactItem extends ContactListItem
         // Command listener
         public void commandAction(Command c, Displayable d)
         {
-            
+			
             // Return to contact list
             if (c == MenuUtil.backCommand)
             {
@@ -416,6 +506,96 @@ public class ContactListContactItem extends ContactListItem
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
 
                     break;
+                // #sijapp cond.if target is "MIDP2"#
+                case 2:
+                    // Send a filetransfer with a file given by path
+                    // We can only make file transfers with ICQ clients prot V8 and up
+                    if (ContactListContactItem.this.getICQVersion() < 8)
+                    {
+                        JimmException.handleException(new JimmException(190, 0, true));
+                    }
+                    else
+                    {
+                        FileTransfer ft = new FileTransfer(FileTransfer.FT_TYPE_FILE_BY_NAME,ContactListContactItem.this);
+                        ft.startFT(); 
+                    }
+
+                    break;
+                        
+                case 3:
+                    // Send a filetransfer with a camera image
+                    System.out.println("FileTransfer: cam");
+                    
+                    // We can only make file transfers with ICQ clients prot V8 and up
+                    if (ContactListContactItem.this.getICQVersion() < 8)
+                    {
+                        JimmException.handleException(new JimmException(190, 0, true));
+                    }
+                    else
+                    {
+                        FileTransfer ft = new FileTransfer(FileTransfer.FT_TYPE_CAMERA_SNAPSHOT,ContactListContactItem.this);
+                        ft.startFT(); 
+                    }
+
+                    break;
+                
+                case 4:
+                    // Info
+
+                    // Display splash canvas
+                    SplashCanvas wait1 = Jimm.jimm.getSplashCanvasRef();
+                    wait1.setMessage(ResourceBundle.getString("wait"));
+                    wait1.setProgress(0);
+                    Jimm.display.setCurrent(wait1);
+
+                    // Request info from server
+                    RequestInfoAction act1 = new RequestInfoAction(ContactListContactItem.this.getUin());
+                    try
+                    {
+                        Jimm.jimm.getIcqRef().requestAction(act1);
+                    } catch (JimmException e)
+                    {
+                        JimmException.handleException(e);
+                        if (e.isCritical()) return;
+                    }
+
+                    // Start timer
+                    Jimm.jimm.getTimerRef().schedule(new SplashCanvas.RequestInfoTimerTask(act1), 1000, 1000);
+
+                    break;
+                case 5:
+                    // Remove
+                    MenuUtil.deleteUserAlert = new Alert(ResourceBundle.getString("remove")+"?",ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",null,AlertType.CONFIRMATION);
+                    MenuUtil.deleteUserAlert.addCommand(MenuUtil.textboxOkCommand);
+                    MenuUtil.deleteUserAlert.addCommand(MenuUtil.textboxCancelCommand);
+                    MenuUtil.deleteUserAlert.setCommandListener(this);
+                    Jimm.display.setCurrent(MenuUtil.deleteUserAlert);
+                    
+                    break;
+                    
+                case 6:
+                    
+                    // DC Info
+                    Alert info = new Alert("DC Infos");
+                    info.setString("DC typ: "+ContactListContactItem.this.getDCType()+"\n"+
+                                   "ICQ version: "+ContactListContactItem.this.getICQVersion()+"\n"+
+                                   "Int IP: "+Util.ipToString(ContactListContactItem.this.getInternalIP())+"\n"+
+                                   "Ext IP: "+Util.ipToString(ContactListContactItem.this.getExternalIP())+"\n"+
+                                   "Port: "+ContactListContactItem.this.getPort()+"\n");
+                    info.setTimeout(Alert.FOREVER);
+                    Jimm.display.setCurrent(info);
+                    
+                    break;
+
+                case 7:
+                    // Request auth
+                    requReason = true;
+                    MenuUtil.reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
+                    MenuUtil.reasonTextbox.removeCommand(MenuUtil.textboxOkCommand);
+                    MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxSendCommand);
+                    MenuUtil.reasonTextbox.setCommandListener(this);
+                    Jimm.display.setCurrent(MenuUtil.reasonTextbox);
+                // #sijapp cond.else#
                 case 2:
                     // Info
 
@@ -449,17 +629,16 @@ public class ContactListContactItem extends ContactListItem
                     Jimm.display.setCurrent(MenuUtil.deleteUserAlert);
                     
                     break;
-
+                    
                 case 4:
                     // Request auth
-
                     requReason = true;
                     MenuUtil.reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
                     MenuUtil.reasonTextbox.removeCommand(MenuUtil.textboxOkCommand);
                     MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.reasonTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.reasonTextbox);
-
+                // #sijapp cond.end#
                 }
 
             }
@@ -694,7 +873,11 @@ public class ContactListContactItem extends ContactListItem
             else
             {
                 MenuUtil.menuList.setTitle(ContactListContactItem.this.name);
+                //  #sijapp cond.if target is "MIDP2"#
+                if (MenuUtil.menuList.size() > 7) MenuUtil.menuList.delete(7);
+                //  #sijapp cond.else#
                 if (MenuUtil.menuList.size() > 4) MenuUtil.menuList.delete(4);
+                //  #sijapp cond.end#
                 if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH))
                         MenuUtil.menuList.append(ResourceBundle.getString("requauth"), null);
                 MenuUtil.menuList.setSelectedIndex(0, true);
@@ -777,8 +960,15 @@ public class ContactListContactItem extends ContactListItem
             MenuUtil.menuList = new List("set", Choice.IMPLICIT);
             MenuUtil.menuList.append(ResourceBundle.getString("send_message"), null);
             MenuUtil.menuList.append(ResourceBundle.getString("send_url"), null);
+            // #sijapp cond.if target is "MIDP2"#
+            MenuUtil.menuList.append(ResourceBundle.getString("ft_name"),null);
+            MenuUtil.menuList.append(ResourceBundle.getString("ft_cam"),null);
+            // #sijapp cond.end#
             MenuUtil.menuList.append(ResourceBundle.getString("info"), null);
             MenuUtil.menuList.append(ResourceBundle.getString("remove"), null);
+            // #sijapp cond.if target is "MIDP2"#
+            MenuUtil.menuList.append("DC Info", null);
+            // #sijapp cond.end#
 
             MenuUtil.menuList.addCommand(MenuUtil.backCommand);
 

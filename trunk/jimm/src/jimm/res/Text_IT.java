@@ -92,11 +92,11 @@ public class Text_IT extends ResourceBundle
 		resources.put("lang_DE",                     "Deutsch");
 		resources.put("lang_EN",                     "English");
 		resources.put("lang_ES",                     "Espanol");
-		resources.put("lang_IT",                     "Italiano");		
+		resources.put("lang_IT",                     "Italiano");
 		resources.put("lang_LT",                     "Lithuanian");
 		resources.put("lang_RU",                     "Russian");
 		resources.put("lang_SE",                     "Svensk");
-		resources.put("lang_SR",                     "Српски");
+		resources.put("lang_SR",                     "??????");
 		resources.put("lastname",                    "Cognome");
 		resources.put("loading",                     "Caricamento");
 		resources.put("male",                        "M");

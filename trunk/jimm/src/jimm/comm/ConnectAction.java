@@ -269,7 +269,7 @@ public class ConnectAction extends Action
 		// Open connection
 		try
 		{
-			this.icq.c.connect(this.srvHost, this.srvPort);
+			this.icq.c.connect(this.srvHost+":"+this.srvPort);
 		}
 		catch (JimmException e)
 		{
@@ -700,6 +700,7 @@ public class ConnectAction extends Action
 						// Iterate through all items
 						int count = Util.getWord(buf, marker);
 						marker += 2;
+						System.out.println("elemente in serverlist: "+count);
 						for (int i = 0; i < count; i++)
 						{
 
@@ -736,6 +737,7 @@ public class ConnectAction extends Action
 
 								// Get nick
 								String nick = new String(name);
+								System.out.println("c "+i+": "+name);
 								boolean noAuth = false;
 								while (len > 0)
 								{
@@ -763,7 +765,7 @@ public class ConnectAction extends Action
 							// Group of contacts
 							else if (type == 0x0001)
 							{
-
+							    System.out.println("g "+i+": "+name);
 								// Skip TLVs
 								marker += len;
 
@@ -777,7 +779,7 @@ public class ConnectAction extends Action
 							// All other item types
 							else
 							{
-
+							    System.out.println("x "+i+": ");
 								// Skip TLVs
 								marker += len;
 
