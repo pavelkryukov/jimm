@@ -567,26 +567,11 @@ public class ContactListContactItem extends ContactListItem
                     // Send plain message
                     if (MenuUtil.menuList.getSelectedIndex() == 0 && !MenuUtil.messageTextbox.getString().equals(""))
                     {
-                        // Append advertisement?
-                        boolean appendAdvertisement = false;
-                        switch (Jimm.jimm.getOptionsRef().getDisplayAdvertisementMode())
-                        {
-                        case 0:
-                            appendAdvertisement = true;
-                            ContactListContactItem.this.outgoingPlainMessagesCnt++;
-                            break;
-                        case 1:
-                            appendAdvertisement = (ContactListContactItem.this.outgoingPlainMessagesCnt == 0);
-                            ContactListContactItem.this.outgoingPlainMessagesCnt++;
-                            break;
-                        }
-
                         // Construct plain message object and request new
                         // SendMessageAction
                         // Add the new message to the chat history
                         PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
-                                ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString(),
-                                appendAdvertisement);
+                                ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
 
                         if (Jimm.jimm.getOptionsRef().keepChat())
                         {
