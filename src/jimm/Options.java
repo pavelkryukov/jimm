@@ -131,7 +131,6 @@ public class Options
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
 		{
-		    System.out.println("Set default");
 		    this.setStringOption (Options.OPTION_UIN,                            "");
 			this.setStringOption (Options.OPTION_PASSWORD,                       "");
 			this.setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
