@@ -175,9 +175,16 @@ public class Jimm extends MIDlet
 		this.t = new Timer();
 		this.sc.setProgress(90);
 		
-		// Activate main menu
-		this.mm.activate();
-
+		if (this.getOptionsRef().getBooleanOption(Options.OPTION_AUTO_CONNECT))
+        {
+            // Connect
+            Jimm.jimm.getContactListRef().beforeConnect();
+            Jimm.jimm.getIcqRef().connect();
+        } else
+        {
+            // Activate main menu
+            this.mm.activate();
+        }
 	}
 
 

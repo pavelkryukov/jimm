@@ -173,5 +173,7 @@ VERSION 0.3.2
 ________________________________________________________________________________
 VERSION 0.3.3
   * New module: Text messages history storing
+  * There now is a back (cancel) option on the options pages
+  * New option: Auto connect on startup
   * Added Ukrainian translation
   
