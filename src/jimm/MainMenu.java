@@ -150,7 +150,7 @@ public class MainMenu implements CommandListener
         // Return to contact list
         if (c == MainMenu.backCommand)
         {
-            if ((d == this.groupList) || (d == this.addUser))
+            if ((d == this.groupList) || (d == this.addUser) || (d == statusList))
                 this.activate();
             else
                 Jimm.jimm.getContactListRef().activate();
@@ -225,6 +225,7 @@ public class MainMenu implements CommandListener
                         MainMenu.statusList.setSelectedIndex(0, true);
                     }
                     MainMenu.statusList.setCommandListener(this);
+                    MainMenu.statusList.addCommand(backCommand);
                     Jimm.display.setCurrent(MainMenu.statusList);
 
                     break;
