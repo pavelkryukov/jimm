@@ -78,7 +78,9 @@ public class Util
 	    
 	    // Get time an apply time zone correction
 		Date date = new Date();
+		// #sijapp cond.if target isnot "SIEMENS"#
 	    date.setTime(date.getTime()+TimeZone.getDefault().getRawOffset());
+	    // #sijapp cond.end#
 		time.setTime(date);
 		
 		// Construct the string for the display
