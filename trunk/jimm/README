@@ -96,6 +96,9 @@ On Siemens S55 mobiles there are the following graphical errors:
   * In the chat histroy the name is shifted left
     (Both depend on errors on the S55 and they might be fixed by Siemens in
     upcoming firmware releases)
+  * On devices with heap memory bellow 300kb (e.g. Siemens S55) Jimm will only
+    run stable with less than 40 contacts. You should also disable the chat history
+    feature
 
 The background of the flowers if there is an active chat is no longer
 transparent.
