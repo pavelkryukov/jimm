@@ -32,6 +32,10 @@ public class ResourceBundle
 {
 
 
+	// Common prefix of all resource packages
+	public static final String PREFIX = "jimm.res.Text";
+
+
 	// List of available language packs
 	public static String[] LANG_AVAILABLE =
 	{
@@ -98,22 +102,22 @@ public class ResourceBundle
 
 
 	// Get string from active language pack
-	public static synchronized String getString(String group, String key)
+	public static synchronized String getString(String key)
 	{
 
 		// Get/load resource bundle
 		ResourceBundle bundle;
 		synchronized (groups)
 		{
-			bundle = (ResourceBundle) groups.get(group + "_" + ResourceBundle.currUiLanguage);
+			bundle = (ResourceBundle) groups.get(ResourceBundle.currUiLanguage);
 			if (bundle == null)
 			{
-				bundle = ResourceBundle.loadBundle(group + "_" + ResourceBundle.currUiLanguage);
+				bundle = ResourceBundle.loadBundle(ResourceBundle.currUiLanguage);
 			}
 		}
 
 		// Return value from resource bundle
-		return bundle.getString(key);
+		return bundle._getString(key);
 
 	}
 
@@ -126,7 +130,7 @@ public class ResourceBundle
 		ResourceBundle bundle = null;
 		try
 		{
-			bundle = (ResourceBundle) Class.forName(name).newInstance();
+			bundle = (ResourceBundle) Class.forName(ResourceBundle.PREFIX + "_" + name).newInstance();
 		}
 		catch (Exception e)
 		{
@@ -150,7 +154,7 @@ public class ResourceBundle
 
 
 	// Return value form hashtable
-	protected String getString(String key)
+	protected String _getString(String key)
 	{
 		String value = (String) resources.get(key);
 		if (value != null)
