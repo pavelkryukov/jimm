@@ -34,7 +34,7 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 
-// #sijapp cond.if target is "MIDP2"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
 import jimm.comm.FileTransferMessage;
 // #sijapp cond.end#
 import jimm.comm.Message;
@@ -98,7 +98,7 @@ public class ContactListContactItem extends ContactListItem
     private int sysNotices;
     private int authRequest;
     
-    //  #sijapp cond.if target is "MIDP2"#
+    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
     // DC values
     private byte[] internalIP;
     private byte[] externalIP;
@@ -106,7 +106,9 @@ public class ContactListContactItem extends ContactListItem
     private int dcType;
     private int icqProt;
     private long authCookie;
-    private FileTransferMessage ftm;
+    //  #sijapp cond.end#
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+   private FileTransferMessage ftm;
     private FileTransfer ft;
     //  #sijapp cond.end#
     
@@ -131,13 +133,15 @@ public class ContactListContactItem extends ContactListItem
         this.urlMessages = 0;
         this.sysNotices = 0;
         this.authRequest = 0;
-        //  #sijapp cond.if target is "MIDP2"#
+        //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
         this.internalIP = new byte[4];
         this.externalIP = new byte[4];
         this.dcPort = "";
         this.dcType = -1;
         this.icqProt = 0;
         this.authCookie = 0;
+        //  #sijapp cond.end#
+       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
         this.ft = null;
         //  #sijapp cond.end#
         this.menu = new Menu();
@@ -147,7 +151,7 @@ public class ContactListContactItem extends ContactListItem
     // Constructor for a new contact item
     public ContactListContactItem(int group, String uin, String name, boolean noAuth, boolean added)
     {
-	    this.id = Util.createRandomId();
+        this.id = Util.createRandomId();
         this.group = group;
         this.uin = new String(uin);
         this.name = new String(name);
@@ -162,13 +166,15 @@ public class ContactListContactItem extends ContactListItem
         this.urlMessages = 0;
         this.sysNotices = 0;
         this.authRequest = 0;
-        //  #sijapp cond.if target is "MIDP2"#
+        //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
         this.internalIP = new byte[4];
         this.externalIP = new byte[4];
         this.dcPort = "";
         this.dcType = -1;
         this.icqProt = 0;
         this.authCookie = 0;
+        //  #sijapp cond.end#
+        //  #sijapp cond.if modules_FILES is "true"#
         this.ft = null;
         //  #sijapp cond.end#
         this.menu = new Menu();
@@ -339,7 +345,7 @@ public class ContactListContactItem extends ContactListItem
         return -1;
     }
     
-    //  #sijapp cond.if target is "MIDP2"#
+    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
     // Sets the DC values
     public void setDCValues(byte[] _internalIP,String _dcPort,int _dcType,int _icqProt,long _authCookie)
     {
@@ -393,7 +399,8 @@ public class ContactListContactItem extends ContactListItem
     {
         return (this.dcPort);
     }
-    
+    // #sijapp cond.end#
+    //  #sijapp cond.if modules_FILES is "true"#
     // Returns the fileTransfer Object of this contact
     public FileTransfer getFT()
     {
@@ -475,7 +482,7 @@ public class ContactListContactItem extends ContactListItem
     // Activates the contact item menu
     public void activateMenu()
     {
-        // #sijapp cond.if target is "MIDP2"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(this.getChatHistoryDisplayNr()).setTitle(this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
         // #sijapp cond.else#
 		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(this.getChatHistoryDisplayNr()).setCaption(this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
@@ -563,7 +570,11 @@ public class ContactListContactItem extends ContactListItem
             }
             
             // Menu item has been selected
+            //#sijapp cond.if target is "MOTOROLA"#
+            else if ((c == List.SELECT_COMMAND) || (c == MenuUtil.selectCommand)) 
+            //#sijapp cond.else#          
             else if (c == List.SELECT_COMMAND)
+            //#sijapp cond.end#
             {
             	int selIndex = MenuUtil.menuList.getSelectedIndex();
             	
@@ -588,7 +599,7 @@ public class ContactListContactItem extends ContactListItem
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
             	}    
 
-                // #sijapp cond.if target is "MIDP2"#
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
                 
                 // Send a filetransfer with a file given by path
                 // We can only make file transfers with ICQ clients prot V8 and up
@@ -621,7 +632,8 @@ public class ContactListContactItem extends ContactListItem
                         ft.startFT(); 
                     }
             	}
-                    
+                    // #sijapp cond.end#
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
             	// DC Info
             	else if (selIndex == MenuUtil.dc_info_idx)
             	{
@@ -966,9 +978,11 @@ public class ContactListContactItem extends ContactListItem
     	static int
 			send_message_idx, 
 			send_url_idx,
-			ft_name_idx,
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+                                                                ft_name_idx,
 			ft_cam_idx,
-			info_idx,
+			// #sijapp cond.end#
+                                                                info_idx,
 			remove_idx,
 			rename_idx,
 			dc_info_idx,
@@ -994,6 +1008,24 @@ public class ContactListContactItem extends ContactListItem
         private static Command backCommand = new Command(ResourceBundle.getString("back"),
                 Command.BACK, 2);
 
+        //#sijapp cond.if target is "MOTOROLA"#
+
+        // Select command
+        private static Command selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 2);
+
+        //#sijapp cond.end#        
+
+        //#sijapp cond.if target is "MOTOROLA"#
+        // Message close command
+        private static Command msgCloseCommand = new Command(ResourceBundle.getString("close"),
+                Command.BACK, 2);
+
+        // Message close and reply command
+        private static Command msgReplyCommand = new Command(ResourceBundle.getString("reply"),
+                Command.BACK, 3);
+
+         //#sijapp cond.else#   
+        
         // Message close command
         private static Command msgCloseCommand = new Command(ResourceBundle.getString("close"),
                 Command.BACK, 3);
@@ -1001,7 +1033,11 @@ public class ContactListContactItem extends ContactListItem
         // Message close and reply command
         private static Command msgReplyCommand = new Command(ResourceBundle.getString("reply"),
                 Command.OK, 2);
-        
+
+
+         //#sijapp cond.end#   
+
+
         // Add temporary user to contact list
         private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.OK, 2);
 
@@ -1035,15 +1071,25 @@ public class ContactListContactItem extends ContactListItem
         // Request authorisation from a contact
         private static Command reqAuthCommand = new Command(ResourceBundle.getString("requauth"),
                 Command.OK, 1);
-        
-        // Request authorisation from a contact
+        //#sijapp cond.if target is "MOTOROLA"#
+        // Rename a contact
+        private static Command renameOkCommand = new Command(ResourceBundle.getString("OK"),
+                Command.OK, 2);
+         //#sijapp cond.else#
+        // Rename a contact
         private static Command renameOkCommand = new Command(ResourceBundle.getString("rename"),
                 Command.OK, 2);
+        //#sijapp cond.end# 
         
         static void initList(boolean showAuthItem)
         {
+                     // #sijapp cond.if modules_FILES is "true"#
         	send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
             	ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
+                     // #sijapp cond.else#
+                     send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
+            	info_idx = remove_idx = rename_idx = auth_idx = -1;
+                      // #sijapp cond.end#
             
         	while (menuList.size() != 0) menuList.delete(0);
         	
@@ -1053,7 +1099,7 @@ public class ContactListContactItem extends ContactListItem
             send_url_idx = MenuUtil.menuList.size();
             menuList.append(ResourceBundle.getString("send_url"), null);
             
-            // #sijapp cond.if target is "MIDP2"#
+            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
             ft_name_idx = MenuUtil.menuList.size();
             menuList.append(ResourceBundle.getString("ft_name"),null);
             
@@ -1081,7 +1127,7 @@ public class ContactListContactItem extends ContactListItem
             	menuList.append(ResourceBundle.getString("requauth"), null);
             }
             
-            // #sijapp cond.if target is "MIDP2"#
+            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
             dc_info_idx = menuList.size();
             menuList.append("DC Info", null);
             // #sijapp cond.end#
@@ -1094,7 +1140,9 @@ public class ContactListContactItem extends ContactListItem
             // Initialize the menu list
             MenuUtil.menuList = new List("set", Choice.IMPLICIT);
             
-
+            // #sijapp cond.if target is "MOTOROLA"#
+            MenuUtil.menuList.addCommand(MenuUtil.selectCommand);
+            // #sijapp cond.end#
             MenuUtil.menuList.addCommand(MenuUtil.backCommand);
 
             // Initialize the textbox for entering messages
@@ -1119,3 +1167,4 @@ public class ContactListContactItem extends ContactListItem
     }
 
 }
+
