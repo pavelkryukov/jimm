@@ -92,7 +92,6 @@ public class Options
 	public static final int OPTION_ONLINE_NOTIFICATION_SOUNDFILE  =   5;   /* String  */
 	public static final int OPTION_ONLINE_NOTIFICATION_VOLUME     =  72;   /* int     */
 	public static final int OPTION_VIBRATOR                       = 131;   /* boolean */
-	public static final int OPTION_KEEPCHAT                       = 132;   /* boolean */
 	public static final int OPTION_CP1251_HACK                    = 133;   /* boolean */
 	public static final int OPTION_COST_PER_PACKET                =  68;   /* int     */
 	public static final int OPTION_COST_PER_DAY                   =  69;   /* int     */
@@ -161,7 +160,6 @@ public class Options
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     0);
 			// #sijapp cond.end#
 			this.setBooleanOption(Options.OPTION_VIBRATOR,                       false);
-			this.setBooleanOption(Options.OPTION_KEEPCHAT,                       true);
 			this.setBooleanOption(Options.OPTION_CP1251_HACK,                    false);
 			this.setIntOption    (Options.OPTION_COST_PER_PACKET,                0);
 			this.setIntOption    (Options.OPTION_COST_PER_DAY,                   0);
@@ -391,7 +389,6 @@ public class Options
 		// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
 		private ChoiceGroup vibratorChoiceGroup;
 		// #sijapp cond.end#
-		private ChoiceGroup keepchatChoiceGroup;
 		private ChoiceGroup cp1251HackChoiceGroup;
 		// #sijapp cond.if modules_TRAFFIC is "true" #
 		private TextField costPerPacketTextField;
@@ -471,9 +468,6 @@ public class Options
 			this.clHideOfflineChoiceGroup = new ChoiceGroup(ResourceBundle.getString("hide_offline"), Choice.MULTIPLE);
 			this.clHideOfflineChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.clHideOfflineChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE));
-			this.keepchatChoiceGroup = new ChoiceGroup(ResourceBundle.getString("keep_chat"), Choice.MULTIPLE);
-			this.keepchatChoiceGroup.append(ResourceBundle.getString("yes"), null);
-			this.keepchatChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_KEEPCHAT));
 			this.cp1251HackChoiceGroup = new ChoiceGroup(ResourceBundle.getString("cp1251"), Choice.MULTIPLE);
 			this.cp1251HackChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.cp1251HackChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CP1251_HACK));
@@ -569,7 +563,6 @@ public class Options
 						this.optionsForm.append(this.displayDateChoiceGroup);
 						this.optionsForm.append(this.clSortByChoiceGroup);
 						this.optionsForm.append(this.clHideOfflineChoiceGroup);
-						this.optionsForm.append(this.keepchatChoiceGroup);
 						this.optionsForm.append(this.cp1251HackChoiceGroup);
 						this.optionsForm.append(this.useSmallFont);
 						this.optionsForm.append(this.showUserGroups);
@@ -667,7 +660,6 @@ public class Options
 						Options.this.setIntOption(Options.OPTION_CL_SORT_BY, newSortMethod);
 						
 						Options.this.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,this.clHideOfflineChoiceGroup.isSelected(0));
-						Options.this.setBooleanOption(Options.OPTION_KEEPCHAT,this.keepchatChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CP1251_HACK,this.cp1251HackChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.useSmallFont.isSelected(0));
 						

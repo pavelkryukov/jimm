@@ -209,14 +209,8 @@ public class Icq implements Runnable
         // Check whether contact item is temporary
         if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP))
         {
-
             // Remove this temporary contact item
             Jimm.jimm.getContactListRef().removeContactItem(cItem);
-
-            if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
-            {
-                cItem.deleteChatHistory();
-            }
 
             // Update and activate contact list
             Jimm.jimm.getContactListRef().update();

@@ -459,22 +459,12 @@ public class ContactListContactItem extends ContactListItem
             // Message has been closed
             else if (c == MenuUtil.msgCloseCommand)
             {
-                if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
-                {
-                    ContactListContactItem.this.deleteChatHistory();
-                }
                 Jimm.jimm.getContactListRef().update(ContactListContactItem.this.getUin());
                 Jimm.jimm.getContactListRef().activate();
             }
             // User wants to send a reply
             else if (c == MenuUtil.msgReplyCommand)
             {
-
-                if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
-                {
-                    ContactListContactItem.this.deleteChatHistory();
-                }
-
                 // Select first list element (new message)
                 MenuUtil.menuList.setSelectedIndex(0, true);
 
@@ -672,7 +662,6 @@ public class ContactListContactItem extends ContactListItem
                         // Add the new message to the chat history
                         PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
                                 ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
-                        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
                             if (chatHistoryDisplayNr != -1)
                                 Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
                             else
@@ -729,11 +718,6 @@ public class ContactListContactItem extends ContactListItem
                     {
                         JimmException.handleException(e);
                         if (e.isCritical()) return;
-                    }
-
-                    if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
-                    {
-                        ContactListContactItem.this.deleteChatHistory();
                     }
 
                     // Return to contact list
