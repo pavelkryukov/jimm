@@ -109,6 +109,14 @@ public class SnacPacket extends Packet
 	// SRV_REPLYBUDDY packet family and command
 	public static final int SRV_REPLYBUDDY_FAMILY = 0x0003;
 	public static final int SRV_REPLYBUDDY_COMMAND = 0x0003;
+	
+    // SRV_REPLYBUDDY packet family and command
+	public static final int CLI_BUDDYLIST_ADD_FAMILY = 0x0003;
+	public static final int CLI_BUDDYLIST_ADD_COMMAND = 0x0004;
+	
+    // SRV_REPLYBUDDY packet family and command
+	public static final int CLI_BUDDYLIST_REMOVE_FAMILY = 0x0003;
+	public static final int CLI_BUDDYLIST_REMOVE_COMMAND = 0x0005;
 
 	// SRV_USERONLINE packet family and command
 	public static final int SRV_USERONLINE_FAMILY = 0x0003;

@@ -34,8 +34,6 @@ import jimm.JimmException;
 public class UpdateContactListAction extends Action
 {
 
-    // CURRENTLY, ONLY CONTACT ITEM REMOVAL IS SUPPORTED!
-
     // Action states
     public static final int STATE_ERROR = -1;
     public static final int STATE_CLI_ROSTERDELETE_SENT = 1;
@@ -58,6 +56,9 @@ public class UpdateContactListAction extends Action
 
     // Action type
     private boolean add;
+    
+    // Type of error happend
+    private int error;
 
     // Last activity
     private Date lastActivity = new Date();
@@ -85,24 +86,40 @@ public class UpdateContactListAction extends Action
     protected void init() throws JimmException
     {
 
+        error = 0;
+        int marker = 0;
+        
+        SnacPacket packet;
+        
+        byte[] uinRaw = Util.stringToByteArray(this.cItem.getUin());
+        byte[] nameRaw = Util.stringToByteArray(this.cItem.getName());
+        
+        byte[] buf = new byte[1+uinRaw.length];
+        
+        Util.putByte(buf, marker, uinRaw.length);
+        System.arraycopy(uinRaw, 0, buf, 1, uinRaw.length);
+        
+        if (!add)
+            packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_REMOVE_FAMILY, SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND,SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND, new byte[0], buf);
+        else	
+            packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_ADD_FAMILY, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND,SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, new byte[0], buf);
+        
+        this.icq.c.sendPacket(packet);
+        
         // Send a CLI_ADDSTART packet
-        SnacPacket packet1 = new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY, SnacPacket.CLI_ADDSTART_COMMAND,
-                0x00000000, new byte[0], new byte[0]);
+        packet = new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY, SnacPacket.CLI_ADDSTART_COMMAND,SnacPacket.CLI_ADDSTART_COMMAND, new byte[0], new byte[0]);
 
-        this.icq.c.sendPacket(packet1);
-
-        SnacPacket packet2;
+        this.icq.c.sendPacket(packet);
 
         if (!add)
         {
+            
             // Pack CLI_ROSTERDELETE packet
             System.out.println("Pack CLI_ROSTERDELETEpacket");
-            byte[] uinRaw = Util.stringToByteArray(this.cItem.getUin());
-            byte[] nameRaw = Util.stringToByteArray(this.cItem.getName());
+
+            buf = new byte[2 + uinRaw.length + 8 + 4 + nameRaw.length];
             
-            byte[] buf = new byte[2 + uinRaw.length + 8 + 4 + nameRaw.length];
-            
-            int marker = 0;
+            marker = 0;
             
             Util.putWord(buf, marker, uinRaw.length);
             System.arraycopy(uinRaw, 0, buf, marker + 2, uinRaw.length);
@@ -120,22 +137,19 @@ public class UpdateContactListAction extends Action
             System.arraycopy(nameRaw, 0, buf, marker + 4, nameRaw.length);
             marker += 4 + nameRaw.length;
             // Send a CLI_ROSTERDELETE packet
-            packet2 = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY, SnacPacket.CLI_ROSTERDELETE_COMMAND,
-                    0x00000000, new byte[0], buf);
+            packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY, SnacPacket.CLI_ROSTERDELETE_COMMAND,
+                    SnacPacket.CLI_ROSTERDELETE_COMMAND, new byte[0], buf);
         } else
         {
             // Pack CLI_ROSTERADDpacket
             System.out.println("Pack CLI_ROSTERADDpacket");
-            byte[] uinRaw = Util.stringToByteArray(this.cItem.getUin());
-            byte[] nameRaw = Util.stringToByteArray(this.cItem.getName());
             
-            byte[] buf;
             if (cItem.noAuth())
                 buf = new byte[2 + uinRaw.length + 6 + 6 + 4 + nameRaw.length];
             else
                 buf = new byte[2 + uinRaw.length + 6 + 2 + 4 + nameRaw.length];
             
-            int marker = 0;
+            marker = 0;
             
             Util.putWord(buf, marker, uinRaw.length);
             System.arraycopy(uinRaw, 0, buf, marker + 2, uinRaw.length);
@@ -169,10 +183,10 @@ public class UpdateContactListAction extends Action
             System.arraycopy(nameRaw, 0, buf, marker, nameRaw.length);
 
             // Send CLI_ROSTERADDpacket
-            packet2 = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY, SnacPacket.CLI_ROSTERADD_COMMAND, 0x00000000,
+            packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY, SnacPacket.CLI_ROSTERADD_COMMAND, SnacPacket.CLI_ROSTERADD_COMMAND,
                     new byte[0], buf);
         }
-        this.icq.c.sendPacket(packet2);
+        this.icq.c.sendPacket(packet);
 
         // Set state
         if (!add)
@@ -216,45 +230,49 @@ public class UpdateContactListAction extends Action
                             System.out.println("CLI_ADDEND");
                             // Send a CLI_ADDEND packet
                             packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND, 0x00000000, new byte[0], new byte[0]);
+                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
                             this.icq.c.sendPacket(packet2);
-                            // this.state = ConnectAction.STATE_ERROR;
+                            error = 2;
+                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(154, 0, true));
-                        
                         case 0x003:
                             System.out.println("CLI_ADDEND");
                             // Send a CLI_ADDEND packet
                             packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND, 0x00000000, new byte[0], new byte[0]);
+                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
                             this.icq.c.sendPacket(packet2);
-                            // this.state = ConnectAction.STATE_ERROR;
+                            error = 3;
+                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(155, 0, true));
                             
                         case 0x00A:
                             System.out.println("CLI_ADDEND");
                             // Send a CLI_ADDEND packet
                             packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND, 0x00000000, new byte[0], new byte[0]);
+                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
                             this.icq.c.sendPacket(packet2);
-                            // this.state = ConnectAction.STATE_ERROR;
+                            error = 10;
+                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(156, 0, true));
                             
                         case 0x00C:
                             System.out.println("CLI_ADDEND");
                             // Send a CLI_ADDEND packet
                             packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND, 0x00000000, new byte[0], new byte[0]);
+                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
                             this.icq.c.sendPacket(packet2);
-                            // this.state = ConnectAction.STATE_ERROR;
+                            error = 12;
+                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(157, 0, true));
                             
                         case 0x00D:
                             System.out.println("CLI_ADDEND");
                             // Send a CLI_ADDEND packet
                             packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND, 0x00000000, new byte[0], new byte[0]);
+                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
                             this.icq.c.sendPacket(packet2);
-                            // this.state = ConnectAction.STATE_ERROR;
+                            error = 13;
+                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(158, 0, true));
                             
                         case 0x00E:
@@ -329,7 +347,7 @@ public class UpdateContactListAction extends Action
                         System.out.println("Send CLI_ROSTERUPDATE");
                         // Send CLI_ROSTERUPDATE packet
                         SnacPacket packet1 = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-                                SnacPacket.CLI_ROSTERUPDATE_COMMAND, 0x00000000, new byte[0], buf);
+                                SnacPacket.CLI_ROSTERUPDATE_COMMAND,SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], buf);
                         this.icq.c.sendPacket(packet1);
 
                         // Move to next state
@@ -339,7 +357,7 @@ public class UpdateContactListAction extends Action
                         System.out.println("CLI_ADDEND");
                         // Send a CLI_ADDEND packet
                         packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                SnacPacket.CLI_ADDEND_COMMAND, 0x00000000, new byte[0], new byte[0]);
+                                SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
                         this.icq.c.sendPacket(packet2);
                                                     
                         // Packet has been consumed
@@ -411,6 +429,11 @@ public class UpdateContactListAction extends Action
 
     }
 
+    // Returns type of the error that happend
+    public int getErrorType(){
+        return error;
+    }
+    
     // Returns true if the action is completed
     public boolean isCompleted()
     {
@@ -420,8 +443,7 @@ public class UpdateContactListAction extends Action
     // Returns true if an error has occured
     public boolean isError()
     {
-        if ((this.state != ConnectAction.STATE_ERROR)
-                && (this.lastActivity.getTime() + UpdateContactListAction.TIMEOUT < System.currentTimeMillis()))
+        if ((this.state != ConnectAction.STATE_ERROR) && (this.lastActivity.getTime() + UpdateContactListAction.TIMEOUT < System.currentTimeMillis()))
         {
             JimmException.handleException(new JimmException(154, 3));
             this.state = ConnectAction.STATE_ERROR;
