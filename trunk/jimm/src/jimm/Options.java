@@ -1100,7 +1100,7 @@ public class Options
 						}
 						Options.this.setClHideOffline(this.clHideOfflineChoiceGroup.isSelected(0));
 						Options.this.setKeepChat(this.keepChatChoiceGroup.isSelected(0));
-						Options.this.setCP1251Hack(this.keepChatChoiceGroup.isSelected(0));
+						Options.this.setCP1251Hack(this.cp1251ChoiceGroup.isSelected(0));
 						// #sijapp cond.if target is "SIEMENS" | target is "RIM"#
 						Options.this.setVibrator(this.vibratorChoiceGroup.isSelected(0));
 						// #sijapp cond.end#
