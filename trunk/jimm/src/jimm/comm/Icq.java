@@ -207,8 +207,7 @@ public class Icq implements Runnable
             // Remove this temporary contact item
             Jimm.jimm.getContactListRef().removeContactItem(cItem);
 
-            // Update and activate contact list
-            Jimm.jimm.getContactListRef().update();
+            // Activate contact list
             Jimm.jimm.getContactListRef().activate();
 
         } else

@@ -501,7 +501,6 @@ public class ContactListContactItem extends ContactListItem
             // Message has been closed
             else if (c == MenuUtil.msgCloseCommand)
             {
-                Jimm.jimm.getContactListRef().update(ContactListContactItem.this.getUin());
                 Jimm.jimm.getContactListRef().activate();
             }
             // User wants to send a reply
@@ -522,7 +521,7 @@ public class ContactListContactItem extends ContactListItem
             // User wants to add temporary contact
             else if (c == MenuUtil.addUrsCommand)
             {
-            	MainMenu.addUserOrGroupCmd(uin,true);
+            	Jimm.jimm.getMainMenuRef().addUserOrGroupCmd(uin,true);
             }
             
             // User wants to rename Contact
@@ -772,7 +771,6 @@ public class ContactListContactItem extends ContactListItem
                         }
 
                         // Return to contact list
-                        Jimm.jimm.getContactListRef().update(ContactListContactItem.this.getUin());
                         this.activate();
 
                     }
@@ -813,7 +811,6 @@ public class ContactListContactItem extends ContactListItem
                     }
 
                     // Return to contact list
-                    Jimm.jimm.getContactListRef().update();
                     this.activate();
 
                 }
@@ -896,7 +893,6 @@ public class ContactListContactItem extends ContactListItem
             else if (c == MenuUtil.deleteChatCommand)
             {
                 ContactListContactItem.this.deleteChatHistory();
-                Jimm.jimm.getContactListRef().update(ContactListContactItem.this.getUin());
                 Jimm.jimm.getContactListRef().activate();
             }
             //Grant authorisation

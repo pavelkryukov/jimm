@@ -1161,21 +1161,6 @@ public class ContactList implements CommandListener
 		}
     }
 	
-    // Updates the client-side contact list (called when roster is up to date)
-	public synchronized void update()
-	{
-	    //DebugLog.addText("update: rooster up to date");
-	    //treeBuilt = false;
-	}
-    
-    // Updates the client-side contact list (called when coming back from
-    // Message Display)
-    public synchronized void update(String uin)
-    {
-        //System.out.println("update: back form msg display");
-        //System.out.println("THIS IS EMPTY METHOD!!!");
-    }
-    
     boolean 
 		needPlayOnlineNotif = false, 
 		needPlayMessNotif = false; 

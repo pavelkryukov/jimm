@@ -134,12 +134,12 @@ public class SplashCanvas extends Canvas
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight());
 		int r, g;
 		Graphics bg_graph = background.getGraphics();
-		for (int x = 0; x < this.getWidth(); x += 2)
+		for (int x = 0; x < this.getWidth(); x+=2)
 		{
-			for (int y = 0; y < this.getHeight(); y += 2)
+			for (int y = 0; y < this.getHeight(); y+=2)
 			{
 				r = x * y / (y + x + 1) % 256;
-				g = (r ^ x ^ y) % 256;
+				g = ((r ^ x ^ y)) % 256;
 				bg_graph.setColor(r, g, (r + g) % 256);
 				bg_graph.fillRect(x, y, 2, 2);
 			}
@@ -576,7 +576,6 @@ public class SplashCanvas extends Canvas
 		{
 			if (this.updateContactListAct.isCompleted())
 			{
-				Jimm.jimm.getContactListRef().update();
 				Jimm.jimm.getContactListRef().activate();
 				this.cancel();
 			}
@@ -586,7 +585,6 @@ public class SplashCanvas extends Canvas
 				{
 					JimmException.handleException(new JimmException(154, 2, true));
 				}
-				Jimm.jimm.getContactListRef().update();
 				Jimm.jimm.getContactListRef().activate();
 				this.cancel();
 			}

@@ -467,20 +467,25 @@ public class UpdateContactListAction extends Action
                         //        + Integer.toHexString(Util.getWord(snacPacket.getData(), 0)));
                         if (Util.getWord(snacPacket.getData(), 0) != 0x0000) { throw (new JimmException(154, 0, true)); }
 
-                        // Delete or add contact item from internal list
+                        // Delete or add contact or group item from internal list
                         if (cItem != null)
-                        if (!add)
-                        {
-                            // System.out.println("Removed");
-                            Jimm.jimm.getContactListRef().removeContactItem(this.cItem);
-                        } else
-                        {
-                            // System.out.println("Added");
-                            Jimm.jimm.getContactListRef().addContactItem(this.cItem);
-                        }
+                            if (!add)
+                            {
+                                Jimm.jimm.getContactListRef().removeContactItem(this.cItem);
+                            } else
+                            {
+                                Jimm.jimm.getContactListRef().addContactItem(this.cItem);
+                            }
                         else
                         {
-                            Jimm.jimm.getContactListRef().addGroup(this.gItem);
+                            if (!add)
+                            {
+                                Jimm.jimm.getContactListRef().removeGroup(this.gItem);
+                            } else
+                            {
+                                Jimm.jimm.getContactListRef().addGroup(this.gItem);
+                            }
+
                         }
 
                         // Move to next state

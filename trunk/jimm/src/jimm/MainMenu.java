@@ -70,19 +70,19 @@ public class MainMenu implements CommandListener
 
     // Visual list
     private List list;
-
-    // List for all groups avaialable
+    
+    // Groups list
     private List groupList;
 
     // Form for the adding users dialog
-    static public Form addUserOrGroup;
+    public Form addUserOrGroup;
     
     // Flag if we we are adding user or group
-    static private boolean addUserFlag;
+    private boolean addUserFlag;
 
     // Text box for adding users to the contact list
-    static private TextField uinTextField;
-    static private TextField nameTextField;
+    private TextField uinTextField;
+    private TextField nameTextField;
 
     // Connected
     private boolean isConnected;
@@ -121,6 +121,7 @@ public class MainMenu implements CommandListener
                 this.list.append(ResourceBundle.getString("add_user"), null);
                 this.list.append(ResourceBundle.getString("search_user"), null);
                 this.list.append(ResourceBundle.getString("add_group"), null);
+                this.list.append(ResourceBundle.getString("del_group"), null);
                 this.list.append(ResourceBundle.getString("options"), null);
                 // #sijapp cond.if modules_TRAFFIC is "true" #
                 this.list.append(ResourceBundle.getString("traffic"), null);
@@ -155,7 +156,7 @@ public class MainMenu implements CommandListener
     }
 
     // Show form for adding user
-    public static void addUserOrGroupCmd(String uin,boolean userFlag)
+    public  void addUserOrGroupCmd(String uin,boolean userFlag)
 	{
         addUserFlag = userFlag;
         // Reset and display textbox for entering uin or group name to add
@@ -241,11 +242,11 @@ public class MainMenu implements CommandListener
         // Return to contact list
         if (c == MainMenu.backCommand)
         {
-            if ((d == this.groupList) || (d == MainMenu.addUserOrGroup) || (d == statusList))
+            if ((d == this.addUserOrGroup) || (d == statusList))
                 this.activate();
             else
                 Jimm.jimm.getContactListRef().activate();
-        } else if ((c == sendCommand) && (d == MainMenu.addUserOrGroup))
+        } else if ((c == sendCommand) && (d == this.addUserOrGroup))
         {
             // Display splash canvas
             SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
@@ -291,6 +292,45 @@ public class MainMenu implements CommandListener
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act1), 1000, 1000);
             else
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
+        } else if ((c == sendCommand) && (d == this.groupList))
+        {
+            ContactListContactItem cItems[];
+            cItems = Jimm.jimm.getContactListRef().getContactItems();
+            int count = 0;
+            for (int i=0;i<cItems.length;i++)
+            {
+                if (cItems[i].getGroup() == Jimm.jimm.getContactListRef().getGroupItems()[this.groupList.getSelectedIndex()].getId())
+                    count++;
+            }
+            if (count != 0)
+            {
+                Alert errorMsg; 
+                errorMsg = new Alert(ResourceBundle.getString("warning"),ResourceBundle.getString("no_not_empty_gr"), null, AlertType.WARNING);
+                errorMsg.setTimeout(Alert.FOREVER);
+                Jimm.display.setCurrent(errorMsg, this.groupList);
+            }
+            else
+            {
+                // Display splash canvas
+                SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
+                wait2.setMessage(ResourceBundle.getString("wait"));
+                wait2.setProgress(0);
+                Jimm.display.setCurrent(wait2);
+                
+                // Create and request action to delete the group
+                UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[this.groupList.getSelectedIndex()],false);
+                try 
+                {
+                    Jimm.jimm.getIcqRef().requestAction(act);
+                }
+                catch (JimmException e)
+                {
+                    JimmException.handleException(e);
+                    if (e.isCritical()) return;
+                }
+                // Start timer
+                Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act), 1000, 1000);
+            }
         }
         
         // User select OK in exit questiom message box
@@ -364,14 +404,26 @@ public class MainMenu implements CommandListener
                 case 5: // Add group
                     addUserOrGroupCmd(null,false);
                     break;
+                case 6: // Del group
+                    // Show list of groups to select which group to delete
+                    groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
+                    for (int i = 0; i < Jimm.jimm.getContactListRef().getGroupItems().length; i++)
+                    {
+                        groupList.append(Jimm.jimm.getContactListRef().getGroupItems()[i].getName(), null);
+                    }
+                    groupList.addCommand(backCommand);
+                    groupList.addCommand(sendCommand);
+                    groupList.setCommandListener(this);
+                    Jimm.display.setCurrent(groupList);
+                    break;
                     
-                case 6:
+                case 7:
                     // Options
                     Jimm.jimm.getOptionsRef().optionsForm.activate();
 
                     break;
                 // #sijapp cond.if modules_TRAFFIC is "true" #
-                case 7:
+                case 8:
                     // Traffic
 
                     // Display an traffic alert
@@ -379,6 +431,22 @@ public class MainMenu implements CommandListener
                     traffic.trafficScreen.activate();
 
                     break;
+                case 9:
+                    // About
+
+                    // Display an info alert
+                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
+                            .getString("about_info"), null, AlertType.INFO);
+                    about.setTimeout(Alert.FOREVER);
+                    Jimm.jimm.getContactListRef().activate(about);
+
+                    break;
+                case 10:
+                    // Exit
+                	menuExit();
+
+                    break;
+                // #sijapp cond.else#
                 case 8:
                     // About
 
@@ -390,22 +458,6 @@ public class MainMenu implements CommandListener
 
                     break;
                 case 9:
-                    // Exit
-                	menuExit();
-
-                    break;
-                // #sijapp cond.else#
-                case 7:
-                    // About
-
-                    // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
-                            .getString("about_info"), null, AlertType.INFO);
-                    about.setTimeout(Alert.FOREVER);
-                    Jimm.jimm.getContactListRef().activate(about);
-
-                    break;
-                case 8:
                     // Exit
              	
                 	menuExit();

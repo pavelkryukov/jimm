@@ -680,9 +680,6 @@ public class ConnectAction extends Action
 					{
 						this.srvReplyRosterRcvd = true;
 
-						// Update contact list
-						Jimm.jimm.getContactListRef().update();
-
 						// Packet has been consumed
 						consumed = true;
 
