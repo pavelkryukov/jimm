@@ -34,48 +34,48 @@ public class UrlMessage extends Message
 {
 
 
-  // URL
-  private String url;
+	// URL
+	private String url;
 
 
-  // Message text
-  private String text;
+	// Message text
+	private String text;
 
 
-  // Constructs an incoming message
-  public UrlMessage(String sndrUin, String rcvrUin, Date date, String url, String text)
-  {
-    this.sndrUin = new String(sndrUin);
-    this.rcvrUin = new String(rcvrUin);
-    this.date = new Date(date.getTime());
-    this.url = new String(url);
-    this.text = new String(text);
-  }
+	// Constructs an incoming message
+	public UrlMessage(String sndrUin, String rcvrUin, Date date, String url, String text)
+	{
+		this.sndrUin = new String(sndrUin);
+		this.rcvrUin = new String(rcvrUin);
+		this.date = new Date(date.getTime());
+		this.url = new String(url);
+		this.text = new String(text);
+	}
 
 
-  // Constructs an outgoing message
-  public UrlMessage(String sndrUin, ContactListContactItem rcvr, Date date, String url, String text)
-  {
-    this.sndrUin = new String(sndrUin);
-    this.rcvr = rcvr;
-    this.date = new Date(date.getTime());
-    this.url = new String(url);
-    this.text = new String(text);
-  }
+	// Constructs an outgoing message
+	public UrlMessage(String sndrUin, ContactListContactItem rcvr, Date date, String url, String text)
+	{
+		this.sndrUin = new String(sndrUin);
+		this.rcvr = rcvr;
+		this.date = new Date(date.getTime());
+		this.url = new String(url);
+		this.text = new String(text);
+	}
 
 
-  // Returns the URL
-  public String getUrl()
-  {
-    return (new String(this.url));
-  }
+	// Returns the URL
+	public String getUrl()
+	{
+		return (new String(this.url));
+	}
 
 
-  // Returns the message text
-  public String getText()
-  {
-    return (new String(this.text));
-  }
+	// Returns the message text
+  	public String getText()
+	{
+		return (new String(this.text));
+	}
 
 
 }
