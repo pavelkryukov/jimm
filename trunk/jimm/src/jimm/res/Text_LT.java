@@ -47,15 +47,16 @@ public class Text_LT extends ResourceBundle
 	resources.put("async",                    	 "Asinchroniškas");    
     resources.put("back",                        "Atgal");
     // #sijapp cond.if target is "SIEMENS" #
-    resources.put("beep",                        "Signalas");
+    resources.put("beep",                        "Pyptelėjimas");
     // #sijapp cond.end #
     resources.put("byte",                        "Baitas");
     resources.put("cancel",                      "Atsisakyti");
     resources.put("close",                       "Uždaryti");
 	resources.put("conn_type",                   "Prisijungimo tipas");    
-    resources.put("connect",                     "Jungtis");
+    resources.put("connect",                     "Prisijungti");
     resources.put("connecting",                  "Jungiamasi");
     resources.put("contact_list",                "Sąrašas");
+	resources.put("cp1251",                      "Naudoti CP1252 pritaikymą?");    
     resources.put("cpd",                         "Kaina per dieną");
     resources.put("cpp",                         "Kaina per paketą");
     resources.put("currency",                    "Valiuta");
@@ -71,7 +72,7 @@ public class Text_LT extends ResourceBundle
     resources.put("hide_offline",                "Paslėpti neprisijungusius");
     resources.put("info",                        "Informacija");
     resources.put("kb",                          "kB");
-    resources.put("keep_chat",                   "Pasilikti pokalbui išklotinę?");
+    resources.put("keep_chat",                   "Pasilikti pokalbių išklotinę?");
     resources.put("keep_conn_alive",             "Palaikyti pastovų ryšį?");
     resources.put("keylock_enable",              "Užrakinti klaviatūrą");
     resources.put("keylock_enabled",             "Klaviatūra užrakinta");
@@ -83,21 +84,22 @@ public class Text_LT extends ResourceBundle
     resources.put("lang_ES",                     "Ispanų");
     resources.put("lang_RU",                     "Rusų");
     resources.put("lang_SE",                     "Švedų");
+	resources.put("lang_LT",                     "Lietuvių");    
     resources.put("loading",                     "Kraunasi");
     resources.put("me",                          "aš");
     resources.put("menu",                        "Meniu");
     resources.put("message",                     "Žinutė");
     resources.put("message_from",                "Žinutė nuo");
     // #sijapp cond.if target is "SIEMENS" #
-    resources.put("message_notification",        "Pranešimas apie žinutę");
+    resources.put("message_notification",        "Pranešti apie žinutę");
     // #sijapp cond.end #
     resources.put("name",                        "Vardas");
     resources.put("nick",                        "Slapyvardis");
     resources.put("no",                          "Ne");
-    resources.put("not_implemented",             "Funkcija dar neįgyvendinta.");
+    resources.put("not_implemented",             "Funkcija dar neveikia.");
     resources.put("notice",                      "Pranešimas");
     resources.put("ok",                          "OK");
-    resources.put("once_a_session",              "Kartą per prisijungimą");
+    resources.put("once_a_session",              "1k.per sesiją?");
     resources.put("options",                     "Savybės");
     resources.put("options_account",             "Vartotojas");
     resources.put("options_cost",                "Kaina");
@@ -109,7 +111,7 @@ public class Text_LT extends ResourceBundle
     resources.put("plength",                     "Apmokestinamo paketo dydis kilobaitais");
     resources.put("remove",                      "Pašalinti iš sąrašo");
     resources.put("reply",                       "Atsakyti");
-    resources.put("reset",                       "Iš pradžių");
+    resources.put("reset",                       "Valyti");
     resources.put("save",                        "Išsaugoti");
     resources.put("search_user",                 "Ieškoti vartotojo");
     resources.put("send",                        "Siųsti");
@@ -147,24 +149,24 @@ public class Text_LT extends ResourceBundle
     resources.put("yes",                         "Taip");
 
     // Generic errors
-    resources.put("error_100",                   "Unknown error (#100.EXT)");
+    resources.put("error_100",                   "Nežinoma klaida (#100.EXT)");
 
     // Login specific errors
-    resources.put("error_110",                   "Multiple logins on same UIN (#110.EXT)");
-    resources.put("error_111",                   "Bad password (#111.EXT)");
-    resources.put("error_112",                   "Non-existant UIN (#112.EXT)");
-    resources.put("error_113",                   "Too many clients from same IP (#113.EXT)");
+    resources.put("error_110",                   "Dar vienas prisijungimas tuo pačiu UIN (#110.EXT)");
+    resources.put("error_111",                   "Negeras slaptažodis (#111.EXT)");
+    resources.put("error_112",                   "Neegzstuojantis UIN (#112.EXT)");
+    resources.put("error_113",                   "Per daug prisijungimų iš to paties IP (#113.EXT)");
     resources.put("error_114",                   "Rate exceeded (#114.EXT)");
-    resources.put("error_115",                   "Contact list could not be parsed (#115.EXT)");
+    resources.put("error_115",                   "Negaliu perskaityti kontaktų sąrašo (#115.EXT)");
     resources.put("error_116",                   "Offline message could not be parsed (#116.EXT)");
-    resources.put("error_117",                   "Empty UIN and/or password (#117.EXT)");
-    resources.put("error_118",                   "No response from server (#118.EXT)");
+    resources.put("error_117",                   "Neįrašytas UIN ir/arba slaptažodis (#117.EXT)");
+    resources.put("error_118",                   "Nėra atsakymo iš serverio (#118.EXT)");
 
     // Network communication specific exceptions
-    resources.put("error_120",                   "An I/O error occured (#120.EXT)");
+    resources.put("error_120",                   "I/O klaida! (#120.EXT)");
     resources.put("error_121",                   "Requested TCP connection cannot be made (#121.EXT)");
-    resources.put("error_122",                   "Specified server host and/or port is invalid (#122.EXT)");
-    resources.put("error_123",                   "Connection has not been established (#123.EXT)");
+    resources.put("error_122",                   "Neteisingas nurodyto serverio adresas ir/arba prievadas (#122.EXT)");
+    resources.put("error_123",                   "Nepavyko prisijungti (#123.EXT)");
     resources.put("error_124",                   "Input stream is out of sync (#124.EXT)");
 
     // Parsing specific errors
@@ -181,11 +183,11 @@ public class Text_LT extends ResourceBundle
     resources.put("error_140",                   "Requested action cannot be queued for execution at this time (#140.EXT)");
 
     // Specific action errors
-    resources.put("error_150",                   "Received message could not be understood (#150.EXT)");
-    resources.put("error_151",                   "Received type 1 message could not be understood (#151.EXT)");
-    resources.put("error_152",                   "Received type 2 message could not be understood (#152.EXT)");
-    resources.put("error_153",                   "Received type 4 message could not be understood (#153.EXT)");
-    resources.put("error_154",                   "Contact list update failed (#154.EXT)");
+    resources.put("error_150",                   "Nesuprantu gautos žinutės (#150.EXT)");
+    resources.put("error_151",                   "Nesuprantu gautos 1 tipo žinutės (#151.EXT)");
+    resources.put("error_152",                   "Nesuprantu gautos 2 tipo žinutės (#152.EXT)");
+    resources.put("error_153",                   "Nesuprantu gautos 4 tipo žinutės (#153.EXT)");
+    resources.put("error_154",                   "Kontaktų sąrašo atnaujinimas nepavyko (#154.EXT)");
 
     // Other errors
     resources.put("error_160",                   "Possibly not enough heap memory available (#160.EXT)");
