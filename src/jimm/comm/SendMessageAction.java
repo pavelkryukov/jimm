@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/comm/SendMessageAction.java
- Version: 0.3.1  Date: 2004/12/25
+ Version: ###VERSION###  Date: ###DATE###
  Author(s): Manuel Linsmayer, Spassky Alexander, Andreas Rossbacher
  *******************************************************************************/
 
