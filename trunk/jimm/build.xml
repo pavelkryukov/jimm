@@ -26,6 +26,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 <project name="Jimm" default="dist">
 
+
 	<!-- ******************************************************************* -->
 	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   -->
 	<!-- ******************************************************************* -->
@@ -85,6 +86,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ******************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
 	<!-- ******************************************************************* -->
+
 
 	<!-- Buildfile description -->
 	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
@@ -188,6 +190,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/ES" value="true">
 			<contains string="${lang}" substring="ES"/>
 		</condition>
+		<condition property="lang/HE" value="true">
+			<contains string="${lang}" substring="HE"/>
+		</condition>
 		<condition property="lang/IT" value="true">
 			<contains string="${lang}" substring="IT"/>
 		</condition>
@@ -203,9 +208,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/SR" value="true">
 			<contains string="${lang}" substring="SR"/>
 		</condition>
-		<condition property="lang/HE" value="true">
-			<contains string="${lang}" substring="HE"/>
-		</condition>
 		<mkdir dir="${build}/init/src"/>
 		<sijapp srcdir="${src}"
 			destdir="${build}/init/src">
@@ -216,12 +218,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="lang_CZ" value="${lang/CZ}"/>
 			<define name="lang_DE" value="${lang/DE}"/>
 			<define name="lang_ES" value="${lang/ES}"/>
+			<define name="lang_HE" value="${lang/HE}"/>
 			<define name="lang_IT" value="${lang/IT}"/>
 			<define name="lang_LT" value="${lang/LT}"/>
 			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
 			<define name="lang_SR" value="${lang/SR}"/>
-			<define name="lang_HE" value="${lang/HE}"/>
 		</sijapp>
 		<replace dir="${build}/init/src"
 			encoding="UTF-8">
@@ -345,18 +347,20 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	</target>
 
 
-	<!-- Target: clean -->
-	<target name="clean" description="Clean the distribution" depends="del_build,del_dist">
-	</target>
-	
-	<!-- Target: del_build -->
+	<!-- Internal target: del_build -->
 	<target name="del_build" description="Delte the build dir">
 		<delete dir="${build}"/>
 	</target>
-	
-	<!-- Target: del_build -->
+
+
+	<!-- Internal target: del_dist -->
 	<target name="del_dist" description="Delte the dist dir">
 		<delete dir="${dist}"/>
 	</target>
+
+
+	<!-- Target: clean -->
+	<target name="clean" description="Clean the distribution" depends="del_build,del_dist"/>
+
 
 </project>
