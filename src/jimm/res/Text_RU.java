@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
  Copyright (C) 2003-04  Jimm Project
 
@@ -69,16 +69,18 @@ public class Text_RU extends ResourceBundle
     resources.put("hide_offline",                "Прятать отключившихся");
     resources.put("info",                        "Информация");
     resources.put("kb",                          "kB");
+    resources.put("keep_chat",                   "Keep chat histroy?");
     resources.put("keep_conn_alive",             "Поддерживать соединение?");
     resources.put("keylock_enable",              "Включить блокировку клавиатуры");
     resources.put("keylock_enabled",             "Блокировка клавиатуры включена");
     resources.put("language",                    "Язык");
-    resources.put("lang_EN",                     "Английский");
-    resources.put("lang_DE",                     "Немецкий");
-    resources.put("lang_RU",                     "Русский");
-    resources.put("lang_ES",			 "Испанский");
     resources.put("lang_BR",                     "Португальский (Бразилия)");
-	resources.put("lang_SE",                     "Svenska"); 
+    resources.put("lang_CZ",                     "Чешском");
+    resources.put("lang_DE",                     "Немецкий");
+    resources.put("lang_EN",                     "Английский");
+    resources.put("lang_ES",                     "Испанский");
+    resources.put("lang_RU",                     "Русский");
+    resources.put("lang_SE",                     "Шведском");
     resources.put("loading",                     "Загрузка");
     resources.put("me",                          "Я");
     resources.put("menu",                        "Меню");
@@ -92,7 +94,7 @@ public class Text_RU extends ResourceBundle
     resources.put("no",                          "Нет");
     resources.put("not_implemented",             "Функция не поддерживается.");
     resources.put("notice",                      "Замечание");
-    resources.put("ok",                          "OK");
+	    resources.put("ok",                          "OK");
     resources.put("once_a_session",              "Один раз за сессию");
     resources.put("options",                     "Настройки");
     resources.put("options_account",             "Учетная запись");
@@ -113,11 +115,12 @@ public class Text_RU extends ResourceBundle
     resources.put("send_url",                    "Новый URL");
     resources.put("server",                      "Начать сеанс");
     resources.put("server_host",                 "Имя сервера");
-     resources.put("server_port",                "Порт");
+    resources.put("server_port",                 "Порт");
     resources.put("session",                     "Сессия");
     resources.put("set_status",                  "Установить состояние");
     resources.put("since",                       "После");
     resources.put("sound",                       "Звук ICQ");
+    resources.put("sound_file_name",             "Sound File Name");
     resources.put("sort_by",                     "Сортировать контакты");
     resources.put("sort_by_name",                "По имени");
     resources.put("sort_by_status",              "По статусу");

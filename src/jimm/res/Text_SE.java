@@ -68,19 +68,19 @@ public class Text_SE extends ResourceBundle
     resources.put("exit",                        "Avsluta");
     resources.put("hide_offline",                "Dölj offline kontakter");
     resources.put("info",                        "Info");
-        resources.put("keep_chat",					 "Spara chatt-loggar?");
     resources.put("kb",                          "kB");
+    resources.put("keep_chat",                   "Spara chatt-loggar?");
     resources.put("keep_conn_alive",             "Håll anslutningen vid liv?");
     resources.put("keylock_SEable",              "Aktivera knapplås?");
     resources.put("keylock_SEabled",             "Knapplås aktiverat");
     resources.put("language",                    "Språk");
-    resources.put("lang_EN",                     "Engelska");
-    resources.put("lang_DE",                     "Tyska");
-    resources.put("lang_RU",                     "Ryska");
-    resources.put("lang_ES",                     "Spanska");
     resources.put("lang_BR",                     "Portugisiska (Brasilien)");
-	resources.put("lang_CZ",                     "Tjeckiska");
-	resources.put("lang_SE",                     "Svenska");
+    resources.put("lang_CZ",                     "Tjeckiska");
+    resources.put("lang_DE",                     "Tyska");
+    resources.put("lang_EN",                     "Engelska");
+    resources.put("lang_ES",                     "Spanska");
+    resources.put("lang_RU",                     "Ryska");
+    resources.put("lang_SE",                     "Svenska");
     resources.put("loading",                     "Laddar");
     resources.put("me",                          "jag");
     resources.put("menu",                        "Meny");
@@ -120,7 +120,7 @@ public class Text_SE extends ResourceBundle
     resources.put("set_status",                  "Ändra status");
     resources.put("since",                       "Sedan");
     resources.put("sound",                       "ICQ-ljud");
-    resources.put("sound_file_name",			 "Filnamn");
+    resources.put("sound_file_name",             "Filnamn");
     resources.put("sort_by",                     "Sortera kontaktlista:");
     resources.put("sort_by_name",                "Enligt namn");
     resources.put("sort_by_status",              "Enligt status");
@@ -196,4 +196,3 @@ public class Text_SE extends ResourceBundle
 
 
 // #sijapp cond.end #
-
