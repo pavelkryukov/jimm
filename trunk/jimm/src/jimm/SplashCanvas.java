@@ -252,70 +252,63 @@ public class SplashCanvas extends Canvas
     // Do we need to draw the splash image?
     if (g.getClipY() < this.getHeight() - SplashCanvas.height - 2)
     {
-
-      // Clear background
+	  // Clear background
       g.setColor(0, 0, 0);
       g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-      // Display splash image (or text)
+	  // Display splash image (or text)
       if (SplashCanvas.splash != null)
       {
         g.drawImage(SplashCanvas.splash, this.getWidth() / 2, this.getHeight() / 2, Graphics.HCENTER | Graphics.VCENTER);
-
-      }
+	  }
       else
       {
         g.setColor(255, 255, 255);
         g.setFont(SplashCanvas.logoFont);
-        g.drawString("mob icq", this.getWidth() / 2, this.getHeight() / 2 + 5, Graphics.HCENTER | Graphics.BASELINE);
+        g.drawString("jimm", this.getWidth() / 2, this.getHeight() / 2 + 5, Graphics.HCENTER | Graphics.BASELINE);
         g.setFont(SplashCanvas.font);
       }
-
-      // Display notice image (or nothing)
+	  // Display notice image (or nothing)
       if (SplashCanvas.notice != null)
       {
         g.drawImage(SplashCanvas.notice, this.getWidth() / 2, 2, Graphics.HCENTER | Graphics.TOP);
       }
 
-
-      // Display message icon, if keylock is enabled
+	  // Display message icon, if keylock is enabled
       if (this.isLocked && this.isMessageAvailable)
 	  	g.drawImage(ContactList.eventPlainMessageImg, 1, 1, Graphics.LEFT | Graphics.TOP);
 
-
-    }
-
+	}
     // Display time and and date (if requested)
-    if ((Jimm.jimm.getOptionsRef() != null) && Jimm.jimm.getOptionsRef().isDisplayDate())
-    {
-
-      // Draw white bottom bar
-      g.setColor(0, 0, 0);
-      g.fillRect(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), SplashCanvas.height + 2);
-      g.setColor(255, 255, 255);
-      g.setStrokeStyle(Graphics.DOTTED);
-      g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), this.getHeight() - SplashCanvas.height - 2);
-
-      // Draw message
-      g.setColor(255, 255, 255);
-      g.setFont(SplashCanvas.font);
-      g.drawString(this.getDateString(false), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
-
-      // Draw current progress
-      int progressPx = this.getWidth() / 100 * this.progress;
-      g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
-      g.setColor(255, 255, 255);
-      g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
-      g.setColor(0, 0, 0);
-      g.drawString(this.getDateString(false), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
-
+    try{  
+	    if (Jimm.jimm.getOptionsRef().isDisplayDate())
+	    {
+		  // Draw white bottom bar
+	      g.setColor(0, 0, 0);
+		  g.fillRect(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), SplashCanvas.height + 2);
+	      g.setColor(255, 255, 255);
+	      g.setStrokeStyle(Graphics.DOTTED);
+	      g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), this.getHeight() - SplashCanvas.height - 2);
+		  // Draw message
+	      g.setColor(255, 255, 255);
+	      g.setFont(SplashCanvas.font);
+	      g.drawString(this.getDateString(false), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+		  // Draw current progress
+	      int progressPx = this.getWidth() / 100 * this.progress;
+	      g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
+	      g.setColor(255, 255, 255);
+	      g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
+	      g.setColor(0, 0, 0);
+	      g.drawString(this.getDateString(false), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+		}
     }
-
+    catch (NullPointerException e){
+    	// Do nothing
+    }
+	
     // Display message, if available
-    else if ((this.message != null) && (this.message.length() > 0))
+    if ((this.message != null) && (this.message.length() > 0))
     {
-
-      // Draw white bottom bar
+	  // Draw white bottom bar
       g.setColor(0, 0, 0);
       g.fillRect(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), SplashCanvas.height + 2);
       g.setColor(255, 255, 255);
@@ -336,7 +329,6 @@ public class SplashCanvas extends Canvas
       g.drawString(this.message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 
     }
-
   }
 
 
