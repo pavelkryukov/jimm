@@ -71,9 +71,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- should be included in the build. Currently, the distribution        -->
 	<!-- includes English (EN), Bulgarian (BG), Brazilian Portuguese (BR),   -->
 	<!-- Czech (CZ), German (DE), Spanish (ES), Hewbrew (HE), Italian (IT),  -->
-	<!-- Lithuanian (LT), Russian (RU), Swedish (SE) and Serbian (SR)        --> 
-	<!-- language packs.                                                     -->
-	<property name="lang"             value="EN,BG,BR,CZ,DE,ES,HE,IT,LT,RU,SE,SR"/>
+	<!-- Lithuanian (LT), Polish (PL), Russian (RU), Swedish (SE)            -->
+	<!-- and Serbian (SR) language packs.                                    -->
+	<property name="lang"             value="EN,BG,BR,CZ,DE,ES,HE,IT,LT,PL,RU,SE,SR"/>
 	<!-- ******************************************************************* -->
 	<!-- Version number of the build. The value can be in any format (e.g.   -->
 	<!-- 0.2cvs).                                                            -->
@@ -86,6 +86,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ******************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
 	<!-- ******************************************************************* -->
+
 
 
 
@@ -203,6 +204,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/LT" value="true">
 			<contains string="${lang}" substring="LT"/>
 		</condition>
+		<condition property="lang/PL" value="true">
+			<contains string="${lang}" substring="PL"/>
+		</condition>
 		<condition property="lang/RU" value="true">
 			<contains string="${lang}" substring="RU"/>
 		</condition>
@@ -226,6 +230,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="lang_HE" value="${lang/HE}"/>
 			<define name="lang_IT" value="${lang/IT}"/>
 			<define name="lang_LT" value="${lang/LT}"/>
+			<define name="lang_PL" value="${lang/PL}"/>
 			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
 			<define name="lang_SR" value="${lang/SR}"/>
@@ -356,7 +361,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 
 	<!-- Internal target: del_dist -->
-	<target name="del_dist" description="Delte the dist dir">
+	<target name="del_dist" description="Delete the dist dir">
 		<delete dir="${dist}"/>
 	</target>
 

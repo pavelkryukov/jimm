@@ -39,11 +39,11 @@ public class ResourceBundle
 	// List of available language packs
 	public static String[] LANG_AVAILABLE =
 	{
-		// #sijapp cond.if lang_EN is "true" #
-		"EN",
-		// #sijapp cond.end #
 		// #sijapp cond.if lang_BR is "true" #
 		"BR",
+		// #sijapp cond.end #
+		// #sijapp cond.if lang_BG is "true" #
+		"BG",
 		// #sijapp cond.end #
 		// #sijapp cond.if lang_CZ is "true" #
 		"CZ",
@@ -51,14 +51,23 @@ public class ResourceBundle
 		// #sijapp cond.if lang_DE is "true" #
 		"DE",
 		// #sijapp cond.end #
+		// #sijapp cond.if lang_EN is "true" #
+		"EN",
+		// #sijapp cond.end #
 		// #sijapp cond.if lang_ES is "true" #
 		"ES",
+		// #sijapp cond.end #
+		// #sijapp cond.if lang_HE is "true" #
+		"HE",
 		// #sijapp cond.end #
 		// #sijapp cond.if lang_IT is "true" #
 		"IT",
 		// #sijapp cond.end #
 		// #sijapp cond.if lang_LT is "true" #
 		"LT",
+		// #sijapp cond.end #
+		// #sijapp cond.if lang_PL is "true" #
+		"PL",
 		// #sijapp cond.end #
 		// #sijapp cond.if lang_RU is "true" #
 		"RU",
@@ -68,12 +77,6 @@ public class ResourceBundle
 		// #sijapp cond.end #
 		// #sijapp cond.if lang_SR is "true" #
 		"SR",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_HE is "true" #
-		"HE",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_BG is "true" #
-		"BG",
 		// #sijapp cond.end #
 	};
 

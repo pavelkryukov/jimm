@@ -24,9 +24,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 -->
 
 
-<project name="Jimm" default="release-part1">
-
-
 	<!-- ******************************************************************* -->
 	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   -->
 	<!-- ******************************************************************* -->
@@ -60,9 +57,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="package" value="jimm"/>
 	<property name="bin" value="bin"/>
 	<property name="targetlist" value="DEFAULT;MIDP2;SIEMENS;RIM"/>
-	<property name="langlist" value="EN,BG;EN,BR;EN,CZ;EN,DE;EN,ES;EN,HE;EN,IT;EN,LT;EN,RU;EN,SE;EN,SR;EN;BG;BR;CZ;DE;ES;HE;IT;LT;RU;SE;SR"/>
-
-
+    <property name="langlist" value="EN,DE,IT,LT,RU,CZ,BG,PL;EN,DE;EN,IT;EN,LT;EN,RU;EN,CZ;EN,BG;EN,PL;EN;DE;IT;LT;RU;CZ;BG;PL"/>
 	<!-- Auxiliary property -->
 	<property name="3ns" value="###"/>
 
@@ -89,7 +84,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- Internal target: export -->
 	<target name="export" depends="init">
 		<mkdir dir="${cvsdir}"/>
-		<cvs command="export"
+		<cvs command="checkout"
 			cvsRoot="${cvsroot}"
 			dest="${cvsdir}"
 			package="${package}"

@@ -104,6 +104,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("lang_ES",                     "Spanisch");
 		resources.put("lang_IT",                     "Italienisch");
 		resources.put("lang_LT",                     "Litauisch");
+		resources.put("lang_PL",                     "Polnisch");
 		resources.put("lang_RU",                     "Russisch");
 		resources.put("lang_SE",                     "Schwedisch");
 		resources.put("lang_SR",                     "Српски");
