@@ -1303,10 +1303,10 @@ public class ContactList implements CommandListener
         if (traffic != 0)
             text = ResourceBundle.getString("contact_list") + " - " + traffic
                     + ResourceBundle.getString("kb") + " - "
-                    + Jimm.jimm.getSplashCanvasRef().getDateString(true);
+                    + Util.getDateString(true);
         else
         	text = ResourceBundle.getString("contact_list") + " - "
-                    + Jimm.jimm.getSplashCanvasRef().getDateString(true);
+                    + Util.getDateString(true);
         
 //#sijapp cond.if target is "MIDP2"#
 		tree.setTitle(text);
