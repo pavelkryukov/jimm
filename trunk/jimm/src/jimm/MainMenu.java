@@ -213,12 +213,10 @@ public class MainMenu implements CommandListener
 		} 
     }
     
-    Alert exitAlert;
-    Command exitOkCommand, exitBackCommand;
     
     private void menuExit()
     {
-   		if (/*Jimm.jimm.getContactListRef().getUnreadMessCount() > 0*/true)
+   		if (Jimm.jimm.getContactListRef().getUnreadMessCount() > 0)
    		{
    	    	Jimm.jimm.messageBox
 			(
@@ -228,8 +226,6 @@ public class MainMenu implements CommandListener
 				this,
 				MSGBS_EXIT
 			);
-   	    	//if (result == 1) doExit();
-   	    	//else Jimm.jimm.getContactListRef().activate();
    		}
    		else doExit();
     }
