@@ -191,6 +191,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("youwereadded",				 "You were added by UIN: ");
 		resources.put("chat_small_font",			 "Small font in chat");
 		resources.put("select",                      "Select");
+		resources.put("attention",                   "Attention!");
+		resources.put("have_unread_mess",            "You have unread messages. Exit any way?");
 		
 		// User management ********
 		resources.put("group_is_not_empty",          "Selected group is not empty!\nMove all users to other groups!");

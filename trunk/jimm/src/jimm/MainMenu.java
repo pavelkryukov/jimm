@@ -167,6 +167,62 @@ public class MainMenu implements CommandListener
         addUser.setCommandListener( Jimm.jimm.getMainMenuRef() );
         Jimm.display.setCurrent(addUser);
 	}
+    
+    private void doExit()
+    {
+        // Disconnect
+        Jimm.jimm.getIcqRef().disconnect();
+        
+        // Save traffic
+        //#sijapp cond.if modules_TRAFFIC is "true" #
+		try 
+		{
+			Jimm.jimm.getTrafficRef().save();
+		} 
+		catch (Exception e) 
+		{ // Do nothing
+		} 
+		//#sijapp cond.end#
+	
+		
+		// Exit app
+		try 
+		{
+			Jimm.jimm.destroyApp(true);
+		} 
+		catch (MIDletStateChangeException e) 
+		{ // Do nothing 
+		} 
+    }
+    
+    Alert exitAlert;
+    Command exitOkCommand, exitBackCommand;
+    
+    private void menuExit()
+    {
+    	exitAlert = new Alert
+		                (
+		                	ResourceBundle.getString("attention"), 
+							ResourceBundle.getString("have_unread_mess"),
+							null,
+							AlertType.CONFIRMATION
+						);
+    	
+    	exitOkCommand = new Command(ResourceBundle.getString("yes"), Command.OK, 1);
+    	exitBackCommand = new Command(ResourceBundle.getString("no"), Command.CANCEL, 1);
+    	
+    	exitAlert.addCommand(exitOkCommand);
+    	exitAlert.addCommand(exitBackCommand);
+    	exitAlert.setCommandListener( Jimm.jimm.getMainMenuRef() );
+    	
+    	if (Jimm.jimm.getContactListRef().getUnreadMessCount() > 0)
+    	{
+    		Jimm.display.setCurrent(exitAlert);
+    	}
+    	else 
+    		doExit();
+    		
+    }
 
     // Command listener
     public void commandAction(Command c, Displayable d)
@@ -209,6 +265,18 @@ public class MainMenu implements CommandListener
             
             // Start timer
             Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
+        }
+        
+        // User select command YES in exit alert
+        else if (c == exitOkCommand)
+        {
+        	doExit();
+        }
+        
+        // User select command NO in exit alert. Return to contact list
+        else if (c == exitBackCommand)
+        {
+        	Jimm.jimm.getContactListRef().activate();
         }
         
         // Menu item has been selected
@@ -294,20 +362,8 @@ public class MainMenu implements CommandListener
                     break;
                 case 8:
                     // Exit
+                	menuExit();
 
-                    // Disconnect
-                    Jimm.jimm.getIcqRef().disconnect();
-					// Save traffic
-					try {
-						traffic.save();
-					} catch (Exception e) { // Do nothing
-					}
-					// Exit app
-					try {
-						Jimm.jimm.destroyApp(true);
-					} catch (MIDletStateChangeException e) {
-						// Do nothing
-					}
                     break;
                 // #sijapp cond.else#
                 case 6:
@@ -322,17 +378,8 @@ public class MainMenu implements CommandListener
                     break;
                 case 7:
                     // Exit
-
-						// Disconnect
-						Jimm.jimm.getIcqRef().disconnect();
-
-						// Exit app
-						try {
-							Jimm.jimm.destroyApp(true);
-						} catch (MIDletStateChangeException e) {
-							// Do nothing
-						}
-
+             	
+                	menuExit();
                     break;
 
                 // #sijapp cond.end#

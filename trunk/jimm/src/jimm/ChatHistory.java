@@ -128,7 +128,7 @@ public class ChatHistory
     }
     
     // Add text to message form
-    public void addTextToForm(int nr,String from, String message, String url, Date time, boolean red)
+    synchronized public void addTextToForm(int nr,String from, String message, String url, Date time, boolean red)
     {
         TextList msgDisplay = (TextList) historyVector.elementAt(nr);
         

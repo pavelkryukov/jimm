@@ -1191,7 +1191,7 @@ public class ContactList implements CommandListener
     {
         ContactListContactItem cItem = getItembyUIN(uin);
         if (cItem == null) return; // error ???
-	
+       
     	long trueStatus = Util.translateStatusReceived(status);
     	boolean statusChanged = (cItem.getStatus() != trueStatus);
         boolean wasNotOffline = (cItem.getStatus() != STATUS_OFFLINE);
@@ -1677,6 +1677,16 @@ public class ContactList implements CommandListener
 				break;
 			}
 		}
+	}
+	
+	// Returns number of unread messages 
+	protected int getUnreadMessCount()
+	{
+		int count = cItems.size();
+		int result = 0;
+		for (int i = 0; i < count; i++)
+			result += ((ContactListContactItem)cItems.elementAt(i)).getUnreadMessCount();
+		return result;
 	}
 	
 

@@ -194,6 +194,9 @@ public class Text_RU extends ResourceBundle
 		resources.put("chat_small_font",             "Мелкий шрифт в чате");
 		resources.put("select",                      "Выбрать");
 		
+		resources.put("attention",                   "Внимание!"); 
+		resources.put("have_unread_mess",            "У Вас остались непрочитанные сообщения. Выйти из программы?");
+		
 		// User management **********
 		resources.put("group_is_not_empty",          "Выбранная группа не пустая!\nПереместите всех пользователей в другие группы!");
 		resources.put("add_group",                   "Добавить группу");
