@@ -26,7 +26,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 <project name="Jimm" default="dist">
 
-
 	<!-- ******************************************************************* -->
 	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   -->
 	<!-- ******************************************************************* -->
@@ -70,9 +69,10 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- This value is a comma separated list of languages packs which       -->
 	<!-- should be included in the build. Currently, the distribution        -->
 	<!-- includes English (EN), Brazilian Portuguese (BR), Czech (CZ),       -->
-	<!-- German (DE), Spanish (ES), Italian (IT), Lithuanian (LT),           -->
-	<!-- Russian (RU), Swedish (SE) and Serbian (SR) language packs.         -->
-	<property name="lang"             value="EN,DE,ES,IT,RU"                  />
+	<!-- German (DE), Spanish (ES), Hewbrew (HE), Italian (IT),              -->
+	<!-- Lithuanian (LT), Russian (RU), Swedish (SE) and Serbian (SR)        --> 
+	<!-- language packs.                                                     -->
+	<property name="lang"             value="EN,BR,CZ,DE,ES,HE,IT,LT,RU,SE,SR"/>
 	<!-- ******************************************************************* -->
 	<!-- Version number of the build. The value can be in any format (e.g.   -->
 	<!-- 0.2cvs).                                                            -->
@@ -85,7 +85,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ******************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
 	<!-- ******************************************************************* -->
-
 
 	<!-- Buildfile description -->
 	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
@@ -145,6 +144,18 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp/lib" value="${RIM/midp/lib}">
 		    <equals arg1="${target}" arg2="RIM"/>
 		</condition>
+		<condition property="midp_profile" value="MIDP-1.0">
+			<equals arg1="${target}" arg2="DEFAULT"/>
+		</condition>
+		<condition property="midp_profile" value="MIDP-1.0">
+			<equals arg1="${target}" arg2="SIEMENS"/>
+		</condition>
+		<condition property="midp_profile" value="MIDP-2.0">
+			<equals arg1="${target}" arg2="MIDP2"/>
+		</condition>
+		<condition property="midp_profile" value="MIDP-1.0">
+			<equals arg1="${target}" arg2="RIM"/>
+		</condition>
 	</target>
 
 
@@ -192,6 +203,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/SR" value="true">
 			<contains string="${lang}" substring="SR"/>
 		</condition>
+		<condition property="lang/HE" value="true">
+			<contains string="${lang}" substring="HE"/>
+		</condition>
 		<mkdir dir="${build}/init/src"/>
 		<sijapp srcdir="${src}"
 			destdir="${build}/init/src">
@@ -207,6 +221,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
 			<define name="lang_SR" value="${lang/SR}"/>
+			<define name="lang_HE" value="${lang/HE}"/>
 		</sijapp>
 		<replace dir="${build}/init/src"
 			encoding="UTF-8">
@@ -286,6 +301,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 				value="${version/java}"/>
 			<replacefilter token="${3ns}DATE${3ns}"
 				value="${date}"/>
+			<replacefilter token="${3ns}MIDP-PROFILE${3ns}"
+				value="${midp_profile}"/>
 		</replace>
 	</target>
 
@@ -329,10 +346,17 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 
 	<!-- Target: clean -->
-	<target name="clean" description="Clean the distribution">
+	<target name="clean" description="Clean the distribution" depends="del_build,del_dist">
+	</target>
+	
+	<!-- Target: del_build -->
+	<target name="del_build" description="Delte the build dir">
 		<delete dir="${build}"/>
+	</target>
+	
+	<!-- Target: del_build -->
+	<target name="del_dist" description="Delte the dist dir">
 		<delete dir="${dist}"/>
 	</target>
-
 
 </project>
