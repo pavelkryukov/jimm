@@ -68,7 +68,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 
 	<!-- Include Ant-Contrib Tasks -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
 
 
 	<!-- Internal target: init -->
