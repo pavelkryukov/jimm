@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -53,6 +53,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("byte",                        "Байт");
 		resources.put("cancel",                      "Отмена");
 		resources.put("city",                        "Город");
+		resources.put("clear",                       "Стереть всё");
 		resources.put("close",                       "Закрыть");
 		resources.put("conn_type",                   "Тип подключения");
 		resources.put("con_wait",                    "Задержка между подключениями (секунд)");
@@ -83,6 +84,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("filename",                    "Имя файла");
 		resources.put("filetransfer",                "Передача файла");
 		resources.put("filepath",                    "Путь к файлу");
+		resources.put("find",                        "Поиск");
 		resources.put("ft_name",                     "Послать файл");		
 		resources.put("ft_cam",                      "Послать фото с камеры");		
 		
@@ -91,6 +93,12 @@ public class Text_RU extends ResourceBundle
 		resources.put("grant",						 "Авторизировать");
 		resources.put("grantedby",					 "Вас авторизировал: ");
 		resources.put("hide_offline",                "Скрывать отключившихся");
+		resources.put("history_info",                "Информация");
+		resources.put("hist_cur",                    "Число сообщений контакта");
+		resources.put("hist_rc",                     "Число сообщений в истории");
+		resources.put("hist_size",                   "Использовано (Кб)");
+		resources.put("hist_avail",                  "Всего места (Кб)"); 
+		resources.put("history",                     "История сообщений");
 		resources.put("info",                        "Информация");
 		resources.put("init_ft",                     "Инициализация...");
 		resources.put("kb",                          "КБ");
@@ -111,6 +119,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("lang_SE",                     "Шведский");
 		resources.put("lang_SR",                     "Српски");
 		resources.put("lang_BG", 					 "Болгарский");
+		resources.put("lang_UA", 					 "Украинский");
 		resources.put("lastname",                    "Фамилия");
 		resources.put("loading",                     "Загрузка");
 		resources.put("male",                        "M");
@@ -121,7 +130,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("message",                     "Сообщение");
 		resources.put("message_from",                "Сообщение от");
 		resources.put("name",                        "Имя");
-		resources.put("next",						 "Дальше");
+		resources.put("next",						 "Дальше (кнопка 'Вправо')");
 		resources.put("nick",                        "Ник");
 		resources.put("no",                          "Нет");
 		resources.put("no_results",                  "Нет результатов");
@@ -146,7 +155,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("password",                    "Пароль");
 		resources.put("plength",                     "Длина оплачиваемого пакета в КБ");
 		resources.put("plsauthme",                   "Привет! Пожалуйста, авторизируй меня и разреши добавить тебя в контакт-лист");
-		resources.put("prev",						 "Предыдущий");
+		resources.put("prev",						 "Предыдущий (кнопка 'Влево')");
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Удалить из списка");
 		resources.put("rename",                      "Переименовать");
@@ -199,6 +208,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("youwereadded",				 "Вас добавил: ");
 		resources.put("chat_small_font",             "Мелкий шрифт в чате");
 		resources.put("select",                      "Выбрать");
+		resources.put("use_history",                 "Хранить историю сообщений");
 		
 		resources.put("attention",                   "Внимание!"); 
 		resources.put("have_unread_mess",            "У Вас остались непрочитанные сообщения. Выйти из программы?");

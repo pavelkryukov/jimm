@@ -101,6 +101,7 @@ public class Options
 	public static final int OPTION_ONLINE_STATUS                  = 192;   /* long    */
 	public static final int OPTION_CHAT_SMALL_FONT                = 135;   /* boolean */
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
+	public static final int OPTION_HISTORY                        = 137;   /* boolean */
 
 
 	/**************************************************************************/
@@ -176,6 +177,7 @@ public class Options
 			this.setLongOption   (Options.OPTION_ONLINE_STATUS,                  ContactList.STATUS_ONLINE);
 			this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
 			this.setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
+			this.setBooleanOption(Options.OPTION_HISTORY,                        false);
 		}
 
 		// Construct option form
@@ -407,6 +409,10 @@ public class Options
 		// #sijapp cond.end#
 		private ChoiceGroup useSmallFont;
 		private ChoiceGroup showUserGroups;
+		
+		// #sijapp cond.if modules_HISTORY is "true" #
+		private ChoiceGroup useHistory;
+		// #sijapp cond.end#
 
 		// Constructor
 		public OptionsForm()
@@ -531,7 +537,12 @@ public class Options
 			this.costPacketLengthTextField = new TextField(ResourceBundle.getString("plength"), String.valueOf(Options.this.getIntOption(Options.OPTION_COST_PACKET_LENGTH) / 1024), 4, TextField.NUMERIC);
 			this.currencyTextField = new TextField(ResourceBundle.getString("currency"), Options.this.getStringOption(Options.OPTION_CURRENCY), 4, TextField.ANY);
 			// #sijapp cond.end#
-
+			
+			// #sijapp cond.if modules_HISTORY is "true" #
+			useHistory = new ChoiceGroup(ResourceBundle.getString("use_history")+"?", Choice.MULTIPLE);
+			useHistory.append(ResourceBundle.getString("yes"), null);
+			useHistory.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_HISTORY));
+			// #sijapp cond.end#
 		}
 
 
@@ -582,7 +593,13 @@ public class Options
 						this.optionsForm.append(this.clSortByChoiceGroup);
 						this.optionsForm.append(this.clHideOfflineChoiceGroup);
 						this.optionsForm.append(this.useSmallFont);
+						
+						// #sijapp cond.if modules_HISTORY is "true" #
+						this.optionsForm.append(this.useHistory);
+						// #sijapp cond.end#
+						
 						this.optionsForm.append(this.cp1251HackChoiceGroup);
+						
 						break;
 					case 3:
 						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
@@ -686,6 +703,10 @@ public class Options
 						Options.this.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,this.clHideOfflineChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CP1251_HACK,this.cp1251HackChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.useSmallFont.isSelected(0));
+						
+						// #sijapp cond.if modules_HISTORY is "true" #
+						Options.this.setBooleanOption(Options.OPTION_HISTORY, this.useHistory.isSelected(0));
+						// #sijapp cond.end#
 						
 						boolean newUseGroups = this.showUserGroups.isSelected(0);
 						Options.this.setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);

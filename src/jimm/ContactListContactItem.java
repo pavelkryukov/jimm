@@ -545,35 +545,36 @@ public class ContactListContactItem extends ContactListItem
             // Menu item has been selected
             else if (c == List.SELECT_COMMAND)
             {
-
-                switch (MenuUtil.menuList.getSelectedIndex())
+            	int selIndex = MenuUtil.menuList.getSelectedIndex();
+            	
+            	// Send plain message
+            	if (selIndex == MenuUtil.send_message_idx)
                 {
-                case 0:
-                    // Send plain message
-
                     // Reset and display textbox for entering messages
                     MenuUtil.messageTextbox.setString(null);
                     MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxOkCommand);
                     MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
-
-                    break;
-                case 1:
-                    // Send URL message
-
+                } 
+            	
+            	// Send URL message
+            	else if (selIndex == MenuUtil.send_url_idx) 
+            	{
                     // Reset and display textbox for entering messages
                     MenuUtil.messageTextbox.setString(null);
                     MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.messageTextbox.addCommand(MenuUtil.textboxOkCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
+            	}    
 
-                    break;
                 // #sijapp cond.if target is "MIDP2"#
-                case 2:
-                    // Send a filetransfer with a file given by path
-                    // We can only make file transfers with ICQ clients prot V8 and up
+                
+                // Send a filetransfer with a file given by path
+                // We can only make file transfers with ICQ clients prot V8 and up
+            	else if (selIndex == MenuUtil.ft_name_idx)
+            	{
                     if (ContactListContactItem.this.getICQVersion() < 8)
                     {
                         JimmException.handleException(new JimmException(190, 0, true));
@@ -583,11 +584,11 @@ public class ContactListContactItem extends ContactListItem
                         ft = new FileTransfer(FileTransfer.FT_TYPE_FILE_BY_NAME,ContactListContactItem.this);
                         ft.startFT(); 
                     }
-
-                    break;
-                        
-                case 3:
-                    // Send a filetransfer with a camera image
+            	}
+            	
+            	// Send a filetransfer with a camera image
+            	else if (selIndex == MenuUtil.ft_cam_idx)
+            	{
                     // System.out.println("FileTransfer: cam");
                     
                     // We can only make file transfers with ICQ clients prot V8 and up
@@ -600,12 +601,34 @@ public class ContactListContactItem extends ContactListItem
                         ft = new FileTransfer(FileTransfer.FT_TYPE_CAMERA_SNAPSHOT,ContactListContactItem.this);
                         ft.startFT(); 
                     }
-
-                    break;
-                
-                case 4:
-                    // Info
-
+            	}
+                    
+            	// DC Info
+            	else if (selIndex == MenuUtil.dc_info_idx)
+            	{
+            		
+            		Alert info = new Alert("DC Infos");
+            		info.setString("DC typ: " + ContactListContactItem.this.getDCType() + "\n" + "ICQ version: "
+            				+ ContactListContactItem.this.getICQVersion() + "\n" + "Int IP: "
+							+ Util.ipToString(ContactListContactItem.this.getInternalIP()) + "\n" + "Ext IP: "
+							+ Util.ipToString(ContactListContactItem.this.getExternalIP()) + "\n" + "Port: "
+							+ ContactListContactItem.this.getPort() + "\n");
+            		info.setTimeout(Alert.FOREVER);
+            		Jimm.display.setCurrent(info);
+            	}
+            	// #sijapp cond.end#
+            	
+            	// Stored history
+            	// #sijapp cond.if modules_HISTORY is "true" #
+            	else if (selIndex == MenuUtil.history_idx)
+            	{
+            		Jimm.jimm.getHistory().showHistoryList(getUin(), getName());
+            	}
+            	// #sijapp cond.end#
+            	
+                // Info
+            	else if (selIndex == MenuUtil.info_idx)
+            	{
                     // Display splash canvas
                     SplashCanvas wait1 = Jimm.jimm.getSplashCanvasRef();
                     wait1.setMessage(ResourceBundle.getString("wait"));
@@ -625,10 +648,11 @@ public class ContactListContactItem extends ContactListItem
 
                     // Start timer
                     Jimm.jimm.getTimerRef().schedule(new SplashCanvas.RequestInfoTimerTask(act1), 1000, 1000);
-
-                    break;
-                case 5:
-                    // Remove
+            	}
+            	
+            	// Remove
+            	else if (selIndex == MenuUtil.remove_idx)
+            	{
                 	Jimm.jimm.messageBox
 					(
 						ResourceBundle.getString("remove")+"?",
@@ -637,11 +661,11 @@ public class ContactListContactItem extends ContactListItem
 						this,
 						MSGBS_DELETECONTACT
 					);
-                    break;
+            	}
 
-                case 6:
-
-                    // Rename Contact
+				// Rename Contact
+            	else if (selIndex == MenuUtil.rename_idx)
+            	{
                     // Reset and display textbox for entering name
                     MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("rename"));
                     MenuUtil.messageTextbox.setString(ContactListContactItem.this.getName());
@@ -649,89 +673,17 @@ public class ContactListContactItem extends ContactListItem
                     MenuUtil.messageTextbox.addCommand(MenuUtil.renameOkCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
+            	}
 
-                    break;
-
-                case 7:
-                    // DC Info
-                    Alert info = new Alert("DC Infos");
-                    info.setString("DC typ: " + ContactListContactItem.this.getDCType() + "\n" + "ICQ version: "
-                            + ContactListContactItem.this.getICQVersion() + "\n" + "Int IP: "
-                            + Util.ipToString(ContactListContactItem.this.getInternalIP()) + "\n" + "Ext IP: "
-                            + Util.ipToString(ContactListContactItem.this.getExternalIP()) + "\n" + "Port: "
-                            + ContactListContactItem.this.getPort() + "\n");
-                    info.setTimeout(Alert.FOREVER);
-                    Jimm.display.setCurrent(info);
-
-                    break;
-
-                case 8:
-                    // Request auth
+				// Request auth
+				else if (selIndex == MenuUtil.auth_idx)
+				{
                     requReason = true;
                     MenuUtil.reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
                     MenuUtil.reasonTextbox.removeCommand(MenuUtil.textboxOkCommand);
                     MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.reasonTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.reasonTextbox);
-                // #sijapp cond.else#
-                case 2:
-                    // Info
-
-                    // Display splash canvas
-                    SplashCanvas wait1 = Jimm.jimm.getSplashCanvasRef();
-                    wait1.setMessage(ResourceBundle.getString("wait"));
-                    wait1.setProgress(0);
-                    Jimm.display.setCurrent(wait1);
-
-                    // Request info from server
-                    RequestInfoAction act1 = new RequestInfoAction(ContactListContactItem.this.getUin());
-                    try
-                    {
-                        Jimm.jimm.getIcqRef().requestAction(act1);
-                    } catch (JimmException e)
-                    {
-                        JimmException.handleException(e);
-                        if (e.isCritical()) return;
-                    }
-
-                    // Start timer
-                    Jimm.jimm.getTimerRef().schedule(new SplashCanvas.RequestInfoTimerTask(act1), 1000, 1000);
-
-                    break;
-                case 3:
-                    // Remove
-                	Jimm.jimm.messageBox
-					(
-						ResourceBundle.getString("remove")+"?",
-						ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",
-						Jimm.MESBOX_OKCANCEL,
-						this,
-						MSGBS_DELETECONTACT
-					);
-                    break;
-                    
-                case 4:
-                    
-                    // Rename Contact
-                    // Reset and display textbox for entering name
-                    MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("rename"));
-                    MenuUtil.messageTextbox.setString(ContactListContactItem.this.getName());
-                    MenuUtil.messageTextbox.removeCommand(MenuUtil.backCommand);
-                    MenuUtil.messageTextbox.addCommand(MenuUtil.renameOkCommand);
-                    MenuUtil.messageTextbox.setCommandListener(this);
-                    Jimm.display.setCurrent(MenuUtil.messageTextbox);
-                    
-                    break;
-                    
-                case 5:
-                    // Request auth
-                    requReason = true;
-                    MenuUtil.reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
-                    MenuUtil.reasonTextbox.removeCommand(MenuUtil.textboxOkCommand);
-                    MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxSendCommand);
-                    MenuUtil.reasonTextbox.setCommandListener(this);
-                    Jimm.display.setCurrent(MenuUtil.reasonTextbox);
-                // #sijapp cond.end#
                 }
 
             }
@@ -750,20 +702,28 @@ public class ContactListContactItem extends ContactListItem
                     }
 
                     // Send plain message
-                    if (MenuUtil.menuList.getSelectedIndex() == 0 && !MenuUtil.messageTextbox.getString().equals(""))
+                    if ((MenuUtil.menuList.getSelectedIndex() == MenuUtil.send_message_idx) 
+                    		&& !MenuUtil.messageTextbox.getString().equals(""))
                     {
                         // Construct plain message object and request new
                         // SendMessageAction
                         // Add the new message to the chat history
                         PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
                                 ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
-                            if (chatHistoryDisplayNr != -1)
-                                Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
-                            else
-	                        {
-	                            chatHistoryDisplayNr = Jimm.jimm.getChatHistoryRef().newChatForm(name);
-	                            Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
-	                        }
+                        
+                        if (chatHistoryDisplayNr != -1)
+                            Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
+                        else
+                        {
+                        	chatHistoryDisplayNr = Jimm.jimm.getChatHistoryRef().newChatForm(name);
+                        	Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
+                        }
+                        
+                        // #sijapp cond.if modules_HISTORY is "true" #
+                        if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
+                        	Jimm.jimm.getHistory().addText(getUin(), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"));
+                        // #sijapp cond.end#
+                            
                         SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
                         try
                         {
@@ -773,20 +733,20 @@ public class ContactListContactItem extends ContactListItem
                             JimmException.handleException(e);
                             if (e.isCritical()) return;
                         }
+                        
+                        
 
                         // Return to contact list
                         this.activate();
-
                     }
+                    
                     // Send URL message (continue creation)
-                    else if (MenuUtil.menuList.getSelectedIndex() == 1)
+                    else if (MenuUtil.menuList.getSelectedIndex() == MenuUtil.send_url_idx)
                     {
-
                         // Reset and display textbox for entering URLs
                         MenuUtil.urlTextbox.setString(null);
                         MenuUtil.urlTextbox.setCommandListener(this);
                         Jimm.display.setCurrent(MenuUtil.urlTextbox);
-
                     }
 
                 }
@@ -893,12 +853,14 @@ public class ContactListContactItem extends ContactListItem
                 MenuUtil.menuList.setCommandListener(this);
                 Jimm.display.setCurrent(MenuUtil.menuList);
             }
+            
             // Delete chat history
             else if (c == MenuUtil.deleteChatCommand)
             {
                 ContactListContactItem.this.deleteChatHistory();
                 Jimm.jimm.getContactListRef().activate();
             }
+            
             //Grant authorisation
             else if (c == MenuUtil.grantAuthCommand)
             {
@@ -968,13 +930,7 @@ public class ContactListContactItem extends ContactListItem
             else
             {
                 MenuUtil.menuList.setTitle(ContactListContactItem.this.name);
-                //  #sijapp cond.if target is "MIDP2"#
-                if (MenuUtil.menuList.size() > 8) MenuUtil.menuList.delete(8);
-                //  #sijapp cond.else#
-                if (MenuUtil.menuList.size() > 5) MenuUtil.menuList.delete(5);
-                //  #sijapp cond.end#
-                if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH))
-                        MenuUtil.menuList.append(ResourceBundle.getString("requauth"), null);
+                MenuUtil.initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH));
                 MenuUtil.menuList.setSelectedIndex(0, true);
                 MenuUtil.menuList.setCommandListener(this);
                 Jimm.display.setCurrent(MenuUtil.menuList);
@@ -988,7 +944,18 @@ public class ContactListContactItem extends ContactListItem
 
     private static class MenuUtil
     {
-
+    	static int
+			send_message_idx, 
+			send_url_idx,
+			ft_name_idx,
+			ft_cam_idx,
+			info_idx,
+			remove_idx,
+			rename_idx,
+			dc_info_idx,
+			auth_idx,
+			history_idx;
+		  
         // Menu list
         private static List menuList;
 
@@ -1054,25 +1021,60 @@ public class ContactListContactItem extends ContactListItem
         private static Command renameOkCommand = new Command(ResourceBundle.getString("rename"),
                 Command.OK, 2);
         
+        static void initList(boolean showAuthItem)
+        {
+        	send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
+            	ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
+            
+        	while (menuList.size() != 0) menuList.delete(0);
+        	
+            send_message_idx = MenuUtil.menuList.size();
+            menuList.append(ResourceBundle.getString("send_message"), null);
+            
+            send_url_idx = MenuUtil.menuList.size();
+            menuList.append(ResourceBundle.getString("send_url"), null);
+            
+            // #sijapp cond.if target is "MIDP2"#
+            ft_name_idx = MenuUtil.menuList.size();
+            menuList.append(ResourceBundle.getString("ft_name"),null);
+            
+            ft_cam_idx = menuList.size();
+            menuList.append(ResourceBundle.getString("ft_cam"),null);
+            
+            // #sijapp cond.end#
+            info_idx = menuList.size();
+            menuList.append(ResourceBundle.getString("info"), null);
+            
+            remove_idx = menuList.size();
+            menuList.append(ResourceBundle.getString("remove"), null);
+            
+            rename_idx = menuList.size();
+            menuList.append(ResourceBundle.getString("rename"), null);
+            
+            // #sijapp cond.if modules_HISTORY is "true" #
+            history_idx = menuList.size();
+            menuList.append(ResourceBundle.getString("history"), null);
+            // #sijapp cond.end#
+            
+            if (showAuthItem)
+            {
+            	auth_idx = menuList.size();
+            	menuList.append(ResourceBundle.getString("requauth"), null);
+            }
+            
+            // #sijapp cond.if target is "MIDP2"#
+            dc_info_idx = menuList.size();
+            menuList.append("DC Info", null);
+            // #sijapp cond.end#
+            
+        }
         
         // Initializer
         static
         {
-
             // Initialize the menu list
             MenuUtil.menuList = new List("set", Choice.IMPLICIT);
-            MenuUtil.menuList.append(ResourceBundle.getString("send_message"), null);
-            MenuUtil.menuList.append(ResourceBundle.getString("send_url"), null);
-            // #sijapp cond.if target is "MIDP2"#
-            MenuUtil.menuList.append(ResourceBundle.getString("ft_name"),null);
-            MenuUtil.menuList.append(ResourceBundle.getString("ft_cam"),null);
-            // #sijapp cond.end#
-            MenuUtil.menuList.append(ResourceBundle.getString("info"), null);
-            MenuUtil.menuList.append(ResourceBundle.getString("remove"), null);
-            MenuUtil.menuList.append(ResourceBundle.getString("rename"), null);
-            // #sijapp cond.if target is "MIDP2"#
-            MenuUtil.menuList.append("DC Info", null);
-            // #sijapp cond.end#
+            
 
             MenuUtil.menuList.addCommand(MenuUtil.backCommand);
 

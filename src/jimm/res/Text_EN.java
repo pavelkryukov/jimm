@@ -53,6 +53,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Cancel");
 		resources.put("city",                        "City");
+		resources.put("clear",                       "Clear");
 		resources.put("close",                       "Close");
 		resources.put("conn_type",                   "Connection type");
 		resources.put("con_wait",                    "Delay between connections(sec)");
@@ -80,6 +81,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("female",                      "F");
 		resources.put("filetransfer",                "File transfer");
 		resources.put("filepath",                    "File path");
+		resources.put("find",                        "Find");
 		resources.put("firstname",                   "First name");
 		resources.put("ft_name",                     "Send file");		
 		resources.put("ft_cam",                      "Send camera image");		
@@ -87,6 +89,12 @@ public class Text_EN extends ResourceBundle
 		resources.put("grant",						 "Grant Auth");
 		resources.put("grantedby",					 "Your auth request was granted by:");
 		resources.put("hide_offline",                "Hide offline contacts");
+		resources.put("history_info",                "Storage info");
+		resources.put("hist_cur",                    "Current contact messages number");
+		resources.put("hist_rc",                     "Total messages number");
+		resources.put("hist_size",                   "Used space (kB)");
+		resources.put("hist_avail",                  "Total space (kB)"); 
+		resources.put("history",                     "Stored history");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initializeing");
 		resources.put("kb",                          "kB");
@@ -109,6 +117,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("lang_SR",                     "Српски");
 		resources.put("lang_HE", 					 "עברית");
 		resources.put("lang_BG", 					 "Bulgarian");
+		resources.put("lang_UA", 					 "Ukrainian");
 		resources.put("lastname",                    "Last name");
 		resources.put("loading",                     "Loading");
 		resources.put("male",                        "M");
@@ -184,6 +193,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
+		resources.put("use_history",                 "Store history");
 		resources.put("user_add",                    "Add user");
 		resources.put("user_search",                 "Search for user");
 		resources.put("vibration",                   "Vibration");
