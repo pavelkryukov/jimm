@@ -423,58 +423,6 @@ public class ContactListContactItem extends ContactListItem
         return (this.uin.equals(ci.getUin()) && (this.temporary == ci.returnBoolValue(VALUE_IS_TEMP)));
     }
 
-    // Compare two contact items (sort by status/nick)
-    public int compareTo(ContactListContactItem cItem2)
-    {
-
-        // Get status and temporary flag
-        long cItem1Status = this.getStatus();
-        boolean cItem1IsTemporary = this.returnBoolValue(VALUE_IS_TEMP);
-        long cItem2Status = cItem2.getStatus();
-        boolean cItem2IsTemporary = cItem2.returnBoolValue(VALUE_IS_TEMP);
-
-        // Compare, return negative int if cItem1 < cItem2, 0 if cItem1 ==
-        // cItem2, or positive int if cItem1 > cItem2
-        if ((cItem1Status != ContactList.STATUS_OFFLINE) && !cItem1IsTemporary)
-        {
-            if (((cItem2Status != ContactList.STATUS_OFFLINE) && !cItem2IsTemporary)
-                    || (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_CL_SORT_BY) != 0))
-            {
-                return (this.getName().compareTo(cItem2.getName()));
-            } else
-            {
-                return (-1);
-            }
-        } else if ((cItem1Status == ContactList.STATUS_OFFLINE) && !cItem1IsTemporary)
-        {
-            if ((cItem2Status != ContactList.STATUS_OFFLINE) && !cItem2IsTemporary
-                    && (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_CL_SORT_BY) == 0))
-            {
-                return (1);
-            } else if (((cItem2Status == ContactList.STATUS_OFFLINE) && !cItem2IsTemporary)
-                    || (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_CL_SORT_BY) != 0))
-            {
-                return (this.getName().compareTo(cItem2.getName()));
-            } else
-            {
-                return (-1);
-            }
-        } else if (cItem1IsTemporary)
-        {
-            if (cItem2IsTemporary)
-            {
-                return (this.getName().compareTo(cItem2.getName()));
-            } else
-            {
-                return (1);
-            }
-        } else
-        {
-            return (0);
-        }
-
-    }
-
     /** ************************************************************************* */
     /** ************************************************************************* */
     /** ************************************************************************* */
