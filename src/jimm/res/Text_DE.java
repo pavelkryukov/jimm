@@ -45,6 +45,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("account",                     "Account");
 		resources.put("add_user",                    "Benutzer hinzufügen");
 		resources.put("add_to_list",                 "Zur Liste hinzuf.");
+		resources.put("age",                         "Alter");
 		resources.put("async",                       "Async");
 		resources.put("auth",				     	 "Auth");
 		resources.put("back",                        "Zurück");
@@ -59,7 +60,6 @@ public class Text_DE extends ResourceBundle
 		resources.put("connect",                     "Verbinden");
 		resources.put("connecting",                  "Verbinde");
 		resources.put("contact_list",                "Liste");
-		resources.put("country",                     "Land");
 		resources.put("cp1251",                      "CP1251-Hack benutzen?");
 		resources.put("cpd",                         "Tagesnutzungsgebühr(cent)");
 		resources.put("cpp",                         "Paketgebühr(cent");
@@ -77,6 +77,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("exit",                        "Beenden");
 		resources.put("firstname",                   "Vorname");
 		resources.put("hide_offline",                "Offline-Kontakte verbergen");
+		resources.put("gender",                      "Geschlecht");
 		resources.put("grant",						 "Auth genehmigen");
 		resources.put("grantedby",					 "Ihre Authorisierungsanfrage wurde genehmingt durch");
 		resources.put("info",                        "Info");
@@ -85,6 +86,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("keep_conn_alive",             "Verbindung erhalten?");
 		resources.put("keylock_enable",              "Tastensperre aktivieren");
 		resources.put("keylock_enabled",             "Tastensperre aktiv");
+		resources.put("keyword",                     "Schlüsselwort");
 		resources.put("language",                    "Sprache");
 		resources.put("lang_BR",                     "Portugiesisch (Brasilien)");
 		resources.put("lang_CZ",                     "Tschechisch");
@@ -97,6 +99,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("lang_SE",                     "Schwedisch");
 		resources.put("lastname",                    "Nachname");
 		resources.put("loading",                     "Lade");
+		resources.put("male",                        "M");
 		resources.put("me",                          "Ich");
 		resources.put("menu",                        "Menü");
 		resources.put("msg_notification",            "Hinweis bei Nachricht");
@@ -107,7 +110,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("message_notification",        "Hinweis bei Nachricht-Eingang");
 		// #sijapp cond.end #
 		resources.put("name",                        "Name");
-		resources.put("next",						 "nächstes");
+		resources.put("next",						 "Nächstes");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "Nein");
 		resources.put("no_results",                  "Keine Ergebnisse");
@@ -129,11 +132,13 @@ public class Text_DE extends ResourceBundle
 		resources.put("password",                    "Passwort");
 		resources.put("plength",                     "Länge des Abrechnungspakets in kB");
 		resources.put("plsauthme",                   "Hallo! Bitte authorisieren sie meine Anfrage sie zu meiner Kontaktliste hinzuzufügen.");
-		resources.put("prev",						 "voheriges");
+		resources.put("prev",						 "Voheriges");
 		resources.put("reason",						 "Grund");
 		resources.put("remove",                      "Aus der Liste entfernen");
 		resources.put("reply",                       "Antworten");
 		resources.put("requauth",                    "Beantrage Auth");
+		resources.put("requ",                        "Benötigt");
+		resources.put("requno",                      "Nicht Ben.");
 		resources.put("reset",                       "Zurücks.");
 		resources.put("results",                     "Ergebnisse");
 		resources.put("save",                        "Sichern");
