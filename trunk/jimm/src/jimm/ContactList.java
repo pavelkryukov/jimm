@@ -23,40 +23,56 @@
 
 package jimm;
 
+import jimm.DebugLog;
+
+import jimm.Jimm;
+import jimm.comm.Message;
+import jimm.comm.Util;
+import jimm.util.ResourceBundle;
+
+import java.util.Hashtable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-import javax.microedition.media.Manager;
-import javax.microedition.media.MediaException;
-import javax.microedition.media.Player;
-import javax.microedition.media.PlayerListener;
-import javax.microedition.media.control.ToneControl;
-import javax.microedition.media.control.VolumeControl;
+import javax.microedition.lcdui.*;
+
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
-import jimm.comm.Message;
-import jimm.comm.Util;
-import jimm.util.ResourceBundle;
-import DrawControls.ImageList;
-import DrawControls.ListItem;
-import DrawControls.TreeNode;
-import DrawControls.TreeNodeComparer;
-import DrawControls.VirtualTree;
+//#sijapp cond.if target is "SIEMENS"#
+import com.siemens.mp.game.Vibrator;
+import com.siemens.mp.game.Light;
+import com.siemens.mp.media.Manager;
+import com.siemens.mp.media.MediaException;
+import com.siemens.mp.media.Player;
+import com.siemens.mp.media.control.ToneControl;
+import com.siemens.mp.media.control.VolumeControl;
+import java.io.InputStream;
+// #sijapp cond.end#
+
+//#sijapp cond.if target is "MIDP2"#
+import javax.microedition.media.PlayerListener;
+import javax.microedition.lcdui.game.Sprite;
+import javax.microedition.media.Manager;
+import javax.microedition.media.MediaException;
+import javax.microedition.media.Player;
+import javax.microedition.media.control.ToneControl;
+import javax.microedition.media.control.VolumeControl;
+import java.io.InputStream;
+//#sijapp cond.end#
+
+//#sijapp cond.if target is "RIM"#
+//import net.rim.device.api.system.Alert;
+import net.rim.device.api.system.LED;
+//#sijapp cond.end#
+
+import DrawControls.*;
+import jimm.Options;
 
 /*
 abstract class UserManagementBase implements CommandListener
@@ -311,7 +327,10 @@ class Tree extends VirtualTree
 
 
 //////////////////////////////////////////////////////////////////////////////////
-public class ContactList implements CommandListener, PlayerListener
+public class ContactList implements CommandListener 
+//#sijapp cond.if target is "MIDP2"#
+                                    , PlayerListener
+//#sijapp cond.end#
 {
     // Status (all are mutual exclusive) TODO: move status to ContactListContactItem
     public static final long STATUS_AWAY      = 0x00000001;
@@ -1375,6 +1394,9 @@ public class ContactList implements CommandListener, PlayerListener
         contactChanged(cItem, true, false, false);
     }
     
+// #sijapp cond.if target is "SIEMENS" | target is"MIDP2"#
+// #sijapp cond.if target is"MIDP2"#    
+    
     // Reaction to player events. (Thanks to Alexander Barannik for idea!)
     public void playerUpdate(final Player player, final String event, Object eventData)
     {
@@ -1389,6 +1411,8 @@ public class ContactList implements CommandListener, PlayerListener
     	}
     	});    	
     }
+    
+// #sijapp cond.end#    
 	
 	// Creates player for file 'source'
 	private Player createPlayer(String source)
@@ -1417,7 +1441,9 @@ public class ContactList implements CommandListener, PlayerListener
 				return null;
 			}
 			p = Manager.createPlayer(is, mediaType);
+//#sijapp cond.if target is"MIDP2"#			
 			p.addPlayerListener(this);
+//#sijapp cond.end#			
 		}
 		catch (Exception e)
 		{
@@ -1445,6 +1471,8 @@ public class ContactList implements CommandListener, PlayerListener
 			//DebugLog.addText("setVolume "+e.toString());
 		}
 	}
+	
+// #sijapp cond.end#
 
     // Play a sound notification
     private void playSoundNotivication(int notType)
@@ -1456,6 +1484,7 @@ public class ContactList implements CommandListener, PlayerListener
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();
         // #sijapp cond.end#
+        
         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR) && (notType == SOUND_TYPE_MESSAGE))
         {
             // #sijapp cond.if target is "SIEMENS"#
