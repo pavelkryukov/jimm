@@ -50,7 +50,12 @@ public class SearchAction extends Action
     public static final int TLV_TYPE_EMAIL               = 0x5E01; // String (2 byte length + string + 1 byte email code)
     public static final int TLV_TYPE_CITY                = 0x9A01; // String (2 byte length + string)
     public static final int TLV_TYPE_KEYWORD             = 0x2602; // String (2 byte length + string)
-
+    public static final int TLV_TYPE_ONLYONLINE          = 0x3002; // UINT8 (1 byte:  1 - search online, 0 - search all)
+    
+    // Search action was called by
+    public static final int CALLED_BY_SEARCHUSER         = 0;
+    public static final int CALLED_BY_ADDUSER            = 1;
+    
     // Timeout
     public static final int TIMEOUT = 10 * 1000; // milliseconds
     
@@ -62,14 +67,18 @@ public class SearchAction extends Action
     // Search object as container for request and results
     private Search cont;
     
+    // Search action was called by
+    private int calledBy;
+    
     // Last activity
     private Date lastActivity = new Date();
     
     // Excpetion handeled;
     private boolean handeld;
     
-    public SearchAction(Search _cont){
+    public SearchAction(Search _cont,int _calledBy){
         cont = _cont;
+        calledBy = _calledBy;
         handeld = false;
     }
 
@@ -111,6 +120,8 @@ public class SearchAction extends Action
             if (search[i].length() != 0) 
                 length += 6 + search[i].length() + 1;
         }
+        // Search offline/online TLV
+        length+=5;
             
         byte[] buf = new byte[length];
         
@@ -178,6 +189,15 @@ public class SearchAction extends Action
                 marker += 1;
             }
         }
+        Util.putWord(buf, marker, TLV_TYPE_ONLYONLINE);
+        marker+=2;
+        Util.putWord(buf,marker,1,false);
+        marker+=2;
+        if (search[7].equals("1"))
+            Util.putByte(buf,marker,1);
+        else
+            Util.putByte(buf,marker,0);
+        marker+=1;
 
         packet = new ToIcqSrvPacket(-1,SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Jimm.jimm.getIcqRef().getUin(),0x07D0,new byte[0], buf);
     
@@ -312,7 +332,10 @@ public class SearchAction extends Action
     {
         if ((this.state != ConnectAction.STATE_ERROR) && (this.lastActivity.getTime() + SearchAction.TIMEOUT < System.currentTimeMillis()))
         {
-            cont.getSearchForm().activate(false);
+            if (calledBy == CALLED_BY_SEARCHUSER)
+            	cont.getSearchForm().activate(false);
+            else if (calledBy == CALLED_BY_ADDUSER)
+            	Jimm.display.setCurrent(Jimm.jimm.getMainMenuRef().addUser);
             Thread.yield();
             if (this.state == STATE_FIRSTRESULT_RECEIVED)
             {

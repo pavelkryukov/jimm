@@ -73,7 +73,7 @@ public class MainMenu implements CommandListener
     private List groupList;
 
     // Form for the adding users dialog
-    private Form addUser;
+    public Form addUser;
 
     // Text box for adding users to the contact list
     private TextField uinTextField;
@@ -164,9 +164,9 @@ public class MainMenu implements CommandListener
             Jimm.display.setCurrent(wait2);
             
             Search search = new Search();
-            search.setSearchRequest(uinTextField.getString(),"","","","","","");
+            search.setSearchRequest(uinTextField.getString(),"","","","","","",false);
             
-            SearchAction act = new SearchAction(search);
+            SearchAction act = new SearchAction(search,SearchAction.CALLED_BY_ADDUSER);
             
             try
             {
