@@ -143,3 +143,8 @@ VERSION 0.3.0
   * New option "Small font in chat"
   * Search results are now drawn with DrawTools (like the new chat history)
   * Many minor bugfixes
+
+ ________________________________________________________________________________
+VERSION 0.3.1
+
+  * Bugfix: Time display on message timestamp was not correct
