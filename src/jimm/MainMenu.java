@@ -35,7 +35,6 @@ import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-import jimm.comm.Action;
 import jimm.comm.SearchAction;
 import jimm.comm.SetOnlineStatusAction;
 import jimm.comm.UpdateContactListAction;
