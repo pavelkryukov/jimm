@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
  Copyright (C) 2003-04  Jimm Project
 
@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/res/Text_ES.java
- Version: 0.3.1  Date: 2004/12/25
+ Version: ###VERSION###  Date: ###DATE###
  Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
