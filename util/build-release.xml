@@ -31,13 +31,13 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   -->
 	<!-- ******************************************************************* -->
 	<property name="DEFAULT/midp"     value="CHANGE ME"                       />
-	<property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/midp.jar"    />
-	<property name="SIEMENS/midp"     value="CHANGE ME"                       />
-	<property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/api.jar"     />
+	<property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar"/>
 	<property name="MIDP2/midp"       value="CHANGE ME"                       />
-	<property name="MIDP2/midp/lib"   value="${MIDP2/midp}/lib/midp.jar"      />
+	<property name="MIDP2/midp/lib"   value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar"/>
 	<property name="RIM/midp"         value="CHANGE ME"                       />
 	<property name="RIM/midp/lib"     value="${RIM/midp}/lib/net_rim_api.jar" />
+	<property name="SIEMENS/midp"     value="CHANGE ME"                       />
+	<property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/API.jar"     />
 	<property name="proguard"         value="CHANGE ME"                       />
 	<property name="proguard/lib"     value="${proguard}/lib/proguard.jar"    />
 	<!-- ******************************************************************* -->
@@ -59,7 +59,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="cvsdir" location="cvs"/>
 	<property name="package" value="jimm"/>
 	<property name="bin" value="bin"/>
-	<property name="targetlist" value="DEFAULT;SIEMENS;MIDP2;RIM"/>
+	<property name="targetlist" value="DEFAULT;MIDP2;SIEMENS;RIM"/>
 	<property name="langlist" value="EN,BR;EN,CZ;EN,DE;EN,ES;EN,HE;EN,IT;EN,LT;EN,RU;EN,SE;EN,SR;EN;BR;CZ;DE;ES;HE;IT;LT;RU;SE;SR"/>
 
 
@@ -126,12 +126,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			inheritAll="false">
 			<property name="DEFAULT/midp"     value="${DEFAULT/midp}"/>
 			<property name="DEFAULT/midp/lib" value="${DEFAULT/midp/lib}"/>
-			<property name="SIEMENS/midp"     value="${SIEMENS/midp}"/>
-			<property name="SIEMENS/midp/lib" value="${SIEMENS/midp/lib}"/>
 			<property name="MIDP2/midp"       value="${MIDP2/midp}"/>
 			<property name="MIDP2/midp/lib"   value="${MIDP2/midp/lib}"/>
 			<property name="RIM/midp"         value="${RIM/midp}"/>
 			<property name="RIM/midp/lib"     value="${RIM/midp/lib}"/>
+			<property name="SIEMENS/midp"     value="${SIEMENS/midp}"/>
+			<property name="SIEMENS/midp/lib" value="${SIEMENS/midp/lib}"/>
 			<property name="proguard"         value="${proguard}"/>
 			<property name="proguard/lib"     value="${proguard/lib}"/>
 			<property name="target"           value="${target}"/>
@@ -149,12 +149,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			inheritAll="false">
 			<property name="DEFAULT/midp"     value="${DEFAULT/midp}"/>
 			<property name="DEFAULT/midp/lib" value="${DEFAULT/midp/lib}"/>
-			<property name="SIEMENS/midp"     value="${SIEMENS/midp}"/>
-			<property name="SIEMENS/midp/lib" value="${SIEMENS/midp/lib}"/>
 			<property name="MIDP2/midp"       value="${MIDP2/midp}"/>
 			<property name="MIDP2/midp/lib"   value="${MIDP2/midp/lib}"/>
 			<property name="RIM/midp"         value="${RIM/midp}"/>
 			<property name="RIM/midp/lib"     value="${RIM/midp/lib}"/>
+			<property name="SIEMENS/midp"     value="${SIEMENS/midp}"/>
+			<property name="SIEMENS/midp/lib" value="${SIEMENS/midp/lib}"/>
 			<property name="proguard"         value="${proguard}"/>
 			<property name="proguard/lib"     value="${proguard/lib}"/>
 			<property name="target"           value="${target}"/>
