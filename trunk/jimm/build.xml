@@ -23,15 +23,17 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 ********************************************************************************
 -->
 
+
 <project name="Jimm" default="dist">
 
+
 	<!-- ********************************************************************* -->
-	<!-- CONFIGURATION SECTION - CHANGE THESE VALUES TO REFLECT YOU LOCAL ENV. -->
+	<!-- CONFIGURATION SECTION - CHANGE THESE VALUES TO REFLECT YOUR LOCAL ENV -->
 	<!-- ********************************************************************* -->
 	<!-- Change this to the directory where MIDP SDK 1.0.3 is installed. You   -->
 	<!-- can use both the slash and the backslash for separating path          -->
 	<!-- components.                                                           -->
-	<property name="DEFAULT/midp"      value="CHANGE ME"                  	    />
+	<property name="DEFAULT/midp"      value="CHANGE ME"                        />
 	<property name="SIEMENS/midp"      value="CHANGE ME"                        />
 	<property name="NOKIAS40/midp"     value="CHANGE ME"                        />
 	<!-- ********************************************************************* -->
@@ -42,7 +44,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="NOKIAS40/midp/lib" value="${NOKIAS40/midp}/lib/classes.zip" />
 	<!-- ********************************************************************* -->
 	<!-- Change this to the directory where ProGuard is installed. You can     -->
-	<!-- use both the slash and the backslash for separating path components.  -->
+	<!-- use both the slash and the backslash for separating path components   -->
 	<property name="proguard"          value="CHANGE ME"                        />
 	<!-- ********************************************************************* -->
 	<!-- This property must point at the ProGuard JAR file, normally found in  -->
@@ -52,33 +54,32 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD        -->
 	<!-- ********************************************************************* -->
 	<!-- Build target. If you have a Siemens mobile, set this property to      -->
-	<!-- "SIEMENS". If you have a Nokia 6800 mobile, set this property to      -->
-	<!-- "NOKIAS40". Otherwise go with the default value ("DEFAULT").          -->
+	<!-- SIEMENS. If you have a Nokia 6800/7250i mobile, set this property to  -->
+	<!-- NOKIAS40. Otherwise go with the default value (DEFAULT).              -->
 	<property name="target"            value="DEFAULT"                          />
 	<!-- ********************************************************************* -->
-	<!-- Network connection type. Currently, this is "RAWSOCKET" and           -->
-	<!-- "RAWSOCKET_ASYNC" (needed for some screwed Java implementations) are  -->
-	<!-- the only supported connections.                                       -->
+	<!-- Network connection type. Currently, RAWSOCKET and RAWSOCKET_ASYNC     -->
+	<!-- (needed for some screwed Java implementations) are supported.         -->
 	<property name="connection"        value="RAWSOCKET"                        />
 	<!-- ********************************************************************* -->
-	<!-- This value is a comma separated list of modules  which should         -->
-	<!-- be included in the build. Currently, the distribution includes        -->
-	<!-- only a module for traffic("TRAFFIC") display.					       -->
-	<!-- language packs.                                                       -->
+	<!-- This value is a comma separated list of modules which should be       -->
+	<!-- included in the build. Currently, the distribution includes only a    -->
+	<!-- module for traffic (TRAFFIC) display.                                 -->
 	<property name="modules"           value="TRAFFIC"                          />
 	<!-- ********************************************************************* -->
 	<!-- This value is a comma separated list of languages packs which should  -->
 	<!-- be included in the build. Currently, the distribution includes        -->
-	<!-- English ("EN"), German ("DE"), Russian ("RU"), Spanish ("ES")         -->
-	<!-- Brasilian ("BR") Chechz ("CZ") and Swedish ("SE") language packs.     -->
-	<!-- language packs.                                                       -->
-	<property name="lang"              value="EN,DE,RU,ES,BR,CZ,SE"             />
+	<!-- English (EN), Brasilian (BR), Czech (CZ), German (DE), Spanish (ES),  -->
+	<!-- Lithuanian (LT), Russian (RU) and Swedish (SE).                       -->
+	<property name="lang"              value="EN,BR,CZ,DE,ES,LT,RU,SE"          />
 	<!-- ********************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!-- ********************************************************************* -->
 
+
 	<!-- Buildfile description -->
 	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
+
 
 	<!-- Set global properties for this build -->
 	<property name="build" location="build"/>
@@ -92,18 +93,29 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="util/jarsizetask" location="${util}/jarsizetask"/>
 	<property name="util/jarsizetask/lib" location="${util/jarsizetask}/dist/lib/jarsizetask.jar"/>
 
+
 	<!-- Set default version number -->
-	<property name="version" value="0.1beta8pre3asyc"/>
+	<property name="version" value="0.1"/>
 	<property name="version/java" value="0.1"/>
+
 
 	<!-- Auxiliary property -->
 	<property name="3ns" value="###"/>
 
+
 	<!-- Register Proguard task -->
 	<taskdef name="proguard" classname="proguard.ant.ProGuardTask" classpath="${proguard/lib}"/>
 
+
 	<!-- Internal target: init -->
 	<target name="init">
+		<mkdir dir="${build}"/>
+		<mkdir dir="${dist}"/>
+		<tstamp>
+			<format property="date"
+				pattern="yyyy/MM/dd"
+				timezone="GMT+00:00"/>
+		</tstamp>
 		<condition property="midp" value="${DEFAULT/midp}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
@@ -122,14 +134,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp/lib" value="${NOKIAS40/midp/lib}">
 			<equals arg1="${target}" arg2="NOKIAS40"/>
 		</condition>
-		<mkdir dir="${build}"/>
-		<mkdir dir="${dist}"/>
-		<tstamp>
-			<format property="date"
-				pattern="yyyy/MM/dd"
-				timezone="GMT+00:00"/>
-		</tstamp>
 	</target>
+
 
 	<!-- Internal target: sijapp -->
 	<target name="sijapp">
@@ -139,28 +145,32 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<taskdef name="sijapp" classname="sijapp.SijappTask" classpath="${util/sijapp/lib}"/>
 	</target>
 
+
 	<!-- Internal target: preprocess-source -->
 	<target name="preprocess-source" depends="init,sijapp">
-		<condition property="mod/TRAF" value="true">
+		<condition property="modules/TRAFFIC" value="true">
 			<contains string="${modules}" substring="TRAFFIC"/>
 		</condition>
 		<condition property="lang/EN" value="true">
 			<contains string="${lang}" substring="EN"/>
-		</condition>
-		<condition property="lang/DE" value="true">
-			<contains string="${lang}" substring="DE"/>
-		</condition>
-		<condition property="lang/RU" value="true">
-			<contains string="${lang}" substring="RU"/>
-		</condition>
-		<condition property="lang/ES" value="true">
-			<contains string="${lang}" substring="ES"/>
 		</condition>
 		<condition property="lang/BR" value="true">
 			<contains string="${lang}" substring="BR"/>
 		</condition>
 		<condition property="lang/CZ" value="true">
 			<contains string="${lang}" substring="CZ"/>
+		</condition>
+		<condition property="lang/DE" value="true">
+			<contains string="${lang}" substring="DE"/>
+		</condition>
+		<condition property="lang/ES" value="true">
+			<contains string="${lang}" substring="ES"/>
+		</condition>
+		<condition property="lang/LT" value="true">
+			<contains string="${lang}" substring="LT"/>
+		</condition>
+		<condition property="lang/RU" value="true">
+			<contains string="${lang}" substring="RU"/>
 		</condition>
 		<condition property="lang/SE" value="true">
 			<contains string="${lang}" substring="SE"/>
@@ -170,13 +180,14 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			destdir="${build}/init/src">
 			<define name="target" value="${target}"/>
 			<define name="connection" value="${connection}"/>
-			<define name="mod_TRAF" value="${mod/TRAF}"/>
+			<define name="modules_TRAFFIC" value="${modules/TRAFFIC}"/>
 			<define name="lang_EN" value="${lang/EN}"/>
-			<define name="lang_DE" value="${lang/DE}"/>
-			<define name="lang_RU" value="${lang/RU}"/>
-			<define name="lang_ES" value="${lang/ES}"/>
 			<define name="lang_BR" value="${lang/BR}"/>
 			<define name="lang_CZ" value="${lang/CZ}"/>
+			<define name="lang_DE" value="${lang/DE}"/>
+			<define name="lang_ES" value="${lang/ES}"/>
+			<define name="lang_LT" value="${lang/LT}"/>
+			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
 			<define name="cp1251" value="${cp1251}"/>
 		</sijapp>
@@ -191,6 +202,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</replace>
 	</target>
 
+
 	<!-- Internal target: compile -->
 	<target name="compile" depends="preprocess-source">
 		<mkdir dir="${build}/compile/classes"/>
@@ -201,6 +213,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			target="1.1">
 		</javac>
 	</target>
+
 
 	<!-- Internal target: obfuscate -->
 	<target name="obfuscate" depends="compile" unless="skip-obfuscate">
@@ -221,6 +234,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			dest="${build}/obfuscate/classes"/>
 	</target>
 
+
 	<!-- Internal target: skip-obfuscate -->
 	<target name="skip-obfuscate" depends="compile" if="skip-obfuscate">
 		<mkdir dir="${build}/obfuscate/classes"/>
@@ -228,6 +242,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<fileset dir="${build}/compile/classes"/>
 		</copy>
 	</target>
+
 
 	<!-- Internal target: preverify -->
 	<target name="preverify" depends="obfuscate,skip-obfuscate">
@@ -239,6 +254,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<arg line="-cldc"/>
 		</exec>
 	</target>
+
 
 	<!-- Internal target: preprocess-manifest -->
 	<target name="preprocess-manifest" depends="init">
@@ -255,6 +271,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</replace>
 	</target>
 
+
 	<!-- Internal target: preprocess-resources -->
 	<target name="preprocess-resources">
 		<mkdir dir="${build}/res"/>
@@ -266,6 +283,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</copy>
 	</target>
 
+
 	<!-- Internal target: jarsizetask -->
 	<target name="jarsizetask">
 		<ant dir="${util/jarsizetask}"
@@ -273,6 +291,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</ant>
 		<taskdef name="jarsize" classname="JarSizeTask" classpath="${util/jarsizetask/lib}"/>
 	</target>
+
 
 	<!-- Target: dist -->
 	<target name="dist" depends="preverify,preprocess-manifest,preprocess-resources,jarsizetask" description="Generate the distribution">
@@ -290,10 +309,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<delete dir="${dist}/bin/META-INF"/>
 	</target>
 
+
 	<!-- Target: clean -->
 	<target name="clean" description="Clean the distribution">
 		<delete dir="${build}"/>
 		<delete dir="${dist}"/>
 	</target>
+
 
 </project>
