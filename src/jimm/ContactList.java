@@ -366,8 +366,7 @@ public class ContactList implements CommandListener
 		newUserCommand     = new Command(ResourceBundle.getString("add_user"),     Command.SCREEN, 2),
 		searchUserCommand  = new Command(ResourceBundle.getString("search_user"),  Command.SCREEN, 2),
 		newGroupCommand    = new Command(ResourceBundle.getString("add_group"),    Command.SCREEN, 2),
-		removeUserCommand  = new Command(ResourceBundle.getString("remove_user"),  Command.SCREEN, 2),
-		removeGroupCommand = new Command(ResourceBundle.getString("remove_group"), Command.SCREEN, 2);
+		removeUserCommand  = new Command(ResourceBundle.getString("remove_user"),  Command.SCREEN, 2);
     
 //#sijapp cond.if modules_DEBUGLOG is "true" #
     private static Command 
@@ -505,7 +504,6 @@ public class ContactList implements CommandListener
 		//this.tree.addCommand(searchUserCommand);
 		//this.tree.addCommand(removeUserCommand);
 		//this.tree.addCommand(newGroupCommand);
-		//this.tree.addCommand(removeGroupCommand);
 	
 //#sijapp cond.if modules_DEBUGLOG is "true" #
 		this.tree.addCommand(debugListCommand);
@@ -1358,6 +1356,24 @@ public class ContactList implements CommandListener
 		TreeNode groupNode = tree.addNode(null, gItem);
 		gNodes.put(new Integer(gItem.getId()), groupNode);
     }
+    
+    // removes existing group 
+    public synchronized void removeGroup(ContactListGroupItem gItem)
+    {
+    	ContactListGroupItem realGroup = getGroupById(gItem.getId());
+    	if (realGroup == null) return;
+    	if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USER_GROUPS) )
+    	{
+    		TreeNode node = (TreeNode)gNodes.get( new Integer(realGroup.getId()) );
+    		tree.deleteChild
+			(
+					tree.getRoot(), 
+					tree.getIndexOfChild(tree.getRoot(), node)
+			);
+    		gNodes.remove( new Integer(realGroup.getId()) );
+    	}	
+    	gItems.removeElement(realGroup);
+    }
 
     // Adds the given message to the message queue of the contact item
     // identified by the given UIN
@@ -1713,33 +1729,6 @@ public class ContactList implements CommandListener
         {
         	itemClicked();
         }
-
-        /*
-        // "new user" menu item selected
-        else if (c == newUserCommand)
-        {
-            (new AddUserForm()).go();
-        }
-    	
-        // "search user" menu item selected
-        else if (c == searchUserCommand)
-        {
-            Search search = new Search();
-            search.getSearchForm().activate(false);
-        }
-        
-        // "add group" menu item selected
-        else if (c == newGroupCommand)
-        {
-            (new AddGroupForm()).go();
-        }
-        
-        // "remove group" menu item selected
-        else if (c == removeGroupCommand)
-        {
-            (new RemoveGroupForm()).go();
-        }
-        */
         
 //#sijapp cond.if modules_DEBUGLOG is "true" #
         else if (c == debugListCommand)
