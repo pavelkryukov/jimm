@@ -250,7 +250,6 @@ public class ContactListContactItem extends ContactListItem
     // Adds a message to the message display
     protected synchronized void addMessage(Message message)
     {
-        System.out.println("Nr: "+chatHistoryDisplayNr);
         if(chatHistoryDisplayNr != -1)
             Jimm.jimm.getChatHistoryRef().addMessage(chatHistoryDisplayNr,message,this);
         else
@@ -350,7 +349,7 @@ public class ContactListContactItem extends ContactListItem
         // Command listener
         public void commandAction(Command c, Displayable d)
         {
-
+            
             // Return to contact list
             if (c == MenuUtil.backCommand)
             {
@@ -466,7 +465,7 @@ public class ContactListContactItem extends ContactListItem
                 // Message has been entered
                 if (d == MenuUtil.messageTextbox)
                 {
-
+                    
                     // Abort if nothing has been entered
                     if (MenuUtil.messageTextbox.getString().length() < 1)
                     {
@@ -481,9 +480,14 @@ public class ContactListContactItem extends ContactListItem
                         // Add the new message to the chat history
                         PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
                                 ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
-
                         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
-                            Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
+                            if (chatHistoryDisplayNr != -1)
+                                Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
+                            else
+	                        {
+	                            chatHistoryDisplayNr = Jimm.jimm.getChatHistoryRef().newChatForm(name);
+	                            Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
+	                        }
                         SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
                         try
                         {
