@@ -135,6 +135,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("options_interface",           "Interface");
 		resources.put("options_network",             "Network");
 		resources.put("options_other",               "Other");
+		resources.put("options_signaling",           "Signaling");
 		resources.put("password",                    "Password");
 		resources.put("plength",                     "Length of charge packet in kB");
 		resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
@@ -159,6 +160,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("server_port",                 "Port");
 		resources.put("session",                     "Session");
 		resources.put("set_status",                  "Set status");
+		resources.put("options_signaling",           "Signaling");
 		resources.put("since",                       "Since");
 		resources.put("sound",                       "Sound file");
 		resources.put("sort_by",                     "Sort contact list");
@@ -179,7 +181,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("user_add",                    "Add user");
 		resources.put("user_search",                 "Search for user");
 		resources.put("vibration",                   "Vibration");
-		resources.put("viewfinder",                  "Viewfinder");		
+		resources.put("viewfinder",                  "Viewfinder");
+		resources.put("volume",                      "Volume");		
 		resources.put("wait",                        "Please wait ...");
 		resources.put("warning",                     "Warning");
 		resources.put("wantsyourauth",				 " wants your Authorisation. Reason: ");

@@ -63,6 +63,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Gauge;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.rms.RecordStore;
@@ -86,8 +87,10 @@ public class Options
 	public static final int OPTION_CL_HIDE_OFFLINE                = 130;   /* boolean */
 	public static final int OPTION_MESSAGE_NOTIFICATION_MODE      =  66;   /* int     */
 	public static final int OPTION_MESSAGE_NOTIFICATION_SOUNDFILE =   4;   /* String  */
+	public static final int OPTION_MESSAGE_NOTIFICATION_VOLUME    =  71;   /* int     */
 	public static final int OPTION_ONLINE_NOTIFICATION_MODE       =  67;   /* int     */
 	public static final int OPTION_ONLINE_NOTIFICATION_SOUNDFILE  =   5;   /* String  */
+	public static final int OPTION_ONLINE_NOTIFICATION_VOLUME     =  72;   /* int     */
 	public static final int OPTION_VIBRATOR                       = 131;   /* boolean */
 	public static final int OPTION_KEEPCHAT                       = 132;   /* boolean */
 	public static final int OPTION_CP1251_HACK                    = 133;   /* boolean */
@@ -142,13 +145,17 @@ public class Options
 			// #sijapp cond.elseif target is "MIDP2"#
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.wav");
+			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.wav");
+			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
 			// #sijapp cond.else#
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "");
+			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    0);
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "");
+			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     0);
 			// #sijapp cond.end#
 			this.setBooleanOption(Options.OPTION_VIBRATOR,                       false);
 			this.setBooleanOption(Options.OPTION_KEEPCHAT,                       true);
@@ -368,8 +375,10 @@ public class Options
 		// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 		private ChoiceGroup messageNotificationModeChoiceGroup;
 		private TextField messageNotificationSoundfileTextField;
+		private Gauge messageNotificationSoundVolume;
 		private ChoiceGroup onlineNotificationModeChoiceGroup;
 		private TextField onlineNotificationSoundfileTextField;
+		private Gauge onlineNotificationSoundVolume;
 		// #sijapp cond.elseif target is "RIM"#
 		private ChoiceGroup messageNotificationModeChoiceGroup;
 		private ChoiceGroup onlineNotificationModeChoiceGroup;
@@ -400,6 +409,10 @@ public class Options
 			this.optionsMenu.append(ResourceBundle.getString("options_account"), null);
 			this.optionsMenu.append(ResourceBundle.getString("options_network"), null);
 			this.optionsMenu.append(ResourceBundle.getString("options_interface"), null);
+			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+			this.optionsMenu.append(ResourceBundle.getString("options_signaling"), null);
+            // #sijapp cond.end#
+			
 			// #sijapp cond.if modules_TRAFFIC is "true" #
 			this.optionsMenu.append(ResourceBundle.getString("options_cost"), null);
 			// #sijapp cond.end#
@@ -462,6 +475,7 @@ public class Options
 			this.useSmallFont.append(ResourceBundle.getString("yes"), null);
 			this.useSmallFont.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT));
 			
+//			 Initialize elements (Signaling section)
 			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
 			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
@@ -475,6 +489,8 @@ public class Options
 			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
 			this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
 			this.messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.this.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
+			this.messageNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"),true,10,Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME)/10);
+			this.onlineNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"),true,10,Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME)/10);
 			// #sijapp cond.end#
 			// #sijapp cond.if target is "RIM"#
 			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
@@ -543,10 +559,15 @@ public class Options
 						this.optionsForm.append(this.keepchatChoiceGroup);
 						this.optionsForm.append(this.cp1251HackChoiceGroup);
 						this.optionsForm.append(this.useSmallFont);
+						break;
+
+					case 3:
 						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
+						this.optionsForm.append(this.messageNotificationSoundVolume);
 						this.optionsForm.append(this.messageNotificationSoundfileTextField);
 						this.optionsForm.append(this.onlineNotificationModeChoiceGroup);
+						this.optionsForm.append(this.onlineNotificationSoundVolume);
 						this.optionsForm.append(this.onlineNotificationSoundfileTextField);
 						// #sijapp cond.elseif target is "RIM"#
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
@@ -554,10 +575,13 @@ public class Options
 						// #sijapp cond.end#
 						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
 						this.optionsForm.append(this.vibratorChoiceGroup);
-						// #sijapp cond.end#
 						break;
+						// #sijapp cond.end#
+
 					// #sijapp cond.if modules_TRAFFIC is "true" #
-					case 3:
+					// #sijapp cond.if target isnot "DEFAULT"#
+					case 4:
+                    // #sijapp cond.end#
 						this.optionsForm.append(this.costPerPacketTextField);
 						this.optionsForm.append(this.costPerDayTextField);
 						this.optionsForm.append(this.costPacketLengthTextField);
@@ -623,25 +647,33 @@ public class Options
 						    Options.this.setIntOption(Options.OPTION_CL_SORT_BY,this.clSortByChoiceGroup.getSelectedIndex());
 						}
 						Options.this.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,this.clHideOfflineChoiceGroup.isSelected(0));
+						Options.this.setBooleanOption(Options.OPTION_KEEPCHAT,this.keepchatChoiceGroup.isSelected(0));
+						Options.this.setBooleanOption(Options.OPTION_CP1251_HACK,this.cp1251HackChoiceGroup.isSelected(0));
+						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.useSmallFont.isSelected(0));
+						Jimm.jimm.getContactListRef().sortAll();
+						break;
+					case 3:
 						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
 						Options.this.setStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE,this.messageNotificationSoundfileTextField.getString());
+						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,this.messageNotificationSoundVolume.getValue()*10);
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());
 						Options.this.setStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,this.onlineNotificationSoundfileTextField.getString());
+						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME,this.onlineNotificationSoundVolume.getValue()*10);
+						System.out.println("Message Volume: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
+						System.out.println("Online Volume: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
 						// #sijapp cond.elseif target is "RIM"#
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());
 						// #sijapp cond.end#
 						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
 						Options.this.setBooleanOption(Options.OPTION_VIBRATOR,this.vibratorChoiceGroup.isSelected(0));
-						// #sijapp cond.end#
-						Options.this.setBooleanOption(Options.OPTION_KEEPCHAT,this.keepchatChoiceGroup.isSelected(0));
-						Options.this.setBooleanOption(Options.OPTION_CP1251_HACK,this.cp1251HackChoiceGroup.isSelected(0));
-						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.useSmallFont.isSelected(0));
-						Jimm.jimm.getContactListRef().sortAll();
 						break;
+						// #sijapp cond.end#
 					// #sijapp cond.if modules_TRAFFIC is "true" #
-					case 3:
+				    // #sijapp cond.if target isnot "DEFAULT"#
+					case 4:
+                    // #sijapp cond.end#
 						Options.this.setIntOption(Options.OPTION_COST_PER_PACKET,Util.decimalToInt(this.costPerPacketTextField.getString()));
 						this.costPerPacketTextField.setString(Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_PACKET)));
 						Options.this.setIntOption(Options.OPTION_COST_PER_DAY,Util.decimalToInt(this.costPerDayTextField.getString()));

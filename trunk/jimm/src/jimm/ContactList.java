@@ -33,11 +33,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Vector;
 
+
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
@@ -48,12 +48,14 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
 // #sijapp cond.if target is "SIEMENS"#
-import com.siemens.mp.game.Sound;
 import com.siemens.mp.game.Vibrator;
 import com.siemens.mp.game.Light;
 import com.siemens.mp.media.Manager;
 import com.siemens.mp.media.MediaException;
 import com.siemens.mp.media.Player;
+import com.siemens.mp.media.control.ToneControl;
+import com.siemens.mp.media.control.VolumeControl;
+import java.io.InputStream;
 // #sijapp cond.end#
 
 //#sijapp cond.if target is "MIDP2"#
@@ -62,6 +64,7 @@ import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.control.ToneControl;
+import javax.microedition.media.control.VolumeControl;
 import java.io.InputStream;
 //#sijapp cond.end#
 
@@ -853,58 +856,33 @@ public class ContactList implements CommandListener
     }
 
     // Play a sound notification
-    private void playSoundNotivication(int notType)
+    private synchronized void playSoundNotivication(int notType)
     {
+        // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+        
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();
-        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
-        {
-            Vibrator.triggerVibrator(500);
-        }
-        int mode_si;
-        if (notType == SOUND_TYPE_MESSAGE)
-            mode_si = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
-        else
-            mode_si = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
-            
-        switch (mode_si)
-        {
-        case 1:
-            Sound.playTone(1000, 1000);
-            break;
-        case 2:
-            try
-            {
-                Player p;
-                if (notType == SOUND_TYPE_MESSAGE)
-                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
-                else
-                	p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
-                p.start();
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-            } catch (MediaException e)
-            {
-                e.printStackTrace();
-            }
-            break;
-
-        }
-        Light.setLightOff();
         // #sijapp cond.end#
         // #sijapp cond.if target is "MIDP2"#
+        Jimm.display.flashBacklight(500);
+        // #sijapp cond.end#
         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
         {
-            Display.getDisplay(Jimm.jimm).vibrate(500);
+            // #sijapp cond.if target is "SIEMENS"#
+            Vibrator.triggerVibrator(500);
+            // #sijapp cond.end#
+            // #sijapp cond.if target is "MIDP2"#
+            Jimm.display.vibrate(500);
+            // #sijapp cond.end#
         }
-        int mode_m2;
+        
+        int not_mode;
         if (notType == SOUND_TYPE_MESSAGE)
-            mode_m2 = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
+            not_mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
         else
-            mode_m2 = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
+            not_mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
             
-        switch (mode_m2)
+        switch (not_mode)
         {
         case 1:
             try
@@ -912,10 +890,10 @@ public class ContactList implements CommandListener
                 switch(notType)
                 {
                 case SOUND_TYPE_MESSAGE:
-                    Manager.playTone(ToneControl.C4, 500, 100);
+                    Manager.playTone(ToneControl.C4, 500, Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
                     break;
                 case SOUND_TYPE_ONLINE:
-                    Manager.playTone(ToneControl.C4+7, 500, 100);
+                    Manager.playTone(ToneControl.C4+7, 500, Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
                 }
 
             } catch (MediaException e)
@@ -926,36 +904,46 @@ public class ContactList implements CommandListener
         case 2:
             try
             {
-                InputStream is;
                 Player p;
+                VolumeControl c;
+                
                 if (notType == SOUND_TYPE_MESSAGE)
                 {
-                    is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
-                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE).endsWith(".amr"))
-                        p = Manager.createPlayer(is, "audio/amr");
-                    else
-                        p = Manager.createPlayer(is, "audio/x-wav");
+                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
+                    p.realize();
+                    c = (VolumeControl) p.getControl("VolumeControl");
+                    c.setLevel(Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
+                    System.out.println("MessageVol: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
                 }
                 else
                 {
-                    is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
-                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE).endsWith(".amr"))
-                        p = Manager.createPlayer(is, "audio/amr");
-                    else
-                        p = Manager.createPlayer(is, "audio/x-wav");
+                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
+                    p.realize();
+                    c = (VolumeControl) p.getControl("VolumeControl");
+                    c.setLevel(Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
+                    System.out.println("OnlineVol: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
                 }
                 p.start();
             } catch (IOException ioe)
             {
-            } catch (MediaException me)
+            	// Do nothing
+            	//System.out.println(ioe.toString());
+            }
+            catch (MediaException me)
             {
                 // Do nothing
+                //System.out.println(me.toString());
             }
 
             break;
 
         }
+        // #sijapp cond.if target is "SIEMENS"#
+        Light.setLightOff();
         // #sijapp cond.end#
+        
+        // #sijapp cond.end#
+        
         // #sijapp cond.if target is "RIM"#
         LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
         LED.setState(LED.STATE_BLINKING);
