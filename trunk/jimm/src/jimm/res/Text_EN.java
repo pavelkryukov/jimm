@@ -61,6 +61,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("cpp",                         "Cost per packet");
 		resources.put("currency",                    "Currency");
 		resources.put("delete_chat",                 "Delete chat");
+		resources.put("deny",						 "Deny Auth");
+		resources.put("denyedby",					 "Your auth request was denyed by: ");
 		resources.put("user_menu",                   "User Menu");
 		resources.put("disconnect",                  "Disconnect");
 		resources.put("disconnecting",               "Disconnecting");
@@ -69,6 +71,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("email",                       "Email");
 		resources.put("error",                       "Error");
 		resources.put("exit",                        "Exit");
+		resources.put("grant",						 "Grant Auth");
+		resources.put("grantedby",					 "Your auth request was granted by:");
 		resources.put("hide_offline",                "Hide offline contacts");
 		resources.put("info",                        "Info");
 		resources.put("kb",                          "kB");
@@ -109,6 +113,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("options_other",               "Other");
 		resources.put("password",                    "Password");
 		resources.put("plength",                     "Length of charge packet in kB");
+		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
 		resources.put("reply",                       "Reply");
 		resources.put("reset",                       "Reset");
@@ -136,6 +141,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("status_occupied",             "Occupied");
 		resources.put("status_offline",              "Offline");
 		resources.put("status_online",               "Online");
+		resources.put("sysnotice",					 "System Notice");
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
@@ -146,7 +152,9 @@ public class Text_EN extends ResourceBundle
 		// #sijapp cond.end #
 		resources.put("wait",                        "Please wait ...");
 		resources.put("warning",                     "Warning");
+		resources.put("wantsyourauth",				 " wants your Authorisation. Reason: ");
 		resources.put("yes",                         "Yes");
+		resources.put("youwereadded",				 "You were added by UIN: ");
 
 		// Generic errors
 		resources.put("error_100",                   "Unknown error (#100.EXT)");

@@ -61,6 +61,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("cpp",                         "Paketgebühr(cent");
 		resources.put("currency",                    "Währung");
 		resources.put("delete_chat",                 "Lösche Chat");
+		resources.put("deny",						 "Auth ablehnen");
+		resources.put("denyedby",					 "Ihre Authorisierungsanfrage wurde abgelehnt durch: ");
 		resources.put("user_menu",                   "Benutzer Menü");
 		resources.put("disconnect",                  "Trennen");
 		resources.put("disconnecting",               "Trenne");
@@ -70,6 +72,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("error",                       "Fehler");
 		resources.put("exit",                        "Beenden");
 		resources.put("hide_offline",                "Offline-Kontakte verbergen");
+		resources.put("grant",						 "Auth genehmigen");
+		resources.put("grantedby",					 "Ihre Authorisierungsanfrage wurde genehmingt durch");
 		resources.put("info",                        "Info");
 		resources.put("kb",                          "kB");
 		resources.put("keep_chat",                   "Chat-History behalten?");
@@ -109,6 +113,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("options_other",               "Sonstiges");
 		resources.put("password",                    "Passwort");
 		resources.put("plength",                     "Länge des Abrechnungspakets in kB");
+		resources.put("reason",						 "Grund");
 		resources.put("remove",                      "Aus der Liste entfernen");
 		resources.put("reply",                       "Antworten");
 		resources.put("reset",                       "Zurücks.");
@@ -136,6 +141,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("status_occupied",             "Beschäftigt");
 		resources.put("status_offline",              "Offline");
 		resources.put("status_online",               "Online");
+		resources.put("sysnotice",					 "System Nachricht");
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
@@ -146,7 +152,9 @@ public class Text_DE extends ResourceBundle
 		// #sijapp cond.end #
 		resources.put("wait",                        "Bitte warten ...");
 		resources.put("warning",                     "Warnung");
+		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
 		resources.put("yes",                         "Ja");
+		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
 
 		// Generic errors
 		resources.put("error_100",                   "Unbekannter Fehler (#100.EXT)");
