@@ -23,7 +23,6 @@
 
 package jimm;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 import javax.microedition.lcdui.Font;
@@ -33,7 +32,6 @@ import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.SystemNotice;
 import jimm.comm.UrlMessage;
-import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 import DrawControls.TextList;
@@ -134,15 +132,12 @@ public class ChatHistory
     {
         TextList msgDisplay = (TextList) historyVector.elementAt(nr);
         
-        Calendar stamp = Calendar.getInstance();
-        stamp.setTime(time);
         
         msgDisplay.lock();
         int lastSize = msgDisplay.getItemCount();
         msgDisplay.addBigText
         (
-          from + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" 
-               + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):",
+          from + " (" + Jimm.jimm.getSplashCanvasRef().getDateString(true) + "):",
           red ? 0xFF0000 : 0xFF, 
           Font.STYLE_BOLD
         );
