@@ -146,7 +146,7 @@ public class UpdateContactListAction extends Action
             // Pack CLI_ROSTERADDpacket
             System.out.println("Pack CLI_ROSTERADDpacket");
             
-            if (cItem.noAuth())
+            if (cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
                 buf = new byte[2 + uinRaw.length + 6 + 6 + 4 + nameRaw.length];
             else
                 buf = new byte[2 + uinRaw.length + 6 + 2 + 4 + nameRaw.length];
@@ -162,7 +162,7 @@ public class UpdateContactListAction extends Action
             marker += 2;
             Util.putWord(buf, marker, 0x0000);
             marker += 2;
-            if (cItem.noAuth())
+            if (cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
             {
                 // Add length of TLVs and 0x066 packet
                 Util.putWord(buf, marker, 8 + nameRaw.length);
@@ -247,14 +247,14 @@ public class UpdateContactListAction extends Action
                             throw (new JimmException(158, 0, true));
                             
                         case 0x00E:
-                            cItem.setNoAuth(true);
+                            cItem.setBoolValue(ContactListContactItem.VALUE_NO_AUTH,true);
                             System.out.println("Added");
                             Jimm.jimm.getContactListRef().addContactItem(this.cItem);
                             this.state = UpdateContactListAction.STATE_SRV_REPLYED_AUTH;
                             break;
                         
                         default:
-                            cItem.setTemporary(false);
+                            cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP,false);
 
                         // Get all contact items and group items as aray
                         ContactListContactItem[] cItems = Jimm.jimm.getContactListRef().getContactItems();
@@ -281,12 +281,12 @@ public class UpdateContactListAction extends Action
                         for (int i = 0; i < cItems.length; i++)
                         {
                             if ((gItem.getId() == cItems[i].getGroup())
-                                    && ((this.cItem != cItems[i]) || cItem.isTemporary()))
+                                    && ((this.cItem != cItems[i]) || cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)))
                             {
                                 cItemsRemaining.addElement(cItems[i]);
                             }
                         }
-                        if (cItem.isTemporary())
+                        if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP))
                         {
                             cItemsRemaining.addElement(cItem);
                         }
