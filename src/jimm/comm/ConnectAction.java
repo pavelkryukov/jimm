@@ -425,8 +425,7 @@ public class ConnectAction extends Action
                         this.srvMotdRcvd = true;
                     }
 
-                    // Check if we received both SRV_FAMILIES2 and SRV_MOTD
-                    // packet
+                    // Check if we received both SRV_FAMILIES2 and SRV_MOTD packet
                     if (this.srvFamilies2Rcvd && this.srvMotdRcvd)
                     {
                         // Send a CLI_RATESREQUEST packet as reply
