@@ -48,7 +48,7 @@ public class SearchAction extends Action
     public static final int TLV_TYPE_FIRSTNAME           = 0x4001; // String (2 byte length + string)
     public static final int TLV_TYPE_LASTNAME            = 0x4A01; // String (2 byte length + string)
     public static final int TLV_TYPE_EMAIL               = 0x5E01; // String (2 byte length + string + 1 byte email code)
-    public static final int TLV_TYPE_CITY                = 0x9A01; // String (2 byte length + string)
+    public static final int TLV_TYPE_CITY                = 0x9001; // String (2 byte length + string)
     public static final int TLV_TYPE_KEYWORD             = 0x2602; // String (2 byte length + string)
     public static final int TLV_TYPE_ONLYONLINE          = 0x3002; // UINT8 (1 byte:  1 - search online, 0 - search all)
     
@@ -118,7 +118,9 @@ public class SearchAction extends Action
         for (int i = 1; i < 7; i++)
         {
             if (search[i].length() != 0) 
+            {
                 length += 6 + search[i].length() + 1;
+            }
         }
         // Search offline/online TLV
         length+=5;
