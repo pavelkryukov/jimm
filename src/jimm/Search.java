@@ -445,7 +445,7 @@ public class Search
 
                 Search.this.setSearchRequest(this.uinSearchTextBox.getString(), this.nickSearchTextBox.getString(),
                         this.firstnameSearchTextBox.getString(), this.lastnameSearchTextBox.getString(),
-                        this.emailSearchTextBox.getString(), this.emailSearchTextBox.getString(),
+                        this.emailSearchTextBox.getString(), this.citySearchTextBox.getString(),
                         this.keywordSearchTextBox.getString(),this.onlyOnline.isSelected(0));
 
                 SearchAction act = new SearchAction(Search.this,SearchAction.CALLED_BY_SEARCHUSER);
