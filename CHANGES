@@ -153,5 +153,9 @@ VERSION 0.3.1
   * Bugfix: If you try to add a contact and there are no groups you can make a new one
   * Bugfix: There is now a 100% unique ID created for new contacts and groups
   * Bugfix: IDs created for new contacts/groups is now in the needed range
+  * Bugfix: Fixed invisible mode bug. Now invisible contacts are shown correctly
+  * Bugfix: Now it is possible to delete contact from contact list in Siemens build
+  * "Use cp1251 hack" option is true by default in the russian build
+  * Program asks user before exit if unread messages exist
   * Contact names can be changed locally till next list update from server
   * Added Bulgarian translation
