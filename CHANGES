@@ -134,8 +134,10 @@ VERSION 0.3.0
 
   * NEW FEATURE: File transfer to other > ICQ v8 clients
   * NEW FEATURE: New chat history is added
+  * NEW FEATURE: Group display support
   * There is now a new "Signaling" menu in options for sound settings
   * You can now set the sound volume
   * General sound format support but only wav-files (PCM) will be in the release
   * New option "Small font in chat"
+  * Search results are now drawn with DrawTools (like the new chat history)
   * Many minor bugfixes
