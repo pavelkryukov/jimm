@@ -938,6 +938,7 @@ public class ContactListContactItem extends ContactListItem
             // Display chat history
             if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
             {
+                MenuUtil.initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH));
                 Displayable msgDisplay = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.chatHistoryDisplayNr);
                 
                 msgDisplay.removeCommand(MenuUtil.addUrsCommand);
