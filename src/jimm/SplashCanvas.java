@@ -291,8 +291,10 @@ public class SplashCanvas extends Canvas
 	}
     // Display time and and date (if requested)
     try{  
-	    if (Jimm.jimm.getOptionsRef().isDisplayDate())
+	    System.out.println("bef");
+        if (Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_DISPLAY_DATE))
 	    {
+            System.out.println("aft");
 		  // Draw white bottom bar
 	      //g.setColor(0, 0, 0);
 		  //g.fillRect(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), SplashCanvas.height + 2);

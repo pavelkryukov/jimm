@@ -152,8 +152,8 @@ public class Icq implements Runnable
 
         Options options = Jimm.jimm.getOptionsRef();
         // Connect
-        ConnectAction act = new ConnectAction(options.getUin(), options.getPassword(),
-                options.getSrvHost(), options.getSrvPort());
+        ConnectAction act = new ConnectAction(options.getOptionValueString(Options.OPTION_UIN), options.getOptionValueString(Options.OPTION_PASSWORD),
+                options.getOptionValueString(Options.OPTION_SRV_HOST), options.getOptionValueString(Options.OPTION_SRV_PORT));
         try
         {
             this.requestAction(act);
@@ -210,7 +210,7 @@ public class Icq implements Runnable
             // Remove this temporary contact item
             Jimm.jimm.getContactListRef().removeContactItem(cItem);
 
-            if (!Jimm.jimm.getOptionsRef().keepChat())
+            if (!Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_KEEPCHAT))
             {
                 cItem.deleteChatHistory();
             }
@@ -684,7 +684,7 @@ public class Icq implements Runnable
 
 					// Read flap header
 					bReadSum = 0;
-					if (Jimm.jimm.getOptionsRef().getConnType() == 1)
+					if (Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_CONN_TYPE) == 1)
 	 				{
 						while (is.available() == 0) Thread.sleep(250);
 					}

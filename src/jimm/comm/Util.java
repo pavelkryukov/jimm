@@ -32,6 +32,7 @@ import java.io.DataOutputStream;
 
 import jimm.Jimm;
 import jimm.ContactList;
+import jimm.Options;
 
 
 public class Util
@@ -220,7 +221,7 @@ public class Util
       }
     }
 
-    if (Jimm.jimm.getOptionsRef().cp1251Hack())
+    if (Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_CP1251_HACK))
     	// Read string in CP1251 (Cyrillic)
     	return (Encoding.byteArray1251ToString(buf, off, len));
     	// Read string in default character encoding
@@ -271,7 +272,7 @@ public class Util
     }
 
     // Write string in CP1251 (Cyrillic)
-	if (Jimm.jimm.getOptionsRef().cp1251Hack())
+	if (Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_CP1251_HACK))
     	return (Encoding.stringToByteArray1251(val));
 	else
     // Write string in default character encoding
