@@ -223,7 +223,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("error_122",                   "Указанный сервер и/или порт некорректны (#122.EXT)");
 		resources.put("error_123",                   "Соединение не может быть установлено (#123.EXT)");
 		resources.put("error_124",                   "Входной поток не синхронизован (#124.EXT)");
-
+		
 		// Parsing specific errors
 		resources.put("error_130",                   "FLAP заголовок не обработан (#130.EXT)");
 		resources.put("error_131",                   "Неизвестный канал (#131.EXT)");
@@ -254,6 +254,18 @@ public class Text_RU extends ResourceBundle
 		resources.put("error_170",                   "Возможно, недостаточно памяти (#160.EXT)");
 		resources.put("error_171",                   "Невозможно получить мета информацию (#161.EXT)");
 
+		
+		// Camera errors
+		resources.put("error_180",                   "Ошибка создания объекта 'VideoControl' (#180.EXT)");
+        resources.put("error_181",                   "Ошибка инициализации видеоискателя (#181.EXT)");
+        resources.put("error_182",                   "Ошибка запуска видеоискателя (#182.EXT)");
+        resources.put("error_183",                   "Ошибка во время получения снимка (#183.EXT)");
+        resources.put("error_185",                   "Фотосъёмка не поддерживается (#185.EXT)");
+
+        // File transfer errors
+        resources.put("error_190",                   "Передача файлов не поддерживается для клиентов ICQ ниже 8-ой версии (#190.EXT)");
+        resources.put("error_191",                   "Ошибка чтения файла. Возможно, данная функция не поддерживается (#191.EXT)");
+        resources.put("error_192",                   "Некорректный путь к файлу. Возможно, данная функция не поддерживается (#192.EXT)");		
 	}
 
 
