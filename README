@@ -55,8 +55,8 @@ PACKAGE CONTENTS
   |   |        '- Jimm.jad (archive descriptor, RIM mobiles only)
   |   '- MIDP2
   |       '- [List of included languages]
-  |            |- Jimm.jar (obfusc. Java archive, MIDP2 compartible mobiles only)
-  |            '- Jimm.jad (archive descriptor, MIDP2 compartible mobiles only)
+  |            |- Jimm.jar (obfusc. Java archive, MIDP2 compatible mobiles only)
+  |            '- Jimm.jad (archive descriptor, MIDP2 compatible mobiles only)
   |- res
   |   |- MANIFEST.MF
   |   '- [Target]
