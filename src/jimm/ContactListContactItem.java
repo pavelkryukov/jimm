@@ -45,6 +45,7 @@ import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.RequestInfoAction;
 import jimm.comm.SendMessageAction;
+import jimm.comm.SystemNotice;
 import jimm.comm.UpdateContactListAction;
 import jimm.comm.UrlMessage;
 import jimm.comm.Util;
@@ -75,6 +76,7 @@ public class ContactListContactItem extends ContactListItem
 	private int group;
 	private String uin;
 	private String name;
+	private boolean noAuth;
 
 	// Transient variables
 	private boolean temporary;
@@ -86,17 +88,19 @@ public class ContactListContactItem extends ContactListItem
 	private int outgoingPlainMessagesCnt;
 	private int plainMessages;
 	private int urlMessages;
+	private int sysNotices;
 
 	// Menu
 	private Menu menu;
 
   // Constructor
-  public ContactListContactItem(int id, int group, String uin, String name)
+  public ContactListContactItem(int id, int group, String uin, String name, boolean noAuth)
   {
     this.id = id;
     this.group = group;
     this.uin = new String(uin);
     this.name = new String(name);
+    this.noAuth = noAuth;
     this.temporary = false;
     this.status = ContactList.STATUS_OFFLINE;
     this.capabilities = ContactListContactItem.CAP_NO_INTERNAL;
@@ -104,6 +108,7 @@ public class ContactListContactItem extends ContactListItem
     this.outgoingPlainMessagesCnt = 0;
     this.plainMessages = 0;
     this.urlMessages = 0;
+    this.sysNotices = 0;
     this.menu = new Menu();
   }
 
@@ -161,6 +166,18 @@ public class ContactListContactItem extends ContactListItem
 		this.name = new String(name);
 	}
 
+	// Retrun the staate of authorisation
+	public boolean getAuth()
+	{
+		return (noAuth);
+	}
+
+
+	// Sets stat auf authorisation
+	public void setNoAuth(boolean noAuth)
+	{
+		this.noAuth = noAuth;
+	}
 
 	// Returns true if this is an temporary contact
 	public boolean isTemporary()
@@ -205,7 +222,7 @@ public class ContactListContactItem extends ContactListItem
 
   // Returns true if the next available message is a plain message
   // Returns false if no message at all is available, or if the next available
-  // message is an URL message
+  // message is an URL message or plain message
   protected synchronized boolean isPlainMessageAvailable()
   {
     return (this.plainMessages > 0);
@@ -214,10 +231,18 @@ public class ContactListContactItem extends ContactListItem
 
   // Returns true if the next available message is an URL message
   // Returns false if no message at all is available, or if the next available
-  // message is an URL message
+  // message is an plain message or system notice
   protected synchronized boolean isUrlMessageAvailable()
   {
     return (this.urlMessages > 0);
+  }
+  
+  // Returns true if the next available message is a sys notice
+  // Returns false if no message at all is available, or if the next available
+  // message is an URL message plain message
+  protected synchronized boolean isSysNoticeAvailable()
+  {
+	return (this.sysNotices > 0);
   }
 
 
@@ -230,11 +255,13 @@ public class ContactListContactItem extends ContactListItem
 		Graphics g = prequel.getGraphics();
 		g.setColor(255, 0, 0);
 		g.setFont(prequelFont);
-		g.drawString(this.getName() + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
-		Image copy = Image.createImage(prequel);
-		msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE + ImageItem.LAYOUT_NEWLINE_AFTER, null));
+		Image copy;
+		
 		if (message instanceof PlainMessage)
 		{
+			g.drawString(this.getName() + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
+			copy = Image.createImage(prequel);
+			msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE + ImageItem.LAYOUT_NEWLINE_AFTER, null));
 			PlainMessage plainMsg = (PlainMessage) message;
 			if (!msgDisplay.isShown())
 				plainMessages++;
@@ -242,11 +269,27 @@ public class ContactListContactItem extends ContactListItem
 		}
 		if (message instanceof UrlMessage)
 		{
+			g.drawString(this.getName() + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
+			copy = Image.createImage(prequel);
+			msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE + ImageItem.LAYOUT_NEWLINE_AFTER, null));
 			UrlMessage urlMsg = (UrlMessage) message;
 			if (!msgDisplay.isShown())
 				urlMessages++;
 			msgDisplay.append(new StringItem(null, "URL: "+urlMsg.getUrl()));
 		    msgDisplay.append(new StringItem(null, urlMsg.getText()));
+		}
+		if (message instanceof SystemNotice)
+		{
+			g.drawString("System Notice "  + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
+			copy = Image.createImage(prequel);
+			msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE + ImageItem.LAYOUT_NEWLINE_AFTER, null));
+			SystemNotice notice = (SystemNotice) message;
+			if (!msgDisplay.isShown())
+				sysNotices++;
+			if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
+			{
+				msgDisplay.append(new StringItem(null, "You were added by UIN "+notice.getSndrUin()));
+			}
 		}
 	}
 
@@ -266,6 +309,7 @@ public class ContactListContactItem extends ContactListItem
 	public synchronized void resetUnreadMessages(){
 		plainMessages=0;
 		urlMessages=0;
+		sysNotices=0;
 	}
 
 	// Delete the chat history
