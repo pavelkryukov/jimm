@@ -268,24 +268,7 @@ public class SnacPacket extends Packet
 	public static final int SRV_FROMICQSRV_FAMILY = 0x0015;
 	public static final int SRV_FROMICQSRV_COMMAND = 0x0003;
 
-
-	/***************************/
-	/* Family 0x0017: NEW USER */
-	/***************************/
-
-	// SRV_REGREFUSED packet family and command
-	public static final int SRV_REGREFUSED_FAMILY = 0x0017;
-	public static final int SRV_REGREFUSED_COMMAND = 0x0001;
-
-	// CLI_REGISTERUSER packet family and command
-	public static final int CLI_REGISTERUSER_FAMILY = 0x0017;
-	public static final int CLI_REGISTERUSER_COMMAND = 0x0004;
-
-	// SRV_NEWUIN packet family and command
-	public static final int SRV_NEWUIN_FAMILY = 0x0017;
-	public static final int SRV_NEWUIN_COMMAND = 0x0005;
-
-
+	
 	/****************************************************************************/
 	/****************************************************************************/
 	/****************************************************************************/
