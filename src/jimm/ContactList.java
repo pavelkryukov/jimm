@@ -832,9 +832,10 @@ public class ContactList implements CommandListener
                 this.cItems.addElement(items[i]);
             } else if (items[i] instanceof ContactListGroupItem)
             {
-                if (!this.gItems.contains(items[i]))
+            	ContactListGroupItem gitem = (ContactListGroupItem)items[i];
+                if (this.getGroupById(gitem.getId()) == null)
                 {
-                    this.gItems.addElement(items[i]);
+                    this.gItems.addElement(gitem);
                 }
             }
         }

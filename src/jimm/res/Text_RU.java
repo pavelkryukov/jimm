@@ -167,6 +167,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("sort_by",                     "Сортировать контакт-лист");
 		resources.put("sort_by_name",                "По имени");
 		resources.put("sort_by_status",              "По статусу");
+		resources.put("status",                      "Статус");
 		resources.put("status_away",                 "Отсутствую");
 		resources.put("status_chat",                 "Свободен для беседы");
 		resources.put("status_dnd",                  "Не беспокоить");
