@@ -63,17 +63,18 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="target"           value="DEFAULT"                         />
 	<!-- ******************************************************************* -->
 	<!-- This value is a comma separated list of modules which should be     -->
-	<!-- included in the build. Currently, the distribution includes only a  -->
-	<!-- module for traffic (TRAFFIC) display.                               -->
-	<property name="modules"          value="TRAFFIC"                         />
+	<!-- included in the build. Realised modules are:                        -->
+	<!--     TRAFFIC - module for traffic calculation                        -->
+	<!--     HISTORY - module for storing history of text messages           -->
+	<property name="modules"          value="TRAFFIC,HISTORY"                 />
 	<!-- ******************************************************************* -->
 	<!-- This value is a comma separated list of languages packs which       -->
 	<!-- should be included in the build. Currently, the distribution        -->
 	<!-- includes English (EN), Bulgarian (BG), Brazilian Portuguese (BR),   -->
 	<!-- Czech (CZ), German (DE), Spanish (ES), Hewbrew (HE), Italian (IT),  -->
-	<!-- Lithuanian (LT), Polish (PL), Russian (RU), Swedish (SE)            -->
-	<!-- and Serbian (SR) language packs.                                    -->
-	<property name="lang"             value="EN,BG,BR,CZ,DE,ES,HE,IT,LT,PL,RU,SE,SR"/>
+	<!-- Lithuanian (LT), Polish (PL), Russian (RU), Swedish (SE),           -->
+	<!-- Serbian (SR) and Ukrainian(UA) language packs.                                    -->
+	<property name="lang"             value="EN,BG,BR,CZ,DE,ES,HE,IT,LT,PL,RU,SE,SR,UA"/>
 	<!-- ******************************************************************* -->
 	<!-- Version number of the build. The value can be in any format (e.g.   -->
 	<!-- 0.2cvs).                                                            -->
@@ -180,6 +181,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="modules/DEBUGLOG" value="true">
 			<contains string="${modules}" substring="DEBUGLOG"/>
 		</condition>
+		<condition property="modules/HISTORY" value="true">
+			<contains string="${modules}" substring="HISTORY"/>
+		</condition>
 		<condition property="lang/EN" value="true">
 			<contains string="${lang}" substring="EN"/>
 		</condition>
@@ -219,12 +223,17 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/SR" value="true">
 			<contains string="${lang}" substring="SR"/>
 		</condition>
+		<condition property="lang/UA" value="true">
+			<contains string="${lang}" substring="UA"/>
+		</condition>
+
 		<mkdir dir="${build}/init/src"/>
 		<sijapp srcdir="${src}"
 			destdir="${build}/init/src">
 			<define name="target" value="${target}"/>
 			<define name="modules_TRAFFIC" value="${modules/TRAFFIC}"/>
 			<define name="modules_DEBUGLOG" value="${modules/DEBUGLOG}"/>
+			<define name="modules_HISTORY" value="${modules/HISTORY}"/>
 			<define name="lang_EN" value="${lang/EN}"/>
 			<define name="lang_BG" value="${lang/BG}"/>
 			<define name="lang_BR" value="${lang/BR}"/>
@@ -238,6 +247,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
 			<define name="lang_SR" value="${lang/SR}"/>
+			<define name="lang_UA" value="${lang/UA}"/>
 		</sijapp>
 		<replace dir="${build}/init/src"
 			encoding="UTF-8">
