@@ -42,9 +42,11 @@ public class SendMessageAction extends Action
   private UrlMessage urlMsg;
 
   
-  // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+  // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+  // #sijapp cond.if modules_FILES is "true"#
   // File transfer request message
   private FileTransferMessage fileTrans;
+  // #sijapp cond.end# 
   // #sijapp cond.end#  
   private int SEQ1 = 0xffff;
 
@@ -129,8 +131,8 @@ public class SendMessageAction extends Action
     
     // Get receiver object
     ContactListContactItem rcvr;
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
-      
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+     // #sijapp cond.if modules_FILES is "true"# 
       if (this.plainMsg != null)
           rcvr = this.plainMsg.getRcvr();
       else
@@ -138,18 +140,20 @@ public class SendMessageAction extends Action
      // #sijapp cond.else#
      rcvr = this.plainMsg.getRcvr();
      // #sijapp cond.end#
-      
+     // #sijapp cond.end#
     // What message format/encoding should we use?
     int type = 1;
  
     boolean utf8;
     utf8 = rcvr.hasCapability(ContactListContactItem.CAP_UTF8_INTERNAL);
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+    // #sijapp cond.if modules_FILES is "true"#
      if ((!utf8 || (this.fileTrans != null)) && ((this.fileTrans != null) || (rcvr.getStatus() != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL)))
      {
        type = 2;
      }
-     // #sijapp cond.else#
+     // #sijapp cond.end#
+    // #sijapp cond.else#
      if (!utf8  && ((rcvr.getStatus() != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL)))
      {
        type = 2;
@@ -257,7 +261,8 @@ public class SendMessageAction extends Action
         // Get filename if file transfer
         byte[] filenameRaw;
 
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans == null) 
         {
             
@@ -269,7 +274,8 @@ public class SendMessageAction extends Action
             textRaw = Util.stringToByteArray(this.fileTrans.getDescription());
             filenameRaw = Util.stringToByteArray(this.fileTrans.getFilename());
         }
-        // #sijapp cond.else#
+        // #sijapp cond.end#
+       // #sijapp cond.else#
         textRaw = Util.stringToByteArray(this.plainMsg.getText());
     	filenameRaw = new byte[0];
         // #sijapp cond.end#
@@ -281,7 +287,8 @@ public class SendMessageAction extends Action
         
         int p_sz =0;
         
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans == null)
         {
             p_sz = 163 + uinRaw.length + textRaw.length;
@@ -290,7 +297,8 @@ public class SendMessageAction extends Action
         {
             p_sz = 192 + uinRaw.length + textRaw.length + filenameRaw.length+1;
         }
-        // #sijapp cond.else#
+        // #sijapp cond.end#
+       // #sijapp cond.else#
         p_sz = 163 + uinRaw.length + textRaw.length;
         // #sijapp cond.end#
         
@@ -317,7 +325,8 @@ public class SendMessageAction extends Action
         marker += 2;
         
         // Length of TLV5 differs betweeen normal message and file requst
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans == null) 
         {
             Util.putWord(buf, marker, 144+textRaw.length, true);
@@ -326,6 +335,7 @@ public class SendMessageAction extends Action
         {
             Util.putWord(buf, marker, 173 + textRaw.length + filenameRaw.length+1);
         }
+        // #sijapp cond.end#
         // #sijapp cond.else#
         Util.putWord(buf, marker, 144+textRaw.length, true);
         // #sijapp cond.end#
@@ -356,7 +366,8 @@ public class SendMessageAction extends Action
         Util.putDWord(buf,marker, 0x000f0000);
         marker += 4;
         
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+         // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans != null) 
         {
             // Set TLV 0x03 (IP)
@@ -372,13 +383,14 @@ public class SendMessageAction extends Action
             marker+=6;
         }
         // #sijapp cond.end#
-        
+         // #sijapp cond.end#  
         // Set TLV 0x2711
         Util.putWord(buf,marker, 0x2711); 
         marker += 2;
         
         // Length of TLV2711 differs betweeen normal message and file requst
-       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans == null) 
         {
             Util.putWord(buf, marker, 104+textRaw.length, true);
@@ -387,6 +399,7 @@ public class SendMessageAction extends Action
         {
             Util.putWord(buf, marker, 119 + textRaw.length + filenameRaw.length+1);
         }
+         // #sijapp cond.end#
         // #sijapp cond.else#
         Util.putWord(buf, marker, 104+textRaw.length, true);
         // #sijapp cond.end#
@@ -417,11 +430,14 @@ public class SendMessageAction extends Action
         marker += 1;	
         
         // Set the DC_TYPE to "normal" if we send a file transfer request
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if modules_FILES is "true"#
+
         if (this.fileTrans == null) 
             Util.putDWord(buf,marker, 0x00000000);
         else
             Util.putDWord(buf,marker, 0x00000004);
+         // #sijapp cond.end#
         // #sijapp cond.else#
         Util.putDWord(buf,marker, 0x00000000);
         // #sijapp cond.end#
@@ -444,11 +460,13 @@ public class SendMessageAction extends Action
         marker +=4;
         
         // Put message type 0x01 if normal message else 0x1a for file request
-       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+       // #sijapp cond.if modules_FILES is "true"#
         if (this.fileTrans == null) 
             Util.putByte(buf, marker, 0x01); 
         else
             Util.putByte(buf, marker, 0x1a);
+        // #sijapp cond.end#
         // #sijapp cond.else#
         Util.putByte(buf, marker, 0x01);
         // #sijapp cond.end#
@@ -467,7 +485,8 @@ public class SendMessageAction extends Action
         marker += 2;
         
         // Put message
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if modules_FILES is "true"#
             if (this.fileTrans == null)
             {
 
@@ -567,6 +586,7 @@ public class SendMessageAction extends Action
                 Util.putDWord(buf,marker,0x00008c82,false);
                 marker += 4;
             }
+            // #sijapp cond.else#
             // #sijapp cond.else#
             // Put message length
             Util.putWord(buf, marker, textRaw.length + 1, false);

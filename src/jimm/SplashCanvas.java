@@ -26,8 +26,10 @@ package jimm;
 
 
 import jimm.comm.ConnectAction;
-//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & module_FILES is "true"#
+//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+//  #sijapp cond.if modules_FILES is "true"#
 import jimm.comm.DirectConnectionAction;
+//  #sijapp cond.end#
 //  #sijapp cond.end#
 import jimm.comm.DisconnectAction;
 import jimm.comm.RequestInfoAction;
@@ -343,7 +345,9 @@ public class SplashCanvas extends Canvas
 	/*****************************************************************************/
 
 
-	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                      // #sijapp cond.if modules_FILES is "true"#
+
 	// Activates the contact list after connection has been established
 	public static class FileTransferTimerTask extends TimerTask implements CommandListener
 	{
@@ -411,6 +415,7 @@ public class SplashCanvas extends Canvas
 
 	}
 	//#sijapp cond.end#
+                     //#sijapp cond.end#
 
 
 	/*****************************************************************************/

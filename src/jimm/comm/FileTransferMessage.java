@@ -21,7 +21,8 @@ Version: ###VERSION###  Date: ###DATE###
 Author(s): Andreas Rossbacher
 *******************************************************************************/
 
-// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+// #sijapp cond.if modules_FILES is "true"#
 
 package jimm.comm;
 
@@ -97,4 +98,5 @@ public class FileTransferMessage extends Message
     }
 }
 
+//#sijapp cond.end#
 //#sijapp cond.end#

@@ -21,8 +21,8 @@
  Author(s): Andreas Rossbacher, Dmitry Tunin
  *******************************************************************************/
 
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
-
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+//#sijapp cond.if modules_FILES is "true"#
 package jimm;
 
 import java.io.DataInputStream;
@@ -509,4 +509,5 @@ public class FileTransfer implements CommandListener
 
     }
 }
+//#sijapp cond.end#
 //#sijapp cond.end#
