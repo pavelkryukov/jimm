@@ -43,16 +43,19 @@ public class Text_EN extends ResourceBundle
 		resources.put("about",                       "About");
 		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
 		resources.put("account",                     "Account");
+		resources.put("add_group",                   "Add group");
 		resources.put("add_user",                    "Add User");
 		resources.put("add_to_list",                 "Add to list");
 		resources.put("age",                         "Age");
 		resources.put("async",                       "Async");
+		resources.put("attention",                   "Attention!");
 		resources.put("auth",				     	 "Auth");
 		resources.put("auto_connect",				 "Auto connect on startup");
 		resources.put("back",                        "Back");
 		resources.put("beep",                        "Beep");
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Cancel");
+		resources.put("chat_small_font",			 "Small font in chat");
 		resources.put("city",                        "City");
 		resources.put("clear",                       "Clear");
 		resources.put("close",                       "Close");
@@ -74,10 +77,10 @@ public class Text_EN extends ResourceBundle
 		resources.put("user_menu",                   "User Menu");
 		resources.put("disconnect",                  "Disconnect");
 		resources.put("disconnecting",               "Disconnecting");
-		resources.put("display_advertisement",       "Append Jimm tip?");
 		resources.put("display_date",                "Display date on splash screen?");
 		resources.put("email",                       "Email");
 		resources.put("error",                       "Error");
+		resources.put("exec",                        "Execute");
 		resources.put("exit",                        "Exit");
 		resources.put("female",                      "F");
 		resources.put("filetransfer",                "File transfer");
@@ -90,6 +93,9 @@ public class Text_EN extends ResourceBundle
 		resources.put("gender",                      "Gender");
 		resources.put("grant",						 "Grant Auth");
 		resources.put("grantedby",					 "Your auth request was granted by:");
+		resources.put("group_name",                  "Group name");
+		resources.put("group_is_not_empty",          "Selected group is not empty!\nMove all users to other groups!");
+		resources.put("have_unread_mess",            "You have unread messages. Exit anyway?");
 		resources.put("hide_offline",                "Hide offline contacts");
 		resources.put("history_info",                "Storage info");
 		resources.put("hist_cur",                    "Current contact messages number");
@@ -108,27 +114,27 @@ public class Text_EN extends ResourceBundle
 		resources.put("keylock_enabled",             "Keylock enabled");
 		resources.put("keyword",                     "Keyword");
 		resources.put("language",                    "Language");
+		resources.put("lang_BG", 					 "Bulgarian");
 		resources.put("lang_BR",                     "Portuguese (Brazil)");
 		resources.put("lang_CZ",                     "Czech");
 		resources.put("lang_DE",                     "German");
 		resources.put("lang_EN",                     "English");
 		resources.put("lang_ES",                     "Spanish");
+		resources.put("lang_HE", 					 "Hebrew");
 		resources.put("lang_IT",                     "Italian");
 		resources.put("lang_LT",                     "Lithuanian");
 		resources.put("lang_PL",                     "Polish");
 		resources.put("lang_RU",                     "Russian");
 		resources.put("lang_SE",                     "Swedish");
-		resources.put("lang_SR",                     "Српски");
-		resources.put("lang_HE", 					 "עברית");
-		resources.put("lang_BG", 					 "Bulgarian");
+		resources.put("lang_SR",                     "Serbian");		
 		resources.put("lang_UA", 					 "Ukrainian");
 		resources.put("lastname",                    "Last name");
 		resources.put("loading",                     "Loading");
 		resources.put("male",                        "M");
 		resources.put("me",                          "me");
 		resources.put("menu",                        "Menu");
-		resources.put("msg_sound_file_name",         "Message Sound File");
 		resources.put("message_notification",        "Message Notice");
+		resources.put("msg_sound_file_name",         "Message Sound File");
 		resources.put("message",                     "Message");
 		resources.put("message_from",                "Message from");
 		resources.put("name",                        "Name");
@@ -160,6 +166,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("prev",						 "Previous");
 		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
+		resources.put("remove_group",                "Remove group");
+		resources.put("remove_user",                 "Remove user");
 		resources.put("rename",                      "Rename");
 		resources.put("reply",                       "Reply");
 		resources.put("requauth",                    "Request auth");
@@ -170,17 +178,20 @@ public class Text_EN extends ResourceBundle
 		resources.put("results",                     "Results");
 		resources.put("save",                        "Save");
 		resources.put("search_user",                 "Search for User");
+		resources.put("select",                      "Select");
 		resources.put("send",                        "Send");
+		resources.put("send_img",                    "Send image");
 		resources.put("send_message",                "New Message");
-		resources.put("send_img",                    "Send image");				
 		resources.put("send_url",                    "New URL");
 		resources.put("server",                      "Login server");
 		resources.put("server_host",                 "Hostname");
 		resources.put("server_port",                 "Port");
 		resources.put("session",                     "Session");
 		resources.put("set_status",                  "Set status");
+		resources.put("show_user_groups",            "Show user groups");
 		resources.put("since",                       "Since");
 		resources.put("sound",                       "Sound file");
+		resources.put("sound_file_name",             "Sound file name");
 		resources.put("sort_by",                     "Sort contact list");
 		resources.put("sort_by_name",                "By name");
 		resources.put("sort_by_status",              "By status");
@@ -209,19 +220,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("whichgroup",				 	 "Which group?");
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
-		resources.put("chat_small_font",			 "Small font in chat");
-		resources.put("select",                      "Select");
-		resources.put("attention",                   "Attention!");
-		resources.put("have_unread_mess",            "You have unread messages. Exit anyway?");
-		
-		// User management ********
-		resources.put("group_is_not_empty",          "Selected group is not empty!\nMove all users to other groups!");
-		resources.put("add_group",                   "Add group");
-		resources.put("group_name",                  "Group name");
-		resources.put("exec",                        "Execute");
-		resources.put("remove_user",                 "Remove user");
-		resources.put("remove_group",                "Remove group");
-		resources.put("show_user_groups",            "Show user groups");
+			
 
 		// Generic errors
 		resources.put("error_100",                   "Unknown error (#100.EXT)");
@@ -296,9 +295,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_192",                   "Error reading the file. Wrong path or not supported (#192.EXT)");
 
 	}
-
-
 }
-
 
 // #sijapp cond.end #
