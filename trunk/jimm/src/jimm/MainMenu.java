@@ -398,6 +398,9 @@ public class MainMenu implements CommandListener
                 case 4:
                     // Exit
 
+                    // Disconnect
+					Jimm.jimm.getIcqRef().disconnect();
+                    
                     try
                     {
                         Jimm.jimm.destroyApp(true);
