@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Created-By: Jimm Project
+MIDlet-Name: Jimm
+MIDlet-Version: ###VERSION-JAVA###
+MIDlet-Vendor: Jimm Project
+MIDlet-Jar-URL: Jimm.jar
+MIDlet-Jar-Size: ###SIZE###
+MicroEdition-Profile: MIDP-1.0
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Description: J2ME ICQ clone
+MIDlet-Info-URL: http://jimm.sourceforge.net/
+MIDlet-1: Jimm,,jimm.Jimm
+Jimm-Version: ###VERSION###
