@@ -31,48 +31,48 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- Change this to the directory where MIDP SDK 1.0.3 is installed. You   -->
 	<!-- can use both the slash and the backslash for separating path          -->
 	<!-- components.                                                           -->
-	<property name="midp_DEF"         value="CHANGE ME"                   	    />
-	<property name="midp_SIE"         value="CHANGE ME"                         />
-	<property name="midp_S40"         value="CHANGE ME"                         />
+	<property name="DEFAULT/midp"      value="CHANGE ME"                  	    />
+	<property name="SIEMENS/midp"      value="CHANGE ME"                        />
+	<property name="NOKIAS40/midp"     value="CHANGE ME"                        />
 	<!-- ********************************************************************* -->
 	<!-- This property must point at the MIDP API classes and all extension    -->
 	<!-- classes required by the chosen target.                                -->
-	<property name="midp/lib_DEF"     value="CHANGE ME"                         />
-	<property name="midp/lib_SIE"     value="CHANGE ME"                         />
-	<property name="midp/lib_S40"     value="CHANGE ME"                         />
+	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/midp.jar"     />
+	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/api.jar"      />
+	<property name="NOKIAS40/midp/lib" value="${NOKIAS40/midp}/lib/classes.zip" />
 	<!-- ********************************************************************* -->
 	<!-- Change this to the directory where ProGuard is installed. You can     -->
 	<!-- use both the slash and the backslash for separating path components.  -->
-	<property name="proguard"     value="CHANGE ME"                             />
+	<property name="proguard"          value="CHANGE ME"                        />
 	<!-- ********************************************************************* -->
 	<!-- This property must point at the ProGuard JAR file, normally found in  -->
 	<!-- the lib directory of the ProGuard distribution.                       -->
-	<property name="proguard/lib" value="${proguard}/lib/proguard.jar"          />
+	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"     />
 	<!-- ********************************************************************* -->
 	<!-- CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD        -->
 	<!-- ********************************************************************* -->
 	<!-- Build target. If you have a Siemens mobile, set this property to      -->
 	<!-- "SIEMENS". If you have a Nokia 6800 mobile, set this property to      -->
 	<!-- "NOKIAS40". Otherwise go with the default value ("DEFAULT").          -->
-	<property name="target"       value="DEFAULT"                               />
+	<property name="target"            value="DEFAULT"                          />
 	<!-- ********************************************************************* -->
 	<!-- Network connection type. Currently, this is "RAWSOCKET" and           -->
 	<!-- "RAWSOCKET_ASYNC" (needed for some screwed Java implementations) are  -->
 	<!-- the only supported connections.                                       -->
-	<property name="connection"   value="RAWSOCKET"                             />
+	<property name="connection"        value="RAWSOCKET"                        />
 	<!-- ********************************************************************* -->
 	<!-- This value is a comma separated list of modules  which should         -->
 	<!-- be included in the build. Currently, the distribution includes        -->
 	<!-- only a module for traffic("TRAFFIC") display.					       -->
 	<!-- language packs.                                                       -->
-	<property name="modules"      value="TRAFFIC"                               />
+	<property name="modules"           value="TRAFFIC"                          />
 	<!-- ********************************************************************* -->
 	<!-- This value is a comma separated list of languages packs which should  -->
 	<!-- be included in the build. Currently, the distribution includes        -->
 	<!-- English ("EN"), German ("DE"), Russian ("RU"), Spanish ("ES")         -->
 	<!-- Brasilian ("BR") Chechz ("CZ") and Swedish ("SE") language packs.     -->
 	<!-- language packs.                                                       -->
-	<property name="lang"         value="EN,DE,RU,ES,BR,CZ,SE"                  />
+	<property name="lang"              value="EN,DE,RU,ES,BR,CZ,SE"             />
 	<!-- ********************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!-- ********************************************************************* -->
@@ -104,26 +104,24 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 	<!-- Internal target: init -->
 	<target name="init">
-		<condition property="midp" value="${midp_DEF}">
+		<condition property="midp" value="${DEFAULT/midp}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
-		<condition property="midp" value="${midp_SIE}">
+		<condition property="midp" value="${SIEMENS/midp}">
 			<equals arg1="${target}" arg2="SIEMENS"/>
 		</condition>
-		<condition property="midp" value="${midp_S40}">
+		<condition property="midp" value="${NOKIAS40/midp}">
 			<equals arg1="${target}" arg2="NOKIAS40"/>
 		</condition>
-
-		<condition property="midp/lib" value="${midp}${midp/lib_DEF}">
+		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
-		<condition property="midp/lib" value="${midp}${midp/lib_SIE}">
+		<condition property="midp/lib" value="${SIEMENS/midp/lib}">
 			<equals arg1="${target}" arg2="SIEMENS"/>
 		</condition>
-		<condition property="midp/lib" value="${midp}${midp/lib_S40}">
+		<condition property="midp/lib" value="${NOKIAS40/midp/lib}">
 			<equals arg1="${target}" arg2="NOKIAS40"/>
 		</condition>
-
 		<mkdir dir="${build}"/>
 		<mkdir dir="${dist}"/>
 		<tstamp>
