@@ -320,16 +320,11 @@ public class Icq implements Runnable {
     // Opens a connection to the specified host and starts the receiver thread
     public synchronized void connect(String hostAndPort) throws JimmException {
       try {
-        //System.out.println("0");
         this.sc = (StreamConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
-        //System.out.println("1");
         this.is = this.sc.openInputStream();
-        //System.out.println("2");
         this.os = this.sc.openOutputStream();
-        this.inputCloseFlag = false;
-        //System.out.println("3");
+		this.inputCloseFlag = false;
         this.rcvThread = new Thread(this);
-        //System.out.println("4");
         this.rcvThread.start();
         this.nextSequence = (new Random()).nextInt() % 0x0FFF;
         this.nextIcqSequence = 2;
@@ -375,6 +370,7 @@ public class Icq implements Runnable {
       } finally {
         this.sc = null;
       }
+	  Thread.yield();
     }
 
     // Returns the number of packets available
@@ -459,19 +455,16 @@ public class Icq implements Runnable {
 
         // Check abort condition
         while (!this.inputCloseFlag) {
-
           // Read flap header
           bReadSum = 0;
           bRead = 0;
 
         if (Jimm.jimm.getOptionsRef().getConnType() == 1)
           while (is.available() == 0) {
-            System.out.println("wait");
-            Thread.sleep(100);
+            Thread.sleep(250);
           }
 
           do {
-
             bRead = this.is.read(flapHeader, bReadSum, flapHeader.length - bReadSum);
             if (bRead == -1)
               break;
@@ -540,7 +533,7 @@ public class Icq implements Runnable {
       }
       //Catch Interr exception
       catch (InterruptedException e) {
-             // Do nothing
+			// Do nothing
         }
 
 
@@ -563,11 +556,8 @@ public class Icq implements Runnable {
 
         // Reset input close flag
         this.inputCloseFlag = false;
-
-
-
       }
-
+      
 
     }
 
