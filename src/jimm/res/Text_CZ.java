@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003  Manuel Linsmayer
+ Copyright (C) 2003-04  Manuel Linsmayer
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
