@@ -222,6 +222,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_156",                   "Error while adding (#156.EXT)");
 		resources.put("error_157",                   "No more elements of this type allowed (#157.EXT)");
 		resources.put("error_158",                   "You did try to add an ICQ contact to an AIM list (#158.EXT)");
+		resources.put("error_159",                   "Server answer on search request (#159.EXT)");
+		resources.put("error_160",                   "Error while searching (#160.EXT)");
 
 		// Other errors
 		resources.put("error_160",                   "Possibly not enough heap memory available (#160.EXT)");
