@@ -830,7 +830,6 @@ public class ContactList implements CommandListener
             this.updated = false;
         }
         
-        // Save version numbers
         if (flags == 0)
             this.versionId1 = versionId1;
         
@@ -845,17 +844,12 @@ public class ContactList implements CommandListener
         // Add new contact items and group items
         for (int i = 0; i < items.length; i++)
         {
-            //System.out.println(i);
             if (items[i] instanceof ContactListContactItem)
             {
                 this.cItems.addElement(items[i]);
             } else if (items[i] instanceof ContactListGroupItem)
             {
-            	ContactListGroupItem gitem = (ContactListGroupItem)items[i];
-                if (this.getGroupById(gitem.getId()) == null)
-                {
-                    this.gItems.addElement(gitem);
-                }
+                this.gItems.addElement(items[i]);
             }
         }
         treeBuilded = false;
@@ -878,8 +872,6 @@ public class ContactList implements CommandListener
             this.updated = false;
     }
     
-
-
     //==================================//
     //                                  //
     //    WORKING WITH CONTACTS TREE    //
@@ -933,6 +925,8 @@ public class ContactList implements CommandListener
 		//DebugLog.addText("Start to build tree...");
 		
 		tree.clear();
+		System.gc();
+		
 		tree.setShowButtons(use_groups);
 		
 		// add group nodes
@@ -1035,26 +1029,34 @@ public class ContactList implements CommandListener
     	TreeNode cItemNode = null;
     	int i, count, groupId;
     	
+    	int debugValue = 0;
+    	
     	if (!treeBuilded) return;
     	
     	try
 		{
     	
+    	debugValue = 1;
     	String uin = item.getUin();
     	
     	// which group id ?
+    	debugValue = 2;
     	groupId = item.getGroup();
     	
 	    // which group ?
+    	debugValue = 3;
 	    ContactListGroupItem group = getGroupById(groupId);
 	    
+	    debugValue = 4;
 		boolean only_online = Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
     	
-    	// Whitch group node? 
+    	// Whitch group node?
+		debugValue = 5;
     	TreeNode groupNode = (TreeNode)gNodes.get( new Integer(groupId) );
     	if (groupNode == null) groupNode = tree.getRoot();
     	
     	// Does contact exists in tree?
+    	debugValue = 6;
   		count = groupNode.size();
    		for (i = 0; i < count; i++)
    		{
@@ -1066,23 +1068,29 @@ public class ContactList implements CommandListener
    			break;
    		}
     	
-    	// Does contact exists in internal list? 
+    	// Does contact exists in internal list?
+   		debugValue = 7;
     	contactExistsInList = (cItems.indexOf(item) != -1);
     	
     	// Lock tree repainting
+    	debugValue = 8;
     	tree.lock();
     	
+    	debugValue = 9;
     	haveToAdd = contactExistsInList && !contactExistInTree;
     	if (only_online && !contactExistInTree) 
     		haveToAdd |= ((item.getStatus() != STATUS_OFFLINE) | item.mustBeShownAnyWay()); 
     	
+    	debugValue = 10;
     	haveToDelete = !contactExistsInList && contactExistInTree;
     	if (only_online && contactExistInTree) 
     		haveToDelete |= ((item.getStatus() == STATUS_OFFLINE) && !item.mustBeShownAnyWay());
     	
     	// if have to add new contact
+    	
     	if (haveToAdd)
     	{
+    		debugValue = 11;
     		cItemNode = tree.addNode(groupNode, item);
     	    fullyChanged = !item.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP);
     	}
@@ -1090,6 +1098,7 @@ public class ContactList implements CommandListener
     	// if have to delete contact
     	else if (haveToDelete)
     	{
+    		debugValue = 12;
     		tree.removeNode(cItemNode);
     		wasDeleted = true;
     	}
@@ -1097,38 +1106,52 @@ public class ContactList implements CommandListener
     	// sort group
     	if (needSorting && !wasDeleted)
     	{
+    		
     		boolean isCurrent = (tree.getCurrentItem() == cItemNode),
 			        inserted = false;
+    		
+    		debugValue = 13;
     		tree.deleteChild( groupNode, tree.getIndexOfChild(groupNode, cItemNode) );
+    		
+    		debugValue = 14;
     		int contCount = groupNode.size();
     		TreeNodeComparer comparer = createNodeComparer();
     		
+    		debugValue = 15;
     		for (int j = 0; j < contCount; j++)
     		{
+    			debugValue = 16;
     			if (comparer.compareNodes(cItemNode, groupNode.elementAt(j)) < 0)
     			{
+    				debugValue = 17;
     				tree.insertChild(groupNode, cItemNode, j);
     				inserted = true;
     				break;
     			}
     		}
+    		debugValue = 18;
     		if (!inserted) tree.insertChild(groupNode, cItemNode, contCount);
+    		debugValue = 19;
     		if (isCurrent) tree.setCurrentItem(cItemNode);
     	}
     	
     	// if set current
+    	debugValue = 20;
     	if (setCurrent) tree.setCurrentItem(cItemNode);
     	
     	// if calc group online/total data
+    	debugValue = 21;
     	if (fullyChanged || needCalcGroupData || wasDeleted) calcGroupData(groupNode, group);
     	
     	// unlock tree and repaint
+    	debugValue = 22;
     	tree.unlock();
     	
 		}
     	catch (Exception e) // TODO: remove try {} catch {} !
 		{
-    		DebugLog.addText("contactChanged (Exception): "+e.toString());	
+    		DebugLog.addText("contactChanged (Exception): "+e.toString()+" "+Integer.toString(debugValue));
+    		tree.unlock();
 		}
     }
 	
@@ -1370,7 +1393,7 @@ public class ContactList implements CommandListener
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();
         // #sijapp cond.else#
-        Jimm.display.flashBacklight(1000);
+        //Jimm.display.flashBacklight(1000);
         // #sijapp cond.end#
         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
         {
@@ -1506,6 +1529,8 @@ public class ContactList implements CommandListener
     //	    }
     //	  }
 
+    
+    ContactListContactItem lastChatItem = null;
    
 	// Is called when user click to contact
 	void itemClicked()
@@ -1520,7 +1545,8 @@ public class ContactList implements CommandListener
 			LED.setState(LED.STATE_OFF);
 			//#sijapp cond.end#
 			
-			((ContactListContactItem)item).activateMenu();
+			lastChatItem = (ContactListContactItem)item; 
+			lastChatItem.activateMenu();
 		}
 		else if (item instanceof ContactListGroupItem)
 		{
@@ -1528,6 +1554,31 @@ public class ContactList implements CommandListener
 		}
 		
 	}
+	
+	// shows next or previos chat 
+	synchronized protected void showNextPrevChat(boolean next)
+	{
+		int index = cItems.indexOf(lastChatItem);
+		if (index == -1) return;
+		int di = next ? 1 : -1;
+		int maxSize = cItems.size();
+		
+		for (int i = index+di;; i += di)
+		{
+			if (i == index) break;
+			if (i < 0) i = maxSize-1;
+			if (i >= maxSize) i = 0;
+			
+			ContactListContactItem cItem = (ContactListContactItem)cItems.elementAt(i); 
+			if ( cItem.returnBoolValue(ContactListContactItem.VALUE_HAS_CHAT) )
+			{
+				lastChatItem = cItem;
+				cItem.activateMenu();
+				break;
+			}
+		}
+	}
+	
 
     // Command listener
     public void commandAction(Command c, Displayable d)

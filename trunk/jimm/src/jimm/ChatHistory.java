@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
 import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Canvas;
 
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
@@ -36,6 +37,39 @@ import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 import DrawControls.TextList;
+
+class ChatTextList extends TextList
+{
+	ChatTextList()
+	{
+		super
+		(
+            null, 
+            TextList.getDefCapColor(),
+            TextList.getDefCapFontColor(),
+            TextList.getDefBackColor(),
+            Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CHAT_SMALL_FONT) 
+               ? TextList.SMALL_FONT : TextList.MEDIUM_FONT,
+            TextList.SEL_NONE
+        );
+	}
+	
+	protected void userPressKey(int keyCode) 
+	{
+		switch (getGameAction(keyCode))
+		{
+		case Canvas.LEFT: 
+			Jimm.jimm.getContactListRef().showNextPrevChat(false);
+			break;
+			
+		case Canvas.RIGHT:
+			Jimm.jimm.getContactListRef().showNextPrevChat(true);
+			break;
+		}
+		
+	}
+	
+}
 
 public class ChatHistory
 {
@@ -173,17 +207,7 @@ public class ChatHistory
     // Creates a new chat form and returns the index number of it in the vector
     public int newChatForm(String name)
     {
-    	 	
-        TextList chatForm = new TextList
-                            (
-                              null, 
-                              TextList.getDefCapColor(),
-                              TextList.getDefCapFontColor(),
-                              TextList.getDefBackColor(),
-                              Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CHAT_SMALL_FONT) 
-		                         ? TextList.SMALL_FONT : TextList.MEDIUM_FONT,
-                              TextList.SEL_NONE
-                            );
+    	ChatTextList chatForm = new ChatTextList();
         
 //#sijapp cond.if target is "MIDP2"#
         chatForm.setFullScreenMode(false);

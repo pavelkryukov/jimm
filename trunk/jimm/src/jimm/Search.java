@@ -176,7 +176,7 @@ public class Search
             case FIELD_EMAIL: return email;
             case FIELD_AUTH: return auth;
             case FIELD_GENDER: return gender;
-            case FIELD_AGE: return Integer.toString(age);
+            case FIELD_AGE: return (age == 0) ? null : Integer.toString(age);
             default: return "";
             }
         }
@@ -273,17 +273,10 @@ public class Search
             this.searchForm.setCommandListener(this);
 
             // Result Screen
-            
             screen = new RichTextList(null);
             screen.addCommand(this.previousComamnd);
             screen.addCommand(this.nextCommand);
             screen.addCommand(this.addCommand);
-            
-            //resultScreen = new TextList(ResourceBundle.getString("results"),TextList.getDefCapColor(),TextList.getDefCapFontColor(),TextList.getDefBackColor(),TextList.SMALL_FONT,TextList.SEL_NONE);
-            //resultScreen.addCommand(this.previousComamnd);
-            //resultScreen.addCommand(this.nextCommand);
-            //resultScreen.addCommand(this.addCommand);
-
         }
 
         // Activate search form
@@ -295,6 +288,17 @@ public class Search
                 Jimm.display.setCurrent(this.screen);
             } else
                 Jimm.display.setCurrent(this.searchForm);
+        }
+        
+        private void showString(int n, String resName, int id, boolean nextLine)
+        {
+        	String text = Search.this.getResult(n).getStringValue(id);
+        	if (text == null)  return;
+        	if (text.trim().length() == 0) return;
+        	String name = ResourceBundle.getString(resName)+": ";
+        	if (nextLine) screen.println(name,0x0,Font.STYLE_BOLD);
+        	else screen.print(name,0x0,Font.STYLE_BOLD);
+        	screen.println(text, 0x0000ff, Font.STYLE_PLAIN);
         }
 
         public void drawResultScreen(int n)
@@ -321,39 +325,25 @@ public class Search
                 screen.setFontSize(Font.SIZE_SMALL);
                 
                 // UIN
-                screen
-                	.print(ResourceBundle.getString("uin")+": ",0x0,Font.STYLE_BOLD)
-                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_UIN), 0x0000ff, Font.STYLE_PLAIN)
+                showString(n, "uin", SearchResult.FIELD_UIN, false);
                 
                 // Nick
-					.print(ResourceBundle.getString("nick") + ": ",0x0,Font.STYLE_BOLD)
-                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NICK), 0x0000ff, Font.STYLE_PLAIN)
+                showString(n, "nick", SearchResult.FIELD_NICK, false);
                 
-				// Name
-                	.println(ResourceBundle.getString("name") + ": ",0x0,Font.STYLE_BOLD)
-                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NAME), 0x0000ff, Font.STYLE_PLAIN);
+                // Name
+                showString(n, "name", SearchResult.FIELD_NAME, true);
                 
                 // EMail
-                if (Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL).length() > 0)
-                {
-                	screen
-						.println(ResourceBundle.getString("email") + ": ",0x0,Font.STYLE_BOLD)
-						.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL), 0x0000ff, Font.STYLE_PLAIN);
-                }
+                showString(n, "email", SearchResult.FIELD_EMAIL, true);
                 
                 // Auth
-                screen
-					.print(ResourceBundle.getString("auth") + ": ",0x0,Font.STYLE_BOLD)
-                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AUTH), 0x0000ff, Font.STYLE_PLAIN)
+                showString(n, "auth", SearchResult.FIELD_AUTH, false);
                 
                 // Gender
-					.print(ResourceBundle.getString("gender") + ": ",0x0,Font.STYLE_BOLD)
-                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER), 0x0000ff, Font.STYLE_PLAIN)
+                showString(n, "gender", SearchResult.FIELD_GENDER, false);
                 
                 // Age
-                	.print(ResourceBundle.getString("age")+": ",0x0,Font.STYLE_BOLD)
-                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AGE), 0x0000ff, Font.STYLE_PLAIN);
-                
+                showString(n, "age", SearchResult.FIELD_AGE, false);
                 
 				// Draw status image
                 int stat = Search.this.getResult(n).getStatus();
