@@ -122,6 +122,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
 		resources.put("no_results",                  "No results");
+		resources.put("no_not_empty_gr",             "Removing of not empty groups not supported yet");
 		resources.put("not_implemented",             "Function not yet implemented.");
 		resources.put("noreason",             		 "No reason was given.");
 		resources.put("notice",                      "Notice");
