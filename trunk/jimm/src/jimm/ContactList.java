@@ -1282,20 +1282,22 @@ public class ContactList implements CommandListener
     //Updates the title of the list
     public void updateTitle(int traffic)
     {
-    	String text;
+
+        String text;
+        String sep = " - ";
         if (traffic != 0)
-            text = ResourceBundle.getString("contact_list") + " - " + traffic
-                    + ResourceBundle.getString("kb") + " - "
-                    + Util.getDateString(true);
-        else
-        	text = ResourceBundle.getString("contact_list") + " - "
-                    + Util.getDateString(true);
-        
-//#sijapp cond.if target is "MIDP2"#
-		tree.setTitle(text);
-//#sijapp cond.else#
-		tree.setCaption(text);
-//#sijapp cond.end#
+        {
+            text = ResourceBundle.getString("contact_list");
+            if (text.length() > 4) sep = "-";
+            text += sep + traffic + ResourceBundle.getString("kb") + sep + Util.getDateString(true);
+        } else
+            text = ResourceBundle.getString("contact_list") + sep + Util.getDateString(true);
+
+        //#sijapp cond.if target is "MIDP2"#
+        tree.setTitle(text);
+        //#sijapp cond.else#
+        tree.setCaption(text);
+        //#sijapp cond.end#
     }
 
     // Removes a contact list item
