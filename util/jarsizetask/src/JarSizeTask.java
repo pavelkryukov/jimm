@@ -19,19 +19,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.StringTokenizer;
+import java.io.InputStreamReader;
 import java.util.zip.CRC32;
 import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-import java.util.zip.ZipEntry;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
