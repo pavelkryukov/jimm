@@ -517,7 +517,6 @@ public class Util
 		}
 		catch (Exception e)
 		{
-			System.out.println("3: "+value);
 			return (0);
 		}
 	}

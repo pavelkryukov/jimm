@@ -119,8 +119,6 @@ public class UpdateContactListAction extends Action
         {
             
             // Pack CLI_ROSTERDELETE packet
-            System.out.println("Pack CLI_ROSTERDELETEpacket");
-
             buf = new byte[2 + uinRaw.length + 8 + 4 + nameRaw.length];
             
             marker = 0;
@@ -226,7 +224,6 @@ public class UpdateContactListAction extends Action
                     {
 
                         // Check error code, see ICQv8 specification
-                        System.out.println("DEL/ADD ACC Rep: 0x"+ Integer.toHexString(Util.getWord(snacPacket.getData(), 0)));               
                         SnacPacket packet2;
                         switch (Util.getWord(snacPacket.getData(), 0)){
                         

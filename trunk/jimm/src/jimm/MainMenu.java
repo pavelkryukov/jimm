@@ -309,11 +309,6 @@ public class MainMenu implements CommandListener
 						// Disconnect
 						Jimm.jimm.getIcqRef().disconnect();
 
-						// Save traffic
-						try {
-							traffic.save();
-						} catch (Exception e) { // Do nothing
-						}
 						// Exit app
 						try {
 							Jimm.jimm.destroyApp(true);
