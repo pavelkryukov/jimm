@@ -110,8 +110,6 @@ public class Icq implements Runnable
 	// Adds a ContactListContactItem to the server saved contact list
 	public synchronized void addToContactList(ContactListContactItem cItem)
 	{
-        System.out.println("start addContact");
-        System.out.println(cItem.toString());
         Random rand = new Random(System.currentTimeMillis());
         int randint = rand.nextInt();
         

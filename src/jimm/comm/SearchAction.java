@@ -279,11 +279,9 @@ public class SearchAction extends Action
                         int age = Util.getWord(data,marker,false);
                         
                         cont.addResult(String.valueOf(uin),strings[0],strings[1]+" "+strings[2],strings[3],auth,status,gender,age);
-                        System.out.println("added");
                         
                         if (this.state == STATE_LASTRESULT_RECEIVED)
                         {
-                            System.out.println("last result");
                             marker += 2;
                             long foundleft = Util.getDWord(data,marker,false);
                             System.out.println("foundleft: "+foundleft);

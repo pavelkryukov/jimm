@@ -489,8 +489,6 @@ public class Search
                 Jimm.display.setCurrent(groupList);
             } else if (c == this.addCommand && d == this.groupList)
             {
-                System.out.println("Send new contact item to server");
-
                 ContactListContactItem cItem = new ContactListContactItem(0, Jimm.jimm.getContactListRef()
                         .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getUIN(selectedIndex),
                         Search.this.getNick(selectedIndex), false, false);

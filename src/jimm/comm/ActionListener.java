@@ -670,7 +670,6 @@ public class ActionListener
                 {
                     length = Util.getWord(buf, authMarker);
                     String reason = Util.byteArrayToString(buf, authMarker, length + 2);
-                    System.out.println("Auth not granted. Reason: " + reason);
                     // Create a new system notice
                     if (length == 0)
                         notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHREPLY, uin, granted, null);
