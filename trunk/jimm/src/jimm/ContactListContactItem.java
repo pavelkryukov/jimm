@@ -144,6 +144,11 @@ public class ContactListContactItem extends ContactListItem
         this.menu = new Menu();
         this.requReason = false;
     }
+    
+    protected void copyChatHistory(ContactListContactItem src)
+    {
+    	chatHistoryDisplayNr = src.chatHistoryDisplayNr;
+    }
 
     // Retruns boolean value by property
     public boolean returnBoolValue(int value)
@@ -476,6 +481,13 @@ public class ContactListContactItem extends ContactListItem
                 Jimm.display.setCurrent(MenuUtil.messageTextbox);
 
             }
+            
+            // User wants to add temporary contact
+            else if (c == MenuUtil.addUrsCommand)
+            {
+            	MainMenu.addUserCmd(uin);
+            }
+            
             // Menu item has been selected
             else if (c == List.SELECT_COMMAND)
             {
@@ -842,6 +854,7 @@ public class ContactListContactItem extends ContactListItem
             {
                 Displayable msgDisplay = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.chatHistoryDisplayNr);
                 
+                msgDisplay.removeCommand(MenuUtil.addUrsCommand);
                 msgDisplay.removeCommand(MenuUtil.grantAuthCommand);
                 msgDisplay.removeCommand(MenuUtil.denyAuthCommand);
                 msgDisplay.removeCommand(MenuUtil.reqAuthCommand);
@@ -856,6 +869,9 @@ public class ContactListContactItem extends ContactListItem
                 }
                 if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH)) msgDisplay.addCommand(MenuUtil.reqAuthCommand);
                 msgDisplay.setCommandListener(this);
+                
+                if (temporary && !noAuth) msgDisplay.addCommand(MenuUtil.addUrsCommand);
+                
                 // Display history
                 ContactListContactItem.this.resetUnreadMessages();
                 Jimm.display.setCurrent(msgDisplay);
@@ -912,6 +928,9 @@ public class ContactListContactItem extends ContactListItem
         // Message close and reply command
         private static Command msgReplyCommand = new Command(ResourceBundle.getString("reply"),
                 Command.OK, 2);
+        
+        // Add temporary user to contact list
+        private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.OK, 2);
 
         //Show the message menu
         private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"),
