@@ -109,6 +109,7 @@ public class ChatHistory
         if (!red) color = 0xFF;
         else color = 0xFF0000;
         
+        msgDisplay.lock();
         lastSize = msgDisplay.getItemCount();
         msgDisplay.addBigText
         (
@@ -127,6 +128,7 @@ public class ChatHistory
         msgDisplay.addBigText(message, 0x0, Font.STYLE_PLAIN);
         
         msgDisplay.setTopItem(lastSize);        
+        msgDisplay.unlock();
     }
     
     // Returns the chat history form at the given nr

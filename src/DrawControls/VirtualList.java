@@ -20,7 +20,7 @@ import DrawControls.ListItem;
 /*!
     It allows you to create list with different colors and images. 
     Base class of VirtualDrawList if Canvas, so it draw itself when
-    paint event is heppen. VirtualDrawList have cursor controlled of
+    paint event is heppen. VirtualList have cursor controlled of
     user
 */
 public abstract class VirtualList extends Canvas
@@ -59,7 +59,8 @@ public abstract class VirtualList extends Canvas
   public static int getDefFontSize()     { return defFontSize; }
 
   private boolean 
-    dontPaintCaption = false;
+    dontPaintCaption = false,
+    dontRepaint      = false;
     
   private ImageList 
     imageList = null;
@@ -124,7 +125,7 @@ public abstract class VirtualList extends Canvas
   // protected void invalidate()  
   final protected void invalidate()
   {
-    if ( !isShown() ) return;
+    if ( dontRepaint || !isShown() ) return;
     dontPaintCaption = true;
     repaint();
   }
@@ -244,36 +245,18 @@ public abstract class VirtualList extends Canvas
     if ((lastCurrItem != currItem) || (lastTopItem != topItem)) invalidate();
   }
   
-  // private void moveUp()
-  private void moveUp()
+  // private void moveCursor(int step)
+  private void moveCursor(int step)
   {
     storelastItemIndexes();
     if (cursorMode == SEL_NONE) 
     {
-      topItem--;
+      topItem += step;
       checkTopItem();
     }
     else
     {
-      currItem--;
-      checkCurrItem();
-      checkTopItem();
-    }
-    repaintIfLastIndexesChanged();
-  }
-  
-  // private void moveDown()
-  private void moveDown()
-  {
-    storelastItemIndexes();
-    if (cursorMode == SEL_NONE) 
-    {
-      topItem++;
-      checkTopItem();
-    }  
-    else
-    {
-      currItem++;
+      currItem += step;
       checkCurrItem();
       checkTopItem();
     }
@@ -310,8 +293,8 @@ public abstract class VirtualList extends Canvas
   {
     switch ( getGameAction(keyCode) )
     {
-case Canvas.DOWN:  moveDown();     break;
-case Canvas.UP:    moveUp();       break;
+case Canvas.DOWN:  moveCursor(1);  break;
+case Canvas.UP:    moveCursor(-1); break;
 case Canvas.LEFT:  moveToTop();    break;
 case Canvas.RIGHT: moveToBottom(); break;
 case Canvas.FIRE:  itemSelected(); break;
@@ -395,20 +378,8 @@ case Canvas.FIRE:  itemSelected(); break;
     g.fillRect(x, y, w, h);
     g.setStrokeStyle(Graphics.DOTTED);
     
-    switch (cursorMode)
-    {
-case SEL_DOTTED:
-      g.setColor(item.color);
-      g.drawRect(x, y, w-1, h-1);
-      break;
-
-case SEL_NONE:
-      //g.setColor(0x808080); // TODO: make color as varible
-      //g.drawLine(x, y, w-1, y);
-      break;
-      
-    }
-    
+    g.setColor(item.color);
+    g.drawRect(x, y, w-1, h-1);
     return item.color;
   }
   
@@ -433,7 +404,7 @@ case SEL_NONE:
   private int drawItem(int index, Graphics g, int top_y, int itemHeight, ListItem item, int fontHeight)
   {
     int y = 0, x = 0, w = 0, textColor = 0;
-    boolean isSelected = (currItem == index);
+    boolean isSelected = ((currItem == index) && (cursorMode != SEL_NONE));
     
     item.clear();
     get(index, item);
@@ -454,7 +425,6 @@ case SEL_INVERTED:
         break;
         
 case SEL_DOTTED:
-case SEL_NONE:
         textColor = drawDottedSelectedBgrnd(g, 0, y, width, itemHeight, item);
         break;
       }  
@@ -571,16 +541,25 @@ case SEL_DOTTED:   x = 2;            break;
   // final protected void paint(Graphics g)
   final protected void paint(Graphics g)
   {
+    if (dontRepaint) return;
+  
     if ( isDoubleBuffered() ) 
     {
       paintAllOnGraphics(g);
     }  
     else 
     {
-      if (bDIimage == null) bDIimage = Image.createImage(getWidth(), getHeight());
-      dontPaintCaption = false;
-      paintAllOnGraphics( bDIimage.getGraphics() );
-      g.drawImage(bDIimage, 0, 0, Graphics.TOP|Graphics.LEFT);
+      try
+      {
+        if (bDIimage == null) bDIimage = Image.createImage(getWidth(), getHeight());
+        dontPaintCaption = false;
+        paintAllOnGraphics( bDIimage.getGraphics() );
+        g.drawImage(bDIimage, 0, 0, Graphics.TOP|Graphics.LEFT);
+      }
+      catch (Exception e)
+      {
+        paintAllOnGraphics(g);
+      }
     }
     dontPaintCaption = false;
   }
@@ -615,5 +594,15 @@ case SEL_DOTTED:   x = 2;            break;
     if (item.text != null)
       g.drawString(item.text, x1+imgWidth, (y1+y2-fontHeight)/2, Graphics.TOP|Graphics.LEFT);
   }
-
+  
+  public synchronized void lock()
+  {
+    dontRepaint = true;
+  }
+  
+  public synchronized void unlock()
+  {
+    dontRepaint = false;
+    invalidate();
+  }
 }
