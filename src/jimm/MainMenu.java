@@ -103,7 +103,7 @@ public class MainMenu implements CommandListener
                 this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
                 this.list.append(ResourceBundle.getString("keylock_enable"), null);
                 this.list.append(ResourceBundle.getString("disconnect"), null);
-                this.list.append(ResourceBundle.getString("set_status"), null);
+                this.list.append(ResourceBundle.getString("set_status"), Jimm.jimm.getContactListRef().getStatusImage(Jimm.jimm.getContactListRef().getOnlineStatus()));
                 this.list.append(ResourceBundle.getString("add_user"), null);
                 this.list.append(ResourceBundle.getString("search_user"), null);
                 this.list.append(ResourceBundle.getString("options"), null);
@@ -116,6 +116,11 @@ public class MainMenu implements CommandListener
                 this.list.setCommandListener(this);
             }
             this.isConnected = Jimm.jimm.getIcqRef().isConnected();
+        }
+        else
+        {
+            if ((this.list != null) && (!Jimm.jimm.getIcqRef().isNotConnected()))
+                this.list.set(2,ResourceBundle.getString("set_status"),Jimm.jimm.getContactListRef().getStatusImage(Jimm.jimm.getContactListRef().getOnlineStatus()));
         }
         this.list.setSelectedIndex(0, true);
     }
@@ -430,6 +435,7 @@ public class MainMenu implements CommandListener
             {
                 SetOnlineStatusAction act = new SetOnlineStatusAction(onlineStatus);
                 Jimm.jimm.getIcqRef().requestAction(act);
+                Jimm.jimm.getContactListRef().setOnlineStatus(onlineStatus);
             } catch (JimmException e)
             {
                 JimmException.handleException(e);
