@@ -22,7 +22,7 @@
  *******************************************************************************/
 
 
-// #sijapp cond.if lang_SR is "true" #
+// #sijapp cond.if lang_SR is "true"#
 
 
 package jimm.res;
@@ -35,10 +35,10 @@ public class Text_SR extends ResourceBundle
 {
 
 
-  public Text_SR()
-  {
+	public Text_SR()
+	{
 
-    // Labels
+		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "О програму");
 		resources.put("about_info",                  "Jimm - Мобилни ICQ\nICQ клиент за J2ME\n\nВерзија ###VERSION###\n http://jimm.sourceforge.net/");
@@ -47,7 +47,7 @@ public class Text_SR extends ResourceBundle
 		resources.put("add_to_list",                 "Додај на листу");
 		resources.put("age",                         "Године"); 
 		resources.put("async",                       "Async");
-		resources.put("auth",			     	     "Ауторизација"); 
+		resources.put("auth",                        "Ауторизација"); 
 		resources.put("back",                        "Назад");
 		resources.put("beep",                        "Бип");
 		resources.put("byte",                        "Бајт");
@@ -63,8 +63,8 @@ public class Text_SR extends ResourceBundle
 		resources.put("cpd",                         "цена по пакету");
 		resources.put("currency",                    "Валута");
 		resources.put("delete_chat",                 "Избриши разговор");
-		resources.put("deny",		        	     "Одбиј ауторизацију");
-		resources.put("denyedby",			         "Вас захтев за ауторизацију је одбијен од: ");
+		resources.put("deny",                        "Одбиј ауторизацију");
+		resources.put("denyedby",                    "Вас захтев за ауторизацију је одбијен од: ");
 		resources.put("user_menu",                   "Контакти");
 		resources.put("disconnect",                  "Дисконектуј се");
 		resources.put("disconnecting",               "Дисконектованје");
@@ -76,8 +76,8 @@ public class Text_SR extends ResourceBundle
 		resources.put("female",                      "З");
 		resources.put("firstname",                   "Прво име");
 		resources.put("gender",                      "Пол");
-		resources.put("grant",			             "Ауторизуј");
-		resources.put("grantedby",		             "Ауторизовано од:");
+		resources.put("grant",                       "Ауторизуј");
+		resources.put("grantedby",                   "Ауторизовано од:");
 		resources.put("hide_offline",                "Сакриј неактивне контакте");
 		resources.put("info",                        "Информација");
 		resources.put("kb",                          "kB");
@@ -107,14 +107,14 @@ public class Text_SR extends ResourceBundle
 		resources.put("message",                     "Порука");
 		resources.put("message_from",                "Порука од");
 		resources.put("name",                        "Име");
-		resources.put("next",						 "Даље");
+		resources.put("next",                        "Даље");
 		resources.put("nick",                        "Надимак");
 		resources.put("no",                          "Не");
 		resources.put("no_results",                  "Без резултата");
 		resources.put("not_implemented",             "Функција није подржана");
-		resources.put("noreason",             		 "Упит није задан.");
+		resources.put("noreason",                    "Упит није задан.");
 		resources.put("notice",                      "Упоѕорење");
-		resources.put("nr",				     		 "Nr");
+		resources.put("nr",                          "Nr");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Једном по сесији");
 		resources.put("onl_notification",            "Информација о долазећом контакту");
@@ -130,8 +130,8 @@ public class Text_SR extends ResourceBundle
 		resources.put("password",                    "Лозинка");
 		resources.put("plength",                     "Величина пакета у kB");
 		resources.put("plsauthme",                   "Ћао, молио бих да прихватите мој захтев да ме додате на контакт листу.");
-		resources.put("prev",						 "Претходни");
-		resources.put("reason",						 "Разлог");
+		resources.put("prev",                        "Претходни");
+		resources.put("reason",                      "Разлог");
 		resources.put("remove",                      "Избаци из листе");
 		resources.put("reply",                       "Одговор");
 		resources.put("requauth",                    "Тражи ауторизацију");
@@ -171,15 +171,15 @@ public class Text_SR extends ResourceBundle
 		resources.put("vibration",                   "Вибрација");
 		resources.put("wait",                        "Сачекајте молићу...");
 		resources.put("warning",                     "Упозорење");
-		resources.put("wantsyourauth",				 " желим ауторизацију. Разлог: ");
-		resources.put("whichgroup",				 	 "Која група?");
+		resources.put("wantsyourauth",               " желим ауторизацију. Разлог: ");
+		resources.put("whichgroup",                  "Која група?");
 		resources.put("yes",                         "Да");
-		resources.put("youwereadded",				 "Додати сте на листу код UIN: ");
+		resources.put("youwereadded",                "Додати сте на листу код UIN: ");
 
-    // Generic errors
-		resources.put("error_100",			 	     "Непозната грешка (#100.EXT)");
+		// Generic errors
+		resources.put("error_100",                   "Непозната грешка (#100.EXT)");
 
-    // Login specific errors
+		// Login specific errors
 		resources.put("error_110",                   "Више корисника на исти UIN (#110.EXT)");
 		resources.put("error_111",                   "Погрешна лозинка (#111.EXT)");
 		resources.put("error_112",                   "Непостојећи UIN (#112.EXT)");
@@ -190,14 +190,14 @@ public class Text_SR extends ResourceBundle
 		resources.put("error_117",                   "Празан UIN и/или лозинка (#117.EXT)");
 		resources.put("error_118",                   "Нема одговора од сервера (#118.EXT)");
 
-    // Network communication  specific exceptions
+		// Network communication  specific exceptions
 		resources.put("error_120",                   "Грешка на улазу-излазу (#120.EXT)");
 		resources.put("error_121",                   "TCP конекција неможе да се оствари (#121.EXT)");
 		resources.put("error_122",                   "Сервер и/или порт су погрешни (#122.EXT)");
 		resources.put("error_123",                   "Конекција неможе да се оствари (#123.EXT)");
 		resources.put("error_124",                   "Улазни подаци нису синхронизовани (#124.EXT)");
 
-    // Parsing specific errors
+		// Parsing specific errors
 		resources.put("error_130",                   "FLAP заглавље нечитљиво (#130.EXT)");
 		resources.put("error_131",                   "Непознат канал (#131.EXT)");
 		resources.put("error_132",                   "Конекција из канала нечитљива (#132.EXT)");
@@ -207,10 +207,10 @@ public class Text_SR extends ResourceBundle
 		resources.put("error_136",                   "Пакет ping канала нечитљив (#136.EXT)");
 		resources.put("error_137",                   "Заглавље старог ICQ протокола нечитљиво (#137.EXT)");
 
-    // Action errors
+		// Action errors
 		resources.put("error_140",                   "Захтевана радња не може да се изврши овог пута (#140.EXT)");
 
-    // Specififc action errors
+		// Specififc action errors
 		resources.put("error_150",                   "Примљена порука није разумљива(#150.EXT)");
 		resources.put("error_151",                   "Примљена порука типа 1 није разумљива (#151.EXT)");
 		resources.put("error_152",                   "Примљена порука типа 2 није разумљива (#152.EXT)");
@@ -223,14 +223,14 @@ public class Text_SR extends ResourceBundle
 		resources.put("error_159",                   "Сервер није одговорио на захтев за претрагу. Покушајте поново (#159.EXT)");
 		resources.put("error_160",                   "Грешка приликом претраге (#160.EXT)");
 
-    // Other errors
+		// Other errors
 		resources.put("error_170",                   "Изгледа да нема довољно меморије (#160.EXT)");
 		resources.put("error_171",                   "Не могу да дохватим мета информације (#161.EXT)");
 
-  }
+	}
 
 
 }
 
 
-// #sijapp cond.end #
+// #sijapp cond.end#
