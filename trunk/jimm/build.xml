@@ -31,43 +31,44 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Change this to the directory where a MIDP SDK is installed. You can   -->
 	<!--  use both the slash and the backslash for separating path              -->
 	<!--  components.                                                           -->
-	<property name="DEFAULT/midp" value="CHANGE ME" />
-	<property name="MIDP2/midp" value="C:\WTK22" />
-	<property name="RIM/midp" value="CHANGE ME" />
-	<property name="SIEMENS/midp" value="CHANGE ME" />
-	<property name="MOTOROLA/midp" value="C:\WTK22" />
+	<property name="DEFAULT/midp"      value="CHANGE ME"                         />
+	<property name="MIDP2/midp"        value="CHANGE ME"                         />
+	<property name="RIM/midp"          value="CHANGE ME"                         />
+	<property name="SIEMENS/midp"      value="CHANGE ME"                         />
+	<property name="MOTOROLA/midp"     value="CHANGE ME"                         />
 	<!--  *******************************************************************   -->
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
-	<property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar" />
-	<property name="MIDP2/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar" />
-	<property name="RIM/midp/lib" value="${RIM/midp}/lib/net_rim_api.jar" />
-	<property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/API.jar" />
+	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar" />
+	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar" />
+	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
+	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/API.jar" />
 	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/motorola.jar" />
 	<!--  *******************************************************************   -->
 	<!--  Change this to the directory where ProGuard is installed. You can     -->
-	<!--  use both the slash and the backslash for separating path              -->
-	<!--  components.                                                           -->
-	<property name="proguard" value="C:\proguard" />
+	<!--  use both the slash and the backslash for separating path components.  -->
+	<property name="proguard"          value="CHANGE ME"                         />
 	<!--  *******************************************************************   -->
 	<!--  This property must point at the ProGuard JAR file, normally found     -->
 	<!--  in the lib directory of the ProGuard distribution.                    -->
-	<property name="proguard/lib" value="${proguard}/lib/proguard.jar" />
+	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"      />
 	<!--  *******************************************************************   -->
 	<!--  CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD        -->
 	<!--  *******************************************************************   -->
-	<!--  Build target. If you have a Siemens mobile, set this property to      -->
-	<!--  SIEMENS. If you have a MIDP2 compartible mobile, set this property    -->
-	<!--  to MIDP2. If you have a Blackberry, set this property to RIM.         -->
-	<!--  Otherwise go with the default value (DEFAULT).                        -->
-	<property name="target" value="MOTOROLA" />
+	<!--  Build target. Currently there are the following build available:      -->
+	<!--      DEFAULT  - Standard MIDP1                                         -->
+	<!--      SIEMENS  - For Siemens MIDP1-devices (like the x55 series         -->
+	<!--      MIDP2    - Standard MIDP2                                         -->
+	<!--      RIM      - For RIM Blackberry devices                             -->
+	<!--      MOTOROLA - For Motorola MIDP2 devices                             -->
+	<property name="target"            value="DEFAULT"                           />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of modules which should be       -->
 	<!--  included in the build. Realised modules are:                          -->
 	<!--      TRAFFIC - module for traffic calculation                          -->
 	<!--      HISTORY - module for storing history of text messages             -->
-	<!--      FILES - module for transferring files                             -->
-	<property name="modules" value="TRAFFIC,HISTORY" />
+	<!--      FILES   - module for transferring files                           -->
+	<property name="modules"           value="TRAFFIC,HISTORY"                   />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of languages packs which         -->
 	<!--  should be included in the build. Currently, the distribution          -->
@@ -75,16 +76,16 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Czech (CZ), German (DE), Spanish (ES), Hewbrew (HE), Italian (IT),    -->
 	<!--  Lithuanian (LT), Polish (PL), Russian (RU), Swedish (SE),             -->
 	<!--  Serbian (SR) and Ukrainian(UA) language packs.                        -->
-	<property name="lang" value="EN,RU" />
+	<property name="lang"              value="EN,BG,BR,CZ,DE,ES,HE,IT,LT,PL,RU,SE,SR,UA"/>
 	<!--  *******************************************************************   -->
 	<!--  Version number of the build. The value can be in any format (e.g.     -->
 	<!--  0.2cvs).                                                              -->
-	<property name="version/jimm" value="0.3.3" />
+	<property name="version/jimm"      value="###VERSION###"                     />
 	<!--  *******************************************************************   -->
 	<!--  Version number of the build in the standardized format                -->
 	<!--  <major>[.<minor>[.<micro>]] (e.g. 0.2). This value should             -->
 	<!--  correspond to the version property (see above).                       -->
-	<property name="version/java" value="0.3.3" />
+	<property name="version/java"      value="###VERSION-JAVA###"                />
 	<!--  *******************************************************************   -->
 	<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!--  *******************************************************************   -->
