@@ -53,6 +53,8 @@ import com.siemens.mp.media.Player;
 // #sijapp cond.end#
 // #sijapp cond.if target is "NOKIAS40"#
 import com.nokia.mid.ui.DirectUtils;
+import com.nokia.mid.ui.DeviceControl;
+import com.nokia.mid.ui.DirectUtils; 
 // #sijapp cond.end#
 
 public class ContactList implements CommandListener {
@@ -637,6 +639,12 @@ public class ContactList implements CommandListener {
 		Jimm.jimm.getSplashCanvasRef().messageAvailable();
 
 		// Notify user
+		// #sijapp cond.if target is "NOKIAS40"#
+		if (Jimm.jimm.getOptionsRef().isVibrator()) {
+			DeviceControl.startVibra(50, 500);
+		}
+		DeviceControl.flashLights(500);
+		//		  #sijapp cond.end# 
 		// #sijapp cond.if target is "SIEMENS"#
 		Light.setLightOn();
 		if (Jimm.jimm.getOptionsRef().isVibrator()) {

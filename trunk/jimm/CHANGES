@@ -87,3 +87,9 @@ VERSION 0.1 BETA-8
   *  Nokia build does not include traffic monitor anymore
   *  The chat history feature can be disabled
   *  New Module System: Traffic monitor is a module now
+  *  Traffic and time now displayed in the title line of the contact list screen
+  
+_________________________________________________________________________________
+VERSION 0.1. BETA-9
+
+  * Vibra and light options for Nokia phones
