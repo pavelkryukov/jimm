@@ -71,8 +71,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- should be included in the build. Currently, the distribution        -->
 	<!-- includes English (EN), Brazilian Portuguese (BR), Czech (CZ),       -->
 	<!-- German (DE), Spanish (ES), Italian (IT), Lithuanian (LT),           -->
-	<!-- Russian (RU) and Swedish (SE) language packs.                       -->
-	<property name="lang"             value="EN,BR,CZ,DE,ES,IT,LT,RU,SE"      />
+	<!-- Russian (RU), Swedish (SE) and Serbian (SR) language packs.         -->
+	<property name="lang"             value="EN,BR,CZ,DE,ES,IT,LT,RU,SE,SR"   />
 	<!-- ******************************************************************* -->
 	<!-- Version number of the build. The value can be in any format (e.g.   -->
 	<!-- 0.2cvs).                                                            -->
@@ -133,6 +133,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp" value="${RIM/midp}">
 			<equals arg1="${target}" arg2="RIM"/>
 		</condition>
+		
 		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
@@ -189,6 +190,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/SE" value="true">
 			<contains string="${lang}" substring="SE"/>
 		</condition>
+		<condition property="lang/SR" value="true">
+			<contains string="${lang}" substring="SR"/>
+		</condition>
 		<mkdir dir="${build}/init/src"/>
 		<sijapp srcdir="${src}"
 			destdir="${build}/init/src">
@@ -203,6 +207,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="lang_LT" value="${lang/LT}"/>
 			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
+			<define name="lang_SR" value="${lang/SR}"/>
 		</sijapp>
 		<replace dir="${build}/init/src"
 			encoding="UTF-8">
