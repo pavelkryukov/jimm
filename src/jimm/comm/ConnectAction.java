@@ -751,7 +751,6 @@ public class ConnectAction extends Action
 				// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:44 ");
                 throw (new JimmException(115, 3));
               }
-			  System.out.println();
               // Normal contact
               if (type == 0x0000)
               {
@@ -790,7 +789,6 @@ public class ConnectAction extends Action
                 }
 
                 // Add this contact item to the vector
-                System.out.println(i-3+".) "+id+" "+group+" "+name+" "+nick);
                 items.addElement(new ContactListContactItem(id, group, name, nick, noAuth));
 
               }
@@ -910,22 +908,22 @@ public class ConnectAction extends Action
 		// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:55 ");
 		// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:3");
         // Watch out for SRV_FROMICQSRV packet
-		if (packet instanceof Packet)
-			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:Packet");
-		if (packet instanceof ConnectPacket)
-			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:ConnectPacket");
-		if (packet instanceof DisconnectPacket)
-			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:DisconnectPacket");
-		if (packet instanceof ErrorPacket)
-			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:ErrorPacket");
-        if (packet instanceof FromIcqSrvPacket)
-			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:FromIcqSrvPacket");
-		if (packet instanceof PingPacket)
-			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:PingPacket");
-		if (packet instanceof SnacPacket)
-			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:SnacPacket");
-		if (packet instanceof ToIcqSrvPacket)
-			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:ToIcqSrvPacket");
+//		if (packet instanceof Packet)
+//			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:Packet");
+//		if (packet instanceof ConnectPacket)
+//			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:ConnectPacket");
+//		if (packet instanceof DisconnectPacket)
+//			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:DisconnectPacket");
+//		if (packet instanceof ErrorPacket)
+//			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:ErrorPacket");
+//        if (packet instanceof FromIcqSrvPacket)
+//			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:FromIcqSrvPacket");
+//		if (packet instanceof PingPacket)
+//			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:PingPacket");
+//		if (packet instanceof SnacPacket)
+//			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:SnacPacket");
+//		if (packet instanceof ToIcqSrvPacket)
+//			// Jimm.jimm.getSplashCanvasRef().setMessage("ConnectAction:forward:ToIcqSrvPacket");
         
         if (packet instanceof FromIcqSrvPacket)
         {
