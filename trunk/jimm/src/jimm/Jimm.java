@@ -105,7 +105,7 @@ public class Jimm extends MIDlet
 		// Check available heap memory, display warning if less then 250 KB
 		if (Runtime.getRuntime().totalMemory() < 256000)
 		{
-			Alert errorMsg = new Alert(ResourceBundle.getString("warning"), JimmException.getErrDesc(160, 0), null, AlertType.WARNING);
+			Alert errorMsg = new Alert(ResourceBundle.getString("warning"), JimmException.getErrDesc(170, 0), null, AlertType.WARNING);
 			errorMsg.setTimeout(Alert.FOREVER);
 			Display.getDisplay(this).setCurrent(errorMsg, this.sc);
 			try
