@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/res/Text_IT.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher
+ Author(s): Manuel Linsmayer, Andreas Rossbacher,  Mario B. Napoli
  *******************************************************************************/
 
 

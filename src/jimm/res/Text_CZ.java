@@ -46,9 +46,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("add_user",                    "Pridání uživatele");
 		resources.put("async",                       "Async");
 		resources.put("back",                        "Zpet");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Pípnutí");
-		// #sijapp cond.end #
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Zrušit");
 		resources.put("close",                       "Zavrít");
@@ -90,9 +88,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("menu",                        "Menu");
 		resources.put("message",                     "Zpráva");
 		resources.put("message_from",                "Zpráva od");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("message_notification",        "Oznámení zprávy");
-		// #sijapp cond.end #
 		resources.put("name",                        "Jméno");
 		resources.put("nick",                        "Prezdívka");
 		resources.put("no",                          "Nic");
@@ -141,9 +137,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Pridání uživatele");
 		resources.put("user_search",                 "Hledání uživatele");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Vibrace");
-		// #sijapp cond.end #
 		resources.put("wait",                        "Cekej prosím ...");
 		resources.put("warning",                     "Výstraha");
 		resources.put("yes",                         "Ano");
@@ -190,8 +184,8 @@ public class Text_CZ extends ResourceBundle
 		resources.put("error_154",                   "Aktualizace seznamu kontaktu selhala (#154.EXT)");
 
 		// Other errors
-		resources.put("error_160",                   "Nedostatek zásobníkové pameti (#160.EXT)");
-		resources.put("error_161",                   "Meta-Informace jsou nedostupné (#161.EXT)");
+		resources.put("error_170",                   "Nedostatek zásobníkové pameti (#160.EXT)");
+		resources.put("error_171",                   "Meta-Informace jsou nedostupné (#161.EXT)");
 
 	}
 

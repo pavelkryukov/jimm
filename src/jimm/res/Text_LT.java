@@ -50,9 +50,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("async",                       "Asinchroniškas");
 		resources.put("auth",                        "Auth");		
 		resources.put("back",                        "Atgal");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Pyptelėjimas");
-		// #sijapp cond.end #
 		resources.put("byte",                        "Baitas");
 		resources.put("cancel",                      "Atsisakyti");
 		resources.put("city",                        "Miestas");		
@@ -171,9 +169,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("url",                         "Nuoroda");
 		resources.put("user_add",                    "Prideti vartotoja");
 		resources.put("user_search",                 "Ieškoti vartotojo");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Vibracija");
-		// #sijapp cond.end #
 		resources.put("wait",                        "Prašome palaukti ...");
 		resources.put("warning",                     "Įspėjimas");
 		resources.put("wantsyourauth",				 " nori būti autorizuotas. Tikslas: ");
@@ -229,8 +225,8 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_160",                   "Error while searching (#160.EXT)");
 
 		// Other errors
-		resources.put("error_160",                   "Possibly not enough heap memory available (#160.EXT)");
-		resources.put("error_161",                   "Could not fetch meta info (#161.EXT)");
+		resources.put("error_170",                   "Possibly not enough heap memory available (#160.EXT)");
+		resources.put("error_171",                   "Could not fetch meta info (#161.EXT)");
  
 	}
 

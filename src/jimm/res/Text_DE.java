@@ -49,9 +49,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("async",                       "Async");
 		resources.put("auth",				     	 "Auth");
 		resources.put("back",                        "Zurück");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Beep");
-		// #sijapp cond.end #
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Abbrechen");
 		resources.put("city",                        "Stadt");
@@ -106,9 +104,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("msg_sound_file_name",         "Nachricht Sound Datei");
 		resources.put("message",                     "Nachricht");
 		resources.put("message_from",                "Nachricht von");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("message_notification",        "Hinweis bei Nachricht-Eingang");
-		// #sijapp cond.end #
 		resources.put("name",                        "Name");
 		resources.put("next",						 "Nächstes");
 		resources.put("nick",                        "Nick");
@@ -172,9 +168,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Benutzer hinzufügen");
 		resources.put("user_search",                 "Benutzer suchen");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Vibration");
-		// #sijapp cond.end #
 		resources.put("wait",                        "Bitte warten ...");
 		resources.put("warning",                     "Warnung");
 		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
