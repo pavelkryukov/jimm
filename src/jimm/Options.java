@@ -88,6 +88,8 @@ public class Options
   // #sijapp cond.if target is "SIEMENS"#
   public static final int DEFAULT_MSG_NOTIFICATION = 0;
   public static final String DEFAULT_MSG_NOTIFY_SOUND_FILE = "message.mmf";
+//#sijapp cond.end#
+//#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
   public static final boolean DEFAULT_VIBRATOR = false;
   // #sijapp cond.end#
   public static final boolean DEFAULT_KEEP_CHAT = true;
@@ -140,6 +142,8 @@ public class Options
   // Section interface, soundfile name
   private String soundFileName;
 
+  // #sijapp cond.end#
+//#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
   // Section interface, vibration enabled/disabled
   private boolean vibrator;
   // #sijapp cond.end#
@@ -198,6 +202,8 @@ public class Options
       // #sijapp cond.if target is "SIEMENS"#
       this.setMsgNotificationMode(Options.DEFAULT_MSG_NOTIFICATION);
       this.setSoundFileName(Options.DEFAULT_MSG_NOTIFY_SOUND_FILE);
+//	  #sijapp cond.end#
+//	  #sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
       this.setVibrator(Options.DEFAULT_VIBRATOR);
       // #sijapp cond.end#
       this.setKeepChat(Options.DEFAULT_KEEP_CHAT);
@@ -248,6 +254,8 @@ public class Options
     // #sijapp cond.if target is "SIEMENS"#
     this.setMsgNotificationMode(dis.readInt());
     this.setSoundFileName(dis.readUTF());
+	// #sijapp cond.else#
+//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
     this.setVibrator(dis.readBoolean());
     // #sijapp cond.else#
     dis.readInt();
@@ -325,6 +333,8 @@ public class Options
     // #sijapp cond.if target is "SIEMENS"#
     dos.writeInt(this.getMsgNotificationMode());
     dos.writeUTF(this.getSoundFileName());
+	// #sijapp cond.else#
+//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
     dos.writeBoolean(this.isVibrator());
     // #sijapp cond.else#
     dos.writeInt(0);
@@ -499,6 +509,8 @@ public class Options
     this.soundFileName = soundFile;
   }
 
+//#sijapp cond.end#
+//#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
   //  Return vibrator
   public synchronized boolean isVibrator()
   {
@@ -638,6 +650,8 @@ public class Options
     // #sijapp cond.if target is "SIEMENS"#
     private ChoiceGroup msgNotificationModeChoiceGroup;
     private TextField soundFileTextField;
+	// #sijapp cond.end#
+//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
     private ChoiceGroup vibratorChoiceGroup;
     // #sijapp cond.end#
 	private ChoiceGroup keepChatChoiceGroup;
@@ -713,6 +727,8 @@ public class Options
       this.msgNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "sound"), null);
       this.msgNotificationModeChoiceGroup.setSelectedIndex(Options.this.getMsgNotificationMode(), true);
 	  this.soundFileTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "sound_file_name"), Options.this.getSoundFileName(), 32, TextField.ANY);
+//	  #sijapp cond.end#
+//	  #sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
       this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "vibration")+"?", Choice.MULTIPLE);
       this.vibratorChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
       this.vibratorChoiceGroup.setSelectedIndex(0,Options.this.isVibrator());
@@ -836,6 +852,8 @@ public class Options
             // #sijapp cond.if target is "SIEMENS"#
             this.optionsForm.append(this.msgNotificationModeChoiceGroup);
             this.optionsForm.append(this.soundFileTextField);
+//			#sijapp cond.end#
+//			#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
             this.optionsForm.append(this.vibratorChoiceGroup);
             // #sijapp cond.end#
             break;
@@ -903,8 +921,11 @@ public class Options
 
             Options.this.setClHideOffline(this.clHideOfflineChoiceGroup.isSelected(0));
             Options.this.setKeepChat(this.keepChatChoiceGroup.isSelected(0));
-            // #sijapp cond.if target is "SIEMENS"#
+            
+//			#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
             Options.this.setVibrator(this.vibratorChoiceGroup.isSelected(0));
+//			#sijapp cond.end#
+//			#sijapp cond.if target is "SIEMENS"#
             Options.this.setSoundFileName(this.soundFileTextField.getString());
             Options.this.setMsgNotificationMode(this.msgNotificationModeChoiceGroup.getSelectedIndex());
             // #sijapp cond.end#
