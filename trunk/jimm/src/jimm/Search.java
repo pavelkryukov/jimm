@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/Search.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Andreas Rossbacher
  *******************************************************************************/
 
@@ -341,7 +341,7 @@ public class Search
                 
                 screen.lock();
                 
-// #sijapp cond.if target is "MIDP2"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                 screen.setFullScreenMode(false);
                 screen.setTitle( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
 // #sijapp cond.else #
@@ -391,7 +391,7 @@ public class Search
                 // Draw a result entry
             	
             	screen.lock();
-            	// #sijapp cond.if target is "MIDP2"#
+            	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                 screen.setFullScreenMode(false);
                 screen.setTitle(ResourceBundle.getString("results")+" 0/0");
                 // #sijapp cond.else #

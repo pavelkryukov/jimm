@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/comm/ActionListener.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Spassky Alexander
  *******************************************************************************/
 
@@ -96,7 +96,7 @@ public class ActionListener
                     && (snacPacket.getCommand() == SnacPacket.SRV_USERONLINE_COMMAND))
             {
                 
-                // #sijapp cond.if target is "MIDP2"#
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                 // DC variables
                 byte[] internalIP = new byte[4];
                 long dcPort = 0;
@@ -139,7 +139,7 @@ public class ActionListener
                         }
 
                     } 
-                    // #sijapp cond.if target is "MIDP2"#
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                     else if (tlvType == 0x000c) // DC Infos
                     {                        
                         // dcMarker
@@ -172,7 +172,7 @@ public class ActionListener
                 }
 
                  // Update contact list
-                // #sijapp cond.if target is "MIDP2"#
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                 Jimm.jimm.getContactListRef().update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie);
                 // #sijapp cond.else#
                 Jimm.jimm.getContactListRef().update(uin, status, capabilities);
@@ -352,7 +352,7 @@ public class ActionListener
 
                     // Get message data and initialize marker
                     byte[] msg2Buf;
-                    // #sijapp cond.if target is "MIDP2"#
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                     int ackType = -1;
                     byte[] extIP = new byte[4];
                     byte[] ip = new byte[4];
@@ -365,7 +365,7 @@ public class ActionListener
                         msg2Buf = Util.getTlv(msgBuf, msgMarker);
                         if (msg2Buf == null) { throw (new JimmException(152, 2, false)); }
                         tlvType = Util.getWord(msgBuf, msgMarker);
-                        // #sijapp cond.if target is "MIDP2"#
+                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                         switch (tlvType)
                         {
                         	case 0x0003: System.arraycopy(msg2Buf,0,extIP,0,4); break;
@@ -392,7 +392,7 @@ public class ActionListener
                     msg2Marker += 2;
                     if ((msgType != 0x0001) && (msgType != 0x0004) && (msgType != 0x001A)) return;
 
-                    // #sijapp cond.if target is "MIDP2"#
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                     status = Util.getWord(msg2Buf,msg2Marker);
                     // #sijapp cond.end#
                     msg2Marker += 2;
@@ -547,7 +547,7 @@ public class ActionListener
                         String text = Util.crlfToCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
                         msg2Marker += textLen;
 
-                        // #sijapp cond.if target is "MIDP2"#
+                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
                         // File transfer message
                         if (plugin.equals("File") && Jimm.jimm.getSplashCanvasRef().isShown())
                         {
@@ -662,7 +662,7 @@ public class ActionListener
                             this.icq.c.sendPacket(ackPacket);
 
                         }
-                        // #sijapp cond.if target is "MIDP2"#
+                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
                         // File transfer request or request ack
                         else  if (msgType == 0x001A)
                         {

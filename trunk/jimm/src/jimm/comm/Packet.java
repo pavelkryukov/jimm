@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/comm/Packet.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Manuel Linsmayer
  *******************************************************************************/
 
@@ -67,7 +67,7 @@ abstract class Packet
 	{
 
 		// Check length (min. 6 bytes)
-		// #sijapp cond.if target is "MIDP2"#
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		if (len < 2)
 		// #sijapp cond.else#
 		if (len < 6)
@@ -79,7 +79,7 @@ abstract class Packet
 		// Verify FLAP.ID
 		if (Util.getByte(buf, off) != 0x2A)
 		{
-			// #sijapp cond.if target is "MIDP2"#
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			return (DCPacket.parse(buf, off, len));
 			// #sijapp cond.else#
 			throw (new JimmException(130, 1));

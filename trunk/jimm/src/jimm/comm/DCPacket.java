@@ -17,11 +17,11 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/comm/DCPacket.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Andreas Rossbacher
  *******************************************************************************/
 
-// #sijapp cond.if target is "MIDP2"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 
 package jimm.comm;
 

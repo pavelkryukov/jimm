@@ -99,7 +99,7 @@ final class HistoryStorageList extends VirtualList
 			
 			if (record == null) return;
 			
-			//#sijapp cond.if target is "MIDP2"#
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			setTitle(record.from+" "+record.date);
 			//#sijapp cond.else#
 			setCaption(record.from+" "+record.date);
@@ -216,7 +216,7 @@ final class HistoryStorageList extends VirtualList
 		if (messText == null)
 		{
 			messText = new TextList(null);
-			//#sijapp cond.if target is "MIDP2"#
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			messText.setFullScreenMode(false);
 			//#sijapp cond.end#
 			messText.setCursorMode(TextList.SEL_NONE);
@@ -232,7 +232,7 @@ final class HistoryStorageList extends VirtualList
 		messText.clear();
 		messText.addBigText(record.date+":", 0, Font.STYLE_BOLD);
 		messText.addBigText(record.text, 0, Font.STYLE_PLAIN);
-		//#sijapp cond.if target is "MIDP2"#
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		messText.setTitle(record.from);
 		//#sijapp cond.else#
 		messText.setCaption(record.from);
@@ -511,7 +511,7 @@ final public class HistoryStorage implements RecordFilter,
 		{
 			String caption = ResourceBundle.getString("history");
 			list = new HistoryStorageList();
-			//#sijapp cond.if target is "MIDP2"#
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			list.setTitle(caption);
 			list.setFullScreenMode(false);
 			//#sijapp cond.else#
@@ -576,3 +576,4 @@ final public class HistoryStorage implements RecordFilter,
 }
 
 //#sijapp cond.end#
+
