@@ -464,11 +464,11 @@ public class Icq implements Runnable {
           bReadSum = 0;
           bRead = 0;
 
-        //  #sijapp cond.if connection is "RAWSOCKET_ASYNC"#
+        if (Jimm.jimm.getOptionsRef().getConnType() == 1)
           while (is.available() == 0) {
+            System.out.println("wait");
             Thread.sleep(100);
           }
-        //  #sijapp cond.end#
 
           do {
 
@@ -528,7 +528,6 @@ public class Icq implements Runnable {
       }
       // Catch communication exception
 
-      //#sijapp cond.if connection is "RAWSOCKET_ASYNC"#
       catch (NullPointerException e) {
         // Construct and handle exception (only if input close flag has not been set)
         if (!this.inputCloseFlag) {
@@ -539,13 +538,12 @@ public class Icq implements Runnable {
         // Reset input close flag
         this.inputCloseFlag = false;
       }
-
       //Catch Interr exception
       catch (InterruptedException e) {
              // Do nothing
         }
 
-      //#sijapp cond.end#
+
 
       catch (JimmException e) {
 

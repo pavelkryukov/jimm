@@ -44,6 +44,7 @@ public class Text_DE extends ResourceBundle
     resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\nVersion ###VERSION###\nSiehe http://jimm.sourceforge.net/");
     resources.put("account",                     "Account");
     resources.put("add_user",                    "Benutzer hinzufügen");
+	resources.put("async",                    	 "Async");
     resources.put("back",                        "Zurück");
     // #sijapp cond.if target is "SIEMENS" #
     resources.put("beep",                        "Beep");
@@ -51,6 +52,7 @@ public class Text_DE extends ResourceBundle
     resources.put("byte",                        "Byte");
     resources.put("cancel",                      "Abbrechen");
     resources.put("close",                       "Schließen");
+	resources.put("conn_type",                   "Verbindungsart");
     resources.put("connect",                     "Verbinden");
     resources.put("connecting",                  "Verbinde");
     resources.put("contact_list",                "Liste");
