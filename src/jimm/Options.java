@@ -561,13 +561,12 @@ public class Options
 					case 2:
 						this.optionsForm.append(this.uiLanguageChoiceGroup);
 						this.optionsForm.append(this.displayDateChoiceGroup);
+						this.optionsForm.append(this.showUserGroups);
 						this.optionsForm.append(this.clSortByChoiceGroup);
 						this.optionsForm.append(this.clHideOfflineChoiceGroup);
-						this.optionsForm.append(this.cp1251HackChoiceGroup);
 						this.optionsForm.append(this.useSmallFont);
-						this.optionsForm.append(this.showUserGroups);
+						this.optionsForm.append(this.cp1251HackChoiceGroup);
 						break;
-
 					case 3:
 						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
