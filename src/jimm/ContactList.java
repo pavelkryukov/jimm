@@ -27,7 +27,6 @@ import jimm.DebugLog;
 
 import jimm.Jimm;
 import jimm.comm.Message;
-import jimm.comm.SearchAction;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
