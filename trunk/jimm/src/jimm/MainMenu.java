@@ -33,7 +33,6 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-import jimm.ContactListContactItem;
 import jimm.comm.SearchAction;
 import jimm.comm.SetOnlineStatusAction;
 import jimm.util.ResourceBundle;
@@ -232,8 +231,6 @@ public class MainMenu implements CommandListener
                 case 3:
                     // Add user
 
-                    System.out.println("Add a user");
-
                     // Reset and display textbox for entering uin to add
                     addUser = new Form(ResourceBundle.getString("jimm.res.Text", "add_user"));
                     uinTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "uin"), "", 16,
@@ -283,6 +280,17 @@ public class MainMenu implements CommandListener
 
                     // Disconnect
                     Jimm.jimm.getIcqRef().disconnect();
+					// Save traffic
+					try {
+						traffic.save();
+					} catch (Exception e) { // Do nothing
+					}
+					// Exit app
+					try {
+						Jimm.jimm.destroyApp(true);
+					} catch (MIDletStateChangeException e) {
+						// Do nothing
+					}
                     break;
                 // #sijapp cond.else#
                 case 6:
@@ -298,8 +306,20 @@ public class MainMenu implements CommandListener
                 case 7:
                     // Exit
 
-                    // Disconnect
-                    Jimm.jimm.getIcqRef().disconnect();
+						// Disconnect
+						Jimm.jimm.getIcqRef().disconnect();
+
+						// Save traffic
+						try {
+							traffic.save();
+						} catch (Exception e) { // Do nothing
+						}
+						// Exit app
+						try {
+							Jimm.jimm.destroyApp(true);
+						} catch (MIDletStateChangeException e) {
+							// Do nothing
+						}
 
                     break;
                 // #sijapp cond.end#
