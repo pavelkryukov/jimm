@@ -428,7 +428,7 @@ public class Search
         public void commandAction(Command c, Displayable d)
         {
             if (c == this.backCommand) Jimm.jimm.getMainMenuRef().activate();
-            if (c == this.searchCommand)
+            else if (c == this.searchCommand)
             {
                 // Display splash canvas
                 SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
@@ -458,9 +458,9 @@ public class Search
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
 
             }
-            if (c == this.nextCommand) nextOrPrev(true);
-            if (c == this.previousComamnd) nextOrPrev(false);
-            if (c == this.addCommand && d == screen)
+            else if (c == this.nextCommand) nextOrPrev(true);
+            else if (c == this.previousComamnd) nextOrPrev(false);
+            else if (c == this.addCommand && d == screen)
             {
                 // Show list of groups to select which group to add to
                 groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
@@ -478,7 +478,7 @@ public class Search
                         .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_UIN),
                         Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_NICK), false, false);
                 cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP,true);
-
+                cItem.setStatus(Search.this.getResult(selectedIndex).getStatus());
                 Jimm.jimm.getIcqRef().addToContactList(cItem);
 
             }
