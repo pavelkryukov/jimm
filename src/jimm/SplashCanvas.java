@@ -642,6 +642,7 @@ public class SplashCanvas extends Canvas
 			} else if (this.searchAct.isError()) {
 				if (!searchAct.excepHandled()) JimmException.handleException(new JimmException(154, 2, true));
 				{
+					Jimm.jimm.getContactListRef().activate();
 					this.cancel();
 				}
 			}
