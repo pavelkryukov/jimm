@@ -111,7 +111,7 @@ public class ContactListContactItem extends ContactListItem
     //  #sijapp cond.end#
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
     // #sijapp cond.if modules_FILES is "true"#
-   private FileTransferMessage ftm;
+    private FileTransferMessage ftm;
     private FileTransfer ft;
     //  #sijapp cond.end#
     //  #sijapp cond.end#
@@ -985,12 +985,12 @@ public class ContactListContactItem extends ContactListItem
 			send_message_idx, 
 			send_url_idx,
 			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-                                                                // #sijapp cond.if modules_FILES is "true"#
-                                                                ft_name_idx,
+            // #sijapp cond.if modules_FILES is "true"#
+            ft_name_idx,
 			ft_cam_idx,
-                                                                // #sijapp cond.end#
+            // #sijapp cond.end#
 			// #sijapp cond.end#
-                                                                info_idx,
+            info_idx,
 			remove_idx,
 			rename_idx,
 			dc_info_idx,
@@ -1091,13 +1091,13 @@ public class ContactListContactItem extends ContactListItem
         
         static void initList(boolean showAuthItem)
         {
-                     // #sijapp cond.if modules_FILES is "true"#
-        	send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
-            	ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
-                     // #sijapp cond.else#
-                     send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
-            	info_idx = remove_idx = rename_idx = auth_idx = -1;
-                      // #sijapp cond.end#
+             // #sijapp cond.if modules_FILES is "true"#
+        	 send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
+             ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
+             // #sijapp cond.else#
+             send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
+             info_idx = remove_idx = rename_idx = auth_idx = -1;
+             // #sijapp cond.end#
             
         	while (menuList.size() != 0) menuList.delete(0);
         	
