@@ -262,78 +262,83 @@ public class ContactListContactItem extends ContactListItem
     // Adds a message to the message display
     protected synchronized void addMessage(Message message)
     {
-        
-        Calendar stamp = Calendar.getInstance();
-        stamp.setTime(message.getDate());
-        
-        // The font we want to use for the prequel (name and time)
-        Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
-       
-        // The Image object we want to use for drawing plus the Grapics object to draw in
-        Image prequel = Image.createImage(120, prequelFont.getHeight() + 2);
-        Graphics g = prequel.getGraphics();
-        
-        g.setColor(255, 0, 0);
-        g.setFont(prequelFont);
-        Image copy;
-
-        if ((message instanceof PlainMessage) || (message instanceof UrlMessage))
+        if (message instanceof PlainMessage)
         {
-            g.drawString(this.getName() + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":"+ Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):"
-                    , 0, 10, Graphics.BASELINE | Graphics.LEFT);
-            copy = Image.createImage(prequel);
-            msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
-                    + ImageItem.LAYOUT_NEWLINE_AFTER, null)); 
             PlainMessage plainMsg = (PlainMessage) message;
             if (!msgDisplay.isShown()) plainMessages++;
-            	msgDisplay.append(new StringItem(null, plainMsg.getText()));
+            this.addTextToForm(this.getName(), plainMsg.getText(), "", plainMsg.getDate(), true);
         }
         if (message instanceof UrlMessage)
         {
-
             UrlMessage urlMsg = (UrlMessage) message;
             if (!msgDisplay.isShown()) urlMessages++;
-            msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "url") + ": "
-                    + urlMsg.getUrl()));
-            msgDisplay.append(new StringItem(null, urlMsg.getText()));
+            this.addTextToForm(this.getName(), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false);
         }
         if (message instanceof SystemNotice)
         {
             SystemNotice notice = (SystemNotice) message;
-            g.drawString(ResourceBundle.getString("jimm.res.Text", "sysnotice") + " ("
-                    + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10,
-                    Graphics.BASELINE | Graphics.LEFT);
-            copy = Image.createImage(prequel);
-            msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
-                    + ImageItem.LAYOUT_NEWLINE_AFTER, null));
-            if (!msgDisplay.isShown()) 
-                sysNotices++;
+            if (!msgDisplay.isShown()) sysNotices++;
+
             if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
             {
-                msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "youwereadded")
-                        + notice.getSndrUin()));
+                this.addTextToForm(ResourceBundle.getString("jimm.res.Text", "sysnotice"), ResourceBundle.getString("jimm.res.Text",
+                        "youwereadded")
+                        + notice.getSndrUin(), "", notice.getDate(), false);
             } else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
             {
                 authRequest++;
-                msgDisplay.append(new StringItem(null, notice.getSndrUin()
-                        + ResourceBundle.getString("jimm.res.Text", "wantsyourauth") + notice.getReason()));
+                this.addTextToForm(ResourceBundle.getString("jimm.res.Text", "sysnotice"), notice.getSndrUin()
+                        + ResourceBundle.getString("jimm.res.Text", "wantsyourauth") + notice.getReason(), "", notice.getDate(), false);
             } else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
             {
                 if (notice.isAUTH_granted())
                 {
-                    msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "grantedby")
-                            + notice.getSndrUin() + "."));
                     this.setNoAuth(false);
+                    this.addTextToForm(ResourceBundle.getString("jimm.res.Text", "sysnotice"), ResourceBundle.getString("jimm.res.Text",
+                            "grantedby")
+                            + notice.getSndrUin() + ".", "", notice.getDate(), false);
                     Jimm.jimm.getContactListRef().refreshVisibleList(true);
                 } else if (notice.getReason() != null)
-                    msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "denyedby")
-                            + notice.getSndrUin() + ". " + ResourceBundle.getString("jimm.res.Text", "reason") + ": "
-                            + notice.getReason()));
+                    this.addTextToForm(ResourceBundle.getString("jimm.res.Text", "sysnotice"), ResourceBundle.getString("jimm.res.Text",
+                            "denyedby")
+                            + notice.getSndrUin() + ". " + ResourceBundle.getString("jimm.res.Text", "reason") + ": " + notice.getReason(),
+                            "", notice.getDate(), false);
                 else
-                    msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "denyedby")
-                            + notice.getSndrUin() + ". " + ResourceBundle.getString("jimm.res.Text", "noreason")));
+                    this.addTextToForm(ResourceBundle.getString("jimm.res.Text", "sysnotice"), ResourceBundle.getString("jimm.res.Text",
+                            "denyedby")
+                            + notice.getSndrUin() + ". " + ResourceBundle.getString("jimm.res.Text", "noreason"), "", notice.getDate(),
+                            false);
             }
         }
+    }
+
+    // Add text to message form
+    public void addTextToForm(String from, String message, String url, Date time, boolean red)
+    {
+        Calendar stamp = Calendar.getInstance();
+        stamp.setTime(time);
+
+        Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
+        // #sijapp cond.if target is "MIDP2"#
+        Image prequel = Image.createImage(msgDisplay.getWidth(), prequelFont.getHeight() + 2);
+        // #sijapp cond.else#
+        Image prequel = Image.createImage(120, prequelFont.getHeight() + 2);
+        // #sijapp cond.end#
+        Graphics g = prequel.getGraphics();
+        if (!red)
+            g.setColor(0, 0, 255);
+        else
+            g.setColor(255, 0, 0);
+        g.setFont(prequelFont);
+        g.drawString(from + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10,
+                Graphics.BASELINE | Graphics.LEFT);
+        Image copy = Image.createImage(prequel);
+
+        msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
+                + ImageItem.LAYOUT_NEWLINE_AFTER, null));
+        if (url.length() > 0)
+            msgDisplay.append(new StringItem(null,ResourceBundle.getString("jimm.res.Text", "url")+": "+url));    
+        msgDisplay.append(new StringItem(null, message));
     }
 
     // Returns if the chat hisotry screen is shown
@@ -575,25 +580,8 @@ public class ContactListContactItem extends ContactListItem
 
                         if (Jimm.jimm.getOptionsRef().keepChat())
                         {
-
-                            Calendar stamp = Calendar.getInstance();
-                            stamp.setTime(plainMsg.getDate());
-
-                            Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
-                            Image prequel = Image.createImage(80, prequelFont.getHeight() + 2);
-                            Graphics g = prequel.getGraphics();
-                            g.setColor(0, 0, 255);
-                            g.setFont(prequelFont);
-                            g.drawString(ResourceBundle.getString("jimm.res.Text", "me") + " ("
-                                    + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE))
-                                    + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
-                            Image copy = Image.createImage(prequel);
-
-                            msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT
-                                    + ImageItem.LAYOUT_NEWLINE_BEFORE + ImageItem.LAYOUT_NEWLINE_AFTER, null));
-                            msgDisplay.append(new StringItem(null, plainMsg.getText()));
-                        }
-                        SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
+                        	ContactListContactItem.this.addTextToForm(ResourceBundle.getString("jimm.res.Text", "me"),plainMsg.getText(),"",plainMsg.getDate(),true);                        }
+                        	SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
                         try
                         {
                             Jimm.jimm.getIcqRef().requestAction(sendMsgAct);
@@ -756,7 +744,7 @@ public class ContactListContactItem extends ContactListItem
                 Jimm.display.setCurrent(MenuUtil.reasonTextbox);
             }
         }
-
+        
         // Activates the contact item menu
         public void activate()
         {
