@@ -21,7 +21,7 @@ Version: ###VERSION###  Date: ###DATE###
 Author(s): Andreas Rossbacher
 *******************************************************************************/
 
-//#sijapp cond.if target is "MIDP2"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
 
 package jimm.comm;
 
