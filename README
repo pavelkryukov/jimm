@@ -54,8 +54,8 @@ PACKAGE CONTENTS
   |   |        '- Jimm.jad (archive descriptor, Siemens mobiles only)
   |   '- NOKIAS40
   |       '- [List of included languages]
-  |            |- Jimm.jar (obfuscated Java archive, Nokia 6800 mobiles only)
-  |            '- Jimm.jad (archive descriptor, Nokia 6800 mobiles only)
+  |            |- Jimm.jar (obfusc. Java archive, Nokia Series 40 mobiles only)
+  |            '- Jimm.jad (archive descriptor, Nokia Series 40 mobiles only)
   |- res
   |   |- MANIFEST.MF
   |   '- [Target]
@@ -190,8 +190,8 @@ ________________________________________________________________________________
 CREDITS
 
 Core development team:
-  *  Manuel Linsmayer <linsmayer@users.sourceforge.net>
-  *  Andreas Rossbacher <rossi771@users.sourceforge.net>
+  *  Manuel Linsmayer <linsmayer at users.sourceforge.net>
+  *  Andreas Rossbacher <rossi771 at users.sourceforge.net>
 
 Contributors:
   *  Andrey B. Ivlev (Russian translation, Cyrillic character support)
