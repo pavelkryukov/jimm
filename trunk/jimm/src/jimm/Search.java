@@ -474,7 +474,7 @@ public class Search
                 Jimm.display.setCurrent(groupList);
             } else if (c == this.addCommand && d == this.groupList)
             {
-                ContactListContactItem cItem = new ContactListContactItem(0, Jimm.jimm.getContactListRef()
+                ContactListContactItem cItem = new ContactListContactItem(Jimm.jimm.getContactListRef()
                         .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_UIN),
                         Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_NICK), false, false);
                 cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP,true);

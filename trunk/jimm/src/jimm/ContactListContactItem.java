@@ -24,6 +24,7 @@
 package jimm;
 
 import java.util.Date;
+import java.util.Random;
 
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
@@ -114,10 +115,42 @@ public class ContactListContactItem extends ContactListItem
     // Menu
     private Menu menu;
 
-    // Constructor
+    // Constructor for an existing contact item
     public ContactListContactItem(int id, int group, String uin, String name, boolean noAuth, boolean added)
     {
         this.id = id;
+        this.group = group;
+        this.uin = new String(uin);
+        this.name = new String(name);
+        this.noAuth = noAuth;
+        this.temporary = false;
+        this.added = added;
+        this.status = ContactList.STATUS_OFFLINE;
+        this.capabilities = ContactListContactItem.CAP_NO_INTERNAL;
+        this.chatHistoryDisplayNr = -1;
+        this.outgoingPlainMessagesCnt = 0;
+        this.plainMessages = 0;
+        this.urlMessages = 0;
+        this.sysNotices = 0;
+        this.authRequest = 0;
+        //  #sijapp cond.if target is "MIDP2"#
+        this.internalIP = new byte[4];
+        this.externalIP = new byte[4];
+        this.dcPort = "";
+        this.dcType = -1;
+        this.icqProt = 0;
+        this.authCookie = 0;
+        this.ft = null;
+        //  #sijapp cond.end#
+        this.menu = new Menu();
+        this.requReason = false;
+    }
+    
+    // Constructor for a new contact item
+    public ContactListContactItem(int group, String uin, String name, boolean noAuth, boolean added)
+    {
+        Random rand = new Random(System.currentTimeMillis());
+	    this.id = rand.nextInt();
         this.group = group;
         this.uin = new String(uin);
         this.name = new String(name);
@@ -491,7 +524,7 @@ public class ContactListContactItem extends ContactListItem
             // User wants to add temporary contact
             else if (c == MenuUtil.addUrsCommand)
             {
-            	MainMenu.addUserCmd(uin);
+            	MainMenu.addUserOrGroupCmd(uin,true);
             }
             
             // Menu item has been selected
