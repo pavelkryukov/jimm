@@ -141,8 +141,10 @@ public class Options
 			// #sijapp cond.if target is "SIEMENS"#
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mmf");
+			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mmf");
+			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
 			// #sijapp cond.elseif target is "MIDP2"#
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.wav");
