@@ -33,6 +33,8 @@ public class SystemNotice extends Message {
 	public static final int SYS_NOTICE_YOUWEREADDED = 1;
 	public static final int SYS_NOTICE_AUTHREPLY = 2;
 	public static final int SYS_NOTICE_AUTHREQ = 3;
+	public static final int SYS_NOTICE_AUTHORISE = 4;
+	public static final int SYS_NOTICE_REQUAUTH = 5;
 
 	/****************************************************************************/
 
@@ -69,6 +71,5 @@ public class SystemNotice extends Message {
 	public int getSysnotetype() {
 		return sysnotetype;
 	}
-
 
 }
