@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
  Copyright (C) 2003-04  Jimm Project
 
@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/res/Text_LT.java
  Version: ###VERSION###  Date: ###DATE###
- Based on CVS 1.17 Text_EN
+ Based on CVS 1.17 Text_EN (2004.06.23 10:14)
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Linas Gricius 
  *******************************************************************************/
 
@@ -44,11 +44,11 @@ public class Text_LT extends ResourceBundle
 		resources.put("about",                       "Apie");
 		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://jimm.sourceforge.net/");
 		resources.put("account",                     "Paskyra");
-		resources.put("add_user",                    "Prideti vartotoja");
-		resources.put("add_to_list",                 "Add to list");
-		resources.put("age",                         "Age");		
+		resources.put("add_user",                    "Pridėti vartotoją");
+		resources.put("add_to_list",                 "Įtraukti į sarašą");
+		resources.put("age",                         "Amžius");		
 		resources.put("async",                       "Asinchroniškas");
-		resources.put("auth",                        "Auth");		
+		resources.put("auth",                        "Autor.");		
 		resources.put("back",                        "Atgal");
 		resources.put("beep",                        "Pyptelėjimas");
 		resources.put("byte",                        "Baitas");
@@ -73,7 +73,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("display_date",                "Rodyti datą startiniame lange?");
 		resources.put("email",                       "El.paštas");
 		resources.put("error",                       "Klaida");
-		resources.put("exit",                        "Išėjimas");
+		resources.put("exit",                        "Išeiti");
 		resources.put("female",                      "M");
 		resources.put("firstname",                   "Vardas");
 		resources.put("gender",                      "Lytis");		
@@ -82,9 +82,9 @@ public class Text_LT extends ResourceBundle
 		resources.put("hide_offline",                "Paslėpti neprisijungusius");
 		resources.put("info",                        "Informacija");
 		resources.put("kb",                          "kB");
-		resources.put("keep_chat",                   "Pasilikti pokalbių išklotinę?");
+		resources.put("keep_chat",                   "Išsaugoti istoriją?");
 		resources.put("keep_conn_alive",             "Palaikyti pastovų ryšį?");
-		resources.put("keylock_enable",              "Užrakinti klaviaturą");
+		resources.put("keylock_enable",              "Užrakinti klaviatūrą");
 		resources.put("keylock_enabled",             "Klaviatūra užrakinta");
 		resources.put("keyword",                     "raktažodis");		
 		resources.put("language",                    "Kalba");
@@ -97,7 +97,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("lang_LT",                     "Lietuvių");
 		resources.put("lang_RU",                     "Rusų");
 		resources.put("lang_SE",                     "Švedų");
-		resources.put("lang_SR",                     "Српски");
+		resources.put("lang_SR",                     "Serbų");
 		resources.put("lastname",                    "Pavardė");		
 		resources.put("loading",                     "Kraunasi");
 		resources.put("male",                        "V");		
@@ -118,7 +118,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("nr",                          "Nr");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "1k.per sesiją?");
-		resources.put("onl_notification",            "Notice for upcoming contact");
+		resources.put("onl_notification",            "Pranešimas apie prisijungusį");
   	    resources.put("onl_sound_file_name",         "Online garsas");
   	    resources.put("only_online",                 "Rodyti tik prisijungusius");
 		resources.put("options",                     "Savybės");
@@ -182,7 +182,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_100",                   "Nežinoma klaida (#100.EXT)");
 
 		// Login specific errors
-		resources.put("error_110",                   "Dar vienas prisijungimas tuo paciu UIN (#110.EXT)");
+		resources.put("error_110",                   "Dar vienas prisijungimas tuo pačiu UIN (#110.EXT)");
 		resources.put("error_111",                   "Negeras slaptažodis (#111.EXT)");
 		resources.put("error_112",                   "Neegzstuojantis UIN (#112.EXT)");
 		resources.put("error_113",                   "Per daug prisijungimu iš to paties IP (#113.EXT)");
@@ -223,7 +223,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_157",                   "No more elements of this type allowed (#157.EXT)");
 		resources.put("error_158",                   "You did try to add an ICQ contact to an AIM list (#158.EXT)");
 		resources.put("error_159",                   "Server did not answer on search request. Try again (#159.EXT)");
-		resources.put("error_160",                   "Error while searching (#160.EXT)");
+		resources.put("error_160",                   "Klaida atliekant paiešką (#160.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Possibly not enough heap memory available (#160.EXT)");
