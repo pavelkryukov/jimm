@@ -1,4 +1,4 @@
-                             Jimm - Mobile Messaging
+﻿                             Jimm - Mobile Messaging
                        Version ###VERSION### - released ###DATE###
                               <http://www.jimm.org/>
 
@@ -119,6 +119,7 @@ the selected target you also need the following:
       <http://www.blackberry.com/developers/>
   * SIEMENS target: Latest version of the Siemens Mobility Toolkit (SMTK)
       <http://communication-market.siemens.de/>
+  *MOTOROLA target: J2ME Wireless Toolkit 2.2 and you need to add motorola.jar library there.
 		
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
