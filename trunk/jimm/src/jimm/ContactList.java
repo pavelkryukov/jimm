@@ -83,6 +83,7 @@ public class ContactList implements CommandListener {
 	public static Image eventPlainMessageImg;
 	public static Image eventUrlMessageImg;
 	public static Image eventSystemNoticeImg;
+	public static Image eventSysActionImg;
 
 	// Initializer
 	static {
@@ -118,6 +119,7 @@ public class ContactList implements CommandListener {
 			ContactList.eventPlainMessageImg = images[8];
 			ContactList.eventUrlMessageImg = images[9];
 			ContactList.eventSystemNoticeImg = images[10];
+			ContactList.eventSysActionImg = images[11];
 		}
 		catch (IOException e) {
 			// Do nothing
@@ -717,6 +719,9 @@ public class ContactList implements CommandListener {
 
 		// Get status image
 		Image img = null;
+		if (cItem.isunasweredAuthRequest())
+			img = eventSysActionImg;
+		else
 		if (cItem.isSysNoticeAvailable()) {
 			img = eventSystemNoticeImg;
 		}
@@ -780,8 +785,12 @@ public class ContactList implements CommandListener {
 				else if (cItem.isUrlMessageAvailable()) {
 					img = eventUrlMessageImg;
 				}
-				else if (cItem.isSysNoticeAvailable())
+				else 		
+				if (cItem.isunasweredAuthRequest())
+					img = eventSysActionImg;
+				else if (cItem.isSysNoticeAvailable()) {
 					img = eventSystemNoticeImg;
+				}
 				else {
 					img = whichImage(cItem);
 				}
@@ -873,8 +882,11 @@ public class ContactList implements CommandListener {
 				img = eventPlainMessageImg;
 			else if (cItem.isUrlMessageAvailable())
 				img = eventUrlMessageImg;
-			else if (cItem.isSysNoticeAvailable())
+			if (cItem.isunasweredAuthRequest())
+				img = eventSysActionImg;
+			else if (cItem.isSysNoticeAvailable()) {
 				img = eventSystemNoticeImg;
+			}
 
 			// Add an "c" the the Status icon determining we have an open chat session for that one.
 			if (cItem.hasChat()) {
