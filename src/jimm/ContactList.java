@@ -1393,9 +1393,8 @@ public class ContactList implements CommandListener
         // Update tree
         contactChanged(cItem, true, false, false);
     }
-    
-// #sijapp cond.if target is "SIEMENS" | target is"MIDP2"#
-// #sijapp cond.if target is"MIDP2"#    
+
+    //#sijapp cond.if target is"MIDP2"#    
     
     // Reaction to player events. (Thanks to Alexander Barannik for idea!)
     public void playerUpdate(final Player player, final String event, Object eventData)
@@ -1411,9 +1410,7 @@ public class ContactList implements CommandListener
     	}
     	});    	
     }
-    
-// #sijapp cond.end#    
-	
+        	
 	// Creates player for file 'source'
 	private Player createPlayer(String source)
 	{
@@ -1441,18 +1438,39 @@ public class ContactList implements CommandListener
 				return null;
 			}
 			p = Manager.createPlayer(is, mediaType);
-//#sijapp cond.if target is"MIDP2"#			
 			p.addPlayerListener(this);
-//#sijapp cond.end#			
+		
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText("Create player exception: "+e.toString());
+			DebugLog.addText("Create player exception: "+e.toString());
 			return null;
 		}
 		return p;
 	}
 	
+	//#sijapp cond.end#
+	
+	//#sijapp cond.if target is"SIEMENS"#
+	private Player createPlayer(String source)
+	{
+		Player p;
+		
+		try
+		{
+			p = Manager.createPlayer(source);
+		}
+		catch (Exception e)
+		{
+			DebugLog.addText("Create player exception: "+e.toString());
+			return null;
+		}
+		return p;
+	}
+	//#sijapp cond.end#
+	
+	
+	//#sijapp cond.if target is"MIDP2" | target is"SIEMENS"#
 	// sets volume for player
 	static private void setVolume(Player p, int value)
 	{
@@ -1468,11 +1486,11 @@ public class ContactList implements CommandListener
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText("setVolume "+e.toString());
+			DebugLog.addText("setVolume "+e.toString());
 		}
 	}
 	
-// #sijapp cond.end#
+	//#sijapp cond.end#
 
     // Play a sound notification
     private void playSoundNotivication(int notType)
