@@ -867,110 +867,114 @@ public class ConnectAction extends Action
 
 						// Extract UIN
 						long uinRaw = Util.getDWord(buf, 0, false);
-						String uin = String.valueOf(uinRaw);
-
-						// Extract date of dispatch
-						int dateYear = Util.getWord(buf, 4, false);
-						int dateMonth = Util.getByte(buf, 6);
-						int dateDay = Util.getByte(buf, 7);
-						int dateHour = Util.getByte(buf, 8);
-						int dateMinute = Util.getByte(buf, 9);
-						Calendar c = Calendar.getInstance();
-						c.set(Calendar.YEAR, dateYear);
-						switch (dateMonth)
+						// If message is from uin 1003 it's from ICQ webmessage and we ignore it
+						if (uinRaw != 1003)
 						{
-							case 1:
-								c.set(Calendar.MONTH, Calendar.JANUARY);
-								break;
-							case 2:
-								c.set(Calendar.MONTH, Calendar.FEBRUARY);
-								break;
-							case 3:
-								c.set(Calendar.MONTH, Calendar.MARCH);
-								break;
-							case 4:
-								c.set(Calendar.MONTH, Calendar.APRIL);
-								break;
-							case 5:
-								c.set(Calendar.MONTH, Calendar.MAY);
-								break;
-							case 6:
-								c.set(Calendar.MONTH, Calendar.JUNE);
-								break;
-							case 7:
-								c.set(Calendar.MONTH, Calendar.JULY);
-								break;
-							case 8:
-								c.set(Calendar.MONTH, Calendar.AUGUST);
-								break;
-							case 9:
-								c.set(Calendar.MONTH, Calendar.SEPTEMBER);
-								break;
-							case 10:
-								c.set(Calendar.MONTH, Calendar.OCTOBER);
-								break;
-							case 11:
-								c.set(Calendar.MONTH, Calendar.NOVEMBER);
-								break;
-							case 12:
-								c.set(Calendar.MONTH, Calendar.DECEMBER);
-						}
-						c.set(Calendar.DAY_OF_MONTH, dateDay);
-						c.set(Calendar.HOUR_OF_DAY, dateHour);
-						c.set(Calendar.MINUTE, dateMinute);
-						c.set(Calendar.SECOND, 0);
-						Date date = c.getTime();
-
-						// Get type
-						int type = Util.getWord(buf, 10, false);
-
-						// Get text length
-						int textLen = Util.getWord(buf, 12, false);
-
-						// Check length
-						if (buf.length != 14 + textLen) { throw (new JimmException(116, 1)); }
-
-						// Get text
-						String text = Util.crlfToCr(Util.byteArrayToString(buf, 14, textLen));
-
-						// Normal message
-						if (type == 0x0001)
-						{
-
-							// Forward message to contact list
-							PlainMessage message = new PlainMessage(uin, this.uin, date, text);
-							Jimm.jimm.getContactListRef().addMessage(message);
-
-						}
-						// URL message
-						else if (type == 0x0004)
-						{
-
-							// Search for delimiter
-							int delim = text.indexOf(0xFE);
-
-							// Split message, if delimiter could be found
-							String urlText;
-							String url;
-							if (delim != -1)
+							String uin = String.valueOf(uinRaw);
+	
+							// Extract date of dispatch
+							int dateYear = Util.getWord(buf, 4, false);
+							int dateMonth = Util.getByte(buf, 6);
+							int dateDay = Util.getByte(buf, 7);
+							int dateHour = Util.getByte(buf, 8);
+							int dateMinute = Util.getByte(buf, 9);
+							Calendar c = Calendar.getInstance();
+							c.set(Calendar.YEAR, dateYear);
+							switch (dateMonth)
 							{
-								urlText = text.substring(0, delim);
-								url = text.substring(delim + 1);
+								case 1:
+									c.set(Calendar.MONTH, Calendar.JANUARY);
+									break;
+								case 2:
+									c.set(Calendar.MONTH, Calendar.FEBRUARY);
+									break;
+								case 3:
+									c.set(Calendar.MONTH, Calendar.MARCH);
+									break;
+								case 4:
+									c.set(Calendar.MONTH, Calendar.APRIL);
+									break;
+								case 5:
+									c.set(Calendar.MONTH, Calendar.MAY);
+									break;
+								case 6:
+									c.set(Calendar.MONTH, Calendar.JUNE);
+									break;
+								case 7:
+									c.set(Calendar.MONTH, Calendar.JULY);
+									break;
+								case 8:
+									c.set(Calendar.MONTH, Calendar.AUGUST);
+									break;
+								case 9:
+									c.set(Calendar.MONTH, Calendar.SEPTEMBER);
+									break;
+								case 10:
+									c.set(Calendar.MONTH, Calendar.OCTOBER);
+									break;
+								case 11:
+									c.set(Calendar.MONTH, Calendar.NOVEMBER);
+									break;
+								case 12:
+									c.set(Calendar.MONTH, Calendar.DECEMBER);
 							}
-							else
+							c.set(Calendar.DAY_OF_MONTH, dateDay);
+							c.set(Calendar.HOUR_OF_DAY, dateHour);
+							c.set(Calendar.MINUTE, dateMinute);
+							c.set(Calendar.SECOND, 0);
+							Date date = c.getTime();
+	
+							// Get type
+							int type = Util.getWord(buf, 10, false);
+	
+							// Get text length
+							int textLen = Util.getWord(buf, 12, false);
+
+							// Check length
+							if (buf.length != 14 + textLen) { throw (new JimmException(116, 1)); }
+	
+							// Get text
+							String text = Util.crlfToCr(Util.byteArrayToString(buf, 14, textLen));
+	
+							// Normal message
+							if (type == 0x0001)
 							{
-								urlText = text;
-								url = "";
+	
+								// Forward message to contact list
+								PlainMessage message = new PlainMessage(uin, this.uin, date, text);
+								Jimm.jimm.getContactListRef().addMessage(message);
+	
 							}
-
-							// Forward message message to contact list
-							UrlMessage message = new UrlMessage(uin, this.uin, date, url, urlText);
-							Jimm.jimm.getContactListRef().addMessage(message);
-
-						}
-
-						// Packet has been consumed
-						consumed = true;
+							// URL message
+							else if (type == 0x0004)
+							{
+	
+								// Search for delimiter
+								int delim = text.indexOf(0xFE);
+	
+								// Split message, if delimiter could be found
+								String urlText;
+								String url;
+								if (delim != -1)
+								{
+									urlText = text.substring(0, delim);
+									url = text.substring(delim + 1);
+								}
+								else
+								{
+									urlText = text;
+									url = "";
+								}
+	
+								// Forward message message to contact list
+								UrlMessage message = new UrlMessage(uin, this.uin, date, url, urlText);
+								Jimm.jimm.getContactListRef().addMessage(message);
+	
+							}
+					}
+						
+					// Packet has been consumed
+					consumed = true;
 
 					}
 					// Watch out for SRV_DONEOFFLINEMSGS
@@ -1076,4 +1080,3 @@ public class ConnectAction extends Action
 
 
 }
-
