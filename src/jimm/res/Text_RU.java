@@ -39,19 +39,39 @@ public class Text_RU extends ResourceBundle
 	{
 
 		// Labels
-		resources.put(".",                           ".");
+
+
+		// MOTOROLA formatted buttons
+                                          // #sijapp cond.if target is "MOTOROLA"#
+		resources.put("select",                      "Выбор     ");
+                                           resources.put("reset",                       "  Сброс");
+                                           resources.put("cancel",                      "    Отмена");
+                                           resources.put("exit_button",                        "     Выход");
+                                           resources.put("back", "     Назад");
+                                           resources.put("menu_button", "     Меню");
+                                           resources.put("save",                        "Сохранить ");
+
+                                          // #sijapp cond.else#
+		resources.put("select",                      "Выбрать");
+                                           resources.put("reset",                       "Сброс");
+                                           resources.put("cancel",                      "Отмена");
+                                           resources.put("back", "Назад");
+                                           resources.put("save",                        "Сохр.");
+
+                                          // #sijapp cond.end#
+                                           resources.put(".",                           ".");
 		resources.put("about",                       "О программе");
-		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\n http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия 0.3.3\n http://www.jimm.org/");
 		resources.put("account",                     "Учетная запись");
 		resources.put("add_user",                    "Добавить пользователя");
 		resources.put("add_to_list",                 "Добавить");
 		resources.put("age",                         "Возраст");
 		resources.put("async",                       "Асинхронная передача");
 		resources.put("auth",				     	 "Авторизация");
-		resources.put("back",                        "Назад");
+		resources.put("auto_connect",				 "Подключаться автоматически");
 		resources.put("beep",                        "Гудок");
 		resources.put("byte",                        "Байт");
-		resources.put("cancel",                      "Отмена");
+		
 		resources.put("city",                        "Город");
 		resources.put("clear",                       "Стереть всё");
 		resources.put("close",                       "Закрыть");
@@ -89,6 +109,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("ft_cam",                      "Послать фото с камеры");		
 		
 		resources.put("firstname",                   "Имя");
+		resources.put("free_heap",                   "Свободная память");
 		resources.put("gender",                      "Пол");
 		resources.put("grant",						 "Авторизировать");
 		resources.put("grantedby",					 "Вас авторизировал: ");
@@ -163,10 +184,10 @@ public class Text_RU extends ResourceBundle
 		resources.put("requauth",                    "Запрос авторизации");
 		resources.put("requ",                        "Требуется");
 		resources.put("requno",                      "Не требуется");
-		resources.put("reset",                       "Сброс");
+		
 		resources.put("res",                         "Разрешение");
 		resources.put("results",                     "Результаты");
-		resources.put("save",                        "Сохр.");
+		
 		resources.put("search_user",                 "Найти пользователя");
 		resources.put("send",                        "Отправить");
 		resources.put("send_message",                "Новое сообщение");
@@ -207,8 +228,11 @@ public class Text_RU extends ResourceBundle
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Вас добавил: ");
 		resources.put("chat_small_font",             "Мелкий шрифт в чате");
-		resources.put("select",                      "Выбрать");
-		resources.put("use_history",                 "Хранить историю сообщений");
+                                          
+
+                                           
+		
+                                           resources.put("use_history",                 "Хранить историю сообщений");
 		
 		resources.put("attention",                   "Внимание!"); 
 		resources.put("have_unread_mess",            "У Вас остались непрочитанные сообщения. Выйти из программы?");
