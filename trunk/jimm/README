@@ -123,7 +123,7 @@ the selected target you also need the following:
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
 instructions in the ProGuard manual to install ProGuard. Jimm requires ProGuard
-3.1 or later.
+3.2 or later.
 
 At first, open the Apache ant buildfile (build.xml) and change the properties in
 the configuration/customization section. You can use both the slash and the
