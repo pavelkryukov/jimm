@@ -30,6 +30,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -42,8 +43,6 @@ public class MainMenu implements CommandListener
 
     // Abort command
     private static Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
-    // Send command
-    private static Command sendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
     // List for selecting a online status
     private static List statusList;
@@ -51,16 +50,14 @@ public class MainMenu implements CommandListener
     // Initializer
     static
     {
-
-        MainMenu.statusList = new List(ResourceBundle.getString("set_status"), List.IMPLICIT);
-        MainMenu.statusList.append(ResourceBundle.getString("status_online"), ContactList.statusOnlineImg);
-        MainMenu.statusList.append(ResourceBundle.getString("status_chat"), ContactList.statusChatImg);
-        MainMenu.statusList.append(ResourceBundle.getString("status_away"), ContactList.statusAwayImg);
-        MainMenu.statusList.append(ResourceBundle.getString("status_na"), ContactList.statusNaImg);
-        MainMenu.statusList.append(ResourceBundle.getString("status_occupied"), ContactList.statusOccupiedImg);
-        MainMenu.statusList.append(ResourceBundle.getString("status_dnd"), ContactList.statusDndImg);
-        MainMenu.statusList.append(ResourceBundle.getString("status_invisible"), ContactList.statusInvisibleImg);
-
+  		MainMenu.statusList = new List(ResourceBundle.getString("set_status"), List.IMPLICIT);
+   		MainMenu.statusList.append(ResourceBundle.getString("status_online"), ContactList.statusOnlineImg);
+   		MainMenu.statusList.append(ResourceBundle.getString("status_chat"), ContactList.statusChatImg);
+   		MainMenu.statusList.append(ResourceBundle.getString("status_away"), ContactList.statusAwayImg);
+   		MainMenu.statusList.append(ResourceBundle.getString("status_na"), ContactList.statusNaImg);
+   		MainMenu.statusList.append(ResourceBundle.getString("status_occupied"), ContactList.statusOccupiedImg);
+   		MainMenu.statusList.append(ResourceBundle.getString("status_dnd"), ContactList.statusDndImg);
+   		MainMenu.statusList.append(ResourceBundle.getString("status_invisible"), ContactList.statusInvisibleImg);
     }
 
     /** ************************************************************************* */
@@ -80,6 +77,13 @@ public class MainMenu implements CommandListener
 
     // Connected
     private boolean isConnected;
+    
+    private Image getStatusImage()
+    {
+    	long cursStatus = Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS);
+    	int imageIndex = ContactListContactItem.getStatusImageIndex(cursStatus);
+    	return ContactList.getImageList().elementAt(imageIndex);
+    }
 
     // Builds the main menu (visual list)
     private void build()
@@ -104,7 +108,7 @@ public class MainMenu implements CommandListener
                 this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
                 this.list.append(ResourceBundle.getString("keylock_enable"), null);
                 this.list.append(ResourceBundle.getString("disconnect"), null);
-                this.list.append(ResourceBundle.getString("set_status"), Jimm.jimm.getContactListRef().getStatusImage(Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS)));
+                this.list.append(ResourceBundle.getString("set_status"), getStatusImage());
                 this.list.append(ResourceBundle.getString("add_user"), null);
                 this.list.append(ResourceBundle.getString("search_user"), null);
                 this.list.append(ResourceBundle.getString("options"), null);
@@ -121,7 +125,7 @@ public class MainMenu implements CommandListener
         else
         {
             if ((this.list != null) && (!Jimm.jimm.getIcqRef().isNotConnected()))
-                this.list.set(2,ResourceBundle.getString("set_status"),Jimm.jimm.getContactListRef().getStatusImage(Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS)));
+                this.list.set(2,ResourceBundle.getString("set_status"), getStatusImage());
         }
         this.list.setSelectedIndex(0, true);
     }
@@ -157,33 +161,8 @@ public class MainMenu implements CommandListener
                 this.activate();
             else
                 Jimm.jimm.getContactListRef().activate();
-        } else if ((c == sendCommand) && (d == this.addUser))
-        {
-            // Display splash canvas
-            SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-            wait2.setMessage(ResourceBundle.getString("wait"));
-            wait2.setProgress(0);
-            Jimm.display.setCurrent(wait2);
-            
-            Search search = new Search();
-            search.setSearchRequest(uinTextField.getString(),"","","","","","",false);
-            
-            SearchAction act = new SearchAction(search,SearchAction.CALLED_BY_ADDUSER);
-            
-            try
-            {
-                Jimm.jimm.getIcqRef().requestAction(act);
-
-            } catch (JimmException e)
-            {
-                JimmException.handleException(e);
-                if (e.isCritical()) return;
-            }
-            
-            // Start timer
-            Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
-
-        } 
+        }
+        
         // Menu item has been selected
         else if ((c == List.SELECT_COMMAND) && (d == this.list))
         {
@@ -232,28 +211,11 @@ public class MainMenu implements CommandListener
                     Jimm.display.setCurrent(MainMenu.statusList);
 
                     break;
-                case 3:
-                    // Add user
-
-                    // Reset and display textbox for entering uin to add
-                    addUser = new Form(ResourceBundle.getString("add_user"));
-                    uinTextField = new TextField(ResourceBundle.getString("uin"), "", 16,
-                            TextField.NUMERIC);
-                    nameTextField = new TextField(ResourceBundle.getString("name"), "", 32,
-                            TextField.ANY);
-                    addUser.append(uinTextField);
-                    addUser.addCommand(sendCommand);
-                    addUser.addCommand(backCommand);
-                    addUser.setCommandListener(this);
-                    Jimm.display.setCurrent(addUser);
-
+                case 3: // Add user
+                    
                     break;
                 case 4:
                     // Search for User
-
-                    Search search = new Search();
-                    search.getSearchForm().activate(false);
-
                     break;
                 case 5:
                     // Options
@@ -398,9 +360,6 @@ public class MainMenu implements CommandListener
                 case 4:
                     // Exit
 
-                    // Disconnect
-					Jimm.jimm.getIcqRef().disconnect();
-                    
                     try
                     {
                         Jimm.jimm.destroyApp(true);

@@ -17,8 +17,8 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/ChatHistory.java
- Version: ###VERSION###  Date: ###DATE###
- Author(s): Andreas Rossbacher, Artyomov Denis
+ Version: 0.2.2  Date: 2004/07/12
+ Author(s): Andreas Rossbacher
  *******************************************************************************/
 
 package jimm;
@@ -28,8 +28,6 @@ import java.util.Date;
 import java.util.Vector;
 import javax.microedition.lcdui.Font;
 
-import jimm.Jimm;
-import jimm.Options;
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.SystemNotice;
@@ -42,7 +40,6 @@ import DrawControls.TextList;
 public class ChatHistory
 {
     private Vector historyVector;
-	private Options options;
     
     public ChatHistory()
     {
@@ -87,7 +84,7 @@ public class ChatHistory
                     contact.setBoolValue(ContactListContactItem.VALUE_NO_AUTH,false);
                     this.addTextToForm(nr,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
                             + notice.getSndrUin() + ".", "", notice.getDate(), false);
-                    Jimm.jimm.getContactListRef().refreshVisibleList(true);
+                    //Jimm.jimm.getContactListRef().refreshVisibleList(true);
                 } else if (notice.getReason() != null)
                     this.addTextToForm(nr,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
                             + notice.getSndrUin() + ". " + ResourceBundle.getString("reason") + ": " + notice.getReason(),
@@ -104,26 +101,19 @@ public class ChatHistory
     public void addTextToForm(int nr,String from, String message, String url, Date time, boolean red)
     {
         TextList msgDisplay = (TextList) historyVector.elementAt(nr);
-        int color, lastSize;
         
-		
-		
         Calendar stamp = Calendar.getInstance();
         stamp.setTime(time);
         
-        if (!red) color = 0xFF;
-        else color = 0xFF0000;
-        
         msgDisplay.lock();
-        lastSize = msgDisplay.getItemCount();
+        int lastSize = msgDisplay.getItemCount();
         msgDisplay.addBigText
         (
           from + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" 
                + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):",
-          color, 
+          red ? 0xFF0000 : 0xFF, 
           Font.STYLE_BOLD
         );
-
         
         if (url.length() > 0)
         {
@@ -183,17 +173,27 @@ public class ChatHistory
     // Creates a new chat form and returns the index number of it in the vector
     public int newChatForm(String name)
     {
+    	 	
         TextList chatForm = new TextList
                             (
-                              name, 
+                              null, 
                               TextList.getDefCapColor(),
                               TextList.getDefCapFontColor(),
                               TextList.getDefBackColor(),
-							  Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CHAT_SMALL_FONT) 
-							    ? TextList.SMALL_FONT : TextList.MEDIUM_FONT,
+                              Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CHAT_SMALL_FONT) 
+		                         ? TextList.SMALL_FONT : TextList.MEDIUM_FONT,
                               TextList.SEL_NONE
                             );
+        
+//#sijapp cond.if target is "MIDP2"#
+        chatForm.setFullScreenMode(false);
+        chatForm.setTitle(name);
+//#sijapp cond.else#
+        chatForm.setCaption(name);
+//#sijapp cond.end#
+        
         historyVector.addElement(chatForm);
         return historyVector.size()-1;
     }
+
 }

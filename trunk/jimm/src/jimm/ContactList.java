@@ -18,14 +18,20 @@
  ********************************************************************************
  File: src/jimm/ContactList.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis
  *******************************************************************************/
 
 package jimm;
 
+import jimm.DebugLog;
+
+import jimm.Jimm;
 import jimm.comm.Message;
+import jimm.comm.SearchAction;
+import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
+import java.util.Hashtable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -33,38 +39,26 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Vector;
 
-
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.Choice;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.*;
 
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
 // #sijapp cond.if target is "SIEMENS"#
+import com.siemens.mp.game.Sound;
 import com.siemens.mp.game.Vibrator;
 import com.siemens.mp.game.Light;
 import com.siemens.mp.media.Manager;
 import com.siemens.mp.media.MediaException;
 import com.siemens.mp.media.Player;
-import com.siemens.mp.media.control.ToneControl;
-import com.siemens.mp.media.control.VolumeControl;
-import java.io.InputStream;
 // #sijapp cond.end#
 
 //#sijapp cond.if target is "MIDP2"#
-import javax.microedition.lcdui.game.Sprite;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.control.ToneControl;
-import javax.microedition.media.control.VolumeControl;
 import java.io.InputStream;
 //#sijapp cond.end#
 
@@ -73,10 +67,262 @@ import java.io.InputStream;
 import net.rim.device.api.system.LED;
 //#sijapp cond.end#
 
+import DrawControls.*;
+import jimm.Options;
+
+abstract class UserManagementBase implements CommandListener
+{
+    private static Form 
+		form = new Form(null);
+
+    private static Command 
+    	sendCommand = new Command(ResourceBundle.getString("exec"), Command.ITEM, 1),
+    	backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
+    
+    static
+    {
+        form.addCommand(sendCommand);
+        form.addCommand(backCommand);
+    }    
+    
+    protected abstract void select();
+    protected abstract void addControls(Form form);
+    
+    protected static void activateContactList()
+    {
+        Jimm.jimm.getContactListRef().activate();
+    }  
+    
+    public void commandAction(Command c, Displayable d)
+    {
+        if (c == backCommand) activateContactList();
+        else if (c == sendCommand) select();
+    }
+    
+    UserManagementBase(String title)
+    {
+        form.setTitle(title);
+    }
+    
+    void go()
+    {
+        while (form.size() != 0) form.delete(0);
+        System.gc();
+        addControls(form);
+        form.setCommandListener(this);
+        Jimm.display.setCurrent(form);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+
+// Class for adding new user
+class AddUserForm extends UserManagementBase
+{
+    private TextField 
+    	uinTextField = new TextField(ResourceBundle.getString("uin"), "", 16, TextField.NUMERIC),
+    	nameTextField = new TextField(ResourceBundle.getString("name"), "", 32, TextField.ANY);
+
+    protected void select()
+    {
+        // Display splash canvas
+        SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
+        wait2.setMessage(ResourceBundle.getString("wait"));
+        wait2.setProgress(0);
+        Jimm.display.setCurrent(wait2);
+
+        Search search = new Search();
+        search.setSearchRequest(uinTextField.getString(), "", "", "", "", "", "", false);
+        SearchAction act = new SearchAction(search, SearchAction.CALLED_BY_ADDUSER);
+
+        try
+        {
+            Jimm.jimm.getIcqRef().requestAction(act);
+
+        } catch (JimmException e)
+        {
+            JimmException.handleException(e);
+            if (e.isCritical()) return;
+        }
+
+        // Start timer
+        Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
+    }
+    
+    protected void addControls(Form form)
+    {
+        form.append(uinTextField);
+        form.append(nameTextField);
+    }
+    
+    AddUserForm()
+    {
+        super(ResourceBundle.getString("add_user"));
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// Class for adding new group
+class AddGroupForm extends UserManagementBase
+{
+    private TextField 
+		uinTextField = new TextField(ResourceBundle.getString("group_name"), "", 32, TextField.ANY);
+   
+    protected void select()
+    {
+    }
+    
+    protected void addControls(Form form)
+    {
+        form.append(uinTextField);
+    }
+    
+    public AddGroupForm()
+    {
+        super(ResourceBundle.getString("add_group"));
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// Class for removing group 
+class RemoveGroupForm extends UserManagementBase
+{
+    private ChoiceGroup 
+    	choice = new ChoiceGroup(ResourceBundle.getString("group_name"), ChoiceGroup.EXCLUSIVE);
+ 
+    protected void select()
+    {
+        ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
+        int index = choice.getSelectedIndex();
+        
+        if (index < 0)
+        {
+            activateContactList();
+            return;
+        }
+
+        if (gItems[index].getTotalCount() != 0)
+        {
+            Alert errorMsg = new Alert
+            (
+                    ResourceBundle.getString("warning"), 
+                    ResourceBundle.getString("group_is_not_empty"),
+                    null, 
+                    AlertType.ERROR
+            );
+    		errorMsg.setTimeout(10000);
+    		
+    		Jimm.jimm.getContactListRef().activate(errorMsg);
+        }
+    }
+    
+    protected void addControls(Form form)
+    {
+        form.append(choice);
+        ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
+        for (int i = 0; i < gItems.length; i++) choice.append(gItems[i].getName(), null); 
+    }
+
+    RemoveGroupForm()
+    {
+        super(ResourceBundle.getString("remove_group"));
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// Comparer for node sorting only by name
+class SimpleNodeComparer implements TreeNodeComparer
+{
+	public int compareNodes(TreeNode node1, TreeNode node2)
+	{
+		ContactListContactItem item1, item2;
+		Object obj1, obj2;
+	
+		obj1 = node1.getData();
+		obj2 = node2.getData();
+		// TODO: test obj & obj2  
+		
+		item1 = (ContactListContactItem)obj1;
+		item2 = (ContactListContactItem)obj2;
+		
+		return item1.getText().compareTo( item2.getText() );
+	}
+}
+
+
+// Comparer for node sorting by status and by name
+class NodeComparer implements TreeNodeComparer
+{
+	static int getNodeWeight(TreeNode node)
+	{
+		ContactListContactItem cItem;
+		Object obj;
+
+		obj = node.getData();
+		if ( !(obj instanceof ContactListContactItem) ) return 10;
+		cItem = (ContactListContactItem)obj;
+		if (cItem.getStatus() != ContactList.STATUS_OFFLINE) return 0; 
+	
+		return 10;
+	}
+	
+	public int compareNodes(TreeNode node1, TreeNode node2)
+	{
+		ContactListContactItem item1, item2;
+		Object obj1, obj2;
+	
+		obj1 = node1.getData();
+		obj2 = node2.getData();
+		// TODO: test obj & obj2  
+		
+		item1 = (ContactListContactItem)obj1;
+		item2 = (ContactListContactItem)obj2;
+		
+		int weight1 = getNodeWeight(node1);
+		int weight2 = getNodeWeight(node2);
+		
+		if (weight1 == weight2)
+		{
+			return item1.getText().compareTo( item2.getText() );		
+		}
+	
+		return (weight1 < weight2) ? -1 : 1;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+
+// Class for tree implementation
+class Tree extends VirtualTree
+{
+	protected void getItemDrawData(TreeNode src, ListItem dst)
+	{
+		ContactListItem item = (ContactListItem)src.getData();
+		dst.text = item.getText();
+		dst.imageIndex = item.getImageIndex();
+	}
+
+	public Tree(String caption)
+	{
+		super(caption, false);
+	}
+	
+	protected void nodeClicked(TreeNode node)
+	{
+	    Jimm.jimm.getContactListRef().itemClicked();
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
 public class ContactList implements CommandListener
 {
-
-    // Status (all are mutual exclusive)
+    // Status (all are mutual exclusive) TODO: move status to ContactListContactItem
     public static final long STATUS_AWAY      = 0x00000001;
     public static final long STATUS_CHAT      = 0x00000020;
     public static final long STATUS_DND       = 0x00000002;
@@ -90,9 +336,6 @@ public class ContactList implements CommandListener
     public static final int SOUND_TYPE_MESSAGE = 1;
     public static final int SOUND_TYPE_ONLINE  = 2;
 
-    // Image objects
-    static Image images[];
-
     public static Image statusAwayImg;
     public static Image statusChatImg;
     public static Image statusDndImg;
@@ -105,48 +348,22 @@ public class ContactList implements CommandListener
     public static Image eventUrlMessageImg;
     public static Image eventSystemNoticeImg;
     public static Image eventSysActionImg;
-
-    // Initializer
-    static
-    {
-        // Construct image objects
-        try
-        {
-            Image iconsImage, dImage;
-            iconsImage = Image.createImage("/icons.png");
-            int imagenum = iconsImage.getWidth() >> 4;
-            images = new Image[imagenum];
-            for (int i = 0; i < imagenum; i++)
-            {
-//              #sijapp cond.if target is "MIDP2"#
-                images[i] = Image.createImage(Image.createImage(iconsImage, i * 16, 0, 16, 16, Sprite.TRANS_NONE));
-//              #sijapp cond.else#
-                dImage = Image.createImage(16, 16);
-                dImage.getGraphics().drawImage(iconsImage, -i << 4, 0, Graphics.TOP | Graphics.LEFT);
-                images[i] = Image.createImage(dImage);
-//              #sijapp cond.end#
-            }
-            ContactList.statusAwayImg = images[0];
-            ContactList.statusChatImg = images[1];
-            ContactList.statusDndImg = images[2];
-            ContactList.statusInvisibleImg = images[3];
-            ContactList.statusNaImg = images[4];
-            ContactList.statusOccupiedImg = images[5];
-            ContactList.statusOfflineImg = images[6];
-            ContactList.statusOnlineImg = images[7];
-            ContactList.eventPlainMessageImg = images[8];
-            ContactList.eventUrlMessageImg = images[9];
-            ContactList.eventSystemNoticeImg = images[10];
-            ContactList.eventSysActionImg = images[11];
-        } catch (IOException e)
-        {
-            // Do nothing
-        }
-    }
-
+	
     // Main menu command
-    private static Command mainMenuCommand = new Command(ResourceBundle.getString("menu"),
-            Command.ITEM, 1);
+    private static Command 
+    	mainMenuCommand    = new Command(ResourceBundle.getString("menu"),         Command.SCREEN, 3),
+		selectCommand      = new Command(ResourceBundle.getString("select"),       Command.ITEM, 1),
+		newUserCommand     = new Command(ResourceBundle.getString("add_user"),     Command.SCREEN, 2),
+		searchUserCommand  = new Command(ResourceBundle.getString("search_user"),  Command.SCREEN, 2),
+		newGroupCommand    = new Command(ResourceBundle.getString("add_group"),    Command.SCREEN, 2),
+		removeUserCommand  = new Command(ResourceBundle.getString("remove_user"),  Command.SCREEN, 2),
+		removeGroupCommand = new Command(ResourceBundle.getString("remove_group"), Command.SCREEN, 2);
+    
+//#sijapp cond.if modules_DEBUGLOG is "true" #
+    private static Command 
+    	debugListCommand = new Command("*Debug list*", Command.ITEM, 2);
+//#sijapp cond.end#
+    
 
     /** ************************************************************************* */
 
@@ -158,31 +375,89 @@ public class ContactList implements CommandListener
     // Contact items
     private Vector cItems;
 
-    // Have there been changes since last visible list update?
-    private boolean changed;
-
     // Group items
     private Vector gItems;
-
-    // Contact list
-    private List contactList;
-
-    // How many are online
-    private int onlineCount;
     
+    private boolean contactsChanged;
+	
+    // Contains tree nodes by groip ids
+	Hashtable gNodes = new Hashtable();
+	
+	// Tree object
+	Tree tree;
+	
+    public Displayable getVisibleContactListRef()
+    {
+        return tree;
+    }
+	
+	private static int imagesCount;
+	
+	public static int getImagesCount()
+	{
+		return imagesCount;
+	}
+	
+	// Images for icons
+	private static ImageList imageList;
+	
+	
+	public static ImageList getImageList()
+	{
+		return imageList;
+	}
+
     // The current online status
     private long onlineStatus;
 
-    // Reference to currently selected contact item
-    private ContactListContactItem currSelCItem;
+    // Initializer
+    static
+    {
+        // Construct image objects
+        try
+        {
+        	imageList = new ImageList();
+			imageList.load("/icons.png", 16);
+            ContactList.statusAwayImg        = imageList.elementAt(0);
+            ContactList.statusChatImg        = imageList.elementAt(1);
+            ContactList.statusDndImg         = imageList.elementAt(2);
+            ContactList.statusInvisibleImg   = imageList.elementAt(3);
+            ContactList.statusNaImg          = imageList.elementAt(4);
+            ContactList.statusOccupiedImg    = imageList.elementAt(5);
+            ContactList.statusOfflineImg     = imageList.elementAt(6);
+            ContactList.statusOnlineImg      = imageList.elementAt(7);
+            ContactList.eventPlainMessageImg = imageList.elementAt(8);
+            ContactList.eventUrlMessageImg   = imageList.elementAt(9);
+            ContactList.eventSystemNoticeImg = imageList.elementAt(10);
+            ContactList.eventSysActionImg    = imageList.elementAt(11);
+            
+            int from = imageList.size();
+            imageList.load("/icons.png", 16);
+    		int to = imageList.size();
+            for (int i = from; i < to; i++)
+            	imageList.setImage
+				(
+					addC
+					(
+							imageList.elementAt(i), 
+							imageList.getWidth(),
+							imageList.getHeight()
+					),
+					i
+				);
+            imagesCount = from;
+        } 
+        catch (IOException e)
+        {
+            // Do nothing
+        }
+    }
 
     // Constructor
     public ContactList()
     {
-
         onlineStatus = STATUS_ONLINE;
         
-        // Try to load contact list from record store
         try
         {
             this.load();
@@ -192,20 +467,37 @@ public class ContactList implements CommandListener
             this.versionId2 = -1;
             this.cItems = new Vector();
             this.gItems = new Vector();
+            DebugLog.addText("Exception while loading list: "+e.toString());        
         }
-        onlineCount = 0;
-        changed = true;
-        // Initialize contact list
-        this.contactList = new List(ResourceBundle.getString("contact_list"), Choice.IMPLICIT);
+		
+		tree = new Tree(null);
+		
+//#sijapp cond.if target is "MIDP2"#
+		tree.setFullScreenMode(false);
+//#sijapp cond.end#
+		
+		tree.setImageList(imageList);
+		tree.setStepSize( -tree.getItemHeight()/2 );
+		
         //		#sijapp cond.if modules_TRAFFIC is "true" #
         this.updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
         //		#sijapp cond.else #
         this.updateTitle(0);
         //		#sijapp cond.end#
-        this.contactList.addCommand(ContactList.mainMenuCommand);
-        this.contactList.setCommandListener(this);
-        
+        this.tree.addCommand(ContactList.mainMenuCommand);
+		this.tree.addCommand(selectCommand);
+		this.tree.addCommand(newUserCommand);
+		this.tree.addCommand(searchUserCommand);
+		this.tree.addCommand(removeUserCommand);
+		this.tree.addCommand(newGroupCommand);
+		this.tree.addCommand(removeGroupCommand);
+	
+//#sijapp cond.if modules_DEBUGLOG is "true" #
+		this.tree.addCommand(debugListCommand);
+//#sijapp cond.end#
 
+		
+        this.tree.setCommandListener(this);
     }
 
     // Returns the id number #1 which identifies (together with id number #2)
@@ -244,38 +536,57 @@ public class ContactList implements CommandListener
         return (gItems);
     }
 
-    // Return the contactList
-    public List getContactList()
-    {
-        return contactList;
-    }
-
     // Request display of the given alert and the main menu afterwards
     public void activate(Alert alert)
     {
-        Jimm.display.setCurrent(alert, this.contactList);
+        Jimm.display.setCurrent(alert, this.tree);
     }
 
     // Request display of the main menu
     public void activate()
     {
+    	DebugLog.addText("Contact list activated!");
+    	
         //System.out.println("Show the contact list");
         //		#sijapp cond.if modules_TRAFFIC is "true" #
         Jimm.jimm.getContactListRef().updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
         //		#sijapp cond.else #
         this.updateTitle(0);
         //		#sijapp cond.end#
-        if (changed)
-        {
-            this.refreshVisibleList(true);
-        }
-        Jimm.display.setCurrent(this.contactList);
+        
+        // show contact list
+        tree.lock();
+        buildTree();
+        sortAll();
+        tree.unlock();
+        Jimm.display.setCurrent(this.tree);
     }
-
+    
+    // is called by options form when options changed
+    public void optionsChanged(boolean groupsChanged, boolean needToSortContacts)
+    {
+    	// debug feature:
+    	DebugLog.addText
+		(
+			"optionsChanged: groupsChanged="+new Boolean(groupsChanged).toString()+
+			" needToSortContact="+new Boolean(needToSortContacts).toString()
+		);
+    	
+    	if (groupsChanged) treeBuilded = false;
+    	if (needToSortContacts)
+    	{
+    		contactsChanged = true;
+            for (int i = 0; i < gItems.size(); i++)
+    		    ((ContactListGroupItem)gItems.elementAt(i)).setChanged(true);
+    		
+    	}
+    }
+    
     // Tries to load contact list from record store
     private void load() throws Exception, IOException, RecordStoreException
     {
-
+        DebugLog.addText("Loading contact list...");
+        
         // Initialize vectors
         this.cItems = new Vector();
         this.gItems = new Vector();
@@ -292,88 +603,96 @@ public class ContactList implements CommandListener
             }
         }
         if (!exist) throw (new Exception());
-
+        
         // Open record store
         RecordStore cl = RecordStore.openRecordStore("contactlist", false);
 
-        // Temporary variables
-        byte[] buf;
-        ByteArrayInputStream bais;
-        DataInputStream dis;
+        try
+		{
+            // Temporary variables
+            byte[] buf;
+            ByteArrayInputStream bais;
+            DataInputStream dis;
 
-        // Get version info from record store
-        buf = cl.getRecord(1);
-        bais = new ByteArrayInputStream(buf);
-        dis = new DataInputStream(bais);
-        if (!(dis.readUTF().equals(Jimm.VERSION))) throw (new IOException());
-
-        // Get version ids from the record store
-        buf = cl.getRecord(2);
-        bais = new ByteArrayInputStream(buf);
-        dis = new DataInputStream(bais);
-        this.versionId1 = dis.readLong();
-        this.versionId2 = dis.readInt();
-
-        // Read all remaining items from the record store
-        int marker = 3;
-        System.gc();
-        long mem = Runtime.getRuntime().freeMemory();
-        while (marker <= cl.getNumRecords())
-        {
-
-            // Get type of the next item
-            buf = cl.getRecord(marker++);
+            // Get version info from record store
+            buf = cl.getRecord(1);
             bais = new ByteArrayInputStream(buf);
             dis = new DataInputStream(bais);
+            if (!(dis.readUTF().equals(Jimm.VERSION))) throw (new IOException());
 
-            // Loop until no more items are available
-            //int load = 0;
-            while (dis.available() > 0)
+            // Get version ids from the record store
+            buf = cl.getRecord(2);
+            bais = new ByteArrayInputStream(buf);
+            dis = new DataInputStream(bais);
+            this.versionId1 = dis.readLong();
+            this.versionId2 = dis.readInt();
+            
+            // Read all remaining items from the record store
+            int marker = 3;
+            System.gc();
+            long mem = Runtime.getRuntime().freeMemory();
+            while (marker <= cl.getNumRecords())
             {
 
-                // Get item type
-                int type = dis.readInt();
+                // Get type of the next item
+                buf = cl.getRecord(marker++);
+                bais = new ByteArrayInputStream(buf);
+                dis = new DataInputStream(bais);
 
-                // Normal contact
-                if (type == 0)
+                // Loop until no more items are available
+                //int load = 0;
+                while (dis.available() > 0)
                 {
 
-                    // Get id, group id, UIN and name from the record store
-                    int id = dis.readInt();
-                    int group = dis.readInt();
-                    String uin = dis.readUTF();
-                    String name = dis.readUTF();
+                    // Get item type
+                    int type = dis.readInt();
 
-                    // Instantiate ContactListContactItem object and add to
-                    // vector
-                    ContactListContactItem ci = new ContactListContactItem(id, group, uin, name, false, true);
-                    this.cItems.addElement(ci);
-                }
-                // Group of contacts
-                else if (type == 1)
-                {
+                    // Normal contact
+                    if (type == 0)
+                    {
 
-                    // Get id and name from the record store
-                    int id = dis.readInt();
-                    String name = dis.readUTF();
+                        // Get id, group id, UIN and name from the record store
+                        int id = dis.readInt();
+                        int group = dis.readInt();
+                        String uin = dis.readUTF();
+                        String name = dis.readUTF();
 
-                    // Instantiate ContactListGroupItem object and add to vector
-                    ContactListGroupItem gi = new ContactListGroupItem(id, name);
-                    this.gItems.addElement(gi);
+                        // Instantiate ContactListContactItem object and add to
+                        // vector
+                        ContactListContactItem ci = new ContactListContactItem(id, group, uin, name, false, true);
+                        this.cItems.addElement(ci);
+                    }
+                    // Group of contacts
+                    else if (type == 1)
+                    {
+                        // Get id and name from the record store
+                        int id = dis.readInt();
+                        String name = dis.readUTF();
+
+                        // Instantiate ContactListGroupItem object and add to vector
+                        ContactListGroupItem gi = new ContactListGroupItem(id, name);
+                        this.gItems.addElement(gi);
+                    }
                 }
             }
-        }
-        System.gc();
-        System.out.println("clload mem used: "+(mem-Runtime.getRuntime().freeMemory()));
-        // Close record store
-        cl.closeRecordStore();
-
+            System.gc();
+            System.out.println("clload mem used: "+(mem-Runtime.getRuntime().freeMemory()));
+		}
+        finally
+		{
+        	// Close record store
+        	cl.closeRecordStore();  
+		}
+        
+        
+        DebugLog.addText("Contact list loaded...");
     }
 
     // Save contact list to record store
     private void save() throws IOException, RecordStoreException
     {
-
+        DebugLog.addText("Saving contact list...");
+        
         // Try to delete the record store
         try
         {
@@ -433,7 +752,6 @@ public class ContactList implements CommandListener
                 // Initialize buffer
                 baos = new ByteArrayOutputStream();
                 dos = new DataOutputStream(baos);
-
             }
 
         }
@@ -469,73 +787,16 @@ public class ContactList implements CommandListener
         }
         // Close record store
         cl.closeRecordStore();
+                
+        DebugLog.addText("Contact list saved!");
     }
-
-    // Changes only the place of the changed element in the list
-    private synchronized int sortElement(int index)
-    {
-
-        // System.out.println("SortElement: " + index);
-
-        if (this.cItems.size() != 1)
-        {
-            // Insertion sort (sort first by status - online/offline/temprary -,
-            // then by nick)
-            ContactListContactItem v = (ContactListContactItem) this.cItems.elementAt(index);
-            this.cItems.removeElementAt(index);
-
-            int i = 0;
-            while (((ContactListContactItem) this.cItems.elementAt(i)).compareTo(v) < 0)
-            {
-                i++;
-                if (i == this.cItems.size()) break;
-
-            }
-            this.cItems.insertElementAt((ContactListItem) v, i);
-
-            return i;
-        } else
-            return 0;
-    }
-
-    // Sorts the contact list completely (used after rooster update)
-    // Insertion sort (sort first by status - online/offline/temprary -, then by
-    // nick)
-    public synchronized void sortAll()
-    {
-
-        // System.out.println("\n");
-        // System.out.println("sort all");
-
-        int j;
-        ContactListContactItem v, w;
-        for (int i = 1; i < this.cItems.size(); i++)
-        {
-            j = i;
-            v = (ContactListContactItem) this.cItems.elementAt(i);
-            while ((w = (ContactListContactItem) this.cItems.elementAt(j - 1)).compareTo(v) > 0)
-            {
-                this.cItems.setElementAt(w, j);
-                if (--j == 0) break;
-            }
-            if (i != j)
-            {
-                this.cItems.setElementAt(v, j);
-            }
-        }
-        changed = true;
-    }
-
+    
+    
     // Updates the client-side conact list (called when a new roster has been
     // received)
     public synchronized void update(long versionId1, int versionId2, ContactListItem[] items)
     {
-
-        // System.out.println("\n");
-        // System.out.println("update: new rooster");
-
-        // Save selected contact entry
-        this.saveListPosition();
+        DebugLog.addText("update: new rooster");
 
         // Save version numbers
         this.versionId1 = versionId1;
@@ -550,17 +811,7 @@ public class ContactList implements CommandListener
             //System.out.println(i);
             if (items[i] instanceof ContactListContactItem)
             {
-                //Sort the new item in the contact list
-                int j;
-                for (j = 0; i < cItems.size(); j++)
-                {
-                    if (((ContactListContactItem) this.cItems.elementAt(j))
-                            .compareTo((ContactListContactItem) items[i]) >= 0)
-                    {
-                        break;
-                    }
-                }
-                this.cItems.insertElementAt(items[i], j);
+                this.cItems.addElement(items[i]);
             } else if (items[i] instanceof ContactListGroupItem)
             {
                 if (!this.gItems.contains(items[i]))
@@ -569,162 +820,375 @@ public class ContactList implements CommandListener
                 }
             }
         }
-
+        treeBuilded = false;
+        
         // Save new contact list
         try
         {
             this.save();
         } catch (Exception e)
         {
-            // Do nothing
+            DebugLog.addText("Exception while saving list: "+e.toString());
         }
-
     }
+    
 
-    // Updates the client-side contact list (called when roster is up to date)
-    public synchronized void update()
+
+    //==================================//
+    //                                  //
+    //    WORKING WITH CONTACTS TREE    //
+    //                                  //  
+    //==================================//
+    
+    // Sorts the contacts and calc online counters
+    private void sortAll()
     {
-
-        // System.out.println("\n");
-        // System.out.println("update: rooster up to date");
-
-        // Save selected contact entry
-        this.saveListPosition();
+    	if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USER_GROUPS))
+    	{
+            for (int i = 0; i < gItems.size(); i++)
+    		{
+    		    ContactListGroupItem gItem = (ContactListGroupItem)gItems.elementAt(i);
+    		    TreeNode groupNode = (TreeNode)gNodes.get( new Integer(gItem.getId()) );
+    		    if ( gItem.getChanged() )
+    		    {
+    		    	 gItem.setChanged(false);
+    		    	 tree.sortNode( groupNode, createNodeComparer() );
+    		    	 calcGroupData(groupNode, gItem);
+    		    	 DebugLog.addText("Group is sorted: "+gItem.getText()+"...");
+    		    }	 
+    		}
+    	}
+    	else
+    	{
+    		if (contactsChanged)
+    		{
+    			tree.sortNode( null, createNodeComparer() );
+    			contactsChanged = false;
+    			DebugLog.addText("All contacts is sorted...");
+    		}
+    	}
     }
+    
+    // creates node comparer for node sorting 
+    static private TreeNodeComparer createNodeComparer()
+    {
+        switch ( Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_CL_SORT_BY) )
+        {
+        case 0:
+        	return new NodeComparer();
+ 	
+        case 1:
+        	return new SimpleNodeComparer(); 
+        }
+        return null;
+    }
+   
+    
+    private boolean treeBuilded = false;
+    
+    // Builds contacts tree (without sorting) 
+	private void buildTree()
+	{
+	    int i, gCount, cCount;
+	    boolean use_groups = Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USER_GROUPS);
+			    
+		cCount = cItems.size();
+		if (treeBuilded || (cCount == 0)) return;
+		
+		DebugLog.addText("Start to build tree...");
+		
+		System.gc();
+		long startMem = Runtime.getRuntime().freeMemory(); 
+		
+		tree.clear();
+		tree.setShowButtons(use_groups);
+		
+		// add group nodes
+		gNodes.clear();
+		
+		if (use_groups)
+		{
+			gCount = gItems.size();
+			for (i = 0; i < gCount; i++)
+			{
+				ContactListGroupItem item = (ContactListGroupItem)gItems.elementAt(i);
+				item.setChanged(true);
+				TreeNode groupNode = tree.addNode(null, item);
+				gNodes.put(new Integer(item.getId()), groupNode);
+			}
+		}
+		
+		// add contacts
+		for (i = 0; i < cCount; i++)
+		{
+			ContactListContactItem cItem = (ContactListContactItem)cItems.elementAt(i); 
+			if (use_groups)
+			{
+			    ContactListGroupItem group = getGroupById( cItem.getGroup() );
+		  	    TreeNode groupNode = (TreeNode)gNodes.get( new Integer( cItem.getGroup() ) );
+		  		tree.addNode(groupNode, cItem);
+			}
+			else
+			{
+				tree.addNode(null, cItem);
+			}
+		}    
+	
+		contactsChanged = true;
+		treeBuilded = true;
+		
+		System.gc();
+		long endMem = Runtime.getRuntime().freeMemory();
+		
+        DebugLog.addText("Tree used "+
+        Long.toString(startMem-endMem)+"bytes of memory");
+	}
 
+	// Returns reference to group with id or null if group not found
+	ContactListGroupItem getGroupById(int id)
+	{
+	    int count = gItems.size();
+	    for (int i = 0; i < count; i++)
+	    {
+	      if (((ContactListGroupItem)gItems.elementAt(i)).getId() == id) 
+	          return (ContactListGroupItem)gItems.elementAt(i); 
+	    }
+	    return null;
+	}
+   
+    public ContactListContactItem getItembyUIN(String uin)
+    {
+    	int count = cItems.size();
+    	for (int i = 0; i < count; i++)
+    	{
+    	    if (((ContactListContactItem)cItems.elementAt(i)).getUin().equals(uin)) 
+    	        return (ContactListContactItem)cItems.elementAt(i);
+    	}
+    	return null;
+    }
+    
+    // Calculates online/total values for group
+    private void calcGroupData(TreeNode groupNode, ContactListGroupItem group)
+    {
+        if ((group == null) || (groupNode == null)) return;
+        
+        ContactListContactItem cItem;
+        int onlineCount = 0;
+        
+        int count = groupNode.size();
+        for (int i = 0; i < count; i++)
+        {
+        	if (!(groupNode.elementAt(i).getData() instanceof ContactListContactItem)) continue; // TODO: must be removed
+            cItem = (ContactListContactItem)groupNode.elementAt(i).getData();
+            if (cItem.getStatus() != STATUS_OFFLINE) onlineCount++;
+        }
+        group.setCounters(onlineCount, count);
+    }
+    
+    // Must be called after any changes in contacts
+    private void contactChanged
+    (
+    	ContactListContactItem item, 
+		boolean setCurrent, 
+		boolean needSorting,
+		boolean needCalcGroupData
+    )
+    {
+    	boolean contactExistInTree = false,
+		        contactExistsInList,
+		        fullyChanged = false;
+    	TreeNode cItemNode = null;
+    	int i, count, groupId;
+    	
+    	if (!treeBuilded) return;
+    	
+    	try
+		{
+    	
+    	String uin = item.getUin();
+    	
+    	// which group id ?
+    	groupId = item.getGroup();
+    	
+	    // which group ?
+	    ContactListGroupItem group = getGroupById(groupId);
+	    
+		if (!tree.isShown())
+		{
+			if (needSorting && (group != null)) group.setChanged(true);
+	    	contactsChanged |= needSorting;			
+			return;
+		}
+    	
+    	// Whitch group node? 
+    	TreeNode groupNode = (TreeNode)gNodes.get( new Integer(groupId) );
+    	if (groupNode == null) groupNode = tree.getRoot();
+    	
+    	// Does contact exists in tree?
+  		count = groupNode.size();
+   		for (i = 0; i < count; i++)
+   		{
+   			cItemNode = groupNode.elementAt(i);
+   			Object data = cItemNode.getData();
+   			if ( !(data instanceof ContactListContactItem) ) continue; 
+   			if ( !((ContactListContactItem)data).getUin().equals(uin) ) continue;
+   			contactExistInTree = true;
+   			break;
+   		}
+    	
+    	// Does contact exists in internal list? 
+    	contactExistsInList = (getItembyUIN(uin) != null);
+    	
+    	// Lock tree repainting
+    	tree.lock();
+    	
+    	// if have to add new contact
+    	if (contactExistsInList && !contactExistInTree)
+    	{
+    		cItemNode = tree.addNode(groupNode, item);
+    	    fullyChanged = !item.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP);
+    	}
+    	
+    	// if have to delete contact
+    	else if (!contactExistsInList && contactExistInTree)
+    	{
+    		tree.removeNode(cItemNode);
+    		fullyChanged = true;
+    	}
+    	
+    	// sort group
+    	if (needSorting)
+    	{
+    		boolean isCurrent = (tree.getCurrentItem() == cItemNode),
+			        inserted = false;
+    		tree.deleteChild( groupNode, tree.getIndexOfChild(groupNode, cItemNode) );
+    		int contCount = groupNode.size();
+    		TreeNodeComparer comparer = createNodeComparer();
+    		
+    		DebugLog.addText(Integer.toString(contCount));
+    		
+    		for (int j = 0; j < contCount; j++)
+    		{
+    			if (comparer.compareNodes(cItemNode, groupNode.elementAt(j)) < 0)
+    			{
+    				tree.insertChild(groupNode, cItemNode, j);
+    				inserted = true;
+    				break;
+    			}
+    		}
+    		if (!inserted) tree.insertChild(groupNode, cItemNode, contCount);
+    		if (isCurrent) tree.setCurrentItem(cItemNode);
+    	}
+    	
+    	// if set current
+    	if (setCurrent) tree.setCurrentItem(cItemNode);
+    	
+    	// if calc group online/total data
+    	if (fullyChanged || needCalcGroupData) calcGroupData(groupNode, group);
+    	
+    	// unlock tree and repaint
+    	tree.unlock();
+    	
+		}
+    	catch (Exception e) // TODO: remove try {} catch {} !
+		{
+    		DebugLog.addText("contactChanged (Exception): "+e.toString());	
+		}
+    }
+	
+    // Updates the client-side contact list (called when roster is up to date)
+	public synchronized void update()
+	{
+	    System.out.println("update: rooster up to date");
+	    treeBuilded = false;
+	}
+    
     // Updates the client-side contact list (called when coming back from
     // Message Display)
     public synchronized void update(String uin)
     {
-
-        // System.out.println("\n");
-        // System.out.println("update: back form msg display");
-
-        // Save selected contact entry
-        this.saveListPosition();
-
-        // Find postion in list
-        int i;
-        ContactListContactItem cItem;
-        for (i = 0; i < this.cItems.size(); i++)
-        {
-            cItem = (ContactListContactItem) this.cItems.elementAt(i);
-            if (cItem.getUin().equals(uin)) break;
-        }
-        // Update list
-        this.refreshList(true, false, i);
+        System.out.println("update: back form msg display");
+        System.out.println("THIS IS EMPTY METHOD!!!");
     }
 
     // Updates the client-side contact list (called when a contact changes
     // status)
     //  #sijapp cond.if target is "MIDP2"#
-    public synchronized void update(String uin, long status, int capabilities,byte[] internalIP,long dcPort,int dcType,int icqProt,long authCookie)
+    public synchronized void update(String uin, long status, int capabilities,
+            byte[] internalIP, long dcPort, int dcType, int icqProt,
+            long authCookie)
     {
+        ContactListContactItem cItem = getItembyUIN(uin);
+        if (cItem == null) return; // error ???
+        
+        // debug feature:
+    	DebugLog.addText
+		(
+				cItem.getText()+" "+
+				Integer.toString((int)cItem.getStatus())+"->"+
+				Integer.toString((int)Util.translateStatusReceived(status))
+		);
+    	
+    	long trueStatus = Util.translateStatusReceived(status);
+    	boolean statusChanged = (cItem.getStatus() != trueStatus);
+        boolean wasNotOffline = (cItem.getStatus() != STATUS_OFFLINE);
+        boolean nowNotOffline = (trueStatus != STATUS_OFFLINE);
+        
+        // Set Status
+        cItem.setStatus(status);
+        cItem.setCapabilities(capabilities);
 
-        // System.out.println("\n");
-        // System.out.println("update: status change");
-        //Do we have an offline to online change?
-        boolean wasoffline = false;
-        boolean onoffchange = false;
-
-        // Save selected contact entry
-        this.saveListPosition();
-
-        // Find the right itme
-        ContactListContactItem cItem;
-        int i;
-        for (i = 0; i < this.cItems.size(); i++)
+        // Update DC values
+        if (dcType != -1)
         {
-            cItem = (ContactListContactItem) this.cItems.elementAt(i);
-            if (cItem.getUin().equals(uin))
-            {
-                //Do we have on offline<->online change?
-                if (cItem.getStatus() == STATUS_OFFLINE)
-                {
-                    onlineCount++;
-                    wasoffline = true;
-                    onoffchange = true;
-                }
-                if (status == STATUS_OFFLINE)
-                {
-                    onlineCount--;
-                    wasoffline = true;
-                }
-                // Set Status
-                cItem.setStatus(status);
-                cItem.setCapabilities(capabilities);
-                
-                // Update DC values
-                if (dcType != -1)
-                {
-                    cItem.setDCValues(internalIP,Long.toString(dcPort),dcType,icqProt,authCookie);
-                }
-                break;
-            }
+            cItem.setDCValues(internalIP, Long.toString(dcPort), dcType,
+                    icqProt, authCookie);
         }
 
-        // Update list only if the item is in our list (was in the rooster)
-        if (i < this.cItems.size())
-        {
-            // Play sound notice if selected
-            if (onoffchange)
-                this.playSoundNotivication(SOUND_TYPE_ONLINE);
+        // Play sound notice if selected
+        if (status == STATUS_ONLINE)
+            this.playSoundNotivication(SOUND_TYPE_ONLINE);
 
-            // Update visual list (sorting only if it was on online offline or vice versa change
-            this.refreshList(!wasoffline, false, i);
-        }
+        // Update visual list
+        if (statusChanged) contactChanged
+        (
+                cItem, 
+                false, 
+                (wasNotOffline && !nowNotOffline) || (!wasNotOffline && nowNotOffline),
+                true
+        );
     }
+
     // #sijapp cond.else#
     public synchronized void update(String uin, long status, int capabilities)
     {
+        System.out.println("update: status change");
 
-        // System.out.println("\n");
-        // System.out.println("update: status change");
-        //Do we have an offline to online change?
-        boolean wasoffline = false;
-        boolean onoffchange = false;
+        ContactListContactItem cItem = getItembyUIN(uin);
+        if (cItem == null)
+            return; // error ???
+        
+        long trueStatus = Util.translateStatusReceived(status);
+        boolean statusChanged = (cItem.getStatus() != trueStatus);
+        boolean wasNotOffline = (cItem.getStatus() != STATUS_OFFLINE);
+        boolean nowNotOffline = (trueStatus != STATUS_OFFLINE);
+        
+        // Set Status
+        cItem.setStatus(status);
+        cItem.setCapabilities(capabilities);
 
-        // Save selected contact entry
-        this.saveListPosition();
+        // Play sound notice if selected
+        if (status == STATUS_ONLINE)
+            this.playSoundNotivication(SOUND_TYPE_ONLINE);
 
-        // Find the right itme
-        ContactListContactItem cItem;
-        int i;
-        for (i = 0; i < this.cItems.size(); i++)
-        {
-            cItem = (ContactListContactItem) this.cItems.elementAt(i);
-            if (cItem.getUin().equals(uin))
-            {
-                //Do we have on offline<->online change?
-                if (cItem.getStatus() == STATUS_OFFLINE)
-                {
-                    onlineCount++;
-                    wasoffline = true;
-                    onoffchange = true;
-                }
-                if (status == STATUS_OFFLINE)
-                {
-                    onlineCount--;
-                    wasoffline = true;
-                }
-                // Set Status
-                cItem.setStatus(status);
-                cItem.setCapabilities(capabilities);
-               
-                break;
-            }
-        }
-
-        // Update list only if the item is in our list (was in the rooster)
-        if (i < this.cItems.size())
-        {
-            // Play sound notice if selected
-            if (onoffchange)
-                this.playSoundNotivication(SOUND_TYPE_ONLINE);
-
-            // Update visual list (sorting only if it was on online offline or vice versa change
-            this.refreshList(!wasoffline, false, i);
-        }
+        // Update visual list
+        if (statusChanged) contactChanged
+        (
+                cItem, 
+                false, 
+                (wasNotOffline && !nowNotOffline) || (!wasNotOffline && nowNotOffline),
+                true
+        );
     }
     // #sijapp cond.end#
 
@@ -732,18 +1196,19 @@ public class ContactList implements CommandListener
     // status)
     public synchronized void update(String uin, long status)
     {
-        
+        System.out.println("update(String uin, long status)");
         //  #sijapp cond.if target is "MIDP2"#
         this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,new byte[0],0,0,-1,0);
         //  #sijapp cond.else#
         this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL);
         //  #sijapp cond.end#
     }
-
-    // Adds a "c" to the contact list image to show that there is an active chat
-    private Image addC(Image img)
+    
+    
+    // Adds a "c" to the image
+    private static Image addC(Image img, int width, int height)
     {
-        Image copy = Image.createImage(16, 16);
+        Image copy = Image.createImage(width, height);
         Graphics g = copy.getGraphics();
         g.drawImage(img, 0, 0, Graphics.TOP | Graphics.LEFT);
         g.setColor(255, 0, 0);
@@ -755,60 +1220,52 @@ public class ContactList implements CommandListener
         g.drawLine(3, 8, 5, 8);
         g.drawLine(5, 6, 6, 6);
         g.drawLine(5, 3, 6, 3);
-        img = Image.createImage(copy);
-        return img;
+        return copy;
     }
 
     //Updates the title of the list
     public void updateTitle(int traffic)
     {
+    	String text;
         if (traffic != 0)
-            contactList.setTitle(ResourceBundle.getString("contact_list") + " - " + traffic
+            text = ResourceBundle.getString("contact_list") + " - " + traffic
                     + ResourceBundle.getString("kb") + " - "
-                    + Jimm.jimm.getSplashCanvasRef().getDateString(true));
+                    + Jimm.jimm.getSplashCanvasRef().getDateString(true);
         else
-            contactList.setTitle(ResourceBundle.getString("contact_list") + " - "
-                    + Jimm.jimm.getSplashCanvasRef().getDateString(true));
+        	text = ResourceBundle.getString("contact_list") + " - "
+                    + Jimm.jimm.getSplashCanvasRef().getDateString(true);
+        
+//#sijapp cond.if target is "MIDP2"#
+		tree.setTitle(text);
+//#sijapp cond.else#
+		tree.setCaption(text);
+//#sijapp cond.end#
     }
 
     // Removes a contact list item
     public synchronized void removeContactItem(ContactListContactItem cItem)
     {
-
-        // System.out.println("\n");
-        // System.out.println("RemoveItem");
-        // System.out.println(cItem.toString());
-
-        // Save selected contact entry
-        this.saveListPosition();
+        System.out.println("removeContactItem "+cItem.getUin());
 
         // Remove given contact item
         this.cItems.removeElement(cItem);
 
         // Update visual list
-        this.refreshList(true, false, Integer.MAX_VALUE);
-        this.refreshVisibleList(true);
-
+        contactChanged(cItem, false, false, true);
     }
 
     // Adds a contact list item
     public synchronized void addContactItem(ContactListContactItem cItem)
     {
-        // System.out.println("\n");
-        // System.out.println("AddItem");
+        System.out.println("addContactItem "+cItem.getUin());
         if (!cItem.returnBoolValue(ContactListContactItem.VALUE_ADDED))
         {
-            System.out.println(cItem.toString());
-            // Save selected contact entry
-            this.saveListPosition();
             // Add given contact item
             cItem.setBoolValue(ContactListContactItem.VALUE_ADDED,true);
             this.cItems.addElement(cItem);
-            // Resort List
-            this.sortElement(cItems.size() - 1);
+            
             // Update visual list
-            this.refreshList(true, false, Integer.MAX_VALUE);
-            this.refreshVisibleList(true);
+            contactChanged(cItem, true, true, true);
         }
     }
 
@@ -845,42 +1302,68 @@ public class ContactList implements CommandListener
             temp = true;
         }
 
-        // Refresh the contact list
-        if (temp)
-            this.refreshList(false, true, i - 1);
-        else if (!cItem.returnBoolValue(ContactListContactItem.VALUE_CHAT_SHOWN)) this.refreshList(true, true, i);
         // Notify splash canvas
         Jimm.jimm.getSplashCanvasRef().messageAvailable();
         // Notify user
         this.playSoundNotivication(SOUND_TYPE_MESSAGE);
+        
+        // Update tree
+        contactChanged(cItem, true, false, false);
     }
 
     // Play a sound notification
-    private synchronized void playSoundNotivication(int notType)
+    private void playSoundNotivication(int notType)
     {
-        // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
-        
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();
-        // #sijapp cond.else#
-        Jimm.display.flashBacklight(1000);
-        // #sijapp cond.end#
         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
         {
-            // #sijapp cond.if target is "SIEMENS"#
             Vibrator.triggerVibrator(500);
-            // #sijapp cond.else#
-            Jimm.display.vibrate(500);
-            // #sijapp cond.end#
         }
-        
-        int not_mode;
+        int mode_si;
         if (notType == SOUND_TYPE_MESSAGE)
-            not_mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
+            mode_si = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
         else
-            not_mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
+            mode_si = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
             
-        switch (not_mode)
+        switch (mode_si)
+        {
+        case 1:
+            Sound.playTone(1000, 1000);
+            break;
+        case 2:
+            try
+            {
+                Player p;
+                if (notType == SOUND_TYPE_MESSAGE)
+                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
+                else
+                	p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
+                p.start();
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            } catch (MediaException e)
+            {
+                e.printStackTrace();
+            }
+            break;
+
+        }
+        Light.setLightOff();
+        // #sijapp cond.end#
+        // #sijapp cond.if target is "MIDP2"#
+        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
+        {
+            Display.getDisplay(Jimm.jimm).vibrate(500);
+        }
+        int mode_m2;
+        if (notType == SOUND_TYPE_MESSAGE)
+            mode_m2 = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
+        else
+            mode_m2 = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
+            
+        switch (mode_m2)
         {
         case 1:
             try
@@ -888,10 +1371,10 @@ public class ContactList implements CommandListener
                 switch(notType)
                 {
                 case SOUND_TYPE_MESSAGE:
-                    Manager.playTone(ToneControl.C4, 500, Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
+                    Manager.playTone(ToneControl.C4, 500, 100);
                     break;
                 case SOUND_TYPE_ONLINE:
-                    Manager.playTone(ToneControl.C4+7, 500, Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
+                    Manager.playTone(ToneControl.C4+7, 500, 100);
                 }
 
             } catch (MediaException e)
@@ -902,46 +1385,36 @@ public class ContactList implements CommandListener
         case 2:
             try
             {
+                InputStream is;
                 Player p;
-                VolumeControl c;
-                
                 if (notType == SOUND_TYPE_MESSAGE)
                 {
-                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
-                    p.realize();
-                    c = (VolumeControl) p.getControl("VolumeControl");
-                    c.setLevel(Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
-                    System.out.println("MessageVol: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
+                    is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
+                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE).endsWith(".amr"))
+                        p = Manager.createPlayer(is, "audio/amr");
+                    else
+                        p = Manager.createPlayer(is, "audio/x-wav");
                 }
                 else
                 {
-                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
-                    p.realize();
-                    c = (VolumeControl) p.getControl("VolumeControl");
-                    c.setLevel(Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
-                    System.out.println("OnlineVol: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
+                    is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
+                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE).endsWith(".amr"))
+                        p = Manager.createPlayer(is, "audio/amr");
+                    else
+                        p = Manager.createPlayer(is, "audio/x-wav");
                 }
                 p.start();
             } catch (IOException ioe)
             {
-            	// Do nothing
-            	//System.out.println(ioe.toString());
-            }
-            catch (MediaException me)
+            } catch (MediaException me)
             {
                 // Do nothing
-                //System.out.println(me.toString());
             }
 
             break;
 
         }
-        // #sijapp cond.if target is "SIEMENS"#
-        Light.setLightOff();
         // #sijapp cond.end#
-        
-        // #sijapp cond.end#
-        
         // #sijapp cond.if target is "RIM"#
         LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
         LED.setState(LED.STATE_BLINKING);
@@ -970,158 +1443,7 @@ public class ContactList implements CommandListener
         // #sijapp cond.end#
 
     }
-
-    // Save reference to currently selected contact item
-    private void saveListPosition()
-    {
-
-        // System.out.println("\n");
-        // System.out.println("saveListPosition");
-        if (this.contactList.size() > 0)
-        {
-            this.currSelCItem = (ContactListContactItem) this.cItems.elementAt(this.contactList.getSelectedIndex());
-        }
-    }
-
-    // Returns an reference to the visible Contact List
-    public List getVisibleContactListRef()
-    {
-        return this.contactList;
-    }
-
-    // Clears the reference to the currently selected contact item
-    public void resetListPosition()
-    {
-
-        // System.out.println("\n");
-        // System.out.println("resetListPosition");
-        this.currSelCItem = null;
-        this.refreshList(true, false, Integer.MAX_VALUE);
-    }
     
-    // Returns the ContactListContactItem which fits to the given UIN
-    public ContactListContactItem getItembyUIN(String uin)
-    {
-        ContactListContactItem cItem = (ContactListContactItem) this.cItems.elementAt(0);
-        for (int i = 0; i < this.cItems.size(); i++)
-        {
-            cItem = (ContactListContactItem) this.cItems.elementAt(i);
-            if (cItem.getUin().equals(uin))
-                return (cItem);
-        }
-        return (null);
-    }
-    
-    
-    // Return status image
-    public Image getStatusImage(long status)
-    {
-        Image img = statusOnlineImg;
-        
-        if (status == STATUS_AWAY)
-            img = statusAwayImg;
-        else if (status == STATUS_CHAT)
-            img = statusChatImg;
-        else if (status == STATUS_DND)
-            img = statusDndImg;
-        else if (status == STATUS_INVISIBLE)
-            img = statusInvisibleImg;
-        else if (status == STATUS_NA)
-            img = statusNaImg;
-        else if (status == STATUS_OCCUPIED)
-            img = statusOccupiedImg;
-        else if (status == STATUS_OFFLINE)
-            img = statusOfflineImg;
-        else if (status == STATUS_ONLINE) img = statusOnlineImg;
-        
-        return img;
-    }
-
-    // Retruns the image for the given status
-    public Image whichImage(ContactListContactItem cItem)
-    {
-
-        // Get status image
-        Image img = null;
-        if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
-            img = eventSysActionImg;
-        else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE) || cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
-        {
-            img = eventSystemNoticeImg;
-        } else if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP))
-        {
-            img = null;
-        }
-
-        if (!(cItem.isMessageAvailable(ContactListContactItem.MESSAGE_PLAIN) || cItem.isMessageAvailable(ContactListContactItem.MESSAGE_URL) || cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE) || cItem
-                .returnBoolValue(ContactListContactItem.VALUE_NO_AUTH)))
-        {
-            img = this.getStatusImage(cItem.getStatus());
-
-            // Add an "c" the the Status icon determining we have an open chat
-            // session for that one.
-            if (cItem.returnBoolValue(ContactListContactItem.VALUE_HAS_CHAT) && (img != null))
-            {
-                img = this.addC(img);
-            }
-        }
-        return img;
-    }
-
-    // Refreshes the visible contact list
-    public void refreshVisibleList(boolean evenIfNotShown)
-    {
-
-        // System.out.println("refreshVisibleList call");
-
-        //	Refreh the visible List of Conctacts only if its showing or the
-        // update is forced
-        if (Jimm.jimm.getContactListRef().getVisibleContactListRef().isShown() || evenIfNotShown)
-        {
-
-            // System.out.println("refreshVisibleList doit");
-
-            // Dtermine the number of visible items
-            int repeatfor = onlineCount;
-            if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) repeatfor = this.cItems.size();
-
-            ContactListContactItem cItem;
-            Image img;
-
-            //Interate over the number of visible items
-            for (int i = 0; i < repeatfor; i++)
-            {
-
-                // Get the item we want form the Vector
-                cItem = (ContactListContactItem) this.cItems.elementAt(i);
-
-                // Get event image, if event is enabled
-                if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_PLAIN))
-                {
-                    img = eventPlainMessageImg;
-                } else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_URL))
-                {
-                    img = eventUrlMessageImg;
-                } else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
-                    img = eventSysActionImg;
-                else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE))
-                {
-                    img = eventSystemNoticeImg;
-                } else
-                {
-                    img = whichImage(cItem);
-                }
-
-                //System.out.println("Invisble size: "+this.cItems.size());
-                //System.out.println("Visible size: "+this.contactList.size());
-
-                // Add/update list item
-                this.contactList.set(i, cItem.getName(), img);
-            }
-            changed = false;
-        }
-
-    }
 
     //	  public void printContactList(boolean visible){
     //
@@ -1150,149 +1472,76 @@ public class ContactList implements CommandListener
     //	    }
     //	  }
 
-    // Refreshes the contact list
-    // noSort: ContactList will not be resorted
-    // message: is called because a message should be added
-    // position: position of the cItem which should be updated
-    public void refreshList(boolean noSort, boolean message, int position)
-    {
-
-        // System.out.println("jimm:ContactList:refreshList");
-
-        // How long should the visible list be? this.contactList.size() for not
-        // hiding
-        // offline contacts and this.onlineCount if hiding offline contacts
-        int clLength = this.onlineCount;
-        if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE))
-        {
-            clLength = this.cItems.size();
-        }
-
-        // Add empty elements to visual contact list, if required
-        while (this.contactList.size() < clLength)
-        {
-            this.contactList.append("", null);
-        }
-
-        // Delete elements from visual contact list, if required
-        while (this.contactList.size() > clLength)
-        {
-            this.contactList.delete(this.contactList.size() - 1);
-        }
-
-        //	Sorts the element if requested
-        if (!noSort)
-        {
-            position = sortElement(position);
-            changed = true;
-
-            // Refreshes the visible contact list
-            this.refreshVisibleList(false);
-        }
-
-        // New focus
-        boolean focused = false;
-        ContactListContactItem cItem;
-        if (message)
-        {
-
-            //System.out.println("Message");
-            cItem = (ContactListContactItem) this.cItems.elementAt(position);
-            Image img = null;
-
-            // Get event image, if event is enabled
-            if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_PLAIN))
-                img = eventPlainMessageImg;
-            else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_URL)) img = eventUrlMessageImg;
-            if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
-                img = eventSysActionImg;
-            else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE))
-            {
-                img = eventSystemNoticeImg;
-            }
-
-            // Add an "c" the the Status icon determining we have an open chat
-            // session for that one.
-            if (cItem.returnBoolValue(ContactListContactItem.VALUE_HAS_CHAT))
-            {
-                img = this.addC(img);
-            }
-
-            // Add/update list item
-            this.contactList.set(position, cItem.getName(), img);
-
-            // Change selected item
-            if (!focused)
-            {
-                focused = true;
-                this.contactList.setSelectedIndex(position, true);
-                this.currSelCItem = cItem;
-            }
-        } else
-        {
-
-            // Only change image if we have a postion for it and the new status
-            // it not offline and were
-            // are not hiding offline contacts
-            if (position != Integer.MAX_VALUE)
-            {
-                cItem = (ContactListContactItem) this.cItems.elementAt(position);
-                if (!((cItem.getStatus() == STATUS_OFFLINE) && Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)))
-                {
-                    //System.out.println("jimm:ContactList:refreshList: Image
-                    // change at:" + position);
-                    // Update list item
-                    this.contactList.set(position, cItem.getName(), whichImage(cItem));
-                }
-            }
-        }
-
-        // Focus item
-        //	System.out.println("Change focus");
-        if (contactList.size() > 0)
-        {
-            if (!focused && (this.currSelCItem != null) && (this.cItems.indexOf(this.currSelCItem) != -1))
-            {
-                if ((this.cItems.elementAt(this.contactList.getSelectedIndex()) != this.currSelCItem)
-                        && !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE))
-                {
-                    this.contactList.setSelectedIndex(this.cItems.indexOf(this.currSelCItem), true);
-                }
-            } else if (!focused && (this.contactList.size() > 0))
-            {
-                this.contactList.setSelectedIndex(0, true);
-                this.currSelCItem = (ContactListContactItem) this.cItems.elementAt(0);
-            }
-        }
-        //printContactList(true);
-        //printContactList(false);
-    }
+   
+	// Is called when user click to contact
+	void itemClicked()
+	{
+		TreeNode node = tree.getCurrentItem();
+		if (node == null) return;
+		ContactListItem item = (ContactListItem)node.getData();
+		if (item instanceof ContactListContactItem)
+		{
+			// Activate the contact item menu
+			//#sijapp cond.if target is "RIM"#
+			LED.setState(LED.STATE_OFF);
+			//#sijapp cond.end#
+			
+			((ContactListContactItem)item).activateMenu();
+		}
+		else if (item instanceof ContactListGroupItem)
+		{
+			DebugLog.addText(new Boolean(node.getExpanded()).toString());
+			tree.setExpandFlag(node, !node.getExpanded());
+		}
+		
+	}
 
     // Command listener
     public void commandAction(Command c, Displayable d)
     {
-
         // Activate main menu
-        if (c == ContactList.mainMenuCommand)
+        if (c == mainMenuCommand)
         {
             Jimm.jimm.getMainMenuRef().activate();
         }
+        
         // Contact item has been selected
-        else if (c == List.SELECT_COMMAND)
+        else if (c == selectCommand)
         {
-
-            // Get selected contact item
-            ContactListContactItem currCItem = (ContactListContactItem) this.cItems.elementAt(this.contactList
-                    .getSelectedIndex());
-
-            // Activate the contact item menu
-						//#sijapp cond.if target is "RIM"#
- 			      LED.setState(LED.STATE_OFF);
-						//#sijapp cond.end#
-            currCItem.activateMenu();
-
+        	itemClicked();
         }
 
+        // "new user" menu item selected
+        else if (c == newUserCommand)
+        {
+            (new AddUserForm()).go();
+        }
+    	
+        // "search user" menu item selected
+        else if (c == searchUserCommand)
+        {
+            Search search = new Search();
+            search.getSearchForm().activate(false);
+        }
+        
+        // "add group" menu item selected
+        else if (c == newGroupCommand)
+        {
+            (new AddGroupForm()).go();
+        }
+        
+        // "remove group" menu item selected
+        else if (c == removeGroupCommand)
+        {
+            (new RemoveGroupForm()).go();
+        }
+        
+//#sijapp cond.if modules_DEBUGLOG is "true" #
+        else if (c == debugListCommand)
+        {
+            DebugLog.activate();
+        }
+//#sijapp cond.end#
     }
 
 }

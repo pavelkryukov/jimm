@@ -245,6 +245,43 @@ public class ContactListContactItem extends ContactListItem
         this.capabilities = capabilities;
     }
     
+    public String getText()
+    {
+        return name;
+    }
+
+    // Returns imaghe index for contact
+    public int getImageIndex()
+    {
+    	int tempIndex = -1;
+    	
+    	if (isMessageAvailable(MESSAGE_PLAIN)) tempIndex = 8;
+        else if (isMessageAvailable(MESSAGE_URL)) tempIndex = 9;
+    	else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
+        else if (isMessageAvailable(MESSAGE_SYS_NOTICE) || returnBoolValue(VALUE_NO_AUTH)) tempIndex = 10;
+        else tempIndex = getStatusImageIndex(status);
+
+    	if ((tempIndex != -1) && (returnBoolValue(VALUE_HAS_CHAT)))
+    	{
+    		tempIndex += ContactList.getImagesCount();
+    	}
+    	
+        return tempIndex;
+    }
+    
+    public static int getStatusImageIndex(long status)
+    {
+        if (status == ContactList.STATUS_AWAY)      return 0;
+        else if (status == ContactList.STATUS_CHAT)     return  1;
+        else if (status == ContactList.STATUS_DND)       return 2;
+        else if (status == ContactList.STATUS_INVISIBLE) return 3;
+        else if (status == ContactList.STATUS_NA)        return 4;
+        else if (status == ContactList.STATUS_OCCUPIED)  return 5;
+        else if (status == ContactList.STATUS_OFFLINE)   return 6;
+        else if (status == ContactList.STATUS_ONLINE)    return  7;
+        return -1;
+    }
+    
     //  #sijapp cond.if target is "MIDP2"#
     // Sets the DC values
     public void setDCValues(byte[] _internalIP,String _dcPort,int _dcType,int _icqProt,long _authCookie)

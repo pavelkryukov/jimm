@@ -176,6 +176,17 @@ public class Text_RU extends ResourceBundle
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Вас добавил: ");
 		resources.put("chat_small_font",             "Мелкий шрифт в чате");
+		resources.put("select",                      "Выбрать");
+		
+		// User management **********
+		resources.put("group_is_not_empty",          "Выбранная группа не пустая!\nПереместите всех пользователей в другие группы!");
+		resources.put("add_group",                   "Добавить группу");
+		resources.put("group_name",                  "Имя группы");
+		resources.put("exec",                        "Выполнить");
+		resources.put("remove_user",                 "Удалить пользователя");
+		resources.put("remove_group",                "Удалить группу");
+		resources.put("show_user_groups",            "Группировать контакты");
+		
 
 		// Generic errors
 		resources.put("error_100",                   "Неизвестная ошибка (#100.EXT)");
