@@ -31,11 +31,15 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- Change this to the directory where MIDP SDK 1.0.3 is installed. You   -->
 	<!-- can use both the slash and the backslash for separating path          -->
 	<!-- components.                                                           -->
-	<property name="midp"         value="CHANGE ME"                   	        />
+	<property name="midp_DEF"         value="CHANGE ME"                   	    />
+	<property name="midp_SIE"         value="CHANGE ME"                         />
+	<property name="midp_S40"         value="CHANGE ME"                         />
 	<!-- ********************************************************************* -->
 	<!-- This property must point at the MIDP API classes and all extension    -->
 	<!-- classes required by the chosen target.                                -->
-	<property name="midp/lib"     value="${midp}/lib/midp.jar"                  />
+	<property name="midp/lib_DEF"     value="CHANGE ME"                         />
+	<property name="midp/lib_SIE"     value="CHANGE ME"                         />
+	<property name="midp/lib_S40"     value="CHANGE ME"                         />
 	<!-- ********************************************************************* -->
 	<!-- Change this to the directory where ProGuard is installed. You can     -->
 	<!-- use both the slash and the backslash for separating path components.  -->
