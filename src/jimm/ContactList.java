@@ -809,6 +809,11 @@ public class ContactList implements CommandListener
         //DebugLog.addText("Contact list saved!");
     }
     
+    protected void beforeConnect()
+    {
+    	tree.clear();
+    	treeBuilded = false;
+    }
     
     // Updates the client-side conact list (called when a new roster has been
     // received)
