@@ -21,7 +21,7 @@
  Author(s): Andreas Rossbacher
  *******************************************************************************/
 
-//#sijapp cond.if target is "MIDP2"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
 
 package jimm;
 
@@ -30,7 +30,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.microedition.io.Connector;
+// #sijapp cond.if target is "MOTOROLA"#
+import com.motorola.io.FileConnection;
+// #sijapp cond.else#
 import javax.microedition.io.StreamConnection;
+// #sijapp cond.end#
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -53,7 +57,10 @@ import jimm.util.ResourceBundle;
 
 public class FileTransfer implements CommandListener
 {
-
+    // #sijapp cond.if target is "MOTOROLA"#
+     FileConnection fc;
+    // #sijapp cond.end#
+    
     // Type of filetrasfer
     public static final int FT_TYPE_FILE_BY_NAME = 1;
     public static final int FT_TYPE_CAMERA_SNAPSHOT = 2;
@@ -195,7 +202,35 @@ public class FileTransfer implements CommandListener
                 byte[] fileData;
                 String path = this.fileNameField.getString();
 
-                StreamConnection con = null;
+               // #sijapp cond.if target is "MOTOROLA"#
+               try
+                {
+                    fc = (FileConnection) Connector.open("file://" + path);
+                    System.out.println("fc");
+                    int size=(int) fc.fileSize();
+                    DataInputStream dis = fc.openDataInputStream();
+                     fileData = new byte[size];
+                    dis.readFully(fileData, 0, size);
+                    dis.close();
+                     fc.close();
+                    // Set the file data in file transfer
+                    FileTransfer.this.setData(fileData);
+
+                    // Create filename and ask for name and description
+                    int i = path.length() - 1;
+                    char backslash = '/';
+                    while (path.charAt(i) != backslash)
+                        i--;
+                    this.askForNameDesc(path.substring(i + 1), "");
+                } catch (IOException ioe)
+                {
+                   // JimmException.handleException(new JimmException(192, 0, true));
+                } catch (Exception e)
+                {
+                    //JimmException.handleException(new JimmException(191, 0, true));
+                } 
+               // #sijapp cond.else#
+               StreamConnection con = null;
                 
                 try
                 {
@@ -230,7 +265,7 @@ public class FileTransfer implements CommandListener
                     {
                     } // Do nothing
                 }
-
+// #sijapp cond.end#
             }
 
         } else if (c == this.backCommand)
