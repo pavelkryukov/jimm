@@ -68,6 +68,13 @@ public class ContactListContactItem extends ContactListItem
     public static final int MESSAGE_URL          = 2;
     public static final int MESSAGE_SYS_NOTICE   = 3;
     public static final int MESSAGE_AUTH_REQUEST = 4;
+    
+    // Value types
+    public static final int VALUE_ADDED 		 = 5;
+    public static final int VALUE_NO_AUTH		 = 6;
+    public static final int VALUE_CHAT_SHOWN	 = 7;
+    public static final int VALUE_IS_TEMP 		 = 8;
+    public static final int VALUE_HAS_CHAT		 = 9;
 
     /** ************************************************************************* */
 
@@ -118,18 +125,34 @@ public class ContactListContactItem extends ContactListItem
         this.requReason = false;
     }
 
-    // Returns if added to the contact list
-    public boolean added()
+    // Retruns boolean value by property
+    public boolean returnBoolValue(int value)
     {
-        return (this.added);
+        switch (value)
+        {
+        case VALUE_ADDED: return (this.added);
+        case VALUE_NO_AUTH: return (noAuth);
+        case VALUE_CHAT_SHOWN: return msgDisplay.isShown();
+        case VALUE_IS_TEMP: return (this.temporary);
+        case VALUE_HAS_CHAT: if (msgDisplay.size() == 0)
+            					return false;
+        					 else
+        					     return true;
+        default: return false;
+        }
     }
-
-    // Sets the contact item added
-    public void setAdded(boolean added)
+    
+    // Sets boolean value by property
+    public void setBoolValue(int value,boolean bool_value)
     {
-        this.added = added;
+        switch (value)
+        {
+        case VALUE_ADDED: this.added = bool_value;
+        case VALUE_NO_AUTH: this.noAuth = bool_value;
+        case VALUE_IS_TEMP: this.temporary = bool_value;
+        }
     }
-
+    
     // Returns the contact item id
     public int getId()
     {
@@ -177,31 +200,7 @@ public class ContactListContactItem extends ContactListItem
     {
         this.name = new String(name);
     }
-
-    // Retrun the staate of authorisation
-    public boolean noAuth()
-    {
-        return (noAuth);
-    }
-
-    // Sets stat auf authorisation
-    public void setNoAuth(boolean noAuth)
-    {
-        this.noAuth = noAuth;
-    }
-
-    // Returns true if this is a contact which is on the local list
-    public boolean isTemporary()
-    {
-        return (this.temporary);
-    }
-
-    // Permanent / temporary contact entry
-    public void setTemporary(boolean temporary)
-    {
-        this.temporary = temporary;
-    }
-
+    
     // Returns the status of this contact item
     public long getStatus()
     {
@@ -274,7 +273,7 @@ public class ContactListContactItem extends ContactListItem
             {
                 if (notice.isAUTH_granted())
                 {
-                    this.setNoAuth(false);
+                    this.setBoolValue(VALUE_NO_AUTH,false);
                     this.addTextToForm(ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
                             + notice.getSndrUin() + ".", "", notice.getDate(), false);
                     Jimm.jimm.getContactListRef().refreshVisibleList(true);
@@ -297,11 +296,12 @@ public class ContactListContactItem extends ContactListItem
         stamp.setTime(time);
 
         Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
+        Image prequel;
         // #sijapp cond.if target is "MIDP2"#
-        Image prequel = Image.createImage(msgDisplay.getWidth(), prequelFont.getHeight() + 2);
+        prequel = Image.createImage(msgDisplay.getWidth(), prequelFont.getHeight() + 2);
         Font textFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
         // #sijapp cond.else#
-        Image prequel = Image.createImage(120, prequelFont.getHeight() + 2);
+        prequel = Image.createImage(120, prequelFont.getHeight() + 2);
         // #sijapp cond.end#
         Graphics g = prequel.getGraphics();
         if (!red)
@@ -330,21 +330,6 @@ public class ContactListContactItem extends ContactListItem
         msgDisplay.append(messageItem);
     }
 
-    // Returns if the chat hisotry screen is shown
-    public boolean chatShown()
-    {
-        return msgDisplay.isShown();
-    }
-
-    // Returns if the contact item has a chat runnig
-    public boolean hasChat()
-    {
-        if (msgDisplay.size() == 0)
-            return false;
-        else
-            return true;
-    }
-
     public synchronized void resetUnreadMessages()
     {
         plainMessages = 0;
@@ -370,7 +355,7 @@ public class ContactListContactItem extends ContactListItem
     {
         if (!(obj instanceof ContactListContactItem)) return (false);
         ContactListContactItem ci = (ContactListContactItem) obj;
-        return (this.uin.equals(ci.getUin()) && (this.temporary == ci.isTemporary()));
+        return (this.uin.equals(ci.getUin()) && (this.temporary == ci.returnBoolValue(VALUE_IS_TEMP)));
     }
 
     // Compare two contact items (sort by status/nick)
@@ -379,9 +364,9 @@ public class ContactListContactItem extends ContactListItem
 
         // Get status and temporary flag
         long cItem1Status = this.getStatus();
-        boolean cItem1IsTemporary = this.isTemporary();
+        boolean cItem1IsTemporary = this.returnBoolValue(VALUE_IS_TEMP);
         long cItem2Status = cItem2.getStatus();
-        boolean cItem2IsTemporary = cItem2.isTemporary();
+        boolean cItem2IsTemporary = cItem2.returnBoolValue(VALUE_IS_TEMP);
 
         // Compare, return negative int if cItem1 < cItem2, 0 if cItem1 ==
         // cItem2, or positive int if cItem1 > cItem2
@@ -669,7 +654,7 @@ public class ContactListContactItem extends ContactListItem
                     try
                     {
                         Jimm.jimm.getIcqRef().requestAction(sysNotAct);
-                        if (ContactListContactItem.this.isTemporary()) Jimm.jimm.getIcqRef().requestAction(updateAct);
+                        if (ContactListContactItem.this.returnBoolValue(VALUE_IS_TEMP)) Jimm.jimm.getIcqRef().requestAction(updateAct);
                     } catch (JimmException e)
                     {
                         JimmException.handleException(e);
@@ -738,7 +723,7 @@ public class ContactListContactItem extends ContactListItem
         {
 
             // Display chat history
-            if (ContactListContactItem.this.hasChat())
+            if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
             {
                 msgDisplay.removeCommand(MenuUtil.grantAuthCommand);
                 msgDisplay.removeCommand(MenuUtil.denyAuthCommand);
@@ -752,7 +737,7 @@ public class ContactListContactItem extends ContactListItem
                     msgDisplay.addCommand(MenuUtil.grantAuthCommand);
                     msgDisplay.addCommand(MenuUtil.denyAuthCommand);
                 }
-                if (ContactListContactItem.this.noAuth()) msgDisplay.addCommand(MenuUtil.reqAuthCommand);
+                if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH)) msgDisplay.addCommand(MenuUtil.reqAuthCommand);
                 msgDisplay.setCommandListener(this);
                 // Display history
                 ContactListContactItem.this.resetUnreadMessages();
@@ -764,7 +749,7 @@ public class ContactListContactItem extends ContactListItem
             {
                 MenuUtil.menuList.setTitle(ContactListContactItem.this.name);
                 if (MenuUtil.menuList.size() > 4) MenuUtil.menuList.delete(4);
-                if (ContactListContactItem.this.noAuth())
+                if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH))
                         MenuUtil.menuList.append(ResourceBundle.getString("requauth"), null);
                 MenuUtil.menuList.setSelectedIndex(0, true);
                 MenuUtil.menuList.setCommandListener(this);

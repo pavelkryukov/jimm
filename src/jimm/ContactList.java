@@ -296,6 +296,8 @@ public class ContactList implements CommandListener
 
         // Read all remaining items from the record store
         int marker = 3;
+        System.gc();
+        long mem = Runtime.getRuntime().freeMemory();
         while (marker <= cl.getNumRecords())
         {
 
@@ -341,6 +343,8 @@ public class ContactList implements CommandListener
                 }
             }
         }
+        System.gc();
+        System.out.println("clload mem used: "+(mem-Runtime.getRuntime().freeMemory()));
         // Close record store
         cl.closeRecordStore();
 
@@ -706,13 +710,13 @@ public class ContactList implements CommandListener
     {
         // System.out.println("\n");
         // System.out.println("AddItem");
-        if (!cItem.added())
+        if (!cItem.returnBoolValue(ContactListContactItem.VALUE_ADDED))
         {
             System.out.println(cItem.toString());
             // Save selected contact entry
             this.saveListPosition();
             // Add given contact item
-            cItem.setAdded(true);
+            cItem.setBoolValue(ContactListContactItem.VALUE_ADDED,true);
             this.cItems.addElement(cItem);
             // Resort List
             this.sortElement(cItems.size() - 1);
@@ -748,7 +752,7 @@ public class ContactList implements CommandListener
         if (!listed)
         {
             cItem = new ContactListContactItem(0, 0, message.getSndrUin(), message.getSndrUin(), false, true);
-            cItem.setTemporary(true);
+            cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP,true);
             cItem.addMessage(message);
             this.cItems.addElement(cItem);
             i++;
@@ -758,7 +762,7 @@ public class ContactList implements CommandListener
         // Refresh the contact list
         if (temp)
             this.refreshList(false, true, i - 1);
-        else if (!cItem.chatShown()) this.refreshList(true, true, i);
+        else if (!cItem.returnBoolValue(ContactListContactItem.VALUE_CHAT_SHOWN)) this.refreshList(true, true, i);
         // Notify splash canvas
         Jimm.jimm.getSplashCanvasRef().messageAvailable();
         // Notify user
@@ -918,16 +922,16 @@ public class ContactList implements CommandListener
         Image img = null;
         if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
             img = eventSysActionImg;
-        else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE) || cItem.noAuth())
+        else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE) || cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
         {
             img = eventSystemNoticeImg;
-        } else if (cItem.isTemporary())
+        } else if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP))
         {
             img = null;
         }
 
         if (!(cItem.isMessageAvailable(ContactListContactItem.MESSAGE_PLAIN) || cItem.isMessageAvailable(ContactListContactItem.MESSAGE_URL) || cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE) || cItem
-                .noAuth()))
+                .returnBoolValue(ContactListContactItem.VALUE_NO_AUTH)))
         {
             long status = cItem.getStatus();
             if (status == STATUS_AWAY)
@@ -948,7 +952,7 @@ public class ContactList implements CommandListener
 
             // Add an "c" the the Status icon determining we have an open chat
             // session for that one.
-            if (cItem.hasChat() && (img != null))
+            if (cItem.returnBoolValue(ContactListContactItem.VALUE_HAS_CHAT) && (img != null))
             {
                 img = this.addC(img);
             }
@@ -1101,7 +1105,7 @@ public class ContactList implements CommandListener
 
             // Add an "c" the the Status icon determining we have an open chat
             // session for that one.
-            if (cItem.hasChat())
+            if (cItem.returnBoolValue(ContactListContactItem.VALUE_HAS_CHAT))
             {
                 img = this.addC(img);
             }

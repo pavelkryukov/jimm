@@ -492,7 +492,7 @@ public class Search
                 ContactListContactItem cItem = new ContactListContactItem(0, Jimm.jimm.getContactListRef()
                         .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getUIN(selectedIndex),
                         Search.this.getNick(selectedIndex), false, false);
-                cItem.setTemporary(true);
+                cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP,true);
 
                 Jimm.jimm.getIcqRef().addToContactList(cItem);
 
