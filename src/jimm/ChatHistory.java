@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/ChatHistory.java
- Version: 0.2.2  Date: 2004/07/12
+ Version: ###VERSION###  Date: ###DATE###
  Author(s): Andreas Rossbacher
  *******************************************************************************/
 
