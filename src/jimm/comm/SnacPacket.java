@@ -193,8 +193,12 @@ public class SnacPacket extends Packet
 	public static final int SRV_REPLYROSTER_COMMAND = 0x0006;
 
 	// CLI_ROSTERACK packet family and command
-	public static final int CLI_ROSTERACK_FAMILY = 0x00013;
+	public static final int CLI_ROSTERACK_FAMILY = 0x0013;
 	public static final int CLI_ROSTERACK_COMMAND = 0x0007;
+	
+	// CLI_ROSTERADD packet family and command
+	public static final int CLI_ROSTERADD_FAMILY = 0x0013;
+	public static final int CLI_ROSTERADD_COMMAND = 0x0008;
 
 	// CLI_ROSTERUPDATE packet family and command
 	public static final int CLI_ROSTERUPDATE_FAMILY = 0x0013;
