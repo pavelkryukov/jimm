@@ -307,7 +307,9 @@ public class Search
                 }
                 
                 // Draw a result entry
+//              #sijapp cond.if target is "MIDP2"#
                 resultScreen.setFullScreenMode(true);
+//              #sijapp cond.end#
                 resultScreen.lock();
                 resultScreen.setCaption(ResourceBundle.getString("results")+" "+new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString());
                 // UIN
@@ -356,7 +358,9 @@ public class Search
             } else
             {
                 // Draw a result entry
+//              #sijapp cond.if target is "MIDP2"#
                 resultScreen.setFullScreenMode(true);
+//              #sijapp cond.end#
                 resultScreen.lock();
                 resultScreen.setCaption(ResourceBundle.getString("results")+" 0/0");
                 // No results
