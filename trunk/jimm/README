@@ -8,18 +8,19 @@ _______________________________________________________________________________
 ABOUT
 
 Jimm is a native ICQ clone for Java 2 Platform Micro Edition (J2ME), Mobile
-Information Device Profile (MIDP) 1.0. It supports the new v8 protocol, former
-protocols are not supported.
+Information Device Profile (MIDP) 1.0 and 2.0 . It supports the new v8 protocol, 
+former protocols are not supported.
 
 Jimm is probably the most lightweight ICQ clone available, so please do not
 expect the same features your favourite desktop client has. Currently, Jimm has
 the following features:
 
   *  Request and read the server side contact list
-  *  Send plain messages (type 1)
+  *  Send plain messages (type 1 and 2)
   *  Receive plain messages (type 1, 2 and 4, and offline messages)
   *  Send URL messages (type 4)
   *  Receive URL messages (type 1, 2 and 4, and offline messages)
+  *  Send file transfer messages and send files (type 2 and direct connection)
   *  Set your status (away, n/a, etc.)
   *  Receive status updates (user is away, n/a, etc.)
   *  Request information about another user
@@ -29,11 +30,7 @@ the following features:
   *  Answer authorization requests
   *  Multilingual user interface
 
-Jimm does not support peer to peer connections (and will never do so), all
-messages are routed through the central ICQ/AIM server by using a single
-persistent TCP/IP connection.
-
-________________________________________________________________________________
+____________________________________________________________________________
 PACKAGE CONTENTS
 
   |- README (this file)
@@ -97,15 +94,14 @@ On Siemens S55 mobiles there are the following graphical errors:
     (Both depend on errors on the S55 and they might be fixed by Siemens in
     upcoming firmware releases)
   * On devices with heap memory bellow 300kb (e.g. Siemens S55) Jimm will only
-    run stable with less than 40 contacts. You should also disable the chat history
-    feature
-  * On Nokia 6230 with FW > 3.15 you have to set "Communication-Network access" for
-    Jimm to "Ask everytime". When the phone asks you to accept the connection the
-    second time just wait about 5 seconds till the GRPS connection is ready for the
-    new connection. (you can see this by the changing "G" symbol on the phone)
-
-The background of the flowers if there is an active chat is no longer
-transparent.
+    run stable with less than 40 contacts.
+  * The background of the flowers if there is an active chat is no longer
+    transparent.
+  
+On Nokia 6230 with FW > 3.15 you have to set "Communication-Network access" for
+Jimm to "Ask everytime". When the phone asks you to accept the connection the
+second time just wait about 5 seconds till the GRPS connection is ready for the
+new connection. (you can see this by the changing "G" symbol on the phone)
 
 ________________________________________________________________________________
 HOW TO BUILD
@@ -133,6 +129,12 @@ instructions in the ProGuard manual to install ProGuard.
 At first, open the Apache ant buildfiles (build.xml, util/sijapp/build.xml)
 and change the properties in the configuration/customization section. You can
 use both the slash and the backslash for separating path components.
+
+If you are using the Sun WirelessToolkit newer than 2.0 you have to join the 
+midpapi20.jar or midpapi10.jar file with the corresponding cldcapi1x.jar file. 
+If you want to build the MIDP2 target you also have to include the content of 
+mmapi.jar in the main .jar archive you link to in the path you entered in 
+build.xml 
 
 To build Jimm, just type 'ant' or 'ant dist'. To disable class file
 obfuscation, add '-Dskip-obfuscate=1' to the before mentioned command. If
