@@ -43,18 +43,8 @@ import javax.microedition.lcdui.TextField;
 
 public class Search
 {
-
+      
     private SearchForm searchForm;
-
-    // Results
-    private Vector uin;
-    private Vector nick;
-    private Vector name;
-    private Vector email;
-    private Vector auth;
-    private Vector status;
-    private Vector gender;
-    private Vector age;
 
     // Request
     private String reqUin;
@@ -65,82 +55,30 @@ public class Search
     private String reqCity;
     private String reqKeyword;
     private boolean onlyOnline;
+    
+    // Results
+    private Vector results;
 
     // Constructor
     public Search()
     {
-        this.uin = new Vector();
-        this.nick = new Vector();
-        this.name = new Vector();
-        this.email = new Vector();
-        this.auth = new Vector();
-        this.status = new Vector();
-        this.gender = new Vector();
-        this.age = new Vector();
-
         this.searchForm = new SearchForm();
-    }
-
-    // Return the nick for SearchResult at index i
-    public String getNick(int i)
-    {
-        return (String) this.nick.elementAt(i);
-    }
-
-    // Return the uin for SearchResult at index i
-    public String getUIN(int i)
-    {
-        return (String) this.uin.elementAt(i);
-    }
-
-    // Return the auth String for SearchResult at index i
-    public String getAuthString(int i)
-    {
-        return (String) this.auth.elementAt(i);
-    }
-
-    // Return the name for SearchResult at index i
-    public String getName(int i)
-    {
-        return (String) this.name.elementAt(i);
-    }
-
-    // Return the email for SearchResult at index i
-    public String getEmail(int i)
-    {
-        return (String) this.email.elementAt(i);
-    }
-
-    // Return the gender string for SearchResult at index i
-    public String getGender(int i)
-    {
-        return (String) this.gender.elementAt(i);
-    }
-
-    // Return the age for SearchResult at index i
-    public String getAge(int i)
-    {
-        return new String(this.age.elementAt(i).toString());
+        
+        this.results = new Vector();
     }
     
-    // Return the status for SearchResult at index i
-    public Integer getStatus(int i)
-    {
-        return (Integer) this.status.elementAt(i);
-    }
-
     // Add a result to the results vector
     public void addResult(String uin, String nick, String name, String email, String auth, int status, String gender,
             int age)
     {
-        this.uin.addElement(uin);
-        this.nick.addElement(nick);
-        this.name.addElement(name);
-        this.email.addElement(email);
-        this.auth.addElement(auth);
-        this.status.addElement(new Integer(status));
-        this.gender.addElement(gender);
-        this.age.addElement(new Integer(age));
+        SearchResult result = new SearchResult(uin,nick,name,email,auth,status,gender,age);
+        this.results.addElement(result);
+    }
+    
+    // Return a result object by given Nr
+    public SearchResult getResult(int nr)
+    {
+        return (SearchResult) results.elementAt(nr);
     }
 
     // Set a search request
@@ -178,7 +116,7 @@ public class Search
     // Return size of search results
     public int size()
     {
-        return uin.size();
+        return results.size();
     }
 
     // Return the SearchForm object
@@ -187,6 +125,71 @@ public class Search
         return this.searchForm;
     }
 
+    /** ************************************************************************* */
+    /** ************************************************************************* */
+    /** ************************************************************************* */
+    
+    // Class for search result entries
+    public class SearchResult
+    {
+        
+        // Return types
+        public static final int FIELD_UIN	  = 1;
+        public static final int FIELD_NICK    = 2;
+        public static final int FIELD_NAME    = 3;
+        public static final int FIELD_EMAIL   = 4;
+        public static final int FIELD_STATUS  = 5;
+        public static final int FIELD_AUTH    = 6;
+        public static final int FIELD_GENDER  = 7;
+        public static final int FIELD_AGE     = 8;
+        
+        // Results
+        private String uin;
+        private String nick;
+        private String name;
+        private String email;
+        private String auth;
+        private int status;
+        private String gender;
+        private int age;
+        
+        public SearchResult(String _uin,String _nick,String _name,String _email,String _auth,int _status,String _gender,int _age)
+        {
+            uin = _uin;
+            nick = _nick;
+            name = _name;
+            email = _email;
+            auth = _auth;
+            status = _status;
+            gender = _gender;
+            age = _age;
+            
+        }
+        
+        // Return given String value
+        public String getStringValue(int value)
+        {
+            switch (value)
+            {
+            case FIELD_UIN: return uin; 
+            case FIELD_NICK: return nick;
+            case FIELD_NAME: return name;
+            case FIELD_EMAIL: return email;
+            case FIELD_AUTH: return auth;
+            case FIELD_GENDER: return gender;
+            case FIELD_AGE: return Integer.toString(age);
+            default: return "";
+            }
+        }
+        
+        // Return given int value
+        public int getStatus()
+        {
+            return status; 
+        }
+    
+    }
+    
     /** ************************************************************************* */
     /** ************************************************************************* */
     /** ************************************************************************* */
@@ -336,7 +339,7 @@ public class Search
                 // Draw "Nick: "
                 g.drawString(ResourceBundle.getString("nick") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 // Draw "Auth: "
-                g.drawString(ResourceBundle.getString("auth") + ": ", typeFont.stringWidth(ResourceBundle.getString("nick") + ": ") + contentFont.stringWidth(Search.this.getNick(n)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("auth") + ": ", typeFont.stringWidth(ResourceBundle.getString("nick") + ": ") + contentFont.stringWidth(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NICK)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker += 1;
                 
                 // Draw "Name: "
@@ -344,7 +347,7 @@ public class Search
                 lineMarker+=1;
                 
                 // Draw "Email: " only of there is an email adress
-                if (Search.this.getEmail(n).length() > 0)
+                if (Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL).length() > 0)
                 {
                     g.drawString(ResourceBundle.getString("email") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                     lineMarker+=1;
@@ -353,7 +356,7 @@ public class Search
                 // Draw "Gender: "
                 g.drawString(ResourceBundle.getString("gender") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 // Draw "Age: "
-                g.drawString(ResourceBundle.getString("age") + ": ", typeFont.stringWidth(ResourceBundle.getString("gender") + ": ") + contentFont.stringWidth(Search.this.getGender(n)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(ResourceBundle.getString("age") + ": ", typeFont.stringWidth(ResourceBundle.getString("gender") + ": ") + contentFont.stringWidth(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
 
                 g.setFont(contentFont);
                 g.setColor(0, 0, 255);
@@ -363,38 +366,38 @@ public class Search
                 // Draw counter
                 g.drawString(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString(), typeFont.stringWidth(ResourceBundle.getString("nr") + ".: "), 2, Graphics.TOP | Graphics.LEFT);
                 // Draw UIN
-                g.drawString(Search.this.getUIN(n), typeFont.stringWidth(ResourceBundle.getString("nr") + ".: ") + contentFont.stringWidth(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size())) + typeFont.stringWidth(" " + ResourceBundle.getString("uin") + ": "), 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_UIN), typeFont.stringWidth(ResourceBundle.getString("nr") + ".: ") + contentFont.stringWidth(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size())) + typeFont.stringWidth(" " + ResourceBundle.getString("uin") + ": "), 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw nick
-                g.drawString(Search.this.getNick(n), typeFont.stringWidth(ResourceBundle.getString("nick") + ": "),(typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NICK), typeFont.stringWidth(ResourceBundle.getString("nick") + ": "),(typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 // Draw auth string
-                g.drawString(Search.this.getAuthString(n), typeFont.stringWidth(ResourceBundle.getString("nick") + ": ") + contentFont.stringWidth(Search.this.getNick(n)) + typeFont.stringWidth(ResourceBundle.getString("nick") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AUTH), typeFont.stringWidth(ResourceBundle.getString("nick") + ": ") + contentFont.stringWidth(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NAME)) + typeFont.stringWidth(ResourceBundle.getString("nick") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw name
-                g.drawString(Search.this.getName(n), typeFont.stringWidth(ResourceBundle.getString("name") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NAME), typeFont.stringWidth(ResourceBundle.getString("name") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw email adress if there is one
-                if (Search.this.getEmail(n).length() > 0)
+                if (Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL).length() > 0)
                 {
-                    g.drawString(Search.this.getEmail(n), typeFont.stringWidth(ResourceBundle.getString("email") + ": "), (typeFont.getHeight() * lineMarker)+ 2, Graphics.TOP | Graphics.LEFT);
+                    g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL), typeFont.stringWidth(ResourceBundle.getString("email") + ": "), (typeFont.getHeight() * lineMarker)+ 2, Graphics.TOP | Graphics.LEFT);
                     lineMarker+=1;
                 }
                 
                 // Draw gender
-                g.drawString(Search.this.getGender(n), typeFont.stringWidth(ResourceBundle.getString("gender") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER), typeFont.stringWidth(ResourceBundle.getString("gender") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 // Draw age
-                g.drawString(Search.this.getAge(n), typeFont.stringWidth(ResourceBundle.getString("gender") + ": ") + contentFont.stringWidth(Search.this.getGender(n)) + typeFont.stringWidth(ResourceBundle.getString("age") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
+                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AGE), typeFont.stringWidth(ResourceBundle.getString("gender") + ": ") + contentFont.stringWidth(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER)) + typeFont.stringWidth(ResourceBundle.getString("age") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 lineMarker+=1;
                 
                 // Draw status image
-                if (Search.this.getStatus(n).intValue() == 0) 
+                if (Search.this.getResult(n).getStatus() == 0) 
                     g.drawImage(ContactList.statusOfflineImg, 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                else if (Search.this.getStatus(n).intValue() == 1)  
+                else if (Search.this.getResult(n).getStatus() == 1)  
                     g.drawImage(ContactList.statusOnlineImg, 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                else if (Search.this.getStatus(n).intValue() == 2)  
+                else if (Search.this.getResult(n).getStatus() == 2)  
                     g.drawImage(ContactList.statusInvisibleImg, 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
                 else
                     g.drawImage(Image.createImage(16, 16), 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
@@ -490,8 +493,8 @@ public class Search
             } else if (c == this.addCommand && d == this.groupList)
             {
                 ContactListContactItem cItem = new ContactListContactItem(0, Jimm.jimm.getContactListRef()
-                        .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getUIN(selectedIndex),
-                        Search.this.getNick(selectedIndex), false, false);
+                        .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_UIN),
+                        Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_NICK), false, false);
                 cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP,true);
 
                 Jimm.jimm.getIcqRef().addToContactList(cItem);
