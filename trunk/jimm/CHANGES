@@ -158,4 +158,5 @@ VERSION 0.3.1
   * "Use cp1251 hack" option is true by default in the russian build
   * Program asks user before exit if unread messages exist
   * Contact names can be changed locally till next list update from server
+  * If selected the date and time on the splash screen is now located on top of the screen
   * Added Bulgarian translation
