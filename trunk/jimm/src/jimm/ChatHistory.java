@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/ChatHistory.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.2.2  Date: 2004/07/12
  Author(s): Andreas Rossbacher
  *******************************************************************************/
 
@@ -26,13 +26,7 @@ package jimm;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
-
 import javax.microedition.lcdui.Font;
-import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.ImageItem;
-import javax.microedition.lcdui.StringItem;
 
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
@@ -41,9 +35,10 @@ import jimm.comm.UrlMessage;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
+import DrawControls.TextList;
+
 public class ChatHistory
 {
-
     private Vector historyVector;
     
     public ChatHistory()
@@ -54,7 +49,7 @@ public class ChatHistory
     // Adds a message to the message display
     protected synchronized void addMessage(int nr,Message message,ContactListContactItem contact)
     {
-        Form msgDisplay = (Form) historyVector.elementAt(nr);
+        TextList msgDisplay = (TextList) historyVector.elementAt(nr);
         
         if (message instanceof PlainMessage)
         {
@@ -105,53 +100,42 @@ public class ChatHistory
     // Add text to message form
     public void addTextToForm(int nr,String from, String message, String url, Date time, boolean red)
     {
-        Form msgDisplay = (Form) historyVector.elementAt(nr);
+        TextList msgDisplay = (TextList) historyVector.elementAt(nr);
+        int color, lastSize;
         
         Calendar stamp = Calendar.getInstance();
         stamp.setTime(time);
         
-        Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
-        Image prequel;
-        // #sijapp cond.if target is "MIDP2"#
-        prequel = Image.createImage(msgDisplay.getWidth(), prequelFont.getHeight() + 2);
-        Font textFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-        // #sijapp cond.else#
-        prequel = Image.createImage(120, prequelFont.getHeight() + 2);
-        // #sijapp cond.end#
-        Graphics g = prequel.getGraphics();
-        if (!red)
-            g.setColor(0, 0, 255);
-        else
-            g.setColor(255, 0, 0);
-        g.setFont(prequelFont);
-        g.drawString(from + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10,
-                Graphics.BASELINE | Graphics.LEFT);
-        Image copy = Image.createImage(prequel);
+        if (!red) color = 0xFF;
+        else color = 0xFF0000;
+        
+        lastSize = msgDisplay.getItemCount();
+        msgDisplay.addBigText
+        (
+          from + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" 
+               + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):",
+          color, 
+          Font.STYLE_BOLD
+        );
 
-        msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
-                + ImageItem.LAYOUT_NEWLINE_AFTER, null));
+        
         if (url.length() > 0)
         {
-            StringItem urlItem = new StringItem(null,ResourceBundle.getString("url")+": "+url);
-//          #sijapp cond.if target is "MIDP2"#
-            urlItem.setFont(textFont);
-//          #sijapp cond.end#
-            msgDisplay.append(urlItem);
+            msgDisplay.addBigText(ResourceBundle.getString("url")+": "+url, 0x00FF00, Font.STYLE_PLAIN);
         }
-        StringItem messageItem = new StringItem(null, message);
-//      #sijapp cond.if target is "MIDP2"#
-        messageItem.setFont(textFont);
-//      #sijapp cond.end#
-        msgDisplay.append(messageItem);
+        
+        msgDisplay.addBigText(message, 0x0, Font.STYLE_PLAIN);
+        
+        msgDisplay.setTopItem(lastSize);        
     }
     
     // Returns the chat history form at the given nr
-    public Form getChatHistoryAt(int nr)
+    public TextList getChatHistoryAt(int nr)
     {
         if (historyVector.size() > 0 && nr != -1)
-            return (Form) historyVector.elementAt(nr);
+            return (TextList) historyVector.elementAt(nr);
         else
-            return new Form("Error");
+            return new TextList("Error");
     }
     
     // Delete the chat hisotry at nr
@@ -159,8 +143,8 @@ public class ChatHistory
     {
         if (historyVector.size() > 0)
         {
-            Form temp = (Form)historyVector.elementAt(nr);
-            temp.delete(0);
+            TextList temp = (TextList)historyVector.elementAt(nr);
+            temp.clear();
         }
     }
     
@@ -169,7 +153,7 @@ public class ChatHistory
     {
         if (historyVector.size() > 0)
         {
-            Form temp = (Form)historyVector.elementAt(nr);
+            TextList temp = (TextList)historyVector.elementAt(nr);
             return temp.isShown();
         }
         else
@@ -181,8 +165,8 @@ public class ChatHistory
         {
             if ((historyVector.size() > nr) && (nr != -1))
             {
-                Form temp = (Form)historyVector.elementAt(nr);
-                return temp.size();
+                TextList temp = (TextList)historyVector.elementAt(nr);
+                return temp.getItemCount();
             }
             else
                 return -1;
@@ -192,7 +176,15 @@ public class ChatHistory
     // Creates a new chat form and returns the index number of it in the vector
     public int newChatForm(String name)
     {
-        Form chatForm = new Form(name);
+        TextList chatForm = new TextList
+                            (
+                              name, 
+                              TextList.getDefCapColor(),
+                              TextList.getDefCapFontColor(),
+                              TextList.getDefBackColor(),
+                              TextList.SMALL_FONT,
+                              TextList.SEL_NONE
+                            );
         historyVector.addElement(chatForm);
         return historyVector.size()-1;
     }
