@@ -21,383 +21,339 @@ File: build.xml
 Version: ###VERSION###  Date: ###DATE###
 Author(s): Manuel Linsmayer, Andreas Rossbacher
 ********************************************************************************
+-->
 
-
---> 
 <project name="Jimm" default="dist">
-<!--  ******************************************************************* 
-  --> 
-<!--  CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   
-  --> 
-<!--  ******************************************************************* 
-  --> 
-<!--  Change this to the directory where a MIDP SDK is installed. You can 
-  --> 
-<!--  use both the slash and the backslash for separating path            
-  --> 
-<!--  components.                                                         
-  --> 
-  <property name="DEFAULT/midp" value="CHANGE ME" /> 
-  <property name="MIDP2/midp" value="C:\WTK22" /> 
-  <property name="RIM/midp" value="CHANGE ME" /> 
-  <property name="SIEMENS/midp" value="CHANGE ME" /> 
-  <property name="MOTOROLA/midp" value="C:\WTK22" /> 
 
-<!--  ******************************************************************* 
-  --> 
-<!--  This property must point at the MIDP API classes and all extension  
-  --> 
-<!--  classes required by the chosen target.                              
-  --> 
-  <property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar" /> 
-  <property name="MIDP2/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar" /> 
-  <property name="RIM/midp/lib" value="${RIM/midp}/lib/net_rim_api.jar" /> 
-  <property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/API.jar" /> 
-  <property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/motorola.jar" /> 
-<!--  ******************************************************************* 
-  --> 
-<!--  Change this to the directory where ProGuard is installed. You can   
-  --> 
-<!--  use both the slash and the backslash for separating path            
-  --> 
-<!--  components.                                                         
-  --> 
-  <property name="proguard" value="C:\proguard" /> 
-<!--  ******************************************************************* 
-  --> 
-<!--  This property must point at the ProGuard JAR file, normally found   
-  --> 
-<!--  in the lib directory of the ProGuard distribution.                  
-  --> 
-  <property name="proguard/lib" value="${proguard}/lib/proguard.jar" /> 
-<!--  ******************************************************************* 
-  --> 
-<!--  CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD      
-  --> 
-<!--  ******************************************************************* 
-  --> 
-<!--  Build target. If you have a Siemens mobile, set this property to    
-  --> 
-<!--  SIEMENS. If you have a MIDP2 compartible mobile, set this property  
-  --> 
-<!--  to MIDP2. If you have a Blackberry, set this property to RIM.       
-  --> 
-<!--  Otherwise go with the default value (DEFAULT).                      
---> 
-  <property name="target" value="MOTOROLA" /> 
-<!--  ******************************************************************* 
-  --> 
-<!--  This value is a comma separated list of modules which should be     
-  --> 
-<!--  included in the build. Realised modules are:                        
-  --> 
-<!--      TRAFFIC - module for traffic calculation                        
-  --> 
-<!--      HISTORY - module for storing history of text messages        
-  --> 
-<!--      FILES - module for transferring files        
-  --> 
-  <property name="modules" value="TRAFFIC,HISTORY" /> 
-<!--  ******************************************************************* 
-  --> 
-<!--  This value is a comma separated list of languages packs which       
-  --> 
-<!--  should be included in the build. Currently, the distribution        
-  --> 
-<!--  includes English (EN), Bulgarian (BG), Brazilian Portuguese (BR),   
-  --> 
-<!--  Czech (CZ), German (DE), Spanish (ES), Hewbrew (HE), Italian (IT),  
-  --> 
-<!--  Lithuanian (LT), Polish (PL), Russian (RU), Swedish (SE),           
-  --> 
-<!--  Serbian (SR) and Ukrainian(UA) language packs.                                    
-  --> 
-  <property name="lang" value="EN,RU" /> 
-<!--  ******************************************************************* 
-  --> 
-<!--  Version number of the build. The value can be in any format (e.g.   
-  --> 
-<!--  0.2cvs).                                                            
-  --> 
-  <property name="version/jimm" value="0.3.3" /> 
-<!--  ******************************************************************* 
-  --> 
-<!--  Version number of the build in the standardized format              
-  --> 
-<!--  <major>[.<minor>[.<micro>]] (e.g. 0.2). This value should           
-  --> 
-<!--  correspond to the version property (see above).                     
-  --> 
-  <property name="version/java" value="0.3.3" /> 
-<!--  ******************************************************************* 
-  --> 
-<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   
-  --> 
-<!--  ******************************************************************* 
-  --> 
-<!--  Buildfile description 
-  --> 
-  <description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description> 
-<!--  Set global properties for this build 
-  --> 
-  <property name="build" location="build" /> 
-  <property name="dist" location="dist" /> 
-  <property name="src" location="src" /> 
-  <property name="res" location="res" /> 
-  <property name="res/target" location="${res}/${target}" /> 
-  <property name="util" location="util" /> 
-  <property name="util/sijapp" location="${util}/sijapp" /> 
-  <property name="util/sijapp/lib" location="${util/sijapp}/dist/lib/sijapp.jar" /> 
-  <property name="util/jarsizetask" location="${util}/jarsizetask" /> 
-  <property name="util/jarsizetask/lib" location="${util/jarsizetask}/dist/lib/jarsizetask.jar" /> 
-<!--  Auxiliary property 
-  --> 
-  <property name="3ns" value="###" /> 
-<!--  Register Proguard task 
-  --> 
-  <taskdef name="proguard" classname="proguard.ant.ProGuardTask" classpath="${proguard/lib}" /> 
-<!--  Internal target: init 
-  --> 
-<target name="init">
-  <mkdir dir="${build}" /> 
-  <mkdir dir="${dist}" /> 
-<tstamp>
-  <format property="date" pattern="yyyy/MM/dd" timezone="GMT+00:00" /> 
-  </tstamp>
-<condition property="midp" value="${DEFAULT/midp}">
-  <equals arg1="${target}" arg2="DEFAULT" /> 
-  </condition>
-<condition property="midp" value="${SIEMENS/midp}">
-  <equals arg1="${target}" arg2="SIEMENS" /> 
-  </condition>
-<condition property="midp" value="${MIDP2/midp}">
-  <equals arg1="${target}" arg2="MIDP2" /> 
-  </condition>
-<condition property="midp" value="${RIM/midp}">
-  <equals arg1="${target}" arg2="RIM" /> 
-  </condition>
-<condition property="midp" value="${MOTOROLA/midp}">
-  <equals arg1="${target}" arg2="MOTOROLA" /> 
-  </condition>
-<condition property="midp/lib" value="${DEFAULT/midp/lib}">
-  <equals arg1="${target}" arg2="DEFAULT" /> 
-  </condition>
-<condition property="midp/lib" value="${SIEMENS/midp/lib}">
-  <equals arg1="${target}" arg2="SIEMENS" /> 
-  </condition>
-<condition property="midp/lib" value="${MIDP2/midp/lib}">
-  <equals arg1="${target}" arg2="MIDP2" /> 
-  </condition>
-<condition property="midp/lib" value="${RIM/midp/lib}">
-  <equals arg1="${target}" arg2="RIM" /> 
-  </condition>
-<condition property="midp/lib" value="${MOTOROLA/midp/lib}">
-  <equals arg1="${target}" arg2="MOTOROLA" /> 
-  </condition>
-<condition property="midp_profile" value="MIDP-1.0">
-  <equals arg1="${target}" arg2="DEFAULT" /> 
-  </condition>
-<condition property="midp_profile" value="MIDP-1.0">
-  <equals arg1="${target}" arg2="SIEMENS" /> 
-  </condition>
-<condition property="midp_profile" value="MIDP-2.0">
-  <equals arg1="${target}" arg2="MIDP2" /> 
-  </condition>
-<condition property="midp_profile" value="MIDP-1.0">
-  <equals arg1="${target}" arg2="RIM" /> 
-  </condition>
-<condition property="midp_profile" value="MIDP-2.0">
-  <equals arg1="${target}" arg2="MOTOROLA" /> 
-  </condition>
-  </target>
-<!--  Internal target: sijapp 
-  --> 
-<target name="sijapp">
-  <ant dir="${util/sijapp}" inheritAll="false" /> 
-  <taskdef name="sijapp" classname="sijapp.SijappTask" classpath="${util/sijapp/lib}" /> 
-  </target>
-<!--  Internal target: preprocess-source 
-  --> 
-<target name="preprocess-source" depends="init,sijapp">
-<condition property="modules/TRAFFIC" value="true">
-  <contains string="${modules}" substring="TRAFFIC" /> 
-  </condition>
-<condition property="modules/DEBUGLOG" value="true">
-  <contains string="${modules}" substring="DEBUGLOG" /> 
-  </condition>
-<condition property="modules/HISTORY" value="true">
-  <contains string="${modules}" substring="HISTORY" /> 
-  </condition>
-<condition property="modules/FILES" value="true">
-  <contains string="${modules}" substring="FILES" /> 
-  </condition>
-<condition property="lang/EN" value="true">
-  <contains string="${lang}" substring="EN" /> 
-  </condition>
-<condition property="lang/BG" value="true">
-  <contains string="${lang}" substring="BG" /> 
-  </condition>
-<condition property="lang/BR" value="true">
-  <contains string="${lang}" substring="BR" /> 
-  </condition>
-<condition property="lang/CZ" value="true">
-  <contains string="${lang}" substring="CZ" /> 
-  </condition>
-<condition property="lang/DE" value="true">
-  <contains string="${lang}" substring="DE" /> 
-  </condition>
-<condition property="lang/ES" value="true">
-  <contains string="${lang}" substring="ES" /> 
-  </condition>
-<condition property="lang/HE" value="true">
-  <contains string="${lang}" substring="HE" /> 
-  </condition>
-<condition property="lang/IT" value="true">
-  <contains string="${lang}" substring="IT" /> 
-  </condition>
-<condition property="lang/LT" value="true">
-  <contains string="${lang}" substring="LT" /> 
-  </condition>
-<condition property="lang/PL" value="true">
-  <contains string="${lang}" substring="PL" /> 
-  </condition>
-<condition property="lang/RU" value="true">
-  <contains string="${lang}" substring="RU" /> 
-  </condition>
-<condition property="lang/SE" value="true">
-  <contains string="${lang}" substring="SE" /> 
-  </condition>
-<condition property="lang/SR" value="true">
-  <contains string="${lang}" substring="SR" /> 
-  </condition>
-<condition property="lang/UA" value="true">
-  <contains string="${lang}" substring="UA" /> 
-  </condition>
-  <mkdir dir="${build}/init/src" /> 
-<sijapp srcdir="${src}" destdir="${build}/init/src">
-  <define name="target" value="${target}" /> 
-  <define name="modules_TRAFFIC" value="${modules/TRAFFIC}" /> 
-  <define name="modules_DEBUGLOG" value="${modules/DEBUGLOG}" /> 
-  <define name="modules_HISTORY" value="${modules/HISTORY}" /> 
-  <define name="lang_EN" value="${lang/EN}" /> 
-  <define name="lang_BG" value="${lang/BG}" /> 
-  <define name="lang_BR" value="${lang/BR}" /> 
-  <define name="lang_CZ" value="${lang/CZ}" /> 
-  <define name="lang_DE" value="${lang/DE}" /> 
-  <define name="lang_ES" value="${lang/ES}" /> 
-  <define name="lang_HE" value="${lang/HE}" /> 
-  <define name="lang_IT" value="${lang/IT}" /> 
-  <define name="lang_LT" value="${lang/LT}" /> 
-  <define name="lang_PL" value="${lang/PL}" /> 
-  <define name="lang_RU" value="${lang/RU}" /> 
-  <define name="lang_SE" value="${lang/SE}" /> 
-  <define name="lang_SR" value="${lang/SR}" /> 
-  <define name="lang_UA" value="${lang/UA}" /> 
-  </sijapp>
-<replace dir="${build}/init/src" encoding="UTF-8">
-  <replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" /> 
-  <replacefilter token="${3ns}VERSION-JAVA${3ns}" value="${version/java}" /> 
-  <replacefilter token="${3ns}DATE${3ns}" value="${date}" /> 
-  </replace>
-  </target>
-<!--  Internal target: compile 
-  --> 
-<target name="compile" depends="preprocess-source">
-  <mkdir dir="${build}/compile/classes" /> 
-  <javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" debug="on" /> 
-  </target>
-<!--  Internal target: obfuscate 
-  --> 
-<target name="obfuscate" depends="compile" unless="skip-obfuscate">
-  <mkdir dir="${build}/obfuscate/classes" /> 
-<proguard note="off" defaultpackage="" usemixedcaseclassnames="off" overloadaggressively="off">
-  <injar name="${build}/compile/classes" /> 
-  <outjar name="${build}/obfuscate/classes" /> 
-  <keep access="public" type="class" extends="javax.microedition.midlet.MIDlet" /> 
-  <keep access="public" type="class" name="jimm.util.ResourceBundle" /> 
-  <keep access="public" type="class" extends="jimm.util.ResourceBundle" /> 
-  <libraryjar path="${midp/lib}" /> 
-  </proguard>
-  </target>
-<!--  Internal target: skip-obfuscate 
-  --> 
-<target name="skip-obfuscate" depends="compile" if="skip-obfuscate">
-  <mkdir dir="${build}/obfuscate/classes" /> 
-<copy todir="${build}/obfuscate/classes">
-  <fileset dir="${build}/compile/classes" /> 
-  </copy>
-  </target>
-<!--  Internal target: preverify 
-  --> 
-<target name="preverify" depends="obfuscate,skip-obfuscate">
-  <mkdir dir="${build}/preverified/classes" /> 
-<exec executable="${midp}/bin/preverify">
-  <arg line="-classpath '${midp/lib}'" /> 
-  <arg line="-d '${build}/preverified/classes'" /> 
-  <arg line="'${build}/obfuscate/classes'" /> 
-  <arg line="-cldc" /> 
-  </exec>
-  </target>
-<!--  Internal target: preprocess-manifest 
-  --> 
-<target name="preprocess-manifest" depends="init">
-  <copy file="${res}/MANIFEST.MF" todir="${build}" /> 
-<replace file="${build}/MANIFEST.MF" encoding="UTF-8">
-  <replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" /> 
-  <replacefilter token="${3ns}VERSION-JAVA${3ns}" value="${version/java}" /> 
-  <replacefilter token="${3ns}DATE${3ns}" value="${date}" /> 
-  <replacefilter token="${3ns}MIDP-PROFILE${3ns}" value="${midp_profile}" /> 
-  </replace>
-  </target>
-<!--  Internal target: preprocess-resources 
-  --> 
-<target name="preprocess-resources">
-  <mkdir dir="${build}/res" /> 
-<copy todir="${build}/res" includeEmptyDirs="false">
-  <fileset dir="${res}" includes="*" excludes="MANIFEST.MF" /> 
-  </copy>
-<copy todir="${build}/res" flatten="true" includeEmptyDirs="false">
-  <fileset dir="${res/target}" /> 
-  </copy>
-  </target>
-<!--  Internal target: jarsizetask 
-  --> 
-<target name="jarsizetask">
-  <ant dir="${util/jarsizetask}" inheritAll="false" /> 
-  <taskdef name="jarsize" classname="JarSizeTask" classpath="${util/jarsizetask/lib}" /> 
-  </target>
-<!--  Target: dist 
-  --> 
-<target name="dist" depends="preverify,preprocess-manifest,preprocess-resources,jarsizetask" description="Generate the distribution">
-  <mkdir dir="${dist}/bin" /> 
-<jar destfile="${dist}/bin/Jimm.jar" manifest="${build}/MANIFEST.MF">
-  <fileset dir="${build}/preverified/classes" /> 
-  <fileset dir="${build}/res" /> 
-  </jar>
-  <jarsize file="${dist}/bin/Jimm.jar" /> 
-<unjar src="${dist}/bin/Jimm.jar" dest="${dist}/bin">
-  <patternset includes="META-INF/MANIFEST.MF" /> 
-  </unjar>
-  <move file="${dist}/bin/META-INF/MANIFEST.MF" tofile="${dist}/bin/Jimm.jad" /> 
-  <delete dir="${dist}/bin/META-INF" /> 
-  </target>
-<!--  Internal target: del_build 
-  --> 
-<target name="del_build" description="Delete the build dir">
-  <delete dir="${build}" /> 
-  </target>
-<!--  Internal target: del_dist 
-  --> 
-<target name="del_dist" description="Delete the dist dir">
-  <delete dir="${dist}" /> 
-  </target>
-<!--  Internal target: del_utils 
-  --> 
-<target name="del_utils" description="Delete the utils dist and build dirs">
-  <ant dir="${util/sijapp}" inheritAll="false" target="clean" /> 
-  <ant dir="${util/jarsizetask}" inheritAll="false" target="clean" /> 
-  </target>
-<!--  Target: clean 
-  --> 
-  <target name="clean" description="Clean the distribution" depends="del_utils,del_build,del_dist" /> 
-  </project>
+	<!--  *******************************************************************   -->
+	<!--  CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT     -->
+	<!--  *******************************************************************   -->
+	<!--  Change this to the directory where a MIDP SDK is installed. You can   -->
+	<!--  use both the slash and the backslash for separating path              -->
+	<!--  components.                                                           -->
+	<property name="DEFAULT/midp" value="CHANGE ME" />
+	<property name="MIDP2/midp" value="C:\WTK22" />
+	<property name="RIM/midp" value="CHANGE ME" />
+	<property name="SIEMENS/midp" value="CHANGE ME" />
+	<property name="MOTOROLA/midp" value="C:\WTK22" />
+	<!--  *******************************************************************   -->
+	<!--  This property must point at the MIDP API classes and all extension    -->
+	<!--  classes required by the chosen target.                                -->
+	<property name="DEFAULT/midp/lib" value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar" />
+	<property name="MIDP2/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar" />
+	<property name="RIM/midp/lib" value="${RIM/midp}/lib/net_rim_api.jar" />
+	<property name="SIEMENS/midp/lib" value="${SIEMENS/midp}/lib/API.jar" />
+	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/motorola.jar" />
+	<!--  *******************************************************************   -->
+	<!--  Change this to the directory where ProGuard is installed. You can     -->
+	<!--  use both the slash and the backslash for separating path              -->
+	<!--  components.                                                           -->
+	<property name="proguard" value="C:\proguard" />
+	<!--  *******************************************************************   -->
+	<!--  This property must point at the ProGuard JAR file, normally found     -->
+	<!--  in the lib directory of the ProGuard distribution.                    -->
+	<property name="proguard/lib" value="${proguard}/lib/proguard.jar" />
+	<!--  *******************************************************************   -->
+	<!--  CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD        -->
+	<!--  *******************************************************************   -->
+	<!--  Build target. If you have a Siemens mobile, set this property to      -->
+	<!--  SIEMENS. If you have a MIDP2 compartible mobile, set this property    -->
+	<!--  to MIDP2. If you have a Blackberry, set this property to RIM.         -->
+	<!--  Otherwise go with the default value (DEFAULT).                        -->
+	<property name="target" value="MOTOROLA" />
+	<!--  *******************************************************************   -->
+	<!--  This value is a comma separated list of modules which should be       -->
+	<!--  included in the build. Realised modules are:                          -->
+	<!--      TRAFFIC - module for traffic calculation                          -->
+	<!--      HISTORY - module for storing history of text messages             -->
+	<!--      FILES - module for transferring files                             -->
+	<property name="modules" value="TRAFFIC,HISTORY" />
+	<!--  *******************************************************************   -->
+	<!--  This value is a comma separated list of languages packs which         -->
+	<!--  should be included in the build. Currently, the distribution          -->
+	<!--  includes English (EN), Bulgarian (BG), Brazilian Portuguese (BR),     -->
+	<!--  Czech (CZ), German (DE), Spanish (ES), Hewbrew (HE), Italian (IT),    -->
+	<!--  Lithuanian (LT), Polish (PL), Russian (RU), Swedish (SE),             -->
+	<!--  Serbian (SR) and Ukrainian(UA) language packs.                        -->
+	<property name="lang" value="EN,RU" />
+	<!--  *******************************************************************   -->
+	<!--  Version number of the build. The value can be in any format (e.g.     -->
+	<!--  0.2cvs).                                                              -->
+	<property name="version/jimm" value="0.3.3" />
+	<!--  *******************************************************************   -->
+	<!--  Version number of the build in the standardized format                -->
+	<!--  <major>[.<minor>[.<micro>]] (e.g. 0.2). This value should             -->
+	<!--  correspond to the version property (see above).                       -->
+	<property name="version/java" value="0.3.3" />
+	<!--  *******************************************************************   -->
+	<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
+	<!--  *******************************************************************   -->
+
+
+	<!--  Buildfile description   -->
+	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
+
+	<!--  Set global properties for this build   -->
+	<property name="build" location="build" />
+	<property name="dist" location="dist" />
+	<property name="src" location="src" />
+	<property name="res" location="res" />
+	<property name="res/target" location="${res}/${target}" />
+	<property name="util" location="util" />
+	<property name="util/sijapp" location="${util}/sijapp" />
+	<property name="util/sijapp/lib" location="${util/sijapp}/dist/lib/sijapp.jar" />
+	<property name="util/jarsizetask" location="${util}/jarsizetask" />
+	<property name="util/jarsizetask/lib" location="${util/jarsizetask}/dist/lib/jarsizetask.jar" />
+
+	<!--  Auxiliary property   -->
+	<property name="3ns" value="###" />
+
+	<!--  Register Proguard task  -->
+	<taskdef name="proguard" classname="proguard.ant.ProGuardTask" classpath="${proguard/lib}" />
+
+	<!--  Internal target: init   -->
+	<target name="init">
+		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
+		<tstamp>
+			<format property="date" pattern="yyyy/MM/dd" timezone="GMT+00:00" />
+		</tstamp>
+		<condition property="midp" value="${DEFAULT/midp}">
+			<equals arg1="${target}" arg2="DEFAULT" />
+		</condition>
+		<condition property="midp" value="${SIEMENS/midp}">
+			<equals arg1="${target}" arg2="SIEMENS" />
+		</condition>
+		<condition property="midp" value="${MIDP2/midp}">
+			<equals arg1="${target}" arg2="MIDP2" />
+		</condition>
+		<condition property="midp" value="${RIM/midp}">
+			<equals arg1="${target}" arg2="RIM" />
+		</condition>
+		<condition property="midp" value="${MOTOROLA/midp}">
+			<equals arg1="${target}" arg2="MOTOROLA" />
+		</condition>
+		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
+			<equals arg1="${target}" arg2="DEFAULT" />
+		</condition>
+		<condition property="midp/lib" value="${SIEMENS/midp/lib}">
+			<equals arg1="${target}" arg2="SIEMENS" />
+		</condition>
+		<condition property="midp/lib" value="${MIDP2/midp/lib}">
+			<equals arg1="${target}" arg2="MIDP2" />
+		</condition>
+		<condition property="midp/lib" value="${RIM/midp/lib}">
+			<equals arg1="${target}" arg2="RIM" />
+		</condition>
+		<condition property="midp/lib" value="${MOTOROLA/midp/lib}">
+			<equals arg1="${target}" arg2="MOTOROLA" />
+		</condition>
+		<condition property="midp_profile" value="MIDP-1.0">
+			<equals arg1="${target}" arg2="DEFAULT" />
+		</condition>
+		<condition property="midp_profile" value="MIDP-1.0">
+			<equals arg1="${target}" arg2="SIEMENS" />
+		</condition>
+		<condition property="midp_profile" value="MIDP-2.0">
+			<equals arg1="${target}" arg2="MIDP2" />
+		</condition>
+		<condition property="midp_profile" value="MIDP-1.0">
+			<equals arg1="${target}" arg2="RIM" />
+		</condition>
+		<condition property="midp_profile" value="MIDP-2.0">
+			<equals arg1="${target}" arg2="MOTOROLA" />
+		</condition>
+	</target>
+
+
+	<!--  Internal target: sijapp   -->
+	<target name="sijapp">
+		<ant dir="${util/sijapp}" inheritAll="false" />
+		<taskdef name="sijapp" classname="sijapp.SijappTask" classpath="${util/sijapp/lib}" />
+	</target>
+
+	<!--  Internal target: preprocess-source   -->
+	<target name="preprocess-source" depends="init,sijapp">
+		<condition property="modules/TRAFFIC" value="true">
+			<contains string="${modules}" substring="TRAFFIC" />
+		</condition>
+		<condition property="modules/DEBUGLOG" value="true">
+			<contains string="${modules}" substring="DEBUGLOG" />
+		</condition>
+		<condition property="modules/HISTORY" value="true">
+			<contains string="${modules}" substring="HISTORY" />
+		</condition>
+		<condition property="modules/FILES" value="true">
+			<contains string="${modules}" substring="FILES" />
+		</condition>
+		<condition property="lang/EN" value="true">
+			<contains string="${lang}" substring="EN" />
+		</condition>
+		<condition property="lang/BG" value="true">
+			<contains string="${lang}" substring="BG" />
+		</condition>
+		<condition property="lang/BR" value="true">
+			<contains string="${lang}" substring="BR" />
+		</condition>
+		<condition property="lang/CZ" value="true">
+			<contains string="${lang}" substring="CZ" />
+		</condition>
+		<condition property="lang/DE" value="true">
+			<contains string="${lang}" substring="DE" />
+		</condition>
+		<condition property="lang/ES" value="true">
+			<contains string="${lang}" substring="ES" />
+		</condition>
+		<condition property="lang/HE" value="true">
+			<contains string="${lang}" substring="HE" />
+		</condition>
+		<condition property="lang/IT" value="true">
+			<contains string="${lang}" substring="IT" />
+		</condition>
+		<condition property="lang/LT" value="true">
+			<contains string="${lang}" substring="LT" />
+		</condition>
+		<condition property="lang/PL" value="true">
+			<contains string="${lang}" substring="PL" />
+		</condition>
+		<condition property="lang/RU" value="true">
+			<contains string="${lang}" substring="RU" />
+		</condition>
+		<condition property="lang/SE" value="true">
+			<contains string="${lang}" substring="SE" />
+		</condition>
+		<condition property="lang/SR" value="true">
+			<contains string="${lang}" substring="SR" />
+		</condition>
+		<condition property="lang/UA" value="true">
+			<contains string="${lang}" substring="UA" />
+		</condition>
+		<mkdir dir="${build}/init/src" />
+		<sijapp srcdir="${src}" destdir="${build}/init/src">
+			<define name="target" value="${target}" />
+			<define name="modules_TRAFFIC" value="${modules/TRAFFIC}" />
+			<define name="modules_DEBUGLOG" value="${modules/DEBUGLOG}" />
+			<define name="modules_HISTORY" value="${modules/HISTORY}" />
+			<define name="lang_EN" value="${lang/EN}" />
+			<define name="lang_BG" value="${lang/BG}" />
+			<define name="lang_BR" value="${lang/BR}" />
+			<define name="lang_CZ" value="${lang/CZ}" />
+			<define name="lang_DE" value="${lang/DE}" />
+			<define name="lang_ES" value="${lang/ES}" />
+			<define name="lang_HE" value="${lang/HE}" />
+			<define name="lang_IT" value="${lang/IT}" />
+			<define name="lang_LT" value="${lang/LT}" />
+			<define name="lang_PL" value="${lang/PL}" />
+			<define name="lang_RU" value="${lang/RU}" />
+			<define name="lang_SE" value="${lang/SE}" />
+			<define name="lang_SR" value="${lang/SR}" />
+			<define name="lang_UA" value="${lang/UA}" />
+		</sijapp>
+		<replace dir="${build}/init/src" encoding="UTF-8">
+			<replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" />
+			<replacefilter token="${3ns}VERSION-JAVA${3ns}" value="${version/java}" />
+			<replacefilter token="${3ns}DATE${3ns}" value="${date}" />
+		</replace>
+	</target>
+	
+	<!--  Internal target: compile   -->
+	<target name="compile" depends="preprocess-source">
+		<mkdir dir="${build}/compile/classes" />
+		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" debug="on" />
+	</target>
+	
+	<!--  Internal target: obfuscate -->
+	<target name="obfuscate" depends="compile" unless="skip-obfuscate">
+		<mkdir dir="${build}/obfuscate/classes" />
+		<proguard note="off" defaultpackage="" usemixedcaseclassnames="off" overloadaggressively="off">
+			<injar name="${build}/compile/classes" />
+			<outjar name="${build}/obfuscate/classes" />
+			<keep access="public" type="class" extends="javax.microedition.midlet.MIDlet" />
+			<keep access="public" type="class" name="jimm.util.ResourceBundle" />
+			<keep access="public" type="class" extends="jimm.util.ResourceBundle" />
+			<libraryjar path="${midp/lib}" />
+		</proguard>
+	</target>
+	
+	<!--  Internal target: skip-obfuscate  -->
+	<target name="skip-obfuscate" depends="compile" if="skip-obfuscate">
+		<mkdir dir="${build}/obfuscate/classes" />
+		<copy todir="${build}/obfuscate/classes">
+			<fileset dir="${build}/compile/classes" />
+		</copy>
+	</target>
+	
+	<!--  Internal target: preverify   -->
+	<target name="preverify" depends="obfuscate,skip-obfuscate">
+		<mkdir dir="${build}/preverified/classes" />
+		<exec executable="${midp}/bin/preverify">
+			<arg line="-classpath '${midp/lib}'" />
+			<arg line="-d '${build}/preverified/classes'" />
+			<arg line="'${build}/obfuscate/classes'" />
+			<arg line="-cldc" />
+		</exec>
+	</target>
+	
+	<!--  Internal target: preprocess-manifest   -->
+	<target name="preprocess-manifest" depends="init">
+		<copy file="${res}/MANIFEST.MF" todir="${build}" />
+		<replace file="${build}/MANIFEST.MF" encoding="UTF-8">
+			<replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" />
+			<replacefilter token="${3ns}VERSION-JAVA${3ns}" value="${version/java}" />
+			<replacefilter token="${3ns}DATE${3ns}" value="${date}" />
+			<replacefilter token="${3ns}MIDP-PROFILE${3ns}" value="${midp_profile}" />
+		</replace>
+	</target>
+	
+	<!--  Internal target: preprocess-resources  -->
+	<target name="preprocess-resources">
+		<mkdir dir="${build}/res" />
+		<copy todir="${build}/res" includeEmptyDirs="false">
+			<fileset dir="${res}" includes="*" excludes="MANIFEST.MF" />
+		</copy>
+		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false">
+			<fileset dir="${res/target}" />
+		</copy>
+	</target>
+	
+	<!--  Internal target: jarsizetask  -->
+	<target name="jarsizetask">
+		<ant dir="${util/jarsizetask}" inheritAll="false" />
+		<taskdef name="jarsize" classname="JarSizeTask" classpath="${util/jarsizetask/lib}" />
+	</target>
+	
+	<!--  Target: dist  -->
+	<target name="dist" depends="preverify,preprocess-manifest,preprocess-resources,jarsizetask" description="Generate the distribution">
+		<mkdir dir="${dist}/bin" />
+		<jar destfile="${dist}/bin/Jimm.jar" manifest="${build}/MANIFEST.MF">
+			<fileset dir="${build}/preverified/classes" />
+			<fileset dir="${build}/res" />
+		</jar>
+		<jarsize file="${dist}/bin/Jimm.jar" />
+		<unjar src="${dist}/bin/Jimm.jar" dest="${dist}/bin">
+			<patternset includes="META-INF/MANIFEST.MF" />
+		</unjar>
+		<move file="${dist}/bin/META-INF/MANIFEST.MF" tofile="${dist}/bin/Jimm.jad" />
+		<delete dir="${dist}/bin/META-INF" />
+	</target>
+	
+	<!--  Internal target: del_build  -->
+	<target name="del_build" description="Delete the build dir">
+		<delete dir="${build}" />
+	</target>
+	
+	<!--  Internal target: del_dist  -->
+	<target name="del_dist" description="Delete the dist dir">
+		<delete dir="${dist}" />
+	</target>
+	
+	<!--  Internal target: del_utils  -->
+	<target name="del_utils" description="Delete the utils dist and build dirs">
+		<ant dir="${util/sijapp}" inheritAll="false" target="clean" />
+		<ant dir="${util/jarsizetask}" inheritAll="false" target="clean" />
+	</target>
+	
+	<!--  Target: clean   -->
+	<target name="clean" description="Clean the distribution" depends="del_utils,del_build,del_dist" />
+
+</project>
