@@ -32,6 +32,7 @@ import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.SystemNotice;
 import jimm.comm.UrlMessage;
+import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 import DrawControls.TextList;
@@ -137,7 +138,7 @@ public class ChatHistory
         int lastSize = msgDisplay.getItemCount();
         msgDisplay.addBigText
         (
-          from + " (" + Jimm.jimm.getSplashCanvasRef().getDateString(true) + "):",
+          from + " (" + Util.getDateString(true) + "):",
           red ? 0xFF0000 : 0xFF, 
           Font.STYLE_BOLD
         );
