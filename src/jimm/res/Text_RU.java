@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
  Copyright (C) 2003-05  Jimm Project
 
@@ -65,7 +65,7 @@ public class Text_RU extends ResourceBundle
                                           // #sijapp cond.end#
                                            resources.put(".",                           ".");
 		resources.put("about",                       "О программе");
-		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия 0.3.3\n http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\n http://www.jimm.org/");
 		resources.put("account",                     "Учетная запись");
 		resources.put("add_user",                    "Добавить пользователя");
 		resources.put("add_to_list",                 "Добавить");
