@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/ContactListItem.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Artyomov Denis
  *******************************************************************************/
 
 
@@ -27,10 +27,12 @@ package jimm;
 
 public abstract class ContactListItem
 {
-
-
 	// Checks whether some other object is equal to this one
 	public abstract boolean equals(Object obj);
 
-
+	// returns text of list item. Is used for visual tree
+	public abstract String getText();
+	
+	// returns image index of tree node. Is used for visual tree
+	public abstract int getImageIndex();
 }

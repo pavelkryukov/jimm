@@ -403,14 +403,12 @@ public class SplashCanvas extends Canvas
       Jimm.jimm.getSplashCanvasRef().setProgress(this.dcAct.getProgress());
       if (this.dcAct.isCompleted())
       {
-        Jimm.jimm.getContactListRef().resetListPosition();
         Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
         Jimm.jimm.getContactListRef().activate();
         this.cancel();
       }
       else if (this.dcAct.isError())
       {
-          Jimm.jimm.getContactListRef().resetListPosition();
           Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
           Jimm.jimm.getContactListRef().activate();
           this.cancel();
@@ -447,7 +445,6 @@ public class SplashCanvas extends Canvas
       Jimm.jimm.getSplashCanvasRef().setProgress(this.connectAct.getProgress());
       if (this.connectAct.isCompleted())
       {
-        Jimm.jimm.getContactListRef().resetListPosition();
         Jimm.jimm.getContactListRef().activate();
         this.cancel();
       }

@@ -100,6 +100,7 @@ public class Options
 	public static final int OPTION_CURRENCY                       =   6;   /* String  */
 	public static final int OPTION_ONLINE_STATUS                  = 192;   /* long    */
 	public static final int OPTION_CHAT_SMALL_FONT                = 135;   /* boolean */
+	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
 
 
 	/**************************************************************************/
@@ -166,6 +167,7 @@ public class Options
 			this.setStringOption (Options.OPTION_CURRENCY,                       "$");
 			this.setLongOption   (Options.OPTION_ONLINE_STATUS,                  ContactList.STATUS_ONLINE);
 			this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
+			this.setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
 		}
 
 		// Construct option form
@@ -346,7 +348,8 @@ public class Options
 	// Form for editing option values
 	public class OptionsForm implements CommandListener
 	{
-
+		boolean lastGroupsUsed;
+		int lastSortMethod;
 
 		// Commands
 		private Command backCommand;
@@ -395,6 +398,7 @@ public class Options
 		private TextField currencyTextField;
 		// #sijapp cond.end#
 		private ChoiceGroup useSmallFont;
+		private ChoiceGroup showUserGroups;
 
 		// Constructor
 		public OptionsForm()
@@ -475,6 +479,11 @@ public class Options
 			this.useSmallFont.append(ResourceBundle.getString("yes"), null);
 			this.useSmallFont.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT));
 			
+			this.showUserGroups = new ChoiceGroup(ResourceBundle.getString("show_user_groups"), Choice.MULTIPLE);
+			this.showUserGroups.append(ResourceBundle.getString("yes"), null);
+			this.showUserGroups.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_USER_GROUPS));
+			
+			
 //			 Initialize elements (Signaling section)
 			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
@@ -530,10 +539,11 @@ public class Options
 		// Command listener
 		public void commandAction(Command c, Displayable d)
 		{
-
 			// Look for select command
 			if (c == List.SELECT_COMMAND)
 			{
+				lastGroupsUsed = Options.this.getBooleanOption(Options.OPTION_USER_GROUPS);
+				lastSortMethod = Options.this.getIntOption(Options.OPTION_CL_SORT_BY);
 
 				// Delete all items
 				while (this.optionsForm.size() > 0) { this.optionsForm.delete(0); }
@@ -559,6 +569,7 @@ public class Options
 						this.optionsForm.append(this.keepchatChoiceGroup);
 						this.optionsForm.append(this.cp1251HackChoiceGroup);
 						this.optionsForm.append(this.useSmallFont);
+						this.optionsForm.append(this.showUserGroups);
 						break;
 
 					case 3:
@@ -638,20 +649,34 @@ public class Options
 					case 2:
 						Options.this.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.LANG_AVAILABLE[this.uiLanguageChoiceGroup.getSelectedIndex()]);
 						Options.this.setBooleanOption(Options.OPTION_DISPLAY_DATE,this.displayDateChoiceGroup.isSelected(0));
+						
+						int newSortMethod = 0;
+						
 						if (this.clHideOfflineChoiceGroup.isSelected(0))
 						{
-							Options.this.setIntOption(Options.OPTION_CL_SORT_BY,0);
+							newSortMethod = 0;
 						}
 						else
 	  					{
-						    Options.this.setIntOption(Options.OPTION_CL_SORT_BY,this.clSortByChoiceGroup.getSelectedIndex());
+							newSortMethod = this.clSortByChoiceGroup.getSelectedIndex();
 						}
+						
+						Options.this.setIntOption(Options.OPTION_CL_SORT_BY, newSortMethod);
+						
 						Options.this.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,this.clHideOfflineChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_KEEPCHAT,this.keepchatChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CP1251_HACK,this.cp1251HackChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.useSmallFont.isSelected(0));
-						Jimm.jimm.getContactListRef().sortAll();
+						
+						boolean newUseGroups = this.showUserGroups.isSelected(0);
+						Options.this.setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);
+						Jimm.jimm.getContactListRef().optionsChanged
+						(
+							(newUseGroups != lastGroupsUsed),
+							(newSortMethod != lastSortMethod)
+						);
 						break;
+						
 					case 3:
 						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
@@ -697,7 +722,6 @@ public class Options
 				// Activate MM/CL
 				if (Jimm.jimm.getIcqRef().isConnected())
 				{
-					Jimm.jimm.getContactListRef().refreshList(true, false, Integer.MAX_VALUE);
 					Jimm.jimm.getContactListRef().activate();
 				}
 				else

@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/ContactListGroupItem.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Artyomov Denis
  *******************************************************************************/
 
 
@@ -32,15 +32,59 @@ public class ContactListGroupItem extends ContactListItem
 	// Persistent variables
 	private int id;
 	private String name;
-
-
+	private boolean changed = true;
+	
+	
+	private int
+		// Counter for online users
+		onlineCount,
+		
+		// counter for total users in group
+		totalCount;
+	
 	// Constructor
 	public ContactListGroupItem(int id, String name)
 	{
 		this.id = id;
 		this.name = new String(name);
+		onlineCount = totalCount = 0;
 	}
 
+	public void setChanged(boolean value)
+	{
+		changed = value;
+	}
+	
+	public boolean getChanged()
+	{
+		return changed;
+	}
+	
+	public void setCounters(int online, int total)
+	{
+	    onlineCount = online;
+	    totalCount  = total;
+	}
+	
+	public int getTotalCount()
+	{
+	    return totalCount;
+	}
+	
+    public String getText()
+    {
+        String result;
+        if (onlineCount != 0) 
+            result = name+" ("+Integer.toString(onlineCount)+"/"
+                         +Integer.toString(totalCount)+")";
+        else result = name;
+        return result;
+    }
+
+    public int getImageIndex()
+    {
+        return -1;
+    }
 
 	// Returns the group item id
 	public int getId()

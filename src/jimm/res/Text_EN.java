@@ -190,6 +190,16 @@ public class Text_EN extends ResourceBundle
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
 		resources.put("chat_small_font",			 "Small font in chat");
+		resources.put("select",                      "Select");
+		
+		// User management ********
+		resources.put("group_is_not_empty",          "Selected group is not empty!\nMove all users to other groups!");
+		resources.put("add_group",                   "Add group");
+		resources.put("group_name",                  "Group name");
+		resources.put("exec",                        "Execute");
+		resources.put("remove_user",                 "Remove user");
+		resources.put("remove_group",                "Remove group");
+		resources.put("show_user_groups",            "Show user groups");
 
 		// Generic errors
 		resources.put("error_100",                   "Unknown error (#100.EXT)");

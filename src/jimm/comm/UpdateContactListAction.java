@@ -399,7 +399,7 @@ public class UpdateContactListAction extends Action
             // Set error state if exception is critical
             if (e.isCritical() || (error != 0)) this.state = ConnectAction.STATE_ERROR;
             
-            while (!Jimm.jimm.getContactListRef().getContactList().isShown())
+            while (!Jimm.jimm.getContactListRef().getVisibleContactListRef().isShown())
                 try
                 {
                     this.wait(100);
