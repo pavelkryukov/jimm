@@ -18,7 +18,7 @@
  *******************************************************************************
  File: src/jimm/Options.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis
  ******************************************************************************/
 
 
@@ -38,8 +38,8 @@
    0 -  63 (00XXXXXX)  UTF8
   64 - 127 (01XXXXXX)  INTEGER
  128 - 191 (10XXXXXX)  BOOLEAN
- 192 - 223 (110XXXXX)  LONG
- 224 - 255 (111XXXXX)  SHORT, BYTE-ARRAY (scrambled String)
+ 192 - 224 (110XXXXX)  LONG
+ 225 - 255 (111XXXXX)  SHORT, BYTE-ARRAY (scrambled String)
  ******************************************************************************/
 
 
@@ -75,7 +75,7 @@ public class Options
 
 	// Option keys
 	public static final int OPTION_UIN                            =   0;   /* String  */
-	public static final int OPTION_PASSWORD                       = 224;   /* String  */
+	public static final int OPTION_PASSWORD                       = 225;   /* String  */
 	public static final int OPTION_SRV_HOST                       =   1;   /* String  */
 	public static final int OPTION_SRV_PORT                       =   2;   /* String  */
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
@@ -96,7 +96,7 @@ public class Options
 	public static final int OPTION_COST_PACKET_LENGTH             =  70;   /* int     */
 	public static final int OPTION_CURRENCY                       =   6;   /* String  */
 	public static final int OPTION_ONLINE_STATUS                  = 192;   /* long    */
-	public static final int OPTION_CHAT_SMALL_FONT                = 134;   /* boolean */
+	public static final int OPTION_CHAT_SMALL_FONT                = 135;   /* boolean */
 
 
 	/**************************************************************************/
@@ -118,13 +118,17 @@ public class Options
 		try
 		{
 		    this.options = new Hashtable();
+		    System.out.println("start load");
 			this.load();
+			System.out.println("load done");
 			ResourceBundle.setCurrUiLanguage(this.getStringOption(Options.OPTION_UI_LANGUAGE));
+			System.out.println("options made");
 		}
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
 		{
-			this.setStringOption (Options.OPTION_UIN,                            "");
+		    System.out.println("excep");
+		    this.setStringOption (Options.OPTION_UIN,                            "");
 			this.setStringOption (Options.OPTION_PASSWORD,                       "");
 			this.setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
 			this.setStringOption (Options.OPTION_SRV_PORT,                       "5190");
@@ -158,7 +162,6 @@ public class Options
 			this.setIntOption    (Options.OPTION_COST_PACKET_LENGTH,             1024);
 			this.setStringOption (Options.OPTION_CURRENCY,                       "$");
 			this.setLongOption   (Options.OPTION_ONLINE_STATUS,                  ContactList.STATUS_ONLINE);
-			
 			this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
 		}
 
@@ -170,21 +173,17 @@ public class Options
 	// Load option values from record store
 	public void load() throws IOException, RecordStoreException
 	{
-
 		// Open record store
 		RecordStore account = RecordStore.openRecordStore("options", false);
-
 		// Temporary variables
 		byte[] buf;
 		ByteArrayInputStream bais;
 		DataInputStream dis;
-
 		// Get version info from record store
 		buf = account.getRecord(1);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
 		if (!(dis.readUTF().equals(Jimm.VERSION))) throw (new IOException());
-
 		// Read all option key-value pairs
 		buf = account.getRecord(2);
 		bais = new ByteArrayInputStream(buf);
@@ -208,12 +207,12 @@ public class Options
 			{
 			    this.setLongOption(optionKey, dis.readLong());
 			}
-			else   /* 224-255 = Scrambled String */
+			else   /* 226-255 = Scrambled String */
 			{
-				byte[] optionValue = new byte[dis.readUnsignedShort()];
-				dis.readFully(optionValue);
-				optionValue = Util.decipherPassword(optionValue);
-				this.setStringOption(optionKey, new String(optionValue));
+			    byte[] optionValue = new byte[dis.readUnsignedShort()];
+			    dis.readFully(optionValue);
+			    optionValue = Util.decipherPassword(optionValue);
+			    this.setStringOption(optionKey, new String(optionValue));
 			}
 		}
 		
@@ -225,6 +224,7 @@ public class Options
 		{
 			Options.this.setIntOption(Options.OPTION_CL_SORT_BY, 0);
 		}
+		System.out.println("loaded");
 
 	}
 
@@ -278,7 +278,7 @@ public class Options
 			{
 				dos.writeLong(this.getLongOption(optionKey));
 			}
-			else   /* 224-255 = Scrambled String */
+			else   /* 226-255 = Scrambled String */
 			{
 			    byte[] optionValue = this.getStringOption(optionKey).getBytes();
 				optionValue = Util.decipherPassword(optionValue);
