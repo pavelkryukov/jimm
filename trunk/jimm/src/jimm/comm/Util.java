@@ -85,7 +85,7 @@ public class Util
 
         // Construct the string for the display
 
-        // #sijapp cond.if target isnot "SIEMENS"#
+        // #sijapp cond.if target isnot "SIEMENS" | target isnot "MOTOROLA"#
         String datestr = new String("failed");
         if (TimeZone.getDefault().useDaylightTime())
         {
@@ -681,3 +681,4 @@ public class Util
 
 
 }
+
