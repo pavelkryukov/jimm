@@ -66,6 +66,8 @@ public class Text_LT extends ResourceBundle
 		resources.put("delete_chat",                 "Ištrinti istoriją");
 		resources.put("deny",						 "Atmesti autorizavimą");
 		resources.put("denyedby",					 "Atorizavimas atmestas: ");
+		resources.put("description",                 "Aprašymas");
+		resources.put("name_desc",                   "Failas vardas ir aprašymas");		
 		resources.put("user_menu",                   "Vartotojo meniu");
 		resources.put("disconnect",                  "Atsijungti");
 		resources.put("disconnecting",               "Atsijungiama");
@@ -75,13 +77,18 @@ public class Text_LT extends ResourceBundle
 		resources.put("error",                       "Klaida");
 		resources.put("exit",                        "Išeiti");
 		resources.put("female",                      "M");
+		resources.put("filetransfer",                "File transfer");
+		resources.put("filepath",                    "File path");		
 		resources.put("firstname",                   "Vardas");
+		resources.put("ft_name",                     "Siųsti failą");		
+		resources.put("ft_cam",                      "Siųsti nuotrauką iš kameros");		
 		resources.put("gender",                      "Lytis");		
 		resources.put("grant",						 "Autorizuoti");
 		resources.put("grantedby",					 "Jūs autorizuotas:");		
 		resources.put("hide_offline",                "Paslėpti neprisijungusius");
 		resources.put("info",                        "Informacija");
 		resources.put("kb",                          "kB");
+		resources.put("init_ft",                     "Pradedama");
 		resources.put("keep_chat",                   "Išsaugoti istoriją?");
 		resources.put("keep_conn_alive",             "Palaikyti pastovų ryšį?");
 		resources.put("keylock_enable",              "Užrakinti klaviatūrą");
@@ -98,6 +105,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("lang_RU",                     "Rusų");
 		resources.put("lang_SE",                     "Švedų");
 		resources.put("lang_SR",                     "Serbų");
+		resources.put("lang_HE", 					 "Hebrajų");
 		resources.put("lastname",                    "Pavardė");		
 		resources.put("loading",                     "Kraunasi");
 		resources.put("male",                        "V");		
@@ -128,10 +136,11 @@ public class Text_LT extends ResourceBundle
 		resources.put("options_interface",           "Sąsaja");
 		resources.put("options_network",             "Tinklas");
 		resources.put("options_other",               "Kiti");
+		resources.put("options_signaling",           "Pranešimai");
 		resources.put("password",                    "Slaptažodis");
 		resources.put("plength",                     "Apmokestinamo paketo dydis kilobaitais");
         resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
-  	    resources.put("prev",                        "Previous");
+  	    resources.put("prev",                        "Ankstesnis");
 		resources.put("reason",						 "Priežastis");		
 		resources.put("remove",                      "Pašalinti iš sąrašo");
 		resources.put("reply",                       "Atsakyti");
@@ -139,11 +148,13 @@ public class Text_LT extends ResourceBundle
   	    resources.put("requ",                        "Reikalingas");
   	    resources.put("requno",                      "Nereikalingas");
 		resources.put("reset",                       "Valyti");
+		resources.put("res",                         "Raiška");
 		resources.put("results",                     "Rezultatai");
 		resources.put("save",                        "Išsaugoti");
 		resources.put("search_user",                 "Ieškoti vartotojo");
 		resources.put("send",                        "Siųsti");
 		resources.put("send_message",                "Nauja Žinutė");
+		resources.put("send_img",                    "Siųsti paveiksliuką");				
 		resources.put("send_url",                    "Nauja Nuoroda");
 		resources.put("server",                      "Prisijungimo serveris");
 		resources.put("server_host",                 "Serveris");
@@ -155,6 +166,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("sort_by",                     "Rušiuoti sarašą");
 		resources.put("sort_by_name",                "Pagal vardą");
 		resources.put("sort_by_status",              "Pagal statusą");
+		resources.put("status",                      "Statusas");
 		resources.put("status_away",                 "Kažkur šalia");
 		resources.put("status_chat",                 "Noriu kalbėtis!");
 		resources.put("status_dnd",                  "Netrukdyti!");
@@ -163,20 +175,32 @@ public class Text_LT extends ResourceBundle
 		resources.put("status_occupied",             "Užimtas");
 		resources.put("status_offline",              "Atsijungęs");
 		resources.put("status_online",               "Prisijungęs");
-		resources.put("sysnotice",                   "System Notice");
-		resources.put("sysnotice",					 "Sistemos pranešimas");		
+		resources.put("sysnotice",                   "Sistemos pranešimas");
 		resources.put("traffic",                     "Srautas");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "Nuoroda");
 		resources.put("user_add",                    "Prideti vartotoja");
 		resources.put("user_search",                 "Ieškoti vartotojo");
 		resources.put("vibration",                   "Vibracija");
+		resources.put("viewfinder",                  "Viewfinder");
+		resources.put("volume",                      "Garsas");		
 		resources.put("wait",                        "Prašome palaukti ...");
 		resources.put("warning",                     "Įspėjimas");
 		resources.put("wantsyourauth",				 " nori būti autorizuotas. Tikslas: ");
 		resources.put("whichgroup",                  "Kuri grupė?");
 		resources.put("yes",                         "Taip");
 		resources.put("youwereadded",				 "Įtraukas į sąrašą pas: ");
+		resources.put("chat_small_font",			 "Mažas šrifto dydis");
+		resources.put("select",                      "Pasirinkti");
+		
+		// User management ********
+		resources.put("group_is_not_empty",          "Pasirinkta grupė nėra tuščia!\nPerkelkite visus vartotojus į kitas grupes!");
+		resources.put("add_group",                   "Pridėti grupę");
+		resources.put("group_name",                  "Grupės pavadinimas");
+		resources.put("exec",                        "Vykdyti");
+		resources.put("remove_user",                 "Pašalinti vartotoją");
+		resources.put("remove_group",                "Pašalinti grupę");
+		resources.put("show_user_groups",            "Rodyti vartotojų grupes");
 		
 		// Generic errors
 		resources.put("error_100",                   "Nežinoma klaida (#100.EXT)");
@@ -188,16 +212,24 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_113",                   "Per daug prisijungimu iš to paties IP (#113.EXT)");
 		resources.put("error_114",                   "Rate exceeded (#114.EXT)");
 		resources.put("error_115",                   "Negaliu perskaityti kontaktų sarašo (#115.EXT)");
-		resources.put("error_116",                   "Offline message could not be parsed (#116.EXT)");
+		resources.put("error_116",                   "Neperskaitau Offline žinutės (#116.EXT)");
 		resources.put("error_117",                   "Neįrašytas UIN ir/arba slaptažodis (#117.EXT)");
 		resources.put("error_118",                   "Nėra atsakymo iš serverio (#118.EXT)");
 
 		// Network communication specific exceptions
+		// Connection to server
 		resources.put("error_120",                   "I/O klaida! (#120.EXT)");
 		resources.put("error_121",                   "Requested TCP connection cannot be made (#121.EXT)");
 		resources.put("error_122",                   "Neteisingas nurodyto serverio adresas ir/arba prievadas (#122.EXT)");
 		resources.put("error_123",                   "Nepavyko prisijungti (#123.EXT)");
 		resources.put("error_124",                   "Input stream is out of sync (#124.EXT)");
+
+		// Peer connection
+		resources.put("error_125",                   "I/O klaida (#125.EXT)");
+		resources.put("error_126",                   "Requested TCP connection cannot be made (#126.EXT)");
+		resources.put("error_127",                   "Specified server host and/or port is invalid (#127.EXT)");
+		resources.put("error_128",                   "Nepavyko prisijungti (#128.EXT)");
+		resources.put("error_129",                   "Input stream is out of sync (#129.EXT)");
 
 		// Parsing specific errors
 		resources.put("error_130",                   "FLAP header could not be parsed (#130.EXT)");
@@ -210,25 +242,37 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_137",                   "Old ICQ protocol header could not be parsed (#137.EXT)");
 
 		// Action errors
-		resources.put("error_140",                   "Requested action cannot be queued for execution at this time (#140.EXT)");
+		resources.put("error_140",                   "Prašomas darbas negali būti šiuo metu vykdomas (#140.EXT)");
 
 		// Specific action errors
 		resources.put("error_150",                   "Nesuprantu gautos žinutes (#150.EXT)");
 		resources.put("error_151",                   "Nesuprantu gautos 1 tipo žinutes (#151.EXT)");
 		resources.put("error_152",                   "Nesuprantu gautos 2 tipo žinutes (#152.EXT)");
 		resources.put("error_153",                   "Nesuprantu gautos 4 tipo žinutes (#153.EXT)");
-		resources.put("error_154",                   "Kontaktu sarašo atnaujinimas nepavyko (#154.EXT)");
-		resources.put("error_155",                   "Object is already in your server list (#155.EXT)");
-		resources.put("error_156",                   "Error while adding. Try again (#156.EXT)");
-		resources.put("error_157",                   "No more elements of this type allowed (#157.EXT)");
-		resources.put("error_158",                   "You did try to add an ICQ contact to an AIM list (#158.EXT)");
-		resources.put("error_159",                   "Server did not answer on search request. Try again (#159.EXT)");
+		resources.put("error_154",                   "Kontaktų sarašo atnaujinimas nepavyko (#154.EXT)");
+		resources.put("error_155",                   "Objektas jau jūsų saraše (serveryje) (#155.EXT)");
+		resources.put("error_156",                   "Klaida įtraukiant į sąrašą. Bandykite vėliau (#156.EXT)");
+		resources.put("error_157",                   "Nebeleidžiama pridėti naujų (#157.EXT)");
+		resources.put("error_158",                   "Jūs bandėt įtraukti ICQ kontaktą į AIM sąrašą (#158.EXT)");
+		resources.put("error_159",                   "Nėra atsakymo iš serverio. Bandykite vėliau (#159.EXT)");
 		resources.put("error_160",                   "Klaida atliekant paiešką (#160.EXT)");
 
 		// Other errors
-		resources.put("error_170",                   "Possibly not enough heap memory available (#160.EXT)");
-		resources.put("error_171",                   "Could not fetch meta info (#161.EXT)");
- 
+		resources.put("error_170",                   "Greičiausiai neužtenka meta atminties (#160.EXT)");
+		resources.put("error_171",                   "Negaliu perskaityti meta informacijos (#161.EXT)");
+		
+		// Camera errors
+		resources.put("error_180",                   "Klaida sukuriant vaizdo apdorojimo objektą (#180.EXT)");
+		resources.put("error_181",                   "Išankstinės fotografavimo vaizdo paieškos bandymo sukurti klaida (#181.EXT)");
+		resources.put("error_182",                   "Išankstinės fotografavimo vaizdo paieškos klaida (#182.EXT)");
+		resources.put("error_183",                   "Fotografavimo klaida (#183.EXT)");
+		resources.put("error_185",                   "Fotografavimas iš Java programų nepalaikomas (#185.EXT)");
+		
+		// File transfer errors
+		resources.put("error_190",                   "Apsikeitimas su  < ICQv8 protokolo klientais nepalaikomas (#190.EXT)");
+		resources.put("error_191",                   "Klaida skaitant failą. Greičiausiai nepalaikoma (#191.EXT)");
+		resources.put("error_192",                   "Klaida skaitant failą. Blogai nurodytas kelias arba nepalaikoma (#192.EXT)");
+
 	}
 
 
