@@ -46,6 +46,7 @@ import jimm.comm.PlainMessage;
 import jimm.comm.RequestInfoAction;
 import jimm.comm.SendMessageAction;
 import jimm.comm.SystemNotice;
+import jimm.comm.SysNoticeAction;
 import jimm.comm.UpdateContactListAction;
 import jimm.comm.UrlMessage;
 import jimm.comm.Util;
@@ -89,6 +90,7 @@ public class ContactListContactItem extends ContactListItem
 	private int plainMessages;
 	private int urlMessages;
 	private int sysNotices;
+	private int authRequest;
 
 	// Menu
 	private Menu menu;
@@ -109,6 +111,7 @@ public class ContactListContactItem extends ContactListItem
     this.plainMessages = 0;
     this.urlMessages = 0;
     this.sysNotices = 0;
+    this.authRequest = 0;
     this.menu = new Menu();
   }
 
@@ -245,6 +248,11 @@ public class ContactListContactItem extends ContactListItem
 	return (this.sysNotices > 0);
   }
 
+  // Returns
+  protected synchronized boolean isunasweredAuthRequest()
+  {
+	return (this.authRequest > 0);
+  }
 
 	// Adds a message to the message display
 	protected synchronized void addMessage(Message message) {
@@ -275,12 +283,12 @@ public class ContactListContactItem extends ContactListItem
 			UrlMessage urlMsg = (UrlMessage) message;
 			if (!msgDisplay.isShown())
 				urlMessages++;
-			msgDisplay.append(new StringItem(null, "URL: "+urlMsg.getUrl()));
+			msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "url")+": "+urlMsg.getUrl()));
 		    msgDisplay.append(new StringItem(null, urlMsg.getText()));
 		}
 		if (message instanceof SystemNotice)
 		{
-			g.drawString("System Notice "  + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
+			g.drawString(ResourceBundle.getString("jimm.res.Text", "sysnotice") + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10, Graphics.BASELINE | Graphics.LEFT);
 			copy = Image.createImage(prequel);
 			msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE + ImageItem.LAYOUT_NEWLINE_AFTER, null));
 			SystemNotice notice = (SystemNotice) message;
@@ -288,7 +296,19 @@ public class ContactListContactItem extends ContactListItem
 				sysNotices++;
 			if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
 			{
-				msgDisplay.append(new StringItem(null, "You were added by UIN "+notice.getSndrUin()));
+				msgDisplay.append(new StringItem(null, ResourceBundle.getString("jimm.res.Text", "youwereadded")+notice.getSndrUin()));
+			}
+			else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
+			{
+				authRequest++;
+				msgDisplay.append(new StringItem(null,notice.getSndrUin()+ResourceBundle.getString("jimm.res.Text", "wantsyourauth")+notice.getReason()));
+			}
+			else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
+			{
+				if (notice.isAUTH_granted())
+					msgDisplay.append(new StringItem(null,ResourceBundle.getString("jimm.res.Text", "grantedby")+notice.getSndrUin()+"."));
+				else
+					msgDisplay.append(new StringItem(null,ResourceBundle.getString("jimm.res.Text", "denyedby")+notice.getSndrUin()+". "+ResourceBundle.getString("jimm.res.Text", "reason")+": "+notice.getReason()));
 			}
 		}
 	}
@@ -404,6 +424,7 @@ public class ContactListContactItem extends ContactListItem
 			// Return to contact list
 			if (c == MenuUtil.backCommand)
 			{
+				ContactListContactItem.this.resetUnreadMessages();
 				Jimm.jimm.getContactListRef().activate();
 			}
 			// Message has been closed
@@ -612,29 +633,26 @@ public class ContactListContactItem extends ContactListItem
 
 				}
 				// URL has been entered
-				else if (d == MenuUtil.urlTextbox)
-				{
+				else if (d == MenuUtil.urlTextbox) {
 
 					// Abort if nothing has been entered
-					if (MenuUtil.urlTextbox.getString().length() < 1)
-					{
+					if (MenuUtil.urlTextbox.getString().length() < 1) {
 						this.activate();
 					}
 
 					// Construct URL message object and request new SendMessageAction
-          UrlMessage urlMsg = new UrlMessage(Jimm.jimm.getIcqRef().getUin(), ContactListContactItem.this, new Date(), MenuUtil.urlTextbox.getString(), MenuUtil.messageTextbox.getString());
+					UrlMessage urlMsg = new UrlMessage(Jimm.jimm.getIcqRef().getUin(), ContactListContactItem.this, new Date(), MenuUtil.urlTextbox.getString(), MenuUtil.messageTextbox.getString());
 					SendMessageAction sendMsgAct = new SendMessageAction(urlMsg);
-					try
-					{
+					try {
 						Jimm.jimm.getIcqRef().requestAction(sendMsgAct);
 					}
-					catch (JimmException e)
-					{
+					catch (JimmException e) {
 						JimmException.handleException(e);
-						if (e.isCritical()) return;
+						if (e.isCritical())
+							return;
 					}
 
-					if (!Jimm.jimm.getOptionsRef().keepChat()){
+					if (!Jimm.jimm.getOptionsRef().keepChat()) {
 						ContactListContactItem.this.deleteChatHistory();
 					}
 
@@ -642,6 +660,37 @@ public class ContactListContactItem extends ContactListItem
 					Jimm.jimm.getContactListRef().update();
 					Jimm.jimm.getContactListRef().activate();
 
+				}
+				// Reason has been entered
+				else if (d == MenuUtil.reasonTextbox) {
+
+					SystemNotice notice;
+					
+					// Decrease the number of handled auth requests by one
+					ContactListContactItem.this.authRequest -= 1;
+					
+					// If or if not a reason was entered
+					if (MenuUtil.reasonTextbox.getString().length() < 1) 
+					{
+						notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this.getUin(), false,"");
+					}
+					else 
+					{
+						notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this.getUin(), false, MenuUtil.reasonTextbox.getString());
+					}
+					
+					// Assemble the sysNotAction and request it
+					SysNoticeAction sysNotAct = new SysNoticeAction(notice);
+					try 
+					{
+						Jimm.jimm.getIcqRef().requestAction(sysNotAct);
+					}
+					catch (JimmException e) {
+						JimmException.handleException(e);
+						if (e.isCritical())
+							return;
+					}
+					this.activate();
 				}
 
 			}
@@ -651,21 +700,42 @@ public class ContactListContactItem extends ContactListItem
 				this.activate();
 			}
 			// Menu should be activated
-			else if (c == MenuUtil.addMenuCommand)
-			{
+			else if (c == MenuUtil.addMenuCommand) {
 				MenuUtil.menuList.setTitle(ContactListContactItem.this.name);
 				MenuUtil.menuList.setSelectedIndex(0, true);
 				MenuUtil.menuList.setCommandListener(this);
 				Jimm.display.setCurrent(MenuUtil.menuList);
 			}
 			// Delete chat history
-			else if (c == MenuUtil.deleteChatCommand)
-			{
+			else if (c == MenuUtil.deleteChatCommand) {
 				ContactListContactItem.this.deleteChatHistory();
 				Jimm.jimm.getContactListRef().update(ContactListContactItem.this.getUin());
 				Jimm.jimm.getContactListRef().activate();
 			}
-
+			//Grant authorisation
+			else if (c == MenuUtil.grantAuthCommand) {
+				ContactListContactItem.this.authRequest -= 1;
+				SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this.getUin(), true,"");
+				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
+				try {
+					Jimm.jimm.getIcqRef().requestAction(sysNotAct);
+				}
+				catch (JimmException e) {
+					JimmException.handleException(e);
+					if (e.isCritical())
+						return;
+				}
+				this.activate();
+			}
+			//Deny authorisation
+			else if (c == MenuUtil.denyAuthCommand) {
+				// Reset and display textbox for entering deney reason
+				MenuUtil.reasonTextbox.setString(null);
+				MenuUtil.reasonTextbox.removeCommand(MenuUtil.textboxOkCommand);
+				MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxSendCommand);
+				MenuUtil.reasonTextbox.setCommandListener(this);
+				Jimm.display.setCurrent(MenuUtil.reasonTextbox);
+			}
 		}
 
 
@@ -674,10 +744,17 @@ public class ContactListContactItem extends ContactListItem
 
 			// Display chat history
 			if (ContactListContactItem.this.hasChat()) {
+				msgDisplay.removeCommand(MenuUtil.grantAuthCommand);
+				msgDisplay.removeCommand(MenuUtil.denyAuthCommand);
 				msgDisplay.addCommand(MenuUtil.msgCloseCommand);
 				msgDisplay.addCommand(MenuUtil.msgReplyCommand);
 				msgDisplay.addCommand(MenuUtil.deleteChatCommand);
-				msgDisplay.addCommand(MenuUtil.addMenuCommand);
+				msgDisplay.addCommand(MenuUtil.addMenuCommand);	
+				if (ContactListContactItem.this.isunasweredAuthRequest())
+				{
+					msgDisplay.addCommand(MenuUtil.grantAuthCommand);
+					msgDisplay.addCommand(MenuUtil.denyAuthCommand);
+				}
 				msgDisplay.setCommandListener(this);
 				// Display history
 				ContactListContactItem.this.resetUnreadMessages();
@@ -714,37 +791,41 @@ public class ContactListContactItem extends ContactListItem
 
 		// Textbox for entering URLs
 		private static TextBox urlTextbox;
+		
+		// Textbox for entering a reason
+		private static TextBox reasonTextbox;
 
 
 		// Abort command
-		private static Command backCommand = new Command(ResourceBundle.getString("jimm.res.Text", "back"), Command.BACK, 1);
-
+		private static Command backCommand = new Command(ResourceBundle.getString("jimm.res.Text", "back"), Command.BACK, 2);
 
 		// Message close command
-		private static Command msgCloseCommand = new Command(ResourceBundle.getString("jimm.res.Text", "close"), Command.BACK, 2);
-
+		private static Command msgCloseCommand = new Command(ResourceBundle.getString("jimm.res.Text", "close"), Command.BACK, 3);
 
 		// Message close and reply command
-		private static Command msgReplyCommand = new Command(ResourceBundle.getString("jimm.res.Text", "reply"), Command.OK, 1);
+		private static Command msgReplyCommand = new Command(ResourceBundle.getString("jimm.res.Text", "reply"), Command.OK, 2);
 
 		//Show the message menu
-		private static Command addMenuCommand = new Command(ResourceBundle.getString("jimm.res.Text", "user_menu"), Command.OK, 3);
+		private static Command addMenuCommand = new Command(ResourceBundle.getString("jimm.res.Text", "user_menu"), Command.OK, 4);
 
 		//Delete Chat History
-		private static Command deleteChatCommand = new Command(ResourceBundle.getString("jimm.res.Text", "delete_chat"), Command.BACK, 4);
+		private static Command deleteChatCommand = new Command(ResourceBundle.getString("jimm.res.Text", "delete_chat"), Command.BACK, 5);
 
 		// Textbox OK command
-		private static Command textboxOkCommand = new Command(ResourceBundle.getString("jimm.res.Text", "ok"), Command.OK, 1);
-
+		private static Command textboxOkCommand = new Command(ResourceBundle.getString("jimm.res.Text", "ok"), Command.OK, 2);
 
 		// Textbox Send command
-		private static Command textboxSendCommand = new Command(ResourceBundle.getString("jimm.res.Text", "send"), Command.OK, 1);
-
+		private static Command textboxSendCommand = new Command(ResourceBundle.getString("jimm.res.Text", "send"), Command.OK, 2);
 
 		// Textbox cancel command
-		private static Command textboxCancelCommand = new Command(ResourceBundle.getString("jimm.res.Text", "cancel"), Command.CANCEL, 2);
+		private static Command textboxCancelCommand = new Command(ResourceBundle.getString("jimm.res.Text", "cancel"), Command.CANCEL, 3);
 
-
+		//Grand authorisation a for authorisation asking contact
+		private static Command grantAuthCommand = new Command(ResourceBundle.getString("jimm.res.Text", "grant"), Command.OK, 1);
+		
+		//Deny authorisation a for authorisation asking contact
+		private static Command denyAuthCommand = new Command(ResourceBundle.getString("jimm.res.Text", "deny"), Command.CANCEL, 1);
+		
 		// Initializer
 		static
 		{
@@ -765,6 +846,11 @@ public class ContactListContactItem extends ContactListItem
 			MenuUtil.urlTextbox = new TextBox(ResourceBundle.getString("jimm.res.Text", "url"), null, 1000, TextField.URL);
 			MenuUtil.urlTextbox.addCommand(MenuUtil.textboxCancelCommand);
 			MenuUtil.urlTextbox.addCommand(MenuUtil.textboxSendCommand);
+			
+			// Initialize the textfor for entering reasons
+			MenuUtil.reasonTextbox = new TextBox(ResourceBundle.getString("jimm.res.Text", "reason"), null, 1000, TextField.ANY);
+			MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxCancelCommand);
+			MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxSendCommand);
 
 		}
 
