@@ -68,6 +68,7 @@ public class UpdateContactListAction extends Action
     {
         this.add = add;
         this.cItem = cItem;
+        this.error = 0;
     }
 
     // Returns true if the action can be performed
@@ -93,6 +94,9 @@ public class UpdateContactListAction extends Action
         
         byte[] uinRaw = Util.stringToByteArray(this.cItem.getUin());
         byte[] nameRaw = Util.stringToByteArray(this.cItem.getName());
+        
+        
+        // Pack and send CLI_BUDDYLIST_REMOVE or CLI_BUDDYLIST_ADD package
         
         byte[] buf = new byte[1+uinRaw.length];
         
@@ -197,7 +201,7 @@ public class UpdateContactListAction extends Action
     }
 
     // Forwards received packet, returns true if packet was consumed
-    protected boolean forward(Packet packet) throws JimmException
+    protected synchronized boolean forward(Packet packet) throws JimmException
     {
 
         // Catch JimmExceptions
@@ -227,52 +231,22 @@ public class UpdateContactListAction extends Action
                         switch (Util.getWord(snacPacket.getData(), 0)){
                         
                         case 0x002:
-                            System.out.println("CLI_ADDEND");
-                            // Send a CLI_ADDEND packet
-                            packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
-                            this.icq.c.sendPacket(packet2);
                             error = 2;
-                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(154, 0, true));
                         case 0x003:
-                            System.out.println("CLI_ADDEND");
-                            // Send a CLI_ADDEND packet
-                            packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
-                            this.icq.c.sendPacket(packet2);
                             error = 3;
-                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(155, 0, true));
                             
                         case 0x00A:
-                            System.out.println("CLI_ADDEND");
-                            // Send a CLI_ADDEND packet
-                            packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
-                            this.icq.c.sendPacket(packet2);
                             error = 10;
-                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(156, 0, true));
                             
                         case 0x00C:
-                            System.out.println("CLI_ADDEND");
-                            // Send a CLI_ADDEND packet
-                            packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
-                            this.icq.c.sendPacket(packet2);
                             error = 12;
-                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(157, 0, true));
                             
                         case 0x00D:
-                            System.out.println("CLI_ADDEND");
-                            // Send a CLI_ADDEND packet
-                            packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-                                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
-                            this.icq.c.sendPacket(packet2);
                             error = 13;
-                            this.state = ConnectAction.STATE_ERROR;
                             throw (new JimmException(158, 0, true));
                             
                         case 0x00E:
@@ -416,12 +390,26 @@ public class UpdateContactListAction extends Action
         catch (JimmException e)
         {
 
+            System.out.println("CLI_ADDEND");
+            // Send a CLI_ADDEND packet
+            packet = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
+                    SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
+            this.icq.c.sendPacket(packet);
+            
             // Update activity timestamp
             this.lastActivity = new Date();
 
             // Set error state if exception is critical
-            if (e.isCritical()) this.state = ConnectAction.STATE_ERROR;
-
+            if (e.isCritical() || (error != 0)) this.state = ConnectAction.STATE_ERROR;
+            
+            while (!Jimm.jimm.getContactListRef().getContactList().isShown())
+                try
+                {
+                    this.wait(100);
+                } catch (InterruptedException e1)
+                {
+                    // Do nothing
+                }
             // Forward exception
             throw (e);
 
