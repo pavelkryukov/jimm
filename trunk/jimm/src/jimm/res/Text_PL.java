@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -41,16 +41,16 @@ public class Text_PL extends ResourceBundle
 		// Labels
 		resources.put(".",							".");
 		resources.put("about",						"O programie");
-		resources.put("about_info",					"Jimm - Mobile Messaging\n\nICQ client for J2ME\nWersja 0.3.1\nInformacje: http://jimm.sourceforge.net/");
+		resources.put("about_info",					"Jimm - Mobile Messaging\n\nKlient ICQ dla platformy J2ME\nWersja 0.3.1\nInformacje: http://jimm.sourceforge.net/");
 		resources.put("account",					"Konto");
 		resources.put("add_user",					"Dodaj użytkownika");
 		resources.put("add_to_list",				"Dodaj do listy");
 		resources.put("age",						"Wiek");
-		resources.put("async",						"Async");
-		resources.put("auth",						"Auth");
+		resources.put("async",							"Async");
+		resources.put("auth",							"Auth");
 		resources.put("back",						"Wstecz");
 		resources.put("beep",						"Beep");
-		resources.put("byte",						"Bajt");
+		resources.put("byte",						"B");
 		resources.put("cancel",						"Anuluj");
 		resources.put("city",						"Miasto");
 		resources.put("close",						"Zamknij");
@@ -106,7 +106,7 @@ public class Text_PL extends ResourceBundle
 		resources.put("lang_RU",					"Rosyjski");
 		resources.put("lang_SE",					"Szwedzki");
 		resources.put("lang_SR",					"Serbski");
-		resources.put("lang_HE",				    "עברית");
+		resources.put("lang_HE",						"עברית");
 		resources.put("lang_BG", 					"Bułgarski");
 		resources.put("lang_PL",					"Polski");
 		resources.put("lastname",					"Nazwisko");
@@ -166,7 +166,7 @@ public class Text_PL extends ResourceBundle
 		resources.put("server_port",				"Port");
 		resources.put("session",					"Sesja");
 		resources.put("set_status",					"Ustaw status");
-		resources.put("since", "					Since");
+		resources.put("since",						"Od");
 		resources.put("sound",						"Plik dźwiękowy");
 		resources.put("sort_by",					"Sortuj listę kontaktów");
 		resources.put("sort_by_name",				"Według nazwy");
