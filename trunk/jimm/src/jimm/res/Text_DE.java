@@ -189,6 +189,15 @@ public class Text_DE extends ResourceBundle
 		resources.put("yes",                         "Ja");
 		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
 
+		// User management ********
+		resources.put("group_is_not_empty",          "Gewählte Gruppe ist leer!\nAlle Kontakte in andere Gruppe verschieben?");
+		resources.put("add_group",                   "Gruppe hinzufügen");
+		resources.put("group_name",                  "Gruppenname");
+		resources.put("exec",                        "Ausführen");
+		resources.put("remove_user",                 "Kontakt löschen");
+		resources.put("remove_group",                "Gruppe löschen");
+		resources.put("show_user_groups",            "Gruppen anzeigen");		
+		
 		// Generic errors
 		resources.put("error_100",                   "Unbekannter Fehler (#100.EXT)");
 
