@@ -58,7 +58,7 @@ public class Text_SR extends ResourceBundle
 		resources.put("connect",                     "Конектуј се");
 		resources.put("connecting",                  "Конектујем се");
 		resources.put("contact_list",                "Контакти");
-		resources.put("cp1251",                      "Use CP1252 hack?");
+		resources.put("cp1251",                      "Use CP1251 hack?");
 		resources.put("cpp",                         "Цена по дану");
 		resources.put("cpd",                         "цена по пакету");
 		resources.put("currency",                    "Валута");

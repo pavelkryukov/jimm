@@ -59,7 +59,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("connect",                     "Prisijungti");
 		resources.put("connecting",                  "Jungiamasi");
 		resources.put("contact_list",                "Sąrašas");
-		resources.put("cp1251",                      "Naudoti CP1252 pritaikymą?");
+		resources.put("cp1251",                      "Naudoti CP1251 pritaikymą?");
 		resources.put("cpd",                         "Kaina per dieną");
 		resources.put("cpp",                         "Kaina per paketą");
 		resources.put("currency",                    "Valiuta");
