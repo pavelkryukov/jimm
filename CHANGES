@@ -132,13 +132,13 @@ VERSION 0.2.3
 ________________________________________________________________________________
 VERSION 0.3.0
 
-  * NEW FEATURE: File transfer to other > ICQ v8 clients
-  * NEW FEATURE: New chat history is added
+  * NEW FEATURE: File transfer to other > ICQ v8 clients (MIDP2 version only)
+  * NEW FEATURE: New chat history added
   * NEW FEATURE: Group display support
   * Quick adding temporary contact to contact list
   * Switching between chats with "left" and "right" buttons
   * There is now a new "Signaling" menu in options for sound settings
-  * You can now set the sound volume
+  * You can now set the sound volume for online and message sounds
   * General sound format support but only wav-files (PCM) will be in the release
   * New option "Small font in chat"
   * Search results are now drawn with DrawTools (like the new chat history)
