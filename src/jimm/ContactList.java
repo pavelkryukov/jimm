@@ -63,6 +63,11 @@ import javax.microedition.media.control.ToneControl;
 import java.io.InputStream;
 //#sijapp cond.end#
 
+//#sijapp cond.if target is "RIM"#
+//import net.rim.device.api.system.Alert;
+import net.rim.device.api.system.LED;
+//#sijapp cond.end#
+
 public class ContactList implements CommandListener
 {
 
@@ -79,7 +84,7 @@ public class ContactList implements CommandListener
     // Sound notification typs
     public static final int SOUND_TYPE_MESSAGE = 1;
     public static final int SOUND_TYPE_ONLINE  = 2;
-    
+
     // Image objects
     static Image images[];
 
@@ -218,7 +223,7 @@ public class ContactList implements CommandListener
         this.gItems.copyInto(gItems);
         return (gItems);
     }
-    
+
     // Return the contactList
     public List getContactList()
     {
@@ -632,7 +637,7 @@ public class ContactList implements CommandListener
             // Play sound notice if selected
             if (onoffchange)
                 this.playSoundNotivication(SOUND_TYPE_ONLINE);
-            
+
             // Update visual list (sorting only if it was on online offline or vice versa change
             this.refreshList(!wasoffline, false, i);
         }
@@ -805,7 +810,7 @@ public class ContactList implements CommandListener
                 case SOUND_TYPE_ONLINE:
                     Manager.playTone(ToneControl.C4+7, 500, 100);
                 }
-                
+
             } catch (MediaException e)
             {
                 // Do nothing
@@ -828,9 +833,30 @@ public class ContactList implements CommandListener
 
         }
         // #sijapp cond.end#
+        // #sijapp cond.if target is "RIM"#
+        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
+        LED.setState(LED.STATE_BLINKING);
+        if (Jimm.jimm.getOptionsRef().isVibrator())
+        {
+						// had to use full path since import already contains another Alert object
+            net.rim.device.api.system.Alert.startVibrate(500);
+        }
+        switch (Jimm.jimm.getOptionsRef().getNotificationMode(notType))
+        {
+        case 1:
+						// array is note in Hz, duration in ms.
+						short[] tune = new short[] { 349, 250, 0, 10, 523, 250 };
+            net.rim.device.api.system.Alert.startAudio(tune, 50);
+            net.rim.device.api.system.Alert.startBuzzer(tune, 50);
+            break;
+				}
+//        LED.setState(LED.STATE_OFF);
+//        net.rim.device.api.system.Alert.stopAudio();
+//        net.rim.device.api.system.Alert.stopBuzzer();
+        // #sijapp cond.end#
 
     }
-    
+
     // Save reference to currently selected contact item
     private void saveListPosition()
     {
@@ -1022,7 +1048,7 @@ public class ContactList implements CommandListener
         {
             position = sortElement(position);
             changed = true;
-            
+
             // Refreshes the visible contact list
             this.refreshVisibleList(false);
         }
@@ -1123,6 +1149,9 @@ public class ContactList implements CommandListener
                     .getSelectedIndex());
 
             // Activate the contact item menu
+						//#sijapp cond.if target is "RIM"#
+ 			      LED.setState(LED.STATE_OFF);
+						//#sijapp cond.end#
             currCItem.activateMenu();
 
         }
