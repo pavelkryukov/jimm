@@ -114,3 +114,8 @@ ________________________________________________________________________________
 VERSION 0.2.2
 
   * Bugfix: It was not possible to send an inital message to a contact
+  
+________________________________________________________________________________
+VERSION 0.2.3
+
+  * Added mp3 soundfile support for MIDP2 build. (Only if your device can play mp3)
