@@ -151,4 +151,6 @@ VERSION 0.3.1
   * NEW FEATURE: Users of the Nokia 6230 can now set the connection delay in the network menu
   * Bugfix: Time display on message timestamp was not correct
   * Bugfix: If you try to add a contact and there are no groups you can make a new one
+  * Bugfix: There is now a 100% unique ID created for new contacts and groups
+  * Contact names can be changed locally till next list update from server
   * Added Bulgarian translation

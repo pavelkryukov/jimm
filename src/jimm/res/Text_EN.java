@@ -144,6 +144,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("prev",						 "Previous");
 		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
+		resources.put("rename",                      "Rename");
 		resources.put("reply",                       "Reply");
 		resources.put("requauth",                    "Request auth");
 		resources.put("requ",                        "Required");

@@ -28,7 +28,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.Random;
 
+import jimm.ContactListContactItem;
+import jimm.ContactListGroupItem;
+import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.ContactList;
 import jimm.Options;
@@ -129,7 +133,7 @@ public class Util
 		if (bigEndian)
 		{
 			buf[off] = (byte) ((val >> 8) & 0x000000FF);
-			buf[++off] = (byte) ((val) & 0x000000FF);
+			buf[++off] = (byte) ((val)    & 0x000000FF);
 		}
 		else   // Little endian
 		{
@@ -504,8 +508,50 @@ public class Util
 
         return arrIP;
     }
-  
+    
+    // Create a random id which is not used yet
+    public static int createRandomId()
+    {
+        ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
+        ContactListContactItem[] cItems = Jimm.jimm.getContactListRef().getContactItems();
+        int randint;
+        boolean found;
 
+        Random rand = new Random(System.currentTimeMillis());
+        randint = rand.nextInt() & 0x0000ffff;
+        
+        DebugLog.addText("rand: "+randint);
+        do
+        {
+            found = false;
+            for (int i = 0; i < gItems.length; i++)
+            {
+                DebugLog.addText("gItem: "+gItems[i].getId());
+                if (gItems[i].getId() == randint)
+                {
+                    randint = rand.nextInt() & 0x0000ffff;
+                    DebugLog.addText("rand: "+randint);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) 
+                for (int j = 0; j < cItems.length; j++)
+                {
+                    DebugLog.addText("cItem: "+cItems[j].getId());
+                    if (cItems[j].getId() == randint)
+	                {
+	                    randint = rand.nextInt() & 0x0000ffff;
+	                    DebugLog.addText("rand: "+randint);
+	                    found = true;
+	                    break;
+	                }
+                }
+        } while (found == true);
+
+        return randint;
+    }
+  
 	// #sijapp cond.if modules_TRAFFIC is "true" #
 	// Returns String value of cost value
 	public static String intToDecimal(int value)

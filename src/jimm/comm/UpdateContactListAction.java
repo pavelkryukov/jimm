@@ -257,7 +257,7 @@ public class UpdateContactListAction extends Action
                 System.arraycopy(nameRaw, 0, buf, marker, nameRaw.length);
             }
             // Send CLI_ROSTERADDpacket
-            packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY, SnacPacket.CLI_ROSTERADD_COMMAND, SnacPacket.CLI_ROSTERADD_COMMAND,
+            packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY, SnacPacket.CLI_ROSTERADD_COMMAND, Util.getCounter(),
                     new byte[0], buf);
         }
         this.icq.c.sendPacket(packet);
