@@ -57,6 +57,7 @@ import com.siemens.mp.media.Player;
 // #sijapp cond.end#
 
 //#sijapp cond.if target is "MIDP2"#
+import javax.microedition.lcdui.game.Sprite;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
@@ -114,9 +115,13 @@ public class ContactList implements CommandListener
             images = new Image[imagenum];
             for (int i = 0; i < imagenum; i++)
             {
+//              #sijapp cond.if target is "MIDP2"#
+                images[i] = Image.createImage(Image.createImage(iconsImage, i * 16, 0, 16, 16, Sprite.TRANS_NONE));
+//              #sijapp cond.else#
                 dImage = Image.createImage(16, 16);
                 dImage.getGraphics().drawImage(iconsImage, -i << 4, 0, Graphics.TOP | Graphics.LEFT);
                 images[i] = Image.createImage(dImage);
+//              #sijapp cond.end#
             }
             ContactList.statusAwayImg = images[0];
             ContactList.statusChatImg = images[1];
