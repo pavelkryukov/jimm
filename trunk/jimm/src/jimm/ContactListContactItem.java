@@ -413,6 +413,12 @@ public class ContactListContactItem extends ContactListItem
     }    
     // #sijapp cond.end#
     
+    // Returns the FileTransferMessage of this contact
+    public int getChatHistoryDisplayNr()
+    {
+        return this.chatHistoryDisplayNr;
+    }
+    
     // Returns true if the next available message is a message of given type
     // Returns false if no message at all is available, or if the next available
     // message is of another type
@@ -511,6 +517,7 @@ public class ContactListContactItem extends ContactListItem
 
                 // Reset and display textbox for entering messages
                 MenuUtil.messageTextbox.setString(null);
+                MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
                 MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxOkCommand);
                 MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                 MenuUtil.messageTextbox.setCommandListener(this);
@@ -552,6 +559,7 @@ public class ContactListContactItem extends ContactListItem
                 {
                     // Reset and display textbox for entering messages
                     MenuUtil.messageTextbox.setString(null);
+                    MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
                     MenuUtil.messageTextbox.removeCommand(MenuUtil.textboxOkCommand);
                     MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);

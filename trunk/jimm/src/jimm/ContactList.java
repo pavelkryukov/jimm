@@ -1499,6 +1499,11 @@ public class ContactList implements CommandListener
 			if ( cItem.returnBoolValue(ContactListContactItem.VALUE_HAS_CHAT) )
 			{
 				lastChatItem = cItem;
+                // #sijapp cond.if target is "MIDP2"#
+				// Jimm.jimm.getChatHistoryRef().getChatHistoryAt(cItem.getChatHistoryDisplayNr()).setTitle(cItem.getName()+" ("+(cItem.getChatHistoryDisplayNr()+1)+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
+                // #sijapp cond.else#
+				// Jimm.jimm.getChatHistoryRef().getChatHistoryAt(cItem.getChatHistoryDisplayNr()).setCaption(cItem.getName()+" ("+(cItem.getChatHistoryDisplayNr()+1)+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
+                // #sijapp cond.end#
 				cItem.activateMenu();
 				break;
 			}

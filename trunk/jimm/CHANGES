@@ -177,5 +177,6 @@ VERSION 0.3.3
   * New option: Auto connect on startup
   * A message how to disable keylock is shown on splash screen if trying it the wrong way
   * Free heap mem can be seen at the bottom of about page
+  * Name of recipient is shown on top of message edit field
   * Added Ukrainian translation
   
