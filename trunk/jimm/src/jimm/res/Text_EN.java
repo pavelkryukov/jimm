@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -48,6 +48,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("age",                         "Age");
 		resources.put("async",                       "Async");
 		resources.put("auth",				     	 "Auth");
+		resources.put("auto_connect",				 "Auto connect on startup");
 		resources.put("back",                        "Back");
 		resources.put("beep",                        "Beep");
 		resources.put("byte",                        "Byte");
