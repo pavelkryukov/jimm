@@ -32,14 +32,14 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/midp.jar"     />
 	<property name="SIEMENS/midp"      value="CHANGE ME"                        />
 	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/api.jar"      />
-	<property name="NOKIAS40/midp"     value="CHANGE ME"                        />
-	<property name="NOKIAS40/midp/lib" value="${NOKIAS40/midp}/lib/classes.zip" />
+	<property name="RIM/midp"          value="CHANGE ME"                        />
+	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar"  />
 	<property name="proguard"          value="CHANGE ME"                        />
 	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"     />
 	<!-- ********************************************************************* -->
 	<!-- RELEASE VERSION SECTION - EVERY RELEASE HAS A UNIQUE VERSION NUMBER   -->
 	<!-- ********************************************************************* -->
-	<property name="version"           value="0.1latest"                        />
+	<property name="version"           value="0.2"                              />
 	<property name="version/java"      value="0.1"                              />
 	<!-- ********************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
@@ -53,9 +53,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="cvsdir" location="cvs"/>
 	<property name="package" value="jimm"/>
 	<property name="bin" value="bin"/>
-	<property name="targetlist" value="DEFAULT;SIEMENS;NOKIAS40"/>
+	<property name="targetlist" value="DEFAULT;SIEMENS;MIDP2"/>
 	<property name="connectionlist" value="RAWSOCKET"/>
-	<property name="langlist" value="EN,DE,RU,ES,BR,CZ,SE,LT;EN,DE;EN,RU;EN,ES;EN,BR;EN,CZ;EN,SE;EN,LT;EN;DE;RU;ES;BR;CZ;SE;LT"/>
+	<property name="langlist" value="EN,DE,RU,ES,BR,CZ,SE,LT,IT;EN,DE;EN,RU;EN,ES;EN,BR;EN,CZ;EN,SE;EN,LT;EN,IT;EN;DE;RU;ES;BR;CZ;SE;LT;IT"/>
 
 	<!-- Auxiliary property -->
 	<property name="3ns" value="###"/>
