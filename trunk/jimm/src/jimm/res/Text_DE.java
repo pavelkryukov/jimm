@@ -256,8 +256,9 @@ public class Text_DE extends ResourceBundle
 		resources.put("error_156",                   "Fehler beim Hinzufügen. Nochmal versuchen (#156.EXT)");
 		resources.put("error_157",                   "Keine weiteren Objekte dieses Typs zulässig (#157.EXT)");
 		resources.put("error_158",                   "Versuch einen ICQ-Kontact einer AIM-Liste hinzuzufügen (#158.EXT)");
-		resources.put("error_159",                   "Server antwortete nicht auf Suchanfrage. Nochmal versuchen(#159.EXT)");
+		resources.put("error_159",                   "Server antwortete nicht auf Suchanfrage. Nochmal versuchen (#159.EXT)");
 		resources.put("error_160",                   "Fehler beim Suchen (#160.EXT)");
+		resources.put("error_161",                   "Keine Gruppen vorhanden. Erst eine Gruppe erstellen (#161.EXT)");
 		
 		// other errors
 		resources.put("error_170",                   "Möglicherweise nicht genügend Heap-Speicher verfügbar (#170.EXT)");

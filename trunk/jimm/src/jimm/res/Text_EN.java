@@ -257,6 +257,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_158",                   "You did try to add an ICQ contact to an AIM list (#158.EXT)");
 		resources.put("error_159",                   "Server did not answer on search request. Try again (#159.EXT)");
 		resources.put("error_160",                   "Error while searching (#160.EXT)");
+		resources.put("error_161",                   "No groups found. Please add a group (#161.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Possibly not enough heap memory available (#170.EXT)");

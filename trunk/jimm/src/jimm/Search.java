@@ -25,6 +25,8 @@ package jimm;
 
 import java.util.Vector;
 
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
@@ -462,16 +464,25 @@ public class Search
             else if (c == this.previousComamnd) nextOrPrev(false);
             else if (c == this.addCommand && d == screen)
             {
-                // Show list of groups to select which group to add to
-                groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
-                for (int i = 0; i < Jimm.jimm.getContactListRef().getGroupItems().length; i++)
+                if (Jimm.jimm.getContactListRef().getGroupItems().length == 0)
                 {
-                    groupList.append(Jimm.jimm.getContactListRef().getGroupItems()[i].getName(), null);
+                    Jimm.jimm.getMainMenuRef().addUserOrGroupCmd(null, false);
+                    Alert errorMsg = new Alert(ResourceBundle.getString("warning"), JimmException.getErrDesc(161, 0), null, AlertType.WARNING);
+                    errorMsg.setTimeout(Alert.FOREVER);
+                    Jimm.display.setCurrent(errorMsg,Jimm.jimm.getMainMenuRef().addUserOrGroup);
+                } else
+                {
+                    // Show list of groups to select which group to add to
+                    groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
+                    for (int i = 0; i < Jimm.jimm.getContactListRef().getGroupItems().length; i++)
+                    {
+                        groupList.append(Jimm.jimm.getContactListRef().getGroupItems()[i].getName(), null);
+                    }
+                    groupList.addCommand(backCommand);
+                    groupList.addCommand(addCommand);
+                    groupList.setCommandListener(this);
+                    Jimm.display.setCurrent(groupList);
                 }
-                groupList.addCommand(backCommand);
-                groupList.addCommand(addCommand);
-                groupList.setCommandListener(this);
-                Jimm.display.setCurrent(groupList);
             } else if (c == this.addCommand && d == this.groupList)
             {
                 ContactListContactItem cItem = new ContactListContactItem(Jimm.jimm.getContactListRef()
