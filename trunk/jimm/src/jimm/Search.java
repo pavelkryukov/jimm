@@ -394,6 +394,12 @@ public class Search
             if (c == this.backCommand) Jimm.jimm.getMainMenuRef().activate();
             if (c == this.searchCommand)
             {
+                // Display splash canvas
+                SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
+                wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
+                wait2.setProgress(0);
+                Jimm.display.setCurrent(wait2);
+                
                 selectedIndex = 0;
 
                 Search.this.setSearchRequest(this.uinSearchTextBox.getString(), this.nickSearchTextBox.getString(),
@@ -411,6 +417,9 @@ public class Search
                     JimmException.handleException(e);
                     if (e.isCritical()) return;
                 }
+                
+//              // Start timer
+                Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
 
             }
             if (c == this.nextCommand)
