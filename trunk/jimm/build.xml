@@ -58,10 +58,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- NOKIAS40. Otherwise go with the default value (DEFAULT).              -->
 	<property name="target"            value="DEFAULT"                          />
 	<!-- ********************************************************************* -->
-	<!-- Network connection type. Currently, RAWSOCKET and RAWSOCKET_ASYNC     -->
-	<!-- (needed for some screwed Java implementations) are supported.         -->
-	<property name="connection"        value="RAWSOCKET"                        />
-	<!-- ********************************************************************* -->
 	<!-- This value is a comma separated list of modules which should be       -->
 	<!-- included in the build. Currently, the distribution includes only a    -->
 	<!-- module for traffic (TRAFFIC) display.                                 -->
@@ -69,13 +65,13 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ********************************************************************* -->
 	<!-- This value is a comma separated list of languages packs which should  -->
 	<!-- be included in the build. Currently, the distribution includes        -->
-	<!-- English (EN), Brasilian (BR), Czech (CZ), German (DE), Spanish (ES),  -->
-	<!-- Lithuanian (LT), Russian (RU) and Swedish (SE).                       -->
-	<property name="lang"              value="EN,BR,CZ,DE,ES,LT,RU,SE"          />
+	<!-- English ("EN"), German ("DE"), Russian ("RU"), Spanish ("ES")         -->
+	<!-- Brasilian ("BR") Chechz ("CZ") Swedish ("SE"), Lithuanian ("LT"   )   -->
+	<!-- and Italien ("IT") language packs.                                    -->
+	<property name="lang"              value="EN,DE,RU,ES,BR,CZ,SE,LT,IT"       />
 	<!-- ********************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!-- ********************************************************************* -->
-
 
 	<!-- Buildfile description -->
 	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
@@ -95,7 +91,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 
 	<!-- Set default version number -->
-	<property name="version" value="0.1"/>
+	<property name="version" value="0.2.1"/>
 	<property name="version/java" value="0.1"/>
 
 
@@ -166,6 +162,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/ES" value="true">
 			<contains string="${lang}" substring="ES"/>
 		</condition>
+		<condition property="lang/ES" value="true">
+			<contains string="${lang}" substring="ES"/>
+		</condition>
 		<condition property="lang/LT" value="true">
 			<contains string="${lang}" substring="LT"/>
 		</condition>
@@ -175,8 +174,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/SE" value="true">
 			<contains string="${lang}" substring="SE"/>
 		</condition>
-		<condition property="lang/LT" value="true">
-			<contains string="${lang}" substring="LT"/>
+		<condition property="lang/IT" value="true">
+			<contains string="${lang}" substring="IT"/>
 		</condition>
 		<mkdir dir="${build}/init/src"/>
 		<sijapp srcdir="${src}"
@@ -193,6 +192,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
 			<define name="lang_LT" value="${lang/LT}"/>
+			<define name="lang_IT" value="${lang/IT}"/>
 		</sijapp>
 		<replace dir="${build}/init/src"
 			encoding="UTF-8">
@@ -213,7 +213,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			destdir="${build}/compile/classes"
 			bootclasspath="${midp/lib}"
 			encoding="utf8"
-			target="1.1">
+			target="1.1"
+			debug="on">
 		</javac>
 	</target>
 
