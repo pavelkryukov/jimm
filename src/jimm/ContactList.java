@@ -492,9 +492,9 @@ public class ContactList implements CommandListener
 		this.tree.addCommand(selectCommand);
 		this.tree.addCommand(newUserCommand);
 		this.tree.addCommand(searchUserCommand);
-		this.tree.addCommand(removeUserCommand);
-		this.tree.addCommand(newGroupCommand);
-		this.tree.addCommand(removeGroupCommand);
+		//this.tree.addCommand(removeUserCommand);
+		//this.tree.addCommand(newGroupCommand);
+		//this.tree.addCommand(removeGroupCommand);
 	
 //#sijapp cond.if modules_DEBUGLOG is "true" #
 		this.tree.addCommand(debugListCommand);
@@ -549,7 +549,7 @@ public class ContactList implements CommandListener
     // Request display of the main menu
     public void activate()
     {
-    	DebugLog.addText("Contact list activated!");
+    	//DebugLog.addText("Contact list activated!");
     	
         //System.out.println("Show the contact list");
         //		#sijapp cond.if modules_TRAFFIC is "true" #
@@ -582,12 +582,13 @@ public class ContactList implements CommandListener
     // is called by options form when options changed
     public void optionsChanged(boolean groupsChanged, boolean needToSortContacts)
     {
-    	// debug feature:
+    	/*
     	DebugLog.addText
 		(
 			"optionsChanged: groupsChanged="+new Boolean(groupsChanged).toString()+
 			" needToSortContact="+new Boolean(needToSortContacts).toString()
 		);
+		*/
     	
     	if (groupsChanged) treeBuilded = false;
     	if (needToSortContacts)
@@ -602,7 +603,7 @@ public class ContactList implements CommandListener
     // Tries to load contact list from record store
     private void load() throws Exception, IOException, RecordStoreException
     {
-        DebugLog.addText("Loading contact list...");
+        //DebugLog.addText("Loading contact list...");
         
         // Initialize vectors
         this.cItems = new Vector();
@@ -702,13 +703,13 @@ public class ContactList implements CommandListener
 		}
         
         
-        DebugLog.addText("Contact list loaded...");
+        //DebugLog.addText("Contact list loaded...");
     }
 
     // Save contact list to record store
     private void save() throws IOException, RecordStoreException
     {
-        DebugLog.addText("Saving contact list...");
+        //DebugLog.addText("Saving contact list...");
         
         // Try to delete the record store
         try
@@ -805,7 +806,7 @@ public class ContactList implements CommandListener
         // Close record store
         cl.closeRecordStore();
                 
-        DebugLog.addText("Contact list saved!");
+        //DebugLog.addText("Contact list saved!");
     }
     
     
@@ -813,7 +814,7 @@ public class ContactList implements CommandListener
     // received)
     public synchronized void update(long versionId1, int versionId2, ContactListItem[] items)
     {
-        DebugLog.addText("update: new rooster");
+        //DebugLog.addText("update: new rooster");
 
         // Save version numbers
         this.versionId1 = versionId1;
@@ -871,7 +872,7 @@ public class ContactList implements CommandListener
     		    	 gItem.setChanged(false);
     		    	 tree.sortNode( groupNode, createNodeComparer() );
     		    	 calcGroupData(groupNode, gItem);
-    		    	 DebugLog.addText("Group is sorted: "+gItem.getText()+"...");
+    		    	 //DebugLog.addText("Group is sorted: "+gItem.getText()+"...");
     		    }	 
     		}
     	}
@@ -881,7 +882,7 @@ public class ContactList implements CommandListener
     		{
     			tree.sortNode( null, createNodeComparer() );
     			contactsChanged = false;
-    			DebugLog.addText("All contacts is sorted...");
+    			//DebugLog.addText("All contacts is sorted...");
     		}
     	}
     }
@@ -912,10 +913,7 @@ public class ContactList implements CommandListener
 		cCount = cItems.size();
 		if (treeBuilded || (cCount == 0)) return;
 		
-		DebugLog.addText("Start to build tree...");
-		
-		System.gc();
-		long startMem = Runtime.getRuntime().freeMemory(); 
+		//DebugLog.addText("Start to build tree...");
 		
 		tree.clear();
 		tree.setShowButtons(use_groups);
@@ -953,12 +951,6 @@ public class ContactList implements CommandListener
 	
 		contactsChanged = true;
 		treeBuilded = true;
-		
-		System.gc();
-		long endMem = Runtime.getRuntime().freeMemory();
-		
-        DebugLog.addText("Tree used "+
-        Long.toString(startMem-endMem)+"bytes of memory");
 	}
 
 	// Returns reference to group with id or null if group not found
@@ -1082,8 +1074,6 @@ public class ContactList implements CommandListener
     		int contCount = groupNode.size();
     		TreeNodeComparer comparer = createNodeComparer();
     		
-    		DebugLog.addText(Integer.toString(contCount));
-    		
     		for (int j = 0; j < contCount; j++)
     		{
     			if (comparer.compareNodes(cItemNode, groupNode.elementAt(j)) < 0)
@@ -1147,13 +1137,14 @@ public class ContactList implements CommandListener
         ContactListContactItem cItem = getItembyUIN(uin);
         if (cItem == null) return; // error ???
         
-        // debug feature:
+        /*
     	DebugLog.addText
 		(
 				cItem.getText()+" "+
 				Integer.toString((int)cItem.getStatus())+"->"+
 				Integer.toString((int)Util.translateStatusReceived(status))
 		);
+		*/
     	
     	long trueStatus = Util.translateStatusReceived(status);
     	boolean statusChanged = (cItem.getStatus() != trueStatus);
@@ -1172,7 +1163,7 @@ public class ContactList implements CommandListener
         }
 
         // Play sound notice if selected
-        if (trueStatus == STATUS_ONLINE)
+        if ((trueStatus == STATUS_ONLINE) && statusChanged)
         {
             if ( !isNowConnecting() ) 
             	this.playSoundNotivication(SOUND_TYPE_ONLINE);
@@ -1193,7 +1184,7 @@ public class ContactList implements CommandListener
     // #sijapp cond.else#
     public synchronized void update(String uin, long status, int capabilities)
     {
-        System.out.println("update: status change");
+        //System.out.println("update: status change");
 
         ContactListContactItem cItem = getItembyUIN(uin);
         if (cItem == null)
@@ -1209,7 +1200,7 @@ public class ContactList implements CommandListener
         cItem.setCapabilities(capabilities);
 
         // Play sound notice if selected
-        if (trueStatus == STATUS_ONLINE)
+        if ((trueStatus == STATUS_ONLINE) && statusChanged)
         {
             if ( !isNowConnecting() ) 
             	this.playSoundNotivication(SOUND_TYPE_ONLINE);
@@ -1232,7 +1223,7 @@ public class ContactList implements CommandListener
     // status)
     public synchronized void update(String uin, long status)
     {
-        System.out.println("update(String uin, long status)");
+        //System.out.println("update(String uin, long status)");
         //  #sijapp cond.if target is "MIDP2"#
         this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,new byte[0],0,0,-1,0);
         //  #sijapp cond.else#
@@ -1513,7 +1504,6 @@ public class ContactList implements CommandListener
 		}
 		else if (item instanceof ContactListGroupItem)
 		{
-			DebugLog.addText(new Boolean(node.getExpanded()).toString());
 			tree.setExpandFlag(node, !node.getExpanded());
 		}
 		
