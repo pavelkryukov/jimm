@@ -285,8 +285,7 @@ public class Options
 		this.setNotificationMode(dis.readInt(),ContactList.SOUND_TYPE_MESSAGE);
 		this.setNotificationMode(dis.readInt(),ContactList.SOUND_TYPE_ONLINE);
 		// #sijapp cond.else#
-		dis.readInt();
-		dis.readInt();
+		dis.skipBytes(2*4);
 		// #sijapp cond.end#
 		// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
 		this.setSoundFileName(dis.readUTF(),ContactList.SOUND_TYPE_MESSAGE);
@@ -298,7 +297,7 @@ public class Options
 		// #sijapp cond.if target is "SIEMENS" | target is "RIM"#
 		this.setVibrator(dis.readBoolean());
 		// #sijapp cond.else#
-		dis.readBoolean();
+		dis.skipBytes(1);
 		// #sijapp cond.end#
 		this.setKeepChat(dis.readBoolean());
 		this.setCP1251Hack(dis.readBoolean());
@@ -308,9 +307,7 @@ public class Options
 		this.setCostPacketLength(dis.readInt());
 		this.setCurrency(dis.readUTF());
 		// #sijapp cond.else#
-		dis.readInt();
-		dis.readInt();
-		dis.readInt();
+		dis.skipBytes(3*4);
 		dis.readUTF();
 		// #sijapp cond.end#
 		this.setOnlineStatus(dis.readLong());
