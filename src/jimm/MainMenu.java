@@ -50,7 +50,25 @@ public class MainMenu implements CommandListener
     // Send command
     private static Command sendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
-    // List for selecting a online status
+// #sijapp cond.if target is "MOTOROLA" # 
+
+    // Select command
+    private static Command selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
+
+
+// #sijapp cond.if lang_RU is "true" | lang_EN is "true" # 
+
+    //Exit command
+    private static Command exitCommand = new Command(ResourceBundle.getString("exit_button"), Command.EXIT, 1);
+
+//#sijapp cond.else# 
+
+    private static Command exitCommand = new Command(ResourceBundle.getString("exit"), Command.EXIT, 1);
+
+//#sijapp cond.end# 
+//#sijapp cond.end# 
+
+     // List for selecting a online status
     private static List statusList;
 
     // Initializer
@@ -110,6 +128,11 @@ public class MainMenu implements CommandListener
                 // #sijapp cond.end#
                 this.list.append(ResourceBundle.getString("about"), null);
                 this.list.append(ResourceBundle.getString("exit"), null);
+                 // #sijapp cond.if target is "MOTOROLA" #
+                 this.list.addCommand(MainMenu.selectCommand);
+                 this.list.addCommand(MainMenu.exitCommand);
+                 // #sijapp cond.end#
+
 
                 this.list.setCommandListener(this);
             } else
@@ -129,6 +152,9 @@ public class MainMenu implements CommandListener
                 this.list.append(ResourceBundle.getString("about"), null);
                 this.list.append(ResourceBundle.getString("exit"), null);
                 this.list.addCommand(MainMenu.backCommand);
+                // #sijapp cond.if target is "MOTOROLA" #
+                this.list.addCommand(MainMenu.selectCommand);
+                 // #sijapp cond.end#
                 this.list.setCommandListener(this);
             }
             this.isConnected = Jimm.jimm.getIcqRef().isConnected();
@@ -239,6 +265,17 @@ public class MainMenu implements CommandListener
         Traffic traffic = Jimm.jimm.getTrafficRef();
         // #sijapp cond.end#
 
+
+         // #sijapp cond.if target is "MOTOROLA" #
+        //Exit by soft button
+          
+        if (c == MainMenu.exitCommand)
+        {
+            menuExit();
+         }       
+
+        // #sijapp cond.end#
+        
         // Return to contact list
         if (c == MainMenu.backCommand)
         {
@@ -346,7 +383,16 @@ public class MainMenu implements CommandListener
         }
         
         // Menu item has been selected
+
+//#sijapp cond.if target is "MOTOROLA"#
+
+       else if ((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand) && (d == this.list))
+
+ // #sijapp cond.else#
+
         else if ((c == List.SELECT_COMMAND) && (d == this.list))
+ // #sijapp cond.end#
+
         {
             if (this.isConnected)
             {
@@ -390,7 +436,10 @@ public class MainMenu implements CommandListener
                     }
                     MainMenu.statusList.setCommandListener(this);
                     MainMenu.statusList.addCommand(backCommand);
-                    Jimm.display.setCurrent(MainMenu.statusList);
+                    //#sijapp cond.if target is "MOTOROLA"# 
+                    MainMenu.statusList.addCommand(selectCommand);
+                    //#sijapp cond.end#
+                   Jimm.display.setCurrent(MainMenu.statusList);
 
                     break;
                 case 3: // Add user
@@ -541,8 +590,12 @@ public class MainMenu implements CommandListener
             }
         }
         // Online status has been selected
+        //#sijapp cond.if target is "MOTOROLA"#
+        else if ((c == List.SELECT_COMMAND) || (c== MainMenu.selectCommand) && (d == MainMenu.statusList))
+        //#sijapp cond.else#
         else if ((c == List.SELECT_COMMAND) && (d == MainMenu.statusList))
-        {
+        //#sijapp cond.end#
+         {
 
             // Request online status change
             long onlineStatus = ContactList.STATUS_ONLINE;
@@ -585,3 +638,4 @@ public class MainMenu implements CommandListener
     }
 
 }
+
