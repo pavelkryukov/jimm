@@ -40,6 +40,9 @@ import java.io.IOException;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -69,8 +72,8 @@ public class SplashCanvas extends Canvas
 
   // Image object, holds the notice image
   private static Image notice;
-
-
+  
+  
   // Font used to display the logo (if image is not available)
   private static Font logoFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_LARGE);
 
@@ -346,26 +349,53 @@ public class SplashCanvas extends Canvas
     }
   }
   
+  
   /****************************************************************************/
   /****************************************************************************/
   /****************************************************************************/
 
 //  #sijapp cond.if target is "MIDP2"#
   // Activates the contact list after connection has been established
-  public static class FileTransferTimerTask extends TimerTask
+  public static class FileTransferTimerTask extends TimerTask implements CommandListener
   {
 
 
     // Reference to ConnectAction
     private DirectConnectionAction dcAct;
 
+    // Cancel Command
+    private Command cancelCommand;
 
     // Constructor
     public FileTransferTimerTask(DirectConnectionAction _dcAct)
     {
+      
+      System.out.println("made FileTransferTimerTask");
       this.dcAct = _dcAct;
+      
+      // Set the cancel command
+      cancelCommand = new Command(ResourceBundle.getString("cancel"),Command.CANCEL,1);
+      Jimm.jimm.getSplashCanvasRef().addCommand(cancelCommand);
+      Jimm.jimm.getSplashCanvasRef().setCommandListener(this);
+      
+      // Activate the splash screen
+      Jimm.jimm.getSplashCanvasRef().setMessage(ResourceBundle.getString("filetransfer"));
+      Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
     }
 
+    // Command listener
+    public void commandAction(Command c, Displayable d)
+    {
+        if (c == this.cancelCommand)
+        {
+            Jimm.jimm.getContactListRef().activate();
+            Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
+            this.dcAct.setCancel(true);
+            Jimm.jimm.getContactListRef().activate();
+            
+            this.cancel();
+        }
+    }
 
     // Timer routine
     public void run()
@@ -383,16 +413,14 @@ public class SplashCanvas extends Canvas
       }
     }
 
-
   }
 
-//  #sijapp cond.end#
-
   /****************************************************************************/
   /****************************************************************************/
   /****************************************************************************/
 
-
+//#sijapp cond.end#
+  
   // Activates the contact list after connection has been established
   public static class ConnectTimerTask extends TimerTask
   {

@@ -552,7 +552,7 @@ public class ActionListener
 
                         // #sijapp cond.if target is "MIDP2"#
                         // File transfer message
-                        if (plugin.equals("File"))
+                        if (plugin.equals("File") && Jimm.jimm.getSplashCanvasRef().isShown())
                         {
                          if (ackType == 2)
                          {
@@ -596,7 +596,7 @@ public class ActionListener
                                                        
                              System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
                              
-                             DirectConnectionAction dcAct = new DirectConnectionAction(sender.getFT());
+                             DirectConnectionAction dcAct = new DirectConnectionAction(sender.getFTM());
                              try
                              {
                                  Jimm.jimm.getIcqRef().requestAction(dcAct);
@@ -606,11 +606,10 @@ public class ActionListener
                                  if (e.isCritical()) return;
                              }
                                  
-                                 // Activate the splash screen
-                                 Jimm.jimm.getSplashCanvasRef().setMessage(ResourceBundle.getString("filetransfer"));
-                                 Display.getDisplay(Jimm.jimm).setCurrent(Jimm.jimm.getSplashCanvasRef());
+                                 // Remove Cancel command form init splash screen
+                                 Jimm.jimm.getSplashCanvasRef().removeCommand(sender.getFT().getCancelCommand());
                                  
-                                 // Start timer
+                                 // Start timer (timer will activate splash screen)
                                  Jimm.jimm.getTimerRef().schedule(new SplashCanvas.FileTransferTimerTask(dcAct), 1000, 1000);
                          }
                         }
