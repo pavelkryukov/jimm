@@ -66,7 +66,6 @@ class ChatTextList extends TextList
 			Jimm.jimm.getContactListRef().showNextPrevChat(true);
 			break;
 		}
-		
 	}
 }
 

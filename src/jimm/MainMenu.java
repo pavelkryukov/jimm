@@ -29,8 +29,9 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -71,11 +72,11 @@ public class MainMenu implements CommandListener
     private List groupList;
 
     // Form for the adding users dialog
-    public Form addUser;
+    static public Form addUser;
 
     // Text box for adding users to the contact list
-    private TextField uinTextField;
-    private TextField nameTextField;
+    static private TextField uinTextField;
+    static private TextField nameTextField;
 
     // Connected
     private boolean isConnected;
@@ -146,6 +147,27 @@ public class MainMenu implements CommandListener
         Jimm.display.setCurrent(this.list);
     }
 
+    // Show form for adding user
+    public static void addUserCmd(String uin)
+	{
+        // Reset and display textbox for entering uin to add
+        addUser = new Form(ResourceBundle.getString("add_user"));
+        uinTextField = new TextField(ResourceBundle.getString("uin"), uin, 16, TextField.NUMERIC);
+        nameTextField = new TextField(ResourceBundle.getString("name"), "", 32, TextField.ANY);
+        if (uin == null) 
+        	addUser.append(uinTextField);
+        else 
+        {
+        	StringItem si = new StringItem(ResourceBundle.getString("uin"), uin);
+        	addUser.append(si);
+        }
+        addUser.append(nameTextField);
+        addUser.addCommand(sendCommand);
+        addUser.addCommand(backCommand);
+        addUser.setCommandListener( Jimm.jimm.getMainMenuRef() );
+        Jimm.display.setCurrent(addUser);
+	}
+
     // Command listener
     public void commandAction(Command c, Displayable d)
     {
@@ -158,11 +180,11 @@ public class MainMenu implements CommandListener
         // Return to contact list
         if (c == MainMenu.backCommand)
         {
-            if ((d == this.groupList) || (d == this.addUser) || (d == statusList))
+            if ((d == this.groupList) || (d == MainMenu.addUser) || (d == statusList))
                 this.activate();
             else
                 Jimm.jimm.getContactListRef().activate();
-        } else if ((c == sendCommand) && (d == this.addUser))
+        } else if ((c == sendCommand) && (d == MainMenu.addUser))
         {
             // Display splash canvas
             SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
@@ -238,17 +260,7 @@ public class MainMenu implements CommandListener
 
                     break;
                 case 3: // Add user
-                    // Reset and display textbox for entering uin to add
-                    addUser = new Form(ResourceBundle.getString("add_user"));
-                    uinTextField = new TextField(ResourceBundle.getString("uin"), "", 16,
-                            TextField.NUMERIC);
-                    nameTextField = new TextField(ResourceBundle.getString("name"), "", 32,
-                            TextField.ANY);
-                    addUser.append(uinTextField);
-                    addUser.addCommand(sendCommand);
-                    addUser.addCommand(backCommand);
-                    addUser.setCommandListener(this);
-                    Jimm.display.setCurrent(addUser);
+                	addUserCmd(null);
                     break;
                     
                 case 4:

@@ -820,6 +820,8 @@ public class ContactList implements CommandListener
         System.out.println("update: new rooster");
         System.out.println("Flags: "+flags);
         System.out.println("Updated: "+this.updated);
+        
+        DebugLog.addText("update: new rooster");
 
         // Remove all Elemente form the old ContactList
         if (!updated)
@@ -907,7 +909,7 @@ public class ContactList implements CommandListener
         	return new NodeComparer();
  	
         case 1:
-        	return new SimpleNodeComparer(); 
+        	return new SimpleNodeComparer();
         }
         return null;
     }
@@ -1035,7 +1037,6 @@ public class ContactList implements CommandListener
     	
     	try
 		{
-    	
     	debugValue = 1;
     	String uin = item.getUin();
     	
@@ -1099,6 +1100,8 @@ public class ContactList implements CommandListener
     	else if (haveToDelete)
     	{
     		debugValue = 12;
+    		
+    		DebugLog.addText("Deleting node");
     		tree.removeNode(cItemNode);
     		wasDeleted = true;
     	}
@@ -1121,7 +1124,9 @@ public class ContactList implements CommandListener
     		for (int j = 0; j < contCount; j++)
     		{
     			debugValue = 16;
-    			if (comparer.compareNodes(cItemNode, groupNode.elementAt(j)) < 0)
+    			TreeNode testNode = groupNode.elementAt(j);
+    			if ( !(testNode.getData() instanceof ContactListContactItem) ) continue;
+    			if (comparer.compareNodes(cItemNode, testNode) < 0)
     			{
     				debugValue = 17;
     				tree.insertChild(groupNode, cItemNode, j);
@@ -1158,8 +1163,8 @@ public class ContactList implements CommandListener
     // Updates the client-side contact list (called when roster is up to date)
 	public synchronized void update()
 	{
-	    System.out.println("update: rooster up to date");
-	    treeBuilded = false;
+	    DebugLog.addText("update: rooster up to date");
+	    //treeBuilded = false;
 	}
     
     // Updates the client-side contact list (called when coming back from
@@ -1174,11 +1179,6 @@ public class ContactList implements CommandListener
 		needPlayOnlineNotif = false, 
 		needPlayMessNotif = false; 
     
-    private boolean isNowConnecting()
-    {
-    	return !treeBuilded; // TODO: make true connecting mode check!!!!!!!
-    }
-
     // Updates the client-side contact list (called when a contact changes
     // status)
     //  #sijapp cond.if target is "MIDP2"#
@@ -1208,7 +1208,7 @@ public class ContactList implements CommandListener
         // Play sound notice if selected
         if ((trueStatus == STATUS_ONLINE) && statusChanged)
         {
-            if ( !isNowConnecting() ) 
+            if ( treeBuilded ) 
             	this.playSoundNotivication(SOUND_TYPE_ONLINE);
             else
             	needPlayOnlineNotif |= true;
@@ -1245,7 +1245,7 @@ public class ContactList implements CommandListener
         // Play sound notice if selected
         if ((trueStatus == STATUS_ONLINE) && statusChanged)
         {
-            if ( !isNowConnecting() ) 
+            if ( treeBuilded ) 
             	this.playSoundNotivication(SOUND_TYPE_ONLINE);
             else
             	needPlayOnlineNotif |= true;
@@ -1315,7 +1315,7 @@ public class ContactList implements CommandListener
     // Removes a contact list item
     public synchronized void removeContactItem(ContactListContactItem cItem)
     {
-        System.out.println("removeContactItem "+cItem.getUin());
+    	DebugLog.addText("removeContactItem "+cItem.getUin());
 
         // Remove given contact item
         this.cItems.removeElement(cItem);
@@ -1327,15 +1327,23 @@ public class ContactList implements CommandListener
     // Adds a contact list item
     public synchronized void addContactItem(ContactListContactItem cItem)
     {
-        System.out.println("addContactItem "+cItem.getUin());
+        DebugLog.addText("addContactItem "+cItem.getUin()+
+        		" temp="+new Boolean(cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)).toString());
         if (!cItem.returnBoolValue(ContactListContactItem.VALUE_ADDED))
         {
+        	// does contact already exists or temporary ?
+        	ContactListContactItem oldItem = getItembyUIN(cItem.getUin());
+        	if (oldItem != null) removeContactItem(oldItem);
+        	
             // Add given contact item
-            cItem.setBoolValue(ContactListContactItem.VALUE_ADDED,true);
-            this.cItems.addElement(cItem);
+        	this.cItems.addElement(cItem);
+            cItem.setBoolValue(ContactListContactItem.VALUE_ADDED, true);
             
             // Update visual list
             contactChanged(cItem, true, true, true);
+            
+            // copy old chat history number if contact was temporary 
+            if (oldItem != null) cItem.copyChatHistory(oldItem);
         }
     }
 
@@ -1344,8 +1352,8 @@ public class ContactList implements CommandListener
     public synchronized void addMessage(Message message)
     {
         // Search for contact entry and add message to message queue
-        // System.out.println("\n");
-        // System.out.println("addMessage");
+
+        DebugLog.addText("addMessage");
         boolean listed = false;
         ContactListContactItem cItem = null;
         int i;
@@ -1376,7 +1384,7 @@ public class ContactList implements CommandListener
         Jimm.jimm.getSplashCanvasRef().messageAvailable();
         
         // Notify user
-        if ( isNowConnecting() ) needPlayMessNotif |= true;
+        if ( !treeBuilded ) needPlayMessNotif |= true;
         else this.playSoundNotivication(SOUND_TYPE_MESSAGE);
         
         // Update tree
