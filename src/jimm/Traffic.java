@@ -21,7 +21,7 @@
  Author: Andreas Rossbacher
  *******************************************************************************/
 
-//#sijapp cond.if mod_TRAF is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
 
 package jimm;
 

@@ -167,7 +167,7 @@ public class ContactList implements CommandListener {
 		changed = false;
 		// Initialize contact list
 		this.contactList = new List(ResourceBundle.getString("jimm.res.Text", "contact_list"), Choice.IMPLICIT);
-//		#sijapp cond.if mod_TRAF is "true" #
+//		#sijapp cond.if modules_TRAFFIC is "true" #
 		this.updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
 //		#sijapp cond.else #
 		this.updateTitle(0);
@@ -209,7 +209,7 @@ public class ContactList implements CommandListener {
 	// Request display of the main menu
 	public void activate() {
 		//System.out.println("Show the contact list");
-//		#sijapp cond.if mod_TRAF is "true" #
+//		#sijapp cond.if modules_TRAFFIC is "true" #
 		Jimm.jimm.getContactListRef().updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
 //		#sijapp cond.else #
 		this.updateTitle(0);

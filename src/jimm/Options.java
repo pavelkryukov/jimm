@@ -97,7 +97,7 @@ public class Options
   // #sijapp cond.end#
   public static final boolean DEFAULT_KEEP_CHAT = true;
   public static final boolean DEFAULT_CP1251_HACK = false;
-//#sijapp cond.if mod_TRAF is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
   public static final int DEFAULT_COST_PER_PACKET = 0;
   public static final int DEFAULT_COST_PER_DAY = 0;
   public static final int DEFAULT_COST_PACKET_LENGTH = 1024;
@@ -161,7 +161,7 @@ public class Options
 //Section interface, use the cp1251 hack?
  private boolean cp1251_hack;
 
-//#sijapp cond.if mod_TRAF is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
   // Section cost, cost per packet
   private int costPerPacket;
 
@@ -219,7 +219,7 @@ public class Options
       // #sijapp cond.end#
       this.setKeepChat(Options.DEFAULT_KEEP_CHAT);
       this.setCP1251Hack(Options.DEFAULT_CP1251_HACK);
-//	  #sijapp cond.if mod_TRAF is "true" #
+//	  #sijapp cond.if modules_TRAFFIC is "true" #
       this.setCostPerPacket(Options.DEFAULT_COST_PER_PACKET);
       this.setCostPerDay(Options.DEFAULT_COST_PER_DAY);
       this.setCostPacketLength(Options.DEFAULT_COST_PACKET_LENGTH);
@@ -278,7 +278,7 @@ public class Options
     // #sijapp cond.end#
     this.setKeepChat(dis.readBoolean());
     this.setCP1251Hack(dis.readBoolean());
-	//	#sijapp cond.if mod_TRAF is "true" #
+	//	#sijapp cond.if modules_TRAFFIC is "true" #
     this.setCostPerPacket(dis.readInt());
     this.setCostPerDay(dis.readInt());
     this.setCostPacketLength(dis.readInt());
@@ -361,7 +361,7 @@ public class Options
     // #sijapp cond.end#
     dos.writeBoolean(this.keepChat());
     dos.writeBoolean(this.cp1251Hack());
-	//	#sijapp cond.if mod_TRAF is "true" #
+	//	#sijapp cond.if modules_TRAFFIC is "true" #
     dos.writeInt(this.getCostPerPacket());
     dos.writeInt(this.getCostPerDay());
     dos.writeInt(this.getCostPacketLength());
@@ -576,7 +576,7 @@ public class Options
 	  this.cp1251_hack = cp1251_hack;
   }
 
-//#sijapp cond.if mod_TRAF is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
   // Get cost per packet
   public synchronized int getCostPerPacket()
   {
@@ -699,7 +699,7 @@ public class Options
     // #sijapp cond.end#
 	private ChoiceGroup keepChatChoiceGroup;
 	private ChoiceGroup cp1251ChoiceGroup;
-//	#sijapp cond.if mod_TRAF is "true" #
+//	#sijapp cond.if modules_TRAFFIC is "true" #
     private TextField costPerPacketTextField;
     private TextField costPerDayTextField;
     private TextField costPacketLengthTextField;
@@ -719,7 +719,7 @@ public class Options
       this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_account"), null);
       this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_network"), null);
       this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_interface"), null);
-//	  #sijapp cond.if mod_TRAF is "true" #
+//	  #sijapp cond.if modules_TRAFFIC is "true" #
       this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_cost"), null);
 //	  #sijapp cond.end#
       this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_other"), null);
@@ -786,7 +786,7 @@ public class Options
       this.vibratorChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
       this.vibratorChoiceGroup.setSelectedIndex(0,Options.this.isVibrator());
       // #sijapp cond.end#
-//	  #sijapp cond.if mod_TRAF is "true" #
+//	  #sijapp cond.if modules_TRAFFIC is "true" #
       // Initialize elements (cost section)
       this.costPerPacketTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "cpp"), this.getString(Options.this.getCostPerPacket()), 6, TextField.ANY);
       this.costPerDayTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "cpd"), this.getString(Options.this.getCostPerDay()), 6, TextField.ANY);
@@ -801,7 +801,7 @@ public class Options
       this.displayAdvertisementModeChoiceGroup.setSelectedIndex(Options.this.getDisplayAdvertisementMode(), true);
     }
 
-	//	  #sijapp cond.if mod_TRAF is "true" #
+	//	  #sijapp cond.if modules_TRAFFIC is "true" #
 
 	// Returns String value of cost value
 	public String getString(int value) {
@@ -912,7 +912,7 @@ public class Options
             this.optionsForm.append(this.vibratorChoiceGroup);
             // #sijapp cond.end#
             break;
-//			#sijapp cond.if mod_TRAF is "true" #
+//			#sijapp cond.if modules_TRAFFIC is "true" #
           case 3:
             this.optionsForm.append(this.costPerPacketTextField);
             this.optionsForm.append(this.costPerDayTextField);
@@ -991,7 +991,7 @@ public class Options
             // #sijapp cond.end#
             Jimm.jimm.getContactListRef().sortAll();
             break;
-//			#sijapp cond.if mod_TRAF is "true" #
+//			#sijapp cond.if modules_TRAFFIC is "true" #
           case 3:
             Options.this.setCostPerPacket(this.getValue(this.costPerPacketTextField.getString()));
 			this.costPerPacketTextField.setString(this.getString(Options.this.getCostPerPacket()));
