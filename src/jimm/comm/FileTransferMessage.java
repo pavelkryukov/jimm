@@ -42,7 +42,7 @@ public class FileTransferMessage extends Message
     // Constructs an outgoing message
     public FileTransferMessage(String sndrUin, ContactListContactItem _rcvr, String _filename, String _description, byte[] _file)
     {
-        System.out.println("Constr: FileTransferRequest");
+        // System.out.println("Constr: FileTransferRequest");
         this.sndrUin = new String(sndrUin);
         this.rcvr = _rcvr;
         this.filename = _filename;
@@ -82,9 +82,9 @@ public class FileTransferMessage extends Message
             buf = new byte[2049];
         else
             buf = new byte[(file.length % 2048) + 1];
-        System.out.println("buf length: " + buf.length);
+        // System.out.println("buf length: " + buf.length);
         Util.putByte(buf, 0, 0x06);
-        System.out.println("p");
+        // System.out.println("p");
         try
         {
             System.arraycopy(file, (segment * 2048), buf, 1, buf.length - 1);

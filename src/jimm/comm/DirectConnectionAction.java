@@ -160,17 +160,17 @@ public class DirectConnectionAction extends Action
 
         if (packet instanceof DCPacket)
         {
-            System.out.println("Got a dc packet");
+            // System.out.println("Got a dc packet");
             DCPacket dcPacket = (DCPacket) packet;
 
             byte[] buf = dcPacket.getDCContent();
 
-            System.out.println(Util.toHexString(buf));
+            // System.out.println(Util.toHexString(buf));
 
             // Got peer ACK for DC
             if ((buf.length >= 4) && (Util.getDWord(buf, 0) == 0x01000000))
             {
-                System.out.println("Got a dc init ack packet");
+                // System.out.println("Got a dc init ack packet");
 
                 // We also have to ACK the connection
                 buf = new byte[4];
@@ -179,8 +179,8 @@ public class DirectConnectionAction extends Action
                 DCPacket initPacket = new DCPacket(buf);
                 this.icq.peerC.sendPacket(initPacket);
 
-                System.out.println("Sent DC ACK");
-                System.out.println(Util.toHexString(buf));
+                // System.out.println("Sent DC ACK");
+                // System.out.println(Util.toHexString(buf));
 
                 // And now we send out a file transfer init
                 buf = new byte[17 + 2 + Jimm.jimm.getIcqRef().getUin().length() + 1];
@@ -199,7 +199,7 @@ public class DirectConnectionAction extends Action
                 Util.putDWord(buf, marker, 1, false);
                 marker += 4;
 
-                if (this.ft == null) System.out.println("ft was null this cannot happen");
+                // if (this.ft == null) System.out.println("ft was null this cannot happen");
 
                 // Put number of bytes which will be sent
                 Util.putDWord(buf, marker, this.ft.getSize(), false);
@@ -222,20 +222,20 @@ public class DirectConnectionAction extends Action
                 Util.putByte(buf, marker, 0x00);
                 marker++;
 
-                System.out.println(Util.toHexString(buf));
+                // System.out.println(Util.toHexString(buf));
 
                 // Send the packet
                 DCPacket initFTPacket = new DCPacket(buf);
                 this.icq.peerC.sendPacket(initFTPacket);
-                System.out.println("Sent FT init packet");
+                // System.out.println("Sent FT init packet");
 
                 this.state = STATE_CLI_FILE_INIT_DONE;
 
                 consumed = true;
             } else if (this.state == STATE_CLI_FILE_INIT_DONE && (Util.getByte(buf, 0) == 0x01))
             {
-                System.out.println("Got peer ACK for FT");
-                System.out.println("Now start the transfer");
+                // System.out.println("Got peer ACK for FT");
+                // System.out.println("Now start the transfer");
 
                 buf = new byte[14 + 2 + this.ft.getFilename().length() + 1 + 3];
 
@@ -305,7 +305,7 @@ public class DirectConnectionAction extends Action
                 ft.getRcvr().setFTM(null);
 
                 // Connection closed 
-                System.out.println("File done/Conn closed");
+                // System.out.println("File done/Conn closed");
                 consumed = true;
 
                 if (!cancel)
@@ -318,9 +318,9 @@ public class DirectConnectionAction extends Action
     // Returns a number between 0 and 100 (inclusive) which indicates the current progress
     public int getProgress()
     {
-        System.out.println("getProgress: " + i + " " + (ft.getSize() >>> 11));
+        // System.out.println("getProgress: " + i + " " + (ft.getSize() >>> 11));
         int percent = ((i * 100) / (ft.getSize() >>> 11));
-        System.out.println("ready: " + percent);
+        // System.out.println("ready: " + percent);
         return (percent);
     }
 

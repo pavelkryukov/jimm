@@ -381,7 +381,7 @@ public class SplashCanvas extends Canvas
 		public FileTransferTimerTask(DirectConnectionAction _dcAct)
 		{
 
-			System.out.println("made FileTransferTimerTask");
+			// System.out.println("made FileTransferTimerTask");
 			this.dcAct = _dcAct;
 
 			// Set the cancel command

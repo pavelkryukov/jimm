@@ -190,7 +190,7 @@ public class FileTransfer implements CommandListener
                 this.initFT(this.fileNameField.getString(), this.descriptionField.getString());
             } else
             {
-                System.out.println("do filename read");
+                // System.out.println("do filename read");
                 // byte array for data and File object for the file itself
                 byte[] fileData;
                 String path = this.fileNameField.getString();
@@ -348,7 +348,7 @@ public class FileTransfer implements CommandListener
             if (!viewfinder && (img != null))
             {
                 g.drawImage(img, getWidth() / 2, getHeight() / 2, Graphics.VCENTER | Graphics.HCENTER);
-                System.out.println("drawedImage");
+                // System.out.println("drawedImage");
             }
 
             g.setColor(0x00000000);

@@ -688,8 +688,8 @@ public class Options
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());
 						Options.this.setStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,this.onlineNotificationSoundfileTextField.getString());
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME,this.onlineNotificationSoundVolume.getValue()*10);
-						System.out.println("Message Volume: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
-						System.out.println("Online Volume: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
+						// System.out.println("Message Volume: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
+						// System.out.println("Online Volume: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
 						// #sijapp cond.elseif target is "RIM"#
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());

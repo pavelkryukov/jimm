@@ -144,7 +144,7 @@ public class UpdateContactListAction extends Action
         } else
         {
             // Pack CLI_ROSTERADDpacket
-            System.out.println("Pack CLI_ROSTERADDpacket");
+            // System.out.println("Pack CLI_ROSTERADDpacket");
             
             if (cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
                 buf = new byte[2 + uinRaw.length + 6 + 6 + 4 + nameRaw.length];
@@ -248,7 +248,7 @@ public class UpdateContactListAction extends Action
                             
                         case 0x00E:
                             cItem.setBoolValue(ContactListContactItem.VALUE_NO_AUTH,true);
-                            System.out.println("Added");
+                            // System.out.println("Added");
                             Jimm.jimm.getContactListRef().addContactItem(this.cItem);
                             this.state = UpdateContactListAction.STATE_SRV_REPLYED_AUTH;
                             break;
@@ -315,7 +315,7 @@ public class UpdateContactListAction extends Action
                             marker += 2;
                         }
 
-                        System.out.println("Send CLI_ROSTERUPDATE");
+                        // System.out.println("Send CLI_ROSTERUPDATE");
                         // Send CLI_ROSTERUPDATE packet
                         SnacPacket packet1 = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
                                 SnacPacket.CLI_ROSTERUPDATE_COMMAND,SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], buf);
@@ -325,7 +325,7 @@ public class UpdateContactListAction extends Action
                         this.state = UpdateContactListAction.STATE_CLI_ADDEND_SENT;
                         }
                         
-                        System.out.println("CLI_ADDEND");
+                        // System.out.println("CLI_ADDEND");
                         // Send a CLI_ADDEND packet
                         packet2 = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
                                 SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
@@ -350,18 +350,18 @@ public class UpdateContactListAction extends Action
                     {
 
                         // Check error code, see ICQv8 specification
-                        System.out.println("UPDATE ACC Rep: 0x"
-                                + Integer.toHexString(Util.getWord(snacPacket.getData(), 0)));
+                        // System.out.println("UPDATE ACC Rep: 0x"
+                        //        + Integer.toHexString(Util.getWord(snacPacket.getData(), 0)));
                         if (Util.getWord(snacPacket.getData(), 0) != 0x0000) { throw (new JimmException(154, 0, true)); }
 
                         // Delete or add contact item from internal list
                         if (!add)
                         {
-                            System.out.println("Removed");
+                            // System.out.println("Removed");
                             Jimm.jimm.getContactListRef().removeContactItem(this.cItem);
                         } else
                         {
-                            System.out.println("Added");
+                            // System.out.println("Added");
                             Jimm.jimm.getContactListRef().addContactItem(this.cItem);
                         }
 
@@ -387,7 +387,7 @@ public class UpdateContactListAction extends Action
         catch (JimmException e)
         {
 
-            System.out.println("CLI_ADDEND");
+            // System.out.println("CLI_ADDEND");
             // Send a CLI_ADDEND packet
             packet = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
                     SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);

@@ -686,7 +686,7 @@ public class ConnectAction extends Action
 					    if (snacPacket.getFlags() != 1) 
 					        this.srvReplyRosterRcvd = true;
 						
-						System.out.println("Flag: "+snacPacket.getFlags());
+						// System.out.println("Flag: "+snacPacket.getFlags());
 
 						// Initialize vector for items
 						Vector items = new Vector();
@@ -704,7 +704,7 @@ public class ConnectAction extends Action
 						// Iterate through all items
 						int count = Util.getWord(buf, marker);
 						marker += 2;
-						System.out.println("elemente in serverlist: "+count);
+						// System.out.println("elemente in serverlist: "+count);
 						for (int i = 0; i < count; i++)
 						{
 
@@ -741,7 +741,7 @@ public class ConnectAction extends Action
 
 								// Get nick
 								String nick = new String(name);
-								System.out.println("c "+i+": "+name);
+								//System.out.println("c "+i+": "+name);
 								boolean noAuth = false;
 								while (len > 0)
 								{
@@ -769,7 +769,7 @@ public class ConnectAction extends Action
 							// Group of contacts
 							else if (type == 0x0001)
 							{
-							    System.out.println("g "+i+": "+name);
+							    //System.out.println("g "+i+": "+name);
 								// Skip TLVs
 								marker += len;
 
@@ -783,7 +783,7 @@ public class ConnectAction extends Action
 							// All other item types
 							else
 							{
-							    System.out.println("x "+i+": ");
+							    //System.out.println("x "+i+": ");
 								// Skip TLVs
 								marker += len;
 
