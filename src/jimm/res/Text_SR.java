@@ -55,6 +55,7 @@ public class Text_SR extends ResourceBundle
 		resources.put("city",                        "City");
 		resources.put("close",                       "Затвори");
 		resources.put("conn_type",                   "Тип конекциjе");
+		resources.put("con_wait",                    "Пауза између конекција(sec)");
 		resources.put("connect",                     "Конектуj се");
 		resources.put("connecting",                  "Конектуjем се");
 		resources.put("contact_list",                "Контакти");
@@ -62,7 +63,8 @@ public class Text_SR extends ResourceBundle
 		resources.put("cpp",                         "Цена по дану");
 		resources.put("cpd",                         "цена по пакету");
 		resources.put("currency",                    "Валута");
-		resources.put("delete_chat",                 "Избриши разговор");
+		resources.put("del_group",                   "Обриши групу");
+		resources.put("delete_chat",                 "Обриши разговор");
 		resources.put("deny",                        "Одбиj ауторизациjу");
 		resources.put("denyedby",                    "Вас захтев за ауторизациjу jе одбиjен од: ");
 		resources.put("description",                 "Опис");
@@ -94,17 +96,19 @@ public class Text_SR extends ResourceBundle
 		resources.put("keylock_enabled",             "Тастери закључани");
 		resources.put("keyword",                     "Кључно слово");
 		resources.put("language",                    "jезик");
-		resources.put("lang_BR",                     "Португалски (Бразил)");
-		resources.put("lang_CZ",                     "Чешки");
-		resources.put("lang_DE",                     "Њемачки");
-		resources.put("lang_EN",                     "Енглески");
-		resources.put("lang_ES",                     "Шпански");
-		resources.put("lang_IT",                     "Италиjански");
-		resources.put("lang_LT",                     "Литовском");
-		resources.put("lang_RU",                     "Руски");
-		resources.put("lang_SE",                     "Шведски");
+		resources.put("lang_BR",                     "Portuguese (Brazil)");
+		resources.put("lang_CZ",                     "Czech");
+		resources.put("lang_DE",                     "German");
+		resources.put("lang_EN",                     "English");
+		resources.put("lang_ES",                     "Spanish");
+		resources.put("lang_IT",                     "Italian");
+		resources.put("lang_LT",                     "Lithuanian");
+		resources.put("lang_PL",                     "Polish");
+		resources.put("lang_RU",                     "Russian");
+		resources.put("lang_SE",                     "Swedish");
 		resources.put("lang_SR",                     "Српски");
-       resources.put("lang_HE",                     "×¢×‘×¨×™×ª");
+		resources.put("lang_HE", 					 "עברית");
+		resources.put("lang_BG", 					 "Bulgarian");
 		resources.put("lastname",                    "Презиме");
 		resources.put("loading",                     "Учитавам");
 		resources.put("male",                        "M");
@@ -119,6 +123,7 @@ public class Text_SR extends ResourceBundle
 		resources.put("nick",                        "Надимак");
 		resources.put("no",                          "Не");
 		resources.put("no_results",                  "Без резултата");
+		resources.put("no_not_empty_gr",             "Група није празна, брисање није подржано");
 		resources.put("not_implemented",             "Функциjа ниjе подржана");
 		resources.put("noreason",                    "Упит ниjе задан.");
 		resources.put("notice",                      "Упозорење");
@@ -142,6 +147,7 @@ public class Text_SR extends ResourceBundle
 		resources.put("prev",                        "Претходни");
 		resources.put("reason",                      "Разлог");
 		resources.put("remove",                      "Избаци из листе");
+		resources.put("rename",                      "Преименуј");
 		resources.put("reply",                       "Одговор");
 		resources.put("requauth",                    "Тражи ауторизациjу");
 		resources.put("requ",                        "Потребно");
@@ -151,7 +157,6 @@ public class Text_SR extends ResourceBundle
 		resources.put("results",                     "Резултати");
 		resources.put("save",                        "Сачуваj");
 		resources.put("search_user",                 "Пронађи корисника");
-		resources.put("select",                      "Селектуj");
 		resources.put("send",                        "Пошаљи");
 		resources.put("send_message",                "Нова порука");
 		resources.put("send_img",                    "Пошаљи слику");
@@ -191,6 +196,9 @@ public class Text_SR extends ResourceBundle
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",                "Додати сте на листу код UIN: ");
 		resources.put("chat_small_font",	         "Мали фонт");
+		resources.put("select",                      "Означи");
+		resources.put("attention",                   "Упозорење!");
+		resources.put("have_unread_mess",            "Имате непрочитаних порука. Ипак излазите?");
 		
 		// User management ********
 		resources.put("group_is_not_empty",          "Одабрана група ниjе празна!\nПремести контакте у осталу групу!");
@@ -255,6 +263,7 @@ public class Text_SR extends ResourceBundle
 		resources.put("error_158",                   "Покусали сте да додате ICQ контакт на AIM листу (#158.EXT)");
 		resources.put("error_159",                   "Сервер ниjе одговорио на захтев за претрагу. Покушаjте поново (#159.EXT)");
 		resources.put("error_160",                   "Грешка приликом претраге (#160.EXT)");
+		resources.put("error_161",                   "Група не постоји. Додај групу (#161.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Изгледа да нема довољно мемориjе (#170.EXT)");
