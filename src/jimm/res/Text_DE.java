@@ -134,6 +134,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("options_interface",           "Interface");
 		resources.put("options_network",             "Netzwerk");
 		resources.put("options_other",               "Sonstiges");
+		resources.put("options_signaling",           "Signalisierung");
 		resources.put("password",                    "Passwort");
 		resources.put("plength",                     "Länge des Abrechnungspakets in kB");
 		resources.put("plsauthme",                   "Hallo! Bitte authorisieren sie meine Anfrage sie zu meiner Kontaktliste hinzuzufügen.");
@@ -179,7 +180,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("user_add",                    "Benutzer hinzufügen");
 		resources.put("user_search",                 "Benutzer suchen");
 		resources.put("vibration",                   "Vibration");
-		resources.put("viewfinder",                  "Sucher");		
+		resources.put("viewfinder",                  "Sucher");
+		resources.put("volume",                      "Lautstärke");	
 		resources.put("wait",                        "Bitte warten ...");
 		resources.put("warning",                     "Warnung");
 		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
