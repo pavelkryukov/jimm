@@ -27,6 +27,7 @@ package jimm.comm;
 
 import jimm.Jimm;
 import jimm.JimmException;
+import jimm.Options;
 
 
 public class SetOnlineStatusAction extends Action
@@ -82,7 +83,7 @@ public class SetOnlineStatusAction extends Action
 		this.icq.c.sendPacket(packet);
 
 		// Save new online status
-		Jimm.jimm.getOptionsRef().setOnlineStatus(this.onlineStatus);
+		Jimm.jimm.getOptionsRef().setLongOption(Options.OPTION_ONLINE_STATUS, this.onlineStatus);
 		try
 		{
 			Jimm.jimm.getOptionsRef().save();

@@ -744,7 +744,7 @@ public class ConnectAction extends Action
                         this.icq.c.sendPacket(reply3);
 
                         // Send a CLI_SETSTATUS packet
-                        long onlineStatus = Util.translateStatusSend(Jimm.jimm.getOptionsRef().getOptionValueLong(Options.OPTION_ONLINE_STATUS));
+                        long onlineStatus = Util.translateStatusSend(Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS));
                         Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, onlineStatus);
                         SnacPacket reply4 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000,
                                 new byte[0], ConnectAction.CLI_SETSTATUS_DATA);

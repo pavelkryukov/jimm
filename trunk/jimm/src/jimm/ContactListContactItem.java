@@ -399,7 +399,7 @@ public class ContactListContactItem extends ContactListItem
         if ((cItem1Status != ContactList.STATUS_OFFLINE) && !cItem1IsTemporary)
         {
             if (((cItem2Status != ContactList.STATUS_OFFLINE) && !cItem2IsTemporary)
-                    || (Jimm.jimm.getOptionsRef().getOptionValueInt(Options.DEFAULT_CL_SORT_BY) != 0))
+                    || (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_CL_SORT_BY) != 0))
             {
                 return (this.getName().compareTo(cItem2.getName()));
             } else
@@ -409,11 +409,11 @@ public class ContactListContactItem extends ContactListItem
         } else if ((cItem1Status == ContactList.STATUS_OFFLINE) && !cItem1IsTemporary)
         {
             if ((cItem2Status != ContactList.STATUS_OFFLINE) && !cItem2IsTemporary
-                    && (Jimm.jimm.getOptionsRef().getOptionValueInt(Options.DEFAULT_CL_SORT_BY) == 0))
+                    && (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_CL_SORT_BY) == 0))
             {
                 return (1);
             } else if (((cItem2Status == ContactList.STATUS_OFFLINE) && !cItem2IsTemporary)
-                    || (Jimm.jimm.getOptionsRef().getOptionValueInt(Options.DEFAULT_CL_SORT_BY) != 0))
+                    || (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_CL_SORT_BY) != 0))
             {
                 return (this.getName().compareTo(cItem2.getName()));
             } else
@@ -456,7 +456,7 @@ public class ContactListContactItem extends ContactListItem
             // Message has been closed
             else if (c == MenuUtil.msgCloseCommand)
             {
-                if (!Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_KEEPCHAT))
+                if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
                 {
                     ContactListContactItem.this.deleteChatHistory();
                 }
@@ -467,7 +467,7 @@ public class ContactListContactItem extends ContactListItem
             else if (c == MenuUtil.msgReplyCommand)
             {
 
-                if (!Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_KEEPCHAT))
+                if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
                 {
                     ContactListContactItem.this.deleteChatHistory();
                 }
@@ -578,7 +578,7 @@ public class ContactListContactItem extends ContactListItem
                         PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
                                 ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
 
-                        if (Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_KEEPCHAT))
+                        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
                         {
                         	ContactListContactItem.this.addTextToForm(ResourceBundle.getString("jimm.res.Text", "me"),plainMsg.getText(),"",plainMsg.getDate(),true);                        }
                         	SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
@@ -632,7 +632,7 @@ public class ContactListContactItem extends ContactListItem
                         if (e.isCritical()) return;
                     }
 
-                    if (!Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_KEEPCHAT))
+                    if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
                     {
                         ContactListContactItem.this.deleteChatHistory();
                     }
