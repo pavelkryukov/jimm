@@ -553,7 +553,16 @@ case SEL_DOTTED:   x = 2;            break;
     width = getWidth();
     int y = drawCaption(graphics);
     
+    boolean needCheck = (visCount == 0); 
+    
     visCount = (height-y)/getItemHeight();
+    
+    if (needCheck)
+    {
+    	checkCurrItem();
+    	checkTopItem();
+    }
+    
     width = getWidth()-scrollerWidth;
     drawItems( graphics, y, getFontHeight() );
     drawScroller(graphics, scrollerWidth, y);
