@@ -296,11 +296,13 @@ public class SplashCanvas extends Canvas
 		{
 			g.setColor(255, 255, 255);
 			g.setFont(SplashCanvas.font);
+			// Draw the date bellow notice if set up to do so
 			if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
 			{
-				g.drawString(Util.getDateString(false), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+				g.drawString(Util.getDateString(false), this.getWidth() / 2, 12, Graphics.TOP | Graphics.HCENTER);
 			}
-			else if ((this.message != null) && (this.message.length() > 0))
+			// Draw the progressbar message
+			if ((this.message != null) && (this.message.length() > 0))
 			{
 				g.drawString(this.message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 			}
@@ -314,14 +316,14 @@ public class SplashCanvas extends Canvas
 		if (Jimm.jimm.getOptionsRef() != null)
 		{
 			g.setColor(0, 0, 0);
+			// Draw the date bellow notice if set up to do so
 			if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
 			{
-				g.drawString(Util.getDateString(false), this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+				g.drawString(Util.getDateString(false), this.getWidth() / 2, 12, Graphics.TOP | Graphics.HCENTER);
 			}
-			else if ((this.message != null) && (this.message.length() > 0))
-			{
-				g.drawString(this.message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
-			}
+				
+			// Draw the progressbar message
+			g.drawString(this.message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 		}
 
 	}
