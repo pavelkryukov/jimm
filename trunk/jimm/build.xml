@@ -177,6 +177,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="modules/TRAFFIC" value="true">
 			<contains string="${modules}" substring="TRAFFIC"/>
 		</condition>
+		<condition property="modules/DEBUGLOG" value="true">
+			<contains string="${modules}" substring="DEBUGLOG"/>
+		</condition>
 		<condition property="lang/EN" value="true">
 			<contains string="${lang}" substring="EN"/>
 		</condition>
@@ -221,6 +224,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			destdir="${build}/init/src">
 			<define name="target" value="${target}"/>
 			<define name="modules_TRAFFIC" value="${modules/TRAFFIC}"/>
+			<define name="modules_DEBUGLOG" value="${modules/DEBUGLOG}"/>
 			<define name="lang_EN" value="${lang/EN}"/>
 			<define name="lang_BG" value="${lang/BG}"/>
 			<define name="lang_BR" value="${lang/BR}"/>
@@ -253,7 +257,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<javac srcdir="${build}/init/src"
 			destdir="${build}/compile/classes"
 			bootclasspath="${midp/lib}"
-			encoding="utf8"
+			encoding="utf-8"
 			target="1.1"
 			debug="on">
 		</javac>
@@ -355,7 +359,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 
 	<!-- Internal target: del_build -->
-	<target name="del_build" description="Delte the build dir">
+	<target name="del_build" description="Delete the build dir">
 		<delete dir="${build}"/>
 	</target>
 
@@ -364,10 +368,21 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<target name="del_dist" description="Delete the dist dir">
 		<delete dir="${dist}"/>
 	</target>
-
+	
+	<!-- Internal target: del_utils -->
+	<target name="del_utils" description="Delete the utils dist and build dirs">
+		<ant dir="${util/sijapp}"
+			inheritAll="false" 
+			target="clean">
+		</ant>
+		<ant dir="${util/jarsizetask}"
+			inheritAll="false" 
+			target="clean">
+		</ant>
+	</target>
 
 	<!-- Target: clean -->
-	<target name="clean" description="Clean the distribution" depends="del_build,del_dist"/>
+	<target name="clean" description="Clean the distribution" depends="del_utils,del_build,del_dist"/>
 
 
 </project>
