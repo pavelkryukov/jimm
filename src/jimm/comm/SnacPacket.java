@@ -280,6 +280,9 @@ public class SnacPacket extends Packet
 
 	// The command to perform
 	protected int command;
+	
+	// The snac flags
+	protected int snacFlags;
 
 
 	// Reference number
@@ -293,23 +296,28 @@ public class SnacPacket extends Packet
 	// Data
 	protected byte[] data;
 
-
 	// Constructor
-	public SnacPacket(int sequence, int family, int command, long reference, byte[] extData, byte[] data)
+	public SnacPacket(int sequence, int family, int command, int snacFlags, long reference, byte[] extData, byte[] data)
 	{
 		this.sequence = sequence;
 		this.family = family;
 		this.command = command;
+		this.snacFlags = snacFlags;
 		this.reference = reference;
 		this.extData = extData;
 		this.data = data;
 	}
-
-
+	
+	// Constructor
+	public SnacPacket(int sequence, int family, int command, long reference, byte[] extData, byte[] data)
+	{
+	    this(sequence, family, command, 0, reference, extData, data);
+	}
+	
 	// Constructor
 	public SnacPacket(int family, int command, long reference, byte[] extData, byte[] data)
 	{
-		this(-1, family, command, reference, extData, data);
+		this(-1, family, command, 0, reference, extData, data);
 	}
 
 
@@ -324,6 +332,12 @@ public class SnacPacket extends Packet
 	public int getCommand()
 	{
 		return (this.command);
+	}
+	
+	// Returns the snacFlags
+	public int getFlags()
+	{
+		return (snacFlags);
 	}
 
 
@@ -350,7 +364,7 @@ public class SnacPacket extends Packet
 		System.arraycopy(this.data, 0, data, 0, data.length);
 		return (data);
 	}
-
+		
 
 	// Returns the packet as byte array
 	public byte[] toByteArray()
@@ -469,7 +483,7 @@ public class SnacPacket extends Packet
 		}
 
 		// Instantiate SnacPacket
-		return (new SnacPacket(flapSequence, snacFamily, snacCommand, snacReference, extData, data));
+		return (new SnacPacket(flapSequence, snacFamily, snacCommand, snacFlags, snacReference, extData, data));
 
 	}
 

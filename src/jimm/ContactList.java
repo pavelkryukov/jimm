@@ -379,6 +379,9 @@ public class ContactList implements CommandListener
     private long versionId1;
 
     private int versionId2;
+    
+    // Update help variable
+    private boolean updated;
 
     // Contact items
     private Vector cItems;
@@ -474,6 +477,7 @@ public class ContactList implements CommandListener
         {
             this.versionId1 = -1;
             this.versionId2 = -1;
+            this.updated = false;
             this.cItems = new Vector();
             this.gItems = new Vector();
             DebugLog.addText("Exception while loading list: "+e.toString());        
@@ -812,16 +816,29 @@ public class ContactList implements CommandListener
     
     // Updates the client-side conact list (called when a new roster has been
     // received)
-    public synchronized void update(long versionId1, int versionId2, ContactListItem[] items)
+    public synchronized void update(int flags, long versionId1, int versionId2, ContactListItem[] items)
     {
         //DebugLog.addText("update: new rooster");
 
-        // Save version numbers
-        this.versionId1 = versionId1;
-        this.versionId2 = versionId2;
-
         // Remove all Elemente form the old ContactList
-        cItems.removeAllElements();
+        if (flags == 0 && (!updated))
+        {
+            System.out.println("Clear ContactList");
+            cItems.removeAllElements();
+            this.updated = false;
+        }
+        
+        // Save version numbers
+        if (flags == 0)
+            this.versionId1 = versionId1;
+        
+        if (! this.updated)
+            this.versionId2 = versionId2;
+        else
+            this.versionId2 = this.versionId2+versionId2;
+        
+        System.out.println("Ver 1: "+this.versionId1);
+        System.out.println("Ver 2: "+this.versionId2);
 
         // Add new contact items and group items
         for (int i = 0; i < items.length; i++)
@@ -849,6 +866,7 @@ public class ContactList implements CommandListener
         {
             DebugLog.addText("Exception while saving list: "+e.toString());
         }
+        this.updated = true;
     }
     
 

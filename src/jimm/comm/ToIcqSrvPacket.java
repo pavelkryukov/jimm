@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/ToIcqSrvPacket.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 
@@ -64,19 +64,24 @@ public class ToIcqSrvPacket extends SnacPacket
 
 
 	// Constructor
-	public ToIcqSrvPacket(int sequence, long reference, int icqSequence, String uin, int subcommand, byte[] extData, byte[] data)
+	public ToIcqSrvPacket(int sequence, long reference, int snacFlags, int icqSequence, String uin, int subcommand, byte[] extData, byte[] data)
 	{
-		super(sequence, SnacPacket.CLI_TOICQSRV_FAMILY, SnacPacket.CLI_TOICQSRV_COMMAND, reference, extData, data);
+		super(sequence, SnacPacket.CLI_TOICQSRV_FAMILY, SnacPacket.CLI_TOICQSRV_COMMAND, snacFlags, reference, extData, data);
 		this.icqSequence = icqSequence;
 		this.uin = new String(uin);
 		this.subcommand = subcommand;
 	}
 
+	// Constructor
+	public ToIcqSrvPacket(int sequence, long reference, int icqSequence, String uin, int subcommand, byte[] extData, byte[] data)
+	{
+		this(sequence,reference,0,icqSequence,uin,subcommand,extData,data);
+	}
 
 	// Constructor
 	public ToIcqSrvPacket(long reference, String uin, int subcommand, byte[] extData, byte[] data)
 	{
-		this(-1, reference, -1, uin, subcommand, extData, data);
+		this(-1, reference, 0, -1, uin, subcommand, extData, data);
 	}
 
 
@@ -234,7 +239,7 @@ public class ToIcqSrvPacket extends SnacPacket
 		}
 
 		// Instantiate ToIcqSrvPacket
-		return (new ToIcqSrvPacket(flapSequence, snacReference, icqSequence, uin, subcommand, extData, data));
+		return (new ToIcqSrvPacket(flapSequence, snacReference, snacFlags, icqSequence, uin, subcommand, extData, data));
 
 	}
 
