@@ -200,8 +200,12 @@ public class Text_DE extends ResourceBundle
 		resources.put("error_151",                   "Empfangene Nachricht vom Typ 1 war unverständlich (#151.EXT)");
 		resources.put("error_152",                   "Empfangene Nachricht vom Typ 2 war unverständlich (#152.EXT)");
 		resources.put("error_153",                   "Empfangene Nachricht vom Typ 4 war unverständlich (#153.EXT)");
-		resources.put("error_154",                   "Aktualisierung der Kontaktliste ist fehlgeschlagen (#154.EXT)");
-
+		resources.put("error_154",                   "Fehler beim aktualisieren der Kontaktliste (#154.EXT)");
+		resources.put("error_155",                   "Objekt ist bereits auf dem Server vorhanden  (#155.EXT)");
+		resources.put("error_156",                   "Fehler beim Hinzufügen (#156.EXT)");
+		resources.put("error_157",                   "Keine weiteren Objekte dieses Typs zulässig (#157.EXT)");
+		resources.put("error_158",                   "Versuch einen ICQ-Kontact einer AIM-Liste hinzuzufügen (#158.EXT)");
+		
 		// other errors
 		resources.put("error_160",                   "Möglicherweise nicht genügend Heap-Speicher verfügbar (#160.EXT)");
 		resources.put("error_161",                   "Meta-Informationen nicht verfügbar (#161.EXT)");

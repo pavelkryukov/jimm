@@ -200,7 +200,11 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_151",                   "Received type 1 message could not be understood (#151.EXT)");
 		resources.put("error_152",                   "Received type 2 message could not be understood (#152.EXT)");
 		resources.put("error_153",                   "Received type 4 message could not be understood (#153.EXT)");
-		resources.put("error_154",                   "Contact list update failed (#154.EXT)");
+		resources.put("error_154",                   "Error updating your contact list (#154.EXT)");
+		resources.put("error_155",                   "Object is already in your server list (#155.EXT)");
+		resources.put("error_156",                   "Error while adding (#156.EXT)");
+		resources.put("error_157",                   "No more elements of this type allowed (#157.EXT)");
+		resources.put("error_158",                   "You did try to add an ICQ contact to an AIM list (#158.EXT)");
 
 		// Other errors
 		resources.put("error_160",                   "Possibly not enough heap memory available (#160.EXT)");
