@@ -39,8 +39,6 @@ public class Text_EN extends ResourceBundle
 	{
 
 		// Labels
-
-
                                           //MOTOROLA formatted buttons
                                           // #sijapp cond.if target is "MOTOROLA"#
                                           resources.put("select",                     "Select    ");
@@ -63,9 +61,11 @@ public class Text_EN extends ResourceBundle
                                            resources.put("save",                        "Save");
                                            resources.put("ok",                          "OK");
 		 // #sijapp cond.end#
-                                           resources.put(".",                           ".");
+
+                                          
+		resources.put(".",                           ".");
 		resources.put("about",                       "About");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion 0.3.3\nSee http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
 		resources.put("account",                     "Account");
 		resources.put("add_group",                   "Add group");
 		resources.put("add_user",                    "Add User");
@@ -75,14 +75,11 @@ public class Text_EN extends ResourceBundle
 		resources.put("attention",                   "Attention!");
 		resources.put("auth",				     	 "Auth");
 		resources.put("auto_connect",				 "Auto connect on startup");
-		
 		resources.put("beep",                        "Beep");
 		resources.put("byte",                        "Byte");
-		
 		resources.put("chat_small_font",			 "Small font in chat");
 		resources.put("city",                        "City");
 		resources.put("clear",                       "Clear");
-		
 		resources.put("conn_type",                   "Connection type");
 		resources.put("con_wait",                    "Delay between connections(sec)");
 		resources.put("connect",                     "Connect");
@@ -171,7 +168,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("noreason",             		 "No reason was given.");
 		resources.put("notice",                      "Notice");
 		resources.put("nr",				     		 "Nr");
-		
 		resources.put("once_a_session",              "Once a session");
 		resources.put("onl_notification",            "Notice for upcoming contact");
 		resources.put("onl_sound_file_name",         "Online Sound File");
@@ -193,16 +189,12 @@ public class Text_EN extends ResourceBundle
 		resources.put("remove_group",                "Remove group");
 		resources.put("remove_user",                 "Remove user");
 		resources.put("rename",                      "Rename");
-		
 		resources.put("requauth",                    "Request auth");
 		resources.put("requ",                        "Required");
 		resources.put("requno",                      "Not req");
-		resources.put("reset",                       "Reset");
 		resources.put("res",                         "Resolution");
 		resources.put("results",                     "Results");
-		
 		resources.put("search_user",                 "Search for User");
-		
 		resources.put("send",                        "Send");
 		resources.put("send_img",                    "Send image");
 		resources.put("send_message",                "New Message");
@@ -244,7 +236,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("whichgroup",				 	 "Which group?");
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
-		
+			
 
 		// Generic errors
 		resources.put("error_100",                   "Unknown error (#100.EXT)");
@@ -322,4 +314,3 @@ public class Text_EN extends ResourceBundle
 }
 
 // #sijapp cond.end #
-
