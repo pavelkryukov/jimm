@@ -39,7 +39,8 @@ import DrawControls.TextList;
 
 class ChatTextList extends TextList
 {
-	ChatTextList()
+	
+    ChatTextList()
 	{
 		super
 		(
@@ -58,23 +59,30 @@ class ChatTextList extends TextList
 		switch (getGameAction(keyCode))
 		{
 		case Canvas.LEFT: 
+		    Jimm.jimm.getChatHistoryRef().incCounter(false);
 			Jimm.jimm.getContactListRef().showNextPrevChat(false);
 			break;
 			
 		case Canvas.RIGHT:
+		    Jimm.jimm.getChatHistoryRef().incCounter(true);
 			Jimm.jimm.getContactListRef().showNextPrevChat(true);
 			break;
 		}
 	}
+	
 }
 
 public class ChatHistory
 {
     private Vector historyVector;
+    private int counter;
+    private int deleted;
     
     public ChatHistory()
     {
         historyVector = new Vector();
+        counter = 1;
+        deleted = 0;
     }
     
     // Adds a message to the message display
@@ -175,6 +183,8 @@ public class ChatHistory
         {
             TextList temp = (TextList)historyVector.elementAt(nr);
             temp.clear();
+            deleted++;
+            counter--;
         }
     }
     
@@ -191,24 +201,36 @@ public class ChatHistory
     }
     
     // Returns the size of the chat histore at number nr
-    public int chatHistorySize(int nr){
+    public int chatHistorySize(int nr)
+    {
+        if ((historyVector.size() > nr) && (nr != -1))
         {
-            if ((historyVector.size() > nr) && (nr != -1))
-            {
-                TextList temp = (TextList)historyVector.elementAt(nr);
-                return temp.getItemCount();
-            }
-            else
-                return -1;
-        }
+            TextList temp = (TextList) historyVector.elementAt(nr);
+            return temp.getItemCount();
+        } else
+            return -1;
     }
     
-    // Returns the size if the history Vector
+    // Return the size of the History Vector minus deleted
     public int chatHistorySize()
     {
-        return this.historyVector.size();
+        return this.historyVector.size()-deleted;
     }
-
+    
+	// Return the counter for the ChatHistory
+	public int getCounter()
+	{
+	    return counter;
+	}
+	
+	// Sets the counter for the ChatHistory
+	public void incCounter(boolean up){
+	    if (up)
+	        counter = ((counter++) % (this.historyVector.size()-deleted))+1;
+	    else
+	        counter = ((counter--) % (this.historyVector.size()-deleted))+1;
+	}
+    
     // Creates a new chat form and returns the index number of it in the vector
     public int newChatForm(String name)
     {
@@ -216,9 +238,9 @@ public class ChatHistory
         
     	// #sijapp cond.if target is "MIDP2"#
         chatForm.setFullScreenMode(false);
-        chatForm.setTitle(name); //+" ("+(this.chatHistorySize()+1)+"/"+(this.chatHistorySize()+1)+")");
+        chatForm.setTitle(  name+" ("+counter+"/"+(this.historyVector.size()-deleted+1)+")");
         // #sijapp cond.else#
-        chatForm.setCaption(name); //+" ("+(this.chatHistorySize()+1)+"/"+(this.chatHistorySize()+1)+")");
+        chatForm.setCaption(name+" ("+counter+"/"+(this.historyVector.size()-deleted+1)+")");
         // #sijapp cond.end#
         
         historyVector.addElement(chatForm);
