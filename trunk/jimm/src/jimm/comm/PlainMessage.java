@@ -34,56 +34,35 @@ public class PlainMessage extends Message
 {
 
 
-  // Jimm Advertisement
-  public static final String ADVERTISEMENT = "\n \n* Sent using Jimm";
+	// Message text
+	private String text;
 
 
-  /****************************************************************************/
+	// Constructs an incoming message
+	public PlainMessage(String sndrUin, String rcvrUin, Date date, String text)
+	{
+		this.sndrUin = new String(sndrUin);
+		this.rcvrUin = new String(rcvrUin);
+		this.date = new Date(date.getTime());
+		this.text = new String(text);
+	}
 
 
-  // Message text
-  private String text;
+	// Constructs an outgoing message
+	public PlainMessage(String sndrUin, ContactListContactItem rcvr, Date date, String text)
+	{
+		this.sndrUin = new String(sndrUin);
+		this.rcvr = rcvr;
+		this.date = new Date(date.getTime());
+		this.text = new String(text);
+	}
 
 
-  // Constructs an incoming message
-  public PlainMessage(String sndrUin, String rcvrUin, Date date, String text)
-  {
-    this.sndrUin = new String(sndrUin);
-    this.rcvrUin = new String(rcvrUin);
-    this.date = new Date(date.getTime());
-    this.text = new String(text);
-  }
-
-
-  // Constructs an outgoing message
-  public PlainMessage(String sndrUin, ContactListContactItem rcvr, Date date, String text, boolean displayAdvertisement)
-  {
-    this.sndrUin = new String(sndrUin);
-    this.rcvr = rcvr;
-    this.date = new Date(date.getTime());
-    if (displayAdvertisement)
-    {
-      this.text = text + PlainMessage.ADVERTISEMENT;
-    }
-    else
-    {
-      this.text = new String(text);
-    }
-  }
-
-
-  // Constructs an outgoing message (w/o advertisement)
-  public PlainMessage(String sndrUin, ContactListContactItem rcvr, Date date, String text)
-  {
-    this(sndrUin, rcvr, date, text, false);
-  }
-
-
-  // Returns the message text
-  public String getText()
-  {
-    return (new String(this.text));
-  }
+	// Returns the message text
+	public String getText()
+	{
+		return (new String(this.text));
+	}
 
 
 }
