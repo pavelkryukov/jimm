@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
  Copyright (C) 2003-05  Jimm Project
 
@@ -50,14 +50,14 @@ public class Text_RU extends ResourceBundle
                                            resources.put("back", "     Назад");
                                            resources.put("menu_button", "     Меню");
                                            resources.put("save",                        "Сохранить ");
-
+                                           resources.put("ok",                          "OK       ");
                                           // #sijapp cond.else#
 		resources.put("select",                      "Выбрать");
                                            resources.put("reset",                       "Сброс");
                                            resources.put("cancel",                      "Отмена");
                                            resources.put("back", "Назад");
                                            resources.put("save",                        "Сохр.");
-
+                                           resources.put("ok",                          "OK");
                                           // #sijapp cond.end#
                                            resources.put(".",                           ".");
 		resources.put("about",                       "О программе");
@@ -160,7 +160,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("noreason",             		 "Причина не дана");
 		resources.put("notice",                      "Уведомление");
 		resources.put("nr",				     		 "Номер");
-		resources.put("ok",                          "OK");
+		
 		resources.put("once_a_session",              "Один раз за сессию");
 		resources.put("onl_notification",            "Информировать о подключившемся контакте");
 		resources.put("onl_sound_file_name",         "Файл звука подключения");
