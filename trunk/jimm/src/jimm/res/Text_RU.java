@@ -96,6 +96,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("lang_LT",                     "Литовский");
 		resources.put("lang_RU",                     "Русский");
 		resources.put("lang_SE",                     "Шведский");
+		resources.put("lang_SR",                     "Српски");
 		resources.put("lastname",                    "Фамилия");
 		resources.put("loading",                     "Загрузка");
 		resources.put("male",                        "M");
