@@ -338,7 +338,7 @@ public class SplashCanvas extends Canvas
 
 
   // Activates the contact list after connection has been established
-  static class ConnectTimerTask extends TimerTask
+  public static class ConnectTimerTask extends TimerTask
   {
 
 
@@ -379,7 +379,7 @@ public class SplashCanvas extends Canvas
 
 
   // Activates the main menu after connection has been terminated
-  static class DisconnectTimerTask extends TimerTask
+  public static class DisconnectTimerTask extends TimerTask
   {
 
 
@@ -436,7 +436,7 @@ public class SplashCanvas extends Canvas
 
 
   // Waits until meta information is available
-  static class RequestInfoTimerTask extends TimerTask
+  public static class RequestInfoTimerTask extends TimerTask
   {
 
 
@@ -486,7 +486,7 @@ public class SplashCanvas extends Canvas
 
 
   // Waits until contact listupdate is completed
-  static class UpdateContactListTimerTask extends TimerTask
+  public static class UpdateContactListTimerTask extends TimerTask
   {
 
 

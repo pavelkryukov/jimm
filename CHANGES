@@ -82,22 +82,23 @@ VERSION 0.1 BETA-7
 ________________________________________________________________________________
 VERSION 0.1 BETA-8
 
-  *  Soundfile name in Siemens version is now configureable
+  *  NEW FEATURE: Soundfile name in Siemens version is now configureable
+  *  NEW FEATURE:Traffic and time now displayed in the title line of the contact list screen
+  *  NEW FEATURE: The chat history feature can be disabled
   *  Images are stored in one file except of different
   *  Nokia build does not include traffic monitor anymore
-  *  The chat history feature can be disabled
   *  New Module System: Traffic monitor is a module now
-  *  Traffic and time now displayed in the title line of the contact list screen
   
 _________________________________________________________________________________
 VERSION 0.2.0
 
-  * Vibra and light options for Nokia phones
-  * Type of connection is now configurable
-  * Use of CP1251 hack is now configurable
-  * System messages will get displayed
-  * Requests of authorisation can be answered and 
-  * Adding users by UIN is now supported
+  * NEW FEATURE: Type of connection is now configurable
+  * NEW FEATURE: Use of CP1251 hack is now configurable
+  * NEW FEATURE: System messages will get displayed
+  * NEW FEATURE: Requests of authorisation can be answered and 
+  * NEW FEATURE: Adding users by UIN is now supported
+  * NEW FEATURE: There is a MIDP2 version supporting sound
+  * NEW FEATURE: There is now also sound support for upcoming contacts
+  * NEW FEATURE: It is now possible to search for users
   * There is no special Nokia version anymore
-  * There is a MIDP2 version supporting sound
-  * There is also sound support for upcoming contacts nw
+ 

@@ -47,6 +47,9 @@ public class ResourceBundle
 		// #sijapp cond.if lang_DE is "true" #
 		"DE",
 		// #sijapp cond.end #
+		// #sijapp cond.if lang_IT is "true" #
+		"IT",
+		// #sijapp cond.end #
 		// #sijapp cond.if lang_ES is "true" #
 		"ES",
 		// #sijapp cond.end #

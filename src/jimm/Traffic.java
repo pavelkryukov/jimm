@@ -139,7 +139,7 @@ public class Traffic
 
 	// Saves traffic from file
 
-	protected void save() throws IOException, RecordStoreException
+	public void save() throws IOException, RecordStoreException
 	{
 
 		// Open record store

@@ -34,8 +34,12 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.StreamConnection;
 
+import jimm.ContactListContactItem;
 import jimm.Jimm;
 import jimm.JimmException;
+import jimm.Options;
+import jimm.SplashCanvas;
+import jimm.util.ResourceBundle;
 
 
 public class Icq implements Runnable
@@ -103,7 +107,144 @@ public class Icq implements Runnable
 
 	}
 
+	// Adds a ContactListContactItem to the server saved contact list
+	public synchronized void addToContactList(ContactListContactItem cItem)
+	{
+        System.out.println("start addContact");
+        System.out.println(cItem.toString());
+        Random rand = new Random(System.currentTimeMillis());
+        int randint = rand.nextInt();
+        
+        // Give it a new ID if it is 0
+        if(cItem.getId() ==0)
+            cItem.setId(randint);
+        
+        // Display splash canvas
+        SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
+        wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
+        wait2.setProgress(0);
+        Jimm.display.setCurrent(wait2);
 
+        // Request contact item removal
+        UpdateContactListAction act = new UpdateContactListAction(cItem, true);
+        try
+        {
+            this.requestAction(act);
+        } catch (JimmException e)
+        {
+            JimmException.handleException(e);
+            if (e.isCritical()) return;
+        }
+
+        // Start timer
+        Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act), 1000, 1000);
+		System.out.println("start addContact");
+	}
+	
+	// Connects to the ICQ network
+	public synchronized void connect()
+	{
+        // Display splash canvas
+        SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
+        wait.setMessage(ResourceBundle.getString("jimm.res.Text", "connecting"));
+        wait.setProgress(0);
+        Jimm.display.setCurrent(wait);
+
+        Options options = Jimm.jimm.getOptionsRef();
+        // Connect
+        ConnectAction act = new ConnectAction(options.getUin(), options.getPassword(),
+                options.getSrvHost(), options.getSrvPort());
+        try
+        {
+            this.requestAction(act);
+
+        } catch (JimmException e)
+        {
+            JimmException.handleException(e);
+            if (e.isCritical()) return;
+        }
+
+        // Start timer
+        Jimm.jimm.getTimerRef().schedule(new SplashCanvas.ConnectTimerTask(act), 1000, 1000);
+	}
+	
+	// Disconnects from the ICQ network
+	public synchronized void disconnect()
+	{
+        // Display splash canvas
+        SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
+        wait.setMessage(ResourceBundle.getString("jimm.res.Text", "disconnecting"));
+        wait.setProgress(0);
+        Jimm.display.setCurrent(wait);
+
+        // Disconnect
+        DisconnectAction act = new DisconnectAction();
+        try
+        {
+            this.requestAction(act);
+        } catch (JimmException e)
+        {
+            JimmException.handleException(e);
+            if (e.isCritical()) return;
+        }
+
+        // Start timer
+        Jimm.jimm.getTimerRef().schedule(new SplashCanvas.DisconnectTimerTask(act, false), 1000, 1000);
+        // #sijapp cond.if modules_TRAFFIC is "true" #
+        try
+        {
+            Jimm.jimm.getTrafficRef().save();
+        } catch (Exception e)
+        { // Do nothing
+        }
+        // #sijapp cond.end#
+	}
+	
+	// Dels a ContactListContactItem to the server saved contact list
+	public synchronized void delFromContactList(ContactListContactItem cItem)
+	{
+        // Check whether contact item is temporary
+        if (cItem.isTemporary())
+        {
+
+            // Remove this temporary contact item
+            Jimm.jimm.getContactListRef().removeContactItem(cItem);
+
+            if (!Jimm.jimm.getOptionsRef().keepChat())
+            {
+                cItem.deleteChatHistory();
+            }
+
+            // Update and activate contact list
+            Jimm.jimm.getContactListRef().update();
+            Jimm.jimm.getContactListRef().activate();
+
+        } else
+        {
+
+            // Display splash canvas
+            SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
+            wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
+            wait2.setProgress(0);
+            Jimm.display.setCurrent(wait2);
+
+            // Request contact item removal
+            UpdateContactListAction act2 = new UpdateContactListAction(cItem, false);
+            try
+            {
+                Jimm.jimm.getIcqRef().requestAction(act2);
+            } catch (JimmException e)
+            {
+                JimmException.handleException(e);
+                if (e.isCritical()) return;
+            }
+
+            // Start timer
+            Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
+
+        }
+	}
+	
 	// Checks whether the comm. subsystem is in STATE_NOT_CONNECTED
 	public synchronized boolean isNotConnected()
 	{
