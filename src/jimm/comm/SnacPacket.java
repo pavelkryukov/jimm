@@ -219,6 +219,22 @@ public class SnacPacket extends Packet
 	// CLI_ADDEND packet family and command
 	public static final int CLI_ADDEND_FAMILY = 0x0013;
 	public static final int CLI_ADDEND_COMMAND = 0x0012;
+
+    // CLI_REQAUTH packet family and command
+	public static final int CLI_REQAUTH_FAMILY = 0x0013;
+	public static final int CLI_REQAUTH_COMMAND = 0x0018;
+	 
+	// SRV_AUTHREQ packet family and command
+	public static final int SRV_AUTHREQ_FAMILY = 0x0013;
+	public static final int SRV_AUTHREQ_COMMAND = 0x0019;
+	
+	// CLI_AUTHORIZE packet family and command
+	public static final int CLI_AUTHORIZE_FAMILY = 0x0013;
+	public static final int CLI_AUTHORIZE_COMMAND = 0x001A;	
+     
+    // SRV_AUTHREPLY packet family and command
+	public static final int SRV_AUTHREPLY_FAMILY = 0x0013;
+	public static final int SRV_AUTHREPLY_COMMAND = 0x001B;
 	
 	// SRV_ADDEDYOU packet family and command
 	public static final int SRV_ADDEDYOU_FAMILY = 0x0013;
