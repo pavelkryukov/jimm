@@ -818,10 +818,12 @@ public class ContactList implements CommandListener
     // received)
     public synchronized void update(int flags, long versionId1, int versionId2, ContactListItem[] items)
     {
-        //DebugLog.addText("update: new rooster");
+        System.out.println("update: new rooster");
+        System.out.println("Flags: "+flags);
+        System.out.println("Updated: "+this.updated);
 
         // Remove all Elemente form the old ContactList
-        if (flags == 0 && (!updated))
+        if (!updated)
         {
             System.out.println("Clear ContactList");
             cItems.removeAllElements();
@@ -871,7 +873,10 @@ public class ContactList implements CommandListener
                 DebugLog.addText("Exception while saving list: " + e.toString());
             }
         }
-        this.updated = true;
+        if (flags == 1)
+            this.updated = true;
+        else 
+            this.updated = false;
     }
     
 
