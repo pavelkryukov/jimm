@@ -22,7 +22,7 @@
  *******************************************************************************/
 
 
-// #sijapp cond.if lang_EN is "true" #
+// #sijapp cond.if lang_RU is "true" #
 
 
 package jimm.res;
@@ -44,14 +44,12 @@ public class Text_RU extends ResourceBundle
 		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\n http://jimm.sourceforge.net/");
 		resources.put("account",                     "Учетная запись");
 		resources.put("add_user",                    "Добавить пользователя");
-		resources.put("add_to_list",                 "Добавить в список");
+		resources.put("add_to_list",                 "Добавить");
 		resources.put("age",                         "Возраст");
 		resources.put("async",                       "Асинхронная передача");
 		resources.put("auth",				     	 "Авторизация");
 		resources.put("back",                        "Назад");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Гудок");
-		// #sijapp cond.end #
 		resources.put("byte",                        "Байт");
 		resources.put("cancel",                      "Отмена");
 		resources.put("city",                        "Город");
@@ -68,7 +66,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("deny",						 "Отклонить авторизацию");
 		resources.put("denyedby",					 "Ваш запрос на авторизацию отклонил: ");
 		resources.put("user_menu",                   "Меню пользователя");
-		resources.put("disconnect",                  "Отключить");
+		resources.put("disconnect",                  "Отключиться");
 		resources.put("disconnecting",               "Отключение");
 		resources.put("display_advertisement",       "Добавить подпись Jimm?");
 		resources.put("display_date",                "Отображать дату на заставке?");
@@ -138,9 +136,9 @@ public class Text_RU extends ResourceBundle
 		resources.put("requauth",                    "Запрос авторизации");
 		resources.put("requ",                        "Требуется");
 		resources.put("requno",                      "Не требуется");
-		resources.put("reset",                       "Сбросить");
+		resources.put("reset",                       "Сброс");
 		resources.put("results",                     "Результаты");
-		resources.put("save",                        "Сохранить");
+		resources.put("save",                        "Сохр.");
 		resources.put("search_user",                 "Найти пользователя");
 		resources.put("send",                        "Отправить");
 		resources.put("send_message",                "Новое сообщение");
@@ -151,7 +149,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("session",                     "Сессия");
 		resources.put("set_status",                  "Установить статус");
 		resources.put("since",                       "Начиная с");
-		resources.put("sound",                       "Имя файла");
+		resources.put("sound",                       "Звуковой файл");
 		resources.put("sort_by",                     "Сортировать контакт-лист");
 		resources.put("sort_by_name",                "По имени");
 		resources.put("sort_by_status",              "По статусу");
@@ -169,9 +167,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Добавить пользователя");
 		resources.put("user_search",                 "Найти пользователя");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Вибрация");
-		// #sijapp cond.end #
 		resources.put("wait",                        "Пожалуйста, ждите ...");
 		resources.put("warning",                     "Предупреждение");
 		resources.put("wantsyourauth",				 " хочет авторизироваться. Причина: ");
