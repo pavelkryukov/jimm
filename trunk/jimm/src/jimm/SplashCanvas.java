@@ -551,6 +551,7 @@ public class SplashCanvas extends Canvas
 				                  ResourceBundle.getString("name") + ": " + (name.length() > 0 ? name : "-") + (char) (0x0D) +
 				                  ResourceBundle.getString("email") + ": " + (email.length() > 0 ? email : "-");
 				Alert info = new Alert(ResourceBundle.getString("info"), infoText, null, AlertType.INFO);
+				info.setTimeout(Alert.FOREVER);
 				Jimm.jimm.getContactListRef().activate(info);
 				this.cancel();
 			}
