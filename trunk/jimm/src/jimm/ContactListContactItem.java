@@ -1050,7 +1050,7 @@ public class ContactListContactItem extends ContactListItem
         
         // Request authorisation from a contact
         private static Command renameOkCommand = new Command(ResourceBundle.getString("rename"),
-                Command.OK, 1);
+                Command.OK, 2);
         
         
         // Initializer
