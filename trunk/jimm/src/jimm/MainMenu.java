@@ -89,7 +89,7 @@ public class MainMenu implements CommandListener
 				this.list = new List(ResourceBundle.getString("jimm.res.Text", "menu"), List.IMPLICIT);
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "connect"), null);
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "options"), null);
-//				#sijapp cond.if mod_TRAF is "true" #
+//				#sijapp cond.if modules_TRAFFIC is "true" #
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "traffic"), null);
 //				#sijapp cond.end#
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "about"), null);
@@ -106,7 +106,7 @@ public class MainMenu implements CommandListener
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "add_user"), null);
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "search_user"), null);
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "options"), null);
-//				#sijapp cond.if mod_TRAF is "true" #
+//				#sijapp cond.if modules_TRAFFIC is "true" #
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "traffic"), null);
 //				#sijapp cond.end#
 				this.list.append(ResourceBundle.getString("jimm.res.Text", "about"), null);
@@ -145,7 +145,7 @@ public class MainMenu implements CommandListener
 		// Get options container
 		Options options = Jimm.jimm.getOptionsRef();
 
-//		#sijapp cond.if mod_TRAF is "true" #
+//		#sijapp cond.if modules_TRAFFIC is "true" #
 		//Get traffic container
 
 		Traffic traffic = Jimm.jimm.getTrafficRef();
@@ -188,7 +188,7 @@ public class MainMenu implements CommandListener
 
 						// Start timer
 						Jimm.jimm.getTimerRef().schedule(new SplashCanvas.DisconnectTimerTask(act, false), 1000, 1000);
-//					#sijapp cond.if mod_TRAF is "true" #
+//					#sijapp cond.if modules_TRAFFIC is "true" #
 						try
 						{
 							traffic.save();
@@ -255,7 +255,7 @@ public class MainMenu implements CommandListener
 						options.optionsForm.activate();
 
 						break;
-//					#sijapp cond.if mod_TRAF is "true" #
+//					#sijapp cond.if modules_TRAFFIC is "true" #
 					case 6:   // Traffic
 
 						// Display an traffic alert
@@ -355,7 +355,7 @@ public class MainMenu implements CommandListener
 						options.optionsForm.activate();
 
 						break;
-//					#sijapp cond.if mod_TRAF is "true" #
+//					#sijapp cond.if modules_TRAFFIC is "true" #
 					case 2:   // Traffic
 
 						// Display an traffic alert
