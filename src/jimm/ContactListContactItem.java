@@ -284,8 +284,6 @@ public class ContactListContactItem extends ContactListItem
             copy = Image.createImage(prequel);
             msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
                     + ImageItem.LAYOUT_NEWLINE_AFTER, null)); 
-        }
-        { 
             PlainMessage plainMsg = (PlainMessage) message;
             if (!msgDisplay.isShown()) plainMessages++;
             	msgDisplay.append(new StringItem(null, plainMsg.getText()));
@@ -301,13 +299,13 @@ public class ContactListContactItem extends ContactListItem
         }
         if (message instanceof SystemNotice)
         {
+            SystemNotice notice = (SystemNotice) message;
             g.drawString(ResourceBundle.getString("jimm.res.Text", "sysnotice") + " ("
                     + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10,
                     Graphics.BASELINE | Graphics.LEFT);
             copy = Image.createImage(prequel);
             msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
                     + ImageItem.LAYOUT_NEWLINE_AFTER, null));
-            SystemNotice notice = (SystemNotice) message;
             if (!msgDisplay.isShown()) 
                 sysNotices++;
             if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
