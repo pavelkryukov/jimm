@@ -16,8 +16,9 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
- File: src/jimm/res/Text_EN.java
+ File: src/jimm/res/Text_LT.java
  Version: ###VERSION###  Date: ###DATE###
+ Based on CVS 1.17 Text_EN
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Linas Gricius 
  *******************************************************************************/
 
@@ -44,13 +45,17 @@ public class Text_LT extends ResourceBundle
 		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://jimm.sourceforge.net/");
 		resources.put("account",                     "Paskyra");
 		resources.put("add_user",                    "Prideti vartotoja");
+		resources.put("add_to_list",                 "Add to list");
+		resources.put("age",                         "Age");		
 		resources.put("async",                       "Asinchroniškas");
+		resources.put("auth",                        "Auth");		
 		resources.put("back",                        "Atgal");
 		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Pyptelėjimas");
 		// #sijapp cond.end #
 		resources.put("byte",                        "Baitas");
 		resources.put("cancel",                      "Atsisakyti");
+		resources.put("city",                        "Miestas");		
 		resources.put("close",                       "Uždaryti");
 		resources.put("conn_type",                   "Prisijungimo tipas");
 		resources.put("connect",                     "Prisijungti");
@@ -71,7 +76,10 @@ public class Text_LT extends ResourceBundle
 		resources.put("email",                       "El.paštas");
 		resources.put("error",                       "Klaida");
 		resources.put("exit",                        "Išėjimas");
-		resources.put("grant",						 "Grant Auth");
+		resources.put("female",                      "M");
+		resources.put("firstname",                   "Vardas");
+		resources.put("gender",                      "Lytis");		
+		resources.put("grant",						 "Autorizuoti");
 		resources.put("grantedby",					 "Jūs autorizuotas:");		
 		resources.put("hide_offline",                "Paslėpti neprisijungusius");
 		resources.put("info",                        "Informacija");
@@ -79,31 +87,41 @@ public class Text_LT extends ResourceBundle
 		resources.put("keep_chat",                   "Pasilikti pokalbių išklotinę?");
 		resources.put("keep_conn_alive",             "Palaikyti pastovų ryšį?");
 		resources.put("keylock_enable",              "Užrakinti klaviaturą");
-		resources.put("keylock_enabled",             "Klaviatura užrakinta");
+		resources.put("keylock_enabled",             "Klaviatūra užrakinta");
+		resources.put("keyword",                     "raktažodis");		
 		resources.put("language",                    "Kalba");
-		resources.put("lang_BR",                     "Portugalu (Brazilija)");
-		resources.put("lang_CZ",                     "Ceku");
-		resources.put("lang_DE",                     "Vokieciu");
-		resources.put("lang_EN",                     "Anglu");
-		resources.put("lang_ES",                     "Ispanu");
-		resources.put("lang_LT",                     "Lietuviu");
-		resources.put("lang_RU",                     "Rusu");
-		resources.put("lang_SE",                     "Svedu");
+		resources.put("lang_BR",                     "Portugalų (Brazilija)");
+		resources.put("lang_CZ",                     "Čekų");
+		resources.put("lang_DE",                     "Vokiečių");
+		resources.put("lang_EN",                     "Anglų");
+		resources.put("lang_ES",                     "Ispanų");
+		resources.put("lang_IT",                     "Italų");		
+		resources.put("lang_LT",                     "Lietuvių");
+		resources.put("lang_RU",                     "Rusų");
+		resources.put("lang_SE",                     "Švedų");
+		resources.put("lastname",                    "Pavardė");		
 		resources.put("loading",                     "Kraunasi");
+		resources.put("male",                        "V");		
 		resources.put("me",                          "aš");
 		resources.put("menu",                        "Meniu");
+		resources.put("msg_sound_file_name",         "Žinutės garsas");
+		resources.put("message_notification",        "Žinutės pranešimas");		
 		resources.put("message",                     "Žinutė");
 		resources.put("message_from",                "Žinutė nuo");
-		// #sijapp cond.if target is "SIEMENS" #
-		resources.put("message_notification",        "Pranešti apie žinutę");
-		// #sijapp cond.end #
 		resources.put("name",                        "Vardas");
+		resources.put("next",						 "Toliau");		
 		resources.put("nick",                        "Slapyvardis");
 		resources.put("no",                          "Ne");
+		resources.put("no_results",                  "Nerasta");
 		resources.put("not_implemented",             "Funkcija dar neveikia.");
+		resources.put("noreason",                    "Nepateikė priežasties.");
 		resources.put("notice",                      "Pranešimas");
+		resources.put("nr",                          "Nr");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "1k.per sesiją?");
+		resources.put("onl_notification",            "Notice for upcoming contact");
+  	    resources.put("onl_sound_file_name",         "Online garsas");
+  	    resources.put("only_online",                 "Rodyti tik prisijungusius");
 		resources.put("options",                     "Savybės");
 		resources.put("options_account",             "Vartotojas");
 		resources.put("options_cost",                "Kaina");
@@ -113,10 +131,16 @@ public class Text_LT extends ResourceBundle
 		resources.put("options_other",               "Kiti");
 		resources.put("password",                    "Slaptažodis");
 		resources.put("plength",                     "Apmokestinamo paketo dydis kilobaitais");
+        resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
+  	    resources.put("prev",                        "Previous");
 		resources.put("reason",						 "Priežastis");		
 		resources.put("remove",                      "Pašalinti iš sąrašo");
 		resources.put("reply",                       "Atsakyti");
+		resources.put("requauth",                    "Prašyti autorizavimo");
+  	    resources.put("requ",                        "Reikalingas");
+  	    resources.put("requno",                      "Nereikalingas");
 		resources.put("reset",                       "Valyti");
+		resources.put("results",                     "Rezultatai");
 		resources.put("save",                        "Išsaugoti");
 		resources.put("search_user",                 "Ieškoti vartotojo");
 		resources.put("send",                        "Siųsti");
@@ -126,10 +150,9 @@ public class Text_LT extends ResourceBundle
 		resources.put("server_host",                 "Serveris");
 		resources.put("server_port",                 "Prievadas");
 		resources.put("session",                     "Sesija");
-		resources.put("set_status",                  "Nustatyti statusa");
+		resources.put("set_status",                  "Nustatyti statusą");
 		resources.put("since",                       "Nuo");
 		resources.put("sound",                       "ICQ Garsas");
-		resources.put("sound_file_name",             "Garsinis failas");
 		resources.put("sort_by",                     "Rušiuoti sarašą");
 		resources.put("sort_by_name",                "Pagal vardą");
 		resources.put("sort_by_status",              "Pagal statusą");
@@ -141,6 +164,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("status_occupied",             "Užimtas");
 		resources.put("status_offline",              "Atsijungęs");
 		resources.put("status_online",               "Prisijungęs");
+		resources.put("sysnotice",                   "System Notice");
 		resources.put("sysnotice",					 "Sistemos pranešimas");		
 		resources.put("traffic",                     "Srautas");
 		resources.put("uin",                         "UIN");
@@ -153,6 +177,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("wait",                        "Prašome palaukti ...");
 		resources.put("warning",                     "Įspėjimas");
 		resources.put("wantsyourauth",				 " nori būti autorizuotas. Tikslas: ");
+		resources.put("whichgroup",                  "Kuri grupė?");
 		resources.put("yes",                         "Taip");
 		resources.put("youwereadded",				 "Įtraukas į sąrašą pas: ");
 		
@@ -165,10 +190,10 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_112",                   "Neegzstuojantis UIN (#112.EXT)");
 		resources.put("error_113",                   "Per daug prisijungimu iš to paties IP (#113.EXT)");
 		resources.put("error_114",                   "Rate exceeded (#114.EXT)");
-		resources.put("error_115",                   "Negaliu perskaityti kontaktu sarašo (#115.EXT)");
+		resources.put("error_115",                   "Negaliu perskaityti kontaktų sarašo (#115.EXT)");
 		resources.put("error_116",                   "Offline message could not be parsed (#116.EXT)");
-		resources.put("error_117",                   "Neirašytas UIN ir/arba slaptažodis (#117.EXT)");
-		resources.put("error_118",                   "Nera atsakymo iš serverio (#118.EXT)");
+		resources.put("error_117",                   "Neįrašytas UIN ir/arba slaptažodis (#117.EXT)");
+		resources.put("error_118",                   "Nėra atsakymo iš serverio (#118.EXT)");
 
 		// Network communication specific exceptions
 		resources.put("error_120",                   "I/O klaida! (#120.EXT)");
@@ -196,11 +221,17 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_152",                   "Nesuprantu gautos 2 tipo žinutes (#152.EXT)");
 		resources.put("error_153",                   "Nesuprantu gautos 4 tipo žinutes (#153.EXT)");
 		resources.put("error_154",                   "Kontaktu sarašo atnaujinimas nepavyko (#154.EXT)");
+		resources.put("error_155",                   "Object is already in your server list (#155.EXT)");
+		resources.put("error_156",                   "Error while adding. Try again (#156.EXT)");
+		resources.put("error_157",                   "No more elements of this type allowed (#157.EXT)");
+		resources.put("error_158",                   "You did try to add an ICQ contact to an AIM list (#158.EXT)");
+		resources.put("error_159",                   "Server did not answer on search request. Try again (#159.EXT)");
+		resources.put("error_160",                   "Error while searching (#160.EXT)");
 
 		// Other errors
 		resources.put("error_160",                   "Possibly not enough heap memory available (#160.EXT)");
 		resources.put("error_161",                   "Could not fetch meta info (#161.EXT)");
-
+ 
 	}
 
 
