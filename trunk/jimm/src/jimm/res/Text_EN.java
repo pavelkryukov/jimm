@@ -45,6 +45,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("account",                     "Account");
 		resources.put("add_user",                    "Add User");
 		resources.put("add_to_list",                 "Add to list");
+		resources.put("age",                         "Age");
 		resources.put("async",                       "Async");
 		resources.put("auth",				     	 "Auth");
 		resources.put("back",                        "Back");
@@ -59,7 +60,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("connect",                     "Connect");
 		resources.put("connecting",                  "Connecting");
 		resources.put("contact_list",                "List");
-		resources.put("country",                     "Country");
 		resources.put("cp1251",                      "Use CP1252 hack?");
 		resources.put("cpd",                         "Cost per day");
 		resources.put("cpp",                         "Cost per packet");
@@ -75,7 +75,9 @@ public class Text_EN extends ResourceBundle
 		resources.put("email",                       "Email");
 		resources.put("error",                       "Error");
 		resources.put("exit",                        "Exit");
+		resources.put("female",                      "F");
 		resources.put("firstname",                   "First name");
+		resources.put("gender",                      "Gender");
 		resources.put("grant",						 "Grant Auth");
 		resources.put("grantedby",					 "Your auth request was granted by:");
 		resources.put("hide_offline",                "Hide offline contacts");
@@ -85,6 +87,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("keep_conn_alive",             "Keep connection alive?");
 		resources.put("keylock_enable",              "Enable keylock");
 		resources.put("keylock_enabled",             "Keylock enabled");
+		resources.put("keyword",                     "Keyword");
 		resources.put("language",                    "Language");
 		resources.put("lang_BR",                     "Portuguese (Brazil)");
 		resources.put("lang_CZ",                     "Czech");
@@ -97,6 +100,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("lang_SE",                     "Swedish");
 		resources.put("lastname",                    "Last name");
 		resources.put("loading",                     "Loading");
+		resources.put("male",                        "M");
 		resources.put("me",                          "me");
 		resources.put("menu",                        "Menu");
 		resources.put("msg_sound_file_name",         "Message Sound File");
@@ -104,7 +108,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("message",                     "Message");
 		resources.put("message_from",                "Message from");
 		resources.put("name",                        "Name");
-		resources.put("next",						 "nächstes");
+		resources.put("next",						 "Next");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
 		resources.put("no_results",                  "No results");
@@ -126,11 +130,13 @@ public class Text_EN extends ResourceBundle
 		resources.put("password",                    "Password");
 		resources.put("plength",                     "Length of charge packet in kB");
 		resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
-		resources.put("prev",						 "previous");
+		resources.put("prev",						 "Previous");
 		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
 		resources.put("reply",                       "Reply");
 		resources.put("requauth",                    "Request auth");
+		resources.put("requ",                        "Required");
+		resources.put("requno",                      "Not req");
 		resources.put("reset",                       "Reset");
 		resources.put("results",                     "Results");
 		resources.put("save",                        "Save");
