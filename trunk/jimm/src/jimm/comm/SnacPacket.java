@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/SnacPacket.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 
@@ -219,7 +219,10 @@ public class SnacPacket extends Packet
 	// CLI_ADDEND packet family and command
 	public static final int CLI_ADDEND_FAMILY = 0x0013;
 	public static final int CLI_ADDEND_COMMAND = 0x0012;
-
+	
+	// SRV_ADDEDYOU packet family and command
+	public static final int SRV_ADDEDYOU_FAMILY = 0x0013;
+	public static final int SRV_ADDEDYOU_COMMAND = 0x001C;
 
 	/**************************/
 	/* Family 0x0015: OLD ICQ */
