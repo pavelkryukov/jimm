@@ -315,12 +315,16 @@ public abstract class VirtualList extends Canvas
   {
     switch ( getGameAction(keyCode) )
     {
-case Canvas.DOWN:  moveCursor(1);  break;
-case Canvas.UP:    moveCursor(-1); break;
-case Canvas.LEFT:  moveToTop();    break;
-case Canvas.RIGHT: moveToBottom(); break;
-case Canvas.FIRE:  itemSelected(); break;
+    case Canvas.DOWN:  moveCursor(1);  break;
+    case Canvas.UP:    moveCursor(-1); break;
+    case Canvas.FIRE:  itemSelected(); break;
     }
+    
+    switch (keyCode)
+	{
+	case KEY_NUM1:  moveToTop(); break;
+	case KEY_NUM7:  moveToBottom(); break;
+	}
   }
   
   // protected void keyPressed(int keyCode) 

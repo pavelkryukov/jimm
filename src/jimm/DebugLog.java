@@ -19,17 +19,25 @@ class Helper implements CommandListener
 
 public class DebugLog
 {
-  private static TextList list;
+	private static TextList list;
   
-  private static Command backCommand = new Command("back", Command.BACK, 1);
+	private static Command backCommand = new Command("Back", Command.BACK, 1);
   
   
-  static
-  {
-      list = new TextList("debug log");
-      list.addCommand(backCommand);
-      list.setCommandListener( new Helper() );
-      list.setFontSize(TextList.SMALL_FONT);
+	static
+	{
+		list = new TextList(null);
+		list.addCommand(backCommand);
+		list.setCommandListener( new Helper() );
+		list.setFontSize(TextList.SMALL_FONT);
+      
+//#sijapp cond.if target is "MIDP2"#
+      list.setTitle("Debug log");
+      list.setFullScreenMode(false);
+//#sijapp cond.else#
+      list.setCaption("Ddebug log");
+//#sijapp cond.end#
+      
   }
   
   

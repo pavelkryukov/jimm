@@ -254,10 +254,10 @@ public class ContactListContactItem extends ContactListItem
     // and "hide offline" is on
     protected boolean mustBeShownAnyWay()
     {
-    	return (plainMessages > 0) |
-		       (urlMessages > 0)   | 
-			   (sysNotices > 0)    |
-			   (authRequest > 0)   | 
+    	return (plainMessages > 0) ||
+		       (urlMessages > 0)   || 
+			   (sysNotices > 0)    ||
+			   (authRequest > 0)   || 
 			   temporary; 
     }
     
