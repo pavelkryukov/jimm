@@ -1,7 +1,7 @@
 <!--
 ********************************************************************************
 Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-04  Jimm Project
+Copyright (C) 2003-05  Jimm Project
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -78,7 +78,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ******************************************************************* -->
 	<!-- Version number of the build. The value can be in any format (e.g.   -->
 	<!-- 0.2cvs).                                                            -->
-	<property name="version"          value="###VERSION###"                   />
+	<property name="version/jimm"          value="###VERSION###"              />
 	<!-- ******************************************************************* -->
 	<!-- Version number of the build in the standardized format              -->
 	<!-- <major>[.<minor>[.<micro>]] (e.g. 0.2). This value should           -->
@@ -252,7 +252,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<replace dir="${build}/init/src"
 			encoding="UTF-8">
 			<replacefilter token="${3ns}VERSION${3ns}"
-				value="${version}"/>
+				value="${version/jimm}"/>
 			<replacefilter token="${3ns}VERSION-JAVA${3ns}"
 				value="${version/java}"/>
 			<replacefilter token="${3ns}DATE${3ns}"
@@ -319,7 +319,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<replace file="${build}/MANIFEST.MF"
 			encoding="UTF-8">
 			<replacefilter token="${3ns}VERSION${3ns}"
-				value="${version}"/>
+				value="${version/jimm}"/>
 			<replacefilter token="${3ns}VERSION-JAVA${3ns}"
 				value="${version/java}"/>
 			<replacefilter token="${3ns}DATE${3ns}"
