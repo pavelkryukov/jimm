@@ -96,3 +96,4 @@ VERSION 0.1 BETA-9
   * Type of connection is now configurable
   * Use of CP1251 hack is now configurable
   * System messages will get displayed
+  * Requests of authorisation can be answered
