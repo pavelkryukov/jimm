@@ -121,7 +121,7 @@ public class Icq implements Runnable
         
         // Display splash canvas
         SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-        wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
+        wait2.setMessage(ResourceBundle.getString("wait"));
         wait2.setProgress(0);
         Jimm.display.setCurrent(wait2);
 
@@ -146,7 +146,7 @@ public class Icq implements Runnable
 	{
         // Display splash canvas
         SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
-        wait.setMessage(ResourceBundle.getString("jimm.res.Text", "connecting"));
+        wait.setMessage(ResourceBundle.getString("connecting"));
         wait.setProgress(0);
         Jimm.display.setCurrent(wait);
 
@@ -173,7 +173,7 @@ public class Icq implements Runnable
 	{
         // Display splash canvas
         SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
-        wait.setMessage(ResourceBundle.getString("jimm.res.Text", "disconnecting"));
+        wait.setMessage(ResourceBundle.getString("disconnecting"));
         wait.setProgress(0);
         Jimm.display.setCurrent(wait);
 
@@ -224,7 +224,7 @@ public class Icq implements Runnable
 
             // Display splash canvas
             SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-            wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
+            wait2.setMessage(ResourceBundle.getString("wait"));
             wait2.setProgress(0);
             Jimm.display.setCurrent(wait2);
 

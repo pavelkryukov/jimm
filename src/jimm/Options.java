@@ -392,37 +392,37 @@ public class Options
 		{
 
 			// Initialize commands
-			this.backCommand = new Command(ResourceBundle.getString("jimm.res.Text", "back"), Command.BACK, 1);
-			this.saveCommand = new Command(ResourceBundle.getString("jimm.res.Text", "save"), Command.SCREEN, 1);
+			this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
+			this.saveCommand = new Command(ResourceBundle.getString("save"), Command.SCREEN, 1);
 
 			// Initialize options menu
-			this.optionsMenu = new List(ResourceBundle.getString("jimm.res.Text", "options"), Choice.IMPLICIT);
-			this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_account"), null);
-			this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_network"), null);
-			this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_interface"), null);
+			this.optionsMenu = new List(ResourceBundle.getString("options"), Choice.IMPLICIT);
+			this.optionsMenu.append(ResourceBundle.getString("options_account"), null);
+			this.optionsMenu.append(ResourceBundle.getString("options_network"), null);
+			this.optionsMenu.append(ResourceBundle.getString("options_interface"), null);
 			// #sijapp cond.if modules_TRAFFIC is "true" #
-			this.optionsMenu.append(ResourceBundle.getString("jimm.res.Text", "options_cost"), null);
+			this.optionsMenu.append(ResourceBundle.getString("options_cost"), null);
 			// #sijapp cond.end#
 			this.optionsMenu.addCommand(this.backCommand);
 			this.optionsMenu.setCommandListener(this);
 
 			// Initialize options form
-			this.optionsForm = new Form(ResourceBundle.getString("jimm.res.Text", "options"));
+			this.optionsForm = new Form(ResourceBundle.getString("options"));
 			this.optionsForm.addCommand(this.saveCommand);
 			this.optionsForm.setCommandListener(this);
 
 			// Initialize elements (account section)
-			this.uinTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "uin"), Options.this.getStringOption(Options.OPTION_UIN), 12, TextField.NUMERIC);
-			this.passwordTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "password"),Options.this.getStringOption(Options.OPTION_PASSWORD), 32, TextField.PASSWORD);
+			this.uinTextField = new TextField(ResourceBundle.getString("uin"), Options.this.getStringOption(Options.OPTION_UIN), 12, TextField.NUMERIC);
+			this.passwordTextField = new TextField(ResourceBundle.getString("password"),Options.this.getStringOption(Options.OPTION_PASSWORD), 32, TextField.PASSWORD);
 
 			// Initialize elements (network section)
-			this.srvHostTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "server_host"), Options.this.getStringOption(Options.OPTION_SRV_HOST), 32, TextField.ANY);
-			this.srvPortTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "server_port"), Options.this.getStringOption(Options.OPTION_SRV_PORT), 5, TextField.NUMERIC);
-			this.keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "keep_conn_alive"), Choice.MULTIPLE);
-			this.keepConnAliveChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
+			this.srvHostTextField = new TextField(ResourceBundle.getString("server_host"), Options.this.getStringOption(Options.OPTION_SRV_HOST), 32, TextField.ANY);
+			this.srvPortTextField = new TextField(ResourceBundle.getString("server_port"), Options.this.getStringOption(Options.OPTION_SRV_PORT), 5, TextField.NUMERIC);
+			this.keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle.getString("keep_conn_alive"), Choice.MULTIPLE);
+			this.keepConnAliveChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.keepConnAliveChoiceGroup.setSelectedIndex(0,Options.this.getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
-			this.connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "conn_type"), Choice.MULTIPLE);
-			this.connTypeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "async"), null);
+			this.connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.MULTIPLE);
+			this.connTypeChoiceGroup.append(ResourceBundle.getString("async"), null);
 			if (Options.this.getIntOption(Options.OPTION_CONN_TYPE) == 0)
 			{
 				this.connTypeChoiceGroup.setSelectedIndex(0,false);
@@ -433,67 +433,67 @@ public class Options
 			}
 
 			// Initialize elements (interface section)
-			this.uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "language"), Choice.EXCLUSIVE);
+			this.uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle.getString("language"), Choice.EXCLUSIVE);
 			for (int i = 0; i < ResourceBundle.LANG_AVAILABLE.length; i++)
 			{
-				this.uiLanguageChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "lang_" + ResourceBundle.LANG_AVAILABLE[i]), null);
+				this.uiLanguageChoiceGroup.append(ResourceBundle.getString("lang_" + ResourceBundle.LANG_AVAILABLE[i]), null);
 				if (ResourceBundle.LANG_AVAILABLE[i].equals(Options.this.getStringOption(Options.OPTION_UI_LANGUAGE)))
 				{
 					this.uiLanguageChoiceGroup.setSelectedIndex(i, true);
 				}
 			}
-			this.displayDateChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "display_date"), Choice.MULTIPLE);
-			this.displayDateChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
+			this.displayDateChoiceGroup = new ChoiceGroup(ResourceBundle.getString("display_date"), Choice.MULTIPLE);
+			this.displayDateChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.displayDateChoiceGroup.setSelectedIndex(0,Options.this.getBooleanOption(Options.OPTION_DISPLAY_DATE));
-			this.clSortByChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "sort_by"), Choice.EXCLUSIVE);
-			this.clSortByChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "sort_by_status"), null);
-			this.clSortByChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "sort_by_name"), null);
+			this.clSortByChoiceGroup = new ChoiceGroup(ResourceBundle.getString("sort_by"), Choice.EXCLUSIVE);
+			this.clSortByChoiceGroup.append(ResourceBundle.getString("sort_by_status"), null);
+			this.clSortByChoiceGroup.append(ResourceBundle.getString("sort_by_name"), null);
 			this.clSortByChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_CL_SORT_BY), true);
-			this.clHideOfflineChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "hide_offline"), Choice.MULTIPLE);
-			this.clHideOfflineChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
+			this.clHideOfflineChoiceGroup = new ChoiceGroup(ResourceBundle.getString("hide_offline"), Choice.MULTIPLE);
+			this.clHideOfflineChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.clHideOfflineChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE));
-			this.keepchatChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "keep_chat"), Choice.MULTIPLE);
-			this.keepchatChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
+			this.keepchatChoiceGroup = new ChoiceGroup(ResourceBundle.getString("keep_chat"), Choice.MULTIPLE);
+			this.keepchatChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.keepchatChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_KEEPCHAT));
-			this.cp1251HackChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "cp1251"), Choice.MULTIPLE);
-			this.cp1251HackChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
+			this.cp1251HackChoiceGroup = new ChoiceGroup(ResourceBundle.getString("cp1251"), Choice.MULTIPLE);
+			this.cp1251HackChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.cp1251HackChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CP1251_HACK));
 			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
-			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "onl_notification"), Choice.EXCLUSIVE);
-			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "no"), null);
-			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "beep"), null);
-			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "sound"), null);
+			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
+			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
+			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
+			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
 			this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
-			this.messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "msg_sound_file_name"), Options.this.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
-			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "msg_notification"), Choice.EXCLUSIVE);
-			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "no"), null);
-			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "beep"), null);
-			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "sound"), null);
+			this.messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.this.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
+			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("msg_notification"), Choice.EXCLUSIVE);
+			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
+			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
+			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
 			this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE), true);
-			this.onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "onl_sound_file_name"), Options.this.getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
+			this.onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("onl_sound_file_name"), Options.this.getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
 			// #sijapp cond.end#
 			// #sijapp cond.if target is "RIM"#
-			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "onl_notification"), Choice.EXCLUSIVE);
-			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "no"), null);
-			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "beep"), null);
+			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
+			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
+			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
 			this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
-			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "msg_notification"), Choice.EXCLUSIVE);
-			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "no"), null);
-			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "beep"), null);
+			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("msg_notification"), Choice.EXCLUSIVE);
+			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
+			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
 			this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE), true);
 			// #sijapp cond.end#
 			// #sijapp cond.if target is "SIEMENS" | target is "RIM"#
-			this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "vibration")+"?", Choice.MULTIPLE);
-			this.vibratorChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
+			this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration")+"?", Choice.MULTIPLE);
+			this.vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.vibratorChoiceGroup.setSelectedIndex(0,Options.this.getBooleanOption(Options.OPTION_VIBRATOR));
 			// #sijapp cond.end#
 
 			// #sijapp cond.if modules_TRAFFIC is "true" #
 			// Initialize elements (cost section)
-			this.costPerPacketTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "cpp"), Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_PACKET)), 6, TextField.ANY);
-			this.costPerDayTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "cpd"), Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_DAY)), 6, TextField.ANY);
-			this.costPacketLengthTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "plength"), String.valueOf(Options.this.getIntOption(Options.OPTION_COST_PACKET_LENGTH) / 1024), 4, TextField.NUMERIC);
-			this.currencyTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "currency"), Options.this.getStringOption(Options.OPTION_CURRENCY), 4, TextField.ANY);
+			this.costPerPacketTextField = new TextField(ResourceBundle.getString("cpp"), Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_PACKET)), 6, TextField.ANY);
+			this.costPerDayTextField = new TextField(ResourceBundle.getString("cpd"), Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_DAY)), 6, TextField.ANY);
+			this.costPacketLengthTextField = new TextField(ResourceBundle.getString("plength"), String.valueOf(Options.this.getIntOption(Options.OPTION_COST_PACKET_LENGTH) / 1024), 4, TextField.NUMERIC);
+			this.currencyTextField = new TextField(ResourceBundle.getString("currency"), Options.this.getStringOption(Options.OPTION_CURRENCY), 4, TextField.ANY);
 			// #sijapp cond.end#
 
 		}

@@ -41,9 +41,9 @@ public class MainMenu implements CommandListener
 {
 
     // Abort command
-    private static Command backCommand = new Command(ResourceBundle.getString("jimm.res.Text", "back"), Command.BACK, 1);
+    private static Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
     // Send command
-    private static Command sendCommand = new Command(ResourceBundle.getString("jimm.res.Text", "send"), Command.OK, 1);
+    private static Command sendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
     // List for selecting a online status
     private static List statusList;
@@ -52,14 +52,14 @@ public class MainMenu implements CommandListener
     static
     {
 
-        MainMenu.statusList = new List(ResourceBundle.getString("jimm.res.Text", "set_status"), List.IMPLICIT);
-        MainMenu.statusList.append(ResourceBundle.getString("jimm.res.Text", "status_online"), ContactList.statusOnlineImg);
-        MainMenu.statusList.append(ResourceBundle.getString("jimm.res.Text", "status_chat"), ContactList.statusChatImg);
-        MainMenu.statusList.append(ResourceBundle.getString("jimm.res.Text", "status_away"), ContactList.statusAwayImg);
-        MainMenu.statusList.append(ResourceBundle.getString("jimm.res.Text", "status_na"), ContactList.statusNaImg);
-        MainMenu.statusList.append(ResourceBundle.getString("jimm.res.Text", "status_occupied"), ContactList.statusOccupiedImg);
-        MainMenu.statusList.append(ResourceBundle.getString("jimm.res.Text", "status_dnd"), ContactList.statusDndImg);
-        MainMenu.statusList.append(ResourceBundle.getString("jimm.res.Text", "status_invisible"), ContactList.statusInvisibleImg);
+        MainMenu.statusList = new List(ResourceBundle.getString("set_status"), List.IMPLICIT);
+        MainMenu.statusList.append(ResourceBundle.getString("status_online"), ContactList.statusOnlineImg);
+        MainMenu.statusList.append(ResourceBundle.getString("status_chat"), ContactList.statusChatImg);
+        MainMenu.statusList.append(ResourceBundle.getString("status_away"), ContactList.statusAwayImg);
+        MainMenu.statusList.append(ResourceBundle.getString("status_na"), ContactList.statusNaImg);
+        MainMenu.statusList.append(ResourceBundle.getString("status_occupied"), ContactList.statusOccupiedImg);
+        MainMenu.statusList.append(ResourceBundle.getString("status_dnd"), ContactList.statusDndImg);
+        MainMenu.statusList.append(ResourceBundle.getString("status_invisible"), ContactList.statusInvisibleImg);
 
     }
 
@@ -88,30 +88,30 @@ public class MainMenu implements CommandListener
         {
             if (Jimm.jimm.getIcqRef().isNotConnected())
             {
-                this.list = new List(ResourceBundle.getString("jimm.res.Text", "menu"), List.IMPLICIT);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "connect"), null);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "options"), null);
+                this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
+                this.list.append(ResourceBundle.getString("connect"), null);
+                this.list.append(ResourceBundle.getString("options"), null);
                 // #sijapp cond.if modules_TRAFFIC is "true" #
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "traffic"), null);
+                this.list.append(ResourceBundle.getString("traffic"), null);
                 // #sijapp cond.end#
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "about"), null);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "exit"), null);
+                this.list.append(ResourceBundle.getString("about"), null);
+                this.list.append(ResourceBundle.getString("exit"), null);
 
                 this.list.setCommandListener(this);
             } else
             {
-                this.list = new List(ResourceBundle.getString("jimm.res.Text", "menu"), List.IMPLICIT);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "keylock_enable"), null);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "disconnect"), null);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "set_status"), null);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "add_user"), null);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "search_user"), null);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "options"), null);
+                this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
+                this.list.append(ResourceBundle.getString("keylock_enable"), null);
+                this.list.append(ResourceBundle.getString("disconnect"), null);
+                this.list.append(ResourceBundle.getString("set_status"), null);
+                this.list.append(ResourceBundle.getString("add_user"), null);
+                this.list.append(ResourceBundle.getString("search_user"), null);
+                this.list.append(ResourceBundle.getString("options"), null);
                 // #sijapp cond.if modules_TRAFFIC is "true" #
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "traffic"), null);
+                this.list.append(ResourceBundle.getString("traffic"), null);
                 // #sijapp cond.end#
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "about"), null);
-                this.list.append(ResourceBundle.getString("jimm.res.Text", "exit"), null);
+                this.list.append(ResourceBundle.getString("about"), null);
+                this.list.append(ResourceBundle.getString("exit"), null);
                 this.list.addCommand(MainMenu.backCommand);
                 this.list.setCommandListener(this);
             }
@@ -158,7 +158,7 @@ public class MainMenu implements CommandListener
         {
             // Display splash canvas
             SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-            wait2.setMessage(ResourceBundle.getString("jimm.res.Text", "wait"));
+            wait2.setMessage(ResourceBundle.getString("wait"));
             wait2.setProgress(0);
             Jimm.display.setCurrent(wait2);
             
@@ -232,10 +232,10 @@ public class MainMenu implements CommandListener
                     // Add user
 
                     // Reset and display textbox for entering uin to add
-                    addUser = new Form(ResourceBundle.getString("jimm.res.Text", "add_user"));
-                    uinTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "uin"), "", 16,
+                    addUser = new Form(ResourceBundle.getString("add_user"));
+                    uinTextField = new TextField(ResourceBundle.getString("uin"), "", 16,
                             TextField.NUMERIC);
-                    nameTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "name"), "", 32,
+                    nameTextField = new TextField(ResourceBundle.getString("name"), "", 32,
                             TextField.ANY);
                     addUser.append(uinTextField);
                     addUser.addCommand(sendCommand);
@@ -269,8 +269,8 @@ public class MainMenu implements CommandListener
                     // About
 
                     // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("jimm.res.Text", "about"), ResourceBundle
-                            .getString("jimm.res.Text", "about_info"), null, AlertType.INFO);
+                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
+                            .getString("about_info"), null, AlertType.INFO);
                     about.setTimeout(Alert.FOREVER);
                     Jimm.jimm.getContactListRef().activate(about);
 
@@ -297,8 +297,8 @@ public class MainMenu implements CommandListener
                     // About
 
                     // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("jimm.res.Text", "about"), ResourceBundle
-                            .getString("jimm.res.Text", "about_info"), null, AlertType.INFO);
+                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
+                            .getString("about_info"), null, AlertType.INFO);
                     about.setTimeout(Alert.FOREVER);
                     Jimm.jimm.getContactListRef().activate(about);
 
@@ -351,8 +351,8 @@ public class MainMenu implements CommandListener
                     // About
 
                     // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("jimm.res.Text", "about"), ResourceBundle
-                            .getString("jimm.res.Text", "about_info"), null, AlertType.INFO);
+                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
+                            .getString("about_info"), null, AlertType.INFO);
                     about.setTimeout(Alert.FOREVER);
                     this.activate(about);
 
@@ -380,8 +380,8 @@ public class MainMenu implements CommandListener
                     // About
 
                     // Display an info alert
-                    Alert about = new Alert(ResourceBundle.getString("jimm.res.Text", "about"), ResourceBundle
-                            .getString("jimm.res.Text", "about_info"), null, AlertType.INFO);
+                    Alert about = new Alert(ResourceBundle.getString("about"), ResourceBundle
+                            .getString("about_info"), null, AlertType.INFO);
                     about.setTimeout(Alert.FOREVER);
                     this.activate(about);
 

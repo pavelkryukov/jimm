@@ -178,7 +178,7 @@ public class SplashCanvas extends Canvas
   // Enable keylock
   public synchronized void lock()
   {
-    this.setMessage(ResourceBundle.getString("jimm.res.Text", "keylock_enabled"));
+    this.setMessage(ResourceBundle.getString("keylock_enabled"));
     this.setProgress(0);
     this.isLocked = true;
     Jimm.display.setCurrent(this);
@@ -472,11 +472,11 @@ public class SplashCanvas extends Canvas
         String nick = this.requestInfoAct.getNick();
         String name = (this.requestInfoAct.getFirstName() + " " + this.requestInfoAct.getLastName()).trim();
         String email = this.requestInfoAct.getEmail();
-        String infoText = ResourceBundle.getString("jimm.res.Text", "uin") + ": " + (uin.length() > 0 ? uin : "-") + (char) (0x0D) +
-            ResourceBundle.getString("jimm.res.Text", "nick") + ": " + (nick.length() > 0 ? nick : "-") + (char) (0x0D) +
-            ResourceBundle.getString("jimm.res.Text", "name") + ": " + (name.length() > 0 ? name : "-") + (char) (0x0D) +
-            ResourceBundle.getString("jimm.res.Text", "email") + ": " + (email.length() > 0 ? email : "-");
-        Alert info = new Alert(ResourceBundle.getString("jimm.res.Text", "info"), infoText, null, AlertType.INFO);
+        String infoText = ResourceBundle.getString("uin") + ": " + (uin.length() > 0 ? uin : "-") + (char) (0x0D) +
+            ResourceBundle.getString("nick") + ": " + (nick.length() > 0 ? nick : "-") + (char) (0x0D) +
+            ResourceBundle.getString("name") + ": " + (name.length() > 0 ? name : "-") + (char) (0x0D) +
+            ResourceBundle.getString("email") + ": " + (email.length() > 0 ? email : "-");
+        Alert info = new Alert(ResourceBundle.getString("info"), infoText, null, AlertType.INFO);
         Jimm.jimm.getContactListRef().activate(info);
         this.cancel();
       }

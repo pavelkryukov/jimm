@@ -256,9 +256,9 @@ public class SearchAction extends Action
                         // Get auth flag
                         String auth;
                         if (Util.getByte(data,marker) == 0)
-                            auth = ResourceBundle.getString("jimm.res.Text", "req");
+                            auth = ResourceBundle.getString("req");
                         else
-                            auth = ResourceBundle.getString("jimm.res.Text", "reqno");
+                            auth = ResourceBundle.getString("reqno");
                         marker += 1;
                         
                         // Get status
@@ -269,8 +269,8 @@ public class SearchAction extends Action
                         String gender;
                         switch (Util.getByte(data,marker)){
                         case 0: gender = ""; break;
-                        case 1: gender = ResourceBundle.getString("jimm.res.Text", "female"); break;
-                        case 2: gender = ResourceBundle.getString("jimm.res.Text", "male"); break;
+                        case 1: gender = ResourceBundle.getString("female"); break;
+                        case 2: gender = ResourceBundle.getString("male"); break;
                         default: gender = "";
                         }
                         marker += 1;
