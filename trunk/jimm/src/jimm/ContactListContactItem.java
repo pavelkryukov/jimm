@@ -62,6 +62,12 @@ public class ContactListContactItem extends ContactListItem
 
     // Client unterstands UTF-8 messages
     public static final int CAP_UTF8_INTERNAL = 0x00000002;
+    
+    // Message types
+    public static final int MESSAGE_PLAIN        = 1;
+    public static final int MESSAGE_URL          = 2;
+    public static final int MESSAGE_SYS_NOTICE   = 3;
+    public static final int MESSAGE_AUTH_REQUEST = 4;
 
     /** ************************************************************************* */
 
@@ -110,15 +116,6 @@ public class ContactListContactItem extends ContactListItem
         this.authRequest = 0;
         this.menu = new Menu();
         this.requReason = false;
-    }
-
-    // Returns a string representing the object
-    public String toString()
-    {
-        String rep = new String();
-        rep = "ID: 0x" + Integer.toHexString(id) + " Group: 0x" + Integer.toHexString(group) + " UIN: " + uin
-                + " Name: " + name + " Temporary: " + temporary + "NoAuth: "+noAuth;
-        return rep;
     }
 
     // Returns if added to the contact list
@@ -229,34 +226,19 @@ public class ContactListContactItem extends ContactListItem
         this.capabilities = capabilities;
     }
 
-    // Returns true if the next available message is a plain message
+    // Returns true if the next available message is a message of given type
     // Returns false if no message at all is available, or if the next available
-    // message is an URL message or plain message
-    protected synchronized boolean isPlainMessageAvailable()
+    // message is of another type
+    protected synchronized boolean isMessageAvailable(int type)
     {
+        switch (type)
+        {
+        	case MESSAGE_PLAIN: return (this.plainMessages > 0);
+        	case MESSAGE_URL: return (this.urlMessages > 0); 
+        	case MESSAGE_SYS_NOTICE: return (this.sysNotices > 0);
+        	case MESSAGE_AUTH_REQUEST: return (this.authRequest > 0); 
+        }
         return (this.plainMessages > 0);
-    }
-
-    // Returns true if the next available message is an URL message
-    // Returns false if no message at all is available, or if the next available
-    // message is an plain message or system notice
-    protected synchronized boolean isUrlMessageAvailable()
-    {
-        return (this.urlMessages > 0);
-    }
-
-    // Returns true if the next available message is a sys notice
-    // Returns false if no message at all is available, or if the next available
-    // message is an URL message plain message
-    protected synchronized boolean isSysNoticeAvailable()
-    {
-        return (this.sysNotices > 0);
-    }
-
-    // Returns
-    protected synchronized boolean isunasweredAuthRequest()
-    {
-        return (this.authRequest > 0);
     }
 
     // Adds a message to the message display
@@ -765,7 +747,7 @@ public class ContactListContactItem extends ContactListItem
                 msgDisplay.addCommand(MenuUtil.msgReplyCommand);
                 msgDisplay.addCommand(MenuUtil.deleteChatCommand);
                 msgDisplay.addCommand(MenuUtil.addMenuCommand);
-                if (ContactListContactItem.this.isunasweredAuthRequest())
+                if (ContactListContactItem.this.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
                 {
                     msgDisplay.addCommand(MenuUtil.grantAuthCommand);
                     msgDisplay.addCommand(MenuUtil.denyAuthCommand);

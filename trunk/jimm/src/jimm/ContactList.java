@@ -686,8 +686,8 @@ public class ContactList implements CommandListener
     {
 
         // System.out.println("\n");
-        System.out.println("RemoveItem");
-        System.out.println(cItem.toString());
+        // System.out.println("RemoveItem");
+        // System.out.println(cItem.toString());
 
         // Save selected contact entry
         this.saveListPosition();
@@ -705,7 +705,7 @@ public class ContactList implements CommandListener
     public synchronized void addContactItem(ContactListContactItem cItem)
     {
         // System.out.println("\n");
-        System.out.println("AddItem");
+        // System.out.println("AddItem");
         if (!cItem.added())
         {
             System.out.println(cItem.toString());
@@ -916,9 +916,9 @@ public class ContactList implements CommandListener
 
         // Get status image
         Image img = null;
-        if (cItem.isunasweredAuthRequest())
+        if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
             img = eventSysActionImg;
-        else if (cItem.isSysNoticeAvailable() || cItem.noAuth())
+        else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE) || cItem.noAuth())
         {
             img = eventSystemNoticeImg;
         } else if (cItem.isTemporary())
@@ -926,7 +926,7 @@ public class ContactList implements CommandListener
             img = null;
         }
 
-        if (!(cItem.isPlainMessageAvailable() || cItem.isUrlMessageAvailable() || cItem.isSysNoticeAvailable() || cItem
+        if (!(cItem.isMessageAvailable(ContactListContactItem.MESSAGE_PLAIN) || cItem.isMessageAvailable(ContactListContactItem.MESSAGE_URL) || cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE) || cItem
                 .noAuth()))
         {
             long status = cItem.getStatus();
@@ -984,15 +984,15 @@ public class ContactList implements CommandListener
                 cItem = (ContactListContactItem) this.cItems.elementAt(i);
 
                 // Get event image, if event is enabled
-                if (cItem.isPlainMessageAvailable())
+                if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_PLAIN))
                 {
                     img = eventPlainMessageImg;
-                } else if (cItem.isUrlMessageAvailable())
+                } else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_URL))
                 {
                     img = eventUrlMessageImg;
-                } else if (cItem.isunasweredAuthRequest())
+                } else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
                     img = eventSysActionImg;
-                else if (cItem.isSysNoticeAvailable())
+                else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE))
                 {
                     img = eventSystemNoticeImg;
                 } else
@@ -1089,12 +1089,12 @@ public class ContactList implements CommandListener
             Image img = null;
 
             // Get event image, if event is enabled
-            if (cItem.isPlainMessageAvailable())
+            if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_PLAIN))
                 img = eventPlainMessageImg;
-            else if (cItem.isUrlMessageAvailable()) img = eventUrlMessageImg;
-            if (cItem.isunasweredAuthRequest())
+            else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_URL)) img = eventUrlMessageImg;
+            if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
                 img = eventSysActionImg;
-            else if (cItem.isSysNoticeAvailable())
+            else if (cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE))
             {
                 img = eventSystemNoticeImg;
             }
