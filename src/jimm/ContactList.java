@@ -770,15 +770,15 @@ public class ContactList implements CommandListener
     {
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();
-        if (Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_VIBRATOR))
+        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
         {
             Vibrator.triggerVibrator(500);
         }
         int mode_si;
         if (notType == SOUND_TYPE_MESSAGE)
-            mode_si = Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_MESSAGE_SOUND);
+            mode_si = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
         else
-            mode_si = Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_ONLINE_SOUND);
+            mode_si = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
             
         switch (mode_si)
         {
@@ -790,9 +790,9 @@ public class ContactList implements CommandListener
             {
                 Player p;
                 if (notType == SOUND_TYPE_MESSAGE)
-                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getOptionValueString(Options.OPTION_MESSAGE_SOUNDFILE_NAME));
+                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
                 else
-                	p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getOptionValueString(Options.OPTION_ONLINE_SOUNDFILE_NAME));
+                	p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
                 p.start();
             } catch (IOException e)
             {
@@ -809,9 +809,9 @@ public class ContactList implements CommandListener
         // #sijapp cond.if target is "MIDP2"#
         int mode_m2;
         if (notType == SOUND_TYPE_MESSAGE)
-            mode_m2 = Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_MESSAGE_SOUND);
+            mode_m2 = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
         else
-            mode_m2 = Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_ONLINE_SOUND);
+            mode_m2 = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
             
         switch (mode_m2)
         {
@@ -837,9 +837,9 @@ public class ContactList implements CommandListener
             {
                 InputStream is;
                 if (notType == SOUND_TYPE_MESSAGE)
-                    is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getOptionValueString(Options.OPTION_MESSAGE_SOUNDFILE_NAME));
+                    is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
                 else
-                    is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getOptionValueString(Options.OPTION_MESSAGE_SOUNDFILE_NAME));
+                    is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
                 Player p = Manager.createPlayer(is, "audio/X-wav");
                 p.start();
             } catch (IOException ioe)
@@ -856,16 +856,16 @@ public class ContactList implements CommandListener
         // #sijapp cond.if target is "RIM"#
         LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
         LED.setState(LED.STATE_BLINKING);
-        if (Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_VIBRATOR))
+        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
         {
 						// had to use full path since import already contains another Alert object
             net.rim.device.api.system.Alert.startVibrate(500);
         }
         int mode_rim;
         if (notType == SOUND_TYPE_MESSAGE)
-            mode_rim = Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_MESSAGE_SOUND);
+            mode_rim = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
         else
-            mode_rim = Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_ONLINE_SOUND);
+            mode_rim = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
         switch (mode_rim)
         {
         case 1:
@@ -971,7 +971,7 @@ public class ContactList implements CommandListener
 
             // Dtermine the number of visible items
             int repeatfor = onlineCount;
-            if (!Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_CL_HIDE_OFFLINE)) repeatfor = this.cItems.size();
+            if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) repeatfor = this.cItems.size();
 
             ContactListContactItem cItem;
             Image img;
@@ -1051,7 +1051,7 @@ public class ContactList implements CommandListener
         // hiding
         // offline contacts and this.onlineCount if hiding offline contacts
         int clLength = this.onlineCount;
-        if (!Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_CL_HIDE_OFFLINE))
+        if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE))
         {
             clLength = this.cItems.size();
         }
@@ -1125,7 +1125,7 @@ public class ContactList implements CommandListener
             if (position != Integer.MAX_VALUE)
             {
                 cItem = (ContactListContactItem) this.cItems.elementAt(position);
-                if (!((cItem.getStatus() == STATUS_OFFLINE) && Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_CL_HIDE_OFFLINE)))
+                if (!((cItem.getStatus() == STATUS_OFFLINE) && Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)))
                 {
                     //System.out.println("jimm:ContactList:refreshList: Image
                     // change at:" + position);
@@ -1142,7 +1142,7 @@ public class ContactList implements CommandListener
             if (!focused && (this.currSelCItem != null) && (this.cItems.indexOf(this.currSelCItem) != -1))
             {
                 if ((this.cItems.elementAt(this.contactList.getSelectedIndex()) != this.currSelCItem)
-                        && !Jimm.jimm.getOptionsRef().getOptionValueBool(Options.OPTION_CL_HIDE_OFFLINE))
+                        && !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE))
                 {
                     this.contactList.setSelectedIndex(this.cItems.indexOf(this.currSelCItem), true);
                 }

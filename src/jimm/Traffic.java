@@ -188,7 +188,7 @@ public class Traffic
 		traffic = ResourceBundle.getString("jimm.res.Text", "session") + ":\n" +
 				this.getSessionTraffic(false) + " " + ResourceBundle.getString("jimm.res.Text", "byte") + "\n" +
 				this.getSessionTraffic(true) + " " + ResourceBundle.getString("jimm.res.Text", "kb") + "\n" +
-				this.getString(this.generateCostSum(true)) + " " + Jimm.jimm.getOptionsRef().getOptionValueString(Options.OPTION_CURRENCY) + "\n" +
+				this.getString(this.generateCostSum(true)) + " " + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CURRENCY) + "\n" +
 				ResourceBundle.getString("jimm.res.Text", "since") + ": " + this.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
 				this.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
 				time.get(Calendar.YEAR) + " " +
@@ -196,7 +196,7 @@ public class Traffic
 				this.makeTwo(time.get(Calendar.MINUTE)) + "\n" +
 				this.getAllTraffic(false) + " " + ResourceBundle.getString("jimm.res.Text", "byte") + "\n" +
 				this.getAllTraffic(true) + " " + ResourceBundle.getString("jimm.res.Text", "kb") + "\n" +
-				this.getString(this.generateCostSum(false))+ " " + Jimm.jimm.getOptionsRef().getOptionValueString(Options.OPTION_CURRENCY);
+				this.getString(this.generateCostSum(false))+ " " + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CURRENCY);
 		return (traffic);
 
 	}
@@ -228,9 +228,9 @@ public class Traffic
 	{
 
 		int cost;
-		int costPerPacket = Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_COST_PER_PACKET);
+		int costPerPacket = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PER_PACKET);
 //		int costPerDay = Jimm.jimm.getOptionsRef().getCostPerDay();
-		int costPacketLength = Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_COST_PACKET_LENGHT);
+		int costPacketLength = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PACKET_LENGTH);
 
 		if (thisSession)
 		{
@@ -410,7 +410,7 @@ public class Traffic
 	// Increases costPerDaySum at one unit
 	public void increaseCostPerDaySum()
 	{
-		costPerDaySum = costPerDaySum + Jimm.jimm.getOptionsRef().getOptionValueInt(Options.OPTION_COST_PER_DAY);
+		costPerDaySum = costPerDaySum + Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PER_DAY);
 		setLastTimeUsed(new Date().getTime());
 	}
 
