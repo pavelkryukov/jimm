@@ -840,11 +840,23 @@ public class ContactList implements CommandListener
             try
             {
                 InputStream is;
+                Player p;
                 if (notType == SOUND_TYPE_MESSAGE)
+                {
                     is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
+                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE).endsWith(".mp3"))
+                        p = Manager.createPlayer(is, "audio/mpeg");
+                    else
+                        p = Manager.createPlayer(is, "audio/x-wav");
+                }
                 else
+                {
                     is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
-                Player p = Manager.createPlayer(is, "audio/X-wav");
+                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE).endsWith(".mp3"))
+                        p = Manager.createPlayer(is, "audio/mpeg");
+                    else
+                        p = Manager.createPlayer(is, "audio/x-wav");
+                }
                 p.start();
             } catch (IOException ioe)
             {
