@@ -56,6 +56,7 @@ public class Text_EN extends ResourceBundle
     resources.put("connect",                     "Connect");
     resources.put("connecting",                  "Connecting");
     resources.put("contact_list",                "List");
+	resources.put("cp1251",                      "Use CP1252 hack?");
     resources.put("cpd",                         "Cost per day");
     resources.put("cpp",                         "Cost per packet");
     resources.put("currency",                    "Currency");

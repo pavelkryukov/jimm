@@ -56,6 +56,7 @@ public class Text_DE extends ResourceBundle
     resources.put("connect",                     "Verbinden");
     resources.put("connecting",                  "Verbinde");
     resources.put("contact_list",                "Liste");
+	resources.put("cp1251",                      "CP1251-Hack benutzen?");
     resources.put("cpd",                         "Tagesnutzungsgebühr(cent)");
     resources.put("cpp",                         "Paketgebühr(cent");
     resources.put("currency",                    "Währung");
