@@ -179,7 +179,7 @@ public class ChatHistory
     // Returns the size of the chat histore at number nr
     public int chatHistorySize(int nr){
         {
-            if (historyVector.size() > 0)
+            if ((historyVector.size() > 0) && (nr != -1))
             {
                 Form temp = (Form)historyVector.elementAt(nr);
                 return temp.size();
