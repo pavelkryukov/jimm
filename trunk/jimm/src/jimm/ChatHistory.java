@@ -109,7 +109,7 @@ public class ChatHistory
         
         Calendar stamp = Calendar.getInstance();
         stamp.setTime(time);
-
+        
         Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
         Image prequel;
         // #sijapp cond.if target is "MIDP2"#
@@ -179,7 +179,7 @@ public class ChatHistory
     // Returns the size of the chat histore at number nr
     public int chatHistorySize(int nr){
         {
-            if ((historyVector.size() > 0) && (nr != -1))
+            if ((historyVector.size() > nr) && (nr != -1))
             {
                 Form temp = (Form)historyVector.elementAt(nr);
                 return temp.size();

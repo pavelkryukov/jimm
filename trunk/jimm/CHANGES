@@ -109,3 +109,8 @@ VERSION 0.2.1
 
   * Login procedure has been updated
   * Some minor optimizations
+  
+________________________________________________________________________________
+VERSION 0.2.2
+
+  * Bugfix: It was not possible to send an inital message to a contact
