@@ -719,7 +719,7 @@ public class ConnectAction extends Action
 							if (buf.length < marker + nameLen + 2 + 2 + 2 + 2) { throw (new JimmException(115, 2)); }
 
 							// Get name
-							String name = Util.byteArrayToString(buf, marker, nameLen);
+							String name = Util.byteArrayToString(buf, marker, nameLen, true);
 							marker += nameLen;
 
 							// Get group, id and type
