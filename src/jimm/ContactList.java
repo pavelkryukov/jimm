@@ -82,6 +82,7 @@ public class ContactList implements CommandListener {
 	public static Image statusOnlineImg;
 	public static Image eventPlainMessageImg;
 	public static Image eventUrlMessageImg;
+	public static Image eventSystemNoticeImg;
 
 	// Initializer
 	static {
@@ -116,6 +117,7 @@ public class ContactList implements CommandListener {
 			ContactList.statusOnlineImg = images[7];
 			ContactList.eventPlainMessageImg = images[8];
 			ContactList.eventUrlMessageImg = images[9];
+			ContactList.eventSystemNoticeImg = images[10];
 		}
 		catch (IOException e) {
 			// Do nothing
@@ -287,7 +289,7 @@ public class ContactList implements CommandListener {
 					String name = dis.readUTF();
 
 					// Instantiate ContactListContactItem object and add to vector
-					ContactListContactItem ci = new ContactListContactItem(id, group, uin, name);
+					ContactListContactItem ci = new ContactListContactItem(id, group, uin, name,false);
 					this.cItems.addElement(ci);
 				}
 				// Group of contacts
@@ -619,7 +621,6 @@ public class ContactList implements CommandListener {
 
 	// Adds the given message to the message queue of the contact item identified by the given UIN
 	public synchronized void addMessage(Message message) {
-
 		// Search for contact entry and add message to message queue
 		// System.out.println("\n");
 		// System.out.println("addMessage");
@@ -634,28 +635,24 @@ public class ContactList implements CommandListener {
 				break;
 			}
 		}
-
 		// Create a temporary contact entry if no contact entry could be found
 		// do we have a new temp contact (we must do refreshList then first)
 		boolean temp = false;
 		if (!listed) {
-			cItem = new ContactListContactItem(0, 0, message.getSndrUin(), message.getSndrUin());
+			cItem = new ContactListContactItem(0, 0, message.getSndrUin(), message.getSndrUin(),false);
 			cItem.setTemporary(true);
 			cItem.addMessage(message);
 			this.cItems.addElement(cItem);
 			i++;
 			temp = true;
 		}
-
 		// Refresh the contact list
 		if (temp)
 			this.refreshList(false, true, i - 1);
 		else if (!cItem.chatShown())
 			this.refreshList(true, true, i);
-
 		// Notify splash canvas
 		Jimm.jimm.getSplashCanvasRef().messageAvailable();
-
 		// Notify user
 		// #sijapp cond.if target is "NOKIAS40"#
 		if (Jimm.jimm.getOptionsRef().isVibrator()) {
@@ -720,33 +717,37 @@ public class ContactList implements CommandListener {
 
 		// Get status image
 		Image img = null;
-		long status = cItem.getStatus();
-		if (cItem.isTemporary()) {
+		if (cItem.isSysNoticeAvailable()) {
+			img = eventSystemNoticeImg;
+		}
+		else if (cItem.isTemporary()) {
 			img = null;
 		}
 
-		if (status == STATUS_AWAY)
-			img = statusAwayImg;
-		else if (status == STATUS_CHAT)
-			img = statusChatImg;
-		else if (status == STATUS_DND)
-			img = statusDndImg;
-		else if (status == STATUS_INVISIBLE)
-			img = statusInvisibleImg;
-		else if (status == STATUS_NA)
-			img = statusNaImg;
-		else if (status == STATUS_OCCUPIED)
-			img = statusOccupiedImg;
-		else if (status == STATUS_OFFLINE)
-			img = statusOfflineImg;
-		else if (status == STATUS_ONLINE)
-			img = statusOnlineImg;
+		if (!(cItem.isPlainMessageAvailable() || cItem.isUrlMessageAvailable() || cItem.isSysNoticeAvailable())) {
+			long status = cItem.getStatus();
+			if (status == STATUS_AWAY)
+				img = statusAwayImg;
+			else if (status == STATUS_CHAT)
+				img = statusChatImg;
+			else if (status == STATUS_DND)
+				img = statusDndImg;
+			else if (status == STATUS_INVISIBLE)
+				img = statusInvisibleImg;
+			else if (status == STATUS_NA)
+				img = statusNaImg;
+			else if (status == STATUS_OCCUPIED)
+				img = statusOccupiedImg;
+			else if (status == STATUS_OFFLINE)
+				img = statusOfflineImg;
+			else if (status == STATUS_ONLINE)
+				img = statusOnlineImg;
 
-		// Add an "c" the the Status icon determining we have an open chat session for that one.
-		if (cItem.hasChat() && (img != null)) {
-			img = this.addC(img);
+			// Add an "c" the the Status icon determining we have an open chat session for that one.
+			if (cItem.hasChat() && (img != null)) {
+				img = this.addC(img);
+			}
 		}
-
 		return img;
 	}
 
@@ -779,6 +780,8 @@ public class ContactList implements CommandListener {
 				else if (cItem.isUrlMessageAvailable()) {
 					img = eventUrlMessageImg;
 				}
+				else if (cItem.isSysNoticeAvailable())
+					img = eventSystemNoticeImg;
 				else {
 					img = whichImage(cItem);
 				}
@@ -787,7 +790,10 @@ public class ContactList implements CommandListener {
 				//System.out.println("Visible size: " +this.contactList.size());
 
 				// Add/update list item
-				this.contactList.set(i, cItem.getName(), img);
+				if(cItem.getAuth())
+					this.contactList.set(i, "Auth "+cItem.getName(), img);
+				else
+					this.contactList.set(i, cItem.getName(), img);
 			}
 			changed = false;
 		}
@@ -867,6 +873,8 @@ public class ContactList implements CommandListener {
 				img = eventPlainMessageImg;
 			else if (cItem.isUrlMessageAvailable())
 				img = eventUrlMessageImg;
+			else if (cItem.isSysNoticeAvailable())
+				img = eventSystemNoticeImg;
 
 			// Add an "c" the the Status icon determining we have an open chat session for that one.
 			if (cItem.hasChat()) {
