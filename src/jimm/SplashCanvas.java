@@ -49,6 +49,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.midlet.MIDletStateChangeException;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.TimerTask;
 
 
@@ -255,7 +256,10 @@ public class SplashCanvas extends Canvas
   {
 	time.setTime(new Date());
 	String datestr = new String("failed");
-	datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+	if (TimeZone.getDefault().useDaylightTime())
+		datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+	else
+		datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)+1) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
 	if (! onlyTime){
 		datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." + 
 				  Util.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
