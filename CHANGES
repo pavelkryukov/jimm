@@ -101,5 +101,6 @@ VERSION 0.2.0
   * NEW FEATURE: There is now also sound support for upcoming contacts
   * NEW FEATURE: It is now possible to search for users
   * There is no special Nokia version anymore
+  * Options are handled in a different more efficient way.
   * Some bug fixes
  
