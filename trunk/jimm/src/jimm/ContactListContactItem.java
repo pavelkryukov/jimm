@@ -405,7 +405,7 @@ public class ContactListContactItem extends ContactListItem
         return (this.dcPort);
     }
     // #sijapp cond.end#
-    //  #sijapp cond.if modules_FILES is "true"#
+    // #sijapp cond.if modules_FILES is "true"#
     // Returns the fileTransfer Object of this contact
     public FileTransfer getFT()
     {
@@ -605,7 +605,7 @@ public class ContactListContactItem extends ContactListItem
             	}    
 
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-                 // #sijapp cond.if modules_FILES is "true"#
+                // #sijapp cond.if modules_FILES is "true"#
                 // Send a filetransfer with a file given by path
                 // We can only make file transfers with ICQ clients prot V8 and up
             	else if (selIndex == MenuUtil.ft_name_idx)
@@ -984,9 +984,11 @@ public class ContactListContactItem extends ContactListItem
     	static int
 			send_message_idx, 
 			send_url_idx,
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                                                                // #sijapp cond.if modules_FILES is "true"#
                                                                 ft_name_idx,
 			ft_cam_idx,
+                                                                // #sijapp cond.end#
 			// #sijapp cond.end#
                                                                 info_idx,
 			remove_idx,
@@ -1105,13 +1107,15 @@ public class ContactListContactItem extends ContactListItem
             send_url_idx = MenuUtil.menuList.size();
             menuList.append(ResourceBundle.getString("send_url"), null);
             
-            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+            // #sijapp cond.if modules_FILES is "true"#
+
             ft_name_idx = MenuUtil.menuList.size();
             menuList.append(ResourceBundle.getString("ft_name"),null);
             
             ft_cam_idx = menuList.size();
             menuList.append(ResourceBundle.getString("ft_cam"),null);
-            
+            // #sijapp cond.end#
             // #sijapp cond.end#
             info_idx = menuList.size();
             menuList.append(ResourceBundle.getString("info"), null);
