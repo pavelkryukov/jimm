@@ -505,7 +505,7 @@ public class ContactListContactItem extends ContactListItem
 
                         // Return to contact list
                         Jimm.jimm.getContactListRef().update(ContactListContactItem.this.getUin());
-                        Jimm.jimm.getContactListRef().activate();
+                        this.activate();
 
                     }
                     // Send URL message (continue creation)
@@ -551,7 +551,7 @@ public class ContactListContactItem extends ContactListItem
 
                     // Return to contact list
                     Jimm.jimm.getContactListRef().update();
-                    Jimm.jimm.getContactListRef().activate();
+                    this.activate();
 
                 }
                 // Reason has been entered
