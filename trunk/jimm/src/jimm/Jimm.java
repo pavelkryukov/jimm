@@ -70,6 +70,8 @@ public class Jimm extends MIDlet
 	// Contact list object
 	private ContactList cl;
 
+	// chat history object
+	private ChatHistory ch;
 
 	// Timer object
 	private Timer t;
@@ -149,6 +151,10 @@ public class Jimm extends MIDlet
 		// Create contact list object (and update progress indicator)
 		this.cl = new ContactList();
 		this.sc.setProgress(70);
+		
+		// Create chat hisotry object (and update progress indicator)
+		this.ch = new ChatHistory();
+		this.sc.setProgress(80);
 
 		// Create timer object (and update progress indicator)
 		this.t = new Timer();
@@ -200,6 +206,12 @@ public class Jimm extends MIDlet
 	public ContactList getContactListRef()
 	{
 		return (this.cl);
+	}
+	
+	// Returns a reference to the chat history list object
+	public ChatHistory getChatHistoryRef()
+	{
+		return (this.ch);
 	}
 
 
