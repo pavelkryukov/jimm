@@ -1,0 +1,199 @@
+                             Jimm - Mobile Messaging
+                       Version ###VERSION### - released ###DATE###
+                         <http://jimm.sourceforge.net/>
+
+================================================================================
+README
+_______________________________________________________________________________
+ABOUT
+
+Jimm is a native ICQ clone for Java 2 Platform Micro Edition (J2ME), Mobile
+Information Device Profile (MIDP) 1.0. It supports the new v8 protocol, former
+protocols are not supported.
+
+Jimm is probably the most lightweight ICQ clone available, so please do not
+expect the same features your favourite desktop client has. Currently, Jimm has
+the following features:
+
+  *  Request and read the server side contact list
+  *  Send plain messages (type 1)
+  *  Receive plain messages (type 1, 2 and 4, and offline messages)
+  *  Send URL messages (type 4)
+  *  Receive URL messages (type 1, 2 and 4, and offline messages)
+  *  Set your status (away, n/a, etc.)
+  *  Receive status updates (user is away, n/a, etc.)
+  *  Request information about another user
+  *  Remove users from the server side contact list
+  *  Multilingual user interface
+
+Some of the projected features are as follows:
+
+  *  Search for users
+  *  Add users to the server side contact list
+  *  Answer authorization requests
+
+Jimm does not support peer to peer connections (and will never do so), all
+messages are routed through the central ICQ/AIM server by using a single
+persistent TCP/IP connection.
+
+________________________________________________________________________________
+PACKAGE CONTENTS
+
+  |- README (this file)
+  |- CHANGES (change log)
+  |- COPYING (license)
+  |- build.xml (Apache Ant buildfile)
+  |- bin
+  |   |- DEFAULT
+  |   |   '- [List of included languages]
+  |   |        |- Jimm.jar (obfuscated Java archive)
+  |   |        '- Jimm.jad (archive descriptor)
+  |   |- SIEMENS
+  |   |   '- [List of included languages]
+  |   |        |- Jimm.jar (obfuscated Java archive, Siemens mobiles only)
+  |   |        '- Jimm.jad (archive descriptor, Siemens mobiles only)
+  |   '- NOKIAS40
+  |       '- [List of included languages]
+  |            |- Jimm.jar (obfuscated Java archive, Nokia 6800 mobiles only)
+  |            '- Jimm.jad (archive descriptor, Nokia 6800 mobiles only)
+  |- res
+  |   |- MANIFEST.MF
+  |   '- [Target]
+  |        '- [Target-specific resources]
+  |- src
+  |   '- [Source tree]
+  '- util
+      |- build-release.xml (Apache Ant release buildfile)
+      |- sijapp (Simple Java PreProcessor)
+      '- jarsizetask (JarSizeTask)
+
+________________________________________________________________________________
+HOW TO INSTALL
+
+Copy Jimm.jad and Jimm.jar (found inside the bin directory) to your mobile
+phone. If you have a Siemens Mobile, use the files found inside the bin/siemens
+directory. Follow the instructions in your mobile phone manual to start the Java
+application.
+
+At first start-up, select 'Options' and set your UIN and password. The default
+values for the ICQ server host and port should be okay. Option values are
+automatically saved and loaded on subsequent start-ups.
+
+You can also download Jimm.jad and Jimm.jar via WAP. Open the following URL with
+your WAP device and select the desired version:
+<http://jimm.sourceforge.net/download/>
+
+________________________________________________________________________________
+KNOWN BUGS
+
+On Siemens S55 mobiles there are the following graphical errors:
+
+  * In the ICQ Flowers if there is an active chat
+  * In the chat histroy the name is shifted left
+    (Both depend on errors on the S55 and they might be fixed by Siemens in
+    upcoming firmware releases)
+
+The background of the flowers if there is an active chat is no longer
+transparent.
+
+________________________________________________________________________________
+HOW TO BUILD
+
+Jimm uses Apache Ant for building. You can download Apache Ant from
+<http://ant.apache.org/>. Follow the instructions in the Apache Ant manual to
+install Apache Ant.
+
+You also must have a Java 2 Platform Standard Edition (J2SE) SDK and the
+Mobile Information Device Profile (MIDP) SDK 1.0.3. You can download both from
+<http://java.sun.com/>. Make sure not to download the new MIDP SDK 2.0.
+
+By default, class files are obfuscated using ProGuard to reduce bytecode size.
+You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
+instructions in the ProGuard manual to install ProGuard.
+
+At first, open the Apache ant buildfiles (build.xml, util/sijapp/build.xml)
+and change the properties in the configuration/customization section. You can
+use both the slash and the backslash for separating path components.
+
+To build Jimm, just type 'ant' or 'ant dist'. To disable class file
+obfuscation, add '-Dskip-obfuscate=1' to the before mentioned command. If
+everything goes well, look at the newly created directory dist/bin for
+Jimm.jar and Jimm.jad files.
+
+To clean the distribution, type 'ant clean'.
+
+________________________________________________________________________________
+PERFORMANCE
+
+Jimm takes about 20 seconds to load on a Siemens S55 mobile phone. Logging into
+ICQ again takes about 20 seconds. These will vary depending on your mobile phone
+processor and memory performance, bandwidth and contact list size. Because of
+performance limitations of most J2ME devices, it is strongly recommended to
+reduce your contact list size to 50 contacts.
+
+Delays at message sending/receiving are negligible and can be ignored.
+
+Currently, Jimm requires about 250 KB of RAM, depending on the size of your
+contact list, and the activity on the ICQ network. Jimm also requires support
+for socket (TCP/IP) connections, which *is not* required to be
+standard-compliant but some vendor implementations include. Check your mobile
+phone manual.
+
+________________________________________________________________________________
+NETWORK CONSUMPTION
+
+The following information, as all other information in this file and all
+other files included in this Jimm distribution, ARE PROVIDED "AS IS" WITHOUT
+WARRANTY OF ANY KIND. Please see the file COPYING in the Jimm distribution for
+further details.
+
+Jimm establishes a single TCP connection to login.icq.com:5190 (by default).
+This connection is held open until you choose to disconnect or a critical error
+occurs.
+
+Logging into ICQ produces about 5 KB network traffic, excluding your server-side
+contact list. The contact list is locally cached, and only requested again from
+the server if the cache is out of date.
+
+There is also some network traffic while staying online, even when you don't
+send or receive any instant messages. Jimm sends a Keepalive packet every 120
+seconds, which includes 6 bytes payload. This can be disabled. Each time one of
+your buddies changes status, you'll receive at least a notification and,
+depending on the ICQ client you buddy uses, some capability messages.
+
+Jimm adds a 20 bytes long string to all outgoing instant messages, stating
+that the message was sent using Jimm. Go to the options form to disable this.
+The more people use Jimm, the faster Jimm becomes stable - think about it.
+
+Tip 1: Reduce your contact list size to save network traffic.
+Tip 2: Check the network consumption regularly.
+
+________________________________________________________________________________
+GET INVOLVED
+
+Give feedback: <http://jimm.sourceforge.net/forum/>
+Contr. code and documentation patches: <http://sourceforge.net/projects/jimm/>
+
+________________________________________________________________________________
+LICENSING
+
+For licensing and copyright information, please see the file COPYING in the
+Jimm distribution.
+
+________________________________________________________________________________
+DISCLAIMER
+
+Jimm is not affiliated with or endorsed by ICQ Inc. All trademarks belong to
+their respective owners.
+
+________________________________________________________________________________
+CREDITS
+
+Core development team:
+  *  Manuel Linsmayer <linsmayer@users.sourceforge.net>
+  *  Andreas Rossbacher <rossi771@users.sourceforge.net>
+
+Contributors:
+  *  Andrey B. Ivlev (Russian translation, Cyrillic character support)
+  *  Sergey Chernov (Russian translation, Cyrillic character support)
+  *  Miloslav Vorlieek (Czech translation)

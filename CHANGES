@@ -1,0 +1,89 @@
+
+                             Jimm - Mobile Messaging
+                       Version ###VERSION### - released ###DATE###
+                         <http://jimm.sourceforge.net/>
+
+================================================================================
+CHANGES
+________________________________________________________________________________
+VERSION 0.1 BETA-1
+
+  *  New Ant-based build process
+  *  For the most part message parsing code has been rewritten
+  *  Jimm now sends a Keepalive packet (channel 5) every 45 seconds
+  *  Improved exception handling
+  *  Contact list items are sorted by status and by name now
+  *  "Sent using Jimm" is added to instant messages (can be disabled)
+  *  Some improvements on documentation
+
+________________________________________________________________________________
+VERSION 0.1 BETA-2
+
+  *  Contact list bugfix
+  *  Link for download via WAP added to the README file
+  *  Stripline removed from the Jimm advertisement
+
+________________________________________________________________________________
+VERSION 0.1 BETA-3
+
+  *  NEW FEATURE: Set online status (away, n/a, etc.)
+  *  NEW FEATURE: Keylock
+  *  NEW FEATURE: Disable keepalive packet sending
+  *  Display of meta information about a user extended
+  *  Progress indicator has been added to the splash screen
+  *  Some small UI improvements
+  *  It is now possible to append the Jimm tip once per session and user
+  *  Keepalive packet send interval has been increased to 120 seconds
+  *  Performance improvements at record store reading and writing
+  *  Some changes on obfuscator configuration
+  *  Extended error codes have been introduced
+
+________________________________________________________________________________
+VERSION 0.1 BETA-4
+
+  *  NEW FEATURE: Message notification (off/beep/vibration) on Siemens Mobiles
+  *  NEW FEATURE: It is now possible to remove contacts
+  *  Setting options is now possible even when logged in
+  *  Online status is now saved
+  *  Login timeout mechanism reimplemented
+  *  Some minor bugfixes
+  *  Insertion sort instead of bubble sort
+  *  Password is now encrypted saved (trivial algorithm)
+
+________________________________________________________________________________
+VERSION 0.1 BETA-5
+
+  *  NEW FEATURE: Date and time could now be displayed on splash screen
+  *  NEW FEATURE: Traffic and costs are monitored on seperate traffic screen
+  *  Should now work with bigger contact lists (eg up to 70 or more on S55)
+  *  Should now work on Nokia 6800
+
+________________________________________________________________________________
+VERSION 0.1 BETA-6
+
+  *  NEW FEATURE: There is now a chat history feature available
+  *  NEW FEATURE: ICQ sound can be played on S55
+  *  NEW FEATURE: Light is switched on on Siemens phones when new message arrives
+  *  NEW FEATURE: Russian character and menu text support
+  *  NEW FEATURE: The display of offline contacts can be switched off now
+  *  NEW FEATURE: By name or by staus sorting order of contact list is now switchable
+  *  NEW FEATURE: Language module can be selected manually
+  *  New Splash screen and Options pane
+  *  Nokia 6800 is now own distribution set
+  *  It't now possible to enter "." seperated values for the money values
+  *  Major performance enhancements with contact list handling
+  *  Some bug fixes
+
+________________________________________________________________________________
+VERSION 0.1 BETA-7
+
+  *  Some UI changes
+
+________________________________________________________________________________
+VERSION 0.1 BETA-8
+
+  *  Soundfile name in Siemens version is now configureable
+  *  Images are stored in one file except of different
+  *  Nokia build does not include traffic monitor anymore
+  *  The chat history feature can be disabled
+  *  New Module System: Traffic monitor is a module now
