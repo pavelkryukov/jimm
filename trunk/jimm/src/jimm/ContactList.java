@@ -195,22 +195,19 @@ public class ContactList implements CommandListener
 	
     // Main menu command
     private static Command 
-
-                   // #sijapp cond.if target is "MOTOROLA" #
-                     mainMenuCommand    = new Command(ResourceBundle.getString("menu_button"),         Command.SCREEN, 3),
-                  // #sijapp cond.else #    
-    	mainMenuCommand    = new Command(ResourceBundle.getString("menu"),         Command.SCREEN, 3),
-                  // #sijapp cond.end #
-		selectCommand      = new Command(ResourceBundle.getString("select"),       Command.ITEM, 1),
-		newUserCommand     = new Command(ResourceBundle.getString("add_user"),     Command.SCREEN, 2),
-		searchUserCommand  = new Command(ResourceBundle.getString("search_user"),  Command.SCREEN, 2),
-		newGroupCommand    = new Command(ResourceBundle.getString("add_group"),    Command.SCREEN, 2),
-		removeUserCommand  = new Command(ResourceBundle.getString("remove_user"),  Command.SCREEN, 2);
-    
-//#sijapp cond.if modules_DEBUGLOG is "true" #
-    private static Command 
-    	debugListCommand = new Command("*Debug list*", Command.ITEM, 2);
-//#sijapp cond.end#
+    // #sijapp cond.if target is "MOTOROLA" #
+        mainMenuCommand    = new Command(ResourceBundle.getString("menu_button"),  Command.SCREEN, 3),
+    // #sijapp cond.else #    
+        mainMenuCommand    = new Command(ResourceBundle.getString("menu"),         Command.SCREEN, 3),
+    // #sijapp cond.end #
+	    selectCommand      = new Command(ResourceBundle.getString("select"),       Command.ITEM, 1),
+	    newUserCommand     = new Command(ResourceBundle.getString("add_user"),     Command.SCREEN, 2),
+	    searchUserCommand  = new Command(ResourceBundle.getString("search_user"),  Command.SCREEN, 2),
+	    newGroupCommand    = new Command(ResourceBundle.getString("add_group"),    Command.SCREEN, 2),
+	    removeUserCommand  = new Command(ResourceBundle.getString("remove_user"),  Command.SCREEN, 2);  
+    //#sijapp cond.if modules_DEBUGLOG is "true" #
+    private static Command debugListCommand = new Command("*Debug list*", Command.ITEM, 2);
+    //#sijapp cond.end#
     
 
     /** ************************************************************************* */
@@ -507,8 +504,7 @@ public class ContactList implements CommandListener
                         String uin = dis.readUTF();
                         String name = dis.readUTF();
 
-                        // Instantiate ContactListContactItem object and add to
-                        // vector
+                        // Instantiate ContactListContactItem object and add to vector
                         ContactListContactItem ci = new ContactListContactItem(id, group, uin, name, false, true);
                         this.cItems.addElement(ci);
                     }

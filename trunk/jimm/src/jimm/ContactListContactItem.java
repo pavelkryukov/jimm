@@ -110,7 +110,7 @@ public class ContactListContactItem extends ContactListItem
     private long authCookie;
     //  #sijapp cond.end#
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-  // #sijapp cond.if modules_FILES is "true"#
+    // #sijapp cond.if modules_FILES is "true"#
    private FileTransferMessage ftm;
     private FileTransfer ft;
     //  #sijapp cond.end#
@@ -144,7 +144,7 @@ public class ContactListContactItem extends ContactListItem
         this.icqProt = 0;
         this.authCookie = 0;
         //  #sijapp cond.end#
-       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
         // #sijapp cond.if modules_FILES is "true"#
         this.ft = null;
         //  #sijapp cond.end# 
@@ -1083,7 +1083,7 @@ public class ContactListContactItem extends ContactListItem
         // Rename a contact
         private static Command renameOkCommand = new Command(ResourceBundle.getString("OK"),
                 Command.OK, 2);
-         //#sijapp cond.else#
+        //#sijapp cond.else#
         // Rename a contact
         private static Command renameOkCommand = new Command(ResourceBundle.getString("rename"),
                 Command.OK, 2);
