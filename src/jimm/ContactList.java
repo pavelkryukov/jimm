@@ -552,8 +552,8 @@ public class ContactList implements CommandListener
     public synchronized void update()
     {
 
-        // System.out.println("\n");
-        // System.out.println("update: rooster up to date");
+        System.out.println("\n");
+        System.out.println("update: rooster up to date");
 
         // Save selected contact entry
         this.saveListPosition();
@@ -564,8 +564,8 @@ public class ContactList implements CommandListener
     public synchronized void update(String uin)
     {
 
-        // System.out.println("\n");
-        // System.out.println("update: back form msg display");
+        System.out.println("\n");
+        System.out.println("update: back form msg display");
 
         // Save selected contact entry
         this.saveListPosition();
@@ -587,8 +587,8 @@ public class ContactList implements CommandListener
     public synchronized void update(String uin, long status, int capabilities)
     {
 
-        // System.out.println("\n");
-        // System.out.println("update: status change");
+        System.out.println("\n");
+        System.out.println("update: status change");
         //Do we have an offline to online change?
         boolean wasoffline = false;
         boolean onoffchange = false;
