@@ -59,7 +59,6 @@ public abstract class VirtualList extends Canvas
   public static int getDefFontSize()     { return defFontSize; }
 
   private boolean 
-    dontPaintCaption = false,
     dontRepaint      = false;
     
   private ImageList 
@@ -100,7 +99,23 @@ public abstract class VirtualList extends Canvas
   final public void setCapColor(int value)
   {
     capColor = value;
-    repaint(); 
+    repaint();
+  }
+  
+  //! Sets new font size and invalidates items
+  final public void setFontSize(int value)
+  {
+    fontSize = value;
+	checkTopItem();
+    repaint();
+  }
+  
+  //TODO: brief text
+  public void setCursorMode(int value)
+  {
+    if (cursorMode == value) return;
+	cursorMode = value;
+	invalidate();
   }
   
   //! Set background color of items
@@ -117,7 +132,7 @@ public abstract class VirtualList extends Canvas
   public int getItemHeight()
   {
     int imgHeight, fontHeight = getFontHeight();
-    if (imageList != null) imgHeight = imageList.getHeight()+2;
+    if (imageList != null) imgHeight = imageList.getHeight()+1;
     else imgHeight = 0;
     return (fontHeight > imgHeight) ? fontHeight : imgHeight;
   }
@@ -126,7 +141,6 @@ public abstract class VirtualList extends Canvas
   final protected void invalidate()
   {
     if ( dontRepaint || !isShown() ) return;
-    dontPaintCaption = true;
     repaint();
   }
   
@@ -144,11 +158,11 @@ public abstract class VirtualList extends Canvas
                            or VirtualList.SEL_INVERTED */
   )
   {
-    defCapColor = capBackColor;
+    defCapColor     = capBackColor;
     defCapFontColor = capTextColor;
-    defBackColor = backColor;
-    defFontSize = fontSize;
-    defCursorMode = cursorMode;
+    defBackColor    = backColor;
+    defFontSize     = fontSize;
+    defCursorMode   = cursorMode;
   }
 
   //! Create new virtual list with default values  
@@ -213,13 +227,21 @@ public abstract class VirtualList extends Canvas
     if (currItem >= getSize()-1) currItem = getSize()-1;
   }
   
-  // private void checkTopItem() - internal
+  // protected void checkTopItem() - internal
   // check for position of top element of list and change it, if nesessary
-  private void checkTopItem()
+  protected void checkTopItem()
   {
+  	int size = getSize(); 
+  	
+  	if (size == 0)
+  	{
+  		topItem = 0;
+  		return;
+  	}
+  	
     if (cursorMode == SEL_NONE)
     {
-      if ((getSize()-topItem) <= visCount) topItem = getSize()-visCount;
+      if ((size-topItem) <= visCount) topItem = size-visCount;
     }
     else 
     {
@@ -351,12 +373,13 @@ case Canvas.FIRE:  itemSelected(); break;
   // private int drawCaption(Graphics g)
   private int drawCaption(Graphics g)
   {
+  	if (caption == null) return 0;
+  	
     int tmp_y, th;
     Font font;
   
     font = createFont(Font.STYLE_BOLD);
     g.setFont(font);
-    if (dontPaintCaption) return font.getHeight()+3;
     th = font.getHeight();
     g.setColor(capColor);
     g.fillRect(0, 0, width, th+2);
@@ -552,7 +575,6 @@ case SEL_DOTTED:   x = 2;            break;
       try
       {
         if (bDIimage == null) bDIimage = Image.createImage(getWidth(), getHeight());
-        dontPaintCaption = false;
         paintAllOnGraphics( bDIimage.getGraphics() );
         g.drawImage(bDIimage, 0, 0, Graphics.TOP|Graphics.LEFT);
       }
@@ -561,7 +583,6 @@ case SEL_DOTTED:   x = 2;            break;
         paintAllOnGraphics(g);
       }
     }
-    dontPaintCaption = false;
   }
 
   // protected void drawItemData
@@ -578,7 +599,7 @@ case SEL_DOTTED:   x = 2;            break;
     int imgWidth;
   
     ImageList imageList = getImageList();
-    if ((imageList != null) && (item.imageIndex != -1))
+    if ((imageList != null) && (item.imageIndex >= 0) && (item.imageIndex < imageList.size()))
     {
       imgWidth = imageList.getWidth()+3;
       g.drawImage
@@ -595,14 +616,23 @@ case SEL_DOTTED:   x = 2;            break;
       g.drawString(item.text, x1+imgWidth, (y1+y2-fontHeight)/2, Graphics.TOP|Graphics.LEFT);
   }
   
-  public synchronized void lock()
+  public void lock()
   {
     dontRepaint = true;
   }
   
-  public synchronized void unlock()
+  protected void afterUnlock() {} 
+  
+  public void unlock()
   {
     dontRepaint = false;
+    afterUnlock();
     invalidate();
   }
+  
+  protected boolean getLocked()
+  {
+  	return dontRepaint;
+  }
+  
 }
