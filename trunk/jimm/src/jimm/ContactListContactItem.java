@@ -107,7 +107,8 @@ public class ContactListContactItem extends ContactListItem
     private int dcType;
     private int icqProt;
     private long authCookie;
-    private FileTransferMessage ft;
+    private FileTransferMessage ftm;
+    private FileTransfer ft;
     //  #sijapp cond.end#
     
     // Menu
@@ -299,16 +300,22 @@ public class ContactListContactItem extends ContactListItem
         return (this.dcPort);
     }
     
-    // Returns the fileTransferObject of this contact
-    public FileTransferMessage getFT()
+    // Returns the fileTransfer Object of this contact
+    public FileTransfer getFT()
     {
         return this.ft;
     }
     
-    // Set the fileTransferOBject of this contact
-    public void setFT(FileTransferMessage _ft)
+    // Returns the FileTransferMessage of this contact
+    public FileTransferMessage getFTM()
     {
-        this.ft = _ft;
+        return this.ftm;
+    }
+    
+    // Set the FileTransferMessage of this contact
+    public void setFTM(FileTransferMessage _ftm)
+    {
+        this.ftm = _ftm;
     }    
     // #sijapp cond.end#
     
@@ -516,7 +523,7 @@ public class ContactListContactItem extends ContactListItem
                     }
                     else
                     {
-                        FileTransfer ft = new FileTransfer(FileTransfer.FT_TYPE_FILE_BY_NAME,ContactListContactItem.this);
+                        ft = new FileTransfer(FileTransfer.FT_TYPE_FILE_BY_NAME,ContactListContactItem.this);
                         ft.startFT(); 
                     }
 
@@ -533,7 +540,7 @@ public class ContactListContactItem extends ContactListItem
                     }
                     else
                     {
-                        FileTransfer ft = new FileTransfer(FileTransfer.FT_TYPE_CAMERA_SNAPSHOT,ContactListContactItem.this);
+                        ft = new FileTransfer(FileTransfer.FT_TYPE_CAMERA_SNAPSHOT,ContactListContactItem.this);
                         ft.startFT(); 
                     }
 

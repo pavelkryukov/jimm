@@ -81,6 +81,7 @@ public class FileTransfer implements CommandListener
     // Commands
     private Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
     private Command okCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
+    private Command cancelCommand = new Command(ResourceBundle.getString("cancel"), Command.OK, 1);
 
     // Constructor
     public FileTransfer(int ftType, ContactListContactItem _cItem)
@@ -118,8 +119,8 @@ public class FileTransfer implements CommandListener
         } else if (type == FileTransfer.FT_TYPE_FILE_BY_NAME)
         {
             Form fileNameForm = new Form(ResourceBundle.getString("filepath"));
-            this.fileNameField = new TextField(ResourceBundle.getString("filepath"), "0:/Pictures/040903_090322.jpg", 256, TextField.ANY);
-
+            this.fileNameField = new TextField(ResourceBundle.getString("filepath"), "0:/videos/video.avi", 256, TextField.ANY);
+            
             fileNameForm.append(fileNameField);
             fileNameForm.addCommand(this.backCommand);
             fileNameForm.addCommand(this.okCommand);
@@ -138,6 +139,8 @@ public class FileTransfer implements CommandListener
         // Set the splash screen
         Jimm.jimm.getSplashCanvasRef().setProgress(0);
         Jimm.jimm.getSplashCanvasRef().setMessage(ResourceBundle.getString("init_ft"));
+        Jimm.jimm.getSplashCanvasRef().addCommand(this.cancelCommand);
+        Jimm.jimm.getSplashCanvasRef().setCommandListener(this);
         Display.getDisplay(Jimm.jimm).setCurrent(Jimm.jimm.getSplashCanvasRef());
 
         // Send the ft message
@@ -170,6 +173,12 @@ public class FileTransfer implements CommandListener
 
         Jimm.display.setCurrent(name_Desc);
     }
+    
+    // Return the cancel command
+    public Command getCancelCommand()
+    {
+        return (this.cancelCommand);
+    }
 
     // Command listener
     public void commandAction(Command c, Displayable d)
@@ -181,11 +190,13 @@ public class FileTransfer implements CommandListener
                 this.initFT(this.fileNameField.getString(), this.descriptionField.getString());
             } else
             {
+                System.out.println("do filename read");
                 // byte array for data and File object for the file itself
                 byte[] fileData;
                 String path = this.fileNameField.getString();
 
                 StreamConnection con = null;
+                
                 try
                 {
                     // Try to read the file
@@ -226,6 +237,10 @@ public class FileTransfer implements CommandListener
         {
 
             this.getCItem().activateMenu();
+        } else if (c == this.cancelCommand)
+        {
+            Jimm.jimm.getContactListRef().activate();
+            Jimm.jimm.getSplashCanvasRef().removeCommand(this.cancelCommand);
         }
 
     }
@@ -383,22 +398,10 @@ public class FileTransfer implements CommandListener
                     viewfinder = false;
                     repaint();
 
-                    //                    InputStream is =
-                    // getClass().getResourceAsStream("img.jpg");
-                    //                    data_pre = new byte[is.available()];
-                    //                    data = new byte[is.available()];
-                    //                    is.read(data, 0, is.available());
-                    //                    System.out.println("image read");
                 } catch (MediaException me)
                 {
                     JimmException.handleException(new JimmException(183, 0, true));
                 }
-                //                catch (Exception e)
-                //                {
-                //                    System.out.println("Exception during snapshot");
-                //                    e.printStackTrace();
-                //                    System.out.println(e.toString());
-                //                }
             }
         }
 

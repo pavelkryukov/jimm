@@ -48,7 +48,7 @@ public class FileTransferMessage extends Message
         this.filename = _filename;
         this.description = _description;
         this.file = _file;
-        this.rcvr.setFT(this);
+        this.rcvr.setFTM(this);
     }
 
     // Returns the description

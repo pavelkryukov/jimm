@@ -46,15 +46,25 @@ public class DirectConnectionAction extends Action
     private FileTransferMessage ft;
 
     // Packet counter
-    int i;
+    private int i;
+    
+    // Cancel bool
+    private boolean cancel;
 
     // Constructor
     public DirectConnectionAction(FileTransferMessage _ft)
     {
         this.ft = _ft;
         i = 0;
+        cancel = false;
     }
 
+    // Sete the state
+    public void setCancel(boolean _cancel)
+    {
+        this.cancel = _cancel;
+    }
+    
     // Returns true if STATE_CONNECTED is active
     public boolean isExecutable()
     {
@@ -271,39 +281,35 @@ public class DirectConnectionAction extends Action
                 // Send the packet
                 DCPacket startFTPacket = new DCPacket(buf);
                 this.icq.peerC.sendPacket(startFTPacket);
-                System.out.println("Sent FT start packet");
-                System.out.println(Util.toHexString(buf));
-
+ 
                 this.state = STATE_CLI_FILE_START_DONE;
 
                 consumed = true;
             } else if (this.state == STATE_CLI_FILE_START_DONE && (Util.getByte(buf, 0) == 0x03) && (Util.getByte(buf, 13) == 0x01))
             {
-                System.out.println("Got FT start ACK");
-                System.out.println("Start sending the file. length: " + ft.getSize());
 
                 // Send out the file in 2048 byte blocks
-                while (ft.segmentAvail(i))
+                while (ft.segmentAvail(i) && !cancel)
                 {
-                    System.out.println("Send block: " + i);
                     // Send the packet
                     DCPacket DataPacket = new DCPacket(ft.getFileSegmentPacket(i));
                     this.icq.peerC.sendPacket(DataPacket);
-                    System.out.println("Sent data packet");
                     i++;
                 }
 
                 // Close the connection
                 this.icq.peerC.close();
+                Thread.yield();
                 this.icq.peerC = null;
 
-                ft.getRcvr().setFT(null);
+                ft.getRcvr().setFTM(null);
 
                 // Connection closed 
                 System.out.println("File done/Conn closed");
                 consumed = true;
 
-                this.state = STATE_CLI_FILE_SENT;
+                if (!cancel)
+                    this.state = STATE_CLI_FILE_SENT;
             }
         }
         return (consumed);
@@ -326,8 +332,11 @@ public class DirectConnectionAction extends Action
 
     // Returns true if an error has occured
     public boolean isError()
-    {
-        return (false);
+    {        
+        if ((this.state == STATE_ERROR) || this.cancel)
+            return (true);
+        else
+            return (false);
     }
 
 }
