@@ -119,7 +119,8 @@ the selected target you also need the following:
       <http://www.blackberry.com/developers/>
   * SIEMENS target: Latest version of the Siemens Mobility Toolkit (SMTK)
       <http://communication-market.siemens.de/>
-  *MOTOROLA target: J2ME Wireless Toolkit 2.2 and you need to add motorola.jar library there.
+  * MOTOROLA target: J2ME Wireless Toolkit 2.2 
+      You need to add motorola.jar library there.
 		
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
