@@ -34,8 +34,10 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 
-// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+// #sijapp cond.if modules_FILES is "true"#
 import jimm.comm.FileTransferMessage;
+// #sijapp cond.end#
 // #sijapp cond.end#
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
@@ -107,11 +109,12 @@ public class ContactListContactItem extends ContactListItem
     private int icqProt;
     private long authCookie;
     //  #sijapp cond.end#
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+  // #sijapp cond.if modules_FILES is "true"#
    private FileTransferMessage ftm;
     private FileTransfer ft;
     //  #sijapp cond.end#
-    
+    //  #sijapp cond.end#
     // Menu
     private Menu menu;
 
@@ -141,9 +144,11 @@ public class ContactListContactItem extends ContactListItem
         this.icqProt = 0;
         this.authCookie = 0;
         //  #sijapp cond.end#
-       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+       // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if modules_FILES is "true"#
         this.ft = null;
-        //  #sijapp cond.end#
+        //  #sijapp cond.end# 
+        //  #sijapp cond.end# 
         this.menu = new Menu();
         this.requReason = false;
     }
@@ -599,8 +604,8 @@ public class ContactListContactItem extends ContactListItem
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
             	}    
 
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
-                
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                 // #sijapp cond.if modules_FILES is "true"#
                 // Send a filetransfer with a file given by path
                 // We can only make file transfers with ICQ clients prot V8 and up
             	else if (selIndex == MenuUtil.ft_name_idx)
@@ -632,6 +637,7 @@ public class ContactListContactItem extends ContactListItem
                         ft.startFT(); 
                     }
             	}
+                    // #sijapp cond.end#
                     // #sijapp cond.end#
                     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
             	// DC Info
