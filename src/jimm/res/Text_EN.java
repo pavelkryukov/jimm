@@ -166,6 +166,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("sort_by",                     "Sort contact list");
 		resources.put("sort_by_name",                "By name");
 		resources.put("sort_by_status",              "By status");
+		resources.put("status",                      "Status");
 		resources.put("status_away",                 "Away");
 		resources.put("status_chat",                 "Free for Chat");
 		resources.put("status_dnd",                  "Do Not Disturb");
