@@ -108,6 +108,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("lang_SE",                     "Schwedisch");
 		resources.put("lang_SR",                     "Српски");
 		resources.put("lang_BG", 					 "Bulgarisch");
+		resources.put("lang_HE", 					 "עברית");
 		resources.put("lastname",                    "Nachname");
 		resources.put("loading",                     "Lade");
 		resources.put("male",                        "M");

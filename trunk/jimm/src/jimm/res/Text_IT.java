@@ -49,12 +49,15 @@ public class Text_IT extends ResourceBundle
 		resources.put("async",                       "Async");
 		resources.put("auth",                        "Autorizzazione");
 		resources.put("back",                        "Indietro");
+		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Beep");
+		// #sijapp cond.end #
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Annulla");
 		resources.put("city",                        "Citta'");
 		resources.put("close",                       "Chiudi");
 		resources.put("conn_type",                   "Tipo di connessione");
+		resources.put("con_wait",                    "Intervallo tra le connessioni (sec)");
 		resources.put("connect",                     "Connettiti");
 		resources.put("connecting",                  "Connessione in corso");
 		resources.put("contact_list",                "Lista");
@@ -63,6 +66,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("cpp",                         "Costo per pacchetto");
 		resources.put("currency",                    "Valuta");
 		resources.put("delete_chat",                 "Cancella");
+		resources.put("del_group",                   "Elimina gruppo");
 		resources.put("deny",						 "Nega Autorizzazione");
 		resources.put("denyedby",					 "La tua richiesta di autorizzazione è stata rifiutata da: ");
         resources.put("description",                 "Descrizione"); 
@@ -80,7 +84,7 @@ public class Text_IT extends ResourceBundle
         resources.put("filepath",                    "Percorso File"); 
 		resources.put("firstname",                   "Nome");
         resources.put("ft_name",                     "Invia file"); 
-        resources.put("ft_cam",                     "Invia immagine Camera"); 
+        resources.put("ft_cam",                      "Invia immagine Camera"); 
 		resources.put("gender",                      "Sesso");
 		resources.put("grant",						 "Concedi Autorizzazione");
 		resources.put("grantedby",					 "La tua richiesta di autorizzazione è stata accettata da:");
@@ -94,6 +98,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("keylock_enabled",             "Blocco tasti attivato");
 		resources.put("keyword",                     "Parola chiave");
 		resources.put("language",                    "Lingua");
+		resources.put("lang_BG",                     "Bulgaro");
 		resources.put("lang_BR",                     "Portugues (Brazil)");
 		resources.put("lang_CZ",                     "Czech");
 		resources.put("lang_DE",                     "Deutsch");
@@ -103,8 +108,8 @@ public class Text_IT extends ResourceBundle
 		resources.put("lang_LT",                     "Lithuanian");
 		resources.put("lang_RU",                     "Russian");
 		resources.put("lang_SE",                     "Svensk");
-        resources.put("lang_SR",                     "Serbian"); 
-        resources.put("lang_HE",                     "Hebrew"); 
+		resources.put("lang_SR",                     "Српски");
+        resources.put("lang_HE", 					 "עברית");
 		resources.put("lastname",                    "Cognome");
 		resources.put("loading",                     "Caricamento");
 		resources.put("male",                        "M");
@@ -119,6 +124,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
 		resources.put("no_results",                  "Nessun risultato");
+		resources.put("no_not_empty_gr",             "Impossibile rimuovere gruppo non vuoto");
 		resources.put("not_implemented",             "Funzione non ancora implementata.");
 		resources.put("noreason",             		 "Motivo omesso.");
 		resources.put("notice",                      "Avviso");
@@ -142,6 +148,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("prev",                        "Precedente");
 		resources.put("reason",						 "Motivo");
 		resources.put("remove",                      "Rimuovi dalla Lista");
+		resources.put("rename",                      "Rinomina");
 		resources.put("reply",                       "Rispondi");
 		resources.put("requauth",                    "Chiedi autorizzazione");
 		resources.put("requ",                        "Richiesto");
@@ -188,8 +195,10 @@ public class Text_IT extends ResourceBundle
 		resources.put("yes",                         "Sì");
 		resources.put("youwereadded",				 "Sei stato aggiunto da UIN: ");
         resources.put("chat_small_font",             "Font piccolo nella chat"); 
-        resources.put("select",                      "Scegli"); 
-
+        resources.put("select",                      "Scegli");
+        resources.put("attention",                   "Attenzione!");
+  	    resources.put("have_unread_mess",            "Hai messaggi non letti. Uscire comunque?");
+    
         // User management ******** 
         resources.put("group_is_not_empty",          "Il gruppo non è vuoto!\nSposta gli utenti in altri gruppi!"); 
         resources.put("add_group",                   "Aggiungi gruppo"); 
@@ -221,12 +230,12 @@ public class Text_IT extends ResourceBundle
 		resources.put("error_123",                   "Impossibile stabilire la connessione (#123.EXT)");
 		resources.put("error_124",                   "Il flusso in ingresso è fuori sincronia (#124.EXT)");
 
-        // Peer connection 
-        resources.put("error_125",                   "Errore di I/O (#125.EXT)"); 
-        resources.put("error_126",                   "Impossibile effettuare la connessione TCP richiesta (#126.EXT)"); 
-        resources.put("error_127",                   "Indirizzo e/o porta del server specificati non validi (#127.EXT)"); 
-        resources.put("error_128",                   "Impossibile stabilire la connessione (#128.EXT)"); 
-        resources.put("error_129",                   "Il flusso in ingresso è fuori sincronia (#129.EXT)"); 
+       // Peer connection 
+       resources.put("error_125",                   "Errore di I/O (#125.EXT)"); 
+       resources.put("error_126",                   "Impossibile effettuare la connessione TCP richiesta (#126.EXT)"); 
+       resources.put("error_127",                   "Indirizzo e/o porta del server specificati non validi (#127.EXT)"); 
+       resources.put("error_128",                   "Impossibile stabilire la connessione (#128.EXT)"); 
+       resources.put("error_129",                   "Il flusso in ingresso è fuori sincronia (#129.EXT)"); 
 
 		// Parsing specific errors
 		resources.put("error_130",                   "Impossibile processare l'header FLAP (#130.EXT)");
@@ -253,6 +262,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("error_158",                   "Hai provato ad aggiungere un contatto ICQ a una lista AIM (#158.EXT)");
  		resources.put("error_159",                   "Nessuna risposta del server circa la ricerca. Riprovare (#159.EXT)");
  		resources.put("error_160",                   "Errore durante la ricerca (#160.EXT)");
+ 		resources.put("error_161",                   "Nessun gruppo trovato. Aggiungerne uno (#161.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Probabile insufficienza di memoria heap disponibile (#170.EXT)");
@@ -264,7 +274,7 @@ public class Text_IT extends ResourceBundle
         resources.put("error_182",                   "Errore nell'avvio dell'anteprima (#182.EXT)"); 
         resources.put("error_183",                   "Errore nella cattura (#183.EXT)"); 
         resources.put("error_185",                   "Cattura immagini non supportata (#185.EXT)"); 
-
+    
         // File transfer errors 
         resources.put("error_190",                   "Trasferimento con client precedenti a ICQv8 non supportato (#190.EXT)"); 
         resources.put("error_191",                   "Errore di lettura del file. Funzione forse non supportata (#191.EXT)"); 
