@@ -471,12 +471,15 @@ public class Util
 	public static String ipToString(byte[] ip)
 	{
 	    String strIP = new String();
+	    int tmp;
 	    
 	    for (int i=0;i<3;i++)
 	    {
-	        strIP = strIP + new Byte(ip[i]).toString() + ".";
+	        tmp = (int) ip[i] & 0xFF;
+	        strIP = strIP + String.valueOf(tmp)+ ".";
 	    }
-	    strIP = strIP + new Byte(ip[3]).toString();
+	    tmp = (int) ip[3] & 0xFF;
+        strIP = strIP + String.valueOf(tmp);
 	    
 	    return strIP;
 	}
