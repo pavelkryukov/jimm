@@ -124,24 +124,27 @@ public class SplashCanvas extends Canvas
 
 
   // Constructor
-  public SplashCanvas(String message)
-  {
-    this.message = new String(message);
-    this.progress = 0;
-    background = Image.createImage(this.getWidth(),this.getHeight());
-    int r,g;
-    Graphics bg_graph = background.getGraphics();
-    for(int x=0;x<this.getWidth();x+=2)
+    public SplashCanvas(String message)
     {
-    	for(int y=0;y<this.getHeight();y+=2)
-    	{
-    		r=x*y / (y+x+1) % 256;
-    		g=(r^x^y) % 256;
-    		bg_graph.setColor(r,g,(r+g) % 256);
-    		bg_graph.fillRect(x,y,2,2);
-    	}
+        //  #sijapp cond.if target is "MIDP2"#
+        this.setFullScreenMode(true);
+        //  #sijapp cond.end#
+        this.message = new String(message);
+        this.progress = 0;
+        background = Image.createImage(this.getWidth(), this.getHeight());
+        int r, g;
+        Graphics bg_graph = background.getGraphics();
+        for (int x = 0; x < this.getWidth(); x += 2)
+        {
+            for (int y = 0; y < this.getHeight(); y += 2)
+            {
+                r = x * y / (y + x + 1) % 256;
+                g = (r ^ x ^ y) % 256;
+                bg_graph.setColor(r, g, (r + g) % 256);
+                bg_graph.fillRect(x, y, 2, 2);
+            }
+        }
     }
-  }
 
 
   // Constructor, blank message
@@ -616,34 +619,30 @@ public class SplashCanvas extends Canvas
   public static class SearchTimerTask extends TimerTask
   {
 
+        // Reference to UpdateContactListAction
+        private SearchAction searchAct;
 
-    // Reference to UpdateContactListAction
-    private SearchAction searchAct;
+        // Constructor
+        public SearchTimerTask(SearchAction _searchAct)
+        {
+            this.searchAct = _searchAct;
+        }
 
+        // Timer routine
+        public void run()
+        {
+            if (this.searchAct.isCompleted())
+            {
+                searchAct.activateResult();
+                this.cancel();
+            } else if (this.searchAct.isError())
+            {
+                if (!searchAct.excepHandled()) JimmException.handleException(new JimmException(154
+, 2, true));
+                this.cancel();
+            }
+        }
 
-    // Constructor
-    public SearchTimerTask(SearchAction _searchAct)
-    {
-      this.searchAct = _searchAct;
     }
-
-
-    // Timer routine
-    public void run()
-    {
-      if (this.searchAct.isCompleted())
-      {
-        searchAct.activateResult();
-        this.cancel();
-      }
-      else if (this.searchAct.isError())
-      {
-        if (!searchAct.excepHandled())
-            JimmException.handleException(new JimmException(154, 2, true));
-        this.cancel();
-      }
-    }
-
-  }
 
 }
