@@ -25,6 +25,8 @@ package jimm;
 
 import java.util.Date;
 
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -440,9 +442,12 @@ public class ContactListContactItem extends ContactListItem
                     break;
                 case 3:
                     // Remove
-
-                    Jimm.jimm.getIcqRef().delFromContactList(ContactListContactItem.this);
-
+                    MenuUtil.deleteUserAlert = new Alert(ResourceBundle.getString("remove")+"?",ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",null,AlertType.CONFIRMATION);
+                    MenuUtil.deleteUserAlert.addCommand(MenuUtil.textboxOkCommand);
+                    MenuUtil.deleteUserAlert.addCommand(MenuUtil.textboxCancelCommand);
+                    MenuUtil.deleteUserAlert.setCommandListener(this);
+                    Jimm.display.setCurrent(MenuUtil.deleteUserAlert);
+                    
                     break;
 
                 case 4:
@@ -597,6 +602,11 @@ public class ContactListContactItem extends ContactListItem
                     requReason = false;
                     Jimm.jimm.getContactListRef().activate();
                 }
+                // If user interaction deleteUserAlert is shown.
+                else if (d == MenuUtil.deleteUserAlert)
+                {
+                    Jimm.jimm.getIcqRef().delFromContactList(ContactListContactItem.this);
+                }
 
             }
             // Textbox has been canceled
@@ -712,6 +722,9 @@ public class ContactListContactItem extends ContactListItem
 
         // Textbox for entering a reason
         private static TextBox reasonTextbox;
+        
+        // Alert for security question for user delete
+        private static Alert deleteUserAlert;
 
         // Abort command
         private static Command backCommand = new Command(ResourceBundle.getString("back"),
@@ -755,7 +768,7 @@ public class ContactListContactItem extends ContactListItem
         // Request authorisation from a contact
         private static Command reqAuthCommand = new Command(ResourceBundle.getString("requauth"),
                 Command.OK, 1);
-
+        
         // Initializer
         static
         {
