@@ -349,6 +349,15 @@ public class ConnectAction extends Action
 
 						// Close connection
 						this.icq.c.close();
+						
+						try
+                        {
+                            // Wait the given time before starting the new connection
+                            Thread.sleep(Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_CONN_WAIT)*1000);
+                        } catch (InterruptedException e)
+                        {
+                            // Do nothing
+                        }
 
 						// Open connection
 						this.icq.c.connect(disconnectPacket.getServer());

@@ -55,6 +55,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("cancel",                      "Abbrechen");
 		resources.put("city",                        "Stadt");
 		resources.put("close",                       "Schließen");
+		resources.put("con_wait",                    "Verzögerung zwischen Verbindungen(sek)");
 		resources.put("conn_type",                   "Verbindungsart");
 		resources.put("connect",                     "Verbinden");
 		resources.put("connecting",                  "Verbinde");
