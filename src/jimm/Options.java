@@ -81,6 +81,7 @@ public class Options
 	public static final int OPTION_SRV_PORT                       =   2;   /* String  */
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
+	public static final int OPTION_AUTO_CONNECT					  = 138;   /* boolean */
 	public static final int OPTION_CONN_WAIT				      =  65;   /* int     */
 	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
@@ -110,25 +111,27 @@ public class Options
 	// Hashtable containing all option key-value pairs
 	private Hashtable options;
 
-
 	// Options form
 	public OptionsForm optionsForm;
-
 
 	// Constructor
 	public Options()
 	{
 
-		// Try to load option values from record store
+		// Try to load option values from record store and construct options form
 		try
 		{
 		    this.options = new Hashtable();
 			this.load();
 			ResourceBundle.setCurrUiLanguage(this.getStringOption(Options.OPTION_UI_LANGUAGE));
+			
+			// Construct option form
+			this.optionsForm = new OptionsForm();
 		}
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
 		{
+		    System.out.println("Set default");
 		    this.setStringOption (Options.OPTION_UIN,                            "");
 			this.setStringOption (Options.OPTION_PASSWORD,                       "");
 			this.setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
@@ -136,6 +139,7 @@ public class Options
 			this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
 			this.setIntOption    (Options.OPTION_CONN_TYPE,                      0);
 			this.setIntOption    (Options.OPTION_CONN_WAIT,                      0);
+			this.setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
 			this.setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
 			this.setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
 			this.setIntOption    (Options.OPTION_CL_SORT_BY,                     0);
@@ -178,10 +182,11 @@ public class Options
 			this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
 			this.setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
 			this.setBooleanOption(Options.OPTION_HISTORY,                        false);
+			
+			// Construct option form
+			this.optionsForm = new OptionsForm();
 		}
 
-		// Construct option form
-		this.optionsForm = new OptionsForm();
 	}
 
 
@@ -382,6 +387,7 @@ public class Options
 		private TextField conWaitTextField;
 		private ChoiceGroup keepConnAliveChoiceGroup;
 		private ChoiceGroup connTypeChoiceGroup;
+		private ChoiceGroup autoConnectChoiceGroup;
 		private ChoiceGroup uiLanguageChoiceGroup;
 		private ChoiceGroup displayDateChoiceGroup;
 		private ChoiceGroup clSortByChoiceGroup;
@@ -415,7 +421,7 @@ public class Options
 		// #sijapp cond.end#
 
 		// Constructor
-		public OptionsForm()
+		public OptionsForm() throws NullPointerException
 		{
 
 			// Initialize commands
@@ -448,7 +454,7 @@ public class Options
 			this.initSubMenuUI(2);
 			this.initSubMenuUI(3);
 			this.initSubMenuUI(4);
-
+			
 		}
 
 
@@ -483,6 +489,9 @@ public class Options
                 {
                     this.connTypeChoiceGroup.setSelectedIndex(0, true);
                 }
+                this.autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
+                this.autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
+                this.autoConnectChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_AUTO_CONNECT));
                 break;
 
             case 2:
@@ -614,6 +623,7 @@ public class Options
 						this.optionsForm.append(this.srvHostTextField);
 						this.optionsForm.append(this.srvPortTextField);
 						this.optionsForm.append(this.keepConnAliveChoiceGroup);
+						this.optionsForm.append(this.autoConnectChoiceGroup);
 						this.optionsForm.append(this.connTypeChoiceGroup);
 						this.optionsForm.append(this.conWaitTextField);
 						break;
@@ -705,6 +715,7 @@ public class Options
 					    Options.this.setStringOption(Options.OPTION_SRV_HOST,this.srvHostTextField.getString());
 					    Options.this.setStringOption(Options.OPTION_SRV_PORT,this.srvPortTextField.getString());
 						Options.this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,this.keepConnAliveChoiceGroup.isSelected(0));
+						Options.this.setBooleanOption(Options.OPTION_AUTO_CONNECT,this.autoConnectChoiceGroup.isSelected(0));
 						if (this.connTypeChoiceGroup.isSelected(0))
 						{
 							Options.this.setIntOption(Options.OPTION_CONN_TYPE,1);
