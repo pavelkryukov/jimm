@@ -55,6 +55,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("city",                        "City");
 		resources.put("close",                       "Close");
 		resources.put("conn_type",                   "Connection type");
+		resources.put("con_wait",                    "Delay between connections(sec)");
 		resources.put("connect",                     "Connect");
 		resources.put("connecting",                  "Connecting");
 		resources.put("contact_list",                "List");
