@@ -130,3 +130,9 @@ VERSION 0.2.4
   * Added Hebrew translation
   * Added back button to the status selet screen
   * Bugfix: City field is now taken itno account which searching
+  
+________________________________________________________________________________
+VERSION 0.2.5
+
+  * New chat history is added
+  * New option "Small font in chat"
