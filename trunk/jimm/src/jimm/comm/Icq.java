@@ -141,7 +141,7 @@ public class Icq implements Runnable
 
         // Start timer
         Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act), 1000, 1000);
-		System.out.println("start addContact");
+		// System.out.println("start addContact");
 	}
 	
 	// Connects to the ICQ network
@@ -941,16 +941,16 @@ public class Icq implements Runnable
             
             try
             {
-                System.out.println("connect " + hostAndPort);
+                // System.out.println("connect " + hostAndPort);
                 this.sc = (SocketConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);        
-                System.out.println("connected");
+                // System.out.println("connected");
                 
                 this.is = this.sc.openInputStream();
                 this.os = this.sc.openOutputStream();
                 this.rcvThread = new Thread(this);
-                System.out.println("thread done");
+                // System.out.println("thread done");
                 this.rcvThread.start();
-                System.out.println("thread started");
+                // System.out.println("thread started");
 
             } catch (ConnectionNotFoundException e)
             {
@@ -1044,7 +1044,7 @@ public class Icq implements Runnable
                     byte[] outpack = packet.toByteArray();
                     this.os.write(outpack);
                     this.os.flush();
-                    System.out.println("Peer packet sent length: "+outpack.length);
+                    // System.out.println("Peer packet sent length: "+outpack.length);
                     // #sijapp cond.if modules_TRAFFIC is "true" #
                     
                     // 40 is the overhead for each packet

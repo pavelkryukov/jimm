@@ -150,14 +150,14 @@ public class SendMessageAction extends Action
      }
      // #sijapp cond.end#
      
-     if (utf8)
-     {
-         System.out.println("UTF8");
-     }
-     else
-         System.out.println("ASCII");
-     
-     System.out.println("Type: "+type);
+//     if (utf8)
+//     {
+//         System.out.println("UTF8");
+//     }
+//     else
+//         System.out.println("ASCII");
+//     
+//     System.out.println("Type: "+type);
          
      
 
@@ -168,7 +168,7 @@ public class SendMessageAction extends Action
     if (type == 1)
     {
 
-      System.out.println("Send TYPE 1");
+      // System.out.println("Send TYPE 1");
         // Get UIN
       byte[] uinRaw = Util.stringToByteArray(rcvr.getUin());
 
@@ -241,7 +241,7 @@ public class SendMessageAction extends Action
 
     else if (type == 2)
     {
-        System.out.println("Send TYPE 2");
+        // System.out.println("Send TYPE 2");
         // Get UIN
         byte[] uinRaw = Util.stringToByteArray(rcvr.getUin());
 
@@ -593,7 +593,7 @@ public class SendMessageAction extends Action
         // Send packet
         SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
         this.icq.c.sendPacket(snacPkt);
-        System.out.println("SendMessageAction: Sent the packet");
+        // System.out.println("SendMessageAction: Sent the packet");
     }
     SEQ1--;
 

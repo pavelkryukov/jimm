@@ -286,7 +286,7 @@ public class SearchAction extends Action
                         {
                             marker += 2;
                             long foundleft = Util.getDWord(data,marker,false);
-                            System.out.println("foundleft: "+foundleft);
+                            // System.out.println("foundleft: "+foundleft);
                             this.state = STATE_SEARCH_FINISHED;
                         }
                     }

@@ -534,7 +534,7 @@ public class ContactListContactItem extends ContactListItem
                         
                 case 3:
                     // Send a filetransfer with a camera image
-                    System.out.println("FileTransfer: cam");
+                    // System.out.println("FileTransfer: cam");
                     
                     // We can only make file transfers with ICQ clients prot V8 and up
                     if (ContactListContactItem.this.getICQVersion() < 8)

@@ -25,14 +25,11 @@ package jimm.comm;
 
 import java.util.Date;
 
-import javax.microedition.lcdui.Display;
-
 import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.Jimm;
 import jimm.JimmException;
 import jimm.SplashCanvas;
-import jimm.util.ResourceBundle;
 
 public class ActionListener
 {
@@ -167,7 +164,7 @@ public class ActionListener
                         // Get auth cookie
                         authCookie = Util.getDWord(tlvData,dcMarker);
 
-                        System.out.println("length: "+tlvData.length+"IP: "+Util.ipToString(internalIP)+" Port: "+dcPort+" Type: "+dcType+" Version: "+icqProt+" Cookie: "+authCookie);
+                        // System.out.println("length: "+tlvData.length+"IP: "+Util.ipToString(internalIP)+" Port: "+dcPort+" Type: "+dcType+" Version: "+icqProt+" Cookie: "+authCookie);
 
                     }
                     // #sijapp cond.end#
@@ -581,7 +578,7 @@ public class ActionListener
                              
                              // Get IP if possible
                              // Check length
-                             System.out.println("msgBuf len: "+msgBuf.length+" msgMarker: "+msgMarker);
+                             //System.out.println("msgBuf len: "+msgBuf.length+" msgMarker: "+msgMarker);
                              if (msgBuf.length < + 8) { throw (new JimmException(152, 9, false)); }
                              
                              msg2Buf = Util.getTlv(msgBuf, msgMarker);
@@ -594,7 +591,7 @@ public class ActionListener
                              ContactListContactItem sender = Jimm.jimm.getContactListRef().getItembyUIN(uin);
                              sender.updateIPsandPort(ip,extIP,port);
                                                        
-                             System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
+                             //System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
                              
                              DirectConnectionAction dcAct = new DirectConnectionAction(sender.getFTM());
                              try
@@ -834,7 +831,7 @@ public class ActionListener
                 } else
                 {
                     // Create a new system notice
-                    System.out.println("Auth granted");
+                    //System.out.println("Auth granted");
                     notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHREPLY, uin, granted, "");
                 }
 
