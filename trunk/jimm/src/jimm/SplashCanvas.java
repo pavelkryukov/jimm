@@ -60,7 +60,6 @@ public class SplashCanvas extends Canvas
   // Image object, holds the background image
   private static Image background;
 
-
   // Location of the notice image (inside the JAR file)
   private static final String NOTICE_IMG = "/notice.png";
 
@@ -102,22 +101,17 @@ public class SplashCanvas extends Canvas
   // Message to display beneath the splash image
   private String message;
 
-
   // Progress in percent
   private int progress;
-
 
   // True if keylock has been enabled
   private boolean isLocked; // = false
 
-
   // True if at least one message is available
   private boolean isMessageAvailable; // = false
 
-
   // Timestamp
   private Date pressed; // = null
-
 
   // Used for time to be displayed on the spash screen
   private Calendar time = Calendar.getInstance();
@@ -129,12 +123,11 @@ public class SplashCanvas extends Canvas
     this.message = new String(message);
     this.progress = 0;
     background = Image.createImage(this.getWidth(),this.getHeight());
-    System.out.println(this.getWidth()+" "+this.getHeight());
     int r,g;
     Graphics bg_graph = background.getGraphics();
     for(int x=0;x<this.getWidth();x+=2)
     {
-    	for(int y=0;y<this.getWidth();y+=2)
+    	for(int y=0;y<this.getHeight();y+=2)
     	{
     		r=x*y / (y+x+1) % 256;
     		g=(r^x^y) % 256;
@@ -267,7 +260,6 @@ public class SplashCanvas extends Canvas
   protected void paint(Graphics g)
   {
   	
-  	System.out.println("paint");
     // Do we need to draw the splash image?
     if (g.getClipY() < this.getHeight() - SplashCanvas.height - 2)
     {
