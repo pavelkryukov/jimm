@@ -44,18 +44,22 @@ public class Text_EN extends ResourceBundle
 		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://jimm.sourceforge.net/");
 		resources.put("account",                     "Account");
 		resources.put("add_user",                    "Add User");
+		resources.put("add_to_list",                 "Add to list");
 		resources.put("async",                       "Async");
+		resources.put("auth",				     	 "Auth");
 		resources.put("back",                        "Back");
 		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Beep");
 		// #sijapp cond.end #
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Cancel");
+		resources.put("city",                        "City");
 		resources.put("close",                       "Close");
 		resources.put("conn_type",                   "Connection type");
 		resources.put("connect",                     "Connect");
 		resources.put("connecting",                  "Connecting");
 		resources.put("contact_list",                "List");
+		resources.put("country",                     "Country");
 		resources.put("cp1251",                      "Use CP1252 hack?");
 		resources.put("cpd",                         "Cost per day");
 		resources.put("cpp",                         "Cost per packet");
@@ -71,6 +75,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("email",                       "Email");
 		resources.put("error",                       "Error");
 		resources.put("exit",                        "Exit");
+		resources.put("firstname",                   "First name");
 		resources.put("grant",						 "Grant Auth");
 		resources.put("grantedby",					 "Your auth request was granted by:");
 		resources.put("hide_offline",                "Hide offline contacts");
@@ -90,6 +95,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("lang_LT",                     "Lithuanian");
 		resources.put("lang_RU",                     "Russian");
 		resources.put("lang_SE",                     "Swedish");
+		resources.put("lastname",                    "Last name");
 		resources.put("loading",                     "Loading");
 		resources.put("me",                          "me");
 		resources.put("menu",                        "Menu");
@@ -98,11 +104,14 @@ public class Text_EN extends ResourceBundle
 		resources.put("message",                     "Message");
 		resources.put("message_from",                "Message from");
 		resources.put("name",                        "Name");
+		resources.put("next",						 "nächstes");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
+		resources.put("no_results",                  "No results");
 		resources.put("not_implemented",             "Function not yet implemented.");
 		resources.put("noreason",             		 "No reason was given.");
 		resources.put("notice",                      "Notice");
+		resources.put("nr",				     		 "Nr");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Once a session");
 		resources.put("onl_notification",            "Notice for upcoming contact");
@@ -117,11 +126,13 @@ public class Text_EN extends ResourceBundle
 		resources.put("password",                    "Password");
 		resources.put("plength",                     "Length of charge packet in kB");
 		resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
+		resources.put("prev",						 "previous");
 		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
 		resources.put("reply",                       "Reply");
 		resources.put("requauth",                    "Request auth");
 		resources.put("reset",                       "Reset");
+		resources.put("results",                     "Results");
 		resources.put("save",                        "Save");
 		resources.put("search_user",                 "Search for User");
 		resources.put("send",                        "Send");
