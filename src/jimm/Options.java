@@ -1,6 +1,6 @@
 /*******************************************************************************
 Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-04  Jimm Project
+Copyright (C) 2003-05  Jimm Project
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -539,8 +539,7 @@ public class Options
                 this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
                 this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
                 this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
-                this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this
-                        .getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
+                this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
                 this.messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.this.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
                 this.messageNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME) / 10);
                 this.onlineNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME) / 10);
@@ -548,23 +547,19 @@ public class Options
                 this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
                 this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
                 this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-                this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this
-                        .getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
+                this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
                 this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("msg_notification"), Choice.EXCLUSIVE);
                 this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
                 this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-                this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE),
-                        true);
+                this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE),true);
                 // #sijapp cond.end#
-                // #sijapp cond.if target is "SIEMENS" | target is "RIM" |
-                // target is "MIDP2"#
+                // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
                 this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration") + "?", Choice.MULTIPLE);
                 this.vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.vibratorChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_VIBRATOR));
                 // #sijapp cond.end#
 
-                // #sijapp cond.if target is "SIEMENS" | target is "RIM" |
-                // target is "MIDP2"#
+                // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2"#
                 break;
             // #sijapp cond.end#
 
