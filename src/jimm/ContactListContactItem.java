@@ -24,21 +24,15 @@
 package jimm;
 
 import java.util.Date;
-import java.util.Calendar;
 
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Font;
 
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
@@ -91,7 +85,8 @@ public class ContactListContactItem extends ContactListItem
     private boolean added;
     private long status;
     private int capabilities;
-    private Form msgDisplay;
+    private int chatHistoryDisplayNr;
+    
 
     // Message count
     private int outgoingPlainMessagesCnt;
@@ -115,7 +110,7 @@ public class ContactListContactItem extends ContactListItem
         this.added = added;
         this.status = ContactList.STATUS_OFFLINE;
         this.capabilities = ContactListContactItem.CAP_NO_INTERNAL;
-        this.msgDisplay = new Form(ContactListContactItem.this.getName());
+        this.chatHistoryDisplayNr = -1;
         this.outgoingPlainMessagesCnt = 0;
         this.plainMessages = 0;
         this.urlMessages = 0;
@@ -132,12 +127,12 @@ public class ContactListContactItem extends ContactListItem
         {
         case VALUE_ADDED: return (this.added);
         case VALUE_NO_AUTH: return (noAuth);
-        case VALUE_CHAT_SHOWN: return msgDisplay.isShown();
+        case VALUE_CHAT_SHOWN: return Jimm.jimm.getChatHistoryRef().chatHistoryShown(chatHistoryDisplayNr);
         case VALUE_IS_TEMP: return (this.temporary);
-        case VALUE_HAS_CHAT: if (msgDisplay.size() == 0)
-            					return false;
+        case VALUE_HAS_CHAT: if (Jimm.jimm.getChatHistoryRef().chatHistorySize(chatHistoryDisplayNr) > 0)
+            					return true;
         					 else
-        					     return true;
+        					     return false;
         default: return false;
         }
     }
@@ -232,102 +227,37 @@ public class ContactListContactItem extends ContactListItem
     {
         switch (type)
         {
-        	case MESSAGE_PLAIN: return (this.plainMessages > 0);
-        	case MESSAGE_URL: return (this.urlMessages > 0); 
-        	case MESSAGE_SYS_NOTICE: return (this.sysNotices > 0);
+        	case MESSAGE_PLAIN:        return (this.plainMessages > 0);
+        	case MESSAGE_URL:          return (this.urlMessages > 0); 
+        	case MESSAGE_SYS_NOTICE:   return (this.sysNotices > 0);
         	case MESSAGE_AUTH_REQUEST: return (this.authRequest > 0); 
         }
         return (this.plainMessages > 0);
+    }
+    
+    // Increases the mesage count
+    protected synchronized void increaseMessageCount(int type)
+    { 
+        switch (type)
+        {
+        	case MESSAGE_PLAIN:        this.plainMessages++; break;
+        	case MESSAGE_URL:          this.urlMessages++; break;
+        	case MESSAGE_SYS_NOTICE:   this.sysNotices++; break;
+        	case MESSAGE_AUTH_REQUEST: this.authRequest++;
+        }
     }
 
     // Adds a message to the message display
     protected synchronized void addMessage(Message message)
     {
-        if (message instanceof PlainMessage)
-        {
-            PlainMessage plainMsg = (PlainMessage) message;
-            if (!msgDisplay.isShown()) plainMessages++;
-            this.addTextToForm(this.getName(), plainMsg.getText(), "", plainMsg.getDate(), true);
-        }
-        if (message instanceof UrlMessage)
-        {
-            UrlMessage urlMsg = (UrlMessage) message;
-            if (!msgDisplay.isShown()) urlMessages++;
-            this.addTextToForm(this.getName(), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false);
-        }
-        if (message instanceof SystemNotice)
-        {
-            SystemNotice notice = (SystemNotice) message;
-            if (!msgDisplay.isShown()) sysNotices++;
-
-            if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
-            {
-                this.addTextToForm(ResourceBundle.getString("sysnotice"), ResourceBundle.getString("youwereadded")
-                        + notice.getSndrUin(), "", notice.getDate(), false);
-            } else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
-            {
-                authRequest++;
-                this.addTextToForm(ResourceBundle.getString("sysnotice"), notice.getSndrUin()
-                        + ResourceBundle.getString("wantsyourauth") + notice.getReason(), "", notice.getDate(), false);
-            } else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
-            {
-                if (notice.isAUTH_granted())
-                {
-                    this.setBoolValue(VALUE_NO_AUTH,false);
-                    this.addTextToForm(ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
-                            + notice.getSndrUin() + ".", "", notice.getDate(), false);
-                    Jimm.jimm.getContactListRef().refreshVisibleList(true);
-                } else if (notice.getReason() != null)
-                    this.addTextToForm(ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
-                            + notice.getSndrUin() + ". " + ResourceBundle.getString("reason") + ": " + notice.getReason(),
-                            "", notice.getDate(), false);
-                else
-                    this.addTextToForm(ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
-                            + notice.getSndrUin() + ". " + ResourceBundle.getString("noreason"), "", notice.getDate(),
-                            false);
-            }
-        }
-    }
-
-    // Add text to message form
-    public void addTextToForm(String from, String message, String url, Date time, boolean red)
-    {
-        Calendar stamp = Calendar.getInstance();
-        stamp.setTime(time);
-
-        Font prequelFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
-        Image prequel;
-        // #sijapp cond.if target is "MIDP2"#
-        prequel = Image.createImage(msgDisplay.getWidth(), prequelFont.getHeight() + 2);
-        Font textFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-        // #sijapp cond.else#
-        prequel = Image.createImage(120, prequelFont.getHeight() + 2);
-        // #sijapp cond.end#
-        Graphics g = prequel.getGraphics();
-        if (!red)
-            g.setColor(0, 0, 255);
+        System.out.println("Nr: "+chatHistoryDisplayNr);
+        if(chatHistoryDisplayNr != -1)
+            Jimm.jimm.getChatHistoryRef().addMessage(chatHistoryDisplayNr,message,this);
         else
-            g.setColor(255, 0, 0);
-        g.setFont(prequelFont);
-        g.drawString(from + " (" + stamp.get(Calendar.HOUR_OF_DAY) + ":" + Util.makeTwo(stamp.get(Calendar.MINUTE)) + "):", 0, 10,
-                Graphics.BASELINE | Graphics.LEFT);
-        Image copy = Image.createImage(prequel);
-
-        msgDisplay.append(new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
-                + ImageItem.LAYOUT_NEWLINE_AFTER, null));
-        if (url.length() > 0)
         {
-            StringItem urlItem = new StringItem(null,ResourceBundle.getString("url")+": "+url);
-//          #sijapp cond.if target is "MIDP2"#
-            urlItem.setFont(textFont);
-//          #sijapp cond.end#
-            msgDisplay.append(urlItem);
+            chatHistoryDisplayNr = Jimm.jimm.getChatHistoryRef().newChatForm(name);
+            addMessage(message);
         }
-        StringItem messageItem = new StringItem(null, message);
-//      #sijapp cond.if target is "MIDP2"#
-        messageItem.setFont(textFont);
-//      #sijapp cond.end#
-        msgDisplay.append(messageItem);
     }
 
     public synchronized void resetUnreadMessages()
@@ -340,8 +270,8 @@ public class ContactListContactItem extends ContactListItem
     // Delete the chat history
     public void deleteChatHistory()
     {
-        while (msgDisplay.size() > 0)
-            msgDisplay.delete(0);
+        while (Jimm.jimm.getChatHistoryRef().chatHistorySize(chatHistoryDisplayNr) > 0)
+            Jimm.jimm.getChatHistoryRef().chatHistoryDelete(chatHistoryDisplayNr);
     }
 
     // Activates the contact item menu
@@ -553,7 +483,7 @@ public class ContactListContactItem extends ContactListItem
                                 ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
 
                         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_KEEPCHAT))
-                        	ContactListContactItem.this.addTextToForm(ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
+                            Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
                         SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
                         try
                         {
@@ -725,6 +655,8 @@ public class ContactListContactItem extends ContactListItem
             // Display chat history
             if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
             {
+                Form msgDisplay = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.chatHistoryDisplayNr);
+                
                 msgDisplay.removeCommand(MenuUtil.grantAuthCommand);
                 msgDisplay.removeCommand(MenuUtil.denyAuthCommand);
                 msgDisplay.removeCommand(MenuUtil.reqAuthCommand);
