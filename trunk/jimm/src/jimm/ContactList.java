@@ -195,8 +195,9 @@ public class ContactList implements CommandListener
 	
     // Main menu command
     private static Command 
-                   // #sijapp cond.if lang_RU is "true" | lang_EN is "true" & target is "MOTOROLA" #
-                   mainMenuCommand    = new Command(ResourceBundle.getString("menu_button"),         Command.SCREEN, 3),
+
+                   // #sijapp cond.if target is "MOTOROLA" #
+                     mainMenuCommand    = new Command(ResourceBundle.getString("menu_button"),         Command.SCREEN, 3),
                   // #sijapp cond.else #    
     	mainMenuCommand    = new Command(ResourceBundle.getString("menu"),         Command.SCREEN, 3),
                   // #sijapp cond.end #
