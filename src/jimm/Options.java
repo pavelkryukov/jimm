@@ -30,6 +30,7 @@
             SRV_HOST                   (UTF-8)
             SRV_PORT                   (UTF-8)
             KEEP_CONN_ALIVE            (Boolean)
+            CONN_TYPE				   (Integer)
             UI_LANGUAGE                (UTF-8)
             DISPLAY_DATE               (Boolean)
             CL_SORT_BY                 (Integer)
@@ -81,6 +82,7 @@ public class Options
   public static final String DEFAULT_SRV_HOST = "login.icq.com";
   public static final String DEFAULT_SRV_PORT = "5190";
   public static final boolean DEFAULT_KEEP_CONN_ALIVE = true;
+  public static final int DEFAULT_CONN_TYPE = 0;
   public static final String DEFAULT_UI_LANGUAGE = ResourceBundle.LANG_AVAILABLE[0];
   public static final boolean DEFAULT_DISPLAY_DATE = false;
   public static final int DEFAULT_CL_SORT_BY = 0;
@@ -121,6 +123,9 @@ public class Options
 
   // Section network, keep connection alive flag
   private boolean keepConnAlive;
+  
+  // Section network, type of connection used
+  private int conn_type;
 
 
   // Section interface, user interface language/localization
@@ -195,6 +200,7 @@ public class Options
       this.setSrvHost(Options.DEFAULT_SRV_HOST);
       this.setSrvPort(Options.DEFAULT_SRV_PORT);
       this.setKeepConnAlive(Options.DEFAULT_KEEP_CONN_ALIVE);
+      this.setConnType(Options.DEFAULT_CONN_TYPE);
       this.setUiLanguage(Options.DEFAULT_UI_LANGUAGE);
       this.setDisplayDate(Options.DEFAULT_DISPLAY_DATE);
       this.setClSortBy(Options.DEFAULT_CL_SORT_BY);
@@ -247,6 +253,7 @@ public class Options
     this.setSrvHost(dis.readUTF());
     this.setSrvPort(dis.readUTF());
     this.setKeepConnAlive(dis.readBoolean());
+    this.setConnType(dis.readInt());
     this.setUiLanguage(dis.readUTF());
     this.setDisplayDate(dis.readBoolean());
     this.setClSortBy(dis.readInt());
@@ -326,6 +333,7 @@ public class Options
     dos.writeUTF(this.getSrvHost());
     dos.writeUTF(this.getSrvPort());
     dos.writeBoolean(this.isKeepConnAlive());
+    dos.writeInt(this.getConnType());
     dos.writeUTF(this.getUiLanguage());
     dos.writeBoolean(this.isDisplayDate());
     dos.writeInt(this.getClSortBy());
@@ -429,10 +437,22 @@ public class Options
     return (this.keepConnAlive);
   }
 
+  // Set connection tye
+  public synchronized void setConnType(int connType)
+  {
+    this.conn_type = connType;
+  }
+  
+  // Return connection type
+  public synchronized int getConnType()
+  {
+	return (this.conn_type);
+  }
+
   // Set keep connection alive flag
   public synchronized void setKeepConnAlive(boolean keepConnAlive)
   {
-    this.keepConnAlive = keepConnAlive;
+	this.keepConnAlive = keepConnAlive;
   }
 
 
@@ -643,6 +663,7 @@ public class Options
     private TextField srvHostTextField;
     private TextField srvPortTextField;
     private ChoiceGroup keepConnAliveChoiceGroup;
+	private ChoiceGroup connTypeChoiceGroup;
     private ChoiceGroup uiLanguageChoiceGroup;
     private ChoiceGroup displayDateChoiceGroup;
     private ChoiceGroup clSortByChoiceGroup;
@@ -695,6 +716,12 @@ public class Options
       this.keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "keep_conn_alive"), Choice.MULTIPLE);
       this.keepConnAliveChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
       this.keepConnAliveChoiceGroup.setSelectedIndex(0,Options.this.isKeepConnAlive());
+	  this.connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "conn_type"), Choice.MULTIPLE);
+	  this.connTypeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "async"), null);
+	  if (Options.this.getConnType() == 0)
+	  	this.connTypeChoiceGroup.setSelectedIndex(0,false);
+	  else
+	  	this.connTypeChoiceGroup.setSelectedIndex(0,true);
 
       // Initialize elements (interface section)
       this.uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "language"), Choice.EXCLUSIVE);
@@ -842,6 +869,7 @@ public class Options
             this.optionsForm.append(this.srvHostTextField);
             this.optionsForm.append(this.srvPortTextField);
             this.optionsForm.append(this.keepConnAliveChoiceGroup);
+            this.optionsForm.append(this.connTypeChoiceGroup);
             break;
           case 2:
             this.optionsForm.append(this.uiLanguageChoiceGroup);
@@ -909,6 +937,10 @@ public class Options
             Options.this.setSrvHost(this.srvHostTextField.getString());
             Options.this.setSrvPort(this.srvPortTextField.getString());
             Options.this.setKeepConnAlive(this.keepConnAliveChoiceGroup.isSelected(0));
+			if (this.connTypeChoiceGroup.isSelected(0))
+				Options.this.setConnType(1);
+			else
+				Options.this.setConnType(0);
             break;
           case 2:
             Options.this.setUiLanguage(ResourceBundle.LANG_AVAILABLE[this.uiLanguageChoiceGroup.getSelectedIndex()]);
