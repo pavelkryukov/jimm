@@ -22,9 +22,6 @@
  *******************************************************************************/
 
 
-// #sijapp cond.if cp1251 is "true" #
-
-
 package jimm.comm;
 
 
@@ -94,5 +91,3 @@ public class Encoding
 
 }
 
-
-// #sijapp cond.end #
