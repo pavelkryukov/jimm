@@ -4,11 +4,11 @@
 
 ================================================================================
 README
-_______________________________________________________________________________
+________________________________________________________________________________
 ABOUT
 
 Jimm is a native ICQ clone for Java 2 Platform Micro Edition (J2ME), Mobile
-Information Device Profile (MIDP) 1.0 and 2.0 . It supports the new v8 protocol, 
+Information Device Profile (MIDP) 1.0 and 2.0 . It supports the new v8 protocol,
 former protocols are not supported.
 
 Jimm is probably the most lightweight ICQ clone available, so please do not
@@ -23,14 +23,14 @@ the following features:
   *  Send file transfer messages and send files (type 2 and direct connection)
   *  Set your status (away, n/a, etc.)
   *  Receive status updates (user is away, n/a, etc.)
-  *  Request information about another user
+  *  Request information about other users
   *  Remove users from the server side contact list
   *  Search for users
   *  Add users to the server side contact list
   *  Answer authorization requests
   *  Multilingual user interface
 
-____________________________________________________________________________
+________________________________________________________________________________
 PACKAGE CONTENTS
 
   |- README (this file)
@@ -69,12 +69,12 @@ ________________________________________________________________________________
 HOW TO INSTALL
 
 Copy Jimm.jad and Jimm.jar (found inside the bin directory) to your mobile
-phone. If you have a Siemens Mobile residing bellow the XX65 line (eg. S55, 
-M55...), use the files found inside the bin/siemens directory. If you have a
-phone which is capable of running MIDP2 applications (e.g. Siemens XX65 and
-above) please use the files found inside the bin/midp2 directory. For 
-Blackberry handhelds please use the bin/rim directory. Follow the 
-instructions in your mobile phone manual to start the Java application.
+phone. If you have a Siemens 55 series mobile (e.g. S55, M55), use the files
+found inside the bin/SIEMENS directory. If you have a phone which is capable of
+running MIDP2 applications (e.g. Siemens XX65 and above), use the files found
+inside the bin/MIDP2 directory. For Blackberry handhelds please use the bin/RIM
+directory. Follow the instructions in your mobile phone manual to start the Java
+application.
 
 At first start-up, select 'Options' and set your UIN and password. The default
 values for the ICQ server host and port should be okay. Option values are
@@ -156,7 +156,7 @@ Delays at message sending/receiving are negligible and can be ignored.
 
 Currently, Jimm requires about 250 KB of RAM, depending on the size of your
 contact list, and the activity on the ICQ network. Jimm also requires support
-for socket (TCP/IP) connections, which *is not* required to be
+for socket (TCP/IP) connections, which *is not* required by MIDP 1.0 to be
 standard-compliant but some vendor implementations include. Check your mobile
 phone manual.
 
@@ -214,13 +214,13 @@ Core development team:
 Contributors:
   *  Sergey Mymrikov (Contact status and program icons)
   *  Spassky Alexander (Type-2 Message support)
-  *  Mathias Hülsbusch (Mathematical art used for splash screen)
+  *  Mathias Huelsbusch (Mathematical art used for splash screen)
   *  Andrey B. Ivlev (Russian translation, Cyrillic character support)
   *  Sergey Chernov (Russian translation, Cyrillic character support)
   *  David Ethell (RIM sound and vibra support)
   *  Alexei Solonets (Russian translation)
   *  Miloslav Vorlieek (Czech translation)
-  *  Martin Björkman (Swedish translation)
+  *  Martin Bjoerkman (Swedish translation)
   *  Linas Gricius (Lithuanian translation)
   *  Mario B. Napoli (Italian translation)
   *  Urukalo Milan (Serbian translation)
