@@ -176,5 +176,6 @@ VERSION 0.3.3
   * There now is a back (cancel) option on the options pages
   * New option: Auto connect on startup
   * A message how to disable keylock is shown on splash screen if trying it the wrong way
+  * Free heap mem can be seen at the bottom of about page
   * Added Ukrainian translation
   

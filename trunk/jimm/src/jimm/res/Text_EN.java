@@ -84,6 +84,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("filepath",                    "File path");
 		resources.put("find",                        "Find");
 		resources.put("firstname",                   "First name");
+		resources.put("free_heap",                   "Free heap");
 		resources.put("ft_name",                     "Send file");		
 		resources.put("ft_cam",                      "Send camera image");		
 		resources.put("gender",                      "Gender");
