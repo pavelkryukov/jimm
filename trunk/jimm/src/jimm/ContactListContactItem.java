@@ -489,6 +489,7 @@ public class ContactListContactItem extends ContactListItem
 
     private class Menu implements CommandListener
     {
+    	final public static int MSGBS_DELETECONTACT = 1; 
 
         // Command listener
         public void commandAction(Command c, Displayable d)
@@ -614,12 +615,14 @@ public class ContactListContactItem extends ContactListItem
                     break;
                 case 5:
                     // Remove
-                    MenuUtil.deleteUserAlert = new Alert(ResourceBundle.getString("remove")+"?",ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",null,AlertType.CONFIRMATION);
-                    MenuUtil.deleteUserAlert.addCommand(MenuUtil.textboxOkCommand);
-                    MenuUtil.deleteUserAlert.addCommand(MenuUtil.textboxCancelCommand);
-                    MenuUtil.deleteUserAlert.setCommandListener(this);
-                    Jimm.display.setCurrent(MenuUtil.deleteUserAlert);
-                    
+                	Jimm.jimm.messageBox
+					(
+						ResourceBundle.getString("remove")+"?",
+						ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",
+						Jimm.MESBOX_OKCANCEL,
+						this,
+						MSGBS_DELETECONTACT
+					);
                     break;
                     
                 case 6:
@@ -671,12 +674,14 @@ public class ContactListContactItem extends ContactListItem
                     break;
                 case 3:
                     // Remove
-                    MenuUtil.deleteUserAlert = new Alert(ResourceBundle.getString("remove")+"?",ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",null,AlertType.CONFIRMATION);
-                    MenuUtil.deleteUserAlert.addCommand(MenuUtil.textboxOkCommand);
-                    MenuUtil.deleteUserAlert.addCommand(MenuUtil.textboxCancelCommand);
-                    MenuUtil.deleteUserAlert.setCommandListener(this);
-                    Jimm.display.setCurrent(MenuUtil.deleteUserAlert);
-                    
+                	Jimm.jimm.messageBox
+					(
+						ResourceBundle.getString("remove")+"?",
+						ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",
+						Jimm.MESBOX_OKCANCEL,
+						this,
+						MSGBS_DELETECONTACT
+					);
                     break;
                     
                 case 4:
@@ -824,13 +829,20 @@ public class ContactListContactItem extends ContactListItem
                     requReason = false;
                     Jimm.jimm.getContactListRef().activate();
                 }
-                // If user interaction deleteUserAlert is shown.
-                else if (d == MenuUtil.deleteUserAlert)
-                {
-                    Jimm.jimm.getIcqRef().delFromContactList(ContactListContactItem.this);
-                }
-
             }
+            
+            // user select Ok in delete contact message box
+            else if (Jimm.jimm.isMsgBoxCommand(c, MSGBS_DELETECONTACT) == 1)
+            {
+            	Jimm.jimm.getIcqRef().delFromContactList(ContactListContactItem.this);
+            }
+            
+            // user select CANCEL in delete contact message box
+            else if (Jimm.jimm.isMsgBoxCommand(c, MSGBS_DELETECONTACT) == 2)
+            {
+            	this.activate();
+            }
+            
             // Textbox has been canceled
             else if (c == MenuUtil.textboxCancelCommand)
             {

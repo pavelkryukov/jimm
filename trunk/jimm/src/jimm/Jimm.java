@@ -32,6 +32,10 @@ import java.util.Timer;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Form;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -237,6 +241,46 @@ public class Jimm extends MIDlet
 		return (this.traffic);
 	}
 	// #sijapp cond.end#
+	
+	// Commands for the message box
+	private Command msgCommand1, msgCommand2;
+	private int msgBoxTag;
 
+	public int isMsgBoxCommand(Command testCommand, int testTag)
+	{
+		if (msgBoxTag == testTag)
+		{
+			if (testCommand == msgCommand1) return 1;
+			else if (testCommand == msgCommand2) return 2;
+		}	
+		return -1;
+	}
+
+	final public static int MESBOX_YESNO    = 1;
+	final public static int MESBOX_OKCANCEL = 2;
+	public void messageBox(String cap, String text, int type, CommandListener listener, int tag)
+	{
+		msgBoxTag = tag;
+		Form msgForm = new Form(cap);
+		msgForm.append(text);
+		
+		switch (type)
+		{
+		case MESBOX_YESNO:
+			msgCommand1 = new Command(ResourceBundle.getString("yes"), Command.OK, 1);
+			msgCommand2 = new Command(ResourceBundle.getString("no"), Command.CANCEL, 2);
+			break;
+		case MESBOX_OKCANCEL:
+			msgCommand1 = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
+			msgCommand2 = new Command(ResourceBundle.getString("cancel"), Command.CANCEL, 2);
+			break;
+		}
+		
+		msgForm.addCommand(msgCommand1);
+		msgForm.addCommand(msgCommand2);
+
+		msgForm.setCommandListener(listener);
+		display.setCurrent(msgForm);
+	}
 
 }
