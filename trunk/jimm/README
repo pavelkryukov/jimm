@@ -113,9 +113,9 @@ install Apache Ant.
 You also must have a Java 2 Platform Standard Edition (J2SE) SDK. Depending on
 the selected target you also need the following:
 
-  * DEFAULT target: MIDP Reference Implementation (RI) 1.0.3
+  * DEFAULT target: J2ME Wireless Toolkit 2.2
       <http://java.sun.com/j2me/>
-  * MIDP2 target: MIDP Reference Implementation (RI) 2.0
+  * MIDP2 target: J2ME Wireless Toolkit 2.2
       <http://java.sun.com/j2me/>
   * RIM target: Latest version of the Blackberry SDK
       <http://www.blackberry.com/developers/>
@@ -124,17 +124,12 @@ the selected target you also need the following:
 		
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
-instructions in the ProGuard manual to install ProGuard.
+instructions in the ProGuard manual to install ProGuard. Jimm requires ProGuard
+3.1 or later.
 
 At first, open the Apache ant buildfile (build.xml) and change the properties in
 the configuration/customization section. You can use both the slash and the
 backslash for separating path components.
-
-If you are using the J2ME Wireless Toolkit 2.0 (or later) from Sun, you have to
-join the midpapi20.jar or midpapi10.jar file with the corresponding
-cldcapi1x.jar file. If you want to build the MIDP2 target, you also have to
-include the contents of mmapi.jar in the main .jar archive you link to in the
-path you entered in build.xml
 
 To build Jimm, just type 'ant' or 'ant dist'. To disable class file obfuscation,
 add '-Dskip-obfuscate=1' to the before mentioned command. If everything goes
