@@ -83,6 +83,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("lang_LT",                     "Litevsky");
 		resources.put("lang_RU",                     "Rusky");
 		resources.put("lang_SE",                     "Svenska");
+		resources.put("lang_SR",                     "Српски");
 		resources.put("loading",                     "Nahrávám");
 		resources.put("me",                          "já");
 		resources.put("menu",                        "Menu");

@@ -97,6 +97,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("lang_LT",                     "Lietuvių");
 		resources.put("lang_RU",                     "Rusų");
 		resources.put("lang_SE",                     "Švedų");
+		resources.put("lang_SR",                     "Српски");
 		resources.put("lastname",                    "Pavardė");		
 		resources.put("loading",                     "Kraunasi");
 		resources.put("male",                        "V");		
