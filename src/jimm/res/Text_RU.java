@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
  Copyright (C) 2003-04  Jimm Project
 
@@ -18,11 +18,11 @@
  ********************************************************************************
  File: src/jimm/res/Text_RU.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher, Andrey B. Ivlev
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Alexei Solonets
  *******************************************************************************/
 
 
-// #sijapp cond.if lang_RU is "true" #
+// #sijapp cond.if lang_EN is "true" #
 
 
 package jimm.res;
@@ -41,91 +41,118 @@ public class Text_RU extends ResourceBundle
 		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "О программе");
-		resources.put("about_info",                  "Jimm - Мобильный ICQ\nICQ клиент для J2ME\n\nВерсия ###VERSION###\n http://jimm.sourceforge.net/");
-		resources.put("account",                     "Пользователь");
+		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\n http://jimm.sourceforge.net/");
+		resources.put("account",                     "Учетная запись");
 		resources.put("add_user",                    "Добавить пользователя");
-		resources.put("async",                       "Async");
+		resources.put("add_to_list",                 "Добавить в список");
+		resources.put("age",                         "Возраст");
+		resources.put("async",                       "Асинхронная передача");
+		resources.put("auth",				     	 "Авторизация");
 		resources.put("back",                        "Назад");
 		// #sijapp cond.if target is "SIEMENS" #
-		resources.put("beep",                        "Сигнал");
+		resources.put("beep",                        "Гудок");
 		// #sijapp cond.end #
-		resources.put("byte",                        "Byte");
+		resources.put("byte",                        "Байт");
 		resources.put("cancel",                      "Отмена");
+		resources.put("city",                        "Город");
 		resources.put("close",                       "Закрыть");
-		resources.put("conn_type",                   "Connection type");
+		resources.put("conn_type",                   "Тип подключения");
 		resources.put("connect",                     "Подключиться");
 		resources.put("connecting",                  "Подключение");
-		resources.put("contact_list",                "Контакты");
-		resources.put("cp1251",                      "Use CP1252 hack?");
-		resources.put("cpd",                         "Стоимость за день");
+		resources.put("contact_list",                "Список");
+		resources.put("cp1251",                      "Исправлять ошибку CP1252?");
+		resources.put("cpd",                         "Стоимость в день");
 		resources.put("cpp",                         "Стоимость пакета");
 		resources.put("currency",                    "Валюта");
-		resources.put("delete_chat",                 "Удалить разговоры");
+		resources.put("delete_chat",                 "Удалить чат");
+		resources.put("deny",						 "Отклонить авторизацию");
+		resources.put("denyedby",					 "Ваш запрос на авторизацию отклонил: ");
 		resources.put("user_menu",                   "Меню пользователя");
-		resources.put("disconnect",                  "Отключиться");
+		resources.put("disconnect",                  "Отключить");
 		resources.put("disconnecting",               "Отключение");
 		resources.put("display_advertisement",       "Добавить подпись Jimm?");
-		resources.put("display_date",                "Показывать дату на заставке?");
-		resources.put("email",                       "Почта");
+		resources.put("display_date",                "Отображать дату на заставке?");
+		resources.put("email",                       "Email");
 		resources.put("error",                       "Ошибка");
 		resources.put("exit",                        "Выход");
-		resources.put("hide_offline",                "Прятать отключившихся");
+		resources.put("female",                      "Ж");
+		resources.put("firstname",                   "Имя");
+		resources.put("gender",                      "Пол");
+		resources.put("grant",						 "Авторизировать");
+		resources.put("grantedby",					 "Вас авторизировал: ");
+		resources.put("hide_offline",                "Скрывать отключившихся");
 		resources.put("info",                        "Информация");
-		resources.put("kb",                          "kB");
-		resources.put("keep_chat",                   "Keep chat histroy?");
-		resources.put("keep_conn_alive",             "Поддерживать соединение?");
-		resources.put("keylock_enable",              "Включить блокировку клавиатуры");
-		resources.put("keylock_enabled",             "Блокировка клавиатуры включена");
+		resources.put("kb",                          "КБ");
+		resources.put("keep_chat",                   "Хранить историю чата?");
+		resources.put("keep_conn_alive",             "Поддерживать подключение?");
+		resources.put("keylock_enable",              "Блокировка клавиатуры");
+		resources.put("keylock_enabled",             "Блокировка включена");
+		resources.put("keyword",                     "Ключевое слово");
 		resources.put("language",                    "Язык");
 		resources.put("lang_BR",                     "Португальский (Бразилия)");
-		resources.put("lang_CZ",                     "Чешском");
+		resources.put("lang_CZ",                     "Чешский");
 		resources.put("lang_DE",                     "Немецкий");
 		resources.put("lang_EN",                     "Английский");
 		resources.put("lang_ES",                     "Испанский");
-		resources.put("lang_LT",                     "Литовском");
+		resources.put("lang_IT",                     "Итальянский");
+		resources.put("lang_LT",                     "Литовский");
 		resources.put("lang_RU",                     "Русский");
-		resources.put("lang_SE",                     "Шведском");
+		resources.put("lang_SE",                     "Шведский");
+		resources.put("lastname",                    "Фамилия");
 		resources.put("loading",                     "Загрузка");
+		resources.put("male",                        "M");
 		resources.put("me",                          "Я");
 		resources.put("menu",                        "Меню");
+		resources.put("msg_sound_file_name",         "Файл звука сообщения");
+		resources.put("message_notification",        "Уведомление о сообщении");
 		resources.put("message",                     "Сообщение");
 		resources.put("message_from",                "Сообщение от");
-		// #sijapp cond.if target is "SIEMENS" #
-		resources.put("message_notification",        "Уведомление");
-		// #sijapp cond.end #
 		resources.put("name",                        "Имя");
-		resources.put("nick",                        "Псевдоним");
+		resources.put("next",						 "Дальше");
+		resources.put("nick",                        "Ник");
 		resources.put("no",                          "Нет");
-		resources.put("not_implemented",             "Функция не поддерживается.");
-		resources.put("notice",                      "Замечание");
+		resources.put("no_results",                  "Нет результатов");
+		resources.put("not_implemented",             "Функция не поддерживается");
+		resources.put("noreason",             		 "Причина не дана");
+		resources.put("notice",                      "Уведомление");
+		resources.put("nr",				     		 "Номер");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Один раз за сессию");
+		resources.put("onl_notification",            "Информировать о подключившемся контакте");
+		resources.put("onl_sound_file_name",         "Файл звука подключения");
+		resources.put("only_online",                 "Показывать только онлайн контакты");
 		resources.put("options",                     "Настройки");
 		resources.put("options_account",             "Учетная запись");
 		resources.put("options_cost",                "Стоимость");
-		resources.put("options_effect",              "Изменения вступят в силу после переподключения!");
+		resources.put("options_effect",              "Вам необходимо переподключиться для применения изменений");
 		resources.put("options_interface",           "Интерфейс");
 		resources.put("options_network",             "Сеть");
-		resources.put("options_other",               "Другое");
+		resources.put("options_other",               "Разное");
 		resources.put("password",                    "Пароль");
-		resources.put("plength",                     "Длина оплачиваемого пакета в kB");
+		resources.put("plength",                     "Длина оплачиваемого пакета в КБ");
+		resources.put("plsauthme",                   "Привет! Пожалуйста, авторизируй меня и разреши добавить тебя в контакт-лист");
+		resources.put("prev",						 "Предыдущий");
+		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Удалить из списка");
-		resources.put("reply",                       "Ответ");
-		resources.put("reset",                       "Сброс");
-		resources.put("save",                        "Сохрани");
-		resources.put("search_user",                 "Поиск пользователя");
-		resources.put("send",                        "Послать");
+		resources.put("reply",                       "Ответить");
+		resources.put("requauth",                    "Запрос авторизации");
+		resources.put("requ",                        "Требуется");
+		resources.put("requno",                      "Не требуется");
+		resources.put("reset",                       "Сбросить");
+		resources.put("results",                     "Результаты");
+		resources.put("save",                        "Сохранить");
+		resources.put("search_user",                 "Найти пользователя");
+		resources.put("send",                        "Отправить");
 		resources.put("send_message",                "Новое сообщение");
 		resources.put("send_url",                    "Новый URL");
-		resources.put("server",                      "Начать сеанс");
+		resources.put("server",                      "Сервер");
 		resources.put("server_host",                 "Имя сервера");
 		resources.put("server_port",                 "Порт");
 		resources.put("session",                     "Сессия");
-		resources.put("set_status",                  "Установить состояние");
-		resources.put("since",                       "После");
-		resources.put("sound",                       "Звук ICQ");
-		resources.put("sound_file_name",             "Sound File Name");
-		resources.put("sort_by",                     "Сортировать контакты");
+		resources.put("set_status",                  "Установить статус");
+		resources.put("since",                       "Начиная с");
+		resources.put("sound",                       "Имя файла");
+		resources.put("sort_by",                     "Сортировать контакт-лист");
 		resources.put("sort_by_name",                "По имени");
 		resources.put("sort_by_status",              "По статусу");
 		resources.put("status_away",                 "Отсутствую");
@@ -134,35 +161,39 @@ public class Text_RU extends ResourceBundle
 		resources.put("status_invisible",            "Невидимый");
 		resources.put("status_na",                   "Недоступен");
 		resources.put("status_occupied",             "Занят");
-		resources.put("status_offline",              "Отключен");
-		resources.put("status_online",               "В сети");
-		resources.put("traffic",                     "Тарификация");
+		resources.put("status_offline",              "Оффлайн");
+		resources.put("status_online",               "Онлайн");
+		resources.put("sysnotice",					 "Системное уведомление");
+		resources.put("traffic",                     "Трафик");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Добавить пользователя");
-		resources.put("user_search",                 "Поиск пользователя");
+		resources.put("user_search",                 "Найти пользователя");
 		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Вибрация");
 		// #sijapp cond.end #
-		resources.put("wait",                        "Подождитите пожалуйста ...");
+		resources.put("wait",                        "Пожалуйста, ждите ...");
 		resources.put("warning",                     "Предупреждение");
+		resources.put("wantsyourauth",				 " хочет авторизироваться. Причина: ");
+		resources.put("whichgroup",				 	 "В какой группе?");
 		resources.put("yes",                         "Да");
+		resources.put("youwereadded",				 "Вас добавил: ");
 
 		// Generic errors
-		resources.put("error_100", "Неизвестная ошибка (#100.EXT)");
+		resources.put("error_100",                   "Неизвестная ошибка (#100.EXT)");
 
 		// Login specific errors
 		resources.put("error_110",                   "Множественный вход с тем же UIN (#110.EXT)");
-		resources.put("error_111",                   "Ошибка пароля (#111.EXT)");
+		resources.put("error_111",                   "Неверный пароль (#111.EXT)");
 		resources.put("error_112",                   "Несуществующий UIN (#112.EXT)");
 		resources.put("error_113",                   "Слишком много клиентов с одного IP (#113.EXT)");
 		resources.put("error_114",                   "Попытки исчерпаны (#114.EXT)");
-		resources.put("error_115",                   "Контакты не разобраны (#115.EXT)");
-		resources.put("error_116",                   "Сообщение во время отключения не разобрано (#116.EXT)");
-		resources.put("error_117",                   "Пустые UIN и/или пароль (#117.EXT)");
-		resources.put("error_118",                   "Нет ответа от сервера (#118.EXT)");
+		resources.put("error_115",                   "Контакт-лист не может быть обработан (#115.EXT)");
+		resources.put("error_116",                   "Оффлайн сообщение не может быть обработано (#116.EXT)");
+		resources.put("error_117",                   "Нет UIN и/или пароля (#117.EXT)");
+		resources.put("error_118",                   "Сервер не отвечает (#118.EXT)");
 
-		// Network communication  specific exceptions
+		// Network communication specific exceptions
 		resources.put("error_120",                   "Произошла ошибка ввода-вывода (#120.EXT)");
 		resources.put("error_121",                   "Требуемое TCP соединение неосуществимо (#121.EXT)");
 		resources.put("error_122",                   "Указанный сервер и/или порт некорректны (#122.EXT)");
@@ -170,24 +201,30 @@ public class Text_RU extends ResourceBundle
 		resources.put("error_124",                   "Входной поток не синхронизован (#124.EXT)");
 
 		// Parsing specific errors
-		resources.put("error_130",                   "FLAP заголовок не разобран (#130.EXT)");
+		resources.put("error_130",                   "FLAP заголовок не обработан (#130.EXT)");
 		resources.put("error_131",                   "Неизвестный канал (#131.EXT)");
-		resources.put("error_132",                   "Пакет подсоединенного канала не разобран (#132.EXT)");
-		resources.put("error_133",                   "SNAC заголовок не разобран (#133.EXT)");
-		resources.put("error_134",                   "Ошибка пакета канала не разобрана (#134.EXT)");
-		resources.put("error_135",                   "Пакет отсоединенного канала не разобран (#135.EXT)");
-		resources.put("error_136",                   "Пакет канала ping не разобран (#136.EXT)");
-		resources.put("error_137",                   "Заголовок старого протокола ICQ не разобран (#137.EXT)");
+		resources.put("error_132",                   "Пакет подсоединенного канала не обработан (#132.EXT)");
+		resources.put("error_133",                   "SNAC заголовок не обработан (#133.EXT)");
+		resources.put("error_134",                   "Ошибка пакета канала не обработана (#134.EXT)");
+		resources.put("error_135",                   "Пакет отсоединенного канала не обработан (#135.EXT)");
+		resources.put("error_136",                   "Пакет канала ping не обработан (#136.EXT)");
+		resources.put("error_137",                   "Заголовок старого протокола ICQ не обработан (#137.EXT)");
 
 		// Action errors
 		resources.put("error_140",                   "Требуемое действие не может быть выполнено в данное время (#140.EXT)");
 
-		// Specififc action errors
-		resources.put("error_150",                   "Полученное сообщение не разобрано (#150.EXT)");
-		resources.put("error_151",                   "Полученное сообщение 1 типа не разобрано (#151.EXT)");
-		resources.put("error_152",                   "Полученное сообщение 2 типа не разобрано (#152.EXT)");
-		resources.put("error_153",                   "Полученное сообщение 4 типа не разобрано (#153.EXT)");
+		// Specific action errors
+		resources.put("error_150",                   "Полученное сообщение не обработано (#150.EXT)");
+		resources.put("error_151",                   "Полученное сообщение 1 типа не обработано (#151.EXT)");
+		resources.put("error_152",                   "Полученное сообщение 2 типа не обработано (#152.EXT)");
+		resources.put("error_153",                   "Полученное сообщение 4 типа не обработано (#153.EXT)");
 		resources.put("error_154",                   "Ошибка обновления списка пользователей (#154.EXT)");
+		resources.put("error_155",                   "Объект уже находится в списке на сервере (#155.EXT)");
+		resources.put("error_156",                   "Ошибка добавления. Попробуйте снова (#156.EXT)");
+		resources.put("error_157",                   "Разрешено не больше количество элементов этого типа (#157.EXT)");
+		resources.put("error_158",                   "Вы совершили попытку добавить пользователя ICQ в спиок AIM (#158.EXT)");
+		resources.put("error_159",                   "Сервер не отвечает на запрос поиска. Попробуйте снова (#159.EXT)");
+		resources.put("error_160",                   "Ошибка поиска (#160.EXT)");
 
 		// Other errors
 		resources.put("error_160",                   "Возможно, недостаточно памяти (#160.EXT)");
