@@ -33,17 +33,19 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- Change this to the directory where MIDP SDK 1.0.3 is installed. You   -->
 	<!-- can use both the slash and the backslash for separating path          -->
 	<!-- components.                                                           -->
-	<property name="DEFAULT/midp"      value="CHANGE ME"                        />
+	<property name="DEFAULT/midp"      value="CHANGE ME"                  	    />
 	<property name="SIEMENS/midp"      value="CHANGE ME"                        />
+	<property name="RIM/midp"          value="CHANGE ME"                        />
 	<!-- ********************************************************************* -->
 	<!-- This property must point at the MIDP API classes and all extension    -->
 	<!-- classes required by the chosen target.                                -->
-	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/midp.jar"     />
+	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/midpapi.zip"  />
 	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/api.jar"      />
+	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar"  />
 	<!-- ********************************************************************* -->
 	<!-- Change this to the directory where ProGuard is installed. You can     -->
-	<!-- use both the slash and the backslash for separating path components   -->
-	<property name="proguard"          value="CHANGE ME"                        />
+	<!-- use both the slash and the backslash for separating path components.  -->
+	<property name="proguard"     value="CHANGE ME"                             />
 	<!-- ********************************************************************* -->
 	<!-- This property must point at the ProGuard JAR file, normally found in  -->
 	<!-- the lib directory of the ProGuard distribution.                       -->
@@ -53,7 +55,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ********************************************************************* -->
 	<!-- Build target. If you have a Siemens mobile, set this property to      -->
 	<!-- SIEMENS. If you have a MIDP2 compartible mobile, set this property to -->
-	<!-- MIDP2. Otherwise go with the default value (DEFAULT).                 -->
+	<!-- MIDP2. If you have a Blackberry, set this property to RIM.            -->
+	<!-- Otherwise go with the default value (DEFAULT).                        -->
 	<property name="target"            value="DEFAULT"                          />
 	<!-- ********************************************************************* -->
 	<!-- This value is a comma separated list of modules which should be       -->
@@ -64,7 +67,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- This value is a comma separated list of languages packs which should  -->
 	<!-- be included in the build. Currently, the distribution includes        -->
 	<!-- English ("EN"), German ("DE"), Russian ("RU"), Spanish ("ES")         -->
-	<!-- Brasilian ("BR") Chechz ("CZ") Swedish ("SE"), Lithuanian ("LT"   )   -->
+	<!-- Brasilian ("BR") Chechz ("CZ") Swedish ("SE"), Lithuanian ("LT")      -->
 	<!-- and Italien ("IT") language packs.                                    -->
 	<property name="lang"              value="EN,DE,RU,ES,BR,CZ,SE,LT,IT"       />
 	<!-- ********************************************************************* -->
@@ -89,7 +92,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 
 	<!-- Set default version number -->
-	<property name="version" value="0.2pre1"/>
+	<property name="version" value="0.2pre3"/>
 	<property name="version/java" value="0.1"/>
 
 
@@ -119,6 +122,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp" value="${SIEMENS/midp}">
 			<equals arg1="${target}" arg2="SIEMENS"/>
 		</condition>
+		<condition property="midp" value="${RIM/midp}">
+			<equals arg1="${target}" arg2="RIM"/>
+		</condition>
 		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
@@ -127,6 +133,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</condition>
 		<condition property="midp/lib" value="${SIEMENS/midp/lib}">
 			<equals arg1="${target}" arg2="SIEMENS"/>
+		</condition>
+		<condition property="midp/lib" value="${RIM/midp/lib}">
+		    <equals arg1="${target}" arg2="RIM"/>
 		</condition>
 	</target>
 
