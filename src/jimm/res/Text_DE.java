@@ -86,6 +86,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("lang_DE",                     "Deutsch");
 		resources.put("lang_EN",                     "Englisch");
 		resources.put("lang_ES",                     "Spanisch");
+		resources.put("lang_IT",                     "Italienisch");
 		resources.put("lang_LT",                     "Litauisch");
 		resources.put("lang_RU",                     "Russisch");
 		resources.put("lang_SE",                     "Schwedisch");
@@ -113,9 +114,11 @@ public class Text_DE extends ResourceBundle
 		resources.put("options_other",               "Sonstiges");
 		resources.put("password",                    "Passwort");
 		resources.put("plength",                     "Länge des Abrechnungspakets in kB");
+		resources.put("plsauthme",                   "Hallo! Bitte authorisieren sie meine Anfrage sie zu meiner Kontaktliste hinzuzufügen.");
 		resources.put("reason",						 "Grund");
 		resources.put("remove",                      "Aus der Liste entfernen");
 		resources.put("reply",                       "Antworten");
+		resources.put("requauth",                    "Beantrage Auth");
 		resources.put("reset",                       "Zurücks.");
 		resources.put("save",                        "Sichern");
 		resources.put("search_user",                 "Benutzer suchen");
@@ -153,6 +156,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("wait",                        "Bitte warten ...");
 		resources.put("warning",                     "Warnung");
 		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
+		resources.put("whichgroup",				 	 "Welche Gruppe?");
 		resources.put("yes",                         "Ja");
 		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
 

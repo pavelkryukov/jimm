@@ -86,6 +86,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("lang_DE",                     "German");
 		resources.put("lang_EN",                     "English");
 		resources.put("lang_ES",                     "Spanish");
+		resources.put("lang_IT",                     "Italian");
 		resources.put("lang_LT",                     "Lithuanian");
 		resources.put("lang_RU",                     "Russian");
 		resources.put("lang_SE",                     "Swedish");
@@ -113,9 +114,11 @@ public class Text_EN extends ResourceBundle
 		resources.put("options_other",               "Other");
 		resources.put("password",                    "Password");
 		resources.put("plength",                     "Length of charge packet in kB");
+		resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
 		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
 		resources.put("reply",                       "Reply");
+		resources.put("requauth",                    "Request auth");
 		resources.put("reset",                       "Reset");
 		resources.put("save",                        "Save");
 		resources.put("search_user",                 "Search for User");
@@ -153,6 +156,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("wait",                        "Please wait ...");
 		resources.put("warning",                     "Warning");
 		resources.put("wantsyourauth",				 " wants your Authorisation. Reason: ");
+		resources.put("whichgroup",				 	 "Which group?");
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
 
