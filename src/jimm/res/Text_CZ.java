@@ -54,7 +54,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("connect",                     "Pripojení");
 		resources.put("connecting",                  "Pripojuji");
 		resources.put("contact_list",                "Seznam");
-		resources.put("cp1251",                      "Use CP1252 hack?");
+		resources.put("cp1251",                      "Use CP1251 hack?");
 		resources.put("cpd",                         "Cena za den");
 		resources.put("cpp",                         "Cena za paket");
 		resources.put("currency",                    "Mena");

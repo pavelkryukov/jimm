@@ -58,7 +58,7 @@ public class Text_IT extends ResourceBundle
 		resources.put("connect",                     "Connettiti");
 		resources.put("connecting",                  "Connessione in corso");
 		resources.put("contact_list",                "Lista");
-		resources.put("cp1251",                      "Usare hack CP1252?");
+		resources.put("cp1251",                      "Usare hack CP1251?");
 		resources.put("cpd",                         "Costo giornaliero");
 		resources.put("cpp",                         "Costo per pacchetto");
 		resources.put("currency",                    "Valuta");

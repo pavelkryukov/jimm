@@ -58,7 +58,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("connect",                     "Подключиться");
 		resources.put("connecting",                  "Подключение");
 		resources.put("contact_list",                "Список");
-		resources.put("cp1251",                      "Исправлять ошибку CP1252?");
+		resources.put("cp1251",                      "Исправлять ошибку CP1251?");
 		resources.put("cpd",                         "Стоимость в день");
 		resources.put("cpp",                         "Стоимость пакета");
 		resources.put("currency",                    "Валюта");
