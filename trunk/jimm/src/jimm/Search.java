@@ -35,11 +35,10 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
+
+import DrawControls.TextList;
 
 public class Search
 {
@@ -207,7 +206,7 @@ public class Search
 
         // Forms for results and query
         private Form searchForm;
-        private Form resultScreen;
+        private TextList resultScreen;
 
         // List for group selection
         private List groupList;
@@ -274,8 +273,7 @@ public class Search
             this.searchForm.setCommandListener(this);
 
             // Result Screen
-            resultScreen = new Form(ResourceBundle.getString("results"));
-
+            resultScreen = new TextList(ResourceBundle.getString("results"),TextList.getDefCapColor(),TextList.getDefCapFontColor(),TextList.getDefBackColor(),TextList.SMALL_FONT,TextList.SEL_NONE);
             resultScreen.addCommand(this.previousComamnd);
             resultScreen.addCommand(this.nextCommand);
             resultScreen.addCommand(this.addCommand);
@@ -296,17 +294,8 @@ public class Search
         public void drawResultScreen(int n)
         {
 
-            // Fonts used for result screen
-            Font typeFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_SMALL);
-            Font contentFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-
-            // Image used to print a result item in
-            Image resultImage;
-            Image copy;
-            Graphics g;
-
             // Remove the older entrys here
-            if (resultScreen.size() > 0) resultScreen.delete(0);
+            resultScreen.clear();
 
             if (Search.this.size() > 0)
             {
@@ -317,117 +306,59 @@ public class Search
                     resultScreen.removeCommand(this.previousComamnd);
                 }
                 
-                // Which line we are writing to?
-                int lineMarker = 0;
-
-                // Image used to print a result item in
-                resultImage = Image.createImage(120, typeFont.getHeight() * 5 + 4 + 18);
-                g = resultImage.getGraphics();
-
                 // Draw a result entry
+                resultScreen.lock();
+                resultScreen.setCaption(ResourceBundle.getString("results")+" "+new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString());
+                // UIN
+                resultScreen.addBigText(ResourceBundle.getString("uin")+": ",0x0,Font.STYLE_BOLD);
+                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_UIN), 0x0000ff, Font.STYLE_PLAIN);
+                       
+                // Nick
+                resultScreen.addBigText(ResourceBundle.getString("nick") + ": ",0x0,Font.STYLE_BOLD);
+                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NICK), 0x0000ff, Font.STYLE_PLAIN);
                 
-                // First draw the field markers in a different font
-                g.setColor(0, 0, 0);
-                g.setFont(typeFont);
+                // Name
+                resultScreen.addBigText(ResourceBundle.getString("name") + ": ",0x0,Font.STYLE_BOLD);
+                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NAME), 0x0000ff, Font.STYLE_PLAIN);
                 
-                // Draw "Nr.: "
-                g.drawString(ResourceBundle.getString("nr") + ".: ", 0, 2, Graphics.TOP | Graphics.LEFT);
-                // Draw "UIN: "
-                g.drawString(" " + ResourceBundle.getString("uin") + ": ", typeFont.stringWidth(ResourceBundle.getString("nr")+ ".: ") + contentFont.stringWidth(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString()), 2, Graphics.TOP | Graphics.LEFT);
-                lineMarker+=1;
-                
-                // Draw "Nick: "
-                g.drawString(ResourceBundle.getString("nick") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                // Draw "Auth: "
-                g.drawString(ResourceBundle.getString("auth") + ": ", typeFont.stringWidth(ResourceBundle.getString("nick") + ": ") + contentFont.stringWidth(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NICK)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                lineMarker += 1;
-                
-                // Draw "Name: "
-                g.drawString(ResourceBundle.getString("name") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                lineMarker+=1;
-                
-                // Draw "Email: " only of there is an email adress
+                // EMail
                 if (Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL).length() > 0)
                 {
-                    g.drawString(ResourceBundle.getString("email") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                    lineMarker+=1;
+                    resultScreen.addBigText(ResourceBundle.getString("email") + ": ",0x0,Font.STYLE_BOLD);
+                    resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL), 0x0000ff, Font.STYLE_PLAIN);
                 }
                 
-                // Draw "Gender: "
-                g.drawString(ResourceBundle.getString("gender") + ": ", 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                // Draw "Age: "
-                g.drawString(ResourceBundle.getString("age") + ": ", typeFont.stringWidth(ResourceBundle.getString("gender") + ": ") + contentFont.stringWidth(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER)) + 3, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-
-                g.setFont(contentFont);
-                g.setColor(0, 0, 255);
+                // Auth
+                resultScreen.addBigText(ResourceBundle.getString("auth") + ": ",0x0,Font.STYLE_BOLD);
+                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AUTH), 0x0000ff, Font.STYLE_PLAIN);
+                    
+                // Gender
+                resultScreen.addBigText(ResourceBundle.getString("gender") + ": ",0x0,Font.STYLE_BOLD);
+                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER), 0x0000ff, Font.STYLE_PLAIN);
                 
-                lineMarker = 0;
-
-                // Draw counter
-                g.drawString(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString(), typeFont.stringWidth(ResourceBundle.getString("nr") + ".: "), 2, Graphics.TOP | Graphics.LEFT);
-                // Draw UIN
-                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_UIN), typeFont.stringWidth(ResourceBundle.getString("nr") + ".: ") + contentFont.stringWidth(new Integer(n + 1).toString() + "/" + new Integer(Search.this.size())) + typeFont.stringWidth(" " + ResourceBundle.getString("uin") + ": "), 2, Graphics.TOP | Graphics.LEFT);
-                lineMarker+=1;
-                
-                // Draw nick
-                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NICK), typeFont.stringWidth(ResourceBundle.getString("nick") + ": "),(typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                // Draw auth string
-                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AUTH), typeFont.stringWidth(ResourceBundle.getString("nick") + ": ") + contentFont.stringWidth(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NAME)) + typeFont.stringWidth(ResourceBundle.getString("nick") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                lineMarker+=1;
-                
-                // Draw name
-                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NAME), typeFont.stringWidth(ResourceBundle.getString("name") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                lineMarker+=1;
-                
-                // Draw email adress if there is one
-                if (Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL).length() > 0)
-                {
-                    g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL), typeFont.stringWidth(ResourceBundle.getString("email") + ": "), (typeFont.getHeight() * lineMarker)+ 2, Graphics.TOP | Graphics.LEFT);
-                    lineMarker+=1;
-                }
-                
-                // Draw gender
-                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER), typeFont.stringWidth(ResourceBundle.getString("gender") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                // Draw age
-                g.drawString(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AGE), typeFont.stringWidth(ResourceBundle.getString("gender") + ": ") + contentFont.stringWidth(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER)) + typeFont.stringWidth(ResourceBundle.getString("age") + ": "), (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                lineMarker+=1;
-                
+                // Age
+                resultScreen.addBigText(ResourceBundle.getString("age")+": ",0x0,Font.STYLE_BOLD);
+                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AGE), 0x0000ff, Font.STYLE_PLAIN);
+                                
                 // Draw status image
-                if (Search.this.getResult(n).getStatus() == 0) 
-                    g.drawImage(ContactList.statusOfflineImg, 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                else if (Search.this.getResult(n).getStatus() == 1)  
-                    g.drawImage(ContactList.statusOnlineImg, 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                else if (Search.this.getResult(n).getStatus() == 2)  
-                    g.drawImage(ContactList.statusInvisibleImg, 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-                else
-                    g.drawImage(Image.createImage(16, 16), 0, (typeFont.getHeight() * lineMarker) + 2, Graphics.TOP | Graphics.LEFT);
-
-                copy = Image.createImage(resultImage);
-
-                ImageItem item = new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE + ImageItem.LAYOUT_NEWLINE_AFTER, null);
-                resultScreen.append(item);
+                resultScreen.setImageList(ContactList.getImageList());
+                resultScreen.addBigText(ResourceBundle.getString("status") + ": ",0x0,Font.STYLE_BOLD);
+                resultScreen.add("",0xffffff,Search.this.getResult(n).getStatus());
+                resultScreen.unlock();
                 
             } else
             {
-                // Image used to print a result item in
-                resultImage = Image.createImage(120, typeFont.getHeight() + 4);
-                g = resultImage.getGraphics();
-
-                g.setColor(0, 0, 0);
-                g.setFont(typeFont);
-                g.drawString(ResourceBundle.getString("no_results"), 0, 2, Graphics.TOP | Graphics.LEFT);
-
-                copy = Image.createImage(resultImage);
-
-                ImageItem item = new ImageItem(null, copy, ImageItem.LAYOUT_LEFT + ImageItem.LAYOUT_NEWLINE_BEFORE
-                        + ImageItem.LAYOUT_NEWLINE_AFTER, null);
-                resultScreen.append(item);
+                // Draw a result entry
+                resultScreen.lock();
+                resultScreen.setCaption(ResourceBundle.getString("results")+" 0/0");
+                // No results
+                resultScreen.addBigText(ResourceBundle.getString("no_results")+": ",0x0,Font.STYLE_BOLD);
+                resultScreen.unlock();
             }
 
             resultScreen.addCommand(this.backCommand);
 
             resultScreen.setCommandListener(this);
-            System.gc();
         }
 
         public void commandAction(Command c, Displayable d)

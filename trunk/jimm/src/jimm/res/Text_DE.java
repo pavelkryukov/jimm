@@ -165,6 +165,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("sort_by",                     "Sortiere Kontaktliste");
 		resources.put("sort_by_name",                "Nach Name");
 		resources.put("sort_by_status",              "Nach Status");
+		resources.put("status",                      "Status");
 		resources.put("status_away",                 "Abwesend");
 		resources.put("status_chat",                 "Free for Chat");
 		resources.put("status_dnd",                  "Bitte nicht stören");
