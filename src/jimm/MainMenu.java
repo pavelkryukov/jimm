@@ -50,22 +50,22 @@ public class MainMenu implements CommandListener
     // Send command
     private static Command sendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
-// #sijapp cond.if target is "MOTOROLA" # 
+    // #sijapp cond.if target is "MOTOROLA" # 
 
     // Select command
     private static Command selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
 
-// #sijapp cond.if lang_RU is "true" | lang_EN is "true" #
+    // #sijapp cond.if lang_RU is "true" | lang_EN is "true" #
 
     private static Command exitCommand = new Command(ResourceBundle.getString("exit_button"), Command.EXIT, 1);
 
-// #sijapp cond.else # 
+    // #sijapp cond.else # 
 
     //Exit command
     private static Command exitCommand = new Command(ResourceBundle.getString("exit"), Command.EXIT, 1);
 
-//#sijapp cond.end# 
-//#sijapp cond.end# 
+    //#sijapp cond.end# 
+    //#sijapp cond.end# 
 
      // List for selecting a online status
     private static List statusList;
@@ -127,10 +127,10 @@ public class MainMenu implements CommandListener
                 // #sijapp cond.end#
                 this.list.append(ResourceBundle.getString("about"), null);
                 this.list.append(ResourceBundle.getString("exit"), null);
-                 // #sijapp cond.if target is "MOTOROLA" #
-                 this.list.addCommand(MainMenu.selectCommand);
-                 this.list.addCommand(MainMenu.exitCommand);
-                 // #sijapp cond.end#
+                // #sijapp cond.if target is "MOTOROLA" #
+                this.list.addCommand(MainMenu.selectCommand);
+                this.list.addCommand(MainMenu.exitCommand);
+                // #sijapp cond.end#
 
 
                 this.list.setCommandListener(this);
@@ -153,7 +153,7 @@ public class MainMenu implements CommandListener
                 this.list.addCommand(MainMenu.backCommand);
                 // #sijapp cond.if target is "MOTOROLA" #
                 this.list.addCommand(MainMenu.selectCommand);
-                 // #sijapp cond.end#
+                // #sijapp cond.end#
                 this.list.setCommandListener(this);
             }
             this.isConnected = Jimm.jimm.getIcqRef().isConnected();
@@ -265,7 +265,7 @@ public class MainMenu implements CommandListener
         // #sijapp cond.end#
 
 
-         // #sijapp cond.if target is "MOTOROLA" #
+        // #sijapp cond.if target is "MOTOROLA" #
         //Exit by soft button
           
         if (c == MainMenu.exitCommand)
@@ -383,14 +383,14 @@ public class MainMenu implements CommandListener
         
         // Menu item has been selected
 
-//#sijapp cond.if target is "MOTOROLA"#
+       //#sijapp cond.if target is "MOTOROLA"#
 
        else if ((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand) && (d == this.list))
 
- // #sijapp cond.else#
+       // #sijapp cond.else#
 
         else if ((c == List.SELECT_COMMAND) && (d == this.list))
- // #sijapp cond.end#
+       // #sijapp cond.end#
 
         {
             if (this.isConnected)

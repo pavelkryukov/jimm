@@ -232,40 +232,39 @@ public class FileTransfer implements CommandListener
                // #sijapp cond.else#
                StreamConnection con = null;
                 
-                try
-                {
-                    // Try to read the file
-                    con = (StreamConnection) Connector.open("file:///" + path);
-                    InputStream is = con.openInputStream();
-                    DataInputStream dis = new DataInputStream(is);
-                    fileData = new byte[dis.available()];
-                    is.read(fileData, 0, dis.available());
+               try
+               {
+                   // Try to read the file
+                   con = (StreamConnection) Connector.open("file:///" + path);
+                   InputStream is = con.openInputStream();
+                   DataInputStream dis = new DataInputStream(is);
+                   fileData = new byte[dis.available()];
+                   is.read(fileData, 0, dis.available());
 
-                    // Set the file data in file transfer
-                    FileTransfer.this.setData(fileData);
-
-                    // Create filename and ask for name and description
-                    int i = path.length() - 1;
-                    char backslash = '/';
-                    while (path.charAt(i) != backslash)
-                        i--;
-                    this.askForNameDesc(path.substring(i + 1), "");
-                } catch (IOException ioe)
-                {
-                    JimmException.handleException(new JimmException(192, 0, true));
-                } catch (Exception e)
-                {
-                    JimmException.handleException(new JimmException(191, 0, true));
-                } finally
-                {
-                    if (con != null) try
-                    {
-                        con.close();
-                    } catch (IOException e)
-                    {
-                    } // Do nothing
-                }
-// #sijapp cond.end#
+                   // Set the file data in file transfer
+                   FileTransfer.this.setData(fileData);
+                   // Create filename and ask for name and description
+                   int i = path.length() - 1;
+                   char backslash = '/';
+                   while (path.charAt(i) != backslash)
+                       i--;
+                   this.askForNameDesc(path.substring(i + 1), "");
+               } catch (IOException ioe)
+               {
+                   JimmException.handleException(new JimmException(192, 0, true));
+               } catch (Exception e)
+               {
+                   JimmException.handleException(new JimmException(191, 0, true));
+               } finally
+               {
+                   if (con != null) try
+                   {
+                       con.close();
+                   } catch (IOException e)
+                   {
+                   } // Do nothing
+               }
+               // #sijapp cond.end#
             }
 
         } else if (c == this.backCommand)
