@@ -55,6 +55,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("city",                        "Город");
 		resources.put("close",                       "Закрыть");
 		resources.put("conn_type",                   "Тип подключения");
+		resources.put("con_wait",                    "Задержка между подключениями (секунд)");
 		resources.put("connect",                     "Подключиться");
 		resources.put("connecting",                  "Подключение");
 		resources.put("contact_list",                "Список");
@@ -62,7 +63,9 @@ public class Text_RU extends ResourceBundle
 		resources.put("cpd",                         "Стоимость в день");
 		resources.put("cpp",                         "Стоимость пакета");
 		resources.put("currency",                    "Валюта");
+		resources.put("del_group",                   "Удалить группу");
 		resources.put("delete_chat",                 "Удалить чат");
+
 		resources.put("deny",						 "Отклонить авторизацию");
 		resources.put("denyedby",					 "Ваш запрос на авторизацию отклонил: ");
 		resources.put("description",                 "Описание");
@@ -107,6 +110,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("lang_RU",                     "Русский");
 		resources.put("lang_SE",                     "Шведский");
 		resources.put("lang_SR",                     "Српски");
+		resources.put("lang_BG", 					 "Болгарский");
 		resources.put("lastname",                    "Фамилия");
 		resources.put("loading",                     "Загрузка");
 		resources.put("male",                        "M");
@@ -121,6 +125,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("nick",                        "Ник");
 		resources.put("no",                          "Нет");
 		resources.put("no_results",                  "Нет результатов");
+		resources.put("no_not_empty_gr",             "Удаление не пустых групп не поддерживается");
 		resources.put("not_implemented",             "Функция не поддерживается");
 		resources.put("noreason",             		 "Причина не дана");
 		resources.put("notice",                      "Уведомление");
@@ -144,6 +149,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("prev",						 "Предыдущий");
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Удалить из списка");
+		resources.put("rename",                      "Переименовать");
 		resources.put("reply",                       "Ответ");
 		resources.put("requauth",                    "Запрос авторизации");
 		resources.put("requ",                        "Требуется");
@@ -198,12 +204,10 @@ public class Text_RU extends ResourceBundle
 		resources.put("have_unread_mess",            "У Вас остались непрочитанные сообщения. Выйти из программы?");
 		
 		// User management **********
-		resources.put("group_is_not_empty",          "Выбранная группа не пустая!\nПереместите всех пользователей в другие группы!");
 		resources.put("add_group",                   "Добавить группу");
 		resources.put("group_name",                  "Имя группы");
 		resources.put("exec",                        "Выполнить");
 		resources.put("remove_user",                 "Удалить пользователя");
-		resources.put("remove_group",                "Удалить группу");
 		resources.put("show_user_groups",            "Группировать контакты");
 
 		// Generic errors
@@ -252,7 +256,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("error_158",                   "Вы совершили попытку добавить пользователя ICQ в спиок AIM (#158.EXT)");
 		resources.put("error_159",                   "Сервер не отвечает на запрос поиска. Попробуйте снова (#159.EXT)");
 		resources.put("error_160",                   "Ошибка поиска (#160.EXT)");
-		resources.put("error_161",                   "У вас нет ни одной группы в списке. Пожалуйста, создайте новую группу (#161.EXT)");
+		resources.put("error_161",                   "У Вас нет ни одной группы в списке. Пожалуйста, создайте новую группу (#161.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Возможно, недостаточно памяти (#160.EXT)");
