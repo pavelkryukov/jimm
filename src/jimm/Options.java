@@ -803,8 +803,8 @@ public class Options
       this.optionsForm.addCommand(this.saveCommand);
       this.optionsForm.setCommandListener(this);
       // Initialize elements (account section)
-      this.uinTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "uin"), Options.this.getUin(), 9, TextField.NUMERIC);
-      this.passwordTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "password"), Options.this.getPassword(), 8, TextField.PASSWORD);
+      this.uinTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "uin"), Options.this.getUin(), 12, TextField.NUMERIC);
+      this.passwordTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "password"), Options.this.getPassword(), 32, TextField.PASSWORD);
 
       // Initialize elements (network section)
       this.srvHostTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "server_host"), Options.this.getSrvHost(), 32, TextField.ANY);
