@@ -26,7 +26,7 @@ package jimm;
 
 
 import jimm.comm.ConnectAction;
-//  #sijapp cond.if target is "MIDP2"#
+//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & module_FILES is "true"#
 import jimm.comm.DirectConnectionAction;
 //  #sijapp cond.end#
 import jimm.comm.DisconnectAction;
@@ -131,7 +131,7 @@ public class SplashCanvas extends Canvas
 	// Constructor
 	public SplashCanvas(String message)
 	{
-		//  #sijapp cond.if target is "MIDP2"#
+		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		this.setFullScreenMode(true);
 		//  #sijapp cond.end#
 		this.message = new String(message);
@@ -343,7 +343,7 @@ public class SplashCanvas extends Canvas
 	/*****************************************************************************/
 
 
-	// #sijapp cond.if target is "MIDP2"#
+	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
 	// Activates the contact list after connection has been established
 	public static class FileTransferTimerTask extends TimerTask implements CommandListener
 	{
@@ -646,3 +646,4 @@ public class SplashCanvas extends Canvas
 
 
 }
+
