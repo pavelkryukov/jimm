@@ -41,16 +41,17 @@ public class Text_EN extends ResourceBundle
         // Labels
         // MOTOROLA formatted buttons
         // #sijapp cond.if target is "MOTOROLA"#
-        resources.put("select",                      "Select    ");
-        resources.put("reset",                       "     Reset");
-        resources.put("cancel",                      "    Cancel");
-        resources.put("back",                        "      Back");
+        resources.put("select",                      "Select      ");
+        resources.put("reset",                       "       Reset");
+        resources.put("cancel",                      "      Cancel");
+        resources.put("back",                        "       Back");
         resources.put("exit_button",                 "       Exit");
         resources.put("menu_button",                 "      Menu");
-        resources.put("save",                        "Save      ");
-        resources.put("ok",                          "OK        ");
-        resources.put("reply",                       "Reply    ");
-        resources.put("close",                       "   Close");
+        resources.put("save",                        "Save       ");
+        resources.put("ok",                          "OK          ");
+        resources.put("reply",                       "Reply       ");
+        resources.put("close",                       "       Close");
+        resources.put("send",                        "Send     ");
         // #sijapp cond.else# 
         resources.put("reply",                       "Reply");
         resources.put("close",                       "Close");
@@ -60,6 +61,7 @@ public class Text_EN extends ResourceBundle
         resources.put("back",                        "Back");
         resources.put("save",                        "Save");
         resources.put("ok",                          "OK");
+        resources.put("send",                        "Send");
     	// #sijapp cond.end#
 
                                           
@@ -195,7 +197,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("res",                         "Resolution");
 		resources.put("results",                     "Results");
 		resources.put("search_user",                 "Search for User");
-		resources.put("send",                        "Send");
 		resources.put("send_img",                    "Send image");
 		resources.put("send_message",                "New Message");
 		resources.put("send_url",                    "New URL");
