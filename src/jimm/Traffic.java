@@ -456,9 +456,14 @@ public class Traffic
 			compareTraffic = (byte) Traffic.this.getSessionTraffic(true);
 
 			// Initialize command
+                                                                // #sijapp cond.if target is "MOTOROLA" # 
+			this.resetCommand = new Command(ResourceBundle.getString("reset"), Command.BACK, 2);
+			this.okCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
+                                                               // #sijapp cond.else #
 
-			this.resetCommand = new Command(ResourceBundle.getString("reset"), Command.SCREEN, 2);
+                                                                this.resetCommand = new Command(ResourceBundle.getString("reset"), Command.SCREEN, 2);
 			this.okCommand = new Command(ResourceBundle.getString("ok"), Command.SCREEN, 1);
+                                                                // #sijapp cond.end #
 
 			// Initialize traffic screen
 
