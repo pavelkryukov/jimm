@@ -118,16 +118,12 @@ public class Options
 		try
 		{
 		    this.options = new Hashtable();
-		    System.out.println("start load");
 			this.load();
-			System.out.println("load done");
 			ResourceBundle.setCurrUiLanguage(this.getStringOption(Options.OPTION_UI_LANGUAGE));
-			System.out.println("options made");
 		}
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
 		{
-		    System.out.println("excep");
 		    this.setStringOption (Options.OPTION_UIN,                            "");
 			this.setStringOption (Options.OPTION_PASSWORD,                       "");
 			this.setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
@@ -175,15 +171,18 @@ public class Options
 	{
 		// Open record store
 		RecordStore account = RecordStore.openRecordStore("options", false);
+		
 		// Temporary variables
 		byte[] buf;
 		ByteArrayInputStream bais;
 		DataInputStream dis;
+		
 		// Get version info from record store
 		buf = account.getRecord(1);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
 		if (!(dis.readUTF().equals(Jimm.VERSION))) throw (new IOException());
+		
 		// Read all option key-value pairs
 		buf = account.getRecord(2);
 		bais = new ByteArrayInputStream(buf);
@@ -224,7 +223,6 @@ public class Options
 		{
 			Options.this.setIntOption(Options.OPTION_CL_SORT_BY, 0);
 		}
-		System.out.println("loaded");
 
 	}
 
