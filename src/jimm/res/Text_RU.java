@@ -42,13 +42,13 @@ public class Text_RU extends ResourceBundle
 		// MOTOROLA formatted buttons
         // #sijapp cond.if target is "MOTOROLA"#
 		resources.put("select",                      "Выбор     ");
-        resources.put("reset",                       "  Сброс");
+        resources.put("reset",                           "      Сброс");
         resources.put("cancel",                      "    Отмена");
         resources.put("exit_button",                 "     Выход");
         resources.put("back",                        "     Назад");
         resources.put("menu_button",                 "     Меню");
         resources.put("save",                        "Сохранить ");
-        resources.put("ok",                          "OK       ");
+        resources.put("ok",                          "OK         ");
         resources.put("reply",                       "Ответ      ");
         resources.put("close",                       "    Закрыть");
         // #sijapp cond.else#
