@@ -107,14 +107,14 @@ install Apache Ant.
 You also must have a Java 2 Platform Standard Edition (J2SE) SDK.
 Depending on the version you want to build you also need the following:
 
-	* Default version: MJ2ME Wireless Toolkit 1.0.4_01
-		<http://java.sun.com/>
-	* MIDP2 version: J2ME Wireless Toolkit SDK 2.0_01
-		<http://java.sun.com/>
-	* Siemens version: Latest version of the SMTK (Siemens Mobility Tool Kit)
-		<http://communication-market.siemens.de>
-	* RIM version: Latest version of the Blackberry SDK
-		<http://www.blackberry.net>
+  * Default version: MIDP Reference Implementation (RI) 1.0.3
+      <http://java.sun.com/>
+  * MIDP2 version: MIDP Reference Implementation (RI) 2.0
+      <http://java.sun.com/>
+  * Siemens version: Latest version of the Siemens Mobility Toolkit (SMTK)
+      <http://communication-market.siemens.de/>
+  * RIM version: Latest version of the Blackberry SDK
+      <http://www.blackberry.net>
 		
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
