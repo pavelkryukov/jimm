@@ -289,7 +289,7 @@ public class SplashCanvas extends Canvas
 		// Draw white bottom bar
 		g.setColor(255, 255, 255);
 		g.setStrokeStyle(Graphics.DOTTED);
-		g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), this.getHeight() - SplashCanvas.height - 2);
+		g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), this.getHeight() - SplashCanvas.height - 3);
 
 		// Draw message
 		if (Jimm.jimm.getOptionsRef() != null)
