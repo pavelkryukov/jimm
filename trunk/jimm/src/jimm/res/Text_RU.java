@@ -65,6 +65,8 @@ public class Text_RU extends ResourceBundle
 		resources.put("delete_chat",                 "Удалить чат");
 		resources.put("deny",						 "Отклонить авторизацию");
 		resources.put("denyedby",					 "Ваш запрос на авторизацию отклонил: ");
+		resources.put("description",                 "Описание");
+		resources.put("name_desc",                   "Имя файла и описание");
 		resources.put("user_menu",                   "Меню пользователя");
 		resources.put("disconnect",                  "Отключиться");
 		resources.put("disconnecting",               "Отключение");
@@ -74,12 +76,20 @@ public class Text_RU extends ResourceBundle
 		resources.put("error",                       "Ошибка");
 		resources.put("exit",                        "Выход");
 		resources.put("female",                      "Ж");
+		
+		resources.put("filename",                    "Имя файла");
+		resources.put("filetransfer",                "Передача файла");
+		resources.put("filepath",                    "Путь к файлу");
+		resources.put("ft_name",                     "Послать файл");		
+		resources.put("ft_cam",                      "Послать фото с камеры");		
+		
 		resources.put("firstname",                   "Имя");
 		resources.put("gender",                      "Пол");
 		resources.put("grant",						 "Авторизировать");
 		resources.put("grantedby",					 "Вас авторизировал: ");
 		resources.put("hide_offline",                "Скрывать отключившихся");
 		resources.put("info",                        "Информация");
+		resources.put("init_ft",                     "Инициализация...");
 		resources.put("kb",                          "КБ");
 		resources.put("keep_chat",                   "Хранить историю чата?");
 		resources.put("keep_conn_alive",             "Поддерживать подключение?");
@@ -127,6 +137,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("options_interface",           "Интерфейс");
 		resources.put("options_network",             "Сеть");
 		resources.put("options_other",               "Разное");
+		resources.put("options_signaling",           "Звук");
 		resources.put("password",                    "Пароль");
 		resources.put("plength",                     "Длина оплачиваемого пакета в КБ");
 		resources.put("plsauthme",                   "Привет! Пожалуйста, авторизируй меня и разреши добавить тебя в контакт-лист");
@@ -138,11 +149,13 @@ public class Text_RU extends ResourceBundle
 		resources.put("requ",                        "Требуется");
 		resources.put("requno",                      "Не требуется");
 		resources.put("reset",                       "Сброс");
+		resources.put("res",                         "Разрешение");
 		resources.put("results",                     "Результаты");
 		resources.put("save",                        "Сохр.");
 		resources.put("search_user",                 "Найти пользователя");
 		resources.put("send",                        "Отправить");
 		resources.put("send_message",                "Новое сообщение");
+		resources.put("send_img",                    "Послать фото");
 		resources.put("send_url",                    "Новый URL");
 		resources.put("server",                      "Сервер");
 		resources.put("server_host",                 "Имя сервера");
@@ -169,6 +182,8 @@ public class Text_RU extends ResourceBundle
 		resources.put("user_add",                    "Добавить пользователя");
 		resources.put("user_search",                 "Найти пользователя");
 		resources.put("vibration",                   "Вибрация");
+		resources.put("viewfinder",                  "Видеоискатель");
+		resources.put("volume",                      "Громкость");
 		resources.put("wait",                        "Пожалуйста, ждите ...");
 		resources.put("warning",                     "Предупреждение");
 		resources.put("wantsyourauth",				 " хочет авторизироваться. Причина: ");
@@ -186,7 +201,6 @@ public class Text_RU extends ResourceBundle
 		resources.put("remove_user",                 "Удалить пользователя");
 		resources.put("remove_group",                "Удалить группу");
 		resources.put("show_user_groups",            "Группировать контакты");
-		
 
 		// Generic errors
 		resources.put("error_100",                   "Неизвестная ошибка (#100.EXT)");
