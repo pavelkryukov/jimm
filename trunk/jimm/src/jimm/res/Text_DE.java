@@ -123,6 +123,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "Nein");
 		resources.put("no_results",                  "Keine Ergebnisse");
+		resources.put("no_not_empty_gr",             "Löschen von nichtleeren Gruppen wird noch nicht unterstützt");
 		resources.put("not_implemented",             "Funktion noch nicht verfügbar.");
 		resources.put("noreason",             		 "Es wurde kein Grund angegeben.");
 		resources.put("notice",                      "Hinweis");
