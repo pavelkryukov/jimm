@@ -54,8 +54,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD        -->
 	<!-- ********************************************************************* -->
 	<!-- Build target. If you have a Siemens mobile, set this property to      -->
-	<!-- SIEMENS. If you have a Nokia 6800/7250i mobile, set this property to  -->
-	<!-- NOKIAS40. Otherwise go with the default value (DEFAULT).              -->
+	<!-- SIEMENS. If you have a MIDP2 compartible mobile, set this property to -->
+	<!-- MIDP2. Otherwise go with the default value (DEFAULT).                 -->
 	<property name="target"            value="DEFAULT"                          />
 	<!-- ********************************************************************* -->
 	<!-- This value is a comma separated list of modules which should be       -->
@@ -91,7 +91,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 
 	<!-- Set default version number -->
-	<property name="version" value="0.2.1"/>
+	<property name="version" value="0.2pre1"/>
 	<property name="version/java" value="0.1"/>
 
 
@@ -115,20 +115,20 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp" value="${DEFAULT/midp}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
+		<condition property="midp" value="${DEFAULT/midp}">
+			<equals arg1="${target}" arg2="MIDP2"/>
+		</condition>
 		<condition property="midp" value="${SIEMENS/midp}">
 			<equals arg1="${target}" arg2="SIEMENS"/>
-		</condition>
-		<condition property="midp" value="${NOKIAS40/midp}">
-			<equals arg1="${target}" arg2="NOKIAS40"/>
 		</condition>
 		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
 			<equals arg1="${target}" arg2="DEFAULT"/>
 		</condition>
+		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
+			<equals arg1="${target}" arg2="MIDP2"/>
+		</condition>
 		<condition property="midp/lib" value="${SIEMENS/midp/lib}">
 			<equals arg1="${target}" arg2="SIEMENS"/>
-		</condition>
-		<condition property="midp/lib" value="${NOKIAS40/midp/lib}">
-			<equals arg1="${target}" arg2="NOKIAS40"/>
 		</condition>
 	</target>
 
