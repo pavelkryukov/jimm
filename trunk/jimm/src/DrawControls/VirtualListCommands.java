@@ -16,20 +16,18 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
- File: src/DrawControls/TreeNodeComparer.java
+ File: src/DrawControls/VirtualList.java
  Version: ###VERSION###  Date: ###DATE###
  Author(s): Artyomov Denis
  *******************************************************************************/
 
-
 package DrawControls;
 
-import DrawControls.TreeNode;
-/*!
- Interface for node comparer. Used to make order of tree noder while sorting
- */
-public interface TreeNodeComparer
-{
-	int compareNodes(TreeNode node1, TreeNode node2);
-}
+import DrawControls.VirtualList;
 
+public interface VirtualListCommands
+{
+  void onKeyPress(VirtualList sender, int keyCode);
+  void onCursorMove(VirtualList sender);
+  void onItemSelected(VirtualList sender);
+}

@@ -87,6 +87,11 @@ public class ChatHistory
             PlainMessage plainMsg = (PlainMessage) message;
             if (!msgDisplay.isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
             this.addTextToForm(nr,contact.getName(), plainMsg.getText(), "", plainMsg.getDate(), true);
+            
+            // #sijapp cond.if modules_HISTORY is "true" #
+            if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
+            	Jimm.jimm.getHistory().addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName());
+            // #sijapp cond.end#	
         }
         if (message instanceof UrlMessage)
         {

@@ -78,6 +78,9 @@ public class ResourceBundle
 		// #sijapp cond.if lang_SR is "true" #
 		"SR",
 		// #sijapp cond.end #
+		// #sijapp cond.if lang_UA is "true" #
+		"UA",
+		// #sijapp cond.end #
 	};
 
 

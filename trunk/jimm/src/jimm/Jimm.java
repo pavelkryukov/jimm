@@ -88,6 +88,11 @@ public class Jimm extends MIDlet
 
 	// Splash canvas object
 	private SplashCanvas sc;
+	
+	// Storage for messages
+	// #sijapp cond.if modules_HISTORY is "true" #
+	private HistoryStorage history;
+	// #sijapp cond.end#
 
 
 	// Start Jimm
@@ -136,6 +141,12 @@ public class Jimm extends MIDlet
 		// Create ICQ object (and update progress indicator)
 		this.icq = new Icq();
 		this.sc.setProgress(20);
+		
+		// Create object for text storage (and update progress indicator)
+		// #sijapp cond.if modules_HISTORY is "true" #
+		history = new HistoryStorage();
+		this.sc.setProgress(30);
+		// #sijapp cond.end#
 
 		// Create options container (and update progress indicator)
 		this.o = new Options();
@@ -163,7 +174,7 @@ public class Jimm extends MIDlet
 		// Create timer object (and update progress indicator)
 		this.t = new Timer();
 		this.sc.setProgress(90);
-
+		
 		// Activate main menu
 		this.mm.activate();
 
@@ -218,6 +229,13 @@ public class Jimm extends MIDlet
 		return (this.ch);
 	}
 
+	// #sijapp cond.if modules_HISTORY is "true" #
+	// Returns a reference to the stored history object
+	public HistoryStorage getHistory()
+	{
+		return (this.history);
+	}
+	// #sijapp cond.end#
 
 	// Returns a reference to the timer object
 	public Timer getTimerRef()

@@ -61,9 +61,9 @@ public class DebugLog
 public class DebugLog
 {
 	synchronized public static void addText(String text)
-  {
-      System.out.println(text);
-  }
+	{
+		System.out.println(text);
+	}
 }
 
 

@@ -1,10 +1,25 @@
-/*
-   Custom Controls for J2ME
-   (c) 2004 Artyomov Denis (artyomov@inbox.ru)
-   
-   No license needs to use this software. You can use it as you want :)
-   Any improvements are very welcome! :)
-*/
+/*******************************************************************************
+ Jimm - Mobile Messaging - J2ME ICQ clone
+ Copyright (C) 2003-05  Jimm Project
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ ********************************************************************************
+ File: src/DrawControls/VirtualList.java
+ Version: ###VERSION###  Date: ###DATE###
+ Author(s): Artyomov Denis
+ *******************************************************************************/
 
 package DrawControls;
 
@@ -15,6 +30,7 @@ import javax.microedition.lcdui.Font;
 
 import DrawControls.ImageList;
 import DrawControls.ListItem;
+import DrawControls.VirtualListCommands;
 
 //! This class is base class of owner draw list controls
 /*!
@@ -57,6 +73,13 @@ public abstract class VirtualList extends Canvas
   public static int getDefBackColor()    { return defBackColor; }
   public static int getDefCursorMode()   { return defCursorMode; }
   public static int getDefFontSize()     { return defFontSize; }
+  
+  private VirtualListCommands vlCommands;
+  
+  public void setVLCommands(VirtualListCommands vlCommands)
+  {
+  	this.vlCommands = vlCommands;
+  }
 
   private boolean 
     dontRepaint      = false;
@@ -231,7 +254,9 @@ public abstract class VirtualList extends Canvas
   // check for position of top element of list and change it, if nesessary
   protected void checkTopItem()
   {
-  	int size = getSize(); 
+  	int size = getSize();
+  	
+  	if (visCount == 0) return;
   	
   	if (size == 0)
   	{
@@ -264,11 +289,16 @@ public abstract class VirtualList extends Canvas
   // private void repaintIfLastIndexesChanged()
   private void repaintIfLastIndexesChanged()
   {
-    if ((lastCurrItem != currItem) || (lastTopItem != topItem)) invalidate();
+    if ((lastCurrItem != currItem) || (lastTopItem != topItem))
+    {
+    	invalidate();
+    	cursorMoved();
+    	if (vlCommands != null) vlCommands.onCursorMove(this);
+    }
   }
   
-  // private void moveCursor(int step)
-  private void moveCursor(int step)
+  // protected void moveCursor(int step)
+  protected void moveCursor(int step)
   {
     storelastItemIndexes();
     if (cursorMode == SEL_NONE) 
@@ -309,6 +339,7 @@ public abstract class VirtualList extends Canvas
   protected void userPressKey(int keyCode) {}
   
   protected void itemSelected() { }
+  protected void cursorMoved() { }
   
   // private keyReaction(int keyCode)
   private void keyReaction(int keyCode)
@@ -317,7 +348,10 @@ public abstract class VirtualList extends Canvas
     {
     case Canvas.DOWN:  moveCursor(1);  break;
     case Canvas.UP:    moveCursor(-1); break;
-    case Canvas.FIRE:  itemSelected(); break;
+    case Canvas.FIRE:  
+    	itemSelected();
+    	if (vlCommands != null) vlCommands.onItemSelected(this);
+    	break;
     }
     
     switch (keyCode)
@@ -332,6 +366,7 @@ public abstract class VirtualList extends Canvas
   {
     keyReaction(keyCode);
     userPressKey(keyCode);
+    if (vlCommands != null) vlCommands.onKeyPress(this, keyCode);
   }
   
   // protected void keyRepeated(int keyCode)
@@ -556,10 +591,13 @@ case SEL_DOTTED:   x = 2;            break;
     height = getHeight();
     width = getWidth();
     int y = drawCaption(graphics);
+    boolean haveToCheckTopItem = (visCount == 0); 
     
     boolean needCheck = (visCount == 0); 
     
     visCount = (height-y)/getItemHeight();
+    
+    if (haveToCheckTopItem) checkTopItem();
     
     if (needCheck)
     {

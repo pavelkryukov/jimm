@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -73,172 +73,6 @@ import net.rim.device.api.system.LED;
 
 import DrawControls.*;
 import jimm.Options;
-
-/*
-abstract class UserManagementBase implements CommandListener
-{
-    private static Form 
-		form = new Form(null);
-
-    private static Command 
-    	sendCommand = new Command(ResourceBundle.getString("exec"), Command.ITEM, 1),
-    	backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
-    
-    static
-    {
-        form.addCommand(sendCommand);
-        form.addCommand(backCommand);
-    }    
-    
-    protected abstract void select();
-    protected abstract void addControls(Form form);
-    
-    protected static void activateContactList()
-    {
-        Jimm.jimm.getContactListRef().activate();
-    }  
-    
-    public void commandAction(Command c, Displayable d)
-    {
-        if (c == backCommand) activateContactList();
-        else if (c == sendCommand) select();
-    }
-    
-    UserManagementBase(String title)
-    {
-        form.setTitle(title);
-    }
-    
-    void go()
-    {
-        while (form.size() != 0) form.delete(0);
-        System.gc();
-        addControls(form);
-        form.setCommandListener(this);
-        Jimm.display.setCurrent(form);
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-
-// Class for adding new user
-class AddUserForm extends UserManagementBase
-{
-    private TextField 
-    	uinTextField = new TextField(ResourceBundle.getString("uin"), "", 16, TextField.NUMERIC),
-    	nameTextField = new TextField(ResourceBundle.getString("name"), "", 32, TextField.ANY);
-
-    protected void select()
-    {
-        // Display splash canvas
-        SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-        wait2.setMessage(ResourceBundle.getString("wait"));
-        wait2.setProgress(0);
-        Jimm.display.setCurrent(wait2);
-
-        Search search = new Search();
-        search.setSearchRequest(uinTextField.getString(), "", "", "", "", "", "", false);
-        SearchAction act = new SearchAction(search, SearchAction.CALLED_BY_ADDUSER);
-
-        try
-        {
-            Jimm.jimm.getIcqRef().requestAction(act);
-
-        } catch (JimmException e)
-        {
-            JimmException.handleException(e);
-            if (e.isCritical()) return;
-        }
-
-        // Start timer
-        Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
-    }
-    
-    protected void addControls(Form form)
-    {
-        form.append(uinTextField);
-        form.append(nameTextField);
-    }
-    
-    AddUserForm()
-    {
-        super(ResourceBundle.getString("add_user"));
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-
-// Class for adding new group
-class AddGroupForm extends UserManagementBase
-{
-    private TextField 
-		uinTextField = new TextField(ResourceBundle.getString("group_name"), "", 32, TextField.ANY);
-   
-    protected void select()
-    {
-    }
-    
-    protected void addControls(Form form)
-    {
-        form.append(uinTextField);
-    }
-    
-    public AddGroupForm()
-    {
-        super(ResourceBundle.getString("add_group"));
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////////////
-
-// Class for removing group 
-class RemoveGroupForm extends UserManagementBase
-{
-    private ChoiceGroup 
-    	choice = new ChoiceGroup(ResourceBundle.getString("group_name"), ChoiceGroup.EXCLUSIVE);
- 
-    protected void select()
-    {
-        ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
-        int index = choice.getSelectedIndex();
-        
-        if (index < 0)
-        {
-            activateContactList();
-            return;
-        }
-
-        if (gItems[index].getTotalCount() != 0)
-        {
-            Alert errorMsg = new Alert
-            (
-                    ResourceBundle.getString("warning"), 
-                    ResourceBundle.getString("group_is_not_empty"),
-                    null, 
-                    AlertType.ERROR
-            );
-    		errorMsg.setTimeout(10000);
-    		
-    		Jimm.jimm.getContactListRef().activate(errorMsg);
-        }
-    }
-    
-    protected void addControls(Form form)
-    {
-        form.append(choice);
-        ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
-        for (int i = 0; i < gItems.length; i++) choice.append(gItems[i].getName(), null); 
-    }
-
-    RemoveGroupForm()
-    {
-        super(ResourceBundle.getString("remove_group"));
-    }
-}
-
-*/
-
-//////////////////////////////////////////////////////////////////////////////////
 
 // Comparer for node sorting only by name
 class SimpleNodeComparer implements TreeNodeComparer
@@ -398,28 +232,13 @@ public class ContactList implements CommandListener
 	
 	// Tree object
 	Tree tree;
-	
-    public Displayable getVisibleContactListRef()
-    {
-        return tree;
-    }
-	
-	private static int imagesCount;
-	
-	public static int getImagesCount()
-	{
-		return imagesCount;
-	}
+
+	// Count of original images
+    private static int imagesCount;
 	
 	// Images for icons
 	private static ImageList imageList;
 	
-	
-	public static ImageList getImageList()
-	{
-		return imageList;
-	}
-
     // The current online status
     private long onlineStatus;
 
@@ -430,6 +249,8 @@ public class ContactList implements CommandListener
         try
         {
         	imageList = new ImageList();
+        	
+        	// reads and divides image "icons.png" to several icons
 			imageList.load("/icons.png", 16);
             ContactList.statusAwayImg        = imageList.elementAt(0);
             ContactList.statusChatImg        = imageList.elementAt(1);
@@ -444,6 +265,7 @@ public class ContactList implements CommandListener
             ContactList.eventSystemNoticeImg = imageList.elementAt(10);
             ContactList.eventSysActionImg    = imageList.elementAt(11);
             
+            // add icons with letter "C" to common icons  
             int from = imageList.size();
             imageList.load("/icons.png", 16);
     		int to = imageList.size();
@@ -481,7 +303,6 @@ public class ContactList implements CommandListener
             this.updated = false;
             this.cItems = new Vector();
             this.gItems = new Vector();
-            //DebugLog.addText("Exception while loading list: "+e.toString());        
         }
 		
 		tree = new Tree(null);
@@ -500,18 +321,31 @@ public class ContactList implements CommandListener
         //		#sijapp cond.end#
         this.tree.addCommand(ContactList.mainMenuCommand);
 		this.tree.addCommand(selectCommand);
-		//this.tree.addCommand(newUserCommand);
-		//this.tree.addCommand(searchUserCommand);
-		//this.tree.addCommand(removeUserCommand);
-		//this.tree.addCommand(newGroupCommand);
 	
 //#sijapp cond.if modules_DEBUGLOG is "true" #
 		this.tree.addCommand(debugListCommand);
 //#sijapp cond.end#
-
 		
         this.tree.setCommandListener(this);
     }
+    
+    // Returns reference to tree 
+    public Displayable getVisibleContactListRef()
+    {
+        return tree;
+    }
+    
+    // Returns number of original images
+	public static int getImagesCount()
+	{
+		return imagesCount;
+	}
+	
+	// Returns image list with status icons and status icons with red letter "C"  
+	public static ImageList getImageList()
+	{
+		return imageList;
+	}
 
     // Returns the id number #1 which identifies (together with id number #2)
     // the saved contact list version
@@ -598,8 +432,6 @@ public class ContactList implements CommandListener
     // Tries to load contact list from record store
     private void load() throws Exception, IOException, RecordStoreException
     {
-        //DebugLog.addText("Loading contact list...");
-        
         // Initialize vectors
         this.cItems = new Vector();
         this.gItems = new Vector();
@@ -696,16 +528,11 @@ public class ContactList implements CommandListener
         	// Close record store
         	cl.closeRecordStore();  
 		}
-        
-        
-        //DebugLog.addText("Contact list loaded...");
     }
 
     // Save contact list to record store
     protected void save() throws IOException, RecordStoreException
     {
-        //DebugLog.addText("Saving contact list...");
-        
         // Try to delete the record store
         try
         {
@@ -800,8 +627,6 @@ public class ContactList implements CommandListener
         }
         // Close record store
         cl.closeRecordStore();
-                
-        //DebugLog.addText("Contact list saved!");
     }
     
     // called before jimm start to connect to server
@@ -897,8 +722,6 @@ public class ContactList implements CommandListener
     	}
     	else tree.sortNode( null, createNodeComparer() );
     	treeSorted = true;
-    	
-    	//DebugLog.addText("Tree sorted");
     }
     
     // creates node comparer for node sorting 
@@ -924,8 +747,6 @@ public class ContactList implements CommandListener
 			    
 		cCount = cItems.size();
 		if (treeBuilt || (cCount == 0)) return;
-		
-		//DebugLog.addText("Start to build tree...");
 		
 		tree.clear();
 		System.gc();
@@ -969,8 +790,6 @@ public class ContactList implements CommandListener
 	
 		treeSorted = false;
 		treeBuilt = true;
-		
-		//DebugLog.addText("Tree builded");
 	}
 
 	// Returns reference to group with id or null if group not found
@@ -985,6 +804,7 @@ public class ContactList implements CommandListener
 	    return null;
 	}
    
+	// Returns reference to contact item with uin or null if not found  
     public ContactListContactItem getItembyUIN(String uin)
     {
     	int count = cItems.size();
@@ -1110,7 +930,6 @@ public class ContactList implements CommandListener
     	// sort group
     	if (needSorting && !wasDeleted)
     	{
-    		
     		boolean isCurrent = (tree.getCurrentItem() == cItemNode),
 			        inserted = false;
     		
@@ -1303,8 +1122,6 @@ public class ContactList implements CommandListener
     // Removes a contact list item
     public synchronized void removeContactItem(ContactListContactItem cItem)
     {
-    	//DebugLog.addText("removeContactItem "+cItem.getUin());
-
         // Remove given contact item
         this.cItems.removeElement(cItem);
 
@@ -1315,8 +1132,6 @@ public class ContactList implements CommandListener
     // Adds a contact list item
     public synchronized void addContactItem(ContactListContactItem cItem)
     {
-        //DebugLog.addText("addContactItem "+cItem.getUin()+
-        //		" temp="+new Boolean(cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)).toString());
         if (!cItem.returnBoolValue(ContactListContactItem.VALUE_ADDED))
         {
         	// does contact already exists or temporary ?
@@ -1367,8 +1182,7 @@ public class ContactList implements CommandListener
     public synchronized void addMessage(Message message)
     {
         // Search for contact entry and add message to message queue
-
-        //DebugLog.addText("addMessage");
+    	
         boolean listed = false;
         ContactListContactItem cItem = null;
         int i;
@@ -1383,7 +1197,7 @@ public class ContactList implements CommandListener
             }
         }
         // Create a temporary contact entry if no contact entry could be found
-        // do we have a new temp contact (we must do refreshList then first)
+        // do we have a new temp contact
         boolean temp = false;
         if (!listed)
         {
@@ -1422,7 +1236,7 @@ public class ContactList implements CommandListener
     	}
     	});    	
     }
-        	
+
 	// Creates player for file 'source'
 	private Player createPlayer(String source)
 	{
