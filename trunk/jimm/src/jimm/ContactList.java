@@ -391,7 +391,7 @@ public class ContactList implements CommandListener
     // Group items
     private Vector gItems;
     
-    private boolean treeBuilded = false, treeSorted = false;
+    private boolean treeBuilt = false, treeSorted = false;
     //private boolean contactsChanged;
 	
     // Contains tree nodes by groip ids
@@ -482,7 +482,7 @@ public class ContactList implements CommandListener
             this.updated = false;
             this.cItems = new Vector();
             this.gItems = new Vector();
-            DebugLog.addText("Exception while loading list: "+e.toString());        
+            //DebugLog.addText("Exception while loading list: "+e.toString());        
         }
 		
 		tree = new Tree(null);
@@ -580,20 +580,20 @@ public class ContactList implements CommandListener
         if (needPlayOnlineNotif)
         {
         	needPlayOnlineNotif = false;
-        	playSoundNotivication(SOUND_TYPE_ONLINE);
+        	playSoundNotification(SOUND_TYPE_ONLINE);
         }
         
         if (needPlayMessNotif)
         {
         	needPlayMessNotif = false;
-        	playSoundNotivication(SOUND_TYPE_MESSAGE);
+        	playSoundNotification(SOUND_TYPE_MESSAGE);
         }
     }
     
     // is called by options form when options changed
     public void optionsChanged(boolean needToRebuildTree, boolean needToSortContacts)
     {
-    	if (needToRebuildTree) treeBuilded = false;
+    	if (needToRebuildTree) treeBuilt = false;
     	if (needToSortContacts) treeSorted = false;
     }
     
@@ -810,7 +810,7 @@ public class ContactList implements CommandListener
     protected void beforeConnect()
     {
     	tree.clear();
-    	treeBuilded = treeSorted = false;
+    	treeBuilt = treeSorted = false;
     	int count = cItems.size();
     	for (int i = 0; i < count; i++) 
     		((ContactListContactItem)cItems.elementAt(i)).setStatus(ContactList.STATUS_OFFLINE);
@@ -820,16 +820,16 @@ public class ContactList implements CommandListener
     // received)
     public synchronized void update(int flags, long versionId1, int versionId2, ContactListItem[] items)
     {
-        System.out.println("update: new rooster");
-        System.out.println("Flags: "+flags);
-        System.out.println("Updated: "+this.updated);
+        //System.out.println("update: new rooster");
+        //System.out.println("Flags: "+flags);
+        //System.out.println("Updated: "+this.updated);
         
         //DebugLog.addText("update: new rooster");
 
         // Remove all Elemente form the old ContactList
         if (!updated)
         {
-            System.out.println("Clear ContactList");
+            //System.out.println("Clear ContactList");
             cItems.removeAllElements();
             gItems.removeAllElements();
             this.updated = false;
@@ -843,8 +843,8 @@ public class ContactList implements CommandListener
         else
             this.versionId2 = this.versionId2+versionId2;
         
-        System.out.println("Ver 1: "+this.versionId1);
-        System.out.println("Ver 2: "+this.versionId2);
+        //System.out.println("Ver 1: "+this.versionId1);
+        //System.out.println("Ver 2: "+this.versionId2);
 
         // Add new contact items and group items
         for (int i = 0; i < items.length; i++)
@@ -857,18 +857,18 @@ public class ContactList implements CommandListener
                 this.gItems.addElement(items[i]);
             }
         }
-        treeBuilded = false;
+        treeBuilt = false;
         
         // Save new contact list
         if (flags == 0)
         {
             try
             {
-                System.out.println("List saved");
+                //System.out.println("List saved");
                 this.save();
             } catch (Exception e)
             {
-                DebugLog.addText("Exception while saving list: " + e.toString());
+                //DebugLog.addText("Exception while saving list: " + e.toString());
             }
         }
         if (flags == 1)
@@ -925,7 +925,7 @@ public class ContactList implements CommandListener
 		        only_online = Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 			    
 		cCount = cItems.size();
-		if (treeBuilded || (cCount == 0)) return;
+		if (treeBuilt || (cCount == 0)) return;
 		
 		//DebugLog.addText("Start to build tree...");
 		
@@ -970,7 +970,7 @@ public class ContactList implements CommandListener
 		}    
 	
 		treeSorted = false;
-		treeBuilded = true;
+		treeBuilt = true;
 		
 		//DebugLog.addText("Tree builded");
 	}
@@ -1036,7 +1036,7 @@ public class ContactList implements CommandListener
     	
     	int debugValue = 0;
     	
-    	if (!treeBuilded) return;
+    	if (!treeBuilt) return;
     	
     	try
 		{
@@ -1167,15 +1167,15 @@ public class ContactList implements CommandListener
 	public synchronized void update()
 	{
 	    //DebugLog.addText("update: rooster up to date");
-	    //treeBuilded = false;
+	    //treeBuilt = false;
 	}
     
     // Updates the client-side contact list (called when coming back from
     // Message Display)
     public synchronized void update(String uin)
     {
-        System.out.println("update: back form msg display");
-        System.out.println("THIS IS EMPTY METHOD!!!");
+        //System.out.println("update: back form msg display");
+        //System.out.println("THIS IS EMPTY METHOD!!!");
     }
     
     boolean 
@@ -1211,8 +1211,8 @@ public class ContactList implements CommandListener
         // Play sound notice if selected
         if ((trueStatus == STATUS_ONLINE) && statusChanged)
         {
-            if ( treeBuilded ) 
-            	this.playSoundNotivication(SOUND_TYPE_ONLINE);
+            if ( treeBuilt ) 
+            	this.playSoundNotification(SOUND_TYPE_ONLINE);
             else
             	needPlayOnlineNotif |= true;
         }
@@ -1248,8 +1248,8 @@ public class ContactList implements CommandListener
         // Play sound notice if selected
         if ((trueStatus == STATUS_ONLINE) && statusChanged)
         {
-            if ( treeBuilded ) 
-            	this.playSoundNotivication(SOUND_TYPE_ONLINE);
+            if ( treeBuilt ) 
+            	this.playSoundNotification(SOUND_TYPE_ONLINE);
             else
             	needPlayOnlineNotif |= true;
         }
@@ -1387,8 +1387,8 @@ public class ContactList implements CommandListener
         Jimm.jimm.getSplashCanvasRef().messageAvailable();
         
         // Notify user
-        if ( !treeBuilded ) needPlayMessNotif |= true;
-        else this.playSoundNotivication(SOUND_TYPE_MESSAGE);
+        if ( !treeBuilt ) needPlayMessNotif |= true;
+        else this.playSoundNotification(SOUND_TYPE_MESSAGE);
         
         // Update tree
         contactChanged(cItem, true, false, false);
@@ -1443,7 +1443,7 @@ public class ContactList implements CommandListener
 		}
 		catch (Exception e)
 		{
-			DebugLog.addText("Create player exception: "+e.toString());
+			//DebugLog.addText("Create player exception: "+e.toString());
 			return null;
 		}
 		return p;
@@ -1462,7 +1462,7 @@ public class ContactList implements CommandListener
 		}
 		catch (Exception e)
 		{
-			DebugLog.addText("Create player exception: "+e.toString());
+			//DebugLog.addText("Create player exception: "+e.toString());
 			return null;
 		}
 		return p;
@@ -1486,16 +1486,16 @@ public class ContactList implements CommandListener
 		}
 		catch (Exception e)
 		{
-			DebugLog.addText("setVolume "+e.toString());
+			//DebugLog.addText("setVolume "+e.toString());
 		}
 	}
 	
 	//#sijapp cond.end#
 
     // Play a sound notification
-    private void playSoundNotivication(int notType)
+    private void playSoundNotification(int notType)
     {
-    	if (!treeBuilded) return;
+    	if (!treeBuilt) return;
     	
         // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
         
