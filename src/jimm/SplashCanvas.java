@@ -346,7 +346,7 @@ public class SplashCanvas extends Canvas
 
 
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-                      // #sijapp cond.if modules_FILES is "true"#
+    // #sijapp cond.if modules_FILES is "true"#
 
 	// Activates the contact list after connection has been established
 	public static class FileTransferTimerTask extends TimerTask implements CommandListener
@@ -415,7 +415,7 @@ public class SplashCanvas extends Canvas
 
 	}
 	//#sijapp cond.end#
-                     //#sijapp cond.end#
+    //#sijapp cond.end#
 
 
 	/*****************************************************************************/
