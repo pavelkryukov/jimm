@@ -23,55 +23,40 @@
 
 package jimm;
 
-import jimm.DebugLog;
-
-import jimm.Jimm;
-import jimm.comm.Message;
-import jimm.comm.Util;
-import jimm.util.ResourceBundle;
-
-import java.util.Hashtable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.microedition.lcdui.*;
-
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
+import javax.microedition.media.Manager;
+import javax.microedition.media.MediaException;
+import javax.microedition.media.Player;
+import javax.microedition.media.PlayerListener;
+import javax.microedition.media.control.ToneControl;
+import javax.microedition.media.control.VolumeControl;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
-//#sijapp cond.if target is "SIEMENS"#
-import com.siemens.mp.game.Vibrator;
-import com.siemens.mp.game.Light;
-import com.siemens.mp.media.Manager;
-import com.siemens.mp.media.MediaException;
-import com.siemens.mp.media.Player;
-import com.siemens.mp.media.control.ToneControl;
-import com.siemens.mp.media.control.VolumeControl;
-import java.io.InputStream;
-// #sijapp cond.end#
-
-//#sijapp cond.if target is "MIDP2"#
-import javax.microedition.lcdui.game.Sprite;
-import javax.microedition.media.Manager;
-import javax.microedition.media.MediaException;
-import javax.microedition.media.Player;
-import javax.microedition.media.control.ToneControl;
-import javax.microedition.media.control.VolumeControl;
-import java.io.InputStream;
-//#sijapp cond.end#
-
-//#sijapp cond.if target is "RIM"#
-//import net.rim.device.api.system.Alert;
-import net.rim.device.api.system.LED;
-//#sijapp cond.end#
-
-import DrawControls.*;
-import jimm.Options;
+import jimm.comm.Message;
+import jimm.comm.Util;
+import jimm.util.ResourceBundle;
+import DrawControls.ImageList;
+import DrawControls.ListItem;
+import DrawControls.TreeNode;
+import DrawControls.TreeNodeComparer;
+import DrawControls.VirtualTree;
 
 /*
 abstract class UserManagementBase implements CommandListener
@@ -275,7 +260,7 @@ class NodeComparer implements TreeNodeComparer
 	
 		return 10;
 	}
-	
+
 	public int compareNodes(TreeNode node1, TreeNode node2)
 	{
 		ContactListContactItem item1, item2;
@@ -326,8 +311,7 @@ class Tree extends VirtualTree
 
 
 //////////////////////////////////////////////////////////////////////////////////
-
-public class ContactList implements CommandListener
+public class ContactList implements CommandListener, PlayerListener
 {
     // Status (all are mutual exclusive) TODO: move status to ContactListContactItem
     public static final long STATUS_AWAY      = 0x00000001;
@@ -557,7 +541,7 @@ public class ContactList implements CommandListener
     // Request display of the main menu
     public void activate()
     {
-    	DebugLog.addText("Contact list activated");
+    	//DebugLog.addText("Contact list activated");
     	
         //System.out.println("Show the contact list");
         //		#sijapp cond.if modules_TRAFFIC is "true" #
@@ -821,7 +805,7 @@ public class ContactList implements CommandListener
         System.out.println("Flags: "+flags);
         System.out.println("Updated: "+this.updated);
         
-        DebugLog.addText("update: new rooster");
+        //DebugLog.addText("update: new rooster");
 
         // Remove all Elemente form the old ContactList
         if (!updated)
@@ -897,7 +881,7 @@ public class ContactList implements CommandListener
     	else tree.sortNode( null, createNodeComparer() );
     	treeSorted = true;
     	
-    	DebugLog.addText("Tree sorted");
+    	//DebugLog.addText("Tree sorted");
     }
     
     // creates node comparer for node sorting 
@@ -969,7 +953,7 @@ public class ContactList implements CommandListener
 		treeSorted = false;
 		treeBuilded = true;
 		
-		DebugLog.addText("Tree builded");
+		//DebugLog.addText("Tree builded");
 	}
 
 	// Returns reference to group with id or null if group not found
@@ -1101,7 +1085,7 @@ public class ContactList implements CommandListener
     	{
     		debugValue = 12;
     		
-    		DebugLog.addText("Deleting node");
+    		//DebugLog.addText("Deleting node");
     		tree.removeNode(cItemNode);
     		wasDeleted = true;
     	}
@@ -1155,7 +1139,7 @@ public class ContactList implements CommandListener
 		}
     	catch (Exception e) // TODO: remove try {} catch {} !
 		{
-    		DebugLog.addText("contactChanged (Exception): "+e.toString()+" "+Integer.toString(debugValue));
+    		//DebugLog.addText("contactChanged (Exception): "+e.toString()+" "+Integer.toString(debugValue));
     		tree.unlock();
 		}
     }
@@ -1163,7 +1147,7 @@ public class ContactList implements CommandListener
     // Updates the client-side contact list (called when roster is up to date)
 	public synchronized void update()
 	{
-	    DebugLog.addText("update: rooster up to date");
+	    //DebugLog.addText("update: rooster up to date");
 	    //treeBuilded = false;
 	}
     
@@ -1315,7 +1299,7 @@ public class ContactList implements CommandListener
     // Removes a contact list item
     public synchronized void removeContactItem(ContactListContactItem cItem)
     {
-    	DebugLog.addText("removeContactItem "+cItem.getUin());
+    	//DebugLog.addText("removeContactItem "+cItem.getUin());
 
         // Remove given contact item
         this.cItems.removeElement(cItem);
@@ -1327,8 +1311,8 @@ public class ContactList implements CommandListener
     // Adds a contact list item
     public synchronized void addContactItem(ContactListContactItem cItem)
     {
-        DebugLog.addText("addContactItem "+cItem.getUin()+
-        		" temp="+new Boolean(cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)).toString());
+        //DebugLog.addText("addContactItem "+cItem.getUin()+
+        //		" temp="+new Boolean(cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)).toString());
         if (!cItem.returnBoolValue(ContactListContactItem.VALUE_ADDED))
         {
         	// does contact already exists or temporary ?
@@ -1353,7 +1337,7 @@ public class ContactList implements CommandListener
     {
         // Search for contact entry and add message to message queue
 
-        DebugLog.addText("addMessage");
+        //DebugLog.addText("addMessage");
         boolean listed = false;
         ContactListContactItem cItem = null;
         int i;
@@ -1390,6 +1374,77 @@ public class ContactList implements CommandListener
         // Update tree
         contactChanged(cItem, true, false, false);
     }
+    
+    // Reaction to player events. (Thanks to Alexander Barannik for idea!)
+    public void playerUpdate(final Player player, final String event, Object eventData)
+    {
+    	// queue a call to updateEvent in the user interface event queue
+    	Jimm.display.callSerially(new Runnable() {
+    	public void run()
+    	{
+        	if (event == END_OF_MEDIA)
+        	{
+        		player.close();
+        	}    	
+    	}
+    	});    	
+    }
+	
+	// Creates player for file 'source'
+	private Player createPlayer(String source)
+	{
+		String ext, mediaType;
+		Player p;
+		
+		// What is file extention?
+		int point = source.lastIndexOf('.');
+		if (point != -1) ext = source.substring(point+1, source.length()).toLowerCase();
+		else ext = "wav";
+		
+		// What is media type?
+		if (ext.equals("mp3")) mediaType = "audio/mpeg";
+		else if (ext.equals("mid") || ext.equals("midi")) mediaType = "audio/midi";
+		else if (ext.equals("amr"))  mediaType = "audio/amr";
+		else mediaType = "audio/X-wav";
+	
+		try
+		{
+			InputStream is = getClass().getResourceAsStream(source);
+			if (is == null) is = getClass().getResourceAsStream("/"+source);
+			if (is == null)
+			{
+				//DebugLog.addText("Create player: source "+source+"not found");
+				return null;
+			}
+			p = Manager.createPlayer(is, mediaType);
+			p.addPlayerListener(this);
+		}
+		catch (Exception e)
+		{
+			//DebugLog.addText("Create player exception: "+e.toString());
+			return null;
+		}
+		return p;
+	}
+	
+	// sets volume for player
+	static private void setVolume(Player p, int value)
+	{
+		try
+		{
+			p.realize();
+			VolumeControl c = (VolumeControl) p.getControl("VolumeControl");
+			if (c != null)
+			{
+				c.setLevel(value);
+				p.prefetch();
+			}
+		}
+		catch (Exception e)
+		{
+			//DebugLog.addText("setVolume "+e.toString());
+		}
+	}
 
     // Play a sound notification
     private void playSoundNotivication(int notType)
@@ -1439,31 +1494,23 @@ public class ContactList implements CommandListener
             try
             {
                 Player p;
-                VolumeControl c;
                 
                 if (notType == SOUND_TYPE_MESSAGE)
                 {
-                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
-                    p.realize();
-                    c = (VolumeControl) p.getControl("VolumeControl");
-                    c.setLevel(Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
-                    System.out.println("MessageVol: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
+                	p = createPlayer( Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE) );
+                	if (p == null) return;
+                    setVolume(p, Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
                 }
                 else
                 {
-                    p = Manager.createPlayer(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
-                    p.realize();
-                    c = (VolumeControl) p.getControl("VolumeControl");
-                    c.setLevel(Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
-                    System.out.println("OnlineVol: "+Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
+                	p = createPlayer( Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE) );
+                	if (p == null) return;
+                    setVolume(p, Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME)); 
                 }
+                
                 p.start();
-            } catch (IOException ioe)
-            {
-            	// Do nothing
-            	//System.out.println(ioe.toString());
             }
-            catch (MediaException me)
+            catch (Exception me)
             {
                 // Do nothing
                 //System.out.println(me.toString());
@@ -1571,9 +1618,9 @@ public class ContactList implements CommandListener
 		
 		for (int i = index+di;; i += di)
 		{
-			if (i == index) break;
 			if (i < 0) i = maxSize-1;
 			if (i >= maxSize) i = 0;
+			if (i == index) break;
 			
 			ContactListContactItem cItem = (ContactListContactItem)cItems.elementAt(i); 
 			if ( cItem.returnBoolValue(ContactListContactItem.VALUE_HAS_CHAT) )
