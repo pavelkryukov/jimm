@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/ChatHistory.java
- Version: 0.2.2  Date: 2004/07/12
+ Version: ###VERSION###  Date: ###DATE###
  Author(s): Andreas Rossbacher, Artyomov Denis
  *******************************************************************************/
 
@@ -202,18 +202,24 @@ public class ChatHistory
                 return -1;
         }
     }
+    
+    // Returns the size if the history Vector
+    public int chatHistorySize()
+    {
+        return this.historyVector.size();
+    }
 
     // Creates a new chat form and returns the index number of it in the vector
     public int newChatForm(String name)
     {
     	ChatTextList chatForm = new ChatTextList();
         
-//#sijapp cond.if target is "MIDP2"#
+    	// #sijapp cond.if target is "MIDP2"#
         chatForm.setFullScreenMode(false);
-        chatForm.setTitle(name);
-//#sijapp cond.else#
-        chatForm.setCaption(name);
-//#sijapp cond.end#
+        chatForm.setTitle(name); //+" ("+(this.chatHistorySize()+1)+"/"+(this.chatHistorySize()+1)+")");
+        // #sijapp cond.else#
+        chatForm.setCaption(name); //+" ("+(this.chatHistorySize()+1)+"/"+(this.chatHistorySize()+1)+")");
+        // #sijapp cond.end#
         
         historyVector.addElement(chatForm);
         return historyVector.size()-1;
