@@ -446,23 +446,27 @@ public class ContactList implements CommandListener
     private synchronized int sortElement(int index)
     {
 
-        //System.out.println("SortElement: " + index);
+        // System.out.println("SortElement: " + index);
 
-        // Insertion sort (sort first by status - online/offline/temprary -,
-        // then by nick)
-        ContactListContactItem v = (ContactListContactItem) this.cItems.elementAt(index);
-        this.cItems.removeElementAt(index);
-        //this.contactList.delete(index);
-
-        int i = 0;
-        while (((ContactListContactItem) this.cItems.elementAt(i)).compareTo(v) < 0)
+        if (this.cItems.size() != 1)
         {
-            i++;
-            if (i == this.cItems.size()) break;
-        }
-        this.cItems.insertElementAt((ContactListItem) v, i);
+            // Insertion sort (sort first by status - online/offline/temprary -,
+            // then by nick)
+            ContactListContactItem v = (ContactListContactItem) this.cItems.elementAt(index);
+            this.cItems.removeElementAt(index);
 
-        return i;
+            int i = 0;
+            while (((ContactListContactItem) this.cItems.elementAt(i)).compareTo(v) < 0)
+            {
+                i++;
+                if (i == this.cItems.size()) break;
+
+            }
+            this.cItems.insertElementAt((ContactListItem) v, i);
+
+            return i;
+        } else
+            return 0;
     }
 
     // Sorts the contact list completely (used after rooster update)
@@ -498,8 +502,8 @@ public class ContactList implements CommandListener
     public synchronized void update(long versionId1, int versionId2, ContactListItem[] items)
     {
 
-        //System.out.println("\n");
-        //System.out.println("update: new rooster");
+        // System.out.println("\n");
+        // System.out.println("update: new rooster");
 
         // Save selected contact entry
         this.saveListPosition();
@@ -552,8 +556,8 @@ public class ContactList implements CommandListener
     public synchronized void update()
     {
 
-        System.out.println("\n");
-        System.out.println("update: rooster up to date");
+        // System.out.println("\n");
+        // System.out.println("update: rooster up to date");
 
         // Save selected contact entry
         this.saveListPosition();
@@ -564,8 +568,8 @@ public class ContactList implements CommandListener
     public synchronized void update(String uin)
     {
 
-        System.out.println("\n");
-        System.out.println("update: back form msg display");
+        // System.out.println("\n");
+        // System.out.println("update: back form msg display");
 
         // Save selected contact entry
         this.saveListPosition();
@@ -587,8 +591,8 @@ public class ContactList implements CommandListener
     public synchronized void update(String uin, long status, int capabilities)
     {
 
-        System.out.println("\n");
-        System.out.println("update: status change");
+        // System.out.println("\n");
+        // System.out.println("update: status change");
         //Do we have an offline to online change?
         boolean wasoffline = false;
         boolean onoffchange = false;
@@ -628,8 +632,8 @@ public class ContactList implements CommandListener
             // Play sound notice if selected
             if (onoffchange)
                 this.playSoundNotivication(SOUND_TYPE_ONLINE);
-            // Update visual list (sorting only if it was on online offline or
-            // vice versa change
+            
+            // Update visual list (sorting only if it was on online offline or vice versa change
             this.refreshList(!wasoffline, false, i);
         }
     }
@@ -1018,6 +1022,7 @@ public class ContactList implements CommandListener
         {
             position = sortElement(position);
             changed = true;
+            
             // Refreshes the visible contact list
             this.refreshVisibleList(false);
         }
