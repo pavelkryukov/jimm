@@ -39,6 +39,7 @@
             MSG_NOTIFY_SOUND_FILE	   (UTF-8)
             VIBRATOR                   (Boolean)
             KEEP_CHAT				   (Boolean)
+            USE_CP1251_HACK			   (Boolean)
             COST_PER_PACKET            (Integer)
             COST_PER_DAY               (Integer)
             COST_PACKET_LENGTH         (Integer)
@@ -95,6 +96,7 @@ public class Options
   public static final boolean DEFAULT_VIBRATOR = false;
   // #sijapp cond.end#
   public static final boolean DEFAULT_KEEP_CHAT = true;
+  public static final boolean DEFAULT_CP1251_HACK = false;
 //#sijapp cond.if mod_TRAF is "true" #
   public static final int DEFAULT_COST_PER_PACKET = 0;
   public static final int DEFAULT_COST_PER_DAY = 0;
@@ -155,6 +157,9 @@ public class Options
 
   // Section interface, keep the chat history enabled/disabled
   private boolean keep_chat;
+  
+//Section interface, use the cp1251 hack?
+ private boolean cp1251_hack;
 
 //#sijapp cond.if mod_TRAF is "true" #
   // Section cost, cost per packet
@@ -213,6 +218,7 @@ public class Options
       this.setVibrator(Options.DEFAULT_VIBRATOR);
       // #sijapp cond.end#
       this.setKeepChat(Options.DEFAULT_KEEP_CHAT);
+      this.setCP1251Hack(Options.DEFAULT_CP1251_HACK);
 //	  #sijapp cond.if mod_TRAF is "true" #
       this.setCostPerPacket(Options.DEFAULT_COST_PER_PACKET);
       this.setCostPerDay(Options.DEFAULT_COST_PER_DAY);
@@ -271,6 +277,7 @@ public class Options
 	dis.readBoolean();
     // #sijapp cond.end#
     this.setKeepChat(dis.readBoolean());
+    this.setCP1251Hack(dis.readBoolean());
 	//	#sijapp cond.if mod_TRAF is "true" #
     this.setCostPerPacket(dis.readInt());
     this.setCostPerDay(dis.readInt());
@@ -353,6 +360,7 @@ public class Options
     dos.writeBoolean(false);
     // #sijapp cond.end#
     dos.writeBoolean(this.keepChat());
+    dos.writeBoolean(this.cp1251Hack());
 	//	#sijapp cond.if mod_TRAF is "true" #
     dos.writeInt(this.getCostPerPacket());
     dos.writeInt(this.getCostPerDay());
@@ -557,6 +565,16 @@ public class Options
   public synchronized void setKeepChat(boolean keep_chat) {
       this.keep_chat = keep_chat;
   }
+  
+  //Return cp1261Hack
+  public synchronized boolean cp1251Hack() {
+	  return (this.cp1251_hack);
+  }
+
+  //  Set cp1251_hack
+  public synchronized void setCP1251Hack(boolean cp1251_hack) {
+	  this.cp1251_hack = cp1251_hack;
+  }
 
 //#sijapp cond.if mod_TRAF is "true" #
   // Get cost per packet
@@ -680,6 +698,7 @@ public class Options
     private ChoiceGroup vibratorChoiceGroup;
     // #sijapp cond.end#
 	private ChoiceGroup keepChatChoiceGroup;
+	private ChoiceGroup cp1251ChoiceGroup;
 //	#sijapp cond.if mod_TRAF is "true" #
     private TextField costPerPacketTextField;
     private TextField costPerDayTextField;
@@ -750,6 +769,9 @@ public class Options
 	  this.keepChatChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "keep_chat"), Choice.MULTIPLE);
 	  this.keepChatChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
 	  this.keepChatChoiceGroup.setSelectedIndex(0, Options.this.keepChat());
+	  this.cp1251ChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "cp1251"), Choice.MULTIPLE);	
+	  this.cp1251ChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
+	  this.cp1251ChoiceGroup.setSelectedIndex(0, Options.this.cp1251Hack());
 
       // #sijapp cond.if target is "SIEMENS"#
       this.msgNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "message_notification"), Choice.EXCLUSIVE);
@@ -881,6 +903,7 @@ public class Options
             this.optionsForm.append(this.clSortByChoiceGroup);
             this.optionsForm.append(this.clHideOfflineChoiceGroup);
             this.optionsForm.append(this.keepChatChoiceGroup);
+			this.optionsForm.append(this.cp1251ChoiceGroup);
             // #sijapp cond.if target is "SIEMENS"#
             this.optionsForm.append(this.msgNotificationModeChoiceGroup);
             this.optionsForm.append(this.soundFileTextField);
@@ -957,6 +980,7 @@ public class Options
 
             Options.this.setClHideOffline(this.clHideOfflineChoiceGroup.isSelected(0));
             Options.this.setKeepChat(this.keepChatChoiceGroup.isSelected(0));
+			Options.this.setCP1251Hack(this.keepChatChoiceGroup.isSelected(0));
             
 //			#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
             Options.this.setVibrator(this.vibratorChoiceGroup.isSelected(0));

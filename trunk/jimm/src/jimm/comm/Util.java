@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+import jimm.Jimm;
 import jimm.ContactList;
 import jimm.util.ResourceBundle;
 
@@ -220,14 +221,12 @@ public class Util
       }
     }
 
-    // #sijapp cond.if cp1251 is "true" #
-    // Read string in CP1251 (Cyrillic)
-    return (Encoding.byteArray1251ToString(buf, off, len));
-    // #sijapp cond.else #
-    // Read string in default character encoding
-    return (new String(buf, off, len));
-    // #sijapp cond.end #
-
+    if (Jimm.jimm.getOptionsRef().cp1251Hack())
+    	// Read string in CP1251 (Cyrillic)
+    	return (Encoding.byteArray1251ToString(buf, off, len));
+    	// Read string in default character encoding
+    else
+    	return (new String(buf, off, len));
   }
 
 
@@ -272,14 +271,12 @@ public class Util
       }
     }
 
-    // #sijapp cond.if cp1251 is "true" #
     // Write string in CP1251 (Cyrillic)
-    return (Encoding.stringToByteArray1251(val));
-    // #sijapp cond.else #
+	if (Jimm.jimm.getOptionsRef().cp1251Hack())
+    	return (Encoding.stringToByteArray1251(val));
+	else
     // Write string in default character encoding
     return (val.getBytes());
-    // #sijapp cond.end #
-
   }
 
 
