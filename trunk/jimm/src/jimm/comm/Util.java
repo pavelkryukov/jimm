@@ -433,6 +433,7 @@ public class Util
 	{
 		if (status == ContactList.STATUS_OFFLINE) return (ContactList.STATUS_OFFLINE);
 		if ((status & ContactList.STATUS_DND) != 0) return (ContactList.STATUS_DND);
+		if ((status & ContactList.STATUS_INVISIBLE) != 0) return (ContactList.STATUS_INVISIBLE);
 		if ((status & ContactList.STATUS_OCCUPIED) != 0) return (ContactList.STATUS_OCCUPIED);
 		if ((status & ContactList.STATUS_NA) != 0) return (ContactList.STATUS_NA);
 		if ((status & ContactList.STATUS_AWAY) != 0) return (ContactList.STATUS_AWAY);
