@@ -99,6 +99,10 @@ On Siemens S55 mobiles there are the following graphical errors:
   * On devices with heap memory bellow 300kb (e.g. Siemens S55) Jimm will only
     run stable with less than 40 contacts. You should also disable the chat history
     feature
+  * On Nokia 6230 with FW > 3.15 you have to set "Communication-Network access" for
+    Jimm to "Ask everytime". When the phone asks you to accept the connection the
+    second time just wait about 5 seconds till the GRPS connection is ready for the
+    new connection. (you can see this by the changing "G" symbol on the phone)
 
 The background of the flowers if there is an active chat is no longer
 transparent.
