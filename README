@@ -55,8 +55,8 @@ PACKAGE CONTENTS
   |   |        '- Jimm.jad (archive descriptor, RIM mobiles only)
   |   '- MIDP2
   |       '- [List of included languages]
-  |            |- Jimm.jar (obfusc. Java archive, Nokia Series 40 mobiles only)
-  |            '- Jimm.jad (archive descriptor, Nokia Series 40 mobiles only)
+  |            |- Jimm.jar (obfusc. Java archive, MIDP2 compartible mobiles only)
+  |            '- Jimm.jad (archive descriptor, MIDP2 compartible mobiles only)
   |- res
   |   |- MANIFEST.MF
   |   '- [Target]
@@ -104,10 +104,18 @@ Jimm uses Apache Ant for building. You can download Apache Ant from
 <http://ant.apache.org/>. Follow the instructions in the Apache Ant manual to
 install Apache Ant.
 
-You also must have a Java 2 Platform Standard Edition (J2SE) SDK and the
-Mobile Information Device Profile (MIDP) SDK 1.0.3. You can download both from
-<http://java.sun.com/>. Make sure not to download the new MIDP SDK 2.0.
+You also must have a Java 2 Platform Standard Edition (J2SE) SDK.
+Depending on the version you want to build you also need the following:
 
+	* Default version: MJ2ME Wireless Toolkit 1.0.4_01
+		<http://java.sun.com/>
+	* MIDP2 version: J2ME Wireless Toolkit SDK 2.0_01
+		<http://java.sun.com/>
+	* Siemens version: Latest version of the SMTK (Siemens Mobility Tool Kit)
+		<http://communication-market.siemens.de>
+	* RIM version: Latest version of the Blackberry SDK
+		<http://www.blackberry.net>
+		
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
 instructions in the ProGuard manual to install ProGuard.
