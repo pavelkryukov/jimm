@@ -1,6 +1,6 @@
 /*******************************************************************************
-Jimm - J2ME ICQ client
-Copyright (C) 2003  Manuel Linsmayer
+Jimm - Mobile Messaging - J2ME ICQ clone
+Copyright (C) 2003-05  Jimm Project
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -122,7 +122,7 @@ public class Icq implements Runnable
         Jimm.display.setCurrent(wait2);
 
         // Request contact item removal
-        UpdateContactListAction act = new UpdateContactListAction(cItem, true);
+        UpdateContactListAction act = new UpdateContactListAction(cItem, true, false);
         try
         {
             this.requestAction(act);
@@ -220,7 +220,7 @@ public class Icq implements Runnable
             Jimm.display.setCurrent(wait2);
 
             // Request contact item removal
-            UpdateContactListAction act2 = new UpdateContactListAction(cItem, false);
+            UpdateContactListAction act2 = new UpdateContactListAction(cItem, false, false);
             try
             {
                 Jimm.jimm.getIcqRef().requestAction(act2);
