@@ -131,15 +131,16 @@ public class SendMessageAction extends Action
     
     // Get receiver object
     ContactListContactItem rcvr;
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        
      // #sijapp cond.if modules_FILES is "true"# 
       if (this.plainMsg != null)
           rcvr = this.plainMsg.getRcvr();
       else
           rcvr = this.fileTrans.getRcvr();
+     
      // #sijapp cond.else#
      rcvr = this.plainMsg.getRcvr();
-     // #sijapp cond.end#
+     
      // #sijapp cond.end#
     // What message format/encoding should we use?
     int type = 1;
@@ -586,7 +587,7 @@ public class SendMessageAction extends Action
                 Util.putDWord(buf,marker,0x00008c82,false);
                 marker += 4;
             }
-            // #sijapp cond.else#
+            // #sijapp cond.end#
             // #sijapp cond.else#
             // Put message length
             Util.putWord(buf, marker, textRaw.length + 1, false);
