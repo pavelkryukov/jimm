@@ -175,6 +175,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="lang/SE" value="true">
 			<contains string="${lang}" substring="SE"/>
 		</condition>
+		<condition property="lang/LT" value="true">
+			<contains string="${lang}" substring="LT"/>
+		</condition>
 		<mkdir dir="${build}/init/src"/>
 		<sijapp srcdir="${src}"
 			destdir="${build}/init/src">
@@ -189,7 +192,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="lang_LT" value="${lang/LT}"/>
 			<define name="lang_RU" value="${lang/RU}"/>
 			<define name="lang_SE" value="${lang/SE}"/>
-			<define name="cp1251" value="${cp1251}"/>
+			<define name="lang_LT" value="${lang/LT}"/>
 		</sijapp>
 		<replace dir="${build}/init/src"
 			encoding="UTF-8">
