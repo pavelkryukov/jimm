@@ -547,7 +547,8 @@ public class ActionListener
                         String text = Util.crlfToCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
                         msg2Marker += textLen;
 
-                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
+                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                       // #sijapp cond.if modules_FILES is "true"#
                         // File transfer message
                         if (plugin.equals("File") && Jimm.jimm.getSplashCanvasRef().isShown())
                         {
@@ -613,6 +614,7 @@ public class ActionListener
                         // URL message
                         else 
                         // #sijapp cond.end#
+                         // #sijapp cond.end#
                         if (plugin.equals("Send Web Page Address (URL)"))
                         {
 
