@@ -28,7 +28,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
+import java.util.TimeZone;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
@@ -67,6 +70,30 @@ public class Util
 	    return (counter);
 	    
 	}
+	
+	// Called to get a date String
+	public static String getDateString(boolean onlyTime)
+	{
+		Calendar time = Calendar.getInstance();
+	    time.setTime(new Date());
+		String datestr = new String("failed");
+		if (TimeZone.getDefault().useDaylightTime())
+		{
+			datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+		}
+		else
+		{
+			datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)+1) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
+		}
+		if (!onlyTime)
+		{
+			datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
+			          Util.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
+			          String.valueOf(time.get(Calendar.YEAR)) + " " + datestr;
+		}
+		return datestr;
+	}
+	
 	public static String toHexString(byte[] b) {
 		StringBuffer sb = new StringBuffer(b.length * 2);
 		for (int i = 0; i < b.length; i++) {
@@ -512,25 +539,33 @@ public class Util
     // Create a random id which is not used yet
     public static int createRandomId()
     {
+		// Max value is probably 0x7FFF, lowest value is unknown.
+		// We use range 0x1000-0x7FFF.
+        // From miranda source
+        
+        int range  = 0x6FFF;
+        
         ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
         ContactListContactItem[] cItems = Jimm.jimm.getContactListRef().getContactItems();
         int randint;
         boolean found;
 
         Random rand = new Random(System.currentTimeMillis());
-        randint = rand.nextInt() & 0x0000ffff;
+        randint = rand.nextInt();
+        if (randint < 0)
+            randint = randint * (-1);
+        randint = randint % range + 4096;
         
-        DebugLog.addText("rand: "+randint);
+        DebugLog.addText("rand: 0x"+Integer.toHexString(randint));
+        
         do
         {
             found = false;
             for (int i = 0; i < gItems.length; i++)
             {
-                DebugLog.addText("gItem: "+gItems[i].getId());
                 if (gItems[i].getId() == randint)
                 {
-                    randint = rand.nextInt() & 0x0000ffff;
-                    DebugLog.addText("rand: "+randint);
+                    randint = rand.nextInt() + 4096 % range;
                     found = true;
                     break;
                 }
@@ -538,11 +573,9 @@ public class Util
             if (!found) 
                 for (int j = 0; j < cItems.length; j++)
                 {
-                    DebugLog.addText("cItem: "+cItems[j].getId());
                     if (cItems[j].getId() == randint)
 	                {
-	                    randint = rand.nextInt() & 0x0000ffff;
-	                    DebugLog.addText("rand: "+randint);
+                        randint = rand.nextInt() % range + 4096;
 	                    found = true;
 	                    break;
 	                }
