@@ -119,7 +119,7 @@ public class FileTransfer implements CommandListener
         } else if (type == FileTransfer.FT_TYPE_FILE_BY_NAME)
         {
             Form fileNameForm = new Form(ResourceBundle.getString("filepath"));
-            this.fileNameField = new TextField(ResourceBundle.getString("filepath"), "0:/videos/video.avi", 256, TextField.ANY);
+            this.fileNameField = new TextField(ResourceBundle.getString("filepath"), "", 256, TextField.ANY);
             
             fileNameForm.append(fileNameField);
             fileNameForm.addCommand(this.backCommand);
@@ -266,7 +266,7 @@ public class FileTransfer implements CommandListener
         private boolean viewfinder = true;
         private Image img;
         private byte[] data;
-        private byte[] data_pre;
+        //private byte[] data_pre;
 
         private int res_marker = 0;
 
@@ -281,12 +281,12 @@ public class FileTransfer implements CommandListener
 
             backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
             okCommand = new Command(ResourceBundle.getString("ok"), Command.SCREEN, 1);
-            resCommand = new Command(ResourceBundle.getString("res"), Command.SCREEN, 2);
+            // resCommand = new Command(ResourceBundle.getString("res"), Command.SCREEN, 2);
             selectCommand = new Command(ResourceBundle.getString("back"), Command.OK, 1);
 
             this.addCommand(backCommand);
             this.addCommand(okCommand);
-            this.addCommand(resCommand);
+            // this.addCommand(resCommand);
             this.setCommandListener(this);
 
             try
@@ -389,9 +389,9 @@ public class FileTransfer implements CommandListener
             {
                 try
                 {
-                    data = vc
-                            .getSnapshot("encoding=jpeg&width=" + this.res[0][this.res_marker] + "&height=" + this.res[1][this.res_marker]);
-                    data_pre = vc.getSnapshot(null);
+                    //data = vc.getSnapshot("encoding=jpeg&width=" + this.res[0][this.res_marker] + "&height=" + this.res[1][this.res_marker]);
+                    //data_pre = vc.getSnapshot(null);
+                    data = vc.getSnapshot(null);
 
                     this.stop();
                     img = Image.createImage(data, 0, data.length);
