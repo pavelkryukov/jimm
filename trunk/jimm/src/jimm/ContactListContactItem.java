@@ -475,6 +475,11 @@ public class ContactListContactItem extends ContactListItem
     // Activates the contact item menu
     public void activateMenu()
     {
+        // #sijapp cond.if target is "MIDP2"#
+		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(this.getChatHistoryDisplayNr()).setTitle(this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
+        // #sijapp cond.else#
+		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(this.getChatHistoryDisplayNr()).setCaption(this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
+        // #sijapp cond.end#
         this.menu.activate();
     }
 
