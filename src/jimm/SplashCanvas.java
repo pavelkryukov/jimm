@@ -514,11 +514,11 @@ public class SplashCanvas extends Canvas
       {
         Jimm.jimm.getContactListRef().update();
         Jimm.jimm.getContactListRef().activate();
-        JimmException.handleException(new JimmException(154, 2, true));
+        if (this.updateContactListAct.getErrorType() == 0 )
+            JimmException.handleException(new JimmException(154, 2, true));
         this.cancel();
       }
     }
-
 
   }
 

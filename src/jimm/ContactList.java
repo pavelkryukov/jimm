@@ -218,6 +218,12 @@ public class ContactList implements CommandListener
         this.gItems.copyInto(gItems);
         return (gItems);
     }
+    
+    // Return the contactList
+    public List getContactList()
+    {
+        return contactList;
+    }
 
     // Request display of the given alert and the main menu afterwards
     public void activate(Alert alert)
