@@ -170,3 +170,8 @@ VERSION 0.3.2
   * Options subpages now have a back button so you can go back without saving
   * Added Polish translation
   
+________________________________________________________________________________
+VERSION 0.3.3
+  * New module: Text messages history storing
+  * Added Ukrainian translation
+  
