@@ -159,8 +159,14 @@ public class Options
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "");
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     0);
 			// #sijapp cond.end#
-			this.setBooleanOption(Options.OPTION_VIBRATOR,                       false);
+			
+			// #sijapp cond.if lang_RU is "true" and lang_EN isnot "true"#
+			this.setBooleanOption(Options.OPTION_CP1251_HACK,                    true);
+			// #sijapp cond.else#
 			this.setBooleanOption(Options.OPTION_CP1251_HACK,                    false);
+			// #sijapp cond.end#
+			
+			this.setBooleanOption(Options.OPTION_VIBRATOR,                       false);
 			this.setIntOption    (Options.OPTION_COST_PER_PACKET,                0);
 			this.setIntOption    (Options.OPTION_COST_PER_DAY,                   0);
 			this.setIntOption    (Options.OPTION_COST_PACKET_LENGTH,             1024);
