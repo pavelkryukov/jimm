@@ -51,6 +51,8 @@ public class Text_RU extends ResourceBundle
                                            resources.put("menu_button", "     Меню");
                                            resources.put("save",                        "Сохранить ");
                                            resources.put("ok",                          "OK       ");
+                                           resources.put("reply",                       "Ответ    ");
+                                           resources.put("close",                       "  Закрыть");
                                           // #sijapp cond.else#
 		resources.put("select",                      "Выбрать");
                                            resources.put("reset",                       "Сброс");
@@ -58,6 +60,8 @@ public class Text_RU extends ResourceBundle
                                            resources.put("back", "Назад");
                                            resources.put("save",                        "Сохр.");
                                            resources.put("ok",                          "OK");
+                                           resources.put("reply",                       "Ответ");
+                                           resources.put("close",                       "Закрыть");
                                           // #sijapp cond.end#
                                            resources.put(".",                           ".");
 		resources.put("about",                       "О программе");
@@ -180,7 +184,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Удалить из списка");
 		resources.put("rename",                      "Переименовать");
-		resources.put("reply",                       "Ответ");
+		
 		resources.put("requauth",                    "Запрос авторизации");
 		resources.put("requ",                        "Требуется");
 		resources.put("requno",                      "Не требуется");
