@@ -636,20 +636,9 @@ public class ContactListContactItem extends ContactListItem
 						MSGBS_DELETECONTACT
 					);
                     break;
+
                 case 6:
-                    // Remove
-                	Jimm.jimm.messageBox
-					(
-						ResourceBundle.getString("remove")+"?",
-						ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",
-						Jimm.MESBOX_OKCANCEL,
-						this,
-						MSGBS_DELETECONTACT
-					);
-                    break;
-                    
-                case 7:
-                    
+
                     // Rename Contact
                     // Reset and display textbox for entering name
                     MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("rename"));
@@ -658,7 +647,20 @@ public class ContactListContactItem extends ContactListItem
                     MenuUtil.messageTextbox.addCommand(MenuUtil.renameOkCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
-                    
+
+                    break;
+
+                case 7:
+                    // DC Info
+                    Alert info = new Alert("DC Infos");
+                    info.setString("DC typ: " + ContactListContactItem.this.getDCType() + "\n" + "ICQ version: "
+                            + ContactListContactItem.this.getICQVersion() + "\n" + "Int IP: "
+                            + Util.ipToString(ContactListContactItem.this.getInternalIP()) + "\n" + "Ext IP: "
+                            + Util.ipToString(ContactListContactItem.this.getExternalIP()) + "\n" + "Port: "
+                            + ContactListContactItem.this.getPort() + "\n");
+                    info.setTimeout(Alert.FOREVER);
+                    Jimm.display.setCurrent(info);
+
                     break;
 
                 case 8:
