@@ -859,12 +859,15 @@ public class ContactList implements CommandListener
         treeBuilded = false;
         
         // Save new contact list
-        try
+        if (flags == 0)
         {
-            this.save();
-        } catch (Exception e)
-        {
-            DebugLog.addText("Exception while saving list: "+e.toString());
+            try
+            {
+                this.save();
+            } catch (Exception e)
+            {
+                DebugLog.addText("Exception while saving list: " + e.toString());
+            }
         }
         this.updated = true;
     }
