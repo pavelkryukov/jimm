@@ -36,7 +36,9 @@
             CL_SORT_BY                 (Integer)
             CL_HIDE_OFFLINE            (Boolean)
             MSG_NOTIFICATION_MODE      (Integer)
+            ONL_NOTIFICATION_MODE      (Integer)
             MSG_NOTIFY_SOUND_FILE	   (UTF-8)
+            ONL_NOTIFY_SOUND_FILE	   (UTF-8)
             VIBRATOR                   (Boolean)
             KEEP_CHAT				   (Boolean)
             USE_CP1251_HACK			   (Boolean)
@@ -52,7 +54,7 @@
 
 package jimm;
 
-
+import jimm.ContactList;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
@@ -88,21 +90,29 @@ public class Options
   public static final boolean DEFAULT_DISPLAY_DATE = false;
   public static final int DEFAULT_CL_SORT_BY = 0;
   public static final boolean  DEFAULT_CL_HIDE_OFFLINE = false;
-  // #sijapp cond.if target is "SIEMENS"#
+  // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
   public static final int DEFAULT_MSG_NOTIFICATION = 0;
+  public static final int DEFAULT_ONL_NOTIFICATION = 0;
+  //#sijapp cond.end#
+  //#sijapp cond.if target is "SIEMENS"#
   public static final String DEFAULT_MSG_NOTIFY_SOUND_FILE = "message.mmf";
-//#sijapp cond.end#
-//#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+  public static final String DEFAULT_ONL_NOTIFY_SOUND_FILE = "online.mmf";
+  //#sijapp cond.end#
+  //#sijapp cond.if target is "MIDP2"#
+  public static final String DEFAULT_MSG_NOTIFY_SOUND_FILE = "message.wav";
+  public static final String DEFAULT_ONL_NOTIFY_SOUND_FILE = "online.wav";
+  //#sijapp cond.end#
+  // #sijapp cond.if target is "SIEMENS"#
   public static final boolean DEFAULT_VIBRATOR = false;
   // #sijapp cond.end#
   public static final boolean DEFAULT_KEEP_CHAT = true;
   public static final boolean DEFAULT_CP1251_HACK = false;
-//#sijapp cond.if modules_TRAFFIC is "true" #
+  //#sijapp cond.if modules_TRAFFIC is "true" #
   public static final int DEFAULT_COST_PER_PACKET = 0;
   public static final int DEFAULT_COST_PER_DAY = 0;
   public static final int DEFAULT_COST_PACKET_LENGTH = 1024;
   public static final String DEFAULT_CURRENCY = "$";
-//#sijapp cond.end#
+  //#sijapp cond.end#
   public static final int DEFAULT_DISPLAY_ADVERTISEMENT = 0;
   public static final long DEFAULT_ONLINE_STATUS = ContactList.STATUS_ONLINE;
 
@@ -142,15 +152,21 @@ public class Options
   // Section interface, show/hide offline contacts flag
   private boolean clHideOffline;
 
-  // #sijapp cond.if target is "SIEMENS"#
+  // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
   // Section interface, message notification mode
   private int msgNotificationMode;
+  
+  // Section interface, online notification mode
+  private int onlNotificationMode;
 
-  // Section interface, soundfile name
-  private String soundFileName;
+  // Section interface, online soundfile name
+  private String onlSoundFileName;
+  
+  //Section interface, message soundfile name
+  private String msgSoundFileName;
 
   // #sijapp cond.end#
-//#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+  //#sijapp cond.if target is "SIEMENS"#
   // Section interface, vibration enabled/disabled
   private boolean vibrator;
   // #sijapp cond.end#
@@ -158,10 +174,10 @@ public class Options
   // Section interface, keep the chat history enabled/disabled
   private boolean keep_chat;
   
-//Section interface, use the cp1251 hack?
+  //Section interface, use the cp1251 hack?
  private boolean cp1251_hack;
 
-//#sijapp cond.if modules_TRAFFIC is "true" #
+ //#sijapp cond.if modules_TRAFFIC is "true" #
   // Section cost, cost per packet
   private int costPerPacket;
 
@@ -210,11 +226,13 @@ public class Options
       this.setDisplayDate(Options.DEFAULT_DISPLAY_DATE);
       this.setClSortBy(Options.DEFAULT_CL_SORT_BY);
       this.setClHideOffline(Options.DEFAULT_CL_HIDE_OFFLINE);
-      // #sijapp cond.if target is "SIEMENS"#
-      this.setMsgNotificationMode(Options.DEFAULT_MSG_NOTIFICATION);
-      this.setSoundFileName(Options.DEFAULT_MSG_NOTIFY_SOUND_FILE);
+      // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+      this.setNotificationMode(Options.DEFAULT_MSG_NOTIFICATION,ContactList.SOUND_TYPE_MESSAGE);
+      this.setNotificationMode(Options.DEFAULT_ONL_NOTIFICATION,ContactList.SOUND_TYPE_ONLINE);
+      this.setSoundFileName(Options.DEFAULT_MSG_NOTIFY_SOUND_FILE,ContactList.SOUND_TYPE_MESSAGE);
+      this.setSoundFileName(Options.DEFAULT_ONL_NOTIFY_SOUND_FILE,ContactList.SOUND_TYPE_ONLINE);
 //	  #sijapp cond.end#
-//	  #sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+//	  #sijapp cond.if target is "SIEMENS"#
       this.setVibrator(Options.DEFAULT_VIBRATOR);
       // #sijapp cond.end#
       this.setKeepChat(Options.DEFAULT_KEEP_CHAT);
@@ -264,14 +282,16 @@ public class Options
     this.setDisplayDate(dis.readBoolean());
     this.setClSortBy(dis.readInt());
     this.setClHideOffline(dis.readBoolean());
-    // #sijapp cond.if target is "SIEMENS"#
-    this.setMsgNotificationMode(dis.readInt());
-    this.setSoundFileName(dis.readUTF());
+    // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+    this.setNotificationMode(dis.readInt(),ContactList.SOUND_TYPE_MESSAGE);
+    this.setNotificationMode(dis.readInt(),ContactList.SOUND_TYPE_ONLINE);
+    this.setSoundFileName(dis.readUTF(),ContactList.SOUND_TYPE_MESSAGE);
+    this.setSoundFileName(dis.readUTF(),ContactList.SOUND_TYPE_ONLINE);
 	// #sijapp cond.else#
 	 dis.readInt();
 	 dis.readBoolean();
 	// #sijapp cond.end#
-	//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+	//	#sijapp cond.if target is "SIEMENS"#
     this.setVibrator(dis.readBoolean());
 	//	#sijapp cond.else#
 	dis.readBoolean();
@@ -347,14 +367,16 @@ public class Options
     dos.writeBoolean(this.isDisplayDate());
     dos.writeInt(this.getClSortBy());
     dos.writeBoolean(this.isClHideOffline());
-    // #sijapp cond.if target is "SIEMENS"#
-    dos.writeInt(this.getMsgNotificationMode());
-    dos.writeUTF(this.getSoundFileName());
+    // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+    dos.writeInt(this.getNotificationMode(ContactList.SOUND_TYPE_MESSAGE));
+    dos.writeInt(this.getNotificationMode(ContactList.SOUND_TYPE_ONLINE));
+    dos.writeUTF(this.getSoundFileName(ContactList.SOUND_TYPE_MESSAGE));
+    dos.writeUTF(this.getSoundFileName(ContactList.SOUND_TYPE_ONLINE));
 	// #sijapp cond.else#
 	dos.writeInt(0);
 	dos.writeBoolean(false);
 	//	#sijapp cond.end#
-	//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+	//	#sijapp cond.if target is "SIEMENS"#
     dos.writeBoolean(this.isVibrator());
     // #sijapp cond.else#
     dos.writeBoolean(false);
@@ -516,33 +538,63 @@ public class Options
   }
 
 
-  // #sijapp cond.if target is "SIEMENS"#
+  // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
   // Return message notification mode
-  public synchronized int getMsgNotificationMode()
+  public synchronized int getNotificationMode(int notType)
   {
-    return (this.msgNotificationMode);
+    switch(notType)
+    {
+    case ContactList.SOUND_TYPE_MESSAGE:
+        return (this.msgNotificationMode);
+    case ContactList.SOUND_TYPE_ONLINE:
+        return (this.onlNotificationMode);
+    }
+      return (this.msgNotificationMode);
   }
 
   // Set message notification mode
-  public synchronized void setMsgNotificationMode(int msgNotificationMode)
+  public synchronized void setNotificationMode(int NotificationMode,int notType)
   {
-    this.msgNotificationMode = msgNotificationMode;
+    switch(notType)
+    {
+    case ContactList.SOUND_TYPE_MESSAGE:
+        this.msgNotificationMode = NotificationMode;
+    case ContactList.SOUND_TYPE_ONLINE:
+        this.onlNotificationMode = NotificationMode;
+    }
+      
   }
 
-  //Return vibrator
-   public synchronized String getSoundFileName()
+  //Return sound file name
+   public synchronized String getSoundFileName(int notType)
   {
-    return (this.soundFileName);
+    switch(notType)
+    {
+    case ContactList.SOUND_TYPE_MESSAGE:
+        return (this.msgSoundFileName);
+    case ContactList.SOUND_TYPE_ONLINE:
+        return (this.onlSoundFileName);
+    default:
+        return (this.onlSoundFileName);
+    }
+       
   }
 
-  //  Set vibrator
-  public synchronized void setSoundFileName(String soundFile)
+  //  Set soundfile name
+  public synchronized void setSoundFileName(String soundFile,int notType)
   {
-    this.soundFileName = soundFile;
+    switch (notType)
+    {
+    case ContactList.SOUND_TYPE_MESSAGE:
+        this.msgSoundFileName = soundFile;
+    case ContactList.SOUND_TYPE_ONLINE:
+        this.onlSoundFileName = soundFile;
+    }
+      
   }
 
 //#sijapp cond.end#
-//#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+//#sijapp cond.if target is "SIEMENS"#
   //  Return vibrator
   public synchronized boolean isVibrator()
   {
@@ -690,11 +742,13 @@ public class Options
     private ChoiceGroup displayDateChoiceGroup;
     private ChoiceGroup clSortByChoiceGroup;
     private ChoiceGroup clHideOfflineChoiceGroup;
-    // #sijapp cond.if target is "SIEMENS"#
+    // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
     private ChoiceGroup msgNotificationModeChoiceGroup;
-    private TextField soundFileTextField;
+    private ChoiceGroup onlNotificationModeChoiceGroup;
+    private TextField msgSoundFileTextField;
+    private TextField onlSoundFileTextField;
 	// #sijapp cond.end#
-//	#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+//	#sijapp cond.if target is "SIEMENS"#
     private ChoiceGroup vibratorChoiceGroup;
     // #sijapp cond.end#
 	private ChoiceGroup keepChatChoiceGroup;
@@ -773,15 +827,22 @@ public class Options
 	  this.cp1251ChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
 	  this.cp1251ChoiceGroup.setSelectedIndex(0, Options.this.cp1251Hack());
 
-      // #sijapp cond.if target is "SIEMENS"#
-      this.msgNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "message_notification"), Choice.EXCLUSIVE);
+      // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+      this.msgNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "onl_notification"), Choice.EXCLUSIVE);
       this.msgNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "no"), null);
       this.msgNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "beep"), null);
       this.msgNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "sound"), null);
-      this.msgNotificationModeChoiceGroup.setSelectedIndex(Options.this.getMsgNotificationMode(), true);
-	  this.soundFileTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "sound_file_name"), Options.this.getSoundFileName(), 32, TextField.ANY);
+      this.msgNotificationModeChoiceGroup.setSelectedIndex(Options.this.getNotificationMode(ContactList.SOUND_TYPE_MESSAGE), true);
+	  this.msgSoundFileTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "msg_sound_file_name"), Options.this.getSoundFileName(ContactList.SOUND_TYPE_MESSAGE), 32, TextField.ANY);
+	  
+      this.onlNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "msg_notification"), Choice.EXCLUSIVE);
+      this.onlNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "no"), null);
+      this.onlNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "beep"), null);
+      this.onlNotificationModeChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "sound"), null);
+      this.onlNotificationModeChoiceGroup.setSelectedIndex(Options.this.getNotificationMode(ContactList.SOUND_TYPE_ONLINE), true);
+	  this.onlSoundFileTextField = new TextField(ResourceBundle.getString("jimm.res.Text", "onl_sound_file_name"), Options.this.getSoundFileName(ContactList.SOUND_TYPE_ONLINE), 32, TextField.ANY);
 //	  #sijapp cond.end#
-//	  #sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+//	  #sijapp cond.if target is "SIEMENS"#
       this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("jimm.res.Text", "vibration")+"?", Choice.MULTIPLE);
       this.vibratorChoiceGroup.append(ResourceBundle.getString("jimm.res.Text", "yes"), null);
       this.vibratorChoiceGroup.setSelectedIndex(0,Options.this.isVibrator());
@@ -904,11 +965,13 @@ public class Options
             this.optionsForm.append(this.clHideOfflineChoiceGroup);
             this.optionsForm.append(this.keepChatChoiceGroup);
 			this.optionsForm.append(this.cp1251ChoiceGroup);
-            // #sijapp cond.if target is "SIEMENS"#
+            // #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
             this.optionsForm.append(this.msgNotificationModeChoiceGroup);
-            this.optionsForm.append(this.soundFileTextField);
+            this.optionsForm.append(this.msgSoundFileTextField);
+            this.optionsForm.append(this.onlNotificationModeChoiceGroup);
+            this.optionsForm.append(this.onlSoundFileTextField);
 //			#sijapp cond.end#
-//			#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+//			#sijapp cond.if target is "SIEMENS"#
             this.optionsForm.append(this.vibratorChoiceGroup);
             // #sijapp cond.end#
             break;
@@ -982,12 +1045,15 @@ public class Options
             Options.this.setKeepChat(this.keepChatChoiceGroup.isSelected(0));
 			Options.this.setCP1251Hack(this.keepChatChoiceGroup.isSelected(0));
             
-//			#sijapp cond.if target is "SIEMENS" | target is "NOKIAS40"#
+//			#sijapp cond.if target is "SIEMENS"#
             Options.this.setVibrator(this.vibratorChoiceGroup.isSelected(0));
 //			#sijapp cond.end#
-//			#sijapp cond.if target is "SIEMENS"#
-            Options.this.setSoundFileName(this.soundFileTextField.getString());
-            Options.this.setMsgNotificationMode(this.msgNotificationModeChoiceGroup.getSelectedIndex());
+//			#sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
+            Options.this.setSoundFileName(this.msgSoundFileTextField.getString(),ContactList.SOUND_TYPE_MESSAGE);
+            Options.this.setNotificationMode(this.msgNotificationModeChoiceGroup.getSelectedIndex(),ContactList.SOUND_TYPE_MESSAGE);
+            
+            Options.this.setSoundFileName(this.onlSoundFileTextField.getString(),ContactList.SOUND_TYPE_ONLINE);
+            Options.this.setNotificationMode(this.onlNotificationModeChoiceGroup.getSelectedIndex(),ContactList.SOUND_TYPE_ONLINE);
             // #sijapp cond.end#
             Jimm.jimm.getContactListRef().sortAll();
             break;
@@ -1035,8 +1101,6 @@ public class Options
 
     }
 
-
   }
-
 
 }
