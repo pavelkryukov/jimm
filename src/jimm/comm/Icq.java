@@ -174,6 +174,8 @@ public class Icq implements Runnable
 	// Disconnects from the ICQ network
 	public synchronized void disconnect()
 	{
+		if (state != STATE_CONNECTED) return;
+		
         // Display splash canvas
         SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
         wait.setMessage(ResourceBundle.getString("disconnecting"));
