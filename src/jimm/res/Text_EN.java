@@ -39,9 +39,29 @@ public class Text_EN extends ResourceBundle
 	{
 
 		// Labels
-		resources.put(".",                           ".");
+
+
+                                          //MOTOROLA formatted buttons
+                                          // #sijapp cond.if target is "MOTOROLA"#
+                                          resources.put("select",                     "Select    ");
+                                          resources.put("reset",                       "     Reset");
+                                          resources.put("cancel",                    "    Cancel");
+                                          resources.put("back",                       "      Back");
+                                          resources.put("exit_button",            "       Exit");
+                                          resources.put("menu_button",        "      Menu");
+                                          resources.put("save",                       "Save      ");
+                                          resources.put("ok",                            "OK        ");
+                                           // #sijapp cond.else#
+                                           resources.put("select",                      "Select");
+                                           resources.put("reset",                       "Reset");
+                                           resources.put("cancel",                        "Cancel");
+                                           resources.put("back",                        "Back");
+                                           resources.put("save",                        "Save");
+                                           resources.put("ok",                          "OK");
+		 // #sijapp cond.end#
+                                           resources.put(".",                           ".");
 		resources.put("about",                       "About");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion 0.3.3\nSee http://www.jimm.org/");
 		resources.put("account",                     "Account");
 		resources.put("add_group",                   "Add group");
 		resources.put("add_user",                    "Add User");
@@ -51,10 +71,10 @@ public class Text_EN extends ResourceBundle
 		resources.put("attention",                   "Attention!");
 		resources.put("auth",				     	 "Auth");
 		resources.put("auto_connect",				 "Auto connect on startup");
-		resources.put("back",                        "Back");
+		
 		resources.put("beep",                        "Beep");
 		resources.put("byte",                        "Byte");
-		resources.put("cancel",                      "Cancel");
+		
 		resources.put("chat_small_font",			 "Small font in chat");
 		resources.put("city",                        "City");
 		resources.put("clear",                       "Clear");
@@ -147,7 +167,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("noreason",             		 "No reason was given.");
 		resources.put("notice",                      "Notice");
 		resources.put("nr",				     		 "Nr");
-		resources.put("ok",                          "OK");
+		
 		resources.put("once_a_session",              "Once a session");
 		resources.put("onl_notification",            "Notice for upcoming contact");
 		resources.put("onl_sound_file_name",         "Online Sound File");
@@ -176,9 +196,9 @@ public class Text_EN extends ResourceBundle
 		resources.put("reset",                       "Reset");
 		resources.put("res",                         "Resolution");
 		resources.put("results",                     "Results");
-		resources.put("save",                        "Save");
+		
 		resources.put("search_user",                 "Search for User");
-		resources.put("select",                      "Select");
+		
 		resources.put("send",                        "Send");
 		resources.put("send_img",                    "Send image");
 		resources.put("send_message",                "New Message");
@@ -220,7 +240,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("whichgroup",				 	 "Which group?");
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
-			
+		
 
 		// Generic errors
 		resources.put("error_100",                   "Unknown error (#100.EXT)");
@@ -298,3 +318,4 @@ public class Text_EN extends ResourceBundle
 }
 
 // #sijapp cond.end #
+
