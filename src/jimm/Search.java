@@ -28,6 +28,8 @@ import java.util.Vector;
 import jimm.comm.SearchAction;
 import jimm.util.ResourceBundle;
 
+import javax.microedition.lcdui.Choice;
+import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -62,6 +64,7 @@ public class Search
     private String reqEmail;
     private String reqCity;
     private String reqKeyword;
+    private boolean onlyOnline;
 
     // Constructor
     public Search()
@@ -119,6 +122,12 @@ public class Search
     {
         return new String(this.age.elementAt(i).toString());
     }
+    
+    // Return the status for SearchResult at index i
+    public Integer getStatus(int i)
+    {
+        return (Integer) this.status.elementAt(i);
+    }
 
     // Add a result to the results vector
     public void addResult(String uin, String nick, String name, String email, String auth, int status, String gender,
@@ -136,7 +145,7 @@ public class Search
 
     // Set a search request
     public void setSearchRequest(String uin, String nick, String firstname, String lastname, String email, String city,
-            String keyword)
+            String keyword,boolean onlyOnline)
     {
         this.reqUin = uin;
         this.reqNick = nick;
@@ -145,12 +154,13 @@ public class Search
         this.reqEmail = email;
         this.reqCity = city;
         this.reqKeyword = keyword;
+        this.onlyOnline = onlyOnline;
     }
 
     // Returns data from the TextFields as an array
     public String[] getSearchRequest()
     {
-        String request[] = new String[7];
+        String request[] = new String[8];
         request[0] = reqUin;
         request[1] = reqNick;
         request[2] = reqFirstname;
@@ -158,6 +168,10 @@ public class Search
         request[4] = reqEmail;
         request[5] = reqCity;
         request[6] = reqKeyword;
+        if (onlyOnline)
+            request[7] = "1";
+        else
+            request[7] = "0";
         return request;
     }
 
@@ -203,6 +217,9 @@ public class Search
         private TextField emailSearchTextBox;
         private TextField citySearchTextBox;
         private TextField keywordSearchTextBox;
+        
+        // Choice box for online choice
+        private ChoiceGroup onlyOnline;
 
         // Selectet index in result screen
         int selectedIndex;
@@ -235,7 +252,12 @@ public class Search
                     TextField.ANY);
             this.keywordSearchTextBox = new TextField(ResourceBundle.getString("jimm.res.Text", "keyword"), "", 32,
                     TextField.ANY);
+            
+            // Choice Group
+            this.onlyOnline = new ChoiceGroup("",Choice.MULTIPLE);
+            this.onlyOnline.append(ResourceBundle.getString("jimm.res.Text", "only_online"),null);
 
+            this.searchForm.append(this.onlyOnline);
             this.searchForm.append(this.uinSearchTextBox);
             this.searchForm.append(this.nickSearchTextBox);
             this.searchForm.append(this.firstnameSearchTextBox);
@@ -293,7 +315,7 @@ public class Search
                 }
 
                 // Image used to print a result item in
-                resultImage = Image.createImage(120, typeFont.getHeight() * 5 + 4);
+                resultImage = Image.createImage(120, typeFont.getHeight() * 5 + 4 + 18);
                 g = resultImage.getGraphics();
 
                 // Draw a result entry
@@ -359,6 +381,14 @@ public class Search
                         + contentFont.stringWidth(Search.this.getGender(n))
                         + typeFont.stringWidth(ResourceBundle.getString("jimm.res.Text", "age") + ": "), typeFont
                         .getHeight() * 4 + 2, Graphics.TOP | Graphics.LEFT);
+                if (Search.this.getStatus(n).intValue() == 0)
+                 g.drawImage(ContactList.statusOfflineImg,0,typeFont.getHeight() * 5 + 2,Graphics.TOP | Graphics.LEFT);
+                else if (Search.this.getStatus(n).intValue() == 1)
+                    g.drawImage(ContactList.statusOnlineImg,0,typeFont.getHeight() * 5 + 2,Graphics.TOP | Graphics.LEFT);
+                else if (Search.this.getStatus(n).intValue() == 2)
+                    g.drawImage(ContactList.statusInvisibleImg,0,typeFont.getHeight() * 5 + 2,Graphics.TOP | Graphics.LEFT);
+                else 
+                    g.drawImage(Image.createImage(16,16),0,typeFont.getHeight() * 5 + 2,Graphics.TOP | Graphics.LEFT);
 
                 copy = Image.createImage(resultImage);
 
@@ -405,9 +435,9 @@ public class Search
                 Search.this.setSearchRequest(this.uinSearchTextBox.getString(), this.nickSearchTextBox.getString(),
                         this.firstnameSearchTextBox.getString(), this.lastnameSearchTextBox.getString(),
                         this.emailSearchTextBox.getString(), this.emailSearchTextBox.getString(),
-                        this.keywordSearchTextBox.getString());
+                        this.keywordSearchTextBox.getString(),this.onlyOnline.isSelected(0));
 
-                SearchAction act = new SearchAction(Search.this);
+                SearchAction act = new SearchAction(Search.this,SearchAction.CALLED_BY_SEARCHUSER);
                 try
                 {
                     Jimm.jimm.getIcqRef().requestAction(act);
