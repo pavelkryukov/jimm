@@ -459,18 +459,18 @@ public class Options
 			this.cp1251HackChoiceGroup.append(ResourceBundle.getString("yes"), null);
 			this.cp1251HackChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CP1251_HACK));
 			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2"#
-			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
-			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
-			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
-			this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
-			this.messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.this.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
-			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("msg_notification"), Choice.EXCLUSIVE);
+			this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
 			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
 			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
 			this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
-			this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE), true);
-			this.onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("onl_sound_file_name"), Options.this.getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
+			this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
+			this.onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("onl_sound_file_name"), Options.this.getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);		
+			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("message_notification"), Choice.EXCLUSIVE);
+			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
+			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
+			this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
+			this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE), true);
+			this.messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.this.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
 			// #sijapp cond.end#
 			// #sijapp cond.if target is "RIM"#
 			this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
