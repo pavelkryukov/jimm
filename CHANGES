@@ -98,3 +98,6 @@ VERSION 0.2.0
   * System messages will get displayed
   * Requests of authorisation can be answered and 
   * Adding users by UIN is now supported
+  * There is no special Nokia version anymore
+  * There is a MIDP2 version supporting sound
+  * There is also sound support for upcoming contacts nw
