@@ -404,12 +404,16 @@ public class SplashCanvas extends Canvas
       if (this.dcAct.isCompleted())
       {
         Jimm.jimm.getContactListRef().resetListPosition();
+        Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
         Jimm.jimm.getContactListRef().activate();
         this.cancel();
       }
       else if (this.dcAct.isError())
       {
-        this.cancel();
+          Jimm.jimm.getContactListRef().resetListPosition();
+          Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
+          Jimm.jimm.getContactListRef().activate();
+          this.cancel();
       }
     }
 
