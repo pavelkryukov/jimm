@@ -75,7 +75,13 @@ public class Util
 	public static String getDateString(boolean onlyTime)
 	{
 		Calendar time = Calendar.getInstance();
-	    time.setTime(new Date());
+	    
+	    // Get time an apply time zone correction
+		Date date = new Date();
+	    date.setTime(date.getTime()+TimeZone.getDefault().getRawOffset());
+		time.setTime(date);
+		
+		// Construct the string for the display
 		String datestr = new String("failed");
 		if (TimeZone.getDefault().useDaylightTime())
 		{
