@@ -168,7 +168,9 @@ public class JarSizeTask extends Task
 				{
 
 					// Copy entry from original file to temporary file without changing anything
-					zos.putNextEntry(ze);
+				   newZe = new ZipEntry(ze);
+				   newZe.setCompressedSize(-1);  // Don't know compressed size
+				   zos.putNextEntry(newZe); 
 					while (zis.available() != 0)
 					{
 						int len = zis.read(buf, 0, 1024);
