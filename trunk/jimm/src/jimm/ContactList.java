@@ -160,6 +160,9 @@ public class ContactList implements CommandListener
 
     // How many are online
     private int onlineCount;
+    
+    // The current online status
+    private long onlineStatus;
 
     // Reference to currently selected contact item
     private ContactListContactItem currSelCItem;
@@ -168,8 +171,9 @@ public class ContactList implements CommandListener
     public ContactList()
     {
 
+        onlineStatus = STATUS_ONLINE;
+        
         // Try to load contact list from record store
-
         try
         {
             this.load();
@@ -191,6 +195,7 @@ public class ContactList implements CommandListener
         //		#sijapp cond.end#
         this.contactList.addCommand(ContactList.mainMenuCommand);
         this.contactList.setCommandListener(this);
+        
 
     }
 
@@ -214,6 +219,18 @@ public class ContactList implements CommandListener
         ContactListContactItem[] cItems = new ContactListContactItem[this.cItems.size()];
         this.cItems.copyInto(cItems);
         return (cItems);
+    }
+    
+    // Return the current online status
+    public long getOnlineStatus()
+    {
+        return this.onlineStatus;
+    }
+    
+    // Set the current online status
+    public void setOnlineStatus(long onlineStatus)
+    {
+        this.onlineStatus = onlineStatus;
     }
 
     // Returns all group items as array
@@ -844,16 +861,16 @@ public class ContactList implements CommandListener
                 if (notType == SOUND_TYPE_MESSAGE)
                 {
                     is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE));
-                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE).endsWith(".mp3"))
-                        p = Manager.createPlayer(is, "audio/mpeg");
+                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE).endsWith(".amr"))
+                        p = Manager.createPlayer(is, "audio/amr");
                     else
                         p = Manager.createPlayer(is, "audio/x-wav");
                 }
                 else
                 {
                     is = getClass().getResourceAsStream(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE));
-                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE).endsWith(".mp3"))
-                        p = Manager.createPlayer(is, "audio/mpeg");
+                    if (Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE).endsWith(".amr"))
+                        p = Manager.createPlayer(is, "audio/amr");
                     else
                         p = Manager.createPlayer(is, "audio/x-wav");
                 }
@@ -925,6 +942,30 @@ public class ContactList implements CommandListener
         this.currSelCItem = null;
         this.refreshList(true, false, Integer.MAX_VALUE);
     }
+    
+    // Return status image
+    public Image getStatusImage(long status)
+    {
+        Image img = statusOnlineImg;
+        
+        if (status == STATUS_AWAY)
+            img = statusAwayImg;
+        else if (status == STATUS_CHAT)
+            img = statusChatImg;
+        else if (status == STATUS_DND)
+            img = statusDndImg;
+        else if (status == STATUS_INVISIBLE)
+            img = statusInvisibleImg;
+        else if (status == STATUS_NA)
+            img = statusNaImg;
+        else if (status == STATUS_OCCUPIED)
+            img = statusOccupiedImg;
+        else if (status == STATUS_OFFLINE)
+            img = statusOfflineImg;
+        else if (status == STATUS_ONLINE) img = statusOnlineImg;
+        
+        return img;
+    }
 
     // Retruns the image for the given status
     public Image whichImage(ContactListContactItem cItem)
@@ -945,22 +986,7 @@ public class ContactList implements CommandListener
         if (!(cItem.isMessageAvailable(ContactListContactItem.MESSAGE_PLAIN) || cItem.isMessageAvailable(ContactListContactItem.MESSAGE_URL) || cItem.isMessageAvailable(ContactListContactItem.MESSAGE_SYS_NOTICE) || cItem
                 .returnBoolValue(ContactListContactItem.VALUE_NO_AUTH)))
         {
-            long status = cItem.getStatus();
-            if (status == STATUS_AWAY)
-                img = statusAwayImg;
-            else if (status == STATUS_CHAT)
-                img = statusChatImg;
-            else if (status == STATUS_DND)
-                img = statusDndImg;
-            else if (status == STATUS_INVISIBLE)
-                img = statusInvisibleImg;
-            else if (status == STATUS_NA)
-                img = statusNaImg;
-            else if (status == STATUS_OCCUPIED)
-                img = statusOccupiedImg;
-            else if (status == STATUS_OFFLINE)
-                img = statusOfflineImg;
-            else if (status == STATUS_ONLINE) img = statusOnlineImg;
+            img = this.getStatusImage(cItem.getStatus());
 
             // Add an "c" the the Status icon determining we have an open chat
             // session for that one.
