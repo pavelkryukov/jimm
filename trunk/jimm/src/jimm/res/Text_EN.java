@@ -102,6 +102,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
 		resources.put("not_implemented",             "Function not yet implemented.");
+		resources.put("noreason",             		 "No reason was given.");
 		resources.put("notice",                      "Notice");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Once a session");

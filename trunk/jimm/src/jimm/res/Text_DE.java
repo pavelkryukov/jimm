@@ -102,6 +102,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "Nein");
 		resources.put("not_implemented",             "Funktion noch nicht verfügbar.");
+		resources.put("noreason",             		 "Es wurde kein Grund angegeben.");
 		resources.put("notice",                      "Hinweis");
 		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Einmal pro Sitzung");
