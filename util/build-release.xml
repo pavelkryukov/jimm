@@ -60,7 +60,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="package" value="jimm"/>
 	<property name="bin" value="bin"/>
 	<property name="targetlist" value="DEFAULT;SIEMENS;MIDP2;RIM"/>
-	<property name="langlist" value="EN,BR;EN,CZ;EN,DE;EN,ES;EN,IT;EN,LT;EN,RU;EN,SE;EN,SR;EN;BR;CZ;DE;ES;IT;LT;RU;SE;SR"/>
+	<property name="langlist" value="EN,BR;EN,CZ;EN,DE;EN,ES;EN,HE;EN,IT;EN,LT;EN,RU;EN,SE;EN,SR;EN;BR;CZ;DE;ES;HE;IT;LT;RU;SE;SR"/>
 
 
 	<!-- Auxiliary property -->
@@ -209,7 +209,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			datetime="${touchdate} 00:00 AM"/>
 		<touch file="${package}-${version}.tar.bz2"
 			datetime="${touchdate} 00:00 AM"/>
-  	</target>
+	</target>
 
 
 	<!-- Target: clean -->
