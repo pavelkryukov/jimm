@@ -164,7 +164,6 @@ public abstract class VirtualTree extends VirtualList
   		//System.out.println("Path to tree node");
   		for (i = 0; i < count; i++)
   		{
-  			System.out.println( path.elementAt(i).toString() );
   			((TreeNode)path.elementAt(i)).expanded = true;
   		}	
   		rebuildTreeIntItems();

@@ -21,7 +21,7 @@ abstract class TitledControl extends Canvas
 	boolean useStdTitle = false;
 	private int currentOffset = 0, lastOffset, bkgrndColor = 0xFFFFFF;
 	
-	final static int defFontHeight = Font.getDefaultFont().getHeight();
+	static int defFontHeight = Font.getDefaultFont().getHeight();
 	
 	public TitledControl(String title)
 	{
@@ -40,24 +40,24 @@ abstract class TitledControl extends Canvas
 		int offset
 	);
 	
-	final protected void invalidate()
+	protected void invalidate()
 	{
 		repaint();
 	}
 	
-	final protected int getCapGeight()
+	protected int getCapGeight()
 	{
 		if (title == null) return 0;
 		if (title.length() == 0) return 0;
 		return defFontHeight+2;
 	}
 	
-	final protected int getScrollerWidth()
+	protected int getScrollerWidth()
 	{
 		return (defFontHeight/5) | 1;
 	}
 	
-	final private void drawScroller(Graphics g)
+	private void drawScroller(Graphics g)
 	{
 		int width = getWidth(),
 		    scrWidth = getScrollerWidth(),
@@ -76,7 +76,7 @@ abstract class TitledControl extends Canvas
 		g.fillRect(x1, scrY, scrWidth, defFontHeight);
 	}
 	
-	final private void drawCaption(Graphics g)
+	private void drawCaption(Graphics g)
 	{
 		if (title == null) return;
 		if (title.length() == 0) return;
@@ -91,21 +91,21 @@ abstract class TitledControl extends Canvas
 		g.drawString(title, defFontHeight/4, 1, Graphics.TOP|Graphics.LEFT);
 	}
 	
-	final public void setCaption(String value)
+	public void setCaption(String value)
 	{
 		if ((title != null) && title.equals(value)) return;
 		title = value;
 		invalidate();
 	}
 	
-	final protected void paint(Graphics g)
+	protected void paint(Graphics g)
 	{
 		paintClient(g, 0, getCapGeight()+1, getWidth()-getScrollerWidth(), getHeight(), currentOffset);
 		drawScroller(g);
 		drawCaption(g);
 	}
 	
-	final private void checkOffset()
+	private void checkOffset()
 	{
 		if (currentOffset < 0) currentOffset = 0;
 		int offsetMax = getDataHeight()-getHeight()+getCapGeight();
@@ -130,17 +130,17 @@ abstract class TitledControl extends Canvas
 		repaintIfChanged();
 	}
 	
-	final protected void keyPressed(int keyCode)
+	protected void keyPressed(int keyCode)
 	{
 		keyReact(keyCode);
 	}
 	
-	final private void storeLastOffset()
+	private void storeLastOffset()
 	{
 		lastOffset = currentOffset;
 	}
 	
-	final private void repaintIfChanged()
+	private void repaintIfChanged()
 	{
 		if (lastOffset != currentOffset) invalidate();
 	}
@@ -313,13 +313,13 @@ public class RichTextList extends TitledControl
 		}
 	}
 	
-	final private RichTextListLine getLastLine()
+	private RichTextListLine getLastLine()
 	{
 		if (lines.size() == 0) lines.addElement( new RichTextListLine() );
 		return (RichTextListLine)lines.lastElement();
 	}
 	
-	final public RichTextList insertImage(Image img, boolean nextLine)
+	public RichTextList insertImage(Image img, boolean nextLine)
 	{
 		RichTextListLine line = getLastLine();
 		line.items.addElement( new ImageElement(img) );
@@ -328,7 +328,7 @@ public class RichTextList extends TitledControl
 		return this;
 	}
 	
-	final private void addtext(String text, boolean nextLine)
+	private void addtext(String text, boolean nextLine)
 	{
 		RichTextListLine line = getLastLine();
 
@@ -338,19 +338,19 @@ public class RichTextList extends TitledControl
 		lastDataheight = -1;
 	}
 	
-	final public RichTextList println(String text)
+	public RichTextList println(String text)
 	{
 		addtext(text, true);
 		return this;
 	}
 	
-	final public RichTextList print(String text)
+	public RichTextList print(String text)
 	{
 		addtext(text, false);
 		return this;
 	}
 	
-	final public RichTextList println(String text, int color, int style)
+	public RichTextList println(String text, int color, int style)
 	{
 		fontStyle = style;
 		fontColor = color;
@@ -358,7 +358,7 @@ public class RichTextList extends TitledControl
 		return this;
 	}
 	
-	final public RichTextList print(String text, int color, int style)
+	public RichTextList print(String text, int color, int style)
 	{
 		fontStyle = style;
 		fontColor = color;
@@ -366,8 +366,9 @@ public class RichTextList extends TitledControl
 		return this;
 	}
 	
-	final public void clear()
+	public void clear()
 	{
 		lines.removeAllElements();
+		lastDataheight = -1;
 	}
 }
