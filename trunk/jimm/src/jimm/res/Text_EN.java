@@ -49,9 +49,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("async",                       "Async");
 		resources.put("auth",				     	 "Auth");
 		resources.put("back",                        "Back");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Beep");
-		// #sijapp cond.end #
 		resources.put("byte",                        "Byte");
 		resources.put("cancel",                      "Cancel");
 		resources.put("city",                        "City");
@@ -169,9 +167,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Add user");
 		resources.put("user_search",                 "Search for user");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Vibration");
-		// #sijapp cond.end #
 		resources.put("wait",                        "Please wait ...");
 		resources.put("warning",                     "Warning");
 		resources.put("wantsyourauth",				 " wants your Authorisation. Reason: ");
@@ -227,8 +223,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_160",                   "Error while searching (#160.EXT)");
 
 		// Other errors
-		resources.put("error_160",                   "Possibly not enough heap memory available (#160.EXT)");
-		resources.put("error_161",                   "Could not fetch meta info (#161.EXT)");
+		resources.put("error_170",                   "Possibly not enough heap memory available (#160.EXT)");
+		resources.put("error_171",                   "Could not fetch meta info (#161.EXT)");
 
 	}
 

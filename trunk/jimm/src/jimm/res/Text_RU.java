@@ -49,9 +49,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("async",                       "Асинхронная передача");
 		resources.put("auth",				     	 "Авторизация");
 		resources.put("back",                        "Назад");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("beep",                        "Гудок");
-		// #sijapp cond.end #
 		resources.put("byte",                        "Байт");
 		resources.put("cancel",                      "Отмена");
 		resources.put("city",                        "Город");
@@ -169,9 +167,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Добавить пользователя");
 		resources.put("user_search",                 "Найти пользователя");
-		// #sijapp cond.if target is "SIEMENS" #
 		resources.put("vibration",                   "Вибрация");
-		// #sijapp cond.end #
 		resources.put("wait",                        "Пожалуйста, ждите ...");
 		resources.put("warning",                     "Предупреждение");
 		resources.put("wantsyourauth",				 " хочет авторизироваться. Причина: ");
