@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/res/Text_IT.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Mario B. Napoli
  *******************************************************************************/
 
@@ -41,7 +41,7 @@ public class Text_IT extends ResourceBundle
 		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "Informazioni");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nClient ICQ per Java J2ME\nVersione ###VERSION###\nVedi http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nClient ICQ per Java J2ME\nVersione 0.3.1\nVedi http://www.jimm.org/");
 		resources.put("account",                     "Account");
 		resources.put("add_user",                    "Aggiungi Utente");
 		resources.put("add_to_list",                 "Aggiungi alla lista");

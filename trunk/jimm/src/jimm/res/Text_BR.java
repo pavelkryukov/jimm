@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/res/Text_BR.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Eduardo Luis Pinheiro Silva
  *******************************************************************************/
 
@@ -41,7 +41,7 @@ public class Text_BR extends ResourceBundle
 		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "Sobre");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nCliente de ICQ para J2ME\nVersão ###VERSION###\nVeja http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nCliente de ICQ para J2ME\nVersão 0.3.1\nVeja http://www.jimm.org/");
 		resources.put("account",                     "Conta");
 		resources.put("add_user",                    "Adicionar usuário");
 		resources.put("async",                    	 "Async");

@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/res/Text_HE.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Guy Aroshas
  *******************************************************************************/
 
@@ -42,7 +42,7 @@ public class Text_HE extends ResourceBundle
 		resources.put("ID_x", "");
 		resources.put(".", ".");
 		resources.put("about", "אודות");
-		resources.put("about_info", "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
+		resources.put("about_info", "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion 0.3.1\nSee http://www.jimm.org/");
 		resources.put("account", "חשבון");
 		resources.put("add_user", "הוסף משתמש");
 		resources.put("add_to_list", "הוסף לרשימה");

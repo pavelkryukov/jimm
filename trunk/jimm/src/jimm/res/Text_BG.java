@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/res/Text_BG.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Ivaylo Donchev
  *******************************************************************************/
 
@@ -41,7 +41,7 @@ public class Text_BG extends ResourceBundle
 		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "Относно");
-		resources.put("about_info",                  "Jimm - Мобилен\n\nICQ Клиент за J2ME\nВерсия ###VERSION###\nВиж http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Мобилен\n\nICQ Клиент за J2ME\nВерсия 0.3.1\nВиж http://www.jimm.org/");
 		resources.put("account",                     "Акаунт");
 		resources.put("add_user",                    "Добави Потребител");
 		resources.put("add_to_list",                 "Добави в листа");

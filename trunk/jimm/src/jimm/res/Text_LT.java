@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/res/Text_LT.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.3.1  Date: 2004/12/25
  Based on CVS 1.37 Text_EN (2004.12.20 16:28)
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Linas Gricius 
  *******************************************************************************/
@@ -42,7 +42,7 @@ public class Text_LT extends ResourceBundle
 		// Labels
 		resources.put(".",                           ".");
 		resources.put("about",                       "Apie");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion 0.3.1\nSee http://www.jimm.org/");
 		resources.put("account",                     "Paskyra");
 		resources.put("add_user",                    "Pridėti vartotoją");
 		resources.put("add_to_list",                 "Įtraukti į sarašą");
