@@ -172,8 +172,8 @@ public class ContactListContactItem extends ContactListItem
     {
         switch (value)
         {
-        case VALUE_ADDED: this.added = bool_value;
-        case VALUE_NO_AUTH: this.noAuth = bool_value;
+        case VALUE_ADDED: this.added = bool_value; break;
+        case VALUE_NO_AUTH: this.noAuth = bool_value; break;
         case VALUE_IS_TEMP: this.temporary = bool_value;
         }
     }
