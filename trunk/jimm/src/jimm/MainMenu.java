@@ -201,7 +201,7 @@ public class MainMenu implements CommandListener
                     // Set status
 
                     // Display status list
-                    long onlineStatus = options.getOnlineStatus();
+                    long onlineStatus = options.getOptionValueLong(Options.OPTION_ONLINE_STATUS);
                     if (onlineStatus == ContactList.STATUS_AWAY)
                     {
                         MainMenu.statusList.setSelectedIndex(2, true);
