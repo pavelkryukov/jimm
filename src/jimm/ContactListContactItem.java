@@ -669,7 +669,7 @@ public class ContactListContactItem extends ContactListItem
             // Display chat history
             if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
             {
-                Form msgDisplay = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.chatHistoryDisplayNr);
+                Displayable msgDisplay = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.chatHistoryDisplayNr);
                 
                 msgDisplay.removeCommand(MenuUtil.grantAuthCommand);
                 msgDisplay.removeCommand(MenuUtil.denyAuthCommand);
