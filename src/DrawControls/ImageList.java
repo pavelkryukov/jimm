@@ -15,6 +15,9 @@ import java.io.IOException;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
+//#sijapp cond.if target is "MIDP2"#
+import javax.microedition.lcdui.game.Sprite;
+//#sijapp cond.end#
 
 //! Class for dividing one big image to several small with equal size
 /*!
@@ -93,8 +96,12 @@ public class ImageList
     int size = resImage.getWidth()/width;
     for (int i = 0; i < size; i++)
     {
-      Image newImage = Image.createImage(width, height);
-      newImage.getGraphics().drawImage(resImage, -width*i, 0, Graphics.TOP|Graphics.LEFT);
+//      #sijapp cond.if target is "MIDP2" | target is "SIEMENS"#
+        Image newImage = Image.createImage(Image.createImage(resImage, i * width, 0, width, height, Sprite.TRANS_NONE));
+//      #sijapp cond.else#
+        Image newImage = Image.createImage(width, height);
+        newImage.getGraphics().drawImage(resImage, -width*i, 0, Graphics.TOP|Graphics.LEFT);
+//      #sijapp cond.end#     
       items.addElement( Image.createImage(newImage) );
     }
     this.width = width;
