@@ -95,10 +95,11 @@ VERSION 0.2.0
   * NEW FEATURE: Type of connection is now configurable
   * NEW FEATURE: Use of CP1251 hack is now configurable
   * NEW FEATURE: System messages will get displayed
-  * NEW FEATURE: Requests of authorisation can be answered and 
+  * NEW FEATURE: Requests of authorisation can be answered
   * NEW FEATURE: Adding users by UIN is now supported
   * NEW FEATURE: There is a MIDP2 version supporting sound
   * NEW FEATURE: There is now also sound support for upcoming contacts
   * NEW FEATURE: It is now possible to search for users
   * There is no special Nokia version anymore
+  * Some bug fixes
  
