@@ -24,7 +24,8 @@
 
 package jimm;
 
-import java.util.Random;
+
+import jimm.comm.Util;
 
 
 public class ContactListGroupItem extends ContactListItem
@@ -53,8 +54,7 @@ public class ContactListGroupItem extends ContactListItem
 	// Constructor for a new group item
 	public ContactListGroupItem(String name)
 	{
-        Random rand = new Random(System.currentTimeMillis());
-	    this.id = rand.nextInt();
+        this.id = Util.createRandomId();
 		this.name = new String(name);
 		onlineCount = totalCount = 0;
 	}

@@ -24,10 +24,8 @@
 package jimm;
 
 import java.util.Date;
-import java.util.Random;
 
 import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -149,8 +147,7 @@ public class ContactListContactItem extends ContactListItem
     // Constructor for a new contact item
     public ContactListContactItem(int group, String uin, String name, boolean noAuth, boolean added)
     {
-        Random rand = new Random(System.currentTimeMillis());
-	    this.id = rand.nextInt();
+	    this.id = Util.createRandomId();
         this.group = group;
         this.uin = new String(uin);
         this.name = new String(name);
@@ -528,6 +525,22 @@ public class ContactListContactItem extends ContactListItem
             	MainMenu.addUserOrGroupCmd(uin,true);
             }
             
+            // User wants to rename Contact
+            else if (c == MenuUtil.renameOkCommand)
+            {
+                ContactListContactItem.this.setName(MenuUtil.messageTextbox.getString());
+                try 
+                {
+                    Jimm.jimm.getContactListRef().save();
+                }
+                catch (Exception e)
+                {
+                    // Do nothing 
+                }
+                MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message"));
+                Jimm.jimm.getContactListRef().activate();
+            }
+            
             // Menu item has been selected
             else if (c == List.SELECT_COMMAND)
             {
@@ -624,22 +637,32 @@ public class ContactListContactItem extends ContactListItem
 						MSGBS_DELETECONTACT
 					);
                     break;
-                    
                 case 6:
+                    // Remove
+                	Jimm.jimm.messageBox
+					(
+						ResourceBundle.getString("remove")+"?",
+						ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",
+						Jimm.MESBOX_OKCANCEL,
+						this,
+						MSGBS_DELETECONTACT
+					);
+                    break;
                     
-                    // DC Info
-                    Alert info = new Alert("DC Infos");
-                    info.setString("DC typ: "+ContactListContactItem.this.getDCType()+"\n"+
-                                   "ICQ version: "+ContactListContactItem.this.getICQVersion()+"\n"+
-                                   "Int IP: "+Util.ipToString(ContactListContactItem.this.getInternalIP())+"\n"+
-                                   "Ext IP: "+Util.ipToString(ContactListContactItem.this.getExternalIP())+"\n"+
-                                   "Port: "+ContactListContactItem.this.getPort()+"\n");
-                    info.setTimeout(Alert.FOREVER);
-                    Jimm.display.setCurrent(info);
+                case 7:
+                    
+                    // Rename Contact
+                    // Reset and display textbox for entering name
+                    MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("rename"));
+                    MenuUtil.messageTextbox.setString(ContactListContactItem.this.getName());
+                    MenuUtil.messageTextbox.removeCommand(MenuUtil.backCommand);
+                    MenuUtil.messageTextbox.addCommand(MenuUtil.renameOkCommand);
+                    MenuUtil.messageTextbox.setCommandListener(this);
+                    Jimm.display.setCurrent(MenuUtil.messageTextbox);
                     
                     break;
 
-                case 7:
+                case 8:
                     // Request auth
                     requReason = true;
                     MenuUtil.reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
@@ -685,6 +708,19 @@ public class ContactListContactItem extends ContactListItem
                     break;
                     
                 case 4:
+                    
+                    // Rename Contact
+                    // Reset and display textbox for entering name
+                    MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("rename"));
+                    MenuUtil.messageTextbox.setString(ContactListContactItem.this.getName());
+                    MenuUtil.messageTextbox.removeCommand(MenuUtil.backCommand);
+                    MenuUtil.messageTextbox.addCommand(MenuUtil.renameOkCommand);
+                    MenuUtil.messageTextbox.setCommandListener(this);
+                    Jimm.display.setCurrent(MenuUtil.messageTextbox);
+                    
+                    break;
+                    
+                case 5:
                     // Request auth
                     requReason = true;
                     MenuUtil.reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
@@ -933,9 +969,9 @@ public class ContactListContactItem extends ContactListItem
             {
                 MenuUtil.menuList.setTitle(ContactListContactItem.this.name);
                 //  #sijapp cond.if target is "MIDP2"#
-                if (MenuUtil.menuList.size() > 7) MenuUtil.menuList.delete(7);
+                if (MenuUtil.menuList.size() > 8) MenuUtil.menuList.delete(8);
                 //  #sijapp cond.else#
-                if (MenuUtil.menuList.size() > 4) MenuUtil.menuList.delete(4);
+                if (MenuUtil.menuList.size() > 5) MenuUtil.menuList.delete(5);
                 //  #sijapp cond.end#
                 if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH))
                         MenuUtil.menuList.append(ResourceBundle.getString("requauth"), null);
@@ -1014,6 +1050,11 @@ public class ContactListContactItem extends ContactListItem
         private static Command reqAuthCommand = new Command(ResourceBundle.getString("requauth"),
                 Command.OK, 1);
         
+        // Request authorisation from a contact
+        private static Command renameOkCommand = new Command(ResourceBundle.getString("rename"),
+                Command.OK, 1);
+        
+        
         // Initializer
         static
         {
@@ -1028,6 +1069,7 @@ public class ContactListContactItem extends ContactListItem
             // #sijapp cond.end#
             MenuUtil.menuList.append(ResourceBundle.getString("info"), null);
             MenuUtil.menuList.append(ResourceBundle.getString("remove"), null);
+            MenuUtil.menuList.append(ResourceBundle.getString("rename"), null);
             // #sijapp cond.if target is "MIDP2"#
             MenuUtil.menuList.append("DC Info", null);
             // #sijapp cond.end#

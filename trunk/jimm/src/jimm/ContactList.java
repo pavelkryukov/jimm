@@ -704,7 +704,7 @@ public class ContactList implements CommandListener
     }
 
     // Save contact list to record store
-    private void save() throws IOException, RecordStoreException
+    protected void save() throws IOException, RecordStoreException
     {
         //DebugLog.addText("Saving contact list...");
         

@@ -145,6 +145,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("prev",						 "Voheriges");
 		resources.put("reason",						 "Grund");
 		resources.put("remove",                      "Aus der Liste entfernen");
+		resources.put("rename",                      "Umbenennen");
 		resources.put("reply",                       "Antworten");
 		resources.put("requauth",                    "Beantrage Auth");
 		resources.put("requ",                        "Benötigt");
