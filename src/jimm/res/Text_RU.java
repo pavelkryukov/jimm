@@ -183,7 +183,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("user_add",                    "Добавить пользователя");
 		resources.put("user_search",                 "Найти пользователя");
 		resources.put("vibration",                   "Вибрация");
-		resources.put("viewfinder",                  "Видеоискатель");
+		resources.put("viewfinder",                  "Видоискатель");
 		resources.put("volume",                      "Громкость");
 		resources.put("wait",                        "Пожалуйста, ждите ...");
 		resources.put("warning",                     "Предупреждение");
@@ -252,6 +252,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("error_158",                   "Вы совершили попытку добавить пользователя ICQ в спиок AIM (#158.EXT)");
 		resources.put("error_159",                   "Сервер не отвечает на запрос поиска. Попробуйте снова (#159.EXT)");
 		resources.put("error_160",                   "Ошибка поиска (#160.EXT)");
+		resources.put("error_161",                   "У вас нет ни одной группы в списке. Пожалуйста, создайте новую группу (#161.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Возможно, недостаточно памяти (#160.EXT)");

@@ -43,6 +43,8 @@ import jimm.util.ResourceBundle;
 
 public class MainMenu implements CommandListener
 {
+	private static final int MSGBS_EXIT = 1;
+	
     // Abort command
     private static Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
     
@@ -216,28 +218,20 @@ public class MainMenu implements CommandListener
     
     private void menuExit()
     {
-    	exitAlert = new Alert
-		                (
-		                	ResourceBundle.getString("attention"), 
-							ResourceBundle.getString("have_unread_mess"),
-							null,
-							AlertType.CONFIRMATION
-						);
-    	
-    	exitOkCommand = new Command(ResourceBundle.getString("yes"), Command.OK, 1);
-    	exitBackCommand = new Command(ResourceBundle.getString("no"), Command.CANCEL, 1);
-    	
-    	exitAlert.addCommand(exitOkCommand);
-    	exitAlert.addCommand(exitBackCommand);
-    	exitAlert.setCommandListener( Jimm.jimm.getMainMenuRef() );
-    	
-    	if (Jimm.jimm.getContactListRef().getUnreadMessCount() > 0)
-    	{
-    		Jimm.display.setCurrent(exitAlert);
-    	}
-    	else 
-    		doExit();
-    		
+   		if (/*Jimm.jimm.getContactListRef().getUnreadMessCount() > 0*/true)
+   		{
+   	    	Jimm.jimm.messageBox
+			(
+				ResourceBundle.getString("attention"),
+				ResourceBundle.getString("have_unread_mess"),
+				Jimm.MESBOX_YESNO,
+				this,
+				MSGBS_EXIT
+			);
+   	    	//if (result == 1) doExit();
+   	    	//else Jimm.jimm.getContactListRef().activate();
+   		}
+   		else doExit();
     }
 
     // Command listener
@@ -304,14 +298,14 @@ public class MainMenu implements CommandListener
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
         }
         
-        // User select command YES in exit alert
-        else if (c == exitOkCommand)
+        // User select OK in exit questiom message box
+        else if (Jimm.jimm.isMsgBoxCommand(c, MSGBS_EXIT) == 1)
         {
         	doExit();
         }
         
-        // User select command NO in exit alert. Return to contact list
-        else if (c == exitBackCommand)
+        // User select CANCEL in exit questiom message box
+        else if (Jimm.jimm.isMsgBoxCommand(c, MSGBS_EXIT) == 2)
         {
         	Jimm.jimm.getContactListRef().activate();
         }
@@ -469,21 +463,7 @@ public class MainMenu implements CommandListener
                     // Disconnect
 					Jimm.jimm.getIcqRef().disconnect();
 					
-					// Save the traffic
-                    try
-                    {
-                        traffic.save();
-                    } catch (Exception e)
-                    { // Do nothing
-                    }
-                    try
-                    {
-                        Jimm.jimm.destroyApp(true);
-                    } catch (MIDletStateChangeException e)
-                    {
-                        // Do nothing
-                    }
-
+					menuExit();
                     break;
                 // #sijapp cond.else#
                 case 3:
