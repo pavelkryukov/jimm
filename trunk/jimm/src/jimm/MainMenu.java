@@ -90,6 +90,7 @@ public class MainMenu implements CommandListener
             {
                 this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
                 this.list.append(ResourceBundle.getString("connect"), null);
+                this.list.append(ResourceBundle.getString("contact_list"), null);
                 this.list.append(ResourceBundle.getString("options"), null);
                 // #sijapp cond.if modules_TRAFFIC is "true" #
                 this.list.append(ResourceBundle.getString("traffic"), null);
@@ -103,7 +104,7 @@ public class MainMenu implements CommandListener
                 this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
                 this.list.append(ResourceBundle.getString("keylock_enable"), null);
                 this.list.append(ResourceBundle.getString("disconnect"), null);
-                this.list.append(ResourceBundle.getString("set_status"), Jimm.jimm.getContactListRef().getStatusImage(Jimm.jimm.getContactListRef().getOnlineStatus()));
+                this.list.append(ResourceBundle.getString("set_status"), Jimm.jimm.getContactListRef().getStatusImage(Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS)));
                 this.list.append(ResourceBundle.getString("add_user"), null);
                 this.list.append(ResourceBundle.getString("search_user"), null);
                 this.list.append(ResourceBundle.getString("options"), null);
@@ -120,7 +121,7 @@ public class MainMenu implements CommandListener
         else
         {
             if ((this.list != null) && (!Jimm.jimm.getIcqRef().isNotConnected()))
-                this.list.set(2,ResourceBundle.getString("set_status"),Jimm.jimm.getContactListRef().getStatusImage(Jimm.jimm.getContactListRef().getOnlineStatus()));
+                this.list.set(2,ResourceBundle.getString("set_status"),Jimm.jimm.getContactListRef().getStatusImage(Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS)));
         }
         this.list.setSelectedIndex(0, true);
     }
@@ -142,9 +143,6 @@ public class MainMenu implements CommandListener
     // Command listener
     public void commandAction(Command c, Displayable d)
     {
-
-        // Get options container
-        Options options = Jimm.jimm.getOptionsRef();
 
         // #sijapp cond.if modules_TRAFFIC is "true" #
         
@@ -206,7 +204,7 @@ public class MainMenu implements CommandListener
                     // Set status
 
                     // Display status list
-                    long onlineStatus = options.getLongOption(Options.OPTION_ONLINE_STATUS);
+                    long onlineStatus = Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS);
                     if (onlineStatus == ContactList.STATUS_AWAY)
                     {
                         MainMenu.statusList.setSelectedIndex(2, true);
@@ -259,7 +257,7 @@ public class MainMenu implements CommandListener
                     break;
                 case 5:
                     // Options
-                    options.optionsForm.activate();
+                    Jimm.jimm.getOptionsRef().optionsForm.activate();
 
                     break;
                 // #sijapp cond.if modules_TRAFFIC is "true" #
@@ -335,12 +333,17 @@ public class MainMenu implements CommandListener
 
                     break;
                 case 1:
+                    // ContactList
+                    Jimm.jimm.getContactListRef().activate();
+
+                    break;
+                case 2:
                     // Options
-                    options.optionsForm.activate();
+                    Jimm.jimm.getOptionsRef().optionsForm.activate();
 
                     break;
                 // #sijapp cond.if modules_TRAFFIC is "true" #
-                case 2:
+                case 3:
                     // Traffic
 
                     // Display an traffic alert
@@ -348,7 +351,7 @@ public class MainMenu implements CommandListener
                     traffic.trafficScreen.activate();
 
                     break;
-                case 3:
+                case 4:
                     // About
 
                     // Display an info alert
@@ -358,7 +361,7 @@ public class MainMenu implements CommandListener
                     this.activate(about);
 
                     break;
-                case 4:
+                case 5:
                     // Exit
 
                     try
@@ -377,7 +380,7 @@ public class MainMenu implements CommandListener
 
                     break;
                 // #sijapp cond.else#
-                case 2:
+                case 3:
                     // About
 
                     // Display an info alert
@@ -387,7 +390,7 @@ public class MainMenu implements CommandListener
                     this.activate(about);
 
                     break;
-                case 3:
+                case 4:
                     // Exit
 
                     try
@@ -435,7 +438,6 @@ public class MainMenu implements CommandListener
             {
                 SetOnlineStatusAction act = new SetOnlineStatusAction(onlineStatus);
                 Jimm.jimm.getIcqRef().requestAction(act);
-                Jimm.jimm.getContactListRef().setOnlineStatus(onlineStatus);
             } catch (JimmException e)
             {
                 JimmException.handleException(e);
