@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/FileTransfer.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Andreas Rossbacher
+ Author(s): Andreas Rossbacher, Dmitry Tunin
  *******************************************************************************/
 
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" & modules_FILES is "true"#
