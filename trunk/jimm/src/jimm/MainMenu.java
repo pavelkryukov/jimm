@@ -149,7 +149,6 @@ public class MainMenu implements CommandListener
     // Command listener
     public void commandAction(Command c, Displayable d)
     {
-
         // #sijapp cond.if modules_TRAFFIC is "true" #
         
         //Get traffic container
@@ -163,6 +162,31 @@ public class MainMenu implements CommandListener
                 this.activate();
             else
                 Jimm.jimm.getContactListRef().activate();
+        } else if ((c == sendCommand) && (d == this.addUser))
+        {
+            // Display splash canvas
+            SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
+            wait2.setMessage(ResourceBundle.getString("wait"));
+            wait2.setProgress(0);
+            Jimm.display.setCurrent(wait2);
+            
+            Search search = new Search();
+            search.setSearchRequest(uinTextField.getString(),"","","","","","",false);
+            
+            SearchAction act = new SearchAction(search,SearchAction.CALLED_BY_ADDUSER);
+            
+            try
+            {
+                Jimm.jimm.getIcqRef().requestAction(act);
+
+            } catch (JimmException e)
+            {
+                JimmException.handleException(e);
+                if (e.isCritical()) return;
+            }
+            
+            // Start timer
+            Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
         }
         
         // Menu item has been selected

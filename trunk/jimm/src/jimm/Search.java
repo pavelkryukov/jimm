@@ -25,9 +25,6 @@ package jimm;
 
 import java.util.Vector;
 
-import jimm.comm.SearchAction;
-import jimm.util.ResourceBundle;
-
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
@@ -35,10 +32,13 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 
-import DrawControls.TextList;
+import jimm.comm.SearchAction;
+import jimm.util.ResourceBundle;
+import DrawControls.RichTextList;
 
 public class Search
 {
@@ -206,7 +206,7 @@ public class Search
 
         // Forms for results and query
         private Form searchForm;
-        private TextList resultScreen;
+        private RichTextList screen;
 
         // List for group selection
         private List groupList;
@@ -273,10 +273,16 @@ public class Search
             this.searchForm.setCommandListener(this);
 
             // Result Screen
-            resultScreen = new TextList(ResourceBundle.getString("results"),TextList.getDefCapColor(),TextList.getDefCapFontColor(),TextList.getDefBackColor(),TextList.SMALL_FONT,TextList.SEL_NONE);
-            resultScreen.addCommand(this.previousComamnd);
-            resultScreen.addCommand(this.nextCommand);
-            resultScreen.addCommand(this.addCommand);
+            
+            screen = new RichTextList(null);
+            screen.addCommand(this.previousComamnd);
+            screen.addCommand(this.nextCommand);
+            screen.addCommand(this.addCommand);
+            
+            //resultScreen = new TextList(ResourceBundle.getString("results"),TextList.getDefCapColor(),TextList.getDefCapFontColor(),TextList.getDefBackColor(),TextList.SMALL_FONT,TextList.SEL_NONE);
+            //resultScreen.addCommand(this.previousComamnd);
+            //resultScreen.addCommand(this.nextCommand);
+            //resultScreen.addCommand(this.addCommand);
 
         }
 
@@ -286,91 +292,100 @@ public class Search
             if (result)
             {
                 drawResultScreen(selectedIndex);
-                Jimm.display.setCurrent(this.resultScreen);
+                Jimm.display.setCurrent(this.screen);
             } else
                 Jimm.display.setCurrent(this.searchForm);
         }
 
         public void drawResultScreen(int n)
         {
-
             // Remove the older entrys here
-            resultScreen.clear();
+            screen.clear();
 
             if (Search.this.size() > 0)
             {
 
                 if (Search.this.size() == 1)
                 {
-                    resultScreen.removeCommand(this.nextCommand);
-                    resultScreen.removeCommand(this.previousComamnd);
+                    screen.removeCommand(this.nextCommand);
+                    screen.removeCommand(this.previousComamnd);
                 }
                 
-                // Draw a result entry
-//              #sijapp cond.if target is "MIDP2"#
-                resultScreen.setFullScreenMode(true);
-//              #sijapp cond.end#
-                resultScreen.lock();
-                resultScreen.setCaption(ResourceBundle.getString("results")+" "+new Integer(n + 1).toString() + "/" + new Integer(Search.this.size()).toString());
-                // UIN
-                resultScreen.addBigText(ResourceBundle.getString("uin")+": ",0x0,Font.STYLE_BOLD);
-                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_UIN), 0x0000ff, Font.STYLE_PLAIN);
-                       
-                // Nick
-                resultScreen.addBigText(ResourceBundle.getString("nick") + ": ",0x0,Font.STYLE_BOLD);
-                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NICK), 0x0000ff, Font.STYLE_PLAIN);
+// #sijapp cond.if target is "MIDP2"#
+                screen.setFullScreenMode(false);
+                screen.setTitle( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+// #sijapp cond.else #
+                screen.setCaption( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+// #sijapp cond.end#
                 
-                // Name
-                resultScreen.addBigText(ResourceBundle.getString("name") + ": ",0x0,Font.STYLE_BOLD);
-                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NAME), 0x0000ff, Font.STYLE_PLAIN);
+                screen.setFontSize(Font.SIZE_SMALL);
+                
+                // UIN
+                screen
+                	.print(ResourceBundle.getString("uin")+": ",0x0,Font.STYLE_BOLD)
+                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_UIN), 0x0000ff, Font.STYLE_PLAIN)
+                
+                // Nick
+					.print(ResourceBundle.getString("nick") + ": ",0x0,Font.STYLE_BOLD)
+                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NICK), 0x0000ff, Font.STYLE_PLAIN)
+                
+				// Name
+                	.println(ResourceBundle.getString("name") + ": ",0x0,Font.STYLE_BOLD)
+                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_NAME), 0x0000ff, Font.STYLE_PLAIN);
                 
                 // EMail
                 if (Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL).length() > 0)
                 {
-                    resultScreen.addBigText(ResourceBundle.getString("email") + ": ",0x0,Font.STYLE_BOLD);
-                    resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL), 0x0000ff, Font.STYLE_PLAIN);
+                	screen
+						.println(ResourceBundle.getString("email") + ": ",0x0,Font.STYLE_BOLD)
+						.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_EMAIL), 0x0000ff, Font.STYLE_PLAIN);
                 }
                 
                 // Auth
-                resultScreen.addBigText(ResourceBundle.getString("auth") + ": ",0x0,Font.STYLE_BOLD);
-                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AUTH), 0x0000ff, Font.STYLE_PLAIN);
-                    
+                screen
+					.print(ResourceBundle.getString("auth") + ": ",0x0,Font.STYLE_BOLD)
+                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AUTH), 0x0000ff, Font.STYLE_PLAIN)
+                
                 // Gender
-                resultScreen.addBigText(ResourceBundle.getString("gender") + ": ",0x0,Font.STYLE_BOLD);
-                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER), 0x0000ff, Font.STYLE_PLAIN);
+					.print(ResourceBundle.getString("gender") + ": ",0x0,Font.STYLE_BOLD)
+                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_GENDER), 0x0000ff, Font.STYLE_PLAIN)
                 
                 // Age
-                resultScreen.addBigText(ResourceBundle.getString("age")+": ",0x0,Font.STYLE_BOLD);
-                resultScreen.addBigText(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AGE), 0x0000ff, Font.STYLE_PLAIN);
-                                
-                // Draw status image
-                resultScreen.setImageList(ContactList.getImageList());
-                resultScreen.addBigText(ResourceBundle.getString("status") + ": ",0x0,Font.STYLE_BOLD);
-                if (Search.this.getResult(n).getStatus() == 0)
-                    resultScreen.add("",0xffffff,6);
-                else if (Search.this.getResult(n).getStatus() == 1)
-                    resultScreen.add("",0xffffff,7);
-                else if (Search.this.getResult(n).getStatus() == 2)
-                    resultScreen.add("",0xffffff,3);
+                	.print(ResourceBundle.getString("age")+": ",0x0,Font.STYLE_BOLD)
+                	.println(Search.this.getResult(n).getStringValue(SearchResult.FIELD_AGE), 0x0000ff, Font.STYLE_PLAIN);
                 
-                resultScreen.unlock();
                 
+				// Draw status image
+                int stat = Search.this.getResult(n).getStatus();
+                int imgIndex = 0;
+                if (stat == 0) imgIndex = 6;
+                else if (stat == 1) imgIndex = 7;
+                else if (stat == 2) imgIndex = 3;
+                
+                screen
+					.print(ResourceBundle.getString("status") + ": ",0x0,Font.STYLE_BOLD)
+					.insertImage
+					 ( 
+					 		ContactList.getImageList().elementAt(imgIndex),
+							true
+					 );
             } else
             {
                 // Draw a result entry
-//              #sijapp cond.if target is "MIDP2"#
-                resultScreen.setFullScreenMode(true);
-//              #sijapp cond.end#
-                resultScreen.lock();
-                resultScreen.setCaption(ResourceBundle.getString("results")+" 0/0");
-                // No results
-                resultScreen.addBigText(ResourceBundle.getString("no_results")+": ",0x0,Font.STYLE_BOLD);
-                resultScreen.unlock();
+            	
+            	// #sijapp cond.if target is "MIDP2"#
+                screen.setFullScreenMode(false);
+                screen.setTitle(ResourceBundle.getString("results")+" 0/0");
+                // #sijapp cond.else #
+                screen.setCaption(ResourceBundle.getString("results")+" 0/0");
+                // #sijapp cond.end#
+            	
+                screen.println(ResourceBundle.getString("no_results")+": ",0x0,Font.STYLE_BOLD);
             }
 
-            resultScreen.addCommand(this.backCommand);
+            screen.addCommand(this.backCommand);
 
-            resultScreen.setCommandListener(this);
+            screen.setCommandListener(this);
         }
 
         public void commandAction(Command c, Displayable d)
@@ -421,7 +436,7 @@ public class Search
                 }
                 this.activate(true);
             }
-            if (c == this.addCommand && d == this.resultScreen)
+            if (c == this.addCommand && d == screen)
             {
                 // Show list of groups to select which group to add to
                 groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
