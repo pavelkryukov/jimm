@@ -321,6 +321,7 @@ public class MainMenu implements CommandListener
 						}
 
                     break;
+
                 // #sijapp cond.end#
                 }
             } else
@@ -330,7 +331,7 @@ public class MainMenu implements CommandListener
                 case 0:
                     // Connect
                     Jimm.jimm.getIcqRef().connect();
-
+                                    
                     break;
                 case 1:
                     // ContactList
@@ -364,6 +365,10 @@ public class MainMenu implements CommandListener
                 case 5:
                     // Exit
 
+                    // Disconnect
+					Jimm.jimm.getIcqRef().disconnect();
+					
+					// Save the traffic
                     try
                     {
                         traffic.save();
