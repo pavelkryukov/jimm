@@ -5,9 +5,10 @@ MIDlet-Version: ###VERSION-JAVA###
 MIDlet-Vendor: Jimm Project
 MIDlet-Jar-URL: Jimm.jar
 MIDlet-Jar-Size: ###SIZE###
+MIDlet-Icon: icon.png
 MicroEdition-Profile: ###MIDP-PROFILE###
 MicroEdition-Configuration: CLDC-1.0
 MIDlet-Description: J2ME ICQ clone
 MIDlet-Info-URL: http://jimm.sourceforge.net/
-MIDlet-1: Jimm,,jimm.Jimm
+MIDlet-1: Jimm,icon.png,jimm.Jimm
 Jimm-Version: ###VERSION###
