@@ -150,6 +150,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("results",                     "Ergebnisse");
 		resources.put("save",                        "Sichern");
 		resources.put("search_user",                 "Benutzer suchen");
+		resources.put("select",                      "Auswahl");
 		resources.put("send",                        "Senden");
 		resources.put("send_img",                    "Bild senden");
 		resources.put("send_message",                "Neue Nachricht");
