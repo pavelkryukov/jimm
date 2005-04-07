@@ -25,6 +25,7 @@
 package jimm;
 
 
+import DrawControls.*;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 
@@ -175,6 +176,9 @@ public class Jimm extends MIDlet
 		this.t = new Timer();
 		this.sc.setProgress(90);
 		
+		// set color scheme for all forms
+		setColorScheme();
+		
 		if (this.getOptionsRef().getBooleanOption(Options.OPTION_AUTO_CONNECT))
         {
             // Connect
@@ -305,6 +309,20 @@ public class Jimm extends MIDlet
 
 		msgForm.setCommandListener(listener);
 		display.setCurrent(msgForm);
+	}
+	
+	static public void setColorScheme(VirtualList vl)
+	{
+		if (vl == null) return;
+		vl.setBackgroundColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BACK));
+		vl.setTextColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT));
+	}
+	
+	public void setColorScheme()
+	{
+		ch.setColorScheme();
+		history.setColorScheme();
+		setColorScheme((VirtualList)cl.getVisibleContactListRef());
 	}
 
 }

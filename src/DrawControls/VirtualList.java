@@ -121,6 +121,7 @@ public abstract class VirtualList extends Canvas
     fontSize = MEDIUM_FONT,
     bkgrndColor = 0xFFFFFF,
     capColor    = 0x0000D0,
+	textColor   = 0x000000,
     capTxtColor = 0xFFFFFF,
     cursorMode  = SEL_INVERTED;
     
@@ -152,6 +153,17 @@ public abstract class VirtualList extends Canvas
     fontSize = value;
 	checkTopItem();
     repaint();
+  }
+  
+  final public int getTextColor()
+  {
+  	return textColor;
+  }
+  
+  public void setTextColor(int value)
+  {
+  	textColor = value;
+  	repaint();
   }
   
   //TODO: brief text

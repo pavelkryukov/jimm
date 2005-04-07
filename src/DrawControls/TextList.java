@@ -135,6 +135,19 @@ public class TextList extends VirtualList
   {
     super(capt, capBackColor, capTextColor, backColor, fontSize, cursorMode);
   }
+  
+  public void setTextColor(int value)
+  {
+    int count = items.size();
+    for (int i = 0; i < count; i++)
+    {
+    	ListItem listItem = (ListItem)items.elementAt(i);
+    	if ((listItem.color == 0x000000) || (listItem.color == 0xFFFFFF))
+    		listItem.color = value;
+    
+    }
+    super.setTextColor(value);
+  }
  
   //! Add big multiline text. 
   /*! Text visial width can be larger then screen width.

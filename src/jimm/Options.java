@@ -103,10 +103,10 @@ public class Options
 	public static final int OPTION_CHAT_SMALL_FONT                = 135;   /* boolean */
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
 	public static final int OPTION_HISTORY                        = 137;   /* boolean */
+	public static final int OPTION_COLOR_SCHEME                   =  74;   /* int     */
 
 
 	/**************************************************************************/
-
 
 	// Hashtable containing all option key-value pairs
 	private Hashtable options;
@@ -188,6 +188,7 @@ public class Options
 			this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
 			this.setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
 			this.setBooleanOption(Options.OPTION_HISTORY,                        false);
+			this.setIntOption    (Options.OPTION_COLOR_SCHEME,                   CLRSCHHEME_BOW); 
 			
 			// Construct option form
 			this.optionsForm = new OptionsForm();
@@ -319,7 +320,6 @@ public class Options
 
 		// Close record store
 		account.closeRecordStore();
-
 	}
 
 
@@ -362,6 +362,38 @@ public class Options
 	
 
 	/**************************************************************************/
+	
+	// Constants for color scheme
+	private static final int CLRSCHHEME_BOW  = 0; // black on white
+	private static final int CLRSCHHEME_WOB  = 1; // white on black
+	private static final int CLRSCHHEME_WOBL = 2; // white on blue
+	
+	// Constants for method getSchemeColor to retrieving color from color scheme 
+	public static final int  CLRSCHHEME_BACK = 1; // retrieving background color
+	public static final int  CLRSCHHEME_TEXT = 2; // retrieving text color
+	public static final int  CLRSCHHEME_BLUE = 3; // retrieving highlight color
+
+	// Retrieves color value from color scheme
+	final public int getSchemeColor(int type)
+	{
+		switch (getIntOption(OPTION_COLOR_SCHEME))
+		{
+		case CLRSCHHEME_BOW:
+			if (type == CLRSCHHEME_BLUE) return 0xFF;
+			return (type == CLRSCHHEME_BACK) ? 0xFFFFFF : 0x000000;
+			
+		case CLRSCHHEME_WOB:
+			if (type == CLRSCHHEME_BLUE) return 0xFFFF;
+			return (type == CLRSCHHEME_BACK) ? 0x000000 : 0xFFFFFF;
+			
+		case CLRSCHHEME_WOBL:
+			if (type == CLRSCHHEME_BLUE) return 0xFFFF;
+			return (type == CLRSCHHEME_BACK) ? 0x000080 : 0xFFFFFF;
+		}
+		return 0;
+	}
+	
+	
 	/**************************************************************************/
 	/**************************************************************************/
 
@@ -370,7 +402,7 @@ public class Options
 	public class OptionsForm implements CommandListener
 	{
 		boolean lastGroupsUsed, lastHideOffline;
-		int lastSortMethod;
+		int lastSortMethod, lastColorScheme;
 
 		// Commands
 		private Command backCommand;
@@ -423,6 +455,7 @@ public class Options
 		// #sijapp cond.end#
 		private ChoiceGroup useSmallFont;
 		private ChoiceGroup showUserGroups;
+		private ChoiceGroup colorScheme;
 		
 		// #sijapp cond.if modules_HISTORY is "true" #
 		private ChoiceGroup useHistory;
@@ -544,6 +577,12 @@ public class Options
                 this.useHistory.append(ResourceBundle.getString("yes"), null);
                 this.useHistory.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_HISTORY));
                 // #sijapp cond.end#
+                
+                this.colorScheme = new ChoiceGroup(ResourceBundle.getString("color_scheme"), Choice.EXCLUSIVE);
+                this.colorScheme.append(ResourceBundle.getString("black_on_white"), null);
+                this.colorScheme.append(ResourceBundle.getString("white_on_black"), null);
+                this.colorScheme.append(ResourceBundle.getString("white_on_blue"), null);
+                this.colorScheme.setSelectedIndex(Options.this.getIntOption(Options.OPTION_COLOR_SCHEME), true);
 
                 break;
             case 3:
@@ -620,6 +659,7 @@ public class Options
 				lastHideOffline = Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 				lastGroupsUsed = Options.this.getBooleanOption(Options.OPTION_USER_GROUPS);
 				lastSortMethod = Options.this.getIntOption(Options.OPTION_CL_SORT_BY);
+				lastColorScheme = Options.this.getIntOption(Options.OPTION_COLOR_SCHEME);
 
 				// Delete all items
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
@@ -657,6 +697,7 @@ public class Options
 						// #sijapp cond.end#
 						
 						this.optionsForm.append(this.cp1251HackChoiceGroup);
+						this.optionsForm.append(this.colorScheme);
 						
 						break;
 					case 3:
@@ -771,12 +812,18 @@ public class Options
 						boolean newUseGroups = this.showUserGroups.isSelected(0);
 						Options.this.setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);
 						
+						int newColorScheme = colorScheme.getSelectedIndex(); 
+						Options.this.setIntOption(Options.OPTION_COLOR_SCHEME, newColorScheme);
+						
 						boolean newHideOffline = Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 						Jimm.jimm.getContactListRef().optionsChanged
 						(
 							(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline),
 							(newSortMethod != lastSortMethod)
 						);
+						
+						if (lastColorScheme != newColorScheme) Jimm.jimm.setColorScheme();
+						
 						break;
 						
 					case 3:
