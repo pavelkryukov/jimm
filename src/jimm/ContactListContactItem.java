@@ -1089,7 +1089,7 @@ public class ContactListContactItem extends ContactListItem
                 Command.OK, 1);
         //#sijapp cond.if target is "MOTOROLA"#
         // Rename a contact
-        private static Command renameOkCommand = new Command(ResourceBundle.getString("OK"),
+        private static Command renameOkCommand = new Command(ResourceBundle.getString("ok"),
                 Command.OK, 2);
         //#sijapp cond.else#
         // Rename a contact
