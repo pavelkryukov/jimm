@@ -72,9 +72,11 @@ public class Text_RU extends ResourceBundle
 		resources.put("auth",				     	 "Авторизация");
 		resources.put("auto_connect",				 "Подключаться автоматически");
 		resources.put("beep",                        "Гудок");
+		resources.put("black_on_white",              "Чёрная на белом");
 		resources.put("byte",                        "Байт");
 		resources.put("city",                        "Город");
 		resources.put("clear",                       "Стереть всё");
+		resources.put("color_scheme",                "Цветовая вхема");
 		resources.put("conn_type",                   "Тип подключения");
 		resources.put("con_wait",                    "Задержка между подключениями (секунд)");
 		resources.put("connect",                     "Подключиться");
@@ -218,6 +220,8 @@ public class Text_RU extends ResourceBundle
 		resources.put("warning",                     "Предупреждение");
 		resources.put("wantsyourauth",				 " хочет авторизироваться. Причина: ");
 		resources.put("whichgroup",				 	 "В какой группе?");
+		resources.put("white_on_black",              "Белая на чёрном");
+		resources.put("white_on_blue",               "Белая на синем");
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Вас добавил: ");
 		resources.put("chat_small_font",             "Мелкий шрифт в чате");                                          

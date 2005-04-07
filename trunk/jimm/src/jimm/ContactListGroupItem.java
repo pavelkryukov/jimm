@@ -89,7 +89,7 @@ public class ContactListGroupItem extends ContactListItem
     
     public int getTextColor()
     {
-    	return 0x000000; 
+    	return Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT); 
     }
 
 	// Returns the group item id

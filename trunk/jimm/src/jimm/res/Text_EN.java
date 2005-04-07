@@ -78,10 +78,12 @@ public class Text_EN extends ResourceBundle
 		resources.put("auth",				     	 "Auth");
 		resources.put("auto_connect",				 "Auto connect on startup");
 		resources.put("beep",                        "Beep");
+		resources.put("black_on_white",              "Black on white");
 		resources.put("byte",                        "Byte");
 		resources.put("chat_small_font",			 "Small font in chat");
 		resources.put("city",                        "City");
 		resources.put("clear",                       "Clear");
+		resources.put("color_scheme",                "Color scheme");
 		resources.put("conn_type",                   "Connection type");
 		resources.put("con_wait",                    "Delay between connections(sec)");
 		resources.put("connect",                     "Connect");
@@ -235,6 +237,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("warning",                     "Warning");
 		resources.put("wantsyourauth",				 " wants your Authorisation. Reason: ");
 		resources.put("whichgroup",				 	 "Which group?");
+		resources.put("white_on_black",              "White on black");
+		resources.put("white_on_blue",               "White on blue");
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
 			

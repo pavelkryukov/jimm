@@ -296,6 +296,14 @@ public class ContactListContactItem extends ContactListItem
         return name;
     }
     
+    private String lowerText = null;
+    
+    public String getLowerText()
+    {
+    	if (lowerText == null) lowerText = name.toLowerCase();
+    	return lowerText;
+    }
+    
     // Returns true if contact must be shown even user offline
     // and "hide offline" is on
     protected boolean mustBeShownAnyWay()
@@ -315,7 +323,7 @@ public class ContactListContactItem extends ContactListItem
     
     public int getTextColor()
     {
-    	return temporary ? 0x808080 : 0x000000;
+    	return temporary ? 0x808080 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT);
     }
 
     // Returns imaghe index for contact
@@ -934,7 +942,6 @@ public class ContactListContactItem extends ContactListItem
         // Activates the contact item menu
         public void activate()
         {
-
             // Display chat history
             if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
             {

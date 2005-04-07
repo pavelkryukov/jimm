@@ -52,6 +52,7 @@ class ChatTextList extends TextList
                ? TextList.SMALL_FONT : TextList.MEDIUM_FONT,
             TextList.SEL_NONE
         );
+		Jimm.setColorScheme(this);
 	}
 	
 	protected void userPressKey(int keyCode) 
@@ -152,7 +153,7 @@ public class ChatHistory
         msgDisplay.addBigText
         (
           from + " (" + Util.getDateString(true) + "):",
-          red ? 0xFF0000 : 0xFF, 
+          red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
           Font.STYLE_BOLD
         );
 
@@ -161,7 +162,7 @@ public class ChatHistory
             msgDisplay.addBigText(ResourceBundle.getString("url")+": "+url, 0x00FF00, Font.STYLE_PLAIN);
         }
         
-        msgDisplay.addBigText(message, 0x0, Font.STYLE_PLAIN);
+        msgDisplay.addBigText(message, msgDisplay.getTextColor(), Font.STYLE_PLAIN);
         
         msgDisplay.setTopItem(lastSize);        
         msgDisplay.unlock();
@@ -245,6 +246,12 @@ public class ChatHistory
         
         historyVector.addElement(chatForm);
         return historyVector.size()-1;
+    }
+    
+    public void setColorScheme()
+    {
+    	int count = historyVector.size();
+    	for (int i = 0; i < count; i++) Jimm.setColorScheme((ChatTextList)historyVector.elementAt(i));
     }
 
 }

@@ -31,9 +31,6 @@ import java.lang.System;
 import java.lang.Exception;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.rms.RecordStore;
-import javax.microedition.rms.RecordFilter;
-import javax.microedition.rms.RecordEnumeration;
-import javax.microedition.rms.RecordComparator;
 import jimm.util.ResourceBundle;
 import java.io.*;
 import javax.microedition.lcdui.*;
@@ -67,10 +64,10 @@ final class HistoryStorageList extends VirtualList
 	private static Command cmdSelect  = new Command(ResourceBundle.getString("select"), Command.SCREEN, 1);
 	private static Command cmdBack    = new Command(ResourceBundle.getString("back"),   Command.BACK,   2);
 	private static Command cmdClear   = new Command(ResourceBundle.getString("clear"),  Command.ITEM,   4); 
-	private static Command cmdFind    = new Command(ResourceBundle.getString("find"),   Command.ITEM,   3);
+	//private static Command cmdFind    = new Command(ResourceBundle.getString("find"),   Command.ITEM,   3);
 	private static Command cmdInfo    = new Command(ResourceBundle.getString("history_info"), Command.ITEM,   5);
 	
-	private static TextList messText;
+	static TextList messText;
 	
 	// list UIN
 	private static String currUin  = new String(), 
@@ -83,10 +80,11 @@ final class HistoryStorageList extends VirtualList
 		addCommand(cmdSelect);
 		addCommand(cmdBack);
 		addCommand(cmdClear);
-		addCommand(cmdFind);
+		//addCommand(cmdFind);
 		addCommand(cmdInfo);
 		setCommandListener(this);
 		setVLCommands(this);
+		Jimm.setColorScheme(this);
 	}
 	
 	// VirtualList command impl.
@@ -117,7 +115,6 @@ final class HistoryStorageList extends VirtualList
 			case Canvas.LEFT: moveInList(-1);  break;
 			case Canvas.RIGHT: moveInList(1); break;
 			}
-			
 		}
 	}
 	
@@ -187,14 +184,14 @@ final class HistoryStorageList extends VirtualList
 			
 			try
 			{
-				str.append(ResourceBundle.getString("hist_cur")).append(": ").append(getSize()).append("\n");
-				str.append(ResourceBundle.getString("hist_rc")).append(": ").append(rs.getNumRecords()).append("\n");
-				str.append(ResourceBundle.getString("hist_size")).append(": ").append(rs.getSize()/1024).append("\n");
-				str.append(ResourceBundle.getString("hist_avail")).append(": ").append(rs.getSizeAvailable()/1024).append("\n");
+				str.append(ResourceBundle.getString("hist_cur")).append(": ").append(getSize()).append("\n")
+				   .append(ResourceBundle.getString("hist_size")).append(": ").append(rs.getSize()/1024).append("\n")
+				   .append(ResourceBundle.getString("hist_avail")).append(": ").append(rs.getSizeAvailable()/1024).append("\n")
+				   ;
 			}
 			catch (Exception e)
 			{
-				
+				str.append("Error while retrieving RS info!");
 			}
 			
 			Alert alert = new Alert
@@ -225,13 +222,14 @@ final class HistoryStorageList extends VirtualList
 			messText.addCommand(cmdMsgNext);
 			messText.addCommand(cmdMsgPrev);
 			messText.setVLCommands(this);
+			Jimm.setColorScheme(messText);
 		}
 		
 		CachedRecord record = Jimm.jimm.getHistory().getRecord(currUin, this.getCurrIndex()); 
 		
 		messText.clear();
-		messText.addBigText(record.date+":", 0, Font.STYLE_BOLD);
-		messText.addBigText(record.text, 0, Font.STYLE_PLAIN);
+		messText.addBigText(record.date+":", messText.getTextColor(), Font.STYLE_BOLD);
+		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN);
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		messText.setTitle(record.from);
 		//#sijapp cond.else#
@@ -267,41 +265,13 @@ final class HistoryStorageList extends VirtualList
 		CachedRecord record = Jimm.jimm.getHistory().getCachedRecord(currUin, index);
 		if (record == null) return;
 		item.text = record.shortText;
-		item.color = (record.type == 0) ? 0x000000 : 0x0000FF;
+		item.color = (record.type == 0) ? getTextColor() : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE);
 	}
 }
 
 // History storage implementation
-final public class HistoryStorage implements RecordFilter, 
-                                             RecordComparator
+final public class HistoryStorage
 {
-	//=============================//
-	//                             //
-	//   impl. for RecordFilter    //
-	//                             //
-	//=============================//
-	
-	private long cmpUin;
-	public boolean matches(byte[] candidate)
-	{
-		return (cmpUin == Util.getDWord(candidate, 0));
-	}
-
-	//=============================//
-	//                             //
-	//   impl. for RecordFilter    //
-	//                             //
-	//=============================//
-	
-	public int compare(byte[] rec1, byte[] rec2)
-	{
-		long value1 = Util.getDWord(rec1, 4);
-		long value2 = Util.getDWord(rec2, 4);
-		if (value1 < value2) return PRECEDES;
-		if (value1 > value2) return FOLLOWS;
-		return EQUIVALENT;
-	}
-	
 	//===================================//
 	//                                   //
 	//    Data storage implementation    //
@@ -311,26 +281,10 @@ final public class HistoryStorage implements RecordFilter,
 	private static RecordStore recordStore;
 	private static HistoryStorageList list;
 	private String currCacheUin = new String();
-	private RecordEnumeration recordsEnum;
 	private int currRecIndex = -1, currRecId;
 	private Hashtable cachedRecords;
 	
-	final static private int TEXT_START_INDEX = 9; 
-	
-	static
-	{
-		try
-		{
-			// opens record store
-			recordStore = RecordStore.openRecordStore("history", true);
-			
-			// TODO: Check version
-		}
-		catch (Exception e)
-		{
-		
-		}
-	}
+	final static private int TEXT_START_INDEX = 1; 
 	
 	// Convert String UIN to long value
 	private long uinToLong(String uin)
@@ -350,11 +304,11 @@ final public class HistoryStorage implements RecordFilter,
 	// Add message text to contact history
 	public void addText(String uin, String text, byte type, String from)
 	{
-		try
-		{
 		byte[] buffer, textData;
 		int textLen;
 		boolean lastLine = false;
+		
+		RecordStore recordStore = null;
 		
 		if (list != null)
 		{
@@ -362,8 +316,14 @@ final public class HistoryStorage implements RecordFilter,
 			else if (list.getCurrIndex() == (list.getSize()-1)) lastLine = true;
 		}
 		
+		// TODO: 
+
+		boolean isCurrenty = currCacheUin.equals(uin);
+		
 		try
 		{
+			recordStore = isCurrenty ? HistoryStorage.recordStore : RecordStore.openRecordStore(getRSName(uin), true); 
+			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
 			DataOutputStream das = new DataOutputStream(baos);
 			das.writeUTF(from);
@@ -373,16 +333,21 @@ final public class HistoryStorage implements RecordFilter,
 			textLen = textData.length;
 			
 			buffer = new byte[textLen+TEXT_START_INDEX];
-			Util.putDWord(buffer, 0, uinToLong(uin));
-			Util.putDWord(buffer, 4, recordStore.getNextRecordID());
-			buffer[8] = type;
+			Util.putDWord(buffer, 0, recordStore.getNextRecordID());
+			buffer[0] = type;
 			System.arraycopy(textData, 0, buffer, TEXT_START_INDEX, textLen);
 			
 			recordStore.addRecord(buffer, 0, buffer.length);
+			
+			if (!isCurrenty && (recordStore != null))
+			{
+				recordStore.closeRecordStore();
+				recordStore = null;
+			}
 		}
 		catch (Exception e) 
 		{
-			DebugLog.addText( "Add text-1: "+e.toString() );
+			DebugLog.addText( "Add text error: "+e.toString() );
 		}
 		
 		if ( (list != null) && HistoryStorageList.getCurrUin().equals(uin) )
@@ -390,87 +355,74 @@ final public class HistoryStorage implements RecordFilter,
 			list.repaint();
 			if (lastLine) list.setCurrentItem(list.getSize()-1);
 		}
-		
-		} catch (Exception e) 
-		{
-			DebugLog.addText( "Add text-2: "+e.toString() );
-		}
-		
 	}
 	
+	// Returns reference for record store
 	RecordStore getRS()
 	{
 		return recordStore;
 	}
 	
-	// enumerates all history records for UIN
-	private void enumerateRecords(String uin)
+	// Returns record store name for UIN
+	static private String getRSName(String uin)
 	{
-		if (cachedRecords == null) cachedRecords = new Hashtable();
-		cachedRecords.clear();
-		currRecIndex = -1;
+		return "hist"+uin;
+	}
+	
+	// Opens record store for UIN
+	private void openUINRecords(String uin)
+	{
+		if (currCacheUin.equals(uin)) return;
+		
 		try
 		{
-			cmpUin = uinToLong(uin);
-			recordsEnum = recordStore.enumerateRecords(this, this, true);
-			if (recordsEnum.numRecords() > 0)
+			if (recordStore != null)
 			{
-				currRecId = recordsEnum.previousRecordId();
-				currRecIndex = recordsEnum.numRecords()-1;
+				recordStore.closeRecordStore();
+				recordStore = null;
+				System.gc();
 			}
-			else currRecId = currRecIndex = -1;
+			recordStore = RecordStore.openRecordStore(getRSName(uin), true);
 		}
 		catch (Exception e)
 		{
+			DebugLog.addText("HistoryStorage: can't open record store "+e.toString());
+			recordStore = null;
 			return;
 		}
-		
 		currCacheUin = uin;
+		
+		if (cachedRecords == null) cachedRecords = new Hashtable();
 	}
 	
 	// Returns record count for UIN
 	public int getRecordCount(String uin)
 	{
-		if (!currCacheUin.equals(uin)) enumerateRecords(uin);
-		return recordsEnum.numRecords();
+		openUINRecords(uin);
+		int result;
+		try
+		{
+			result = recordStore.getNumRecords();
+		}
+		catch (Exception e)
+		{
+			result = 0;			
+		}
+		
+		return result; 
 	}
 	
 	// Returns full data of stored message
 	public CachedRecord getRecord(String uin, int recNo)
 	{
-		if (!currCacheUin.equals(uin)) enumerateRecords(uin);
+		openUINRecords(uin);
 		byte[] data;
-		CachedRecord result = null;
+		CachedRecord result = new CachedRecord();
 		
 		try
 		{
-			if (currRecIndex == -1)
-			{
-				if (recordsEnum.numRecords() == 0) return null;
-				else
-				{
-					currRecId = recordsEnum.previousRecordId();
-					currRecIndex = recordsEnum.numRecords()-1;
-				}
-			}
-			
-			result = new CachedRecord();
-
-			while (recNo != currRecIndex)
-			{
-				if (recNo < currRecIndex) 
-				{
-					currRecId = recordsEnum.previousRecordId();
-					currRecIndex--;
-				}
-				else
-				{
-					currRecId = recordsEnum.nextRecordId();
-					currRecIndex++;
-				}
-			}
-			data = recordStore.getRecord(currRecId);
-			result.type = data[8];
+			data = recordStore.getRecord(recNo+1);
+			result.type = data[0];
 			ByteArrayInputStream bais = new ByteArrayInputStream(data, TEXT_START_INDEX, data.length-TEXT_START_INDEX);
 			DataInputStream dis = new DataInputStream(bais);
 			result.from = dis.readUTF();
@@ -479,6 +431,9 @@ final public class HistoryStorage implements RecordFilter,
 		}
 		catch (Exception e)
 		{
+			result.text = "error";
+			result.date = "error";
+			result.from = "error"; 
 			return null;
 		}
 		
@@ -488,6 +443,8 @@ final public class HistoryStorage implements RecordFilter,
 	// returns cached short text of the message for history list
 	public CachedRecord getCachedRecord(String uin, int recNo)
 	{
+		DebugLog.addText("getCachedRecord "+recNo);
+		
 		int maxLen = 20;
 		CachedRecord cachedRec = (CachedRecord)cachedRecords.get(new Integer(recNo)); 
 		if (cachedRec != null) return cachedRec;
@@ -532,35 +489,24 @@ final public class HistoryStorage implements RecordFilter,
 	{
 		try
 		{
-			if (!currCacheUin.equals(uin)) enumerateRecords(uin);
-			recordsEnum.keepUpdated(false);
-			recordsEnum.rebuild();
-			recordsEnum.reset();
-			cachedRecords = null;
-			while (recordsEnum.hasNextElement())
-			{
-				recordStore.deleteRecord( recordsEnum.nextRecordId() );
-			}
-			recordsEnum.destroy();
-			recordsEnum = null;
+			openUINRecords(uin);
+			recordStore.closeRecordStore();
+			recordStore = null;
+			System.gc();
+			RecordStore.deleteRecordStore( getRSName(uin) );
 			if (cachedRecords != null) cachedRecords.clear();
-			enumerateRecords(uin);
+			currCacheUin = new String();
+			openUINRecords(uin);
 		}
 		catch (Exception e)
 		{
-			DebugLog.addText("Error in HistoryStorage.clearHistory: "+e.toString());
+			DebugLog.addText("HistoryStorage.clearHistory: "+e.toString());
 		}
 	}
 	
 	// Clears cache before hiding history list
 	public void clearCache()
 	{
-		if (recordsEnum != null)
-		{
-			recordsEnum.destroy();
-			recordsEnum = null;
-		}
-		
 		if (cachedRecords != null)
 		{
 			cachedRecords.clear();
@@ -569,10 +515,19 @@ final public class HistoryStorage implements RecordFilter,
 		
 		list = null;
 		
-		currCacheUin = "";
+		currCacheUin = new String();
 		currRecIndex = -1;
 	}
 	
+	// Sets color scheme for history UI controls
+	public void setColorScheme()
+	{
+		if (list != null)
+		{
+			Jimm.setColorScheme(list);
+			if (HistoryStorageList.messText != null) Jimm.setColorScheme(HistoryStorageList.messText);
+		}
+	}
 }
 
 //#sijapp cond.end#

@@ -89,7 +89,7 @@ class SimpleNodeComparer implements TreeNodeComparer
 		item1 = (ContactListContactItem)obj1;
 		item2 = (ContactListContactItem)obj2;
 		
-		return item1.getText().compareTo( item2.getText() );
+		return item1.getLowerText().compareTo( item2.getLowerText() );
 	}
 }
 
@@ -128,7 +128,7 @@ class NodeComparer implements TreeNodeComparer
 		
 		if (weight1 == weight2)
 		{
-			return item1.getText().compareTo( item2.getText() );		
+			return item1.getLowerText().compareTo( item2.getLowerText() );		
 		}
 	
 		return (weight1 < weight2) ? -1 : 1;
