@@ -181,4 +181,6 @@ VERSION 0.3.3
   * On the ChatHistory screen you can now see how many chats are open and in which one you are
   * Contact names are now also updated on server list if renamed in Jimm
   * Added Ukrainian translation
+  * Added new option "Color scheme"
+  * Contact list sorts without case sensitivity now
   
