@@ -385,7 +385,7 @@ public class MainMenu implements CommandListener
 
        //#sijapp cond.if target is "MOTOROLA"#
 
-       else if ((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand) && (d == this.list))
+       else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand)) && (d == this.list))
 
        // #sijapp cond.else#
 
@@ -590,7 +590,7 @@ public class MainMenu implements CommandListener
         }
         // Online status has been selected
         //#sijapp cond.if target is "MOTOROLA"#
-        else if ((c == List.SELECT_COMMAND) || (c== MainMenu.selectCommand) && (d == MainMenu.statusList))
+        else if (((c == List.SELECT_COMMAND) || (c== MainMenu.selectCommand)) && (d == MainMenu.statusList))
         //#sijapp cond.else#
         else if ((c == List.SELECT_COMMAND) && (d == MainMenu.statusList))
         //#sijapp cond.end#
