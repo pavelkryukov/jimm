@@ -50,7 +50,7 @@ public class Text_RU extends ResourceBundle
         resources.put("save",                        "Сохранить ");
         resources.put("ok",                          "OK         ");
         resources.put("reply",                       "Ответ      ");
-        resources.put("close",                       "    Закрыть");
+        resources.put("close",                       "   Закрыть");
         // #sijapp cond.else#
 		resources.put("select",                      "Выбрать");
         resources.put("reset",                       "Сброс");
