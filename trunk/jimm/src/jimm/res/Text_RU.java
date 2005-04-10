@@ -65,6 +65,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("about",                       "О программе");
 		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\n http://www.jimm.org/");
 		resources.put("account",                     "Учетная запись");
+		resources.put("add_group",                   "Добавить группу");
 		resources.put("add_user",                    "Добавить пользователя");
 		resources.put("add_to_list",                 "Добавить");
 		resources.put("age",                         "Возраст");
@@ -113,12 +114,6 @@ public class Text_RU extends ResourceBundle
 		resources.put("grant",						 "Авторизировать");
 		resources.put("grantedby",					 "Вас авторизировал: ");
 		resources.put("hide_offline",                "Скрывать отключившихся");
-		resources.put("history_info",                "Информация");
-		resources.put("hist_cur",                    "Число сообщений контакта");
-		resources.put("hist_rc",                     "Число сообщений в истории");
-		resources.put("hist_size",                   "Использовано (Кб)");
-		resources.put("hist_avail",                  "Всего места (Кб)"); 
-		resources.put("history",                     "История сообщений");
 		resources.put("info",                        "Информация");
 		resources.put("init_ft",                     "Инициализация...");
 		resources.put("kb",                          "КБ");
@@ -229,12 +224,18 @@ public class Text_RU extends ResourceBundle
 		resources.put("attention",                   "Внимание!"); 
 		resources.put("have_unread_mess",            "У Вас остались непрочитанные сообщения. Выйти из программы?");
 		
-		// User management **********
-		resources.put("add_group",                   "Добавить группу");
-		resources.put("group_name",                  "Имя группы");
-		resources.put("exec",                        "Выполнить");
-		resources.put("remove_user",                 "Удалить пользователя");
-		resources.put("show_user_groups",            "Группировать контакты");
+		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("text_to_find",                "Текст");
+		resources.put("find_backwards",              "В обратном направлении");
+		resources.put("find_case_sensitiv",          "С учётом регистра");
+		resources.put("history_info",                "Информация");
+		resources.put("hist_cur",                    "Число сообщений контакта");
+		resources.put("hist_rc",                     "Число сообщений в истории");
+		resources.put("hist_size",                   "Использовано (Кб)");
+		resources.put("hist_avail",                  "Всего места (Кб)"); 
+		resources.put("history",                     "История сообщений");
+		resources.put("not_found",                   "не найден");
+		//#sijapp cond.end#
 
 		// Generic errors
 		resources.put("error_100",                   "Неизвестная ошибка (#100.EXT)");
