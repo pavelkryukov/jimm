@@ -64,7 +64,7 @@ final class HistoryStorageList extends VirtualList
 	private static Command cmdSelect  = new Command(ResourceBundle.getString("select"), Command.SCREEN, 1);
 	private static Command cmdBack    = new Command(ResourceBundle.getString("back"),   Command.BACK,   2);
 	private static Command cmdClear   = new Command(ResourceBundle.getString("clear"),  Command.ITEM,   4); 
-	//private static Command cmdFind    = new Command(ResourceBundle.getString("find"),   Command.ITEM,   3);
+	private static Command cmdFind    = new Command(ResourceBundle.getString("find"),   Command.ITEM,   3);
 	private static Command cmdInfo    = new Command(ResourceBundle.getString("history_info"), Command.ITEM,   5);
 	
 	static TextList messText;
@@ -73,6 +73,13 @@ final class HistoryStorageList extends VirtualList
 	private static String currUin  = new String(), 
 	                      currName = new String();
 	
+	// Controls for finding text
+	private static Form frmFind;
+	private static Command cmdFindOk;
+	private static Command cmdFindCancel;
+	private static TextField tfldFind;
+	private static ChoiceGroup chsFind;
+	
 	// Constructor
 	public HistoryStorageList()
 	{
@@ -80,7 +87,7 @@ final class HistoryStorageList extends VirtualList
 		addCommand(cmdSelect);
 		addCommand(cmdBack);
 		addCommand(cmdClear);
-		//addCommand(cmdFind);
+		addCommand(cmdFind);
 		addCommand(cmdInfo);
 		setCommandListener(this);
 		setVLCommands(this);
@@ -174,6 +181,53 @@ final class HistoryStorageList extends VirtualList
 		else if (c == cmdMsgPrev)
 		{
 			moveInList(-1);
+		}
+		
+		// find command
+		else if (c == cmdFind)
+		{
+			if (frmFind == null)
+			{
+				frmFind = new Form( ResourceBundle.getString("find") );
+				cmdFindOk = new Command(ResourceBundle.getString("find"),   Command.ITEM, 1);
+				cmdFindCancel = new Command(ResourceBundle.getString("back"),   Command.BACK, 2);
+				tfldFind = new TextField
+				(
+						ResourceBundle.getString("text_to_find"),
+						"",
+						64,
+						TextField.ANY
+				);
+				
+				chsFind = new ChoiceGroup(ResourceBundle.getString("options"), Choice.MULTIPLE);
+				chsFind.append(ResourceBundle.getString("find_backwards"), null);
+				chsFind.append(ResourceBundle.getString("find_case_sensitiv"), null);
+				chsFind.setSelectedIndex(0, true);
+				
+				frmFind.addCommand(cmdFindOk);
+				frmFind.addCommand(cmdFindCancel);
+				frmFind.append(tfldFind);
+				frmFind.append(chsFind);
+				frmFind.setCommandListener(this);
+			}
+			Jimm.display.setCurrent(frmFind);
+		}
+		
+		// user select ok command in fin screen
+		else if (c == cmdFindOk)
+		{
+			Jimm.jimm.getHistory().find
+			(
+				currUin,
+				tfldFind.getString(),
+				chsFind.isSelected(1),
+				chsFind.isSelected(0)
+			);
+		}
+		
+		else if (c == cmdFindCancel)
+		{
+			Jimm.display.setCurrent(this);
 		}
 		
 		// commands info
@@ -284,7 +338,19 @@ final public class HistoryStorage
 	private int currRecIndex = -1, currRecId;
 	private Hashtable cachedRecords;
 	
-	final static private int TEXT_START_INDEX = 1; 
+	final static private int TEXT_START_INDEX = 1;
+	
+	public HistoryStorage()
+	{
+		try
+		{
+			RecordStore.deleteRecordStore("history");
+		}
+		catch (Exception e)
+		{
+			
+		}
+	}
 	
 	// Convert String UIN to long value
 	private long uinToLong(String uin)
@@ -302,7 +368,7 @@ final public class HistoryStorage
 	}
 	
 	// Add message text to contact history
-	public void addText(String uin, String text, byte type, String from)
+	synchronized public void addText(String uin, String text, byte type, String from)
 	{
 		byte[] buffer, textData;
 		int textLen;
@@ -413,7 +479,7 @@ final public class HistoryStorage
 	}
 	
 	// Returns full data of stored message
-	public CachedRecord getRecord(String uin, int recNo)
+	synchronized public CachedRecord getRecord(String uin, int recNo)
 	{
 		openUINRecords(uin);
 		byte[] data;
@@ -443,8 +509,6 @@ final public class HistoryStorage
 	// returns cached short text of the message for history list
 	public CachedRecord getCachedRecord(String uin, int recNo)
 	{
-		DebugLog.addText("getCachedRecord "+recNo);
-		
 		int maxLen = 20;
 		CachedRecord cachedRec = (CachedRecord)cachedRecords.get(new Integer(recNo)); 
 		if (cachedRec != null) return cachedRec;
@@ -527,6 +591,48 @@ final public class HistoryStorage
 			Jimm.setColorScheme(list);
 			if (HistoryStorageList.messText != null) Jimm.setColorScheme(HistoryStorageList.messText);
 		}
+	}
+	
+	synchronized private boolean find_intern(String uin, String text, boolean case_sens, boolean back)
+	{
+		int index = list.getCurrIndex();
+		if ((index < 0) || (index >= list.getSize())) return false;
+		if (!case_sens) text = text.toLowerCase();
+		int size = getRecordCount(uin);
+		
+		for (;;)
+		{
+			if ((index < 0) || (index >= size)) break;
+			CachedRecord record = getRecord(uin, index);
+			String search_text = case_sens ? record.text : record.text.toLowerCase();
+			if (search_text.indexOf(text) != -1)
+
+			{
+				list.setCurrentItem(index);
+				Jimm.display.setCurrent(list);
+				return true;
+			}
+			
+			if (back) index--;
+			else index++;
+		}
+		return false;
+	}
+	
+	// find text
+	void find(String uin, String text, boolean case_sens, boolean back)
+	{
+		if (list == null) return;
+		boolean result = find_intern(uin, text, case_sens, back);
+		if (result == true) return;
+		StringBuffer errstr = new StringBuffer();
+		errstr
+			.append(text)
+			.append("\n")
+			.append(ResourceBundle.getString("not_found"));
+		Alert alert = new Alert(ResourceBundle.getString("find"), errstr.toString(), null, AlertType.INFO);
+		alert.setTimeout(Alert.FOREVER);
+		Jimm.display.setCurrent(alert, list);
 	}
 }
 

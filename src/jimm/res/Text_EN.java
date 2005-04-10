@@ -122,12 +122,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("group_is_not_empty",          "Selected group is not empty!\nMove all users to other groups!");
 		resources.put("have_unread_mess",            "You have unread messages. Exit anyway?");
 		resources.put("hide_offline",                "Hide offline contacts");
-		resources.put("history_info",                "Storage info");
-		resources.put("hist_cur",                    "Current contact messages number");
-		resources.put("hist_rc",                     "Total messages number");
-		resources.put("hist_size",                   "Used space (kB)");
-		resources.put("hist_avail",                  "Total space (kB)"); 
-		resources.put("history",                     "Stored history");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initializeing");
 		resources.put("kb",                          "kB");
@@ -242,6 +236,18 @@ public class Text_EN extends ResourceBundle
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
 			
+		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("text_to_find",                "Text");
+		resources.put("find_backwards",              "Backward");
+		resources.put("find_case_sensitiv",          "Case sensitive");
+		resources.put("history_info",                "Storage info");
+		resources.put("hist_cur",                    "Current contact messages number");
+		resources.put("hist_rc",                     "Total messages number");
+		resources.put("hist_size",                   "Used space (kB)");
+		resources.put("hist_avail",                  "Total space (kB)"); 
+		resources.put("history",                     "Stored history");
+		resources.put("not_found",                   "not found");
+		//#sijapp cond.end#
 
 		// Generic errors
 		resources.put("error_100",                   "Unknown error (#100.EXT)");

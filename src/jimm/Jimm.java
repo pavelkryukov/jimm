@@ -320,8 +320,10 @@ public class Jimm extends MIDlet
 	
 	public void setColorScheme()
 	{
-		ch.setColorScheme();
+		// #sijapp cond.if modules_HISTORY is "true" #
 		history.setColorScheme();
+		// #sijapp cond.end#
+		ch.setColorScheme();
 		setColorScheme((VirtualList)cl.getVisibleContactListRef());
 	}
 
