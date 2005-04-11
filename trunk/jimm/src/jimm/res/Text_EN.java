@@ -319,7 +319,8 @@ public class Text_EN extends ResourceBundle
 		// File transfer errors
 		resources.put("error_190",                   "File transfer with < ICQv8 clients not supported (#190.EXT)");
 		resources.put("error_191",                   "Error reading the file. Possibly not supported (#191.EXT)");
-		resources.put("error_192",                   "Error reading the file. Wrong path or not supported (#192.EXT)");
+		resources.put("error_192",                   "Error reading the file. Wrong path, file not found, or not supported (#192.EXT)");
+		resources.put("error_193",                   "Error accessing file system for browsing. Security error (#193.EXT)");
 
 	}
 }
