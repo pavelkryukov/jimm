@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -28,13 +28,18 @@ package jimm;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 
 import javax.microedition.io.Connector;
-// #sijapp cond.if target is "MOTOROLA"#
+import javax.microedition.io.file.FileConnection;
+import javax.microedition.io.file.FileSystemRegistry;
+//#sijapp cond.if target is "MOTOROLA"#
 import com.motorola.io.FileConnection;
 // #sijapp cond.else#
 import javax.microedition.io.StreamConnection;
 // #sijapp cond.end#
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -43,6 +48,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
@@ -125,15 +131,16 @@ public class FileTransfer implements CommandListener
             }
         } else if (type == FileTransfer.FT_TYPE_FILE_BY_NAME)
         {
-            Form fileNameForm = new Form(ResourceBundle.getString("filepath"));
-            this.fileNameField = new TextField(ResourceBundle.getString("filepath"), "", 256, TextField.ANY);
-            
-            fileNameForm.append(fileNameField);
-            fileNameForm.addCommand(this.backCommand);
-            fileNameForm.addCommand(this.okCommand);
-            fileNameForm.setCommandListener(this);
-
-            Jimm.display.setCurrent(fileNameForm);
+            FileSelector fc = new FileSelector();
+            try 
+            {
+                fc.startFc();
+            }
+            catch (JimmException e)
+            {
+                JimmException.handleException(e);
+            }
+                
         }
 
     }
@@ -506,6 +513,217 @@ public class FileTransfer implements CommandListener
 
         }
 
+    }
+
+    /** ************************************************************************* */
+    /** ************************************************************************* */
+    /** ************************************************************************* */
+    
+    // Class for file selection
+    public class FileSelector implements CommandListener
+    {
+
+        private String currDirName;
+
+        private Command select = new Command(ResourceBundle.getString("select"), Command.ITEM, 1);
+        private Command back = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
+        private Command exit = new Command(ResourceBundle.getString("cancel"), Command.EXIT, 3);
+
+        private Image dirIcon, fileIcon;
+        private Image[] iconList;
+
+        /* special string denotes upper directory */
+        private final String UP_DIRECTORY = "..";
+
+        /*
+         * special string that denotes apper directory accessible by this
+         * browser. this virtual directory contains all roots.
+         */
+        private final String MEGA_ROOT = "/";
+
+        /* separator string as defined by FC specification */
+        private final String SEP_STR = "/";
+
+        /* separator character as defined by FC specification */
+        private final char SEP = '/';
+
+        public FileSelector()
+        {
+            currDirName = MEGA_ROOT;
+            try
+            {
+                dirIcon = Image.createImage("dir.png");
+            } catch (IOException e)
+            {
+                dirIcon = null;
+            }
+            try
+            {
+                fileIcon = Image.createImage("file.png");
+            } catch (IOException e)
+            {
+                fileIcon = null;
+            }
+            iconList = new Image[]
+            { fileIcon, dirIcon};
+
+        }
+
+        public void startFc() throws JimmException
+        {
+            try
+            {
+                showCurrDir();
+            } catch (SecurityException e)
+            {
+                throw new JimmException(193,0,true);
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        
+        public void commandAction(Command c, Displayable d)
+        {
+            if (c == select)
+            {
+                List curr = (List) d;
+                final String currFile = curr.getString(curr.getSelectedIndex());
+                new Thread(new Runnable()
+                {
+                    public void run()
+                    {
+                        if (currFile.endsWith(SEP_STR) || currFile.equals(UP_DIRECTORY))
+                            traverseDirectory(currFile);
+                        else
+                            try {
+                                startFT(currFile);
+                            }
+                        	catch (JimmException e)
+                        	{
+                        	    JimmException.handleException(e);
+                        	}
+                    }
+                }).start();
+            }
+            else
+                if (c == back)
+                    showCurrDir();
+                else
+                    if (c == exit) 
+                        FileTransfer.this.getCItem().activateMenu();
+        }
+
+        /**
+         * Show file list in the current directory .
+         */
+        void showCurrDir()
+        {
+            Enumeration e;
+            FileConnection currDir = null;
+            List browser;
+            try
+            {
+                if (MEGA_ROOT.equals(currDirName))
+                {
+                    e = FileSystemRegistry.listRoots();
+                    browser = new List(currDirName, List.IMPLICIT);
+                }
+                else
+                {
+                    currDir = (FileConnection) Connector.open("file://localhost/" + currDirName);
+                    e = currDir.list();
+                    browser = new List(currDirName, List.IMPLICIT);
+                    // not root - draw UP_DIRECTORY
+                    browser.append(UP_DIRECTORY, dirIcon);
+                }
+
+                while (e.hasMoreElements())
+                {
+                    String fileName = (String) e.nextElement();
+                    if (fileName.charAt(fileName.length() - 1) == SEP)
+                        browser.append(fileName, dirIcon);
+                    else
+                        browser.append(fileName, fileIcon);
+                }
+
+                browser.setSelectCommand(select);
+                browser.addCommand(exit);
+
+                browser.setCommandListener(this);
+
+                if (currDir != null)
+                    currDir.close();
+
+                Jimm.display.setCurrent(browser);
+            } catch (IOException ioe)
+            {
+                ioe.printStackTrace();
+            }
+        }
+
+        void traverseDirectory(String fileName)
+        {
+            /*
+             * In case of directory just change the current directory and show
+             * it
+             */
+            if (currDirName.equals(MEGA_ROOT))
+            {
+                if (fileName.equals(UP_DIRECTORY))
+                {
+                    // can not go up from MEGA_ROOT
+                    return;
+                }
+                currDirName = fileName;
+            }
+            else
+                if (fileName.equals(UP_DIRECTORY))
+                {
+                    // Go up one directory
+                    // TODO use setFileConnection when implemented
+                    int i = currDirName.lastIndexOf(SEP, currDirName.length() - 2);
+                    if (i != -1)
+                    {
+                        currDirName = currDirName.substring(0, i + 1);
+                    }
+                    else
+                    {
+                        currDirName = MEGA_ROOT;
+                    }
+                }
+                else
+                {
+                    currDirName = currDirName + fileName;
+                }
+            showCurrDir();
+        }
+
+        void startFT(String fileName) throws JimmException
+        {
+            try
+            {
+                FileConnection fc = (FileConnection) Connector.open("file://localhost/" + currDirName + fileName);
+                if (!fc.exists()) { throw new IOException(); }
+
+                InputStream fis = fc.openInputStream();
+                byte[] b = new byte[(int)fc.fileSize()];
+
+                int length = fis.read(b, 0, (int)fc.fileSize());
+
+                fis.close();
+                fc.close();
+
+                // Set the file data in file transfer
+                FileTransfer.this.setData(b);
+                // Create filename and ask for name and description
+                FileTransfer.this.askForNameDesc(fileName, "");
+
+            } catch (Exception e)
+            {
+                throw new JimmException(192,0,true);
+            }
+        }
     }
 }
 //#sijapp cond.end#
