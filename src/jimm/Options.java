@@ -83,7 +83,7 @@ public class Options
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
 	public static final int OPTION_AUTO_CONNECT					  = 138;   /* boolean */
 	public static final int OPTION_CONN_WAIT				      =  65;   /* int     */
-	public static final int OPTION_SHADOW_CON                     = 138;   /* boolean */
+	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
 	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
 	public static final int OPTION_CL_SORT_BY                     =  66;   /* int     */
