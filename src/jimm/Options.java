@@ -83,6 +83,7 @@ public class Options
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
 	public static final int OPTION_AUTO_CONNECT					  = 138;   /* boolean */
 	public static final int OPTION_CONN_WAIT				      =  65;   /* int     */
+	public static final int OPTION_SHADOW_CON                     = 138;   /* boolean */
 	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
 	public static final int OPTION_CL_SORT_BY                     =  66;   /* int     */
@@ -138,6 +139,7 @@ public class Options
 			this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
 			this.setIntOption    (Options.OPTION_CONN_TYPE,                      0);
 			this.setIntOption    (Options.OPTION_CONN_WAIT,                      0);
+			this.setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
 			this.setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
 			this.setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
 			this.setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
@@ -428,6 +430,7 @@ public class Options
 		private ChoiceGroup keepConnAliveChoiceGroup;
 		private ChoiceGroup connTypeChoiceGroup;
 		private ChoiceGroup autoConnectChoiceGroup;
+		private ChoiceGroup shadowConnChoiceGroup;
 		private ChoiceGroup uiLanguageChoiceGroup;
 		private ChoiceGroup displayDateChoiceGroup;
 		private ChoiceGroup clSortByChoiceGroup;
@@ -527,7 +530,6 @@ public class Options
                 this.keepConnAliveChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
                 this.connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.MULTIPLE);
                 this.connTypeChoiceGroup.append(ResourceBundle.getString("async"), null);
-                this.conWaitTextField = new TextField(ResourceBundle.getString("con_wait"), Integer.toString(Options.this.getIntOption(Options.OPTION_CONN_WAIT)), 5, TextField.NUMERIC);
                 if (Options.this.getIntOption(Options.OPTION_CONN_TYPE) == 0)
                 {
                     this.connTypeChoiceGroup.setSelectedIndex(0, false);
@@ -535,6 +537,10 @@ public class Options
                 {
                     this.connTypeChoiceGroup.setSelectedIndex(0, true);
                 }
+                this.shadowConnChoiceGroup = new ChoiceGroup(ResourceBundle.getString("shadow_con")+"?", Choice.MULTIPLE);
+                this.shadowConnChoiceGroup.append(ResourceBundle.getString("yes"), null);
+                this.shadowConnChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_SHADOW_CON));
+                this.conWaitTextField = new TextField(ResourceBundle.getString("con_wait"), Integer.toString(Options.this.getIntOption(Options.OPTION_CONN_WAIT)), 5, TextField.NUMERIC);
                 this.autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
                 this.autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.autoConnectChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_AUTO_CONNECT));
@@ -774,6 +780,7 @@ public class Options
 					    Options.this.setStringOption(Options.OPTION_SRV_PORT,this.srvPortTextField.getString());
 						Options.this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,this.keepConnAliveChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_AUTO_CONNECT,this.autoConnectChoiceGroup.isSelected(0));
+						Options.this.setBooleanOption(Options.OPTION_SHADOW_CON,this.shadowConnChoiceGroup.isSelected(0));
 						if (this.connTypeChoiceGroup.isSelected(0))
 						{
 							Options.this.setIntOption(Options.OPTION_CONN_TYPE,1);
