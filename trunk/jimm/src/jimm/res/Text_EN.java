@@ -201,6 +201,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("server_port",                 "Port");
 		resources.put("session",                     "Session");
 		resources.put("set_status",                  "Set status");
+		resources.put("shadow_con",                  "Shadow connction(N6230)");
 		resources.put("show_user_groups",            "Show user groups");
 		resources.put("since",                       "Since");
 		resources.put("sound",                       "Sound file");

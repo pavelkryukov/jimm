@@ -183,5 +183,6 @@ VERSION 0.3.3
   * Contact names are now also updated on server list if renamed in Jimm
   * Added Ukrainian translation
   * Added new option "Color scheme"
+  * Added "Shadow connection" hack for Nokia 6230 users
   * Contact list sorts without case sensitivity now
   
