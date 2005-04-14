@@ -25,6 +25,7 @@ Author: Manuel Linsmayer, Andreas Rossbacher
 package jimm.comm;
 
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,6 +34,7 @@ import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
+import javax.microedition.io.ContentConnection;
 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 import javax.microedition.io.SocketConnection;
 // #sijapp cond.else#
@@ -145,6 +147,23 @@ public class Icq implements Runnable
         wait.setMessage(ResourceBundle.getString("connecting"));
         wait.setProgress(0);
         Jimm.display.setCurrent(wait);
+        
+        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_SHADOW_CON))
+        {
+            // Make the shadow connection for Nokia 6230 if needed
+            ContentConnection ctemp = null;
+            DataInputStream istemp = null;
+            try
+            {
+                String url = "http://www.jimm.org/en/6230.html";
+                ctemp = (ContentConnection) Connector.open(url);
+
+                istemp = ctemp.openDataInputStream();
+            } catch (Exception e)
+            {
+                // Do nothing
+            }
+        }
 
         Options options = Jimm.jimm.getOptionsRef();
         // Connect

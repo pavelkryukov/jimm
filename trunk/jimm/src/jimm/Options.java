@@ -82,29 +82,28 @@ public class Options
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
 	public static final int OPTION_AUTO_CONNECT					  = 138;   /* boolean */
-	public static final int OPTION_CONN_WAIT				      =  65;   /* int     */
 	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
 	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
-	public static final int OPTION_CL_SORT_BY                     =  66;   /* int     */
+	public static final int OPTION_CL_SORT_BY                     =  65;   /* int     */
 	public static final int OPTION_CL_HIDE_OFFLINE                = 130;   /* boolean */
-	public static final int OPTION_MESSAGE_NOTIFICATION_MODE      =  67;   /* int     */
+	public static final int OPTION_MESSAGE_NOTIFICATION_MODE      =  66;   /* int     */
 	public static final int OPTION_MESSAGE_NOTIFICATION_SOUNDFILE =   4;   /* String  */
-	public static final int OPTION_MESSAGE_NOTIFICATION_VOLUME    =  68;   /* int     */
-	public static final int OPTION_ONLINE_NOTIFICATION_MODE       =  69;   /* int     */
+	public static final int OPTION_MESSAGE_NOTIFICATION_VOLUME    =  67;   /* int     */
+	public static final int OPTION_ONLINE_NOTIFICATION_MODE       =  68;   /* int     */
 	public static final int OPTION_ONLINE_NOTIFICATION_SOUNDFILE  =   5;   /* String  */
-	public static final int OPTION_ONLINE_NOTIFICATION_VOLUME     =  70;   /* int     */
+	public static final int OPTION_ONLINE_NOTIFICATION_VOLUME     =  69;   /* int     */
 	public static final int OPTION_VIBRATOR                       = 131;   /* boolean */
 	public static final int OPTION_CP1251_HACK                    = 133;   /* boolean */
-	public static final int OPTION_COST_PER_PACKET                =  71;   /* int     */
-	public static final int OPTION_COST_PER_DAY                   =  72;   /* int     */
-	public static final int OPTION_COST_PACKET_LENGTH             =  73;   /* int     */
+	public static final int OPTION_COST_PER_PACKET                =  70;   /* int     */
+	public static final int OPTION_COST_PER_DAY                   =  71;   /* int     */
+	public static final int OPTION_COST_PACKET_LENGTH             =  72;   /* int     */
 	public static final int OPTION_CURRENCY                       =   6;   /* String  */
 	public static final int OPTION_ONLINE_STATUS                  = 192;   /* long    */
 	public static final int OPTION_CHAT_SMALL_FONT                = 135;   /* boolean */
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
 	public static final int OPTION_HISTORY                        = 137;   /* boolean */
-	public static final int OPTION_COLOR_SCHEME                   =  74;   /* int     */
+	public static final int OPTION_COLOR_SCHEME                   =  73;   /* int     */
 
 
 	/**************************************************************************/
@@ -138,7 +137,6 @@ public class Options
 			this.setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 			this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
 			this.setIntOption    (Options.OPTION_CONN_TYPE,                      0);
-			this.setIntOption    (Options.OPTION_CONN_WAIT,                      0);
 			this.setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
 			this.setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
 			this.setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
@@ -426,7 +424,6 @@ public class Options
 		private TextField passwordTextField;
 		private TextField srvHostTextField;
 		private TextField srvPortTextField;
-		private TextField conWaitTextField;
 		private ChoiceGroup keepConnAliveChoiceGroup;
 		private ChoiceGroup connTypeChoiceGroup;
 		private ChoiceGroup autoConnectChoiceGroup;
@@ -540,7 +537,6 @@ public class Options
                 this.shadowConnChoiceGroup = new ChoiceGroup(ResourceBundle.getString("shadow_con")+"?", Choice.MULTIPLE);
                 this.shadowConnChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.shadowConnChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_SHADOW_CON));
-                this.conWaitTextField = new TextField(ResourceBundle.getString("con_wait"), Integer.toString(Options.this.getIntOption(Options.OPTION_CONN_WAIT)), 5, TextField.NUMERIC);
                 this.autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
                 this.autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.autoConnectChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_AUTO_CONNECT));
@@ -688,7 +684,7 @@ public class Options
 						this.optionsForm.append(this.keepConnAliveChoiceGroup);
 						this.optionsForm.append(this.autoConnectChoiceGroup);
 						this.optionsForm.append(this.connTypeChoiceGroup);
-						this.optionsForm.append(this.conWaitTextField);
+						this.optionsForm.append(this.shadowConnChoiceGroup);
 						break;
 					case 2:
 						this.optionsForm.append(this.uiLanguageChoiceGroup);
@@ -789,7 +785,6 @@ public class Options
 						{
 						    Options.this.setIntOption(Options.OPTION_CONN_TYPE,0);
 						}
-						Options.this.setIntOption(Options.OPTION_CONN_WAIT,Integer.parseInt(this.conWaitTextField.getString()));
 						break;
 					case 2:
 						Options.this.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.LANG_AVAILABLE[this.uiLanguageChoiceGroup.getSelectedIndex()]);
