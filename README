@@ -98,8 +98,8 @@ On Siemens S55 mobiles there are the following graphical errors:
   * The background of the flowers if there is an active chat is no longer
     transparent.
 
-On Nokia 6230 with FW > 3.15 you have to set the "Delay between connections" in
-the "Network" menu in the "Options section" to a value above 4 seconds at least.
+On Nokia 6230 with FW > 3.15 you have to set "Shadow connction(N6230)" in
+the "Network" section of the "Options section" to true.
 
 ________________________________________________________________________________
 HOW TO BUILD
