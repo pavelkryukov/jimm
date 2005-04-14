@@ -29,7 +29,11 @@ import DrawControls.*;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 
+import java.io.DataInputStream;
 import java.util.Timer;
+
+import javax.microedition.io.Connector;
+import javax.microedition.io.ContentConnection;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Display;
@@ -178,6 +182,23 @@ public class Jimm extends MIDlet
 		
 		// set color scheme for all forms
 		setColorScheme();
+		
+        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_SHADOW_CON))
+        {
+            // Make the shadow connection for Nokia 6230 if needed
+            ContentConnection ctemp = null;
+            DataInputStream istemp = null;
+            try
+            {
+                String url = "http://www.jimm.org/en/6230.html";
+                ctemp = (ContentConnection) Connector.open(url);
+
+                istemp = ctemp.openDataInputStream();
+            } catch (Exception e)
+            {
+                // Do nothing
+            }
+        }
 		
 		if (this.getOptionsRef().getBooleanOption(Options.OPTION_AUTO_CONNECT))
         {
