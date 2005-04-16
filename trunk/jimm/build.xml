@@ -25,6 +25,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 <project name="Jimm" default="dist">
 
+	
 	<!--  *******************************************************************   -->
 	<!--  CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT     -->
 	<!--  *******************************************************************   -->
@@ -261,7 +262,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Internal target: compile   -->
 	<target name="compile" depends="preprocess-source">
 		<mkdir dir="${build}/compile/classes" />
-		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" debug="on" />
+		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" debug="off" />
 	</target>
 	
 	<!--  Internal target: obfuscate -->
@@ -356,6 +357,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	</target>
 	
 	<!--  Target: clean   -->
-	<target name="clean" description="Clean the distribution" depends="del_utils,del_build,del_dist" />
+	<target name="clean" description="Clean the distribution(without utils)" depends="del_build,del_dist" />
+
+	<!--  Target: clean   -->
+	<target name="clean-all" description="Clean the distribution" depends="clean,del_utils" />
 
 </project>
