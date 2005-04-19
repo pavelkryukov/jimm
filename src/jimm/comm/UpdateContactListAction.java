@@ -252,7 +252,7 @@ public class UpdateContactListAction extends Action
                         this.icq.c.sendPacket(packet);
 
                         // Move to next state
-                        if (!this.modify)
+                        if (this.modify)
                             this.state = UpdateContactListAction.STATE_CLI_ADDEND_SENT;
                         else
                             this.state = UpdateContactListAction.STATE_SRV_UPDATEACK_RCVD;
