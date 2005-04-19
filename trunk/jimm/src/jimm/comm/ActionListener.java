@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -96,13 +96,15 @@ public class ActionListener
                     && (snacPacket.getCommand() == SnacPacket.SRV_USERONLINE_COMMAND))
             {
                 
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                // #sijapp cond.if modules_FILES is "true"#
                 // DC variables
                 byte[] internalIP = new byte[4];
                 long dcPort = 0;
                 int dcType = -1;
                 int icqProt = 0;
                 long authCookie = 0;
+                // #sijapp cond.end#
                 // #sijapp cond.end#
                 
                 // Get data
@@ -139,7 +141,8 @@ public class ActionListener
                         }
 
                     } 
-                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
+                    // #sijapp cond.if modules_FILES is "true"#
                     else if (tlvType == 0x000c) // DC Infos
                     {                        
                         // dcMarker
@@ -168,12 +171,15 @@ public class ActionListener
 
                     }
                     // #sijapp cond.end#
+                    // #sijapp cond.end#
                     marker += 2 + 2 + tlvData.length;
                 }
 
                 // Update contact list
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                // #sijapp cond.if modules_FILES is "true"#
                 Jimm.jimm.getContactListRef().update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie);
+                // #sijapp cond.end#
                 // #sijapp cond.else#
                 Jimm.jimm.getContactListRef().update(uin, status, capabilities);
                 // #sijapp cond.end#
@@ -352,12 +358,14 @@ public class ActionListener
 
                     // Get message data and initialize marker
                     byte[] msg2Buf;
-                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                    // #sijapp cond.if modules_FILES is "true"#
                     int ackType = -1;
                     byte[] extIP = new byte[4];
                     byte[] ip = new byte[4];
                     String port = "0";
                     int status = -1;
+                    // #sijapp cond.end#
                     // #sijapp cond.end#
                     
                     do
@@ -365,7 +373,8 @@ public class ActionListener
                         msg2Buf = Util.getTlv(msgBuf, msgMarker);
                         if (msg2Buf == null) { throw (new JimmException(152, 2, false)); }
                         tlvType = Util.getWord(msgBuf, msgMarker);
-                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                        // #sijapp cond.if modules_FILES is "true"#
                         switch (tlvType)
                         {
                         	case 0x0003: System.arraycopy(msg2Buf,0,extIP,0,4); break;
@@ -373,6 +382,7 @@ public class ActionListener
                             case 0x0005: port = Util.byteArrayToString(msg2Buf); break;
                             case 0x000a: ackType = Util.getWord(msg2Buf,0);break;
                         }
+                        // #sijapp cond.end#
                         // #sijapp cond.end#
                         msgMarker += 4 + msg2Buf.length;
                     } while (tlvType != 0x2711);
@@ -392,8 +402,10 @@ public class ActionListener
                     msg2Marker += 2;
                     if ((msgType != 0x0001) && (msgType != 0x0004) && (msgType != 0x001A)) return;
 
-                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                    // #sijapp cond.if modules_FILES is "true"#
                     status = Util.getWord(msg2Buf,msg2Marker);
+                    // #sijapp cond.end#
                     // #sijapp cond.end#
                     msg2Marker += 2;
                     
@@ -547,7 +559,7 @@ public class ActionListener
                         String text = Util.crlfToCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
                         msg2Marker += textLen;
 
-                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                         // #sijapp cond.if modules_FILES is "true"#
                         // File transfer message
                         if (plugin.equals("File") && Jimm.jimm.getSplashCanvasRef().isShown())
@@ -664,12 +676,14 @@ public class ActionListener
                             this.icq.c.sendPacket(ackPacket);
 
                         }
-                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                        // #sijapp cond.if modules_FILES is "true"#
                         // File transfer request or request ack
                         else  if (msgType == 0x001A)
                         {
                          
                         }
+                        // #sijapp cond.end#
                         // #sijapp cond.end#
                         // Other messages
                         else 

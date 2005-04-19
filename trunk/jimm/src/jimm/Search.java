@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -341,12 +341,12 @@ public class Search
                 
                 screen.lock();
                 
-// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 screen.setFullScreenMode(false);
-                screen.setTitle( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
-// #sijapp cond.else #
-                screen.setCaption( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
-// #sijapp cond.end#
+                screen.setTitle(ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+                // #sijapp cond.else #
+                screen.setCaption(ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+                // #sijapp cond.end#
                 
                 screen.setFontSize(Font.SIZE_SMALL);
                 
@@ -391,7 +391,7 @@ public class Search
                 // Draw a result entry
             	
             	screen.lock();
-            	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+            	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 screen.setFullScreenMode(false);
                 screen.setTitle(ResourceBundle.getString("results")+" 0/0");
                 // #sijapp cond.else #

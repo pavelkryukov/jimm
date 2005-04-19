@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -55,7 +55,7 @@ public class JimmException extends Exception
 	// True, if an error message should be presented to the user
 	protected boolean displayMsg;
 	
-	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// True, if this is an exceptuion for an peer connection
 	protected boolean peer;
 	//  #sijapp cond.end#
@@ -67,8 +67,10 @@ public class JimmException extends Exception
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this.critical = true;
 		this.displayMsg = true;
-		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//  #sijapp cond.if modules_FILES is "true"#
 		this.peer = false;
+		//  #sijapp cond.end#
 		//  #sijapp cond.end#
 	}
 
@@ -79,12 +81,15 @@ public class JimmException extends Exception
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this.critical = false;
 		this.displayMsg = displayMsg;
-		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//  #sijapp cond.if modules_FILES is "true"#
 		this.peer = false;
+		//  #sijapp cond.end#
 		//  #sijapp cond.end#
 	}
 	
-	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	//  #sijapp cond.if modules_FILES is "true"#
 	// Constructs a non-critical JimmException with peer info
 	public JimmException(int errCode, int extErrCode, boolean displayMsg, boolean _peer)
 	{
@@ -93,6 +98,7 @@ public class JimmException extends Exception
 		this.displayMsg = displayMsg;
 		this.peer = _peer;
 	}
+	//  #sijapp cond.end#
 	//  #sijapp cond.end#
 
 
@@ -109,12 +115,14 @@ public class JimmException extends Exception
 		return (this.critical);
 	}
 	
-	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	//  #sijapp cond.if modules_FILES is "true"#
 	// Returns true if this is a peer exception
 	public boolean isPeer()
 	{
 		return (this.peer);
 	}
+	//  #sijapp cond.end#
 	//  #sijapp cond.end#
 
 
@@ -127,11 +135,15 @@ public class JimmException extends Exception
 		{
 
 			// Reset comm. subsystem
-			//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+			//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	    	//  #sijapp cond.if modules_FILES is "true"#
 			if (e.isPeer())
 			    Jimm.jimm.getIcqRef().resetPeerCon();
 			else
 			    Jimm.jimm.getIcqRef().resetServerCon();
+			//  #sijapp cond.else#
+			Jimm.jimm.getIcqRef().resetServerCon();
+			//  #sijapp cond.end#
 			//  #sijapp cond.else#
 			Jimm.jimm.getIcqRef().resetServerCon();
 			//  #sijapp cond.end#

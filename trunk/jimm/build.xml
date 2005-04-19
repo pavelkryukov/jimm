@@ -32,23 +32,25 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Change this to the directory where a MIDP SDK is installed. You can   -->
 	<!--  use both the slash and the backslash for separating path              -->
 	<!--  components.                                                           -->
-	<property name="DEFAULT/midp"      value="CHANGE ME"                         />
-	<property name="MIDP2/midp"        value="CHANGE ME"                         />
-	<property name="RIM/midp"          value="CHANGE ME"                         />
-	<property name="SIEMENS/midp"      value="CHANGE ME"                         />
-	<property name="MOTOROLA/midp"     value="CHANGE ME"                         />
+	<property name="DEFAULT/midp"     value="CHANGE ME"                          />
+	<property name="MIDP2/midp"       value="CHANGE ME"                          />
+	<property name="RIM/midp"         value="CHANGE ME"                          />
+	<property name="SIEMENS/midp"     value="CHANGE ME"                          />
+	<property name="SIEMENS2/midp"    value="CHANGE ME"                          />
+	<property name="MOTOROLA/midp"    value="CHANGE ME"                          />
 	<!--  *******************************************************************   -->
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
-	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar" />
-	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar" />
+	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar"/>
+	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar"/>
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
-	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/API.jar" />
-	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/motorola.jar" />
+	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/Emulators/M55/lib/API.jar"     />
+	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
+	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar" />
 	<!--  *******************************************************************   -->
 	<!--  Change this to the directory where ProGuard is installed. You can     -->
 	<!--  use both the slash and the backslash for separating path components.  -->
-	<property name="proguard"          value="CHANGE ME"                         />
+	<property name="proguard"         value="CHANGE ME"                          />
 	<!--  *******************************************************************   -->
 	<!--  This property must point at the ProGuard JAR file, normally found     -->
 	<!--  in the lib directory of the ProGuard distribution.                    -->
@@ -59,6 +61,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Build target. Currently there are the following build available:      -->
 	<!--      DEFAULT  - Standard MIDP1                                         -->
 	<!--      SIEMENS  - For Siemens MIDP1-devices (like the x55 series         -->
+	<!--      SIEMENS2 - For Siemens MIDP2-devices (like the x65 series         -->
 	<!--      MIDP2    - Standard MIDP2                                         -->
 	<!--      RIM      - For RIM Blackberry devices                             -->
 	<!--      MOTOROLA - For Motorola MIDP2 devices                             -->
@@ -126,6 +129,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp" value="${SIEMENS/midp}">
 			<equals arg1="${target}" arg2="SIEMENS" />
 		</condition>
+		<condition property="midp" value="${SIEMENS2/midp}">
+			<equals arg1="${target}" arg2="SIEMENS2" />
+		</condition>
 		<condition property="midp" value="${MIDP2/midp}">
 			<equals arg1="${target}" arg2="MIDP2" />
 		</condition>
@@ -141,6 +147,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp/lib" value="${SIEMENS/midp/lib}">
 			<equals arg1="${target}" arg2="SIEMENS" />
 		</condition>
+		<condition property="midp/lib" value="${SIEMENS2/midp/lib}">
+			<equals arg1="${target}" arg2="SIEMENS2" />
+		</condition>
 		<condition property="midp/lib" value="${MIDP2/midp/lib}">
 			<equals arg1="${target}" arg2="MIDP2" />
 		</condition>
@@ -155,6 +164,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</condition>
 		<condition property="midp_profile" value="MIDP-1.0">
 			<equals arg1="${target}" arg2="SIEMENS" />
+		</condition>
+		<condition property="midp_profile" value="MIDP-2.0">
+			<equals arg1="${target}" arg2="SIEMENS2" />
 		</condition>
 		<condition property="midp_profile" value="MIDP-2.0">
 			<equals arg1="${target}" arg2="MIDP2" />
@@ -356,10 +368,10 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<ant dir="${util/jarsizetask}" inheritAll="false" target="clean" />
 	</target>
 	
-	<!--  Target: clean   -->
+	<!--  Target: clean without cleaning  utils -->
 	<target name="clean" description="Clean the distribution(without utils)" depends="del_build,del_dist" />
 
-	<!--  Target: clean   -->
+	<!--  Target: clean all  -->
 	<target name="clean-all" description="Clean the distribution" depends="clean,del_utils" />
 
 </project>

@@ -35,7 +35,7 @@ import java.util.Vector;
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.ContentConnection;
-// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.io.SocketConnection;
 // #sijapp cond.else#
 import javax.microedition.io.StreamConnection;
@@ -295,18 +295,15 @@ public class Icq implements Runnable
 
 	}
 	
-	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-	
+	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+    // #sijapp cond.if modules_FILES is "true"#
 	// Resets the comm. subsystem
 	public synchronized void resetPeerCon()
 	{
 	    this.peerC = null;
-	}
-	
+	}	
+    // #sijapp cond.end#
 	// #sijapp cond.end#
-	
-	
-
 
 	// Returns the current UIN
 	public synchronized String getUin()
@@ -331,10 +328,12 @@ public class Icq implements Runnable
 	// Connection to the ICQ server
 	Connection c;
 	
-	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+    // #sijapp cond.if modules_FILES is "true"#
 	// Connection to peer
 	PeerConnection peerC;
 	// #sijapp cond.end#
+	// #sijapp cond.end#	
 
 	// All currently active actions
 	private Vector actAction;
@@ -351,9 +350,11 @@ public class Icq implements Runnable
 	// Main loop
 	public void run()
 	{
-	    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+	    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	    // #sijapp cond.if modules_FILES is "true"#
 	    // Is a DC packet Available
 	    boolean dcPacketAvailable;
+	    // #sijapp cond.end#
 	    // #sijapp cond.end#
 	    
 		// Get thread object
@@ -446,7 +447,8 @@ public class Icq implements Runnable
 				
 
 				// Set dcPacketAvailable to true if the peerC is not null and there is an packet waiting
-				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			    // #sijapp cond.if modules_FILES is "true"#
 				if(this.peerC != null)
 				{
 				    if (this.peerC.available() > 0)
@@ -457,10 +459,11 @@ public class Icq implements Runnable
 				else
 				    dcPacketAvailable = false;
 				// #sijapp cond.end#
+				// #sijapp cond.end#
 
 				// Read next packet, if available
-				
-				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			    // #sijapp cond.if modules_FILES is "true"#
 				while ((this.c.available() > 0) || dcPacketAvailable)
 				{
 					// Try to get packet
@@ -521,8 +524,8 @@ public class Icq implements Runnable
 					    dcPacketAvailable = false;
 				}
 
-
-		// #sijapp cond.else#
+				// #sijapp cond.end#
+		        // #sijapp cond.else#
 
 				while ((this.c.available() > 0))
 				{
@@ -570,8 +573,8 @@ public class Icq implements Runnable
 						}
 					}
 				}
-
-        // #sijapp cond.end#
+                // #sijapp cond.end#
+				
 				// Remove completed actions
 				for (int i = 0; i < this.actAction.size(); i++)
 				{
@@ -608,7 +611,7 @@ public class Icq implements Runnable
 
 
 		// Connection variables
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		private SocketConnection sc;
 		// #sijapp cond.else#
 		private StreamConnection sc;
@@ -642,7 +645,7 @@ public class Icq implements Runnable
 		{
 			try
 			{
-			    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+			    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			    this.sc = (SocketConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
 			    // #sijapp cond.else#
 			    this.sc = (StreamConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
@@ -766,7 +769,8 @@ public class Icq implements Runnable
 
 		}
 		
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		// #sijapp cond.if modules_FILES is "true"#
         // Retun the port this connection is running on
         public int getLocalPort()
         {
@@ -791,7 +795,8 @@ public class Icq implements Runnable
             }
         }
 		// #sijapp cond.end#
-		
+		// #sijapp cond.end#
+        
 		// Main loop
 		public void run()
 		{
@@ -926,7 +931,8 @@ public class Icq implements Runnable
 	/**************************************************************************/
 	/**************************************************************************/
 
-// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+// #sijapp cond.if modules_FILES is "true"#
 
 	// PeerConnection
     public class PeerConnection implements Runnable
@@ -1198,7 +1204,8 @@ public class Icq implements Runnable
         }
 
     }
-	// #sijapp cond.end#
+// #sijapp cond.end#
+// #sijapp cond.end#
 
 }
 
