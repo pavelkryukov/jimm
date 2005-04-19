@@ -49,7 +49,7 @@ public abstract class VirtualList extends Canvas
   public void LightState()
   {              
                if (LightOn)
-               {
+               {	      Jimm.display.flashBacklight(Integer.MAX_VALUE);
                               Jimm.display.flashBacklight(0);
 	          LightOn=false;
                 }
