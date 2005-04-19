@@ -77,7 +77,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("byte",                        "Байт");
 		resources.put("city",                        "Город");
 		resources.put("clear",                       "Стереть всё");
-		resources.put("color_scheme",                "Цветовая вхема");
+		resources.put("color_scheme",                "Цветовая схема");
 		resources.put("conn_type",                   "Тип подключения");
 		resources.put("con_wait",                    "Задержка между подключениями (секунд)");
 		resources.put("connect",                     "Подключиться");
@@ -113,6 +113,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("gender",                      "Пол");
 		resources.put("grant",						 "Авторизировать");
 		resources.put("grantedby",					 "Вас авторизировал: ");
+		resources.put("group_name",                  "Имя группы");
 		resources.put("hide_offline",                "Скрывать отключившихся");
 		resources.put("info",                        "Информация");
 		resources.put("init_ft",                     "Инициализация...");
