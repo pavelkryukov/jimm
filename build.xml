@@ -44,7 +44,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar"/>
 	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar"/>
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
-	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/Emulators/M55/lib/API.jar"     />
+	<property name="SIEMENS/midp/lib"  value="${SIEMENS/midp}/lib/API.jar"     />
 	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
 	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar" />
 	<!--  *******************************************************************   -->
@@ -93,7 +93,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  *******************************************************************   -->
 	<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!--  *******************************************************************   -->
-
 
 	<!--  Buildfile description   -->
 	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
