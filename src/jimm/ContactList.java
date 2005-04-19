@@ -55,7 +55,7 @@ import com.siemens.mp.media.control.VolumeControl;
 import java.io.InputStream;
 // #sijapp cond.end#
 
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.media.PlayerListener;
 import javax.microedition.lcdui.game.Sprite;
 import javax.microedition.media.Manager;
@@ -162,7 +162,7 @@ class Tree extends VirtualTree
 
 //////////////////////////////////////////////////////////////////////////////////
 public class ContactList implements CommandListener 
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                                     , PlayerListener
 //#sijapp cond.end#
 {
@@ -309,24 +309,24 @@ public class ContactList implements CommandListener
 		
 		tree = new Tree(null);
 		
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		tree.setFullScreenMode(false);
-//#sijapp cond.end#
+        // #sijapp cond.end#
 		
 		tree.setImageList(imageList);
 		tree.setStepSize( -tree.getItemHeight()/2 );
 		
-        //		#sijapp cond.if modules_TRAFFIC is "true" #
+        // #sijapp cond.if modules_TRAFFIC is "true" #
         this.updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
-        //		#sijapp cond.else #
+        // #sijapp cond.else #
         this.updateTitle(0);
-        //		#sijapp cond.end#
+        // #sijapp cond.end#
         this.tree.addCommand(ContactList.mainMenuCommand);
 		this.tree.addCommand(selectCommand);
 	
-//#sijapp cond.if modules_DEBUGLOG is "true" #
+        // #sijapp cond.if modules_DEBUGLOG is "true" #
 		this.tree.addCommand(debugListCommand);
-//#sijapp cond.end#
+        // #sijapp cond.end#
 		
         this.tree.setCommandListener(this);
     }
@@ -985,9 +985,9 @@ public class ContactList implements CommandListener
 		needPlayOnlineNotif = false, 
 		needPlayMessNotif = false; 
     
-    // Updates the client-side contact list (called when a contact changes
-    // status)
-    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+    // Updates the client-side contact list (called when a contact changes status)
+    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+    // 	#sijapp cond.if modules_FILES is "true"#
     public synchronized void update(String uin, long status, int capabilities,
             byte[] internalIP, long dcPort, int dcType, int icqProt,
             long authCookie)
@@ -1029,7 +1029,43 @@ public class ContactList implements CommandListener
                 true
         );
     }
+    // #sijapp cond.else#
+    public synchronized void update(String uin, long status, int capabilities)
+    {
+        //System.out.println("update: status change");
 
+        ContactListContactItem cItem = getItembyUIN(uin);
+        if (cItem == null)
+            return; // error ???
+        
+        long trueStatus = Util.translateStatusReceived(status);
+        boolean statusChanged = (cItem.getStatus() != trueStatus);
+        boolean wasNotOffline = (cItem.getStatus() != STATUS_OFFLINE);
+        boolean nowNotOffline = (trueStatus != STATUS_OFFLINE);
+        
+        // Set Status
+        cItem.setStatus(status);
+        cItem.setCapabilities(capabilities);
+
+        // Play sound notice if selected
+        if ((trueStatus == STATUS_ONLINE) && statusChanged)
+        {
+            if ( treeBuilt ) 
+            	this.playSoundNotification(SOUND_TYPE_ONLINE);
+            else
+            	needPlayOnlineNotif |= true;
+        }
+
+        // Update visual list
+        if (statusChanged) contactChanged
+        (
+                cItem, 
+                false, 
+                (wasNotOffline && !nowNotOffline) || (!wasNotOffline && nowNotOffline),
+                true
+        );
+    }
+    // #sijapp cond.end#
     // #sijapp cond.else#
     public synchronized void update(String uin, long status, int capabilities)
     {
@@ -1068,16 +1104,19 @@ public class ContactList implements CommandListener
     }
     // #sijapp cond.end#
 
-    // Updates the client-side contact list (called when a contact changes
-    // status)
+    // Updates the client-side contact list (called when a contact changes status)
     public synchronized void update(String uin, long status)
     {
         //System.out.println("update(String uin, long status)");
-        //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        // #sijapp cond.if modules_FILES is "true"#
         this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,new byte[0],0,0,-1,0);
-        //  #sijapp cond.else#
+        // #sijapp cond.else#
         this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL);
-        //  #sijapp cond.end#
+        // #sijapp cond.end#
+        // #sijapp cond.else#
+        this.update(uin, status, ContactListContactItem.CAP_NO_INTERNAL);
+        // #sijapp cond.end#
     }
     
     
@@ -1113,7 +1152,7 @@ public class ContactList implements CommandListener
         } else
             text = ResourceBundle.getString("contact_list") + sep + Util.getDateString(true);
 
-        //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         tree.setTitle(text);
         //#sijapp cond.else#
         tree.setCaption(text);
@@ -1221,7 +1260,7 @@ public class ContactList implements CommandListener
         contactChanged(cItem, true, false, false);
     }
 
-    //#sijapp cond.if target is"MIDP2" | target is "MOTOROLA"#    
+    //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#    
     
     // Reaction to player events. (Thanks to Alexander Barannik for idea!)
     public void playerUpdate(final Player player, final String event, Object eventData)
@@ -1297,7 +1336,7 @@ public class ContactList implements CommandListener
 	//#sijapp cond.end#
 	
 	
-	//#sijapp cond.if target is"MIDP2" | target is"SIEMENS" | target is "MOTOROLA"#
+	//#sijapp cond.if target is "MIDP2" | target is"SIEMENS" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// sets volume for player
 	static private void setVolume(Player p, int value)
 	{
@@ -1324,7 +1363,7 @@ public class ContactList implements CommandListener
     {
     	if (!treeBuilt) return;
     	
-        // #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         
         // #sijapp cond.if target is "SIEMENS"#
         Light.setLightOn();

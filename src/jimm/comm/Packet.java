@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -67,11 +67,15 @@ abstract class Packet
 	{
 
 		// Check length (min. 6 bytes)
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-		if (len < 2)
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        // #sijapp cond.if modules_FILES is "true"#
+	    if (len < 2)
 		// #sijapp cond.else#
 		if (len < 6)
 		// #sijapp cond.end#
+        // #sijapp cond.else#
+		if (len < 6)
+	    // #sijapp cond.end#		    
 		{
 			throw (new JimmException(130, 0));
 		}
@@ -79,11 +83,15 @@ abstract class Packet
 		// Verify FLAP.ID
 		if (Util.getByte(buf, off) != 0x2A)
 		{
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		    // #sijapp cond.if modules_FILES is "true"#
 			return (DCPacket.parse(buf, off, len));
 			// #sijapp cond.else#
 			throw (new JimmException(130, 1));
 			// #sijapp cond.end#
+			// #sijapp cond.else#
+			throw (new JimmException(130, 1));
+            // #sijapp cond.end#
 		}
 
 		// Get and verify FLAP.CHANNEL

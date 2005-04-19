@@ -34,7 +34,7 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 
-// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 // #sijapp cond.if modules_FILES is "true"#
 import jimm.comm.FileTransferMessage;
 // #sijapp cond.end#
@@ -100,7 +100,8 @@ public class ContactListContactItem extends ContactListItem
     private int sysNotices;
     private int authRequest;
     
-    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+    // #sijapp cond.if modules_FILES is "true"#
     // DC values
     private byte[] internalIP;
     private byte[] externalIP;
@@ -108,8 +109,9 @@ public class ContactListContactItem extends ContactListItem
     private int dcType;
     private int icqProt;
     private long authCookie;
-    //  #sijapp cond.end#
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+    // #sijapp cond.end#
+    // #sijapp cond.end#
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_FILES is "true"#
     private FileTransferMessage ftm;
     private FileTransfer ft;
@@ -136,15 +138,17 @@ public class ContactListContactItem extends ContactListItem
         this.urlMessages = 0;
         this.sysNotices = 0;
         this.authRequest = 0;
-        //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        // #sijapp cond.if modules_FILES is "true"#
         this.internalIP = new byte[4];
         this.externalIP = new byte[4];
         this.dcPort = "";
         this.dcType = -1;
         this.icqProt = 0;
         this.authCookie = 0;
-        //  #sijapp cond.end#
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.end#
+        // #sijapp cond.end#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
         this.ft = null;
         //  #sijapp cond.end# 
@@ -171,17 +175,17 @@ public class ContactListContactItem extends ContactListItem
         this.urlMessages = 0;
         this.sysNotices = 0;
         this.authRequest = 0;
-        //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        // #sijapp cond.if modules_FILES is "true"#
         this.internalIP = new byte[4];
         this.externalIP = new byte[4];
         this.dcPort = "";
         this.dcType = -1;
         this.icqProt = 0;
         this.authCookie = 0;
-        //  #sijapp cond.end#
-        //  #sijapp cond.if modules_FILES is "true"#
         this.ft = null;
-        //  #sijapp cond.end#
+        // #sijapp cond.end#
+        // #sijapp cond.end#
         this.menu = new Menu();
         this.requReason = false;
     }
@@ -358,7 +362,8 @@ public class ContactListContactItem extends ContactListItem
         return -1;
     }
     
-    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+    // #sijapp cond.if modules_FILES is "true"#
     // Sets the DC values
     public void setDCValues(byte[] _internalIP,String _dcPort,int _dcType,int _icqProt,long _authCookie)
     {
@@ -412,8 +417,7 @@ public class ContactListContactItem extends ContactListItem
     {
         return (this.dcPort);
     }
-    // #sijapp cond.end#
-    // #sijapp cond.if modules_FILES is "true"#
+    
     // Returns the fileTransfer Object of this contact
     public FileTransfer getFT()
     {
@@ -431,6 +435,7 @@ public class ContactListContactItem extends ContactListItem
     {
         this.ftm = _ftm;
     }    
+    // #sijapp cond.end#
     // #sijapp cond.end#
     
     // Returns the FileTransferMessage of this contact
@@ -495,7 +500,7 @@ public class ContactListContactItem extends ContactListItem
     // Activates the contact item menu
     public void activateMenu()
     {
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(this.getChatHistoryDisplayNr()).setTitle(this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
         // #sijapp cond.else#
 		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(this.getChatHistoryDisplayNr()).setCaption(this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
@@ -612,7 +617,7 @@ public class ContactListContactItem extends ContactListItem
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
             	}    
 
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_FILES is "true"#
                 // Send a filetransfer with a file given by path
                 // We can only make file transfers with ICQ clients prot V8 and up
@@ -645,9 +650,6 @@ public class ContactListContactItem extends ContactListItem
                         ft.startFT(); 
                     }
             	}
-                    // #sijapp cond.end#
-                    // #sijapp cond.end#
-                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
             	// DC Info
             	else if (selIndex == MenuUtil.dc_info_idx)
             	{
@@ -661,6 +663,7 @@ public class ContactListContactItem extends ContactListItem
             		info.setTimeout(Alert.FOREVER);
             		Jimm.display.setCurrent(info);
             	}
+            	// #sijapp cond.end#
             	// #sijapp cond.end#
             	
             	// Stored history
@@ -992,16 +995,16 @@ public class ContactListContactItem extends ContactListItem
     	static int
 			send_message_idx, 
 			send_url_idx,
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
             // #sijapp cond.if modules_FILES is "true"#
             ft_name_idx,
 			ft_cam_idx,
+			dc_info_idx,
             // #sijapp cond.end#
 			// #sijapp cond.end#
             info_idx,
 			remove_idx,
 			rename_idx,
-			dc_info_idx,
 			auth_idx,
 			history_idx;
 		  
@@ -1099,11 +1102,16 @@ public class ContactListContactItem extends ContactListItem
         
         static void initList(boolean showAuthItem)
         {
+             // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"# 
              // #sijapp cond.if modules_FILES is "true"#
         	 send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
              ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
-             // #sijapp cond.else#
-             send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
+        	 // #sijapp cond.else#
+             send_message_idx =  send_url_idx = history_idx = 
+             info_idx = remove_idx = rename_idx = auth_idx = -1;
+        	 // #sijapp cond.end#
+        	 // #sijapp cond.else#
+             send_message_idx =  send_url_idx = history_idx = 
              info_idx = remove_idx = rename_idx = auth_idx = -1;
              // #sijapp cond.end#
             
@@ -1115,7 +1123,7 @@ public class ContactListContactItem extends ContactListItem
             send_url_idx = MenuUtil.menuList.size();
             menuList.append(ResourceBundle.getString("send_url"), null);
             
-            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
             // #sijapp cond.if modules_FILES is "true"#
 
             ft_name_idx = MenuUtil.menuList.size();
@@ -1145,9 +1153,11 @@ public class ContactListContactItem extends ContactListItem
             	menuList.append(ResourceBundle.getString("requauth"), null);
             }
             
-            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+            // #sijapp cond.if modules_FILES is "true"#
             dc_info_idx = menuList.size();
             menuList.append("DC Info", null);
+            // #sijapp cond.end#
             // #sijapp cond.end#
             
         }

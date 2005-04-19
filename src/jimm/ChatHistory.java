@@ -237,7 +237,7 @@ public class ChatHistory
     {
     	ChatTextList chatForm = new ChatTextList();
         
-    	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+    	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         chatForm.setFullScreenMode(false);
         chatForm.setTitle(  name+" ("+counter+"/"+(this.historyVector.size()-deleted+1)+")");
         // #sijapp cond.else#

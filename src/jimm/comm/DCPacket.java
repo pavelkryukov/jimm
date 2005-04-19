@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -21,7 +21,8 @@
  Author(s): Andreas Rossbacher
  *******************************************************************************/
 
-// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+// #sijapp cond.if modules_FILES is "true"#
 
 package jimm.comm;
 
@@ -76,5 +77,5 @@ public class DCPacket extends Packet
     }
 
 }
-
+// #sijapp cond.end#
 // #sijapp cond.end#

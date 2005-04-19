@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ package jimm;
 
 
 import jimm.comm.ConnectAction;
-//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 //  #sijapp cond.if modules_FILES is "true"#
 import jimm.comm.DirectConnectionAction;
 //  #sijapp cond.end#
@@ -133,7 +133,7 @@ public class SplashCanvas extends Canvas
 	// Constructor
 	public SplashCanvas(String message)
 	{
-		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		this.setFullScreenMode(true);
 		//  #sijapp cond.end#
 		this.message = new String(message);
@@ -345,7 +345,7 @@ public class SplashCanvas extends Canvas
 	/*****************************************************************************/
 
 
-	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
+	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_FILES is "true"#
 
 	// Activates the contact list after connection has been established

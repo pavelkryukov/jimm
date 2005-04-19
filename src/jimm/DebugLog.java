@@ -23,7 +23,6 @@ Author(s): Artyomov Denis
 
 package jimm;
 
-
 import javax.microedition.lcdui.*;
 
 import DrawControls.TextList;
@@ -33,49 +32,47 @@ import jimm.Jimm;
 
 class Helper implements CommandListener
 {
+
     public void commandAction(Command c, Displayable d)
     {
         Jimm.jimm.getContactListRef().activate();
     }
 }
 
-
 public class DebugLog
 {
-	private static TextList list;
-  
-	private static Command backCommand = new Command("Back", Command.BACK, 1);
-  
-  
-	static
-	{
-		list = new TextList(null);
-		list.addCommand(backCommand);
-		list.setCommandListener( new Helper() );
-		list.setFontSize(TextList.SMALL_FONT);
-      
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-      list.setTitle("Debug log");
-      list.setFullScreenMode(false);
-//#sijapp cond.else#
-      list.setCaption("Debug log");
-//#sijapp cond.end#
-      
-  }
-  
-  
-  public static void activate()
-  {
-      Jimm.display.setCurrent(list);
-  }
-  
-  static int counter = 0;
-  
-  synchronized public static void addText(String text)
-  {
-  	list.addBigText("["+Integer.toString(++counter)+"]", 0xFF, Font.STYLE_PLAIN);
-	list.addBigText(text, 0, Font.STYLE_PLAIN);
-  }
+
+    private static TextList list;
+
+    private static Command backCommand = new Command("Back", Command.BACK, 1);
+
+    static
+    {
+        list = new TextList(null);
+        list.addCommand(backCommand);
+        list.setCommandListener(new Helper());
+        list.setFontSize(TextList.SMALL_FONT);
+        //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        list.setTitle("Debug log");
+        list.setFullScreenMode(false);
+        //#sijapp cond.else#
+        list.setCaption("Debug log");
+        //#sijapp cond.end#
+
+    }
+
+    public static void activate()
+    {
+        Jimm.display.setCurrent(list);
+    }
+
+    static int counter = 0;
+
+    synchronized public static void addText(String text)
+    {
+        list.addBigText("[" + Integer.toString(++counter) + "]", 0xFF, Font.STYLE_PLAIN);
+        list.addBigText(text, 0, Font.STYLE_PLAIN);
+    }
 
 }
 
@@ -83,11 +80,11 @@ public class DebugLog
 
 public class DebugLog
 {
-	synchronized public static void addText(String text)
-	{
-		System.out.println(text);
-	}
-}
 
+    synchronized public static void addText(String text)
+    {
+        System.out.println(text);
+    }
+}
 
 //#sijapp cond.end#

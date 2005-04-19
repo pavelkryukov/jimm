@@ -85,7 +85,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("clear",                       "Clear");
 		resources.put("color_scheme",                "Color scheme");
 		resources.put("conn_type",                   "Connection type");
-		resources.put("con_wait",                    "Delay between connections(sec)");
 		resources.put("connect",                     "Connect");
 		resources.put("connecting",                  "Connecting");
 		resources.put("contact_list",                "List");
