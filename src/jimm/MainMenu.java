@@ -306,7 +306,7 @@ public class MainMenu implements CommandListener
                 ContactListGroupItem newGroup = new ContactListGroupItem(uinTextField.getString());
 
                 act1 = null;
-                act2 = new UpdateContactListAction(newGroup, true, false);
+                act2 = new UpdateContactListAction(newGroup,UpdateContactListAction.ACTION_ADD);
             }
             try
             {
@@ -354,7 +354,7 @@ public class MainMenu implements CommandListener
                 Jimm.display.setCurrent(wait2);
                 
                 // Create and request action to delete the group
-                UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[this.groupList.getSelectedIndex()],false,false);
+                UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[this.groupList.getSelectedIndex()],UpdateContactListAction.ACTION_DEL);
                 try 
                 {
                     Jimm.jimm.getIcqRef().requestAction(act);

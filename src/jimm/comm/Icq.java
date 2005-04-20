@@ -123,8 +123,8 @@ public class Icq implements Runnable
         wait2.setProgress(0);
         Jimm.display.setCurrent(wait2);
 
-        // Request contact item removal
-        UpdateContactListAction act = new UpdateContactListAction(cItem, true, false);
+        // Request contact item adding
+        UpdateContactListAction act = new UpdateContactListAction(cItem, UpdateContactListAction.ACTION_ADD);
         try
         {
             this.requestAction(act);
@@ -238,7 +238,7 @@ public class Icq implements Runnable
             Jimm.display.setCurrent(wait2);
 
             // Request contact item removal
-            UpdateContactListAction act2 = new UpdateContactListAction(cItem, false, false);
+            UpdateContactListAction act2 = new UpdateContactListAction(cItem, UpdateContactListAction.ACTION_DEL);
             try
             {
                 Jimm.jimm.getIcqRef().requestAction(act2);
