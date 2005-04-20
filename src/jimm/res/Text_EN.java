@@ -38,6 +38,7 @@ public class Text_EN extends ResourceBundle
 	public Text_EN()
 	{
 
+	    
         // Labels
         // MOTOROLA formatted buttons
         // #sijapp cond.if target is "MOTOROLA"#
@@ -63,11 +64,10 @@ public class Text_EN extends ResourceBundle
         resources.put("ok",                          "OK");
         resources.put("send",                        "Send");
     	// #sijapp cond.end#
-
-                                          
+                                  
 		resources.put(".",                           ".");
 		resources.put("about",                       "About");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion ###VERSION###\nSee http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModules: ###MODULES###\n\nSee http://www.jimm.org/");
 		resources.put("account",                     "Account");
 		resources.put("add_group",                   "Add group");
 		resources.put("add_user",                    "Add User");
@@ -200,7 +200,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("server_port",                 "Port");
 		resources.put("session",                     "Session");
 		resources.put("set_status",                  "Set status");
-		resources.put("shadow_con",                  "Shadow connction(N6230)");
+		resources.put("shadow_con",                  "Shadow connction");
 		resources.put("show_user_groups",            "Show user groups");
 		resources.put("since",                       "Since");
 		resources.put("sound",                       "Sound file");
@@ -319,7 +319,7 @@ public class Text_EN extends ResourceBundle
 		// File transfer errors
 		resources.put("error_190",                   "File transfer with < ICQv8 clients not supported (#190.EXT)");
 		resources.put("error_191",                   "Error reading the file. Possibly not supported (#191.EXT)");
-		resources.put("error_192",                   "Error reading the file. Wrong path, file not found, or not supported (#192.EXT)");
+		resources.put("error_192",                   "Error reading the file. File not found, or not supported (#192.EXT)");
 		resources.put("error_193",                   "Error accessing file system for browsing. Security error (#193.EXT)");
 
 	}

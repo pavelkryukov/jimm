@@ -185,5 +185,6 @@ VERSION 0.3.3
   * Added new option "Color scheme"
   * Added "Shadow connection" hack for Nokia 6230 users
   * Contact list sorts without case sensitivity now
+  * Target and modules are displayed on about screen.
   * Added Ukrainian translation
   

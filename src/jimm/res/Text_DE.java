@@ -39,9 +39,34 @@ public class Text_DE extends ResourceBundle
 	{
 
 		// Labels
+        // MOTOROLA formatted buttons
+        // #sijapp cond.if target is "MOTOROLA"#
+        resources.put("select",                      "Auswahl     ");
+        resources.put("reset",                       "Zurücksetzen");
+        resources.put("cancel",                      "   Abbrechen");
+        resources.put("back",                        "      Zurück");
+        resources.put("exit_button",                 "      Beenden");
+        resources.put("menu_button",                 "      Menü");
+        resources.put("save",                        "Sicher    ");
+        resources.put("ok",                          "OK          ");
+        resources.put("reply",                       "Antworten   ");
+        resources.put("close",                       "     Sließen");
+        resources.put("send",                        "Senden   ");
+        // #sijapp cond.else# 
+        resources.put("reply",                       "Antworten");
+        resources.put("close",                       "Schließen");
+        resources.put("select",                      "Auswahl");
+        resources.put("reset",                       "Zurücksetzen");
+        resources.put("cancel",                      "Abbrechen");
+        resources.put("back",                        "Zurück");
+        resources.put("save",                        "Sichern");
+        resources.put("ok",                          "OK");
+        resources.put("send",                        "Senden");
+    	// #sijapp cond.end#
+        
 		resources.put(".",                           ",");
 		resources.put("about",                       "Über");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\nVersion ###VERSION###\nSiehe http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModule: ###MODULES###\n\nSiehe http://www.jimm.org/");
 		resources.put("account",                     "Account");
 		resources.put("add_group",                   "Gruppe hinzufügen");
 		resources.put("add_user",                    "Benutzer hinzufügen");
@@ -51,14 +76,13 @@ public class Text_DE extends ResourceBundle
 		resources.put("attention",                   "Achtung!");
 		resources.put("auth",				     	 "Auth");
 		resources.put("auto_connect",				 "Nach dem Start automatisch verbinden");
-		resources.put("back",                        "Zurück");
 		resources.put("beep",                        "Beep");
+		resources.put("black_on_white",              "Schwarz auf weiss");
 		resources.put("byte",                        "Byte");
-		resources.put("cancel",                      "Abbrechen");
 		resources.put("chat_small_font",			 "Kleiner font im Chat");
 		resources.put("city",                        "Stadt");
 		resources.put("clear",                       "Löschen");                        
-		resources.put("close",                       "Schließen");
+		resources.put("color_scheme",                "Farbschema");
 		resources.put("con_wait",                    "Verzögerung zwischen Verbindungen(sek)");
 		resources.put("conn_type",                   "Verbindungsart");
 		resources.put("connect",                     "Verbinden");
@@ -96,12 +120,6 @@ public class Text_DE extends ResourceBundle
 		resources.put("group_is_not_empty",          "Gewählte Gruppe ist leer!\nAlle Kontakte in andere Gruppe verschieben?");
 		resources.put("have_unread_mess",            "Sie haben ungelesene Nachrichten. Trotzdem verlassen?");
 		resources.put("hide_offline",                "Offline-Kontakte verbergen");
-		resources.put("history_info",                "Speicherdetails");
-		resources.put("hist_cur",                    "Derzeitige Nachrichten pro Kontakt");
-		resources.put("hist_rc",                     "Anzahl aller Nachrichten");
-		resources.put("hist_size",                   "Benutzer Speicher (kB)");
-		resources.put("hist_avail",                  "Gesamter Speicher (kB)"); 
-		resources.put("history",                     "Gespeicherte history");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initialisierung");
 		resources.put("kb",                          "kB");
@@ -132,7 +150,6 @@ public class Text_DE extends ResourceBundle
 		resources.put("male",                        "M");
 		resources.put("me",                          "Ich");
 		resources.put("menu",                        "Menü");
-		resources.put("msg_notification",            "Hinweis bei Nachricht");
 		resources.put("msg_sound_file_name",         "Nachricht Sound Datei");
 		resources.put("message",                     "Nachricht");
 		resources.put("message_from",                "Nachricht von");
@@ -147,7 +164,6 @@ public class Text_DE extends ResourceBundle
 		resources.put("noreason",             		 "Es wurde kein Grund angegeben.");
 		resources.put("notice",                      "Hinweis");
 		resources.put("nr",				     		 "Nr");
-		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "Einmal pro Sitzung");
 		resources.put("onl_notification",            "Hinweis bei Onlinewechsel");
 		resources.put("onl_sound_file_name",         "Online Sound Datei");
@@ -169,17 +185,12 @@ public class Text_DE extends ResourceBundle
 		resources.put("remove_group",                "Gruppe löschen");
 		resources.put("remove_user",                 "Kontakt löschen");
 		resources.put("rename",                      "Umbenennen");
-		resources.put("reply",                       "Antworten");
 		resources.put("requauth",                    "Beantrage Auth");
 		resources.put("requ",                        "Benötigt");
 		resources.put("requno",                      "Nicht Ben.");
-		resources.put("reset",                       "Zurücks.");
 		resources.put("res",                         "Auflösung");
 		resources.put("results",                     "Ergebnisse");
-		resources.put("save",                        "Sichern");
 		resources.put("search_user",                 "Benutzer suchen");
-		resources.put("select",                      "Auswahl");
-		resources.put("send",                        "Senden");
 		resources.put("send_img",                    "Bild senden");
 		resources.put("send_message",                "Neue Nachricht");
 		resources.put("send_url",                    "Neue URL");
@@ -188,6 +199,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("server_port",                 "Port");
 		resources.put("session",                     "Sitzung");
 		resources.put("set_status",                  "Status festlegen");
+		resources.put("shadow_con",                  "Schattenverbindung");
 		resources.put("show_user_groups",            "Gruppen anzeigen");	
 		resources.put("since",                       "Seit dem");
 		resources.put("sound",                       "Sounddatei");
@@ -218,10 +230,24 @@ public class Text_DE extends ResourceBundle
 		resources.put("warning",                     "Warnung");
 		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
 		resources.put("whichgroup",				 	 "Welche Gruppe?");
+		resources.put("white_on_black",              "Weiss auf schwarz");
+		resources.put("white_on_blue",               "Weiss auf blau");
 		resources.put("yes",                         "Ja");
 		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
 
-
+		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("text_to_find",                "Text");
+		resources.put("find_backwards",              "Rückwärts");
+		resources.put("find_case_sensitiv",          "Gross/Klein beachten");
+		resources.put("history_info",                "Speicher Info");
+		resources.put("hist_cur",                    "Nachrichten des aktuellen Kontakts");
+		resources.put("hist_rc",                     "Nachrichten aller Kontakte");
+		resources.put("hist_size",                   "Benutzer Platz (kB)");
+		resources.put("hist_avail",                  "Gesamter Platz (kB)"); 
+		resources.put("history",                     "Gespeicherte Hisotry");
+		resources.put("not_found",                   "nicht gefunden");
+		//#sijapp cond.end#
+		
 		// Generic errors
 		resources.put("error_100",                   "Unbekannter Fehler (#100.EXT)");
 
@@ -292,7 +318,8 @@ public class Text_DE extends ResourceBundle
 		// File transfer errors
 		resources.put("error_190",                   "Dateiübertragung zu < ICQv8 Clients nicht unterstützt (#190.EXT)");
 		resources.put("error_191",                   "Fehler beim Lesen der Datei. Möglichwerweise nicht unterstützt (#191.EXT)");
-		resources.put("error_192",                   "Fehler beim lesen der Datei. Pfad falsch oder nicht unterstützt(#192.EXT)");
+		resources.put("error_192",                   "Fehler beim lesen der Datei. Datei nicht gefunden oder nicht unterstützt(#192.EXT)");
+		resources.put("error_193",                   "Fehler Öffnen des Dateisystems. Sicherheitsfehler(#193.EXT)");
 
 	}
 }
