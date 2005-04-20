@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ import java.io.IOException;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
-//#sijapp cond.if target is "MIDP2"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.lcdui.game.Sprite;
 //#sijapp cond.end#
 
@@ -111,7 +111,7 @@ public class ImageList
     int size = resImage.getWidth()/width;
     for (int i = 0; i < size; i++)
     {
-//      #sijapp cond.if target is "MIDP2"#
+//      #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         Image newImage = Image.createImage(Image.createImage(resImage, i * width, 0, width, height, Sprite.TRANS_NONE));
 //      #sijapp cond.else#
         Image newImage = Image.createImage(width, height);
