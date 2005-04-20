@@ -571,7 +571,7 @@ public class ContactListContactItem extends ContactListItem
                     Jimm.jimm.getContactListRef().save();
                     
                     // Try to save ContactList to server
-                    UpdateContactListAction action = new UpdateContactListAction(ContactListContactItem.this,false,true);
+                    UpdateContactListAction action = new UpdateContactListAction(ContactListContactItem.this,UpdateContactListAction.ACTION_RENAME);
                     Jimm.jimm.getIcqRef().requestAction(action);
                 }
                 catch (JimmException je)
@@ -836,10 +836,8 @@ public class ContactListContactItem extends ContactListItem
                     if (!requReason) ContactListContactItem.this.authRequest -= 1;
 
                     // If or if not a reason was entered
-                    // Though this box is used twice (reason for auth request
-                    // and auth repley)
-                    // we have to distinguish what we wanna do requReason is
-                    // used for that
+                    // Though this box is used twice (reason for auth request and auth repley)
+                    // we have to distinguish what we wanna do requReason is used for that
                     if (MenuUtil.reasonTextbox.getString().length() < 1)
                     {
                         if (requReason)
@@ -860,7 +858,7 @@ public class ContactListContactItem extends ContactListItem
 
                     // Assemble the sysNotAction and request it
                     SysNoticeAction sysNotAct = new SysNoticeAction(notice);
-                    UpdateContactListAction updateAct = new UpdateContactListAction(ContactListContactItem.this, true, false);
+                    UpdateContactListAction updateAct = new UpdateContactListAction(ContactListContactItem.this, UpdateContactListAction.ACTION_ADD);
 
                     try
                     {

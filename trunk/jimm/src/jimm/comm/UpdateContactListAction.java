@@ -43,6 +43,12 @@ public class UpdateContactListAction extends Action
     public static final int STATE_SRV_UPDATEACK_RCVD = 3;
     public static final int STATE_SRV_REPLYED_AUTH = 4;
     
+    // Action types
+    public static final int ACTION_ADD = 1;
+    public static final int ACTION_DEL = 2;
+    public static final int ACTION_MODIFY = 3;
+    public static final int ACTION_RENAME = 4;
+  
     // Timeout
     public static final int TIMEOUT = 10 * 1000; // milliseconds
 
@@ -57,9 +63,8 @@ public class UpdateContactListAction extends Action
     // Action state
     private int state;
 
-    // Action types
-    private boolean add;
-    private boolean modify;
+    // Action type
+    private int action;
     
     // Type of error happend
     private int error;
@@ -72,10 +77,9 @@ public class UpdateContactListAction extends Action
     byte[] nameRaw;
 
     // Constructor (removes or adds given contact item)
-    public UpdateContactListAction(ContactListItem cItem, boolean add, boolean modify)
+    public UpdateContactListAction(ContactListItem cItem, int _action)
     {
-        this.add = add;
-        this.modify = modify;
+        this.action = _action;
         if (cItem instanceof ContactListContactItem)
         {
             this.cItem = (ContactListContactItem) cItem;
@@ -112,7 +116,7 @@ public class UpdateContactListAction extends Action
         SnacPacket packet;
 
         // Send a buddy add or delete packet if this update deals with a contact
-        if (cItem != null && !modify)
+        if (cItem != null && ((this.action == ACTION_ADD) || (this.action == ACTION_DEL)))
         {
             byte[] buf;
             int marker = 0;
@@ -123,7 +127,7 @@ public class UpdateContactListAction extends Action
             Util.putByte(buf, marker, idRaw.length);
             System.arraycopy(idRaw, 0, buf, 1, idRaw.length);
 
-            if (!add)
+            if (this.action == ACTION_DEL)
                 packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_REMOVE_FAMILY, SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND, SnacPacket.CLI_BUDDYLIST_REMOVE_COMMAND, new byte[0], buf);
             else
                 packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_ADD_FAMILY, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, new byte[0], buf);
@@ -135,10 +139,10 @@ public class UpdateContactListAction extends Action
         packet = new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY, SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND, new byte[0], new byte[0]);
         this.icq.c.sendPacket(packet);
 
-        if (modify)
+        if ((this.action == ACTION_MODIFY) || (this.action == ACTION_RENAME))
             packet = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY, SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(), new byte[0], this.packRoosterItem(null, null, null));
         else
-            if (add)
+            if (this.action == ACTION_ADD)
             {
                 // Send CLI_ROSTERADDpacket
                 packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY, SnacPacket.CLI_ROSTERADD_COMMAND, Util.getCounter(), new byte[0], this.packRoosterItem(null, null, null));
@@ -146,6 +150,7 @@ public class UpdateContactListAction extends Action
             else
             {
                 // Send a CLI_ROSTERDELETE packet
+                System.out.println("delte");
                 packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY, SnacPacket.CLI_ROSTERDELETE_COMMAND, SnacPacket.CLI_ROSTERDELETE_COMMAND, new byte[0], this.packRoosterItem(null, null, null));
             }
 
@@ -195,11 +200,12 @@ public class UpdateContactListAction extends Action
                             cItem.setBoolValue(ContactListContactItem.VALUE_NO_AUTH, true);
                             Jimm.jimm.getContactListRef().addContactItem(this.cItem);
                             this.state = UpdateContactListAction.STATE_SRV_REPLYED_AUTH;
+                            System.out.println("auth");
                             break;
                         default:
                             
                             // Send an ROOSTER_UPDATE packet if contact/group was added/deleted
-                            if (!this.modify)
+                            if ((this.action == ACTION_ADD) || (this.action == ACTION_DEL))
                             {
                                 Vector cItemsRemaining = null;
                                 
@@ -252,7 +258,7 @@ public class UpdateContactListAction extends Action
                         this.icq.c.sendPacket(packet);
 
                         // Move to next state
-                        if (this.modify)
+                        if (((action == ACTION_ADD) || (action == ACTION_DEL)) && (state != STATE_SRV_REPLYED_AUTH))
                             this.state = UpdateContactListAction.STATE_CLI_ADDEND_SENT;
                         else
                             this.state = UpdateContactListAction.STATE_SRV_UPDATEACK_RCVD;
@@ -277,12 +283,12 @@ public class UpdateContactListAction extends Action
 
                         // Delete or add contact or group item from internal list
                         if (cItem != null)
-                            if (!add)
+                            if (action == ACTION_DEL)
                                 Jimm.jimm.getContactListRef().removeContactItem(this.cItem);
                             else
                                 Jimm.jimm.getContactListRef().addContactItem(this.cItem);
                         else
-                            if (!add)
+                            if (action == ACTION_DEL)
                                 Jimm.jimm.getContactListRef().removeGroup(this.gItem);
                             else
                                 Jimm.jimm.getContactListRef().addGroup(this.gItem);
@@ -356,9 +362,9 @@ public class UpdateContactListAction extends Action
     {
         // Calculate length depending on type of packet
         int length;
-        if (!modify)
+        if ((this.action == ACTION_ADD) || (this.action == ACTION_DEL))
             if (this.state == STATE_INIT)
-                if (!this.add)
+                if (this.action == ACTION_DEL)
                     if (cItem != null)
                         length = 2 + idRaw.length + 8 + 4 + nameRaw.length; // Delete cItem
                     else
@@ -428,7 +434,7 @@ public class UpdateContactListAction extends Action
         {
             if (cItem != null)
             {
-                if (add && cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
+                if ((this.action == ACTION_ADD) && cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
                 {
 
                     // Add length of TLVs and 0x066 packet
