@@ -32,12 +32,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Change this to the directory where a MIDP SDK is installed. You can   -->
 	<!--  use both the slash and the backslash for separating path              -->
 	<!--  components.                                                           -->
-	<property name="DEFAULT/midp"     value="CHANGE ME"                          />
-	<property name="MIDP2/midp"       value="CHANGE ME"                          />
-	<property name="RIM/midp"         value="CHANGE ME"                          />
-	<property name="SIEMENS/midp"     value="CHANGE ME"                          />
-	<property name="SIEMENS2/midp"    value="CHANGE ME"                          />
-	<property name="MOTOROLA/midp"    value="CHANGE ME"                          />
+	<property name="DEFAULT/midp"      value="CHANGE ME"                         />
+	<property name="MIDP2/midp"        value="CHANGE ME"                         />
+	<property name="RIM/midp"          value="CHANGE ME"                         />
+	<property name="SIEMENS/midp"      value="CHANGE ME"                         />
+	<property name="SIEMENS2/midp"     value="CHANGE ME"                         />
+	<property name="MOTOROLA/midp"     value="CHANGE ME"                         />
 	<!--  *******************************************************************   -->
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
@@ -50,7 +50,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  *******************************************************************   -->
 	<!--  Change this to the directory where ProGuard is installed. You can     -->
 	<!--  use both the slash and the backslash for separating path components.  -->
-	<property name="proguard"         value="CHANGE ME"                          />
+	<property name="proguard"          value="CHANGE ME"                         />
 	<!--  *******************************************************************   -->
 	<!--  This property must point at the ProGuard JAR file, normally found     -->
 	<!--  in the lib directory of the ProGuard distribution.                    -->
@@ -72,7 +72,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--      TRAFFIC - module for traffic calculation                          -->
 	<!--      HISTORY - module for storing history of text messages             -->
 	<!--      FILES   - module for transferring files                           -->
-	<property name="modules"           value="TRAFFIC,HISTORY,FILES"             />
+	<property name="modules"           value="TRAFFIC, HISTORY, FILES"           />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of languages packs which         -->
 	<!--  should be included in the build. Currently, the distribution          -->
@@ -267,6 +267,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" />
 			<replacefilter token="${3ns}VERSION-JAVA${3ns}" value="${version/java}" />
 			<replacefilter token="${3ns}DATE${3ns}" value="${date}" />
+			<replacefilter token="${3ns}TARGET${3ns}" value="${target}" />
+		    <replacefilter token="${3ns}MODULES${3ns}" value="${modules}" />
 		</replace>
 	</target>
 	
