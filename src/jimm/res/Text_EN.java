@@ -87,6 +87,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("conn_type",                   "Connection type");
 		resources.put("connect",                     "Connect");
 		resources.put("connecting",                  "Connecting");
+		resources.put("cost",                        "Cost");
 		resources.put("contact_list",                "List");
 		resources.put("cp1251",                      "Use CP1251 hack?");
 		resources.put("cpd",                         "Cost per day");
@@ -124,6 +125,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initializeing");
 		resources.put("kb",                          "kB");
+		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Keep chat history?");
 		resources.put("keep_conn_alive",             "Keep connection alive?");
 		resources.put("keylock",                     "Keylock");
@@ -159,6 +161,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("next",						 "Next");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
+		resources.put("not",                         "not");
 		resources.put("no_results",                  "No results");
 		resources.put("no_not_empty_gr",             "Removing of not empty groups not supported yet");
 		resources.put("not_implemented",             "Function not yet implemented.");
@@ -203,11 +206,13 @@ public class Text_EN extends ResourceBundle
 		resources.put("shadow_con",                  "Shadow connction");
 		resources.put("show_user_groups",            "Show user groups");
 		resources.put("since",                       "Since");
+		resources.put("size",                        "Size");
 		resources.put("sound",                       "Sound file");
 		resources.put("sound_file_name",             "Sound file name");
 		resources.put("sort_by",                     "Sort contact list");
 		resources.put("sort_by_name",                "By name");
 		resources.put("sort_by_status",              "By status");
+		resources.put("speed",                       "Speed");
 		resources.put("status",                      "Status");
 		resources.put("status_away",                 "Away");
 		resources.put("status_chat",                 "Free for Chat");
@@ -217,6 +222,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("status_occupied",             "Occupied");
 		resources.put("status_offline",              "Offline");
 		resources.put("status_online",               "Online");
+		resources.put("successful",                  "successful");
 		resources.put("sysnotice",					 "System Notice");
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
@@ -230,6 +236,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("wait",                        "Please wait ...");
 		resources.put("warning",                     "Warning");
 		resources.put("wantsyourauth",				 " wants your Authorisation. Reason: ");
+		resources.put("was",                         "was");
 		resources.put("whichgroup",				 	 "Which group?");
 		resources.put("white_on_black",              "White on black");
 		resources.put("white_on_blue",               "White on blue");

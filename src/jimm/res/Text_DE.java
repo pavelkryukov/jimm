@@ -88,6 +88,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("connect",                     "Verbinden");
 		resources.put("connecting",                  "Verbinde");
 		resources.put("contact_list",                "Liste");
+		resources.put("cost",                        "Kosten");
 		resources.put("cp1251",                      "CP1251-Hack benutzen?");
 		resources.put("cpd",                         "Tagesnutzungsgebühr(cent)");
 		resources.put("cpp",                         "Paketgebühr(cent");
@@ -123,6 +124,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initialisierung");
 		resources.put("kb",                          "kB");
+		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Chat-History behalten?");
 		resources.put("keep_conn_alive",             "Verbindung erhalten?");
 		resources.put("keylock",                     "Tastensperre");
@@ -158,6 +160,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("next",						 "Nächstes");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "Nein");
+		resources.put("not",                         "nicht");
 		resources.put("no_results",                  "Keine Ergebnisse");
 		resources.put("no_not_empty_gr",             "Löschen von nichtleeren Gruppen wird noch nicht unterstützt");
 		resources.put("not_implemented",             "Funktion noch nicht verfügbar.");
@@ -202,11 +205,13 @@ public class Text_DE extends ResourceBundle
 		resources.put("shadow_con",                  "Schattenverbindung");
 		resources.put("show_user_groups",            "Gruppen anzeigen");	
 		resources.put("since",                       "Seit dem");
+		resources.put("size",                        "Größe");
 		resources.put("sound",                       "Sounddatei");
 		resources.put("sound_file_name",             "Sound File Name");
 		resources.put("sort_by",                     "Sortiere Kontaktliste");
 		resources.put("sort_by_name",                "Nach Name");
 		resources.put("sort_by_status",              "Nach Status");
+		resources.put("speed",                       "Geschwindigkeit");
 		resources.put("status",                      "Status");
 		resources.put("status_away",                 "Abwesend");
 		resources.put("status_chat",                 "Free for Chat");
@@ -216,6 +221,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("status_occupied",             "Beschäftigt");
 		resources.put("status_offline",              "Offline");
 		resources.put("status_online",               "Online");
+		resources.put("successful",                  "erfolgreich");
 		resources.put("sysnotice",					 "System Nachricht");
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
@@ -227,6 +233,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("viewfinder",                  "Sucher");
 		resources.put("volume",                      "Lautstärke");	
 		resources.put("wait",                        "Bitte warten ...");
+		resources.put("was",                         "war");
 		resources.put("warning",                     "Warnung");
 		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
 		resources.put("whichgroup",				 	 "Welche Gruppe?");

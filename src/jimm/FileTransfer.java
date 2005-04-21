@@ -50,6 +50,7 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.StringItem;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
@@ -177,7 +178,13 @@ public class FileTransfer implements CommandListener
 
         name_Desc.append(this.fileNameField);
         name_Desc.append(this.descriptionField);
-
+        name_Desc.append(new StringItem(ResourceBundle.getString("size")+": ", String.valueOf(data.length/1024)+" kb"));
+        // #sijapp cond.if modules_TRAFFIC is "true" #
+        name_Desc.append(new StringItem(ResourceBundle.getString("cost")+": ", 
+                Jimm.jimm.getTrafficRef().getString((data.length/Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PACKET_LENGTH))*Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PER_PACKET))
+                +" "+Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CURRENCY)));                       
+        // #sijapp cond.end #
+        
         name_Desc.addCommand(this.backCommand);
         name_Desc.addCommand(this.okCommand);
         name_Desc.setCommandListener(this);

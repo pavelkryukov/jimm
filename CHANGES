@@ -175,6 +175,11 @@ VERSION 0.3.3
   * New module: Text messages history storing
   * NEW FEATURE: File explorer for file selection on supporting mobiles
   * NEW FEATURE: New SIEMENS2 version for Siemens MIDP2 phones with file explorer
+  * BUGFIX: 125.1 exception was shown after each file transfer.
+  * There now is a message informing you if the file transfer was ok
+  * In the file transfer ok window you can see the speed of the file transfer
+  * Progressbar for file transfer is now drawn more precise
+  * You can see size and cost of file transfer before sending
   * There now is a back (cancel) option on the options pages
   * New option: Auto connect on startup
   * A message how to disable keylock is shown on splash screen if trying it the wrong way

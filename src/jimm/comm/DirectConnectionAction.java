@@ -26,6 +26,8 @@
 
 package jimm.comm;
 
+import java.util.Date;
+
 import jimm.Jimm;
 import jimm.JimmException;
 
@@ -47,7 +49,10 @@ public class DirectConnectionAction extends Action
     private FileTransferMessage ft;
 
     // Packet counter
-    private int i;
+    private int packets;
+    
+    // Timestamp
+    private long timestamp;
     
     // Cancel bool
     private boolean cancel;
@@ -56,7 +61,8 @@ public class DirectConnectionAction extends Action
     public DirectConnectionAction(FileTransferMessage _ft)
     {
         this.ft = _ft;
-        i = 0;
+        packets = 0;
+        timestamp = 0;
         cancel = false;
     }
 
@@ -289,15 +295,22 @@ public class DirectConnectionAction extends Action
             } else if (this.state == STATE_CLI_FILE_START_DONE && (Util.getByte(buf, 0) == 0x03) && (Util.getByte(buf, 13) == 0x01))
             {
 
+                // Variables needed for transfer
+                DCPacket dataPacket;
+                Date date = new Date();
+                this.timestamp = date.getTime();
+                
                 // Send out the file in 2048 byte blocks
-                while (ft.segmentAvail(i) && !cancel)
+                while (ft.segmentAvail(packets) && !cancel)
                 {
                     // Send the packet
-                    DCPacket DataPacket = new DCPacket(ft.getFileSegmentPacket(i));
-                    this.icq.peerC.sendPacket(DataPacket);
-                    i++;
+                    dataPacket = new DCPacket(ft.getFileSegmentPacket(packets));
+                    this.icq.peerC.sendPacket(dataPacket);
+                    packets++;
                 }
-
+                date = new Date();
+                this.timestamp = date.getTime()-this.timestamp;
+                
                 // Close the connection
                 this.icq.peerC.close();
                 Thread.yield();
@@ -319,10 +332,25 @@ public class DirectConnectionAction extends Action
     // Returns a number between 0 and 100 (inclusive) which indicates the current progress
     public int getProgress()
     {
-        // System.out.println("getProgress: " + i + " " + (ft.getSize() >>> 11));
-        int percent = ((i * 100) / (ft.getSize() >>> 11));
-        // System.out.println("ready: " + percent);
+        int percent;
+        try
+        {
+            percent = ((packets * 100) / (ft.getSize() >>> 11));
+        }
+        catch(Exception e)
+        {
+            percent = 0;
+        }
         return (percent);
+    }
+    
+    // Return the time the filetransfer took
+    public String getSpeed()
+    {
+        if (this.timestamp != 0)
+            return(String.valueOf(this.ft.getSize()/this.timestamp)+"."+String.valueOf((this.ft.getSize()%this.timestamp)/(this.timestamp/10)));
+        else
+            return("0.0");
     }
 
     // Returns true if the action is completed
@@ -335,7 +363,10 @@ public class DirectConnectionAction extends Action
     public boolean isError()
     {        
         if ((this.state == STATE_ERROR) || this.cancel)
+        {
+            System.out.println("ERROR == true");
             return (true);
+        }
         else
             return (false);
     }
