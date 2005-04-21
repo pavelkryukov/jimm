@@ -479,14 +479,14 @@ public class FileTransfer implements CommandListener
             currDirName = MEGA_ROOT;
             try
             {
-                dirIcon = Image.createImage("dir.png");
+                dirIcon = Image.createImage("/dir.png");
             } catch (IOException e)
             {
                 dirIcon = null;
             }
             try
             {
-                fileIcon = Image.createImage("file.png");
+                fileIcon = Image.createImage("/file.png");
             } catch (IOException e)
             {
                 fileIcon = null;
