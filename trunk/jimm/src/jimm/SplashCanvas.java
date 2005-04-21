@@ -320,7 +320,7 @@ public class SplashCanvas extends Canvas
 		}
 
 		// Draw current progress
-		int progressPx = this.getWidth() / 100 * this.progress;
+		int progressPx = this.getWidth() * this.progress / 100;
 		g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
 		g.setColor(255, 255, 255);
 		g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
@@ -352,20 +352,16 @@ public class SplashCanvas extends Canvas
 	public static class FileTransferTimerTask extends TimerTask implements CommandListener
 	{
 
-
 		// Reference to ConnectAction
 		private DirectConnectionAction dcAct;
-
 
 		// Cancel Command
 		private Command cancelCommand;
 
-
 		// Constructor
 		public FileTransferTimerTask(DirectConnectionAction _dcAct)
 		{
-
-			// System.out.println("made FileTransferTimerTask");
+		    
 			this.dcAct = _dcAct;
 
 			// Set the cancel command
@@ -385,7 +381,7 @@ public class SplashCanvas extends Canvas
 		{
 			if (c == this.cancelCommand)
 			{
-				Jimm.jimm.getContactListRef().activate();
+			    Jimm.jimm.getContactListRef().activate();
 				Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
 				this.dcAct.setCancel(true);
 				Jimm.jimm.getContactListRef().activate();
@@ -397,22 +393,26 @@ public class SplashCanvas extends Canvas
 		// Timer routine
 		public void run()
 		{
-			Jimm.jimm.getSplashCanvasRef().setProgress(this.dcAct.getProgress());
+		    Jimm.jimm.getSplashCanvasRef().setProgress(this.dcAct.getProgress());
 			if (this.dcAct.isCompleted())
 			{
-				Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
-				Jimm.jimm.getContactListRef().activate();
+			    Jimm.jimm.getContactListRef().activate();
+			    Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
 				this.cancel();
+				Alert ok = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("successful")+".\n"+ResourceBundle.getString("speed")+": "+this.dcAct.getSpeed()+" "+ResourceBundle.getString("kbs"),null, AlertType.INFO);
+				ok.setTimeout(2000);
+				Jimm.display.setCurrent(ok);
 			}
 			else if (this.dcAct.isError())
 			{
-				Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
-				Jimm.jimm.getContactListRef().activate();
+			    Jimm.jimm.getContactListRef().activate();
+			    Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
 				this.cancel();
+				Alert err = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("not")+" "+ResourceBundle.getString("successful")+"!",null, AlertType.WARNING);
+				Jimm.display.setCurrent(err);
 			}
 		}
-
-
+		
 	}
 	//#sijapp cond.end#
     //#sijapp cond.end#
@@ -442,7 +442,7 @@ public class SplashCanvas extends Canvas
 		// Timer routine
 		public void run()
 		{
-			Jimm.jimm.getSplashCanvasRef().setProgress(this.connectAct.getProgress());
+		    Jimm.jimm.getSplashCanvasRef().setProgress(this.connectAct.getProgress());
 			if (this.connectAct.isCompleted())
 			{
 				Jimm.jimm.getContactListRef().activate();

@@ -580,7 +580,8 @@ public class Icq implements Runnable
 				{
 					if (((Action) this.actAction.elementAt(i)).isCompleted() || ((Action) this.actAction.elementAt(i)).isError())
 					{
-						this.actAction.removeElementAt(i--);
+						System.out.println("action removed");
+					    this.actAction.removeElementAt(i--);
 					}
 				}
 
@@ -676,15 +677,19 @@ public class Icq implements Runnable
 		// Sets the reconnect flag and closes the connection
 		public synchronized void close() {
 			this.inputCloseFlag = true;
+			
 			try { this.is.close(); }
 			catch (Exception e) { /* Do nothing */ }
 			finally { this.is = null; }
+			
 			try { this.os.close(); }
 			catch (Exception e) { /* Do nothing */ }
 			finally { this.os = null; }
+			
 			try { this.sc.close(); }
 			catch (Exception e) { /* Do nothing */ }
 			finally { this.sc = null; }
+			
 			Thread.yield();
 		}
 
@@ -942,6 +947,9 @@ public class Icq implements Runnable
         private SocketConnection sc;
         private InputStream is;
         private OutputStream os;
+        
+		// Disconnect flags
+		private volatile boolean inputCloseFlag;
 
         // Receiver thread
         private volatile Thread rcvThread;
@@ -952,21 +960,17 @@ public class Icq implements Runnable
         // Opens a connection to the specified host and starts the receiver
         // thread
         public synchronized void connect(String hostAndPort) throws JimmException
-        {
-  
-            
+        {        
             try
             {
-                // System.out.println("connect " + hostAndPort);
-                this.sc = (SocketConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);        
-                // System.out.println("connected");
-                
+                this.sc = (SocketConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
                 this.is = this.sc.openInputStream();
                 this.os = this.sc.openOutputStream();
+                
+                this.inputCloseFlag = false;
+                
                 this.rcvThread = new Thread(this);
-                // System.out.println("thread done");
                 this.rcvThread.start();
-                // System.out.println("thread started");
 
             } catch (ConnectionNotFoundException e)
             {
@@ -983,33 +987,20 @@ public class Icq implements Runnable
         // Sets the reconnect flag and closes the connection
         public synchronized void close()
         {
-            try
-            {
-                this.is.close();
-            } catch (Exception e)
-            { /* Do nothing */
-            } finally
-            {
-                this.is = null;
-            }
-            try
-            {
-                this.os.close();
-            } catch (Exception e)
-            { /* Do nothing */
-            } finally
-            {
-                this.os = null;
-            }
-            try
-            {
-                this.sc.close();
-            } catch (Exception e)
-            { /* Do nothing */
-            } finally
-            {
-                this.sc = null;
-            }
+            this.inputCloseFlag = true;
+            
+            try { this.is.close(); } 
+            catch (Exception e) { /* Do nothing */ } 
+            finally { this.is = null; }
+            
+            try { this.os.close(); } 
+            catch (Exception e) { /* Do nothing */ } 
+            finally { this.os = null; }
+            
+            try { this.sc.close(); } 
+            catch (Exception e) { /* Do nothing */ } 
+            finally { this.sc = null; }
+            
             Thread.yield();
         }
 
@@ -1123,7 +1114,7 @@ public class Icq implements Runnable
             {
 
                 // Check abort condition
-                while (true)
+                while (!this.inputCloseFlag)
                 {
 
                     // Read flap header
@@ -1181,12 +1172,15 @@ public class Icq implements Runnable
             // Catch communication exception
             catch (NullPointerException e)
             {
-
-                // Construct and handle exception
-
-                JimmException f = new JimmException(125, 3, true, true);
-                JimmException.handleException(f);
-                
+                if (!this.inputCloseFlag)
+                {
+                    // Construct and handle exception
+                    JimmException f = new JimmException(125, 3, true, true);
+                    JimmException.handleException(f);
+                }
+                else
+                { /* Do nothing */
+                }
             }
             // Catch InterruptedException
             catch (InterruptedException e)
@@ -1195,10 +1189,15 @@ public class Icq implements Runnable
             // Catch IO exception
             catch (IOException e)
             {
-                // Construct and handle exception 
-                JimmException f = new JimmException(125, 1, true, true);
-                JimmException.handleException(f);
-
+                if (!this.inputCloseFlag)
+                {
+                    // Construct and handle exception
+                    JimmException f = new JimmException(125, 1, true, true);
+                    JimmException.handleException(f);
+                }
+                else
+                { /* Do nothing */
+                }
             }
 
         }
