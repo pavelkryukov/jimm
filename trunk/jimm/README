@@ -39,21 +39,35 @@ PACKAGE CONTENTS
   |- build.xml (Apache Ant buildfile)
   |- bin
   |   |- DEFAULT
-  |   |   '- [List of included languages]
-  |   |        |- Jimm.jar (obfuscated Java archive)
-  |   |        '- Jimm.jad (archive descriptor)
+  |   |   '- [List of included modules]
+  |   |        '- [List of included languages]
+  |   |             |- Jimm.jar (obfuscated Java archive)
+  |   |             '- Jimm.jad (archive descriptor)
   |   |- MIDP2
-  |   |   '- [List of included languages]
-  |   |        |- Jimm.jar (obfusc. Java archive, MIDP2 compatible mobiles only)
-  |   |        '- Jimm.jad (archive descriptor, MIDP2 compatible mobiles only)
+  |   |   '- [List of included modules]
+  |   |        '- [List of included languages]
+  |   |             |- Jimm.jar (obfusc. Java archive, MIDP2 compatible mobiles only)
+  |   |             '- Jimm.jad (archive descriptor, MIDP2 compatible mobiles only)
   |   |- RIM
-  |   |   '- [List of included languages]
-  |   |        |- Jimm.jar (obfuscated Java archive, RIM mobiles only)
-  |   |        '- Jimm.jad (archive descriptor, RIM mobiles only)
+  |   |   '- [List of included modules]
+  |   |        '- [List of included languages]
+  |   |             |- Jimm.jar (obfuscated Java archive, RIM mobiles only)
+  |   |             '- Jimm.jad (archive descriptor, RIM mobiles only)
   |   '- SIEMENS
-  |       '- [List of included languages]
-  |            |- Jimm.jar (obfuscated Java archive, Siemens mobiles only)
-  |            '- Jimm.jad (archive descriptor, Siemens mobiles only)
+  |   |   '- [List of included modules]
+  |   |        '- [List of included languages]
+  |   |             |- Jimm.jar (obfuscated Java archive, Siemens mobiles only)
+  |   |             '- Jimm.jad (archive descriptor, Siemens mobiles only)
+  |   '- SIEMENS2
+  |   |   '- [List of included modules]
+  |   |        '- [List of included languages]
+  |   |             |- Jimm.jar (obfuscated Java archive, Siemens MIDP2 mobiles only)
+  |   |             '- Jimm.jad (archive descriptor, Siemens MDIP2 mobiles only)
+  |   '- MOTOROLA
+  |       '- [List of included modules]
+  |            '- [List of included languages]
+  |                 |- Jimm.jar (obfuscated Java archive, Motorola MIDP2 mobiles only)
+  |                 '- Jimm.jad (archive descriptor, Motorola MIDP2 mobiles only)
   |- res
   |   |- MANIFEST.MF
   |   '- [Target]
