@@ -207,6 +207,8 @@ Core development team:
   *  Artyomov Denis <artyomov at jimm.org>
 
 Contributors:
+  *  Dmitry Tunin (MOTOROLA build maintainer, some bugfixes)
+  *  Tomas Spal (better ContactList title update routine)
   *  Sergey Mymrikov (Contact status and program icons)
   *  Spassky Alexander (Type-2 Message support)
   *  Mathias Huelsbusch (Mathematical art used for splash screen)
@@ -221,4 +223,4 @@ Contributors:
   *  Urukalo Milan (Serbian translation)
   *  Guy Aroshas (Hebrew translation)
   *  Ivaylo Donchev (Bulgarian translation)
-  *  Tomas Spal (better ContactList title update routine)
+  
