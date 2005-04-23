@@ -94,6 +94,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!--  *******************************************************************   -->
 
+	
 	<!--  Buildfile description   -->
 	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
 
@@ -328,7 +329,10 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<fileset dir="${res}" includes="*" excludes="MANIFEST.MF" />
 		</copy>
 		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false">
-			<fileset dir="${res/target}" />
+			<fileset dir="${res/target}">
+		    	<exclude name="lib/*.jar" />
+			</fileset>
+				
 		</copy>
 	</target>
 	
