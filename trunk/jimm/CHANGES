@@ -162,34 +162,30 @@ VERSION 0.3.1
   * Added Bulgarian translation
   
 ________________________________________________________________________________
-VERSION 0.3.2
+VERSION 0.4.0
 
-  * BUGFIX: Sending messages was not possible after renaming a contact
-  * BUGFIX: Time bug (hopefully) fixed
-  * ContactList title is now different depending on the length of the word "list"
-  * Options subpages now have a back button so you can go back without saving
-  * Added Polish translation
-  
-________________________________________________________________________________
-VERSION 0.3.3
-  * New module: Text messages history storing
+  * NEW FEATURE: New module: Text messages history storing
   * NEW FEATURE: File explorer for file selection on supporting mobiles
   * NEW FEATURE: New SIEMENS2 version for Siemens MIDP2 phones with file explorer
+  * NEW FEATURE: New MOTOROLA version for Motorola MIDP2 phones
+  * BUGFIX: Sending messages was not possible after renaming a contact
+  * BUGFIX: Time bug (hopefully) fixed
   * BUGFIX: 125.1 exception was shown after each file transfer.
+  * ContactList title is now different depending on the length of the word "list"
+  * Options subpages now have a back button so you can go back without saving
   * There now is a message informing you if the file transfer was ok
   * In the file transfer ok window you can see the speed of the file transfer
   * Progressbar for file transfer is now drawn more precise
   * You can see size and cost of file transfer before sending
-  * There now is a back (cancel) option on the options pages
   * New option: Auto connect on startup
   * A message how to disable keylock is shown on splash screen if trying it the wrong way
-  * Free heap mem can be seen at the bottom of about page
   * Name of recipient is shown on top of message edit field
   * On the ChatHistory screen you can now see how many chats are open and in which one you are
   * Contact names are now also updated on server list if renamed in Jimm
   * Added new option "Color scheme"
   * Added "Shadow connection" hack for Nokia 6230 users
   * Contact list sorts without case sensitivity now
-  * Target and modules are displayed on about screen.
+  * Target modules and free heap memory are displayed on about screen.
   * Added Ukrainian translation
+  * Added Polish translation
   
