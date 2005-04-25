@@ -500,11 +500,6 @@ public class ContactListContactItem extends ContactListItem
     // Activates the contact item menu
     public void activateMenu()
     {
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(this.getChatHistoryDisplayNr()).setTitle(this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
-        // #sijapp cond.else#
-		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(this.getChatHistoryDisplayNr()).setCaption(this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistorySize()+")");
-        // #sijapp cond.end#
         this.menu.activate();
     }
 
@@ -966,6 +961,13 @@ public class ContactListContactItem extends ContactListItem
                 msgDisplay.setCommandListener(this);
                 
                 if (temporary && !noAuth) msgDisplay.addCommand(MenuUtil.addUrsCommand);
+                
+                // Calculate and set title
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.getChatHistoryDisplayNr()).setTitle(ContactListContactItem.this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistoryVectorSize(ContactListContactItem.this.chatHistoryDisplayNr)+")");
+                // #sijapp cond.else#
+        		Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.getChatHistoryDisplayNr()).setCaption(ContactListContactItem.this.getName()+" ("+Jimm.jimm.getChatHistoryRef().getCounter()+"/"+Jimm.jimm.getChatHistoryRef().chatHistoryVectorSize(ContactListContactItem.this.chatHistoryDisplayNr)+")");
+                // #sijapp cond.end#
                 
                 // Display history
                 ContactListContactItem.this.resetUnreadMessages();

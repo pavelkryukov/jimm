@@ -145,8 +145,13 @@ public class ChatHistory
     // Add text to message form
     synchronized public void addTextToForm(int nr,String from, String message, String url, Date time, boolean red)
     {
+        
         TextList msgDisplay = (TextList) historyVector.elementAt(nr);
         
+        if (msgDisplay.getSize() == 0)
+        {
+            deleted--;
+        }
         
         msgDisplay.lock();
         int lastSize = msgDisplay.getItemCount();
@@ -185,7 +190,6 @@ public class ChatHistory
             TextList temp = (TextList)historyVector.elementAt(nr);
             temp.clear();
             deleted++;
-            counter--;
         }
     }
     
@@ -213,9 +217,18 @@ public class ChatHistory
     }
     
     // Return the size of the History Vector minus deleted
-    public int chatHistorySize()
+    public int chatHistoryVectorSize(int nr)
     {
-        return this.historyVector.size()-deleted;
+        if (this.historyVector.size() != 0)
+        {
+            TextList temp = (TextList) historyVector.elementAt(nr);
+            if (temp.getSize() == 0)
+                return this.historyVector.size() - deleted - 1;
+            else
+                return this.historyVector.size() - deleted;
+        }
+        else
+            return 0;
     }
     
 	// Return the counter for the ChatHistory
@@ -236,13 +249,23 @@ public class ChatHistory
     public int newChatForm(String name)
     {
     	ChatTextList chatForm = new ChatTextList();
-        
+
+        // Calculate the title for the chatdisplay.
     	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-        chatForm.setFullScreenMode(false);
-        chatForm.setTitle(  name+" ("+counter+"/"+(this.historyVector.size()-deleted+1)+")");
+    	chatForm.setFullScreenMode(false);
+        if (this.historyVector.size()-deleted == 0)
+            chatForm.setTitle(name+" ("+counter+"/"+(this.historyVector.size()-deleted+1)+")");
+        else
+            chatForm.setTitle(name+" ("+((counter % (this.historyVector.size()-deleted))+1)+"/"+(this.historyVector.size()-deleted+1)+")");
         // #sijapp cond.else#
-        chatForm.setCaption(name+" ("+counter+"/"+(this.historyVector.size()-deleted+1)+")");
+        if (this.historyVector.size()-deleted == 0)
+            chatForm.setCaption(name+" ("+counter+"/"+(this.historyVector.size()-deleted+1)+")");
+        else
+            chatForm.setCaption(name+" ("+((counter % (this.historyVector.size()-deleted))+1)+"/"+(this.historyVector.size()-deleted+1)+")");
         // #sijapp cond.end#
+        
+        // Has to be ++ cause the subsequent added text will decrease -- because it is cleared
+        deleted++;
         
         historyVector.addElement(chatForm);
         return historyVector.size()-1;

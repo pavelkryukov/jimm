@@ -182,11 +182,15 @@ public class Jimm extends MIDlet
 		
 		if (this.getOptionsRef().getBooleanOption(Options.OPTION_AUTO_CONNECT))
         {
-            // Connect
+            // Remove version string from splash screen
+		    Jimm.jimm.getSplashCanvasRef().delVersionString();
+		    // Connect
             Jimm.jimm.getContactListRef().beforeConnect();
             Jimm.jimm.getIcqRef().connect();
         } else
         {
+            // Remove version string from splash screen
+		    Jimm.jimm.getSplashCanvasRef().delVersionString();
             // Activate main menu
             this.mm.activate();
         }

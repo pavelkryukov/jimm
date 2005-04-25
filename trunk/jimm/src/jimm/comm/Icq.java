@@ -580,7 +580,6 @@ public class Icq implements Runnable
 				{
 					if (((Action) this.actAction.elementAt(i)).isCompleted() || ((Action) this.actAction.elementAt(i)).isError())
 					{
-						System.out.println("action removed");
 					    this.actAction.removeElementAt(i--);
 					}
 				}
