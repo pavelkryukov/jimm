@@ -39,7 +39,7 @@ public class TextList extends VirtualList
     items = new Vector();
 
   // protected int getSize()
-  protected int getSize()
+  public int getSize()
   {
     return items.size();
   }

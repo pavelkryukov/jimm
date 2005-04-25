@@ -79,7 +79,9 @@ public class SplashCanvas extends Canvas
 
 	// Font used to display the logo (if image is not available)
 	private static Font logoFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_LARGE);
-
+	
+	// Font used to display the version nr
+	private static Font versionFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 
 	// Font (and font height in pixels) used to display informational messages
 	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, Font.SIZE_SMALL);
@@ -129,15 +131,19 @@ public class SplashCanvas extends Canvas
 
 	// Timestamp
 	private Date pressed; // = null
+	
+	// Version string
+	private boolean version;
 
 	// Constructor
 	public SplashCanvas(String message)
 	{
-		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	    this.version = true;
+	    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		this.setFullScreenMode(true);
 		//  #sijapp cond.end#
 		this.message = new String(message);
-		this.keylockMessage = new Alert(ResourceBundle.getString("keylock"),ResourceBundle.getString("keylock_message"),null,AlertType.INFO);
+		this.keylockMessage = new Alert(null,null,null,AlertType.INFO);
 		this.keylockMessage.setTimeout(1000);
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight());
 		int r, g;
@@ -190,7 +196,12 @@ public class SplashCanvas extends Canvas
 		this.progress = progress;
 		this.repaint(0, this.getHeight() - SplashCanvas.height - 2, this.getWidth(), SplashCanvas.height + 2);
 	}
-
+	
+	public void delVersionString()
+	{
+	    this.version = false;
+	}
+	
 
 	// Enable keylock
 	public synchronized void lock()
@@ -230,7 +241,11 @@ public class SplashCanvas extends Canvas
 		    if (keyCode == Canvas.KEY_POUND)
 		        this.pressed = new Date();
 		    else
+		    {
+		        this.keylockMessage.setTitle(ResourceBundle.getString("keylock"));
+		        this.keylockMessage.setString(ResourceBundle.getString("keylock_message"));
 		        Jimm.display.setCurrent(this.keylockMessage);
+		    }
 		}
 	}
 
@@ -317,6 +332,14 @@ public class SplashCanvas extends Canvas
 			{
 				g.drawString(this.message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 			}
+		}
+		
+		// Draw version
+		if (this.version)
+		{
+		    g.setColor(0,0,0);
+		    g.setFont(versionFont);
+		    g.drawString(Jimm.VERSION,this.getWidth()-3,this.getHeight()-17, Graphics.BOTTOM | Graphics.RIGHT);
 		}
 
 		// Draw current progress
@@ -445,12 +468,12 @@ public class SplashCanvas extends Canvas
 		    Jimm.jimm.getSplashCanvasRef().setProgress(this.connectAct.getProgress());
 			if (this.connectAct.isCompleted())
 			{
-				Jimm.jimm.getContactListRef().activate();
+			    Jimm.jimm.getContactListRef().activate();
 				this.cancel();
 			}
 			else if (this.connectAct.isError())
 			{
-				this.cancel();
+			    this.cancel();
 			}
 		}
 
