@@ -524,8 +524,7 @@ public class Icq implements Runnable
 					    dcPacketAvailable = false;
 				}
 
-				// #sijapp cond.end#
-		        // #sijapp cond.else#
+				// #sijapp cond.else#
 
 				while ((this.c.available() > 0))
 				{
@@ -574,7 +573,54 @@ public class Icq implements Runnable
 					}
 				}
                 // #sijapp cond.end#
-				
+				// #sijapp cond.else#
+				while ((this.c.available() > 0))
+				{
+					// Try to get packet
+					Packet packet = null;
+					try
+					{
+					    if (this.c.available() > 0)
+					        packet = this.c.getPacket();
+					}
+					catch (JimmException e)
+					{
+						JimmException.handleException(e);
+						if (e.isCritical()) throw (e);
+					}
+
+					// Forward received packet to all active actions and to the action listener
+					boolean consumed = false;
+					for (int i = 0; i < this.actAction.size(); i++)
+					{
+						try
+						{
+							if (((Action) this.actAction.elementAt(i)).forward(packet))
+							{
+								consumed = true;
+								break;
+							}
+						}
+						catch (JimmException e)
+						{
+							JimmException.handleException(e);
+							if (e.isCritical()) throw (e);
+						}
+					}
+					if (!consumed)
+					{
+						try
+						{
+							this.actListener.forward(packet);
+						}
+						catch (JimmException e)
+						{
+							JimmException.handleException(e);
+							if (e.isCritical()) throw (e);
+						}
+					}
+				}
+				// #sijapp cond.end#
 				// Remove completed actions
 				for (int i = 0; i < this.actAction.size(); i++)
 				{
