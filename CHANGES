@@ -168,9 +168,11 @@ VERSION 0.4.0
   * NEW FEATURE: File explorer for file selection on supporting mobiles
   * NEW FEATURE: New SIEMENS2 version for Siemens MIDP2 phones with file explorer
   * NEW FEATURE: New MOTOROLA version for Motorola MIDP2 phones
+  * NEW FEATURE: Turn backlight on/off by STAR button in MOTOROLA build
   * BUGFIX: Sending messages was not possible after renaming a contact
   * BUGFIX: Time bug (hopefully) fixed
   * BUGFIX: 125.1 exception was shown after each file transfer.
+  * BUGFIX: "Deadlock" when renaming or adding contacts
   * ContactList title is now different depending on the length of the word "list"
   * Options subpages now have a back button so you can go back without saving
   * There now is a message informing you if the file transfer was ok
