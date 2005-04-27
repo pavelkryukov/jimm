@@ -179,6 +179,8 @@ public class ActionListener
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_FILES is "true"#
                 Jimm.jimm.getContactListRef().update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie);
+                // #sijapp cond.else#
+                Jimm.jimm.getContactListRef().update(uin, status, capabilities);
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 Jimm.jimm.getContactListRef().update(uin, status, capabilities);
