@@ -209,6 +209,10 @@ public class SplashCanvas extends Canvas
 		this.setMessage(ResourceBundle.getString("keylock_enabled"));
 		this.setProgress(0);
 		this.isLocked = true;
+		//  #sijapp cond.if target is "MOTOROLA"#
+		Jimm.display.flashBacklight(Integer.MAX_VALUE);
+                                           Jimm.display.flashBacklight(0);
+		//  #sijapp cond.end#
 		Jimm.display.setCurrent(this);
 	}
 
@@ -218,6 +222,9 @@ public class SplashCanvas extends Canvas
 	{
 		this.isLocked = false;
 		this.isMessageAvailable = false;
+		//  #sijapp cond.if target is "MOTOROLA"#
+		Jimm.display.flashBacklight(Integer.MAX_VALUE);
+		//  #sijapp cond.end#
 		Jimm.jimm.getContactListRef().activate();
 	}
 
