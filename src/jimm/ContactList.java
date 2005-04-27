@@ -143,9 +143,10 @@ class Tree extends VirtualTree
 	protected void getItemDrawData(TreeNode src, ListItem dst)
 	{
 		ContactListItem item = (ContactListItem)src.getData();
-		dst.text = item.getText();
+		dst.text       = item.getText();
 		dst.imageIndex = item.getImageIndex();
-		dst.color = item.getTextColor();
+		dst.color      = item.getTextColor();
+		dst.fontStyle  = item.getFontStyle(); 
 	}
 
 	public Tree(String caption)
@@ -235,9 +236,6 @@ public class ContactList implements CommandListener
 	// Tree object
 	Tree tree;
 
-	// Count of original images
-    private static int imagesCount;
-	
 	// Images for icons
 	private static ImageList imageList;
 	
@@ -266,23 +264,6 @@ public class ContactList implements CommandListener
             ContactList.eventUrlMessageImg   = imageList.elementAt(9);
             ContactList.eventSystemNoticeImg = imageList.elementAt(10);
             ContactList.eventSysActionImg    = imageList.elementAt(11);
-            
-            // add icons with letter "C" to common icons  
-            int from = imageList.size();
-            imageList.load("/icons.png", 16);
-    		int to = imageList.size();
-            for (int i = from; i < to; i++)
-            	imageList.setImage
-				(
-					addC
-					(
-							imageList.elementAt(i), 
-							imageList.getWidth(),
-							imageList.getHeight()
-					),
-					i
-				);
-            imagesCount = from;
         } 
         catch (IOException e)
         {
@@ -337,11 +318,6 @@ public class ContactList implements CommandListener
         return tree;
     }
     
-    // Returns number of original images
-	public static int getImagesCount()
-	{
-		return imagesCount;
-	}
 	
 	// Returns image list with status icons and status icons with red letter "C"  
 	public static ImageList getImageList()
@@ -1119,24 +1095,6 @@ public class ContactList implements CommandListener
         // #sijapp cond.end#
     }
     
-    
-    // Adds a "c" to the image
-    private static Image addC(Image img, int width, int height)
-    {
-        Image copy = Image.createImage(width, height);
-        Graphics g = copy.getGraphics();
-        g.drawImage(img, 0, 0, Graphics.TOP | Graphics.LEFT);
-        g.setColor(255, 0, 0);
-        g.drawLine(3, 1, 5, 1);
-        g.drawLine(2, 2, 6, 2);
-        g.drawLine(1, 3, 1, 6);
-        g.drawLine(2, 3, 2, 7);
-        g.drawLine(3, 7, 6, 7);
-        g.drawLine(3, 8, 5, 8);
-        g.drawLine(5, 6, 6, 6);
-        g.drawLine(5, 3, 6, 3);
-        return copy;
-    }
 
     //Updates the title of the list
     public void updateTitle(int traffic)

@@ -24,6 +24,8 @@
 
 package jimm;
 
+import javax.microedition.lcdui.Font;
+
 
 public abstract class ContactListItem
 {
@@ -37,4 +39,9 @@ public abstract class ContactListItem
 	public abstract int getImageIndex();
 	
 	public abstract int getTextColor();
+	
+	public int getFontStyle()
+	{
+		return Font.STYLE_PLAIN;
+	}
 }
