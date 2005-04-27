@@ -30,6 +30,7 @@ import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
@@ -325,10 +326,22 @@ public class ContactListContactItem extends ContactListItem
     	return plainMessages+urlMessages+sysNotices+authRequest;
     }
     
+    // Returns color for contact name
     public int getTextColor()
     {
-    	return temporary ? 0x808080 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT);
+    	if (temporary) return 0x808080;
+    	return 
+    		returnBoolValue(VALUE_HAS_CHAT) 
+				? Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE)
+				: Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT); 
     }
+    
+    // Returns font style for contact name 
+	public int getFontStyle()
+	{
+		return returnBoolValue(VALUE_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
+	}
+    
 
     // Returns imaghe index for contact
     public int getImageIndex()
@@ -340,12 +353,6 @@ public class ContactListContactItem extends ContactListItem
     	else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
         else if (isMessageAvailable(MESSAGE_SYS_NOTICE) || returnBoolValue(VALUE_NO_AUTH)) tempIndex = 10;
         else tempIndex = getStatusImageIndex(status);
-
-    	if ((tempIndex != -1) && (returnBoolValue(VALUE_HAS_CHAT)))
-    	{
-    		tempIndex += ContactList.getImagesCount();
-    	}
-    	
         return tempIndex;
     }
     
