@@ -188,6 +188,8 @@ VERSION 0.4.0
   * Added "Shadow connection" hack for Nokia 6230 users
   * Contact list sorts without case sensitivity now
   * Target modules and free heap memory are displayed on about screen.
+  * Password is saved in UTF-8 format now
+  * Jimm supporst minimizing in supporting platforms (e.g. SE K700i)
   * Added Ukrainian translation
   * Added Polish translation
   
