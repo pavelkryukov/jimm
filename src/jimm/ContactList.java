@@ -1216,6 +1216,10 @@ public class ContactList implements CommandListener
         
         // Update tree
         contactChanged(cItem, true, false, false);
+        
+        // Bring Jimm to front if it was in background
+        if (Jimm.display == null)
+            this.activate();
     }
 
     //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#    

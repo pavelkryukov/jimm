@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -102,7 +102,11 @@ public class Jimm extends MIDlet
 	{
 
 		// Return if MIDlet has already been initialized
-		if (Jimm.jimm != null) return;
+		if (Jimm.jimm != null) 
+		    {
+		    Jimm.jimm.getContactListRef().activate();
+		    return;
+		    }
 
 		// Get Jimm version
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
