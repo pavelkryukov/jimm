@@ -456,9 +456,7 @@ public class MainMenu implements CommandListener
                     //#sijapp cond.end#
                    Jimm.display.setCurrent(MainMenu.statusList);
                     break;
-                    
-
-                    
+                              
                 case MENU_ADD_USER:
                     // Add user
                 	addUserOrGroupCmd(null,true);
@@ -500,6 +498,7 @@ public class MainMenu implements CommandListener
                      traffic.setIsActive(true);
                      traffic.trafficScreen.activate();
                      break;
+                 // #sijapp cond.end #
                      
                  case MENU_ABOUT:
                      // Display an info alert
