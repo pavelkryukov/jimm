@@ -242,7 +242,7 @@ public class Options
 			    byte[] optionValue = new byte[dis.readUnsignedShort()];
 			    dis.readFully(optionValue);
 			    optionValue = Util.decipherPassword(optionValue);
-			    this.setStringOption(optionKey, new String(optionValue));
+			    this.setStringOption(optionKey, Util.byteArrayToString(optionValue,true));
 			}
 		}
 		
@@ -309,7 +309,7 @@ public class Options
 			}
 			else   /* 226-255 = Scrambled String */
 			{
-			    byte[] optionValue = this.getStringOption(optionKey).getBytes();
+			    byte[] optionValue = Util.stringToByteArray(this.getStringOption(optionKey),true);
 				optionValue = Util.decipherPassword(optionValue);
 				dos.writeShort(optionValue.length);
 				dos.write(optionValue);
