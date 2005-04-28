@@ -460,8 +460,8 @@ public class Search
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
 
             }
-            else if (c == this.nextCommand) nextOrPrev(true);
-            else if (c == this.previousComamnd) nextOrPrev(false);
+            else if (c == this.nextCommand) nextOrPrev(false);
+            else if (c == this.previousComamnd) nextOrPrev(true);
             else if (c == this.addCommand && d == screen)
             {
                 if (Jimm.jimm.getContactListRef().getGroupItems().length == 0)
