@@ -157,6 +157,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("msg_sound_file_name",         "Message Sound File");
 		resources.put("message",                     "Message");
 		resources.put("message_from",                "Message from");
+		resources.put("minimize",                    "Minimize");
 		resources.put("name",                        "Name");
 		resources.put("next",						 "Next");
 		resources.put("nick",                        "Nick");
@@ -203,7 +204,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("server_port",                 "Port");
 		resources.put("session",                     "Session");
 		resources.put("set_status",                  "Set status");
-		resources.put("shadow_con",                  "Shadow connction");
+		resources.put("shadow_con",                  "Shadow connection");
 		resources.put("show_user_groups",            "Show user groups");
 		resources.put("since",                       "Since");
 		resources.put("size",                        "Size");

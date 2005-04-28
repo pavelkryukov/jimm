@@ -44,6 +44,26 @@ public class MainMenu implements CommandListener
 {
 	private static final int MSGBS_EXIT = 1;
 	
+	// Static constants for menu actios
+	private static final int MENU_CONNECT		= 1;
+	private static final int MENU_DISCONNECT	= 2;
+	private static final int MENU_LIST			= 3;
+	private static final int MENU_OPTIONS		= 4;
+    // #sijapp cond.if modules_TRAFFIC is "true" #
+	private static final int MENU_TRAFFIC		= 5;
+    // #sijapp cond.end #
+	private static final int MENU_KEYLOCK		= 6;
+	private static final int MENU_STATUS		= 7;
+	private static final int MENU_SEARCH		= 8;
+	private static final int MENU_ADD_USER		= 9;
+	private static final int MENU_ADD_GROUP		= 10;
+	private static final int MENU_DEL_GROUP		= 11;
+	private static final int MENU_ABOUT			= 12;
+	private static final int MENU_MINIMIZE		= 13;
+	// Exit has to be biggest element cause it also marks the size
+	private static final int MENU_EXIT			= 14;
+	
+	
     // Abort command
     private static Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
     
@@ -51,20 +71,10 @@ public class MainMenu implements CommandListener
     private static Command sendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
     // #sijapp cond.if target is "MOTOROLA" # 
-
     // Select command
     private static Command selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
 
-    // #sijapp cond.if lang_RU is "true" | lang_EN is "true" #
-
     private static Command exitCommand = new Command(ResourceBundle.getString("exit_button"), Command.EXIT, 1);
-
-    // #sijapp cond.else # 
-
-    //Exit command
-    private static Command exitCommand = new Command(ResourceBundle.getString("exit"), Command.EXIT, 1);
-
-    //#sijapp cond.end# 
     //#sijapp cond.end# 
 
      // List for selecting a online status
@@ -87,6 +97,9 @@ public class MainMenu implements CommandListener
 
     // Visual list
     private List list;
+    
+    // Menu event list
+    private int[] eventList;
     
     // Groups list
     private List groupList;
@@ -116,46 +129,44 @@ public class MainMenu implements CommandListener
     {
         if ((Jimm.jimm.getIcqRef().isConnected() != isConnected) || (this.list == null))
         {
+            this.eventList = new int[MENU_EXIT];
+            this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
+            
             if (Jimm.jimm.getIcqRef().isNotConnected())
-            {
-                this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
-                this.list.append(ResourceBundle.getString("connect"), null);
-                this.list.append(ResourceBundle.getString("contact_list"), null);
-                this.list.append(ResourceBundle.getString("options"), null);
-                // #sijapp cond.if modules_TRAFFIC is "true" #
-                this.list.append(ResourceBundle.getString("traffic"), null);
-                // #sijapp cond.end#
-                this.list.append(ResourceBundle.getString("about"), null);
-                this.list.append(ResourceBundle.getString("exit"), null);
+            {                
+                this.eventList[this.list.append(ResourceBundle.getString("connect"), null)] 		= MENU_CONNECT;
+                this.eventList[this.list.append(ResourceBundle.getString("contact_list"), null)] 	= MENU_LIST;
+                this.eventList[this.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
+                
                 // #sijapp cond.if target is "MOTOROLA" #
                 this.list.addCommand(MainMenu.selectCommand);
                 this.list.addCommand(MainMenu.exitCommand);
                 // #sijapp cond.end#
-
-
                 this.list.setCommandListener(this);
             } else
-            {
-                this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
-                this.list.append(ResourceBundle.getString("keylock_enable"), null);
-                this.list.append(ResourceBundle.getString("disconnect"), null);
-                this.list.append(ResourceBundle.getString("set_status"), getStatusImage());
-                this.list.append(ResourceBundle.getString("add_user"), null);
-                this.list.append(ResourceBundle.getString("search_user"), null);
-                this.list.append(ResourceBundle.getString("add_group"), null);
-                this.list.append(ResourceBundle.getString("del_group"), null);
-                this.list.append(ResourceBundle.getString("options"), null);
-                // #sijapp cond.if modules_TRAFFIC is "true" #
-                this.list.append(ResourceBundle.getString("traffic"), null);
-                // #sijapp cond.end#
-                this.list.append(ResourceBundle.getString("about"), null);
-                this.list.append(ResourceBundle.getString("exit"), null);
-                this.list.addCommand(MainMenu.backCommand);
+            {           
+                this.eventList[this.list.append(ResourceBundle.getString("keylock_enable"), null)] 	= MENU_KEYLOCK;
+                this.eventList[this.list.append(ResourceBundle.getString("disconnect"), null)] 		= MENU_DISCONNECT;
+                this.eventList[this.list.append(ResourceBundle.getString("set_status"), getStatusImage())] = MENU_STATUS;
+                this.eventList[this.list.append(ResourceBundle.getString("add_user"), null)] 		= MENU_ADD_USER;
+                this.eventList[this.list.append(ResourceBundle.getString("search_user"), null)] 	= MENU_SEARCH;
+                this.eventList[this.list.append(ResourceBundle.getString("add_group"), null)] 		= MENU_ADD_GROUP;
+                this.eventList[this.list.append(ResourceBundle.getString("del_group"), null)] 		= MENU_DEL_GROUP;
+                this.eventList[this.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
+                
                 // #sijapp cond.if target is "MOTOROLA" #
                 this.list.addCommand(MainMenu.selectCommand);
                 // #sijapp cond.end#
                 this.list.setCommandListener(this);
-            }
+            } 
+                
+            // #sijapp cond.if modules_TRAFFIC is "true" #
+            this.eventList[this.list.append(ResourceBundle.getString("traffic"), null)] 	= MENU_TRAFFIC;
+            // #sijapp cond.end#
+            this.eventList[this.list.append(ResourceBundle.getString("about"), null)] 		= MENU_ABOUT;
+            this.eventList[this.list.append(ResourceBundle.getString("minimize"), null)] 	= MENU_MINIMIZE;
+            this.eventList[this.list.append(ResourceBundle.getString("exit"), null)] 		= MENU_EXIT;
+
             this.isConnected = Jimm.jimm.getIcqRef().isConnected();
         }
         else
@@ -383,33 +394,38 @@ public class MainMenu implements CommandListener
         
         // Menu item has been selected
 
-       //#sijapp cond.if target is "MOTOROLA"#
-
-       else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand)) && (d == this.list))
-
-       // #sijapp cond.else#
-
+        //#sijapp cond.if target is "MOTOROLA"#
+        else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand)) && (d == this.list))
+        // #sijapp cond.else#
         else if ((c == List.SELECT_COMMAND) && (d == this.list))
-       // #sijapp cond.end#
+        // #sijapp cond.end#
 
         {
-            if (this.isConnected)
+            switch(this.eventList[this.list.getSelectedIndex()])
             {
-                switch (this.list.getSelectedIndex())
-                {
-                case 0:
-                    // Enable keylock
-                    Jimm.jimm.getSplashCanvasRef().lock();
-                    break;
-                case 1:
+                case MENU_CONNECT:
+                // Connect
+            	Jimm.jimm.getContactListRef().beforeConnect();
+                Jimm.jimm.getIcqRef().connect();
+                break;
+                
+                case MENU_DISCONNECT:
                     // Disconnect
                     Jimm.jimm.getIcqRef().disconnect();
                     break;
-
-                case 2:
+                    
+                case MENU_LIST:
+                    // ContactList
+                    Jimm.jimm.getContactListRef().activate();
+                    break;
+                
+                case MENU_KEYLOCK :
+                    // Enable keylock
+                    Jimm.jimm.getSplashCanvasRef().lock();
+                    break;
+                    
+                case MENU_STATUS:
                     // Set status
-
-                    // Display status list
                     long onlineStatus = Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS);
                     if (onlineStatus == ContactList.STATUS_AWAY)
                     {
@@ -435,24 +451,32 @@ public class MainMenu implements CommandListener
                     }
                     MainMenu.statusList.setCommandListener(this);
                     MainMenu.statusList.addCommand(backCommand);
-                    //#sijapp cond.if target is "MOTOROLA"# 
+                    //#sijapp cond.if target is "MOTOROLA"#
                     MainMenu.statusList.addCommand(selectCommand);
                     //#sijapp cond.end#
                    Jimm.display.setCurrent(MainMenu.statusList);
-
                     break;
-                case 3: // Add user
+                    
+
+                    
+                case MENU_ADD_USER:
+                    // Add user
                 	addUserOrGroupCmd(null,true);
                     break;
                     
-                case 4: // Search for User
+                case MENU_SEARCH:
+                    // Search for User
                     Search searchf = new Search();
                     searchf.getSearchForm().activate(false);
                     break;
-                case 5: // Add group
+                    
+                case MENU_ADD_GROUP:
+                    // Add group
                     addUserOrGroupCmd(null,false);
                     break;
-                case 6: // Del group
+                    
+                case MENU_DEL_GROUP:
+                    // Del group
                     // Show list of groups to select which group to delete
                     groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
                     for (int i = 0; i < Jimm.jimm.getContactListRef().getGroupItems().length; i++)
@@ -465,127 +489,34 @@ public class MainMenu implements CommandListener
                     Jimm.display.setCurrent(groupList);
                     break;
                     
-                case 7:
-                    // Options
-                    Jimm.jimm.getOptionsRef().optionsForm.activate();
-
-                    break;
-                // #sijapp cond.if modules_TRAFFIC is "true" #
-                case 8:
-                    // Traffic
-
-                    // Display an traffic alert
-                    traffic.setIsActive(true);
-                    traffic.trafficScreen.activate();
-
-                    break;
-                case 9:
-                    // About
-
-                    // Display an info alert
-                    System.gc();
-                    Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
-                    about.setTimeout(Alert.FOREVER);
-                    Jimm.jimm.getContactListRef().activate(about);
-
-                    break;
-                case 10:
-                    // Exit
-                	menuExit();
-
-                    break;
-                // #sijapp cond.else#
-                case 8:
-                    // About
-
-                    // Display an info alert
-                    System.gc();
-                    Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
-                    about.setTimeout(Alert.FOREVER);
-                    Jimm.jimm.getContactListRef().activate(about);
-
-                    break;
-                case 9:
-                    // Exit
-             	
-                	menuExit();
-                    break;
-
-                // #sijapp cond.end#
-                }
-            } else
-            {
-                switch (this.list.getSelectedIndex())
-                {
-                case 0:
-                    // Connect
-                	Jimm.jimm.getContactListRef().beforeConnect();
-                    Jimm.jimm.getIcqRef().connect();
-                                    
-                    break;
-                case 1:
-                    // ContactList
-                    Jimm.jimm.getContactListRef().activate();
-
-                    break;
-                case 2:
-                    // Options
-                    Jimm.jimm.getOptionsRef().optionsForm.activate();
-
-                    break;
-                // #sijapp cond.if modules_TRAFFIC is "true" #
-                case 3:
-                    // Traffic
-
-                    // Display an traffic alert
-                    traffic.setIsActive(true);
-                    traffic.trafficScreen.activate();
-
-                    break;
-                case 4:
-                    // About
-
-                    // Display an info alert
-                    System.gc();
-                    Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
-                    about.setTimeout(Alert.FOREVER);
-                    this.activate(about);
-
-                    break;
-                case 5:
-                    // Exit
-
-                    // Disconnect
-					Jimm.jimm.getIcqRef().disconnect();
-					
-					menuExit();
-                    break;
-                // #sijapp cond.else#
-                case 3:
-                    // About
-
-                    // Display an info alert
-                    System.gc();
-                    Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
-                    about.setTimeout(Alert.FOREVER);
-                    this.activate(about);
-
-                    break;
-                case 4:
-                    // Exit
-
-                    try
-                    {
-                        Jimm.jimm.destroyApp(true);
-                    } catch (MIDletStateChangeException e)
-                    {
-                        // Do nothing
-                    }
-
-                    break;
-                // #sijapp cond.end#
-
-                }
+                 case MENU_OPTIONS:
+                     // Options
+                     Jimm.jimm.getOptionsRef().optionsForm.activate();
+                     break; 
+                     
+                 // #sijapp cond.if modules_TRAFFIC is "true" #
+                 case MENU_TRAFFIC:
+                     // Traffic
+                     traffic.setIsActive(true);
+                     traffic.trafficScreen.activate();
+                     break;
+                     
+                 case MENU_ABOUT:
+                     // Display an info alert
+                     System.gc();
+                     Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
+                     about.setTimeout(Alert.FOREVER);
+                     Jimm.display.setCurrent(about);
+                     break;
+                 
+                 case MENU_MINIMIZE:
+                     // Minimize Jimm (if supported)
+                     Jimm.display.setCurrent(null);
+                            
+                 case MENU_EXIT:
+                     // Exit
+                 	 menuExit();
+                     break;     
             }
         }
         // Online status has been selected
@@ -631,10 +562,7 @@ public class MainMenu implements CommandListener
 
             // Activate main menu
             Jimm.jimm.getContactListRef().activate();
-
         }
-
     }
-
 }
 
