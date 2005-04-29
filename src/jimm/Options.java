@@ -242,7 +242,7 @@ public class Options
 			    byte[] optionValue = new byte[dis.readUnsignedShort()];
 			    dis.readFully(optionValue);
 			    optionValue = Util.decipherPassword(optionValue);
-			    this.setStringOption(optionKey, Util.byteArrayToString(optionValue,true));
+			    this.setStringOption(optionKey, Util.byteArrayToString(optionValue,2,optionValue.length-2,true));
 			}
 		}
 		
