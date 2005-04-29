@@ -145,6 +145,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("message_notification",        "Уведомление о сообщении");
 		resources.put("message",                     "Сообщение");
 		resources.put("message_from",                "Сообщение от");
+		resources.put("minimize",                    "Фоновый режим");
 		resources.put("name",                        "Имя");
 		resources.put("next",						 "Дальше (кнопка 'Вправо')");
 		resources.put("nick",                        "Ник");
@@ -189,6 +190,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("server_port",                 "Порт");
 		resources.put("session",                     "Сессия");
 		resources.put("set_status",                  "Установить статус");
+		resources.put("shadow_con",                  "Дополнительное подключение");
 		resources.put("show_user_groups",            "Группировать контакты");
 		resources.put("since",                       "Начиная с");
 		resources.put("sound",                       "Звуковой файл");
