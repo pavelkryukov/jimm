@@ -59,7 +59,9 @@ public class MainMenu implements CommandListener
 	private static final int MENU_ADD_GROUP		= 10;
 	private static final int MENU_DEL_GROUP		= 11;
 	private static final int MENU_ABOUT			= 12;
+    // #sijapp cond.if target isnot "MOTOROLA" # 
 	private static final int MENU_MINIMIZE		= 13;
+    // #sijapp cond.end #
 	// Exit has to be biggest element cause it also marks the size
 	private static final int MENU_EXIT			= 14;
 	
@@ -153,10 +155,10 @@ public class MainMenu implements CommandListener
                 this.eventList[this.list.append(ResourceBundle.getString("add_group"), null)] 		= MENU_ADD_GROUP;
                 this.eventList[this.list.append(ResourceBundle.getString("del_group"), null)] 		= MENU_DEL_GROUP;
                 this.eventList[this.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
-                
+                this.list.addCommand(MainMenu.backCommand);
                 // #sijapp cond.if target is "MOTOROLA" #
                 this.list.addCommand(MainMenu.selectCommand);
-                // #sijapp cond.end#
+		// #sijapp cond.end#
                 this.list.setCommandListener(this);
             } 
                 
@@ -164,7 +166,9 @@ public class MainMenu implements CommandListener
             this.eventList[this.list.append(ResourceBundle.getString("traffic"), null)] 	= MENU_TRAFFIC;
             // #sijapp cond.end#
             this.eventList[this.list.append(ResourceBundle.getString("about"), null)] 		= MENU_ABOUT;
-            this.eventList[this.list.append(ResourceBundle.getString("minimize"), null)] 	= MENU_MINIMIZE;
+            // #sijapp cond.if target isnot "MOTOROLA" #
+	    this.eventList[this.list.append(ResourceBundle.getString("minimize"), null)] 	= MENU_MINIMIZE;
+	    // #sijapp cond.end#
             this.eventList[this.list.append(ResourceBundle.getString("exit"), null)] 		= MENU_EXIT;
 
             this.isConnected = Jimm.jimm.getIcqRef().isConnected();
@@ -507,11 +511,11 @@ public class MainMenu implements CommandListener
                      about.setTimeout(Alert.FOREVER);
                      Jimm.display.setCurrent(about);
                      break;
-                 
+                 //#sijapp cond.if target isnot "MOTOROLA"#
                  case MENU_MINIMIZE:
                      // Minimize Jimm (if supported)
                      Jimm.display.setCurrent(null);
-                            
+                 //#sijapp cond.end#           
                  case MENU_EXIT:
                      // Exit
                  	 menuExit();
