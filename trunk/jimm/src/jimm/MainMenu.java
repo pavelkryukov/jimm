@@ -515,6 +515,8 @@ public class MainMenu implements CommandListener
                  case MENU_MINIMIZE:
                      // Minimize Jimm (if supported)
                      Jimm.display.setCurrent(null);
+                     break;
+                     
                  //#sijapp cond.end#           
                  case MENU_EXIT:
                      // Exit

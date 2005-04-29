@@ -190,6 +190,7 @@ VERSION 0.4.0
   * Target modules and free heap memory are displayed on about screen.
   * Password is saved in UTF-8 format now
   * Jimm supporst minimizing in supporting platforms (e.g. SE K700i)
+  * New images that are smaller and should work on Nokia 6230i
   * Added Ukrainian translation
   * Added Polish translation
   
