@@ -51,6 +51,9 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.midlet.MIDletStateChangeException;
 import java.util.Date;
 import java.util.TimerTask;
+//  #sijapp cond.if target is "MOTOROLA"#
+import DrawControls.LightControl;
+
 
 
 public class SplashCanvas extends Canvas
@@ -144,7 +147,7 @@ public class SplashCanvas extends Canvas
 		//  #sijapp cond.end#
 		this.message = new String(message);
 		this.keylockMessage = new Alert(null,null,null,AlertType.INFO);
-		this.keylockMessage.setTimeout(1000);
+		this.keylockMessage.setTimeout(2000);
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight());
 		int r, g;
 		Graphics bg_graph = background.getGraphics();
@@ -210,8 +213,7 @@ public class SplashCanvas extends Canvas
 		this.setProgress(0);
 		this.isLocked = true;
 		//  #sijapp cond.if target is "MOTOROLA"#
-		Jimm.display.flashBacklight(Integer.MAX_VALUE);
-                                           Jimm.display.flashBacklight(0);
+		LightControl.Off();
 		//  #sijapp cond.end#
 		Jimm.display.setCurrent(this);
 	}
@@ -223,7 +225,7 @@ public class SplashCanvas extends Canvas
 		this.isLocked = false;
 		this.isMessageAvailable = false;
 		//  #sijapp cond.if target is "MOTOROLA"#
-		Jimm.display.flashBacklight(Integer.MAX_VALUE);
+		LightControl.On();
 		//  #sijapp cond.end#
 		Jimm.jimm.getContactListRef().activate();
 	}
@@ -251,7 +253,8 @@ public class SplashCanvas extends Canvas
 		    {
 		        this.keylockMessage.setTitle(ResourceBundle.getString("keylock"));
 		        this.keylockMessage.setString(ResourceBundle.getString("keylock_message"));
-		        Jimm.display.setCurrent(this.keylockMessage);
+		       Jimm.display.flashBacklight(2000);
+		       Jimm.display.setCurrent(this.keylockMessage);
 		    }
 		}
 	}

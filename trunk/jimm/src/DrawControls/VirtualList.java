@@ -23,7 +23,7 @@
 
 package DrawControls;
 //#sijapp cond.if target is "MOTOROLA"#
-import jimm.Jimm;
+import DrawControls.LightControl;
 //#sijapp cond.end#
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Canvas;
@@ -43,23 +43,7 @@ import DrawControls.VirtualListCommands;
 */
 public abstract class VirtualList extends Canvas
 {
- //#sijapp cond.if target is "MOTOROLA"#
-  /*! Turn off or on backlight*/
-  private boolean LightOn =true;
-  public void LightState()
-  {              
-               if (LightOn)
-               {	      Jimm.display.flashBacklight(Integer.MAX_VALUE);
-                              Jimm.display.flashBacklight(0);
-	          LightOn=false;
-                }
-                else
-                {
-                               Jimm.display.flashBacklight(Integer.MAX_VALUE);
-                                LightOn=true;
-                 }
-   }
-  //#sijapp cond.end#
+
 
 
   /*! Use inverted mode of cursor */
@@ -392,7 +376,7 @@ public abstract class VirtualList extends Canvas
 	case KEY_NUM1:  moveToTop(); break;
 	case KEY_NUM7:  moveToBottom(); break;
  //#sijapp cond.if target is "MOTOROLA"#
-                      case KEY_STAR:  LightState(); break;
+                      case KEY_STAR:  LightControl.ChangeState(); break;
  //#sijapp cond.end#
 
 
