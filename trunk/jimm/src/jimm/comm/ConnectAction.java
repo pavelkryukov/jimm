@@ -349,7 +349,7 @@ public class ConnectAction extends Action
 
 						// Close connection
 						this.icq.c.close();
-						
+	// #sijapp cond.if target isnot "MOTOROLA"#					
 						if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_SHADOW_CON))
                             {
                                 try
@@ -361,7 +361,7 @@ public class ConnectAction extends Action
                                     // Do nothing
                                 }
                             }
-
+	// #sijapp cond.end#
 						// Open connection
 						this.icq.c.connect(disconnectPacket.getServer());
 
