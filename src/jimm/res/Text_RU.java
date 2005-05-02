@@ -46,7 +46,7 @@ public class Text_RU extends ResourceBundle
         resources.put("cancel",                      "    Отмена");
         resources.put("exit_button",                 "     Выход");
         resources.put("back",                        "     Назад");
-        resources.put("menu_button",                 "     Меню");
+        resources.put("menu_button",                 "      Меню");
         resources.put("save",                        "Сохранить ");
         resources.put("ok",                          "OK         ");
         resources.put("reply",                       "Ответ      ");
@@ -120,8 +120,10 @@ public class Text_RU extends ResourceBundle
 		resources.put("kb",                          "КБ");
 		resources.put("keep_chat",                   "Хранить историю чата?");
 		resources.put("keep_conn_alive",             "Поддерживать подключение?");
+		resources.put("keylock",                     "Блокировка");
 		resources.put("keylock_enable",              "Блокировка клавиатуры");
 		resources.put("keylock_enabled",             "Блокировка включена");
+		resources.put("keylock_message",             "Для разблокировки нажмите и удерживайте клавишу #");
 		resources.put("keyword",                     "Ключевое слово");
 		resources.put("language",                    "Язык");
 		resources.put("lang_BR",                     "Португальский (Бразилия)");
