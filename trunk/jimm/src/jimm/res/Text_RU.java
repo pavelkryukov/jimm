@@ -171,7 +171,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("password",                    "Пароль");
 		resources.put("plength",                     "Длина оплачиваемого пакета в КБ");
 		resources.put("plsauthme",                   "Привет! Пожалуйста, авторизируй меня и разреши добавить тебя в контакт-лист");
-		resources.put("prev",						 "Предыдущий (кнопка 'Влево')");
+		resources.put("prev",						 "Предыдущий");
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Удалить из списка");
 		resources.put("rename",                      "Переименовать");
