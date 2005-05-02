@@ -53,6 +53,7 @@ public class Text_EN extends ResourceBundle
         resources.put("reply",                       "Reply       ");
         resources.put("close",                       "       Close");
         resources.put("send",                        "Send     ");
+        resources.put("next",	          "       Next");
         // #sijapp cond.else# 
         resources.put("reply",                       "Reply");
         resources.put("close",                       "Close");
@@ -63,6 +64,7 @@ public class Text_EN extends ResourceBundle
         resources.put("save",                        "Save");
         resources.put("ok",                          "OK");
         resources.put("send",                        "Send");
+        resources.put("next",	          "Next");
     	// #sijapp cond.end#
                                   
 		resources.put(".",                           ".");
@@ -159,7 +161,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("message_from",                "Message from");
 		resources.put("minimize",                    "Minimize");
 		resources.put("name",                        "Name");
-		resources.put("next",						 "Next");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "No");
 		resources.put("not",                         "not");
