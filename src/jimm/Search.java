@@ -208,11 +208,11 @@ public class Search
     		switch (getGameAction(keyCode))
 			{
     		case Canvas.LEFT:
-    			searchForm.nextOrPrev(true);
+    			searchForm.nextOrPrev(false);
     			break;
     		
     		case Canvas.RIGHT:
-    			searchForm.nextOrPrev(false);
+    			searchForm.nextOrPrev(true);
     			break;
 			}
     	}
@@ -225,7 +225,7 @@ public class Search
         private Command backCommand;
         private Command searchCommand;
         private Command addCommand;
-        private Command previousComamnd;
+        private Command previousCommand;
         private Command nextCommand;
 
         // Forms for results and query
@@ -256,8 +256,8 @@ public class Search
             // Commands
             this.searchCommand = new Command(ResourceBundle.getString("search_user"), Command.OK, 1);
             this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
-            this.addCommand = new Command(ResourceBundle.getString("add_to_list"), Command.ITEM, 2);
-            this.previousComamnd = new Command(ResourceBundle.getString("prev"), Command.ITEM, 1);
+            this.addCommand = new Command(ResourceBundle.getString("add_to_list"), Command.ITEM, 3);
+            this.previousCommand = new Command(ResourceBundle.getString("prev"), Command.ITEM, 2);
             this.nextCommand = new Command(ResourceBundle.getString("next"), Command.ITEM, 1);
 
             // Form
@@ -298,7 +298,7 @@ public class Search
 
             // Result Screen
             screen = new SearchTextList();
-            screen.addCommand(this.previousComamnd);
+            screen.addCommand(this.previousCommand);
             screen.addCommand(this.nextCommand);
             screen.addCommand(this.addCommand);
         }
@@ -336,7 +336,7 @@ public class Search
                 if (Search.this.size() == 1)
                 {
                     screen.removeCommand(this.nextCommand);
-                    screen.removeCommand(this.previousComamnd);
+                    screen.removeCommand(this.previousCommand);
                 }
                 
                 screen.lock();
@@ -460,8 +460,8 @@ public class Search
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
 
             }
-            else if (c == this.nextCommand) nextOrPrev(false);
-            else if (c == this.previousComamnd) nextOrPrev(true);
+            else if (c == this.nextCommand) nextOrPrev(true);
+            else if (c == this.previousCommand) nextOrPrev(false);
             else if (c == this.addCommand && d == screen)
             {
                 if (Jimm.jimm.getContactListRef().getGroupItems().length == 0)
