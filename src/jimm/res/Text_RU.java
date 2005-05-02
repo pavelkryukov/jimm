@@ -51,6 +51,7 @@ public class Text_RU extends ResourceBundle
         resources.put("ok",                          "OK         ");
         resources.put("reply",                       "Ответ      ");
         resources.put("close",                       "   Закрыть");
+        resources.put("search_user",                 "Найти      ");
         // #sijapp cond.else#
 		resources.put("select",                      "Выбрать");
         resources.put("reset",                       "Сброс");
@@ -60,6 +61,7 @@ public class Text_RU extends ResourceBundle
         resources.put("ok",                          "OK");
         resources.put("reply",                       "Ответ");
         resources.put("close",                       "Закрыть");
+        resources.put("search_user",                 "Найти пользователя");
         // #sijapp cond.end#
         resources.put(".",                           ".");
 		resources.put("about",                       "О программе");
@@ -149,7 +151,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("message_from",                "Сообщение от");
 		resources.put("minimize",                    "Фоновый режим");
 		resources.put("name",                        "Имя");
-		resources.put("next",						 "Дальше (кнопка 'Вправо')");
+		resources.put("next",						 "Следующий");
 		resources.put("nick",                        "Ник");
 		resources.put("no",                          "Нет");
 		resources.put("no_results",                  "Нет результатов");
@@ -182,7 +184,6 @@ public class Text_RU extends ResourceBundle
 		resources.put("requno",                      "Не требуется");
 		resources.put("res",                         "Разрешение");
 		resources.put("results",                     "Результаты");		
-		resources.put("search_user",                 "Найти пользователя");
 		resources.put("send",                        "Отправить");
 		resources.put("send_message",                "Новое сообщение");
 		resources.put("send_img",                    "Послать фото");
