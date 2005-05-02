@@ -82,7 +82,9 @@ public class Options
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
 	public static final int OPTION_AUTO_CONNECT					  = 138;   /* boolean */
+	// #sijapp cond.if target isnot "MOTOROLA"#
 	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
+	// #sijapp cond.end#
 	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
 	public static final int OPTION_CL_SORT_BY                     =  65;   /* int     */
@@ -137,7 +139,9 @@ public class Options
 			this.setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 			this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
 			this.setIntOption    (Options.OPTION_CONN_TYPE,                      0);
+			// #sijapp cond.if target isnot "MOTOROLA"#
 			this.setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
+			// #sijapp cond.end#
 			this.setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
 			this.setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
 			this.setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
@@ -427,7 +431,9 @@ public class Options
 		private ChoiceGroup keepConnAliveChoiceGroup;
 		private ChoiceGroup connTypeChoiceGroup;
 		private ChoiceGroup autoConnectChoiceGroup;
+		// #sijapp cond.if target isnot "MOTOROLA"#
 		private ChoiceGroup shadowConnChoiceGroup;
+		// #sijapp cond.end#
 		private ChoiceGroup uiLanguageChoiceGroup;
 		private ChoiceGroup displayDateChoiceGroup;
 		private ChoiceGroup clSortByChoiceGroup;
@@ -534,9 +540,11 @@ public class Options
                 {
                     this.connTypeChoiceGroup.setSelectedIndex(0, true);
                 }
+	// #sijapp cond.if target isnot "MOTOROLA"#
                 this.shadowConnChoiceGroup = new ChoiceGroup(ResourceBundle.getString("shadow_con")+"?", Choice.MULTIPLE);
                 this.shadowConnChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.shadowConnChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_SHADOW_CON));
+	// #sijapp cond.end#
                 this.autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
                 this.autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.autoConnectChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_AUTO_CONNECT));
@@ -684,7 +692,9 @@ public class Options
 						this.optionsForm.append(this.keepConnAliveChoiceGroup);
 						this.optionsForm.append(this.autoConnectChoiceGroup);
 						this.optionsForm.append(this.connTypeChoiceGroup);
+						// #sijapp cond.if target isnot "MOTOROLA"#
 						this.optionsForm.append(this.shadowConnChoiceGroup);
+						// #sijapp cond.end#
 						break;
 					case 2:
 						this.optionsForm.append(this.uiLanguageChoiceGroup);
@@ -776,7 +786,9 @@ public class Options
 					    Options.this.setStringOption(Options.OPTION_SRV_PORT,this.srvPortTextField.getString());
 						Options.this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,this.keepConnAliveChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_AUTO_CONNECT,this.autoConnectChoiceGroup.isSelected(0));
+						// #sijapp cond.if target isnot "MOTOROLA"#
 						Options.this.setBooleanOption(Options.OPTION_SHADOW_CON,this.shadowConnChoiceGroup.isSelected(0));
+						// #sijapp cond.end#
 						if (this.connTypeChoiceGroup.isSelected(0))
 						{
 							Options.this.setIntOption(Options.OPTION_CONN_TYPE,1);
