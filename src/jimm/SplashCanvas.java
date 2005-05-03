@@ -53,7 +53,7 @@ import java.util.Date;
 import java.util.TimerTask;
 //  #sijapp cond.if target is "MOTOROLA"#
 import DrawControls.LightControl;
-
+//  #sijapp cond.end#
 
 
 public class SplashCanvas extends Canvas
