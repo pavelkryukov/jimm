@@ -590,9 +590,9 @@ public class SplashCanvas extends Canvas
 			}
 			else if (this.requestInfoAct.isError())
 			{
-			    JimmException.handleException(new JimmException(160, 0, true));
-			    Jimm.jimm.getContactListRef().activate();
-				this.cancel();
+			    
+			    Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(160, 0, true)));
+			    this.cancel();
 			}
 		}
 
@@ -633,9 +633,12 @@ public class SplashCanvas extends Canvas
 			{
 				if (this.updateContactListAct.getErrorType() == 0 )
 				{
-					JimmException.handleException(new JimmException(154, 2, true));
+					Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(154, 2, true)));
 				}
+				else
+				{
 				Jimm.jimm.getContactListRef().activate();
+				}
 				this.cancel();
 			}
 		}
