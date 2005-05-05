@@ -1218,7 +1218,7 @@ public class ContactList implements CommandListener
         contactChanged(cItem, true, false, false);
         //#sijapp cond.if target isnot "MOTOROLA" #  
         // Bring Jimm to front if it was in background
-        if (Jimm.display == null)
+        if (Jimm.display.getCurrent() == null)
             this.activate();
          //#sijapp cond.end #
     }
@@ -1402,8 +1402,6 @@ public class ContactList implements CommandListener
         // #sijapp cond.end#
         
         // #sijapp cond.if target is "RIM"#
-        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
-        LED.setState(LED.STATE_BLINKING);
         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR))
         {
 						// had to use full path since import already contains another Alert object
@@ -1417,13 +1415,12 @@ public class ContactList implements CommandListener
         switch (mode_rim)
         {
         case 1:
-						// array is note in Hz, duration in ms.
-						short[] tune = new short[] { 349, 250, 0, 10, 523, 250 };
+            // array is note in Hz, duration in ms.
+			short[] tune = new short[] { 349, 250, 0, 10, 523, 250 };
             net.rim.device.api.system.Alert.startAudio(tune, 50);
             net.rim.device.api.system.Alert.startBuzzer(tune, 50);
             break;
 				}
-        // LED.setState(LED.STATE_OFF);
         // net.rim.device.api.system.Alert.stopAudio();
         // net.rim.device.api.system.Alert.stopBuzzer();
         // #sijapp cond.end#
