@@ -55,6 +55,10 @@ import java.util.TimerTask;
 import DrawControls.LightControl;
 //  #sijapp cond.end#
 
+//#sijapp cond.if target is "RIM"#
+import net.rim.device.api.system.LED;
+//#sijapp cond.end#
+
 
 public class SplashCanvas extends Canvas
 {
@@ -224,7 +228,10 @@ public class SplashCanvas extends Canvas
 	{
 		this.isLocked = false;
 		this.isMessageAvailable = false;
-		//  #sijapp cond.if target is "MOTOROLA"#
+        // #sijapp cond.if target is "RIM"#
+        LED.setState(LED.STATE_OFF);
+        //  #sijapp cond.end#
+        //  #sijapp cond.if target is "MOTOROLA"#
 		LightControl.On();
 		//  #sijapp cond.end#
 		Jimm.jimm.getContactListRef().activate();
@@ -237,6 +244,10 @@ public class SplashCanvas extends Canvas
 		if (this.isLocked)
 		{
 			this.isMessageAvailable = true;
+	        // #sijapp cond.if target is "RIM"#
+	        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
+	        LED.setState(LED.STATE_BLINKING);
+            // #sijapp cond.end#
 			this.repaint();
 		}
 	}
