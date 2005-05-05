@@ -127,7 +127,7 @@ public class JimmException extends Exception
 
 
 	// Exception handler
-	public synchronized static void handleException(JimmException e)
+	public synchronized static Alert handleException(JimmException e)
 	{
 
 		// Critical exception
@@ -152,6 +152,7 @@ public class JimmException extends Exception
 			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
 			errorMsg.setTimeout(Alert.FOREVER);
 			Jimm.jimm.getMainMenuRef().activate(errorMsg);
+			return(errorMsg);
 
 		}
 		// Non-critical exception
@@ -164,8 +165,9 @@ public class JimmException extends Exception
 				Alert errorMsg = new Alert(ResourceBundle.getString("warning"), e.getMessage(), null, AlertType.WARNING);
 				errorMsg.setTimeout(Alert.FOREVER);
 				Jimm.display.setCurrent(errorMsg, Jimm.display.getCurrent());
+				return(errorMsg);
 			}
-
+		return(null);
 		}
 
 	}
