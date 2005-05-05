@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -75,35 +75,23 @@ public class Util
     public static String getDateString(boolean onlyTime)
     {
         Calendar time = Calendar.getInstance();
+        String datestr = new String("failed");
 
         // Get time an apply time zone correction
-        Date date = new Date();
-        // #sijapp cond.if target isnot "SIEMENS"#
-        date.setTime(date.getTime() + TimeZone.getDefault().getRawOffset());
-        // #sijapp cond.end#
+        Date date = new Date();        
+        date.setTime(date.getTime() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 )); 
         time.setTime(date);
+        System.out.println(TimeZone.getDefault().getID());
 
         // Construct the string for the display
+        datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
 
-        // #sijapp cond.if target isnot "SIEMENS" | target isnot "MOTOROLA"#
-        String datestr = new String("failed");
-        if (TimeZone.getDefault().useDaylightTime())
-        {
-            datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY) + 1) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
-        } else
-        {
-            datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
-        }
-        // #sijapp cond.else#
-        String datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
-        // #sijapp cond.end#
-
-        if (datestr.substring(0, 1) == "24") datestr = "00" + datestr.substring(2);
         if (!onlyTime)
         {
             datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." + Util.makeTwo(time.get(Calendar.MONTH) + 1) + "."
                     + String.valueOf(time.get(Calendar.YEAR)) + " " + datestr;
         }
+        System.out.println(datestr);
         return datestr;
     }
 	
