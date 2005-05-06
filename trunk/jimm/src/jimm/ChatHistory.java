@@ -190,7 +190,7 @@ public class ChatHistory
             TextList temp = (TextList)historyVector.elementAt(nr);
             temp.clear();
             deleted++;
-            counter = ((counter--) % (this.historyVector.size()-deleted))+1;
+	    if (this.historyVector.size()-deleted > 0) counter = ((counter--) % (this.historyVector.size()-deleted))+1;
         }
     }
     
