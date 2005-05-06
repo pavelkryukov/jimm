@@ -75,8 +75,13 @@ public class Jimm extends MIDlet
 	// Contact list object
 	private ContactList cl;
 
-	// chat history object
+	// Chat history object
 	private ChatHistory ch;
+	
+    // #sijapp cond.if target is "MIDP2" #
+	// Minimized state variable
+	private boolean minimized;
+    // #sijapp cond.end #
 
 	// Timer object
 	private Timer t;
@@ -102,11 +107,14 @@ public class Jimm extends MIDlet
 	{
 
 		// Return if MIDlet has already been initialized
-		if (Jimm.jimm != null) 
-		    {
+		if (Jimm.jimm != null)
+        {
+		    // #sijapp cond.if target is "MIDP2" #
+		    this.setMinimized(false);
+		    // #sijapp cond.end #
 		    Jimm.jimm.getContactListRef().activate();
-		    return;
-		    }
+            return;
+        }
 
 		// Get Jimm version
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
@@ -136,7 +144,12 @@ public class Jimm extends MIDlet
 		{
 			Display.getDisplay(this).setCurrent(this.sc);
 		}
-
+		
+	    // #sijapp cond.if target is "MIDP2" #
+		// Set minimized = false
+		this.setMinimized(false);
+	    // #sijapp cond.end #
+	
 		// Save MIDlet reference
 		Jimm.jimm = this;
 
@@ -278,6 +291,20 @@ public class Jimm extends MIDlet
 		return (this.traffic);
 	}
 	// #sijapp cond.end#
+	
+    // #sijapp cond.if target is "MIDP2" #
+	// Set the minimize variable
+	public void setMinimized(boolean mini)
+	{
+	    this.minimized = mini;
+	}
+	
+	// Return if the app is in minimized state
+	public boolean minimized()
+	{
+	    return(this.minimized);
+	}
+    // #sijapp cond.end #
 	
 	// Commands for the message box
 	private Command msgCommand1, msgCommand2;
