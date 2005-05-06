@@ -58,7 +58,7 @@ public static boolean temp = false;
    }
    public static void tempOff()
    {
-	If (temp)
+	if (temp)
 	{
 	    Off();
 	    temp=false;
