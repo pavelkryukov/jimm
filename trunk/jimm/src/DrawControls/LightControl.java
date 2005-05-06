@@ -58,8 +58,11 @@ public static boolean temp = false;
    }
    public static void tempOff()
    {
-	Off();
-	temp=false;
+	If (temp)
+	{
+	    Off();
+	    temp=false;
+	}
    }
 }
 //#sijapp cond.end#
