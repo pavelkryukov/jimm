@@ -50,6 +50,10 @@ import jimm.comm.UpdateContactListAction;
 import jimm.comm.UrlMessage;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
+// #sijapp cond.if target is "MOTOROLA"#
+import DrawControls.LightControl;
+// #sijapp cond.end#
+
 
 public class ContactListContactItem extends ContactListItem
 {
@@ -552,6 +556,11 @@ public class ContactListContactItem extends ContactListItem
                 MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
                 MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                 MenuUtil.messageTextbox.setCommandListener(this);
+		//#sijapp cond.if target is "MOTOROLA"#
+		//Temporary turn on backlight
+		if (!LightControl.lightOn) LightControl.tempOn();
+					
+		//#sijapp cond.end#
                 Jimm.display.setCurrent(MenuUtil.messageTextbox);
 
             }
@@ -606,6 +615,10 @@ public class ContactListContactItem extends ContactListItem
                     MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
                     MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
+		    //#sijapp cond.if target is "MOTOROLA"#
+		    // Temporary turn on backlight
+		    if (!LightControl.lightOn)	LightControl.tempOn();
+		    //#sijapp cond.end#
                     Jimm.display.setCurrent(MenuUtil.messageTextbox);
                 } 
             	
@@ -752,6 +765,7 @@ public class ContactListContactItem extends ContactListItem
                         this.activate();
                     }
 
+			
                     // Send plain message
                     if ((MenuUtil.menuList.getSelectedIndex() == MenuUtil.send_message_idx) 
                     		&& !MenuUtil.messageTextbox.getString().equals(""))
@@ -784,10 +798,13 @@ public class ContactListContactItem extends ContactListItem
                             if (e.isCritical()) return;
                         }
                         
-                        
+                        // #sijapp cond.if target is "MOTOROLA"#
+			//Turn backlight off of it was temporary on
+			LightControl.tempOff();
+			// #sijapp cond.end#
 
                         // Return to contact list
-                        this.activate();
+			      this.activate();
                     }
                     
                     // Send URL message (continue creation)
@@ -891,6 +908,11 @@ public class ContactListContactItem extends ContactListItem
             // Textbox has been canceled
             else if (c == MenuUtil.textboxCancelCommand)
             {
+		        // #sijapp cond.if target is "MOTOROLA"#
+			//Turn backlight off of it was temporary on
+			LightControl.tempOff();
+
+			// #sijapp cond.end#
                 this.activate();
             }
             // Menu should be activated

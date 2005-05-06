@@ -27,29 +27,39 @@ import jimm.Jimm;
 
 public class LightControl
 {
-private static boolean LightOn =true;
-  
+public static boolean lightOn = true;
+public static boolean temp = false;  
    public static void On()
    {
 	Jimm.display.flashBacklight(Integer.MAX_VALUE);
-                     LightOn=true;
-    }
-    public static void Off()
-    {
+                     lightOn=true;
+   }
+   public static void Off()
+   {
 	Jimm.display.flashBacklight(1);
 	Jimm.display.flashBacklight(0);
-	LightOn=false;
-    }
-    public static void ChangeState()
+	lightOn=false;
+   }
+   public static void ChangeState()
    {              
-               if (LightOn)
+               if (lightOn)
                {	      
-	Off();
-                }
+		    Off();
+               }
                 else
                 {
-                      On();
-                 }
-    }
+                    On();
+                }
+   }
+   public static void tempOn()
+   {    
+   	On();
+	temp=true;
+   }
+   public static void tempOff()
+   {
+	Off();
+	temp=false;
+   }
 }
 //#sijapp cond.end#
