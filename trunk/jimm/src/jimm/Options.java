@@ -82,7 +82,7 @@ public class Options
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
 	public static final int OPTION_AUTO_CONNECT					  = 138;   /* boolean */
-	// #sijapp cond.if target isnot "MOTOROLA"#
+	// #sijapp cond.if target is "MIDP2" | target is "DEFAULT"#
 	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
 	// #sijapp cond.end#
 	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
@@ -139,7 +139,7 @@ public class Options
 			this.setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 			this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
 			this.setIntOption    (Options.OPTION_CONN_TYPE,                      0);
-			// #sijapp cond.if target isnot "MOTOROLA"#
+			// #sijapp cond.if target is "MIDP2" | target is "DEFAULT"#
 			this.setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
 			// #sijapp cond.end#
 			this.setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
@@ -431,9 +431,6 @@ public class Options
 		private ChoiceGroup keepConnAliveChoiceGroup;
 		private ChoiceGroup connTypeChoiceGroup;
 		private ChoiceGroup autoConnectChoiceGroup;
-		// #sijapp cond.if target isnot "MOTOROLA"#
-		private ChoiceGroup shadowConnChoiceGroup;
-		// #sijapp cond.end#
 		private ChoiceGroup uiLanguageChoiceGroup;
 		private ChoiceGroup displayDateChoiceGroup;
 		private ChoiceGroup clSortByChoiceGroup;
@@ -484,7 +481,7 @@ public class Options
 			this.optionsMenu.append(ResourceBundle.getString("options_interface"), null);
 			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			this.optionsMenu.append(ResourceBundle.getString("options_signaling"), null);
-                                                                // #sijapp cond.end#
+            // #sijapp cond.end#
 			
 			// #sijapp cond.if modules_TRAFFIC is "true" #
 			this.optionsMenu.append(ResourceBundle.getString("options_cost"), null);
@@ -533,18 +530,16 @@ public class Options
                 this.keepConnAliveChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
                 this.connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.MULTIPLE);
                 this.connTypeChoiceGroup.append(ResourceBundle.getString("async"), null);
+                // #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
+                this.connTypeChoiceGroup.append(ResourceBundle.getString("shadow_con"), null);
+            	// #sijapp cond.end#
                 if (Options.this.getIntOption(Options.OPTION_CONN_TYPE) == 0)
-                {
                     this.connTypeChoiceGroup.setSelectedIndex(0, false);
-                } else
-                {
+                else
                     this.connTypeChoiceGroup.setSelectedIndex(0, true);
-                }
-	// #sijapp cond.if target isnot "MOTOROLA"#
-                this.shadowConnChoiceGroup = new ChoiceGroup(ResourceBundle.getString("shadow_con")+"?", Choice.MULTIPLE);
-                this.shadowConnChoiceGroup.append(ResourceBundle.getString("yes"), null);
-                this.shadowConnChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_SHADOW_CON));
-	// #sijapp cond.end#
+                // #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
+                this.connTypeChoiceGroup.setSelectedIndex(1, Options.this.getBooleanOption(Options.OPTION_SHADOW_CON));
+                // #sijapp cond.end#
                 this.autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
                 this.autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.autoConnectChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_AUTO_CONNECT));
@@ -692,9 +687,6 @@ public class Options
 						this.optionsForm.append(this.keepConnAliveChoiceGroup);
 						this.optionsForm.append(this.autoConnectChoiceGroup);
 						this.optionsForm.append(this.connTypeChoiceGroup);
-						// #sijapp cond.if target isnot "MOTOROLA"#
-						this.optionsForm.append(this.shadowConnChoiceGroup);
-						// #sijapp cond.end#
 						break;
 					case 2:
 						this.optionsForm.append(this.uiLanguageChoiceGroup);
@@ -786,17 +778,13 @@ public class Options
 					    Options.this.setStringOption(Options.OPTION_SRV_PORT,this.srvPortTextField.getString());
 						Options.this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,this.keepConnAliveChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_AUTO_CONNECT,this.autoConnectChoiceGroup.isSelected(0));
-						// #sijapp cond.if target isnot "MOTOROLA"#
-						Options.this.setBooleanOption(Options.OPTION_SHADOW_CON,this.shadowConnChoiceGroup.isSelected(0));
-						// #sijapp cond.end#
 						if (this.connTypeChoiceGroup.isSelected(0))
-						{
 							Options.this.setIntOption(Options.OPTION_CONN_TYPE,1);
-						}
 						else
-						{
 						    Options.this.setIntOption(Options.OPTION_CONN_TYPE,0);
-						}
+		                // #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
+						Options.this.setBooleanOption(Options.OPTION_SHADOW_CON,this.connTypeChoiceGroup.isSelected(1));
+						// #sijapp cond.end#
 						break;
 					case 2:
 						Options.this.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.LANG_AVAILABLE[this.uiLanguageChoiceGroup.getSelectedIndex()]);
