@@ -217,7 +217,7 @@ public class SplashCanvas extends Canvas
 		this.setProgress(0);
 		this.isLocked = true;
 		//  #sijapp cond.if target is "MOTOROLA"#
-		LightControl.Off();
+		Jimm.display.flashBacklight(0);
 		//  #sijapp cond.end#
 		Jimm.display.setCurrent(this);
 	}
@@ -231,9 +231,7 @@ public class SplashCanvas extends Canvas
         // #sijapp cond.if target is "RIM"#
         LED.setState(LED.STATE_OFF);
         //  #sijapp cond.end#
-        //  #sijapp cond.if target is "MOTOROLA"#
-		LightControl.On();
-		//  #sijapp cond.end#
+        
 		Jimm.jimm.getContactListRef().activate();
 	}
 

@@ -365,6 +365,9 @@ public class ContactList implements CommandListener
     public void activate(Alert alert)
     {
         Jimm.display.setCurrent(alert, this.tree);
+	//#sijapp cond.if target is "MOTOROLA"#
+	LightControl.flash(false);
+	//#sijapp cond.end#
     }
 
     // Request display of the main menu
@@ -384,8 +387,11 @@ public class ContactList implements CommandListener
         buildTree();
         sortAll();
         tree.unlock();
-        Jimm.display.setCurrent(this.tree);
-
+	Jimm.display.setCurrent(this.tree);
+	//#sijapp cond.if target is "MOTOROLA"#
+	LightControl.flash(false);
+	//#sijapp cond.end#
+	
         // play sound notifications after connecting 
         if (needPlayOnlineNotif)
         {

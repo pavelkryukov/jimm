@@ -39,6 +39,9 @@ import jimm.comm.SearchAction;
 import jimm.comm.SetOnlineStatusAction;
 import jimm.comm.UpdateContactListAction;
 import jimm.util.ResourceBundle;
+//#sijapp cond.if target is "MOTOROLA"#
+import DrawControls.LightControl;
+//#sijapp cond.end#
 
 public class MainMenu implements CommandListener
 {
@@ -186,6 +189,9 @@ public class MainMenu implements CommandListener
     {
         this.build();
         Jimm.display.setCurrent(alert, this.list);
+	//#sijapp cond.if target is "MOTOROLA"#
+	LightControl.flash(true);
+	//#sijapp cond.end#
     }
 
     // Activates the main menu
@@ -193,6 +199,9 @@ public class MainMenu implements CommandListener
     {
         this.build();
         Jimm.display.setCurrent(this.list);
+	//#sijapp cond.if target is "MOTOROLA"#
+	LightControl.flash(true);
+	//#sijapp cond.end#
     }
 
     // Show form for adding user

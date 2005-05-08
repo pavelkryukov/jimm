@@ -106,6 +106,11 @@ public class Options
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
 	public static final int OPTION_HISTORY                        = 137;   /* boolean */
 	public static final int OPTION_COLOR_SCHEME                   =  73;   /* int     */
+	// #sijapp cond.if target is "MOTOROLA"#
+	public static final int OPTION_LIGHT_TIMEOUT		      =  74;   /* int     */
+	public static final int OPTION_LIGHT_MANUAL		      = 140;   /* boolean */
+	// #sijapp cond.end#
+	
 
 
 	/**************************************************************************/
@@ -161,13 +166,15 @@ public class Options
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.wav");
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-            // #sijapp cond.elseif target is "MOTOROLA"#
-            this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
+            		// #sijapp cond.elseif target is "MOTOROLA"#
+            		this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mp3");
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mp3");
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
+			this.setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		     5);
+			this.setBooleanOption(Options.OPTION_LIGHT_MANUAL,		     false);
 			// #sijapp cond.else#
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "");
@@ -192,7 +199,8 @@ public class Options
 			this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
 			this.setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
 			this.setBooleanOption(Options.OPTION_HISTORY,                        false);
-			this.setIntOption    (Options.OPTION_COLOR_SCHEME,                   CLRSCHHEME_BOW); 
+			this.setIntOption    (Options.OPTION_COLOR_SCHEME,                   CLRSCHHEME_BOW);
+			 
 			
 			// Construct option form
 			this.optionsForm = new OptionsForm();
@@ -459,6 +467,10 @@ public class Options
 		private ChoiceGroup useSmallFont;
 		private ChoiceGroup showUserGroups;
 		private ChoiceGroup colorScheme;
+		// #sijapp cond.if target is "MOTOROLA"#
+		private TextField lightTimeout;
+		private ChoiceGroup lightManual;
+		// #sijapp cond.end#
 		
 		// #sijapp cond.if modules_HISTORY is "true" #
 		private ChoiceGroup useHistory;
@@ -588,6 +600,11 @@ public class Options
                 this.colorScheme.append(ResourceBundle.getString("white_on_black"), null);
                 this.colorScheme.append(ResourceBundle.getString("white_on_blue"), null);
                 this.colorScheme.setSelectedIndex(Options.this.getIntOption(Options.OPTION_COLOR_SCHEME), true);
+		// #sijapp cond.if target is "MOTOROLA"#
+		this.lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.this.getIntOption(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
+		this.lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
+		this.lightManual.append(ResourceBundle.getString("yes"), null);
+		// #sijapp cond.end#
 
                 break;
             case 3:
@@ -648,6 +665,7 @@ public class Options
 		{
 			this.optionsMenu.setSelectedIndex(0, true);   // Reset
 			Jimm.display.setCurrent(this.optionsMenu);
+			
 		}
 
 
@@ -702,6 +720,10 @@ public class Options
 						
 						this.optionsForm.append(this.cp1251HackChoiceGroup);
 						this.optionsForm.append(this.colorScheme);
+						// #sijapp cond.if target is "MOTOROLA"#
+						this.optionsForm.append(this.lightTimeout);
+						this.optionsForm.append(this.lightManual);
+						// #sijapp cond.end #
 						
 						break;
 					case 3:
@@ -825,7 +847,10 @@ public class Options
 						);
 						
 						if (lastColorScheme != newColorScheme) Jimm.jimm.setColorScheme();
-						
+						// #sijapp cond.if target is "MOTOROLA" #
+						Options.this.setIntOption(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(this.lightTimeout.getString()));
+						Options.this.setBooleanOption(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
+						// #sijapp cond.end #
 						break;
 						
 					case 3:

@@ -533,7 +533,11 @@ public class ContactListContactItem extends ContactListItem
         // Command listener
         public void commandAction(Command c, Displayable d)
         {
-			
+		/#sijapp cond.if target is "MOTOROLA"#
+		//Constantly turn on backlight
+		LightControl.flash(true);
+					
+		//#sijapp cond.end#
             // Return to contact list
             if (c == MenuUtil.backCommand)
             {
@@ -557,8 +561,8 @@ public class ContactListContactItem extends ContactListItem
                 MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                 MenuUtil.messageTextbox.setCommandListener(this);
 		//#sijapp cond.if target is "MOTOROLA"#
-		//Temporary turn on backlight
-		if (!LightControl.lightOn) LightControl.tempOn();
+		//Constantly turn on backlight
+//		LightControl.flash(true);
 					
 		//#sijapp cond.end#
                 Jimm.display.setCurrent(MenuUtil.messageTextbox);
@@ -569,11 +573,21 @@ public class ContactListContactItem extends ContactListItem
             else if (c == MenuUtil.addUrsCommand)
             {
             	Jimm.jimm.getMainMenuRef().addUserOrGroupCmd(uin,true);
+		/#sijapp cond.if target is "MOTOROLA"#
+		//Constantly turn on backlight
+//		LightControl.flash(true);
+					
+		//#sijapp cond.end#
             }
             
             // User wants to rename Contact
             else if (c == MenuUtil.renameOkCommand)
             {
+		/#sijapp cond.if target is "MOTOROLA"#
+		//Constantly turn on backlight
+//		LightControl.flash(true);
+					
+		//#sijapp cond.end#
                 MenuUtil.messageTextbox.removeCommand(MenuUtil.renameOkCommand);
                 ContactListContactItem.this.setName(MenuUtil.messageTextbox.getString());
                 try 
@@ -615,11 +629,7 @@ public class ContactListContactItem extends ContactListItem
                     MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
                     MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                     MenuUtil.messageTextbox.setCommandListener(this);
-		    //#sijapp cond.if target is "MOTOROLA"#
-		    // Temporary turn on backlight
-		    if (!LightControl.lightOn)	LightControl.tempOn();
-		    //#sijapp cond.end#
-                    Jimm.display.setCurrent(MenuUtil.messageTextbox);
+		    Jimm.display.setCurrent(MenuUtil.messageTextbox);
                 } 
             	
             	// Send URL message
@@ -799,9 +809,7 @@ public class ContactListContactItem extends ContactListItem
                         }
                         
                         // #sijapp cond.if target is "MOTOROLA"#
-			//Turn backlight off of it was temporary on
-			LightControl.tempOff();
-			// #sijapp cond.end#
+			
 
                         // Return to contact list
 			      this.activate();
@@ -908,11 +916,7 @@ public class ContactListContactItem extends ContactListItem
             // Textbox has been canceled
             else if (c == MenuUtil.textboxCancelCommand)
             {
-		        // #sijapp cond.if target is "MOTOROLA"#
-			//Turn backlight off of it was temporary on
-			LightControl.tempOff();
-
-			// #sijapp cond.end#
+		        
                 this.activate();
             }
             // Menu should be activated
@@ -1001,6 +1005,9 @@ public class ContactListContactItem extends ContactListItem
                 // Display history
                 ContactListContactItem.this.resetUnreadMessages();
                 Jimm.display.setCurrent(msgDisplay);
+		// #sijapp cond.if target is "MOTOROLA"#
+		LightControl.flash(false);
+		// #sijapp cond.end#
 
             }
             // Display menu
@@ -1011,6 +1018,7 @@ public class ContactListContactItem extends ContactListItem
                 MenuUtil.menuList.setSelectedIndex(0, true);
                 MenuUtil.menuList.setCommandListener(this);
                 Jimm.display.setCurrent(MenuUtil.menuList);
+		LightControl.flash(true);
             }
         }
     }

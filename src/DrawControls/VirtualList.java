@@ -375,17 +375,18 @@ public abstract class VirtualList extends Canvas
 	{
 	case KEY_NUM1:  moveToTop(); break;
 	case KEY_NUM7:  moveToBottom(); break;
- //#sijapp cond.if target is "MOTOROLA"#
-                      case KEY_STAR:  LightControl.ChangeState(); break;
- //#sijapp cond.end#
-
-
-	}
+	// #sijapp cond.if target is "MOTOROLA"#
+	case KEY_STAR: LightControl.changeState();break;
+ 	}
+  
   }
   
   // protected void keyPressed(int keyCode) 
   protected void keyPressed(int keyCode)
   {
+    //#sijapp cond.if target is "MOTOROLA"#
+    LightControl.flash(false);
+    //#sijapp cond.end#
     keyReaction(keyCode);
     userPressKey(keyCode);
     if (vlCommands != null) vlCommands.onKeyPress(this, keyCode);
