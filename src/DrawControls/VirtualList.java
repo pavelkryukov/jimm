@@ -377,6 +377,7 @@ public abstract class VirtualList extends Canvas
 	case KEY_NUM7:  moveToBottom(); break;
 	// #sijapp cond.if target is "MOTOROLA"#
 	case KEY_STAR: LightControl.changeState();break;
+    // #sijapp cond.end#
  	}
   
   }
