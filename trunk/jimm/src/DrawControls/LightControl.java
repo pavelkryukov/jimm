@@ -24,45 +24,39 @@
 
 package DrawControls;
 import jimm.Jimm;
+import jimm.Options;
 
 public class LightControl
 {
-public static boolean lightOn = true;
-public static boolean temp = false;  
-   public static void On()
-   {
-	Jimm.display.flashBacklight(Integer.MAX_VALUE);
-                     lightOn=true;
-   }
-   public static void Off()
-   {
-	Jimm.display.flashBacklight(1);
-	Jimm.display.flashBacklight(0);
-	lightOn=false;
-   }
-   public static void ChangeState()
-   {              
-               if (lightOn)
-               {	      
-		    Off();
-               }
-                else
-                {
-                    On();
-                }
-   }
-   public static void tempOn()
-   {    
-   	On();
-	temp=true;
-   }
-   public static void tempOff()
-   {
-	if (temp)
+private static int TIMEOUT = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_LIGHT_TIMEOUT) * 1000; //millisec
+private static boolean lightOn = true;
+
+    public static void flash(boolean constant)
+    {
+	if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_LIGHT_MANUAL))
+		{
+		if (constant) Jimm.display.flashBacklight(Integer.MAX_VALUE);
+		else    	Jimm.display.flashBacklight(TIMEOUT);
+		}
+
+    }
+    public static void changeState()
+    {
+	if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_LIGHT_MANUAL))
 	{
-	    Off();
-	    temp=false;
+		if (lightOn)
+		{
+			Jimm.display.flashBacklight(1);
+			Jimm.display.flashBacklight(0);
+			lightOn = false;
+		}
+		else
+		{
+			Jimm.display.flashBacklight(Integer.MAX_VALUE);
+			lightOn = true;
+		}
 	}
-   }
+    }
+    
 }
 //#sijapp cond.end#
