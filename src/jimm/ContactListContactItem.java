@@ -561,10 +561,6 @@ public class ContactListContactItem extends ContactListItem
                 MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
                 MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
                 MenuUtil.messageTextbox.setCommandListener(this);
-				// #sijapp cond.if target is "MOTOROLA"#
-				// Constantly turn on backlight
-		        // LightControl.flash(true);		
-				// #sijapp cond.end#
                 Jimm.display.setCurrent(MenuUtil.messageTextbox);
 
             }
@@ -573,19 +569,11 @@ public class ContactListContactItem extends ContactListItem
             else if (c == MenuUtil.addUrsCommand)
             {
             	Jimm.jimm.getMainMenuRef().addUserOrGroupCmd(uin,true);
-            	// #sijapp cond.if target is "MOTOROLA"#
-            	// Constantly turn on backlight
-            	// LightControl.flash(true);			
-            	// #sijapp cond.end#
-            }
+             }
             
             // User wants to rename Contact
             else if (c == MenuUtil.renameOkCommand)
             {
-				// #sijapp cond.if target is "MOTOROLA"#
-				// Constantly turn on backlight
-				// LightControl.flash(true);				
-				//#sijapp cond.end#
                 MenuUtil.messageTextbox.removeCommand(MenuUtil.renameOkCommand);
                 ContactListContactItem.this.setName(MenuUtil.messageTextbox.getString());
                 try 
