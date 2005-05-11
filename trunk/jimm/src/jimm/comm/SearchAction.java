@@ -339,12 +339,12 @@ public class SearchAction extends Action
             Thread.yield();
             if (this.state == STATE_FIRSTRESULT_RECEIVED)
             {
-            	JimmException.handleException(new JimmException(159, 0, true));
+            	Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(159, 0, true)));
             	handeld = true;
             }
             else
             {
-            	JimmException.handleException(new JimmException(159, 1, true));
+            	Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(159, 1, true)));
             	handeld = true;
             }
             this.state = ConnectAction.STATE_ERROR;
