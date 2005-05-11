@@ -262,7 +262,9 @@ public class SplashCanvas extends Canvas
 		    {
 		        this.keylockMessage.setTitle(ResourceBundle.getString("keylock"));
 		        this.keylockMessage.setString(ResourceBundle.getString("keylock_message"));
+			//  #sijapp cond.if target is "MOTOROLA"#
 		       Jimm.display.flashBacklight(2000);
+			// #sijapp cond.end#
 		       Jimm.display.setCurrent(this.keylockMessage);
 		    }
 		}
