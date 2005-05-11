@@ -55,7 +55,7 @@ public class Text_EN extends ResourceBundle
         resources.put("reply",                       "Reply       ");
         resources.put("close",                       "       Close");
         resources.put("send",                        "Send        ");
-        resources.put("next",	          "       Next");
+        resources.put("next",	          	     "Next        ");
         // #sijapp cond.else# 
         resources.put("reply",                       "Reply");
         resources.put("close",                       "Close");
