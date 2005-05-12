@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/res/Text_LT.java
  Version: ###VERSION###  Date: ###DATE###
- Based on CVS 1.37 Text_EN (2004.12.20 16:28)
+ Based on CVS 1.55 Text_EN (2005.04.25 12:00)
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Linas Gricius 
  *******************************************************************************/
 
@@ -39,26 +39,57 @@ public class Text_LT extends ResourceBundle
 	public Text_LT()
 	{
 
+
 		// Labels
+		// MOTOROLA formatted buttons
+		// #sijapp cond.if target is "MOTOROLA"#
+		resources.put("select",                      "Pasirinkti  ");
+		resources.put("reset",                       "   Atstatyti");
+		resources.put("cancel",                      "  Atsisakyti");
+		resources.put("back",                        "       Atgal");
+		resources.put("exit_button",                 "      Išeiti");
+		resources.put("menu_button",                 "     Meniu");
+		resources.put("save",                        "Saugoti    ");
+		resources.put("ok",                          "OK          ");
+		resources.put("reply",                       "Atsakyti    ");
+		resources.put("close",                       "    Uždaryti");
+		resources.put("send",                        "Saugoti     ");
+		// #sijapp cond.else#
+		resources.put("reply",                       "Atsakyti");
+		resources.put("close",                       "Uždaryti");
+		resources.put("select",                      "Pasirinkti");
+		resources.put("reset",                       "Atstatyti");
+		resources.put("cancel",                      "Atsisakyti");
+		resources.put("back",                        "Atgal");
+		resources.put("save",                        "Saugoti");
+		resources.put("ok",                          "OK");
+		resources.put("send",                        "Siųsti");
+		// #sijapp cond.end#
+
 		resources.put(".",                           ".");
 		resources.put("about",                       "Apie");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\nVersion 0.3.1\nSee http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ klientas J2ME palaikantiems telefonams\n\nVersija: ###VERSION###\nTipas: ###TARGET###\nModuliai: ###MODULES###\n\nDaugiau informacijos http://www.jimm.org/");
 		resources.put("account",                     "Paskyra");
+		resources.put("add_group",                   "Sukurti grupę");
 		resources.put("add_user",                    "Pridėti vartotoją");
 		resources.put("add_to_list",                 "Įtraukti į sarašą");
 		resources.put("age",                         "Amžius");		
 		resources.put("async",                       "Asinchroniškas");
+		resources.put("attention",                   "Dėmėsio!");
 		resources.put("auth",                        "Autor.");		
-		resources.put("back",                        "Atgal");
+		resources.put("auto_connect",                "Automatiškai prisijungti paleidus programą");
 		resources.put("beep",                        "Pyptelėjimas");
+		resources.put("black_on_white",              "Juodu ant balto");
 		resources.put("byte",                        "Baitas");
-		resources.put("cancel",                      "Atsisakyti");
+		resources.put("chat_small_font",             "Naudoti mažą šriftą dialogo lange");
 		resources.put("city",                        "Miestas");		
-		resources.put("close",                       "Uždaryti");
+		resources.put("clear",                       "Išvalyti");
+		resources.put("color_scheme",                "Spalvinė schema");
 		resources.put("conn_type",                   "Prisijungimo tipas");
 		resources.put("con_wait",                    "Laukti tarp prisijungimų (sec)");
 		resources.put("connect",                     "Prisijungti");
 		resources.put("connecting",                  "Jungiamasi");
+		resources.put("cost",                        "Kaina");
 		resources.put("contact_list",                "Sąrašas");
 		resources.put("cp1251",                      "Naudoti CP1251 pritaikymą?");
 		resources.put("cpd",                         "Kaina per dieną");
@@ -66,73 +97,85 @@ public class Text_LT extends ResourceBundle
 		resources.put("currency",                    "Valiuta");
 		resources.put("del_group",                   "Ištrinti vartotojų grupę");
 		resources.put("delete_chat",                 "Ištrinti istoriją");
-		resources.put("deny",						 "Atmesti autorizavimą");
+		resources.put("deny",				 		 "Atmesti autorizavimą");
 		resources.put("denyedby",					 "Atorizavimas atmestas: ");
 		resources.put("description",                 "Aprašymas");
 		resources.put("name_desc",                   "Failas vardas ir aprašymas");		
 		resources.put("user_menu",                   "Vartotojo meniu");
 		resources.put("disconnect",                  "Atsijungti");
 		resources.put("disconnecting",               "Atsijungiama");
-		resources.put("display_advertisement",       "Reklamuoti Jimm'ą?");
 		resources.put("display_date",                "Rodyti datą startiniame lange?");
 		resources.put("email",                       "El.paštas");
 		resources.put("error",                       "Klaida");
+		resources.put("exec",                        "Vykdyti");
 		resources.put("exit",                        "Išeiti");
 		resources.put("female",                      "M");
 		resources.put("filetransfer",                "File transfer");
 		resources.put("filepath",                    "File path");		
+		resources.put("find",                        "Rasti");
 		resources.put("firstname",                   "Vardas");
+		resources.put("free_heap",                   "Laisva atmintis");
 		resources.put("ft_name",                     "Siųsti failą");		
 		resources.put("ft_cam",                      "Siųsti nuotrauką iš kameros");		
 		resources.put("gender",                      "Lytis");		
 		resources.put("grant",						 "Autorizuoti");
-		resources.put("grantedby",					 "Jūs autorizuotas:");		
+		resources.put("grantedby",					 "Jūs autorizuotas:");	
+		resources.put("group_name",                  "Grupės vardas");
+		resources.put("group_is_not_empty",          "Pasirinkta grupė nėra tuščia!\nPerkelkite iš pradžių įrašus į kitas grupes!");
+		resources.put("have_unread_mess",            "Turite neatsakytų žinučių. Norite išeiti?");			
 		resources.put("hide_offline",                "Paslėpti neprisijungusius");
 		resources.put("info",                        "Informacija");
 		resources.put("kb",                          "kB");
+		resources.put("kbs",                         "kb/s");
 		resources.put("init_ft",                     "Pradedama");
 		resources.put("keep_chat",                   "Išsaugoti istoriją?");
 		resources.put("keep_conn_alive",             "Palaikyti pastovų ryšį?");
+		resources.put("keylock",                     "Užrakinta klaviatūra");
+		resources.put("keylock_message",             "Palaikykite \"#\" norėdami atblokuoti klaviatūrą");
 		resources.put("keylock_enable",              "Užrakinti klaviatūrą");
 		resources.put("keylock_enabled",             "Klaviatūra užrakinta");
 		resources.put("keyword",                     "raktažodis");		
 		resources.put("language",                    "Kalba");
+		resources.put("lang_BG",                     "Bulgarų");
 		resources.put("lang_BR",                     "Portugalų (Brazilija)");
 		resources.put("lang_CZ",                     "Čekų");
 		resources.put("lang_DE",                     "Vokiečių");
 		resources.put("lang_EN",                     "Anglų");
 		resources.put("lang_ES",                     "Ispanų");
+		resources.put("lang_HE",                     "Hebrajų");
 		resources.put("lang_IT",                     "Italų");		
 		resources.put("lang_LT",                     "Lietuvių");
+		resources.put("lang_PL",                     "Lenkų");
 		resources.put("lang_RU",                     "Rusų");
 		resources.put("lang_SE",                     "Švedų");
 		resources.put("lang_SR",                     "Serbų");
-		resources.put("lang_HE", 					 "Hebrajų");
-		resources.put("lang_BG", 					 "Bulgarian");
+		resources.put("lang_UA",                     "Ukrainiečių");	
 		resources.put("lastname",                    "Pavardė");		
 		resources.put("loading",                     "Kraunasi");
 		resources.put("male",                        "V");		
 		resources.put("me",                          "aš");
 		resources.put("menu",                        "Meniu");
-		resources.put("msg_sound_file_name",         "Žinutės garsas");
 		resources.put("message_notification",        "Žinutės pranešimas");		
+		resources.put("msg_sound_file_name",         "Žinutės garsas");
 		resources.put("message",                     "Žinutė");
 		resources.put("message_from",                "Žinutė nuo");
+		resources.put("minimize",                    "Sumažintas");
 		resources.put("name",                        "Vardas");
-		resources.put("next",						 "Toliau");		
+		resources.put("next",	 					 "Toliau");		
 		resources.put("nick",                        "Slapyvardis");
 		resources.put("no",                          "Ne");
+		resources.put("not",                         "ne");
 		resources.put("no_results",                  "be rezultatų");
+		resources.put("no_not_empty_gr",             "Ne tuščių grupių trynimas dar nepalaikomas!");
 		resources.put("no_not_empty_gr",             "Tik tuščias grupes galima trinti (kol kas)");
 		resources.put("not_implemented",             "Funkcija dar neveikia.");
 		resources.put("noreason",                    "Nepateikė priežasties.");
 		resources.put("notice",                      "Pranešimas");
 		resources.put("nr",                          "Nr");
-		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "1k.per sesiją?");
 		resources.put("onl_notification",            "Pranešimas apie prisijungusį");
-  	    resources.put("onl_sound_file_name",         "Online garsas");
-  	    resources.put("only_online",                 "Rodyti tik prisijungusius");
+  		resources.put("onl_sound_file_name",         "Online garsas");
+	  	resources.put("only_online",                 "Rodyti tik prisijungusius");
 		resources.put("options",                     "Savybės");
 		resources.put("options_account",             "Vartotojas");
 		resources.put("options_cost",                "Kaina");
@@ -143,34 +186,37 @@ public class Text_LT extends ResourceBundle
 		resources.put("options_signaling",           "Pranešimai");
 		resources.put("password",                    "Slaptažodis");
 		resources.put("plength",                     "Apmokestinamo paketo dydis kilobaitais");
-        resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
-  	    resources.put("prev",                        "Ankstesnis");
-		resources.put("reason",						 "Priežastis");		
+	    resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
+	  	resources.put("prev",                        "Ankstesnis");
+		resources.put("reason",		    			 "Priežastis");		
 		resources.put("remove",                      "Pašalinti iš sąrašo");
 		resources.put("rename",                      "Pervadinti");
-		resources.put("reply",                       "Atsakyti");
+		resources.put("remove_group",                "Ištrinti grupę");
+		resources.put("remove_user",                 "Ištrinti vartotoją");
 		resources.put("requauth",                    "Prašyti autorizavimo");
-  	    resources.put("requ",                        "Reikalingas");
-  	    resources.put("requno",                      "Nereikalingas");
-		resources.put("reset",                       "Valyti");
+		resources.put("requ",                        "Reikalingas");
+		resources.put("requno",                      "Nereikalingas");
 		resources.put("res",                         "Raiška");
 		resources.put("results",                     "Rezultatai");
-		resources.put("save",                        "Išsaugoti");
 		resources.put("search_user",                 "Ieškoti vartotojo");
-		resources.put("send",                        "Siųsti");
-		resources.put("send_message",                "Nauja Žinutė");
 		resources.put("send_img",                    "Siųsti paveiksliuką");				
+		resources.put("send_message",                "Nauja Žinutė");
 		resources.put("send_url",                    "Nauja Nuoroda");
 		resources.put("server",                      "Prisijungimo serveris");
 		resources.put("server_host",                 "Serveris");
 		resources.put("server_port",                 "Prievadas");
 		resources.put("session",                     "Sesija");
-		resources.put("set_status",                  "Nustatyti statusą");
+		resources.put("set_status",                  "Būsena");
+		resources.put("shadow_con",                  "Shadow connection (Motorola?)");		
+		resources.put("show_user_groups",            "Rodyti grupes");
 		resources.put("since",                       "Nuo");
+		resources.put("size",                        "Dydis");
 		resources.put("sound",                       "ICQ Garsas");
+		resources.put("sound_file_name",             "Garsinis failas");
 		resources.put("sort_by",                     "Rušiuoti sarašą");
 		resources.put("sort_by_name",                "Pagal vardą");
 		resources.put("sort_by_status",              "Pagal statusą");
+		resources.put("speed",                       "Greitis");
 		resources.put("status",                      "Statusas");
 		resources.put("status_away",                 "Kažkur šalia");
 		resources.put("status_chat",                 "Noriu kalbėtis!");
@@ -180,10 +226,12 @@ public class Text_LT extends ResourceBundle
 		resources.put("status_occupied",             "Užimtas");
 		resources.put("status_offline",              "Atsijungęs");
 		resources.put("status_online",               "Prisijungęs");
+		resources.put("successful",                  "sėkmingas");
 		resources.put("sysnotice",                   "Sistemos pranešimas");
 		resources.put("traffic",                     "Srautas");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "Nuoroda");
+		resources.put("use_history",                 "Saugoti istoriją");
 		resources.put("user_add",                    "Prideti vartotoja");
 		resources.put("user_search",                 "Ieškoti vartotojo");
 		resources.put("vibration",                   "Vibracija");
@@ -191,23 +239,26 @@ public class Text_LT extends ResourceBundle
 		resources.put("volume",                      "Garsas");		
 		resources.put("wait",                        "Prašome palaukti ...");
 		resources.put("warning",                     "Įspėjimas");
-		resources.put("wantsyourauth",				 " nori būti autorizuotas. Tikslas: ");
+		resources.put("wantsyourauth",	  			 " nori būti autorizuotas. Tikslas: ");
+		resources.put("was",                         "buvo");
 		resources.put("whichgroup",                  "Kuri grupė?");
+		resources.put("white_on_black",              "Baltu ant juodo");
+		resources.put("white_on_blue",               "Baltu ant mėlyno");
 		resources.put("yes",                         "Taip");
-		resources.put("youwereadded",				 "Įtraukas į sąrašą pas: ");
-		resources.put("chat_small_font",			 "Mažas šrifto dydis");
-		resources.put("select",                      "Pasirinkti");
-		resources.put("attention",                   "Dėmėsio!");
-  	    resources.put("have_unread_mess",            "Dar turite neperskaitytų žinučių. Norite vis tiek išeiti?");
+		resources.put("youwereadded",	    		 "Įtraukas į sąrašą pas: ");
 		
-		// User management ********
-		resources.put("group_is_not_empty",          "Pasirinkta grupė nėra tuščia!\nPerkelkite visus vartotojus į kitas grupes!");
-		resources.put("add_group",                   "Pridėti grupę");
-		resources.put("group_name",                  "Grupės pavadinimas");
-		resources.put("exec",                        "Vykdyti");
-		resources.put("remove_user",                 "Pašalinti vartotoją");
-		resources.put("remove_group",                "Pašalinti grupę");
-		resources.put("show_user_groups",            "Rodyti vartotojų grupes");
+		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("text_to_find",                "Tekstas");
+		resources.put("find_backwards",              "Atgalinis");
+		resources.put("find_case_sensitiv",          "Case sensitive");
+		resources.put("history_info",                "Informacija");
+		resources.put("hist_cur",                    "Žinutės");
+		resources.put("hist_rc",                     "Viso žinučių");
+		resources.put("hist_size",                   "Sunaudota (kB)");
+		resources.put("hist_avail",                  "Viso (kB)");
+		resources.put("history",                     "Pokalbių istorija");
+		resources.put("not_found",                   "nerasta");
+	 	//#sijapp cond.end#
 		
 		// Generic errors
 		resources.put("error_100",                   "Nežinoma klaida (#100.EXT)");
@@ -280,11 +331,8 @@ public class Text_LT extends ResourceBundle
 		resources.put("error_190",                   "Apsikeitimas su  < ICQv8 protokolo klientais nepalaikomas (#190.EXT)");
 		resources.put("error_191",                   "Klaida skaitant failą. Greičiausiai nepalaikoma (#191.EXT)");
 		resources.put("error_192",                   "Klaida skaitant failą. Blogai nurodytas kelias arba nepalaikoma (#192.EXT)");
-
+		resources.put("error_193",                   "Klaida bandant naršyti failų sistemą. Saugumo klaida (#193.EXT)");		
 	}
-
-
 }
-
 
 // #sijapp cond.end #
