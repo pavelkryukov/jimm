@@ -1,28 +1,28 @@
 /*******************************************************************************
- Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+Jimm - Mobile Messaging - J2ME ICQ clone
+Copyright (C) 2003-05  Jimm Project
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- as published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- ********************************************************************************
- File: src/jimm/res/Text_BG.java
- Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher, Ivaylo Donchev
- *******************************************************************************/
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+********************************************************************************
+File: src/jimm/res/Text_BG.java
+Version: ###VERSION###  Date: ###DATE###
+Author(s): Manuel Linsmayer, Andreas Rossbacher, Ivaylo Donchev
+*******************************************************************************/
 
 
-// #sijapp cond.if lang_BG is "true" #
+//#sijapp cond.if lang_BG is "true" #
 
 
 package jimm.res;
@@ -38,26 +38,59 @@ public class Text_BG extends ResourceBundle
 	public Text_BG()
 	{
 
+	
 		// Labels
+		// MOTOROLA formatted buttons
+ 	    // #sijapp cond.if target is "MOTOROLA"#
+ 	    resources.put("select",                      "Избери      ");
+ 	    resources.put("reset",                       "       Ресет");
+ 	    resources.put("cancel",                      "      Отказ");
+ 	    resources.put("back",                        "       Назад");
+ 	    resources.put("exit_button",                 "       Изход");
+ 	    resources.put("menu_button",                 "      Меню");
+ 	    resources.put("save",                        "Запази       ");
+ 	    resources.put("ok",                          "OK          ");
+ 	    resources.put("reply",                       "Отговори       ");
+ 	    resources.put("close",                       "       Затвори");
+ 	    resources.put("send",                        "Изпрати        ");
+ 	    resources.put("next",                        "       Нататък");
+ 	    // #sijapp cond.else#
+ 	    resources.put("reply",                       "Отговори");
+ 	    resources.put("close",                       "Затвори");
+ 	    resources.put("select",                      "Избери");
+ 	    resources.put("reset",                       "Ресет");
+ 	    resources.put("cancel",                      "Отказ");
+ 	    resources.put("back",                        "Назад");
+ 	    resources.put("save",                        "Запази");
+ 	    resources.put("ok",                          "OK");
+ 	    resources.put("send",                        "Изпрати");
+ 	    resources.put("next",                        "Нататък");
+ 	    // #sijapp cond.end#
+ 	 
 		resources.put(".",                           ".");
 		resources.put("about",                       "Относно");
-		resources.put("about_info",                  "Jimm - Мобилен\n\nICQ Клиент за J2ME\nВерсия 0.3.1\nВиж http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Мобилен ICQ\n\nICQ клиент за J2ME\n\nВерсия: ###VERSION###\n За: ###TARGET###\nМодули: ###MODULES###\n\nВиж http://www.jimm.org/");
 		resources.put("account",                     "Акаунт");
+		resources.put("add_group",                   "Добави група");
 		resources.put("add_user",                    "Добави Потребител");
 		resources.put("add_to_list",                 "Добави в листа");
 		resources.put("age",                         "Год.");
 		resources.put("async",                       "Асинхр.");
+		resources.put("attention",                   "Внимание!");
 		resources.put("auth",				     	 "Оторизация");
-		resources.put("back",                        "Назад");
+		resources.put("auto_connect",                "Автоматично свързване при старт");
 		resources.put("beep",                        "Beep");
+		resources.put("black_on_white",              "Черно-бяло");
 		resources.put("byte",                        "Байт");
-		resources.put("cancel",                      "Отказ");
+		resources.put("chat_small_font",             "Малки шрифтове за чат");
 		resources.put("city",                        "Град");
-		resources.put("close",                       "Затвори");
+		resources.put("clear",                       "Изчисти");
+ 	    resources.put("color_scheme",                "Цветова схема");
 		resources.put("conn_type",                   "Тип на връзката");
-		resources.put("con_wait",                    "Изчакване между връзките(сек)");
+	
 		resources.put("connect",                     "Свържи");
 		resources.put("connecting",                  "Свързване");
+		resources.put("cost",                        "Цена");
 		resources.put("contact_list",                "Лист");
 		resources.put("cp1251",                      "Използвай CP1251 hack?");
 		resources.put("cpd",                         "Цена за ден");
@@ -72,62 +105,77 @@ public class Text_BG extends ResourceBundle
 		resources.put("user_menu",                   "Потр. Меню");
 		resources.put("disconnect",                  "Прекъсни");
 		resources.put("disconnecting",               "Прекъсване");
-		resources.put("display_advertisement",       "Добави Jimm съвет?");
+		
 		resources.put("display_date",                "Изписвай дата на нов екран?");
 		resources.put("email",                       "Email");
 		resources.put("error",                       "Грешка");
+		resources.put("exec",                        "Изпълни");
 		resources.put("exit",                        "Изход");
 		resources.put("female",                      "Ж");
 		resources.put("filetransfer",                "Файлов трансфер");
 		resources.put("filepath",                    "Път до файл");
+		resources.put("find",                        "Намери");
 		resources.put("firstname",                   "Първо име");
+		resources.put("free_heap",                   "Освободи паметта");
 		resources.put("ft_name",                     "Изпрати файл");		
 		resources.put("ft_cam",                      "Изпрати образ от камера");		
 		resources.put("gender",                      "Пол");
 		resources.put("grant",						 "Потвърди оторизация");
 		resources.put("grantedby",					 "Оторизацията потвърдена от:");
+		resources.put("group_name",                  "Име на група");
+ 	    resources.put("group_is_not_empty",          "Избраната група не е празна!\nПреместете всички потребители в други групи!");
+ 	    resources.put("have_unread_mess",            "Имате непрочетени съобщения. Да изляза ли?");
 		resources.put("hide_offline",                "Скрий офлайн контактите");
 		resources.put("info",                        "Инфо");
 		resources.put("init_ft",                     "Инициализиране");
 		resources.put("kb",                          "kB");
+		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Пази чат историята?");
 		resources.put("keep_conn_alive",             "Дръж връзката жива?");
+		resources.put("keylock",                     "Keylock");
+ 	    resources.put("keylock_message",             "Задръжте \"#\" за да изключите keylock-а");
 		resources.put("keylock_enable",              "Заключи клавиатура");
 		resources.put("keylock_enabled",             "Клавиатура заключена");
 		resources.put("keyword",                     "Ключова дума");
 		resources.put("language",                    "Език");
+		resources.put("lang_BG", 					 "Български");
 		resources.put("lang_BR",                     "Португалски (Бразилия)");
 		resources.put("lang_CZ",                     "Чешки");
 		resources.put("lang_DE",                     "Немски");
 		resources.put("lang_EN",                     "Англйиски");
 		resources.put("lang_ES",                     "Испански");
+		resources.put("lang_HE", 					 "Еврейски");
 		resources.put("lang_IT",                     "Италиански");
 		resources.put("lang_LT",                     "Литовски");
+		resources.put("lang_PL",                     "Полски");
 		resources.put("lang_RU",                     "Руски");
 		resources.put("lang_SE",                     "Шведски");
 		resources.put("lang_SR",                     "Сръбски");
-		resources.put("lang_HE", 					 "Еврейски");
-		resources.put("lang_BG", 					 "Български");
+		resources.put("lang_UA",                     "Украински");
+
 		resources.put("lastname",                    "Фамилия");
 		resources.put("loading",                     "Зареждане");
 		resources.put("male",                        "M");
 		resources.put("me",                          "Аз");
 		resources.put("menu",                        "Меню");
-		resources.put("msg_sound_file_name",         "Звук за съобщение");
+		
 		resources.put("message_notification",        "Нотификация при съобщение");
+		resources.put("msg_sound_file_name",         "Звук за съобщение");
 		resources.put("message",                     "Съобщение");
 		resources.put("message_from",                "Съобщение от");
+		resources.put("minimize",                    "Минимизирай");
 		resources.put("name",                        "Име");
-		resources.put("next",						 "Нататък");
+		
 		resources.put("nick",                        "Псевдоним");
 		resources.put("no",                          "Не");
+		resources.put("not",                         "не");
 		resources.put("no_results",                  "Няма резултати");
 		resources.put("no_not_empty_gr",             "Премахването на непразни групи все още не се поддържа");
 		resources.put("not_implemented",             "Тази функция още не е включена.");
 		resources.put("noreason",             		 "Не е зададена причина.");
 		resources.put("notice",                      "Нотификация");
 		resources.put("nr",				     		 "Nr");
-		resources.put("ok",                          "OK");
+		
 		resources.put("once_a_session",              "Веднъж на сесия");
 		resources.put("onl_notification",            "Нотификация за входящ контакт");
 		resources.put("onl_sound_file_name",         "Звук за 'онлайн'");
@@ -146,30 +194,38 @@ public class Text_BG extends ResourceBundle
 		resources.put("prev",						 "Предишен");
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Изтрий от листа");
+		resources.put("remove_group",                "Изтрий група");
+ 	    resources.put("remove_user",                 "Изтрий потребител");
 		resources.put("rename",                      "Преименувай");
-		resources.put("reply",                       "Отговори");
+		
 		resources.put("requauth",                    "Поискай отор.");
 		resources.put("requ",                        "Изискван(и)");
 		resources.put("requno",                      "Неизискван(и)");
-		resources.put("reset",                       "Ресет");
+		
 		resources.put("res",                         "Резолюция");
 		resources.put("results",                     "Резултати");
-		resources.put("save",                        "Запази");
+		
 		resources.put("search_user",                 "Търси потребител");
-		resources.put("send",                        "Изпрати");
-		resources.put("send_message",                "Ново съобщение");
-		resources.put("send_img",                    "Прати картинка");				
+		
+		
+		resources.put("send_img",                    "Прати картинка");
+		resources.put("send_message",                "Ново съобщение");		
 		resources.put("send_url",                    "Нов URL");
 		resources.put("server",                      "Login сървър");
 		resources.put("server_host",                 "Име");
 		resources.put("server_port",                 "Порт");
 		resources.put("session",                     "Сесия");
 		resources.put("set_status",                  "Промени статус");
+		resources.put("shadow_con",                  "Shadow connection");
+ 	    resources.put("show_user_groups",            "Показвай групи");
 		resources.put("since",                       "От");
+		resources.put("size",                        "Размер");
 		resources.put("sound",                       "Звуков файл");
+		resources.put("sound_file_name",             "Име на звуковия файл");
 		resources.put("sort_by",                     "Подреди контакт листа");
 		resources.put("sort_by_name",                "По имена");
 		resources.put("sort_by_status",              "По статус");
+		resources.put("speed",                       "Скорост");
 		resources.put("status",                      "Статус");
 		resources.put("status_away",                 "Ауей");
 		resources.put("status_chat",                 "Свободен за чат");
@@ -179,10 +235,12 @@ public class Text_BG extends ResourceBundle
 		resources.put("status_occupied",             "Зает");
 		resources.put("status_offline",              "Офлайн");
 		resources.put("status_online",               "Онлайн");
+		resources.put("successful",                  "успешен");
 		resources.put("sysnotice",					 "Системна нотификация");
 		resources.put("traffic",                     "Трафик");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
+		resources.put("use_history",                 "Пази история");
 		resources.put("user_add",                    "Добави потр.");
 		resources.put("user_search",                 "Търси потребител");
 		resources.put("vibration",                   "Вибрация");
@@ -191,23 +249,30 @@ public class Text_BG extends ResourceBundle
 		resources.put("wait",                        "Моля изчакайте ...");
 		resources.put("warning",                     "Предупреждение");
 		resources.put("wantsyourauth",				 " иска вашата оторизация. Причина: ");
+		resources.put("was",                         "бе");
 		resources.put("whichgroup",				 	 "В коя група?");
+		resources.put("white_on_black",              "Бяло на черен фон");
+ 	    resources.put("white_on_blue",               "Бяло на син фон");
 		resources.put("yes",                         "Да");
-		resources.put("youwereadded",				 "Бяхте добавен с UIN: ");
-		resources.put("chat_small_font",			 "Малък шрифт в чата");
-		resources.put("select",                      "Избери");
-		resources.put("attention",                   "Внимание!");
-		resources.put("have_unread_mess",            "Имате непрочетени съобщения. Да изляза ли?");
+		resources.put("youwereadded",				 "Бяхте добавен от UIN: ");
 		
-		// User management ********
-		resources.put("group_is_not_empty",          "Избраната група не е празна!\nМестя всички потребители в други групи!");
-		resources.put("add_group",                   "Добави група");
-		resources.put("group_name",                  "Име на групата");
-		resources.put("exec",                        "Давай");
-		resources.put("remove_user",                 "Изтрий потр.");
-		resources.put("remove_group",                "Изтрий група");
-		resources.put("show_user_groups",            "Показвай групи");
-
+		
+		
+		
+		
+		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("text_to_find",                "Текст");
+		resources.put("find_backwards",              "Назад");
+		resources.put("find_case_sensitiv",          "Case sensitive");
+		resources.put("history_info",                "Информация за историята");
+		resources.put("hist_cur",                    "Текущ брой съобщения от контакта");
+		resources.put("hist_rc",                     "Общ брой съобщения");
+		resources.put("hist_size",                   "Използвано място (kB)");
+		resources.put("hist_avail",                  "Място (kB)");
+ 	    resources.put("history",                     "История");
+ 	    resources.put("not_found",                   "не е намерен(а)");
+ 	    //#sijapp cond.end#
+		
 		// Generic errors
 		resources.put("error_100",                   "Незнайна грешка (#100.EXT)");
 
@@ -278,13 +343,12 @@ public class Text_BG extends ResourceBundle
 		// File transfer errors
 		resources.put("error_190",                   "Трансферът на файлове с < ICQv8 клиенти не се поддържа (#190.EXT)");
 		resources.put("error_191",                   "Грешка при четенето на файла. Няма поддръжка за него (#191.EXT)");
-		resources.put("error_192",                   "Грешка при четенето на файла. Грешен път или няма поддръжка (#192.EXT)");
+		resources.put("error_192",                   "Грешка при четенето на файла. Файлът не  енамерен или не се поддържа (#192.EXT)");
+ 	    resources.put("error_193",                   "Грешка при достъпа до файловата система. Грешка по сигурноста. (#193.EXT)");
 
 	}
-
-
 }
 
 
-// #sijapp cond.end #
+//#sijapp cond.end #
 

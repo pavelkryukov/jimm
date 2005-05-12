@@ -1,25 +1,25 @@
 /*******************************************************************************
-jimm - Mobile Messaging - j2ME ICQ clone
-Copyright (C) 2003-04  jimm Project
+ Jimm - Mobile Messaging - J2ME ICQ clone
+ Copyright (C) 2003-05  Jimm Project
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-********************************************************************************
-File: src/jimm/res/Text_SR.java
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ ********************************************************************************
+ File: src/jimm/res/Text_SR.java
  Version: ###VERSION###  Date: ###DATE###
-Author(s): Manuel Linsmayer, Andreas Rossbacher, Urukalo Milan
-*******************************************************************************/
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Urukalo Milan
+ *******************************************************************************/
 
 
 //#sijapp cond.if lang_SR is "true"#
@@ -38,31 +38,63 @@ public class Text_SR extends ResourceBundle
 	public Text_SR()
 	{
 
-		// Labels
+	
+	// Labels
+       // MOTOROLA formatted buttons
+       // #sijapp cond.if target is "MOTOROLA"#
+       resources.put("select",                      "Одабери     ");
+       resources.put("reset",                       "       Reset");
+       resources.put("cancel",                      "      Откажи");
+       resources.put("back",                        "       Назад");
+       resources.put("exit_button",                 "       Изађи");
+       resources.put("menu_button",                 "        Мени");
+       resources.put("save",                        "Сачувај     ");
+       resources.put("ok",                          "OK          ");
+       resources.put("reply",                       "Одговори    ");
+       resources.put("close",                       "     Затвори");
+       resources.put("send",                        "Пошаљи      ");
+       // #sijapp cond.else# 
+       resources.put("reply",                       "Одговори");
+       resources.put("close",                       "Затвори");
+       resources.put("select",                      "Одабери");
+       resources.put("reset",                       "Reset");
+       resources.put("cancel",                      "Откажи");
+       resources.put("back",                        "Назад");
+       resources.put("save",                        "Сачувај");
+       resources.put("ok",                          "OK");
+       resources.put("send",                        "Пошаљи");
+   	// #sijapp cond.end#
+
 		resources.put(".",                           ".");
 		resources.put("about",                       "О програму");
-		resources.put("about_info",                  "jimm - Мобилни ICQ\nICQ клиент за j2ME\n\nВерзиjа 0.3.1\n http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModules: ###MODULES###\n\nSee http://www.jimm.org/");
 		resources.put("account",                     "Налог");
+		resources.put("add_group",                   "Додај групу");
 		resources.put("add_user",                    "Додаj корисника");
 		resources.put("add_to_list",                 "Додаj на листу");
 		resources.put("age",                         "Године"); 
 		resources.put("async",                       "Async");
+		resources.put("attention",                   "Упозорење!");
 		resources.put("auth",                        "Ауторизациjа"); 
-		resources.put("back",                        "Назад");
+		resources.put("auto_connect",    		     "Аутоматско конектовање при стартовању");
 		resources.put("beep",                        "Бип");
+		resources.put("black_on_white",              "Црно/Бело");
 		resources.put("byte",                        "Баjт");
-		resources.put("cancel",                      "Откажи");
+		resources.put("chat_small_font",	         "Мала слова за чет");
 		resources.put("city",                        "City");
-		resources.put("close",                       "Затвори");
+		resources.put("clear",                       "Обриши");
+		resources.put("color_scheme",                "Колор шема");
 		resources.put("conn_type",                   "Тип конекциjе");
 		resources.put("connect",                     "Конектуj се");
 		resources.put("connecting",                  "Конектуjем се");
+		resources.put("cost",                        "Цена");
 		resources.put("contact_list",                "Контакти");
 		resources.put("cp1251",                      "Use CP1251 hack?");
 		resources.put("cpp",                         "Цена по дану");
 		resources.put("cpd",                         "цена по пакету");
 		resources.put("currency",                    "Валута");
-		resources.put("delete_chat",                 "Избриши разговор");
+		resources.put("del_group",                   "Обриши групу");
+		resources.put("delete_chat",                 "Обриши разговор");
 		resources.put("deny",                        "Одбиj ауторизациjу");
 		resources.put("denyedby",                    "Вас захтев за ауторизациjу jе одбиjен од: ");
 		resources.put("description",                 "Опис");
@@ -70,60 +102,73 @@ public class Text_SR extends ResourceBundle
 		resources.put("user_menu",                   "Контакти");
 		resources.put("disconnect",                  "Дисконектуj се");
 		resources.put("disconnecting",               "Дисконектованjе");
-		resources.put("display_advertisement",       "Прикажи jимм савет?");
 		resources.put("display_date",                "Прикажи датум на екрану?");
 		resources.put("email",                       "Пошта");
 		resources.put("error",                       "Грешка");
+		resources.put("exec",                        "Изврши");
 		resources.put("exit",                        "Излаз");
 		resources.put("female",                      "З");
 		resources.put("filetransfer",                "Пренос фаjла");
 		resources.put("filepath",                    "Пут до фаjла");
+		resources.put("find",                        "Пронађи");
 		resources.put("firstname",                   "Име");
+		resources.put("free_heap",                   "Ослободи меморију");
 		resources.put("ft_name",                     "Пошаљи фаjл");		
 		resources.put("ft_cam",                      "Пошаљи слику са камере");
 		resources.put("gender",                      "Пол");
 		resources.put("grant",                       "Ауторизуj");
 		resources.put("grantedby",                   "Ауторизовано од:");
+		resources.put("group_name",                  "Назив Групе");
+		resources.put("group_is_not_empty",          "Означена група није празна!\nИспразни је, премести контакте у остале групе!");
+		resources.put("have_unread_mess",            "Имате непрочитаних порука. Сигурни сте да желите изаћи?");
 		resources.put("hide_offline",                "Сакриj неактивне контакте");
 		resources.put("info",                        "Информациjе");
 		resources.put("init_ft",                     "Инциjализациjа");
 		resources.put("kb",                          "kB");
+		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Задржи разговор?");
 		resources.put("keep_conn_alive",             "Одржаваj конекциjу?");
+		resources.put("keylock",                     "Закључаj тастере");
+		resources.put("keylock_message",             "Притисни \"#\" да откључаж тастере");
 		resources.put("keylock_enable",              "Закључаj тастере");
 		resources.put("keylock_enabled",             "Тастери закључани");
 		resources.put("keyword",                     "Кључно слово");
 		resources.put("language",                    "jезик");
-		resources.put("lang_BR",                     "Португалски (Бразил)");
-		resources.put("lang_CZ",                     "Чешки");
-		resources.put("lang_DE",                     "Њемачки");
-		resources.put("lang_EN",                     "Енглески");
-		resources.put("lang_ES",                     "Шпански");
-		resources.put("lang_IT",                     "Италиjански");
-		resources.put("lang_LT",                     "Литовском");
-		resources.put("lang_RU",                     "Руски");
-		resources.put("lang_SE",                     "Шведски");
-		resources.put("lang_SR",                     "Српски");
-       resources.put("lang_HE",                     "×¢×‘×¨×™×ª");
+		resources.put("lang_BG", 	         	     "Bulgarian");
+		resources.put("lang_BR",                     "Portuguese (Brazil)");
+		resources.put("lang_CZ",                     "Czech");
+		resources.put("lang_DE",                     "German");
+		resources.put("lang_EN",                     "English");
+		resources.put("lang_ES",                     "Spanish");
+		resources.put("lang_HE", 	        	     "Hebrew");
+		resources.put("lang_IT",                     "Italian");
+		resources.put("lang_LT",                     "Lithuanian");
+		resources.put("lang_PL",                     "Polish");
+		resources.put("lang_RU",                     "Russian");
+		resources.put("lang_SE",                     "Swedish");
+		resources.put("lang_SR",                     "Serbian");		
+		resources.put("lang_UA", 	        	     "Ukrainian");
 		resources.put("lastname",                    "Презиме");
 		resources.put("loading",                     "Учитавам");
 		resources.put("male",                        "M");
 		resources.put("me",                          "jа");
 		resources.put("menu",                        "Мени");
-		resources.put("msg_sound_file_name",         "Фаjл са звуком за поруку");
 		resources.put("message_notification",        "Упозорење на поруку");
+		resources.put("msg_sound_file_name",         "Фаjл са звуком за поруку");
 		resources.put("message",                     "Порука");
 		resources.put("message_from",                "Порука од");
+		resources.put("minimize",                    "Смањено");
 		resources.put("name",                        "Име");
 		resources.put("next",                        "Даље");
 		resources.put("nick",                        "Надимак");
 		resources.put("no",                          "Не");
+		resources.put("not",                         "није");
 		resources.put("no_results",                  "Без резултата");
+		resources.put("no_not_empty_gr",             "Брисање група које нису празне, није подржано");
 		resources.put("not_implemented",             "Функциjа ниjе подржана");
 		resources.put("noreason",                    "Упит ниjе задан.");
 		resources.put("notice",                      "Упозорење");
 		resources.put("nr",                          "Nr");
-		resources.put("ok",                          "OK");
 		resources.put("once_a_session",              "jедном по сесиjи");
 		resources.put("onl_notification",            "Информациjа о долазећом контакту");
 		resources.put("onl_sound_file_name",         "Online Sound File");
@@ -135,37 +180,40 @@ public class Text_SR extends ResourceBundle
 		resources.put("options_interface",           "Изглед");
 		resources.put("options_network",             "Мрежа");
 		resources.put("options_other",               "Остало");
-       resources.put("options_signaling",           "Сигнализациjа");
+	    resources.put("options_signaling",           "Сигнализациjа");
 		resources.put("password",                    "Лозинка");
 		resources.put("plength",                     "Величина пакета у kB");
 		resources.put("plsauthme",                   "Ћао, молио бих да прихватите моj захтев да ме додате на контакт листу.");
 		resources.put("prev",                        "Претходни");
 		resources.put("reason",                      "Разлог");
 		resources.put("remove",                      "Избаци из листе");
-		resources.put("reply",                       "Одговор");
+		resources.put("remove_group",                "Избриши групу");
+		resources.put("remove_user",                 "Избриши контакт");
+		resources.put("rename",                      "Rename");
 		resources.put("requauth",                    "Тражи ауторизациjу");
 		resources.put("requ",                        "Потребно");
 		resources.put("requno",                      "Ниjе потребно");
-		resources.put("reset",                       "Ресет");
 		resources.put("res",                         "Резочуциjа");
 		resources.put("results",                     "Резултати");
-		resources.put("save",                        "Сачуваj");
 		resources.put("search_user",                 "Пронађи корисника");
-		resources.put("select",                      "Селектуj");
-		resources.put("send",                        "Пошаљи");
-		resources.put("send_message",                "Нова порука");
 		resources.put("send_img",                    "Пошаљи слику");
+		resources.put("send_message",                "Нова порука");
 		resources.put("send_url",                    "Нови URL");
 		resources.put("server",                      "Сервер");
 		resources.put("server_host",                 "Име сервера");
 		resources.put("server_port",                 "Порт");
 		resources.put("session",                     "Сесиjа");
 		resources.put("set_status",                  "Одабери статус");
+		resources.put("shadow_con",                  "Сумњива конекција");
+		resources.put("show_user_groups",            "Прикажи контакт групе");
 		resources.put("since",                       "После");
+		resources.put("size",                        "Величина");
 		resources.put("sound",                       "ICQ Звук");
+		resources.put("sound_file_name",             "Име фајла са звуком");
 		resources.put("sort_by",                     "Сортираj контакте");
 		resources.put("sort_by_name",                "По имену");
 		resources.put("sort_by_status",              "По статусу");
+		resources.put("speed",                       "Брзина");
 		resources.put("status",                      "Статус");
 		resources.put("status_away",                 "Одсутан");
 		resources.put("status_chat",                 "Слободан за разговор");
@@ -175,10 +223,12 @@ public class Text_SR extends ResourceBundle
 		resources.put("status_occupied",             "Заузет");
 		resources.put("status_offline",              "Offline");
 		resources.put("status_online",               "Online");
+		resources.put("successful",                  "Успешно");
 		resources.put("sysnotice",		             "Порука Система");
 		resources.put("traffic",                     "Проток");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
+		resources.put("use_history",                 "Сачувај старе поруке");
 		resources.put("user_add",                    "Додаj корисника");
 		resources.put("user_search",                 "Пронађи корисника");
 		resources.put("vibration",                   "Вибрациjа");
@@ -187,19 +237,25 @@ public class Text_SR extends ResourceBundle
 		resources.put("wait",                        "Сачекаjте молићу...");
 		resources.put("warning",                     "Упозорење");
 		resources.put("wantsyourauth",               " желим ауторизациjу. Разлог: ");
+		resources.put("was",                         "бити");
 		resources.put("whichgroup",                  "Коjа група?");
+		resources.put("white_on_black",              "Бело-Црно");
+		resources.put("white_on_blue",               "Бело-Плаво");
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",                "Додати сте на листу код UIN: ");
-		resources.put("chat_small_font",	         "Мали фонт");
 		
-		// User management ********
-		resources.put("group_is_not_empty",          "Одабрана група ниjе празна!\nПремести контакте у осталу групу!");
-		resources.put("add_group",                   "Додаj Групу");
-		resources.put("group_name",                  "Име групе");
-		resources.put("exec",                        "Изврши");
-		resources.put("remove_user",                 "Избриши контакт");
-		resources.put("remove_group",                "Избриши групу");
-		resources.put("show_user_groups",            "Прикажи групе");
+		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("text_to_find",                "Текст");
+		resources.put("find_backwards",              "Назад");
+		resources.put("find_case_sensitiv",          "Пази на велика и мала слова");
+		resources.put("history_info",                "Информације о старим порукама");
+		resources.put("hist_cur",                    "Број порука од тренутног контакта");
+		resources.put("hist_rc",                     "Укупан број порука");
+		resources.put("hist_size",                   "Заузета меморија (kB)");
+		resources.put("hist_avail",                  "Укупна меморија (kB)"); 
+		resources.put("history",                     "Сачуване старе поруке");
+		resources.put("not_found",                   "није пронађено");
+		//#sijapp cond.end#
 
 		// Generic errors
 		resources.put("error_100",                   "Непозната грешка (#100.EXT)");
@@ -255,6 +311,7 @@ public class Text_SR extends ResourceBundle
 		resources.put("error_158",                   "Покусали сте да додате ICQ контакт на AIM листу (#158.EXT)");
 		resources.put("error_159",                   "Сервер ниjе одговорио на захтев за претрагу. Покушаjте поново (#159.EXT)");
 		resources.put("error_160",                   "Грешка приликом претраге (#160.EXT)");
+		resources.put("error_161",                   "Група није пронађена, додај групу (#161.EXT)");
 
 		// Other errors
 		resources.put("error_170",                   "Изгледа да нема довољно мемориjе (#170.EXT)");
@@ -270,12 +327,10 @@ public class Text_SR extends ResourceBundle
 		// File transfer errors
 		resources.put("error_190",                   "Трансфер фаjлова са корисницима коjи имаjу стариjу верзиjу од ICQv8 ниjе подржан (#190.EXT)");
 		resources.put("error_191",                   "Не могу да прочитам фаjл. Функциjа ниjе подржана(#191.EXT)");
-		resources.put("error_192",                   "Не могу да прочитам фаjл. погрешан пут или функциjа ниjе подржана(#192.EXT)");
+		resources.put("error_192",                   "Не могу да прочитам фаjл. погрешан пут или формат ниjе подржан(#192.EXT)");
+		resources.put("error_193",                   "Грешка приликом приступања фајл систему. Сигурносни проблем (#193.EXT)");
 
 	}
-
-
 }
 
-
-//#sijapp cond.end#
+//#sijapp cond.end #

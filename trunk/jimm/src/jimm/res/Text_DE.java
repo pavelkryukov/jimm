@@ -22,7 +22,7 @@
  *******************************************************************************/
 
 
-//#sijapp cond.if lang_DE is "true" #
+// #sijapp cond.if lang_DE is "true" #
 
 
 package jimm.res;
@@ -66,7 +66,7 @@ public class Text_DE extends ResourceBundle
         
 		resources.put(".",                           ",");
 		resources.put("about",                       "Über");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModule: ###MODULES###\n\nSiehe http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\n\nVersion: ###VERSION###\nZiel: ###TARGET###\nModule: ###MODULES###\n\nSiehe http://www.jimm.org/");
 		resources.put("account",                     "Account");
 		resources.put("add_group",                   "Gruppe hinzufügen");
 		resources.put("add_user",                    "Benutzer hinzufügen");
@@ -77,9 +77,9 @@ public class Text_DE extends ResourceBundle
 		resources.put("auth",				     	 "Auth");
 		resources.put("auto_connect",				 "Nach dem Start automatisch verbinden");
 		resources.put("beep",                        "Beep");
-		resources.put("black_on_white",              "Schwarz auf weiss");
+		resources.put("black_on_white",              "schwarz auf weiss");
 		resources.put("byte",                        "Byte");
-		resources.put("chat_small_font",			 "Kleiner font im Chat");
+		resources.put("chat_small_font",			 "Kleiner Font im Chat");
 		resources.put("city",                        "Stadt");
 		resources.put("clear",                       "Löschen");                        
 		resources.put("color_scheme",                "Farbschema");
@@ -90,8 +90,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("contact_list",                "Liste");
 		resources.put("cost",                        "Kosten");
 		resources.put("cp1251",                      "CP1251-Hack benutzen?");
-		resources.put("cpd",                         "Tagesnutzungsgebühr(cent)");
-		resources.put("cpp",                         "Paketgebühr(cent");
+		resources.put("cpd",                         "Tagesnutzungsgebühr (cent)");
+		resources.put("cpp",                         "Paketgebühr (cent)");
 		resources.put("currency",                    "Währung");
 		resources.put("del_group",                   "Gruppe löschen");
 		resources.put("delete_chat",                 "Lösche Chat");
@@ -210,8 +210,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("sound",                       "Sounddatei");
 		resources.put("sound_file_name",             "Sound File Name");
 		resources.put("sort_by",                     "Sortiere Kontaktliste");
-		resources.put("sort_by_name",                "Nach Name");
-		resources.put("sort_by_status",              "Nach Status");
+		resources.put("sort_by_name",                "nach Name");
+		resources.put("sort_by_status",              "nach Status");
 		resources.put("speed",                       "Geschwindigkeit");
 		resources.put("status",                      "Status");
 		resources.put("status_away",                 "Abwesend");
@@ -227,7 +227,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
-		resources.put("use_history",                 "Speichere history");
+		resources.put("use_history",                 "Speichere History");
 		resources.put("user_add",                    "Benutzer hinzufügen");
 		resources.put("user_search",                 "Benutzer suchen");
 		resources.put("vibration",                   "Vibration");
@@ -238,8 +238,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("warning",                     "Warnung");
 		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
 		resources.put("whichgroup",				 	 "Welche Gruppe?");
-		resources.put("white_on_black",              "Weiss auf schwarz");
-		resources.put("white_on_blue",               "Weiss auf blau");
+		resources.put("white_on_black",              "weiss auf schwarz");
+		resources.put("white_on_blue",               "weiss auf blau");
 		resources.put("yes",                         "Ja");
 		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
 
