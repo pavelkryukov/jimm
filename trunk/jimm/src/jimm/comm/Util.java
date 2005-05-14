@@ -78,10 +78,13 @@ public class Util
         String datestr = new String("failed");
 
         // Get time an apply time zone correction
-        Date date = new Date();        
-        date.setTime(date.getTime() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 )); 
+        Date date = new Date();
+    	// #sijapp cond.if target is "SIEMENS2" #
+        date.setTime(date.getTime() + TimeZone.getDefault().getRawOffset() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 )); 
+        // #sijapp cond.end #
         time.setTime(date);
         System.out.println(TimeZone.getDefault().getID());
+        System.out.println(TimeZone.getDefault().getRawOffset());
 
         // Construct the string for the display
         datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
