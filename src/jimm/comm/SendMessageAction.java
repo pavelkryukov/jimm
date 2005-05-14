@@ -151,16 +151,11 @@ public class SendMessageAction extends Action
         utf8 = rcvr.hasCapability(ContactListContactItem.CAP_UTF8_INTERNAL);
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
-        if ((!utf8 || (this.fileTrans != null)) && ((this.fileTrans != null) || (rcvr.getStatus() != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL)))
+        if ((this.fileTrans != null) && (rcvr.getStatus() != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL))
         {
             type = 2;
         }
         // #sijapp cond.end#
-        // #sijapp cond.else#
-        if (!utf8 && ((rcvr.getStatus() != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL)))
-        {
-            type = 2;
-        }
         // #sijapp cond.end#
 
         //////////////////////
@@ -235,7 +230,10 @@ public class SendMessageAction extends Action
             this.icq.c.sendPacket(snacPkt);
 
         }
-
+        
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        // #sijapp cond.if modules_FILES is "true"#
+        
         //////////////////////
         // Message format 2 //
         //////////////////////
@@ -613,6 +611,9 @@ public class SendMessageAction extends Action
                 this.icq.c.sendPacket(snacPkt);
                 // System.out.println("SendMessageAction: Sent the packet");
             }
+           
+        // #sijapp cond.end #
+        // #sijapp cond.end #
         SEQ1--;
 
     }
