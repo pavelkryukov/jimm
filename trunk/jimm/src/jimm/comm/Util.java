@@ -83,8 +83,6 @@ public class Util
         date.setTime(date.getTime() + TimeZone.getDefault().getRawOffset() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 )); 
         // #sijapp cond.end #
         time.setTime(date);
-        System.out.println(TimeZone.getDefault().getID());
-        System.out.println(TimeZone.getDefault().getRawOffset());
 
         // Construct the string for the display
         datestr = Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE));
@@ -94,7 +92,6 @@ public class Util
             datestr = Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." + Util.makeTwo(time.get(Calendar.MONTH) + 1) + "."
                     + String.valueOf(time.get(Calendar.YEAR)) + " " + datestr;
         }
-        System.out.println(datestr);
         return datestr;
     }
 	
