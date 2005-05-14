@@ -169,11 +169,13 @@ VERSION 0.4.0
   * NEW FEATURE: New SIEMENS2 version for Siemens MIDP2 phones with file explorer
   * NEW FEATURE: New MOTOROLA version for Motorola MIDP2 phones
   * NEW FEATURE: Turn backlight on/off by STAR button in MOTOROLA build
+  * NEW FEATURE: Automatic light control in MOTOROLA version
   * BUGFIX: Sending messages was not possible after renaming a contact
   * BUGFIX: Time bug (hopefully) fixed
   * BUGFIX: 125.1 exception was shown after each file transfer.
   * BUGFIX: "Deadlock" when renaming or adding contacts
   * BUGFIX: Red LED was blinking forever in RIM build
+  * BUGFIX: Sound system crashed on some phones when two messages came together
   * ContactList title is now different depending on the length of the word "list"
   * Options subpages now have a back button so you can go back without saving
   * There now is a message informing you if the file transfer was ok
@@ -181,6 +183,7 @@ VERSION 0.4.0
   * Progressbar for file transfer is now drawn more precise
   * You can see size and cost of file transfer before sending
   * New option: Auto connect on startup
+  * New option for MOTOROLA: Light timeout and manual light control
   * A message how to disable keylock is shown on splash screen if trying it the wrong way
   * Name of recipient is shown on top of message edit field
   * On the ChatHistory screen you can now see how many chats are open and in which one you are
