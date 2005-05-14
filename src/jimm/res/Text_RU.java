@@ -41,10 +41,10 @@ public class Text_RU extends ResourceBundle
 
 		// MOTOROLA formatted buttons
         // #sijapp cond.if target is "MOTOROLA"#
-	resources.put("backlight_timeout",           "Время подсветки (сек)");
-	resources.put("backlight_manual",            "Ручная подсветка (*)");
-	resources.put("select",                      "Выбор     ");
-        resources.put("reset",                           "      Сброс");
+    	resources.put("backlight_timeout",           "Время подсветки (сек)");
+	    resources.put("backlight_manual",            "Ручная подсветка (*)");
+	    resources.put("select",                      "Выбор     ");
+        resources.put("reset",                       "      Сброс");
         resources.put("cancel",                      "    Отмена");
         resources.put("exit_button",                 "     Выход");
         resources.put("back",                        "     Назад");

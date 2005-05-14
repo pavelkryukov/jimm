@@ -42,6 +42,8 @@ public class Text_PL extends ResourceBundle
 		// Labels
 		// MOTOROLA formatted buttons
 		// #sijapp cond.if target is "MOTOROLA"#
+		resources.put("backlight_manual",            "W��czenie pod�wietlania  (Klawisz *)");
+		resources.put("backlight_timeout",           "Automatyczne wy��czenie  pod�wietlania (w sekundach)");	
 		resources.put("select",                      "Zaznacz     ");
 		resources.put("reset",                       "       Reset");
 		resources.put("cancel",                      "      Anuluj");
@@ -78,7 +80,7 @@ public class Text_PL extends ResourceBundle
 		resources.put("async",                       "Async");
 		resources.put("attention",                   "Ostrzeżenie!");
 		resources.put("auth",                        "Auth");
-		resources.put("auto_connect",                "Automatycznie łącz podczas uruchamiania");
+		resources.put("auto_connect",                "Automatycznie łącz podczas uruchamiania");	
 		resources.put("beep",                        "Beep");
 		resources.put("black_on_white",              "Czarno biały");
 		resources.put("byte",                        "B");

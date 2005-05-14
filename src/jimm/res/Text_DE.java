@@ -41,6 +41,8 @@ public class Text_DE extends ResourceBundle
 		// Labels
         // MOTOROLA formatted buttons
         // #sijapp cond.if target is "MOTOROLA"#
+    	resources.put("backlight_timeout",           "Hintergrundlicht Timeout(sek)");
+	    resources.put("backlight_manual",            "Hintergrundlicht manuell(*)");
         resources.put("select",                      "Auswahl     ");
         resources.put("reset",                       "Zurücksetzen");
         resources.put("cancel",                      "   Abbrechen");
