@@ -47,7 +47,6 @@ private static boolean lightOn = true;
 		if (lightOn)
 		{
 			Jimm.display.flashBacklight(1);
-			Jimm.display.flashBacklight(0);
 			lightOn = false;
 		}
 		else
@@ -57,6 +56,15 @@ private static boolean lightOn = true;
 		}
 	}
     }
-    
+    public static void Off()
+    {
+	Jimm.display.flashBacklight(1);
+	lightOn = false;
+    }
+    public static void On()
+    {
+	Jimm.display.flashBacklight(Integer.MAX_VALUE);
+	lightOn = true;
+    }    
 }
 //#sijapp cond.end#
