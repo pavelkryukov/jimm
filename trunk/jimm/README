@@ -25,8 +25,9 @@ the following features:
   *  Receive status updates (user is away, n/a, etc.)
   *  Request information about other users
   *  Remove users from the server side contact list
-  *  Search for users
   *  Add users to the server side contact list
+  *  Rename users on the server side contact list
+  *  Search for users
   *  Answer authorization requests
   *  Multilingual user interface
 
@@ -82,13 +83,22 @@ PACKAGE CONTENTS
 ________________________________________________________________________________
 HOW TO INSTALL
 
-Copy Jimm.jad and Jimm.jar (found inside the bin directory) to your mobile
-phone. If you have a Siemens 55 series mobile (e.g. S55, M55), use the files
-found inside the bin/SIEMENS directory. If you have a phone which is capable of
-running MIDP2 applications (e.g. Siemens XX65 and above), use the files found
-inside the bin/MIDP2 directory. For Blackberry handhelds please use the bin/RIM
-directory. Follow the instructions in your mobile phone manual to start the Java
-application.
+You can find the .jar file you need to install on your phone in one of the six
+sub directories in the bin folder of this archive.
+You should pick the version you need depending on the device you have:
+
+  * DEFAULT  - Use this version if non of the other versions fits
+  * MIDP2    - Use this version is for devices supporting the MIDP 2 profile.
+               Look in the technicla specs of your device to find out if it
+               supports MIDP 2.
+  * RIM      - Use this version for RIM Blackberry devices.
+  * SIEMENS  - Use this version for Siemens MIDP 1 devices. (e.g. S55, M55...)
+  * SIEMENS2 - Use this version for Siemens MIDP 2 devices. (e.g. S65, CX65...)
+  * MOTOROLA - Use this version for Motorola MIDP 2 devices. (e.g. V600)
+  
+Then choose between the different module and language configurations and copy
+the Jimm.jar and Jimm.jad file to you mobile phone or use the appropriate 
+installation procedure described in your devices manual.
 
 At first start-up, select 'Options' and set your UIN and password. The default
 values for the ICQ server host and port should be okay. Option values are
@@ -101,19 +111,18 @@ your WAP device and select the desired version:
 ________________________________________________________________________________
 KNOWN BUGS
 
-On Siemens S55 mobiles there are the following graphical errors:
-
-  * In the ICQ Flowers if there is an active chat
-  * In the chat histroy the name is shifted left
+ * On Siemens S55 mobiles there are the following graphical errors:
+  - In the ICQ Flowers if there is an active chat
+  - In the chat histroy the name is shifted left
     (Both depend on errors on the S55 and they might be fixed by Siemens in
     upcoming firmware releases)
-  * On devices with heap memory bellow 300kb (e.g. Siemens S55) Jimm will only
-    run stable with less than 40 contacts.
-  * The background of the flowers if there is an active chat is no longer
-    transparent.
 
-On Nokia 6230 with FW > 3.15 you have to set "Shadow connction(N6230)" in
-the "Network" section of the "Options section" to true.
+ * On devices with heap memory bellow 300kb (e.g. Siemens S55) Jimm will only
+   run stable with less than 40 contacts.
+
+ * On Nokia 6230 with FW > 3.15 or other devices which stop connecting at about
+   20% of the connection you have to set "Shadow connction" in the "Network" 
+   section of the "Options section" to true.
 
 ________________________________________________________________________________
 HOW TO BUILD
@@ -127,14 +136,12 @@ the selected target you also need the following:
 
   * DEFAULT target: J2ME Wireless Toolkit 2.2
       <http://java.sun.com/j2me/>
-  * MIDP2 target: J2ME Wireless Toolkit 2.2
+  * MIDP2 and MOTOROLA target: J2ME Wireless Toolkit 2.2
       <http://java.sun.com/j2me/>
   * RIM target: Latest version of the Blackberry SDK
       <http://www.blackberry.com/developers/>
   * SIEMENS target: Latest version of the Siemens Mobility Toolkit (SMTK)
       <http://communication-market.siemens.de/>
-  * MOTOROLA target: J2ME Wireless Toolkit 2.2
-  	  <http://java.sun.com/j2me/>
 		
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
@@ -216,25 +223,30 @@ ________________________________________________________________________________
 CREDITS
 
 Core development team:
+  *  Artyomov Denis <artyomov at jimm.org>
   *  Manuel Linsmayer <manuel at jimm.org>
   *  Andreas Rossbacher <andreas at jimm.org>
-  *  Artyomov Denis <artyomov at jimm.org>
 
 Contributors:
-  *  Dmitry Tunin (MOTOROLA build maintainer, some bugfixes)
-  *  Tomas Spal (better ContactList title update routine)
-  *  Sergey Mymrikov (Contact status and program icons)
   *  Spassky Alexander (Type-2 Message support)
+  *  Sergey Chernov (Cyrillic character support)
+  *  David Ethell (RIM sound and vibra support) 
   *  Mathias Huelsbusch (Mathematical art used for splash screen)
-  *  Andrey B. Ivlev (Russian translation, Cyrillic character support)
-  *  Sergey Chernov (Russian translation, Cyrillic character support)
-  *  David Ethell (RIM sound and vibra support)
-  *  Alexei Solonets (Russian translation)
-  *  Petr Krčmář (Czech translation)
-  *  Martin Bjoerkman (Swedish translation)
-  *  Linas Gricius (Lithuanian translation)
-  *  Mario B. Napoli (Italian translation)
-  *  Urukalo Milan (Serbian translation)
+  *  Andrey B. Ivlev (Cyrillic character support)
+  *  Sergey Mymrikov (Contact status and program icons)
+  *  Tomas Spal (better ContactList title update routine)
+  *  Dmitry Tunin (MOTOROLA build maintainer, some bugfixes)
+
+Translators:
   *  Guy Aroshas (Hebrew translation)
+  *  Martin Bjoerkman (Swedish translation)
+  *  Sergey Chernov (Russian translation)
   *  Ivaylo Donchev (Bulgarian translation)
+  *  Pawel Glogowski (Polsih translation)
+  *  Linas Gricius (Lithuanian translation)
+  *  Andrey B. Ivlev (Russian translation)
+  *  Petr Krčmář (Czech translation)
+  *  Urukalo Milan (Serbian translation)
+  *  Mario B. Napoli (Italian translation)
+  *  Alexei Solonets (Russian translation)
   
