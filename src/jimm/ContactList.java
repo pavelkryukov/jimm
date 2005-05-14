@@ -193,6 +193,8 @@ public class ContactList implements CommandListener
     public static Image eventUrlMessageImg;
     public static Image eventSystemNoticeImg;
     public static Image eventSysActionImg;
+
+    public static boolean playerFree	= true;
 	
     // Main menu command
     private static Command 
@@ -1237,13 +1239,14 @@ public class ContactList implements CommandListener
     // Reaction to player events. (Thanks to Alexander Barannik for idea!)
     public void playerUpdate(final Player player, final String event, Object eventData)
     {
-    	// queue a call to updateEvent in the user interface event queue
-    	Jimm.display.callSerially(new Runnable() {
+	// queue a call to updateEvent in the user interface event queue
+	Jimm.display.callSerially(new Runnable() {
     	public void run()
     	{
         	if (event == END_OF_MEDIA)
         	{
         		player.close();
+			playerFree = true;
         	}    	
     	}
     	});    	
@@ -1275,8 +1278,14 @@ public class ContactList implements CommandListener
 				//DebugLog.addText("Create player: source "+source+"not found");
 				return null;
 			}
+			if (playerFree)
+			{
 			p = Manager.createPlayer(is, mediaType);
+			playerFree = false;
 			p.addPlayerListener(this);
+			}
+			else
+			return null;
 		
 		}
 		catch (Exception e)
