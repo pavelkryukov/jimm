@@ -42,8 +42,8 @@ public class Text_EN extends ResourceBundle
         // Labels
         // MOTOROLA formatted buttons
         // #sijapp cond.if target is "MOTOROLA"#
-	resources.put("backlight_timeout",           "Backlight timeout (sec)");
-	resources.put("backlight_manual",            "Manual backlight (* key)");
+    	resources.put("backlight_timeout",           "Backlight timeout (sec)");
+	    resources.put("backlight_manual",            "Manual backlight (* key)");
         resources.put("select",                      "Select      ");
         resources.put("reset",                       "       Reset");
         resources.put("cancel",                      "      Cancel");
@@ -55,7 +55,7 @@ public class Text_EN extends ResourceBundle
         resources.put("reply",                       "Reply       ");
         resources.put("close",                       "       Close");
         resources.put("send",                        "Send        ");
-        resources.put("next",	          	     "Next        ");
+        resources.put("next",	             	     "Next        ");
         // #sijapp cond.else# 
         resources.put("reply",                       "Reply");
         resources.put("close",                       "Close");
@@ -66,7 +66,7 @@ public class Text_EN extends ResourceBundle
         resources.put("save",                        "Save");
         resources.put("ok",                          "OK");
         resources.put("send",                        "Send");
-        resources.put("next",	          "Next");
+        resources.put("next",	                     "Next");
     	// #sijapp cond.end#
                                   
 		resources.put(".",                           ".");
