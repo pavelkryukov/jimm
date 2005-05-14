@@ -553,7 +553,6 @@ public class FileTransfer implements CommandListener
          */
         void showCurrDir()
         {
-            System.out.println(currDirName);
             Enumeration e;
             FileConnection currDir = null;
             List browser;
