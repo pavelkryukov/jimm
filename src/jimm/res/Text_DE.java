@@ -52,7 +52,7 @@ public class Text_DE extends ResourceBundle
         resources.put("save",                        "Sicher    ");
         resources.put("ok",                          "OK          ");
         resources.put("reply",                       "Antworten   ");
-        resources.put("close",                       "     Sließen");
+        resources.put("close",                       "    Sliessen");
         resources.put("send",                        "Senden   ");
         // #sijapp cond.else# 
         resources.put("reply",                       "Antworten");
@@ -254,7 +254,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("hist_rc",                     "Nachrichten aller Kontakte");
 		resources.put("hist_size",                   "Benutzer Platz (kB)");
 		resources.put("hist_avail",                  "Gesamter Platz (kB)"); 
-		resources.put("history",                     "Gespeicherte Hisotry");
+		resources.put("history",                     "Gespeicherte History");
 		resources.put("not_found",                   "nicht gefunden");
 		//#sijapp cond.end#
 		
