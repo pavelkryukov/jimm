@@ -42,6 +42,8 @@ public class Text_BG extends ResourceBundle
 		// Labels
 		// MOTOROLA formatted buttons
  	    // #sijapp cond.if target is "MOTOROLA"#
+    	resources.put("backlight_timeout",           "Backlight timeout (sec)");
+	    resources.put("backlight_manual",            "Manual backlight (* key)");
  	    resources.put("select",                      "Избери      ");
  	    resources.put("reset",                       "       Ресет");
  	    resources.put("cancel",                      "      Отказ");
