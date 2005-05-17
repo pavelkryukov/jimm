@@ -245,7 +245,11 @@ public class SplashCanvas extends Canvas
 			LightControl.On();
 		}
 		//  #sijapp cond.end#
-		t.cancel();
+		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
+		{
+			
+			t.cancel();
+		}
 		Jimm.jimm.getContactListRef().activate();
 	}
 
