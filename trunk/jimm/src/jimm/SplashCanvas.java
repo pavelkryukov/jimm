@@ -63,8 +63,9 @@ import net.rim.device.api.system.LED;
 
 public class SplashCanvas extends Canvas
 {
-
+	//Timer for repaint
 	private Timer t;
+
 	// Location of the splash image (inside the JAR file)
 	private static final String SPLASH_IMG = "/splash.png";
 
@@ -222,8 +223,10 @@ public class SplashCanvas extends Canvas
 		//  #sijapp cond.end#
 		Jimm.display.setCurrent(this);
 		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
-		t = new Timer();
-		t.schedule(new RepaintTimerTask(),20000,20000);
+		{
+			t = new Timer();
+			t.schedule(new RepaintTimerTask(),20000,20000);
+		}
 		
 	}
 
