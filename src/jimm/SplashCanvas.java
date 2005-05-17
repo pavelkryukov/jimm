@@ -51,6 +51,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.midlet.MIDletStateChangeException;
 import java.util.Date;
 import java.util.TimerTask;
+import java.util.Timer;
 //  #sijapp cond.if target is "MOTOROLA"#
 import DrawControls.LightControl;
 //  #sijapp cond.end#
@@ -63,7 +64,7 @@ import net.rim.device.api.system.LED;
 public class SplashCanvas extends Canvas
 {
 
-
+	private Timer t;
 	// Location of the splash image (inside the JAR file)
 	private static final String SPLASH_IMG = "/splash.png";
 
@@ -141,7 +142,7 @@ public class SplashCanvas extends Canvas
 	
 	// Version string
 	private boolean version;
-
+	
 	// Constructor
 	public SplashCanvas(String message)
 	{
@@ -220,6 +221,10 @@ public class SplashCanvas extends Canvas
 		LightControl.Off();
 		//  #sijapp cond.end#
 		Jimm.display.setCurrent(this);
+		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
+		t = new Timer();
+		t.schedule(new RepaintTimerTask(),20000,20000);
+		
 	}
 
 
@@ -237,6 +242,7 @@ public class SplashCanvas extends Canvas
 			LightControl.On();
 		}
 		//  #sijapp cond.end#
+		t.cancel();
 		Jimm.jimm.getContactListRef().activate();
 	}
 
@@ -706,6 +712,17 @@ public class SplashCanvas extends Canvas
 
 	}
 
+	/*****************************************************************************/
+	/*****************************************************************************/
+	/*****************************************************************************/
 
+	//Repaints Canvas 
+	private static class RepaintTimerTask extends TimerTask
+	{	
+	
+		public void run()
+		{
+			Jimm.jimm.getSplashCanvasRef().repaint();
+		}	
+        }
 }
-
