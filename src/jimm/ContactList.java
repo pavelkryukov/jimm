@@ -1280,8 +1280,8 @@ public class ContactList implements CommandListener
 			}
 			if (playerFree)
 			{
-			p = Manager.createPlayer(is, mediaType);
 			playerFree = false;
+			p = Manager.createPlayer(is, mediaType);
 			p.addPlayerListener(this);
 			}
 			else
