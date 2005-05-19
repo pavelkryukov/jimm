@@ -203,10 +203,7 @@ public class ContactListContactItem extends ContactListItem
 		case VALUE_NO_AUTH: return (noAuth);
 		case VALUE_CHAT_SHOWN: return Jimm.jimm.getChatHistoryRef().chatHistoryShown(this.uin);
 		case VALUE_IS_TEMP: return (this.temporary);
-		case VALUE_HAS_CHAT: if (Jimm.jimm.getChatHistoryRef().chatHistorySize(this.uin) > 0)
-								return true;
-							 else
-								 return false;
+		case VALUE_HAS_CHAT:  return Jimm.jimm.getChatHistoryRef().chatHistoryExists(this.uin); 
 		default: return false;
 		}
 	}
@@ -487,8 +484,7 @@ public class ContactListContactItem extends ContactListItem
 	// Delete the chat history
 	public void deleteChatHistory()
 	{
-		while (Jimm.jimm.getChatHistoryRef().chatHistorySize(uin) > 0)
-			Jimm.jimm.getChatHistoryRef().chatHistoryDelete(uin);
+		Jimm.jimm.getChatHistoryRef().chatHistoryDelete(uin);
 	}
 
 	// Activates the contact item menu

@@ -208,15 +208,10 @@ public class ChatHistory
 			return false;
 	}
 
-	// Returns the size of the chat history for uin
-	public int chatHistorySize(String uin)
+	// Returns true if chat history exists for this uin
+	public boolean chatHistoryExists(String uin)
 	{
-		if (historyTable.containsKey(uin))
-		{
-			TextList temp = (TextList) historyTable.get(uin);
-			return temp.getItemCount();
-		} else
-			return -1;
+	return historyTable.containsKey(uin);
 	}
 
 	
