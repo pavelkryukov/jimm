@@ -25,7 +25,6 @@ package jimm;
 
 import java.util.Enumeration;
 import java.util.Date;
-import java.util.Vector;
 import java.util.Hashtable;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Canvas;
@@ -210,7 +209,7 @@ public class ChatHistory
 			return false;
 	}
 
-	// Returns the size of the chat histore at number nr
+	// Returns the size of the chat history for uin
 	public int chatHistorySize(String uin)
 	{
 		if (historyTable.containsKey(uin))
@@ -221,26 +220,21 @@ public class ChatHistory
 			return -1;
 	}
 
-	// Return the size of the History Hash
-	public int chatHistoryTableSize(String uin)
-	{
-		return historyTable.size();
-	}
-
-	// Creates a new chat form and returns the index number of it in the vector
-	public int newChatForm(String uin,String name)
+	
+	// Creates a new chat form and returns size of the table
+	private void newChatForm(String uin,String name)
 	{
 		ChatTextList chatForm = new ChatTextList(name);
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
-		return historyTable.size();
+		
 	}
 
 	public void UpdateCaption(String uin)
 	{
 		ChatTextList temp = (ChatTextList) this.historyTable.get(uin);
 		// Calculate the title for the chatdisplay.
-		String Title = temp.ChatName+" ("+counter+"/"+this.historyTable.size()+")";
+		String Title = temp.ChatName+" ("+counter+"/"+historyTable.size()+")";
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		temp.setFullScreenMode(false);
 		temp.setTitle(Title);
@@ -265,9 +259,6 @@ public class ChatHistory
 	    else
 	        counter =((counter--) % historyTable.size())+1;
 	}
-	public int getCounter()
-	{
-		return counter;
-	}
+	
 
 }
