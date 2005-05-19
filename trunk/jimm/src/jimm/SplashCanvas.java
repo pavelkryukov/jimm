@@ -225,7 +225,12 @@ public class SplashCanvas extends Canvas
 		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
 		{
 			t = new Timer();
-			t.schedule(new RepaintTimerTask(),20000,20000);
+			t.schedule(new TimerTask() {
+		public void run()
+		{
+			SplashCanvas.this.repaint();
+		}
+		},20000,20000);
 		}
 		
 	}
@@ -719,17 +724,4 @@ public class SplashCanvas extends Canvas
 
 	}
 
-	/*****************************************************************************/
-	/*****************************************************************************/
-	/*****************************************************************************/
-
-	//Repaints Canvas 
-	private static class RepaintTimerTask extends TimerTask
-	{	
-	
-		public void run()
-		{
-			Jimm.jimm.getSplashCanvasRef().repaint();
-		}	
-        }
 }
