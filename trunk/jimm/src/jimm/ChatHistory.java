@@ -195,7 +195,7 @@ public class ChatHistory
 	{
 		historyTable.remove(uin);
 		int total = historyTable.size();
-		if (total > 0) counter = (counter--) % total;
+		if (total > 0) counter = ((counter--) % total) + 1;
 	}
 
 	// Returns if the chat history at the given number is shown
@@ -233,6 +233,7 @@ public class ChatHistory
 		ChatTextList chatForm = new ChatTextList(name);
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
+		return historyTable.size();
 	}
 
 	public void UpdateCaption(String uin)
@@ -266,7 +267,7 @@ public class ChatHistory
 	}
 	public int getCounter()
 	{
-		return (counter);
+		return counter;
 	}
 
 }
