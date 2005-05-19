@@ -240,7 +240,7 @@ public class ChatHistory
 		temp.setTitle(Title);
 		// #sijapp cond.else#
 		temp.setCaption(Title);
-		// #sijapp cond.end# */
+		// #sijapp cond.end#
 		
 	}
 

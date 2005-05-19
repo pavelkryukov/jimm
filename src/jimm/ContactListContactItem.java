@@ -192,10 +192,7 @@ public class ContactListContactItem extends ContactListItem
 		this.requReason = false;
 	}
 	
-/*	protected void copyChatHistory(ContactListContactItem src)
-	{
-		chatHistoryDisplayNr = src.chatHistoryDisplayNr;
-	} */
+
 
 	// Retruns boolean value by property
 	public boolean returnBoolValue(int value)
@@ -445,12 +442,7 @@ public class ContactListContactItem extends ContactListItem
 	}	
 	// #sijapp cond.end#
 	// #sijapp cond.end#
-	
-	// Returns the FileTransferMessage of this contact
-/*	public int getChatHistoryDisplayNr()
-	{
-		return this.chatHistoryDisplayNr;
-	} */
+
 	
 	// Returns true if the next available message is a message of given type
 	// Returns false if no message at all is available, or if the next available
