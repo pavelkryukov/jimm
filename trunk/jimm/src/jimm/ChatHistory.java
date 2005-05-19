@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/ChatHistory.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Andreas Rossbacher, Artyomov Denis
+ Author(s): Andreas Rossbacher, Artyomov Denis, Dmitry Tunin
  *******************************************************************************/
 
 package jimm;
@@ -69,7 +69,6 @@ class ChatTextList extends TextList
 		case Canvas.RIGHT:
 			Jimm.jimm.getChatHistoryRef().incCounter(true);
 			Jimm.jimm.getContactListRef().showNextPrevChat(true);
-			
 			break;
 		}
 	}
@@ -180,7 +179,7 @@ public class ChatHistory
 		msgDisplay.unlock();
 	}
 
-	// Returns the chat history form at the given nr
+	// Returns the chat history form at the given uin
 	public TextList getChatHistoryAt(String uin)
 	{
 		if (historyTable.containsKey(uin))
@@ -189,7 +188,7 @@ public class ChatHistory
 			return new TextList("Error");
 	}
 
-	// Delete the chat hisotry to uin
+	// Delete the chat history for uin
 	public void chatHistoryDelete(String uin)
 	{
 		historyTable.remove(uin);
@@ -221,7 +220,7 @@ public class ChatHistory
 	}
 
 	
-	// Creates a new chat form and returns size of the table
+	// Creates a new chat form
 	private void newChatForm(String uin,String name)
 	{
 		ChatTextList chatForm = new ChatTextList(name);
