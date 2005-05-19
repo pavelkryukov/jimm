@@ -1152,7 +1152,7 @@ public class ContactList implements CommandListener
             contactChanged(cItem, true, true, true);
             
             // copy old chat history number if contact was temporary 
-            if (oldItem != null) cItem.copyChatHistory(oldItem);
+//            if (oldItem != null) cItem.copyChatHistory(oldItem);
         }
     }
     
@@ -1280,8 +1280,8 @@ public class ContactList implements CommandListener
 			}
 			if (playerFree)
 			{
-			playerFree = false;
 			p = Manager.createPlayer(is, mediaType);
+			playerFree = false;
 			p.addPlayerListener(this);
 			}
 			else
