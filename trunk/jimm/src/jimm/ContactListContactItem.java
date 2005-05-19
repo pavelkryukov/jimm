@@ -763,13 +763,6 @@ public class ContactListContactItem extends ContactListItem
 								ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
 						
 						Jimm.jimm.getChatHistoryRef().addMyMessage(uin,plainMsg.getText(),plainMsg.getDate(),name);
-/*						if (chatHistoryDisplayNr != -1)
-							Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
-						else
-						{
-							chatHistoryDisplayNr = Jimm.jimm.getChatHistoryRef().newChatForm(name);
-							Jimm.jimm.getChatHistoryRef().addTextToForm(ContactListContactItem.this.chatHistoryDisplayNr,ResourceBundle.getString("me"),plainMsg.getText(),"",plainMsg.getDate(),false);
-						} */
 						
 						// #sijapp cond.if modules_HISTORY is "true" #
 						if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
