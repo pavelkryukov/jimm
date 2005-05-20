@@ -54,6 +54,7 @@ import java.util.TimerTask;
 import java.util.Timer;
 //  #sijapp cond.if target is "MOTOROLA"#
 import DrawControls.LightControl;
+import javax.microedition.lcdui.Screen;
 //  #sijapp cond.end#
 
 //#sijapp cond.if target is "RIM"#
@@ -154,12 +155,20 @@ public class SplashCanvas extends Canvas
 		this.message = new String(message);
 		this.keylockMessage = new Alert(null,null,null,AlertType.INFO);
 		this.keylockMessage.setTimeout(2000);
+		//  #sijapp cond.if target is "MOTOROLA"#
+		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight()+22);
+		//  #sijapp cond.else#
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight());
+		//  #sijapp cond.end#
 		int r, g;
 		Graphics bg_graph = background.getGraphics();
 		for (int x = 0; x < this.getWidth(); x+=2)
 		{
+			//  #sijapp cond.if target is "MOTOROLA"#
+			for (int y = 0; y < this.getHeight()+22; y+=2)
+			//  #sijapp cond.else#
 			for (int y = 0; y < this.getHeight(); y+=2)
+			//  #sijapp cond.end#
 			{
 				r = x * y / (y + x + 1) % 256;
 				g = ((r ^ x ^ y)) % 256;
