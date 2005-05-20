@@ -604,6 +604,7 @@ public class Options
 		this.lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.this.getIntOption(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
 		this.lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
 		this.lightManual.append(ResourceBundle.getString("yes"), null);
+		this.lightManual.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_LIGHT_MANUAL));
 		// #sijapp cond.end#
 
                 break;
