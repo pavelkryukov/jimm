@@ -623,6 +623,7 @@ public class ContactListContactItem extends ContactListItem
 						ft.startFT(); 
 					}
 				}
+                                // #sijapp cond.if target isnot "MOTOROLA" #
 				
 				// Send a filetransfer with a camera image
 				else if (selIndex == MenuUtil.ft_cam_idx)
@@ -640,6 +641,7 @@ public class ContactListContactItem extends ContactListItem
 						ft.startFT(); 
 					}
 				}
+                                // #sijapp cond.end #
 				// DC Info
 				else if (selIndex == MenuUtil.dc_info_idx)
 				{
@@ -988,7 +990,9 @@ public class ContactListContactItem extends ContactListItem
 			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			// #sijapp cond.if modules_FILES is "true"#
 			ft_name_idx,
+                        // #sijapp cond.if target isnot "MOTOROLA" #
 			ft_cam_idx,
+                        // #sijapp cond.end#
 			dc_info_idx,
 			// #sijapp cond.end#
 			// #sijapp cond.end#
@@ -1087,7 +1091,7 @@ public class ContactListContactItem extends ContactListItem
 		
 		static void initList(boolean showAuthItem)
 		{
-			 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"# 
+			 // #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"# 
 			 // #sijapp cond.if modules_FILES is "true"#
 			 send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
 			 ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
@@ -1099,6 +1103,15 @@ public class ContactListContactItem extends ContactListItem
 			 send_message_idx =  send_url_idx = history_idx = 
 			 info_idx = remove_idx = rename_idx = auth_idx = -1;
 			 // #sijapp cond.end#
+                         // #sijapp cond.if target is "MOTOROLA"#
+                         // #sijapp cond.if modules_FILES is "true"#
+                         send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
+			 ft_name_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
+                         // #sijapp cond.else#
+                         send_message_idx =  send_url_idx = history_idx = 
+			 info_idx = remove_idx = rename_idx = auth_idx = -1;
+                         // #sijapp cond.end#
+                         // #sijapp cond.end#
 			
 			while (menuList.size() != 0) menuList.delete(0);
 			
@@ -1113,9 +1126,11 @@ public class ContactListContactItem extends ContactListItem
 
 			ft_name_idx = MenuUtil.menuList.size();
 			menuList.append(ResourceBundle.getString("ft_name"),null);
+                        // #sijapp cond.if target isnot "MOTOROLA"#
 			
 			ft_cam_idx = menuList.size();
 			menuList.append(ResourceBundle.getString("ft_cam"),null);
+                        // #sijapp cond.end#
 			// #sijapp cond.end#
 			// #sijapp cond.end#
 			info_idx = menuList.size();
