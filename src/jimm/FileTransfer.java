@@ -669,7 +669,11 @@ public class FileTransfer implements CommandListener
                     // can not go up from MEGA_ROOT
                     return;
                 }
+                // #sijapp cond.if target is "MOTOROLA"#
                 currDirName = currDirName+fileName;
+                // #sijapp cond.else#
+                currDirName = fileName;
+                // #sijapp cond.end#
             }
             else
                 if (fileName.equals(UP_DIRECTORY))
