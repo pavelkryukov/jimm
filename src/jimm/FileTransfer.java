@@ -578,7 +578,6 @@ public class FileTransfer implements CommandListener
             {
                  browser = new List(currDirName, List.IMPLICIT);
                  if (!MEGA_ROOT.equals(currDirName)) browser.append(UP_DIRECTORY, dirIcon);
-                 System.out.println(currDirName);
                  currDir = (FileConnection) Connector.open("file://" + currDirName);
                  String[ ]  list = currDir.list(); 
                  for (int i = 0; i < list.length; i++)
