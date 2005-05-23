@@ -67,13 +67,19 @@ public class FileTransfer implements CommandListener
 {    
     // Type of filetrasfer
     public static final int FT_TYPE_FILE_BY_NAME = 1;
+    // #sijapp cond.if target isnot "MOTOROLA" #
     public static final int FT_TYPE_CAMERA_SNAPSHOT = 2;
+    // #sijapp cond.end #
+
 
     // Request
     private String reqUin;
+    // #sijapp cond.if target isnot "MOTOROLA" #
 
     // Viewfinder
     private ViewFinder vf;
+
+    // #sijapp cond.end #
 
     // File data
     private byte[] data;
@@ -117,6 +123,7 @@ public class FileTransfer implements CommandListener
     // Start the file transfer procedure depening on the ft type
     public void startFT()
     {
+        // #sijapp cond.if target isnot "MOTOROLA" #
         if (type == FileTransfer.FT_TYPE_CAMERA_SNAPSHOT)
         {
             if (!System.getProperty("supports.video.capture").equals("true"))
@@ -127,7 +134,10 @@ public class FileTransfer implements CommandListener
                 Display.getDisplay(Jimm.jimm).setCurrent(vf);
                 vf.start();
             }
-        } else if (type == FileTransfer.FT_TYPE_FILE_BY_NAME)
+        }
+        
+        else if (type == FileTransfer.FT_TYPE_FILE_BY_NAME)
+        // #sijapp cond.end #
         {
             FileSelector fc = new FileSelector();
             try 
@@ -146,7 +156,9 @@ public class FileTransfer implements CommandListener
     // Init the ft
     public void initFT(String filename, String description)
     {
+        // #sijapp cond.if target isnot "MOTOROLA" #
         this.vf = null;
+        // #sijapp cond.end #
 
         // Set the splash screen
         Jimm.jimm.getSplashCanvasRef().setProgress(0);
@@ -225,6 +237,7 @@ public class FileTransfer implements CommandListener
     /** ************************************************************************* */
     /** ************************************************************************* */
     /** ************************************************************************* */
+     // #sijapp cond.if target isnot "MOTOROLA" #
 
     // Class for viewfinder
     public class ViewFinder extends Canvas implements CommandListener
@@ -450,6 +463,7 @@ public class FileTransfer implements CommandListener
         }
 
     }
+    // #sijapp cond.end #
 
     /** ************************************************************************* */
     /** ************************************************************************* */
@@ -473,7 +487,11 @@ public class FileTransfer implements CommandListener
 
         // special string that denotes apper directory accessible by this
         // browser. this virtual directory contains all roots.
+        // #sijapp cond.if target is "MOTOROLA"#
+        private final String MEGA_ROOT = FileSystemRegistry.listRoots()[0];
+        // #sijapp cond.else#
         private final String MEGA_ROOT = "/";
+        // #sijapp cond.end#
 
         // separator string as defined by FC specification 
         private final String SEP_STR = "/";
@@ -553,6 +571,46 @@ public class FileTransfer implements CommandListener
          */
         void showCurrDir()
         {
+            // #sijapp cond.if target is "MOTOROLA"#
+            FileConnection currDir = null;
+            List browser;
+            try
+            {
+                 browser = new List(currDirName, List.IMPLICIT);
+                 if (!MEGA_ROOT.equals(currDirName)) browser.append(UP_DIRECTORY, dirIcon);
+                 System.out.println(currDirName);
+                 currDir = (FileConnection) Connector.open("file://" + currDirName);
+                 String[ ]  list = currDir.list(); 
+                 for (int i = 0; i < list.length; i++)
+                    {
+                         String dirName = list[i];
+                         int idx = -1;
+                         int idxf = 0; 
+                         
+                         if (dirName.endsWith(SEP_STR))
+                         {
+                             idx = dirName.lastIndexOf(SEP);
+                             if (idx != -1)  idxf = dirName.lastIndexOf(SEP, idx - 1);
+                             dirName = dirName.substring(idxf + 1);
+                             browser.append(dirName, dirIcon);
+                         }
+                     }
+                 for (int i = 0; i < list.length; i++)
+                     {
+                         String fileName = list[i];
+		         int idx = -1;
+                         if (!fileName.endsWith(SEP_STR))
+                         {
+                             idx = fileName.lastIndexOf(SEP);
+                             if (idx != -1)  fileName = fileName.substring(idx + 1);
+                             browser.append(fileName, fileIcon);
+                         }       
+                         
+                     } 
+           
+            
+            // #sijapp cond.else#
+
             Enumeration e;
             FileConnection currDir = null;
             List browser;
@@ -571,15 +629,13 @@ public class FileTransfer implements CommandListener
                     // #sijapp cond.if target is "MIDP2"#
                     currDir = (FileConnection) Connector.open("file://localhost/" + currDirName);
                     // #sijapp cond.end#
-                    // #sijapp cond.if target is "MOTOROLA"#
-                    currDir = (FileConnection) Connector.open("file://" + currDirName);
-                    // #sijapp cond.end#
+                    
                     e = currDir.list();
                     browser = new List(currDirName, List.IMPLICIT);
                     // not root - draw UP_DIRECTORY
                     browser.append(UP_DIRECTORY, dirIcon);
                 }
-
+       
                 while (e.hasMoreElements())
                 {
                     String fileName = (String) e.nextElement();
@@ -588,7 +644,7 @@ public class FileTransfer implements CommandListener
                     else
                         browser.append(fileName, fileIcon);
                 }
-
+                 // #sijapp cond.end#
                 browser.setSelectCommand(select);
                 browser.addCommand(exit);
 
@@ -614,13 +670,14 @@ public class FileTransfer implements CommandListener
                     // can not go up from MEGA_ROOT
                     return;
                 }
-                currDirName = fileName;
+                currDirName = currDirName+fileName;
             }
             else
                 if (fileName.equals(UP_DIRECTORY))
                 {
                     // Go up one directory
                     // TODO use setFileConnection when implemented
+                    
                     int i = currDirName.lastIndexOf(SEP, currDirName.length() - 2);
                     if (i != -1)
                     {
