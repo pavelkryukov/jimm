@@ -127,7 +127,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("have_unread_mess",            "You have unread messages. Exit anyway?");
 		resources.put("hide_offline",                "Hide offline contacts");
 		resources.put("info",                        "Info");
-		resources.put("init_ft",                     "Initializeing");
+		resources.put("init_ft",                     "Initializing");
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Keep chat history?");
