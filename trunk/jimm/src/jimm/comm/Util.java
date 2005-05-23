@@ -526,12 +526,14 @@ public class Util
         for (int j = 0; j < 3; j++)
         {
 
-            for (i = 0; i < 2; i++)
+            for (i = 0; i < 3; i++)
             {
-                if (ip.charAt(i) == new String(".").charAt(0)) break;
+                if (ip.charAt(i) == '.') break;
             }
-            arrIP[j] = Byte.parseByte(ip.substring(0, i));
+	
+            arrIP[j] = (byte)Integer.parseInt(ip.substring(0, i));
             ip = ip.substring(i + 1);
+            
         }
 
         return arrIP;
