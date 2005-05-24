@@ -501,7 +501,11 @@ public class FileTransfer implements CommandListener
 
         public FileSelector()
         {
+            // #sijapp cond.if target is "MOTOROLA"#
+            currDirName = MEGA_ROOT + "mobile/";
+            // #sijapp cond.else#
             currDirName = MEGA_ROOT;
+            // #sijapp cond.end#
             try
             {
                 dirIcon = Image.createImage("/dir.png");
