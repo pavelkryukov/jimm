@@ -720,7 +720,7 @@ public class FileTransfer implements CommandListener
 
                 InputStream fis = fc.openInputStream();
                 int size = (int)fc.fileSize();
-                if (Runtime.getRuntime().freeMemory() < size + 10000) { throw new IOException(); }
+                if (Runtime.getRuntime().freeMemory() / 4 < size) { throw new IOException(); }
                 byte[] b = new byte[size];
                 
                 int length = fis.read(b);
