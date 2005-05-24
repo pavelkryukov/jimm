@@ -715,9 +715,11 @@ public class FileTransfer implements CommandListener
                 if (!fc.exists()) { throw new IOException(); }
 
                 InputStream fis = fc.openInputStream();
-                byte[] b = new byte[(int)fc.fileSize()];
-
-                int length = fis.read(b, 0, (int)fc.fileSize());
+                int size = (int)fc.fileSize();
+                if (Runtime.getRuntime().freeMemory() < size + 10000) { throw new IOException(); }
+                byte[] b = new byte[size];
+                
+                int length = fis.read(b);
 
                 fis.close();
                 fc.close();
@@ -731,6 +733,7 @@ public class FileTransfer implements CommandListener
             {
                 throw new JimmException(192,0,true);
             }
+             
         }
     }
 }
