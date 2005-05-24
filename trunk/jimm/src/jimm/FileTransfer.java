@@ -487,11 +487,9 @@ public class FileTransfer implements CommandListener
 
         // special string that denotes apper directory accessible by this
         // browser. this virtual directory contains all roots.
-        // #sijapp cond.if target is "MOTOROLA"#
-        private final String MEGA_ROOT = FileSystemRegistry.listRoots()[0];
-        // #sijapp cond.else#
+        
         private final String MEGA_ROOT = "/";
-        // #sijapp cond.end#
+        
 
         // separator string as defined by FC specification 
         private final String SEP_STR = "/";
@@ -502,7 +500,7 @@ public class FileTransfer implements CommandListener
         public FileSelector()
         {
             // #sijapp cond.if target is "MOTOROLA"#
-            currDirName = MEGA_ROOT + "mobile/";
+            currDirName = "/a/mobile/";
             // #sijapp cond.else#
             currDirName = MEGA_ROOT;
             // #sijapp cond.end#
@@ -581,36 +579,46 @@ public class FileTransfer implements CommandListener
             try
             {
                  browser = new List(currDirName, List.IMPLICIT);
-                 if (!MEGA_ROOT.equals(currDirName)) browser.append(UP_DIRECTORY, dirIcon);
-                 currDir = (FileConnection) Connector.open("file://" + currDirName);
-                 String[ ]  list = currDir.list(); 
-                 for (int i = 0; i < list.length; i++)
-                    {
-                         String dirName = list[i];
-                         int idx = -1;
-                         int idxf = 0; 
-                         
-                         if (dirName.endsWith(SEP_STR))
+                 if (MEGA_ROOT.equals(currDirName))
+                 {
+                     String[ ] list = FileSystemRegistry.listRoots();
+                     for  (int i = 0; i < list.length; i++)
                          {
-                             idx = dirName.lastIndexOf(SEP);
-                             if (idx != -1)  idxf = dirName.lastIndexOf(SEP, idx - 1);
-                             dirName = dirName.substring(idxf + 1);
-                             browser.append(dirName, dirIcon);
+                             browser.append(list[i],dirIcon);
                          }
-                     }
-                 for (int i = 0; i < list.length; i++)
-                     {
-                         String fileName = list[i];
-		         int idx = -1;
-                         if (!fileName.endsWith(SEP_STR))
-                         {
-                             idx = fileName.lastIndexOf(SEP);
-                             if (idx != -1)  fileName = fileName.substring(idx + 1);
-                             browser.append(fileName, fileIcon);
-                         }       
+                 }
+                 else
+                 {
+                     browser.append(UP_DIRECTORY, dirIcon);
+                     currDir = (FileConnection) Connector.open("file://" + currDirName);
+                     String[ ]  list = currDir.list(); 
+                     for (int i = 0; i < list.length; i++)
+                        {
+                             String dirName = list[i];
+                             int idx = -1;
+                             int idxf = 0; 
                          
-                     } 
-           
+                             if (dirName.endsWith(SEP_STR))
+                             {
+                                 idx = dirName.lastIndexOf(SEP);
+                                 if (idx != -1)  idxf = dirName.lastIndexOf(SEP, idx - 1);
+                                 dirName = dirName.substring(idxf + 1);
+                                 browser.append(dirName, dirIcon);
+                             }
+                        }
+                     for (int i = 0; i < list.length; i++)
+                         {
+                             String fileName = list[i];
+	                     int idx = -1;
+                             if (!fileName.endsWith(SEP_STR))
+                             {
+                                 idx = fileName.lastIndexOf(SEP);
+                                 if (idx != -1)  fileName = fileName.substring(idx + 1);
+                                 browser.append(fileName, fileIcon);
+                             }       
+                         
+                         } 
+                 }
             
             // #sijapp cond.else#
 
