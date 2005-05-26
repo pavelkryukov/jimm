@@ -310,6 +310,12 @@ public class DirectConnectionAction extends Action
                 }
                 date = new Date();
                 this.timestamp = date.getTime()-this.timestamp;
+
+                try
+                {
+                    Thread.sleep(5000);
+                }
+                catch (Exception e) {}
                 
                 // Close the connection
                 this.icq.peerC.close();
