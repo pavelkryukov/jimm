@@ -192,6 +192,7 @@ public class ChatHistory
 	public void chatHistoryDelete(String uin)
 	{
 		historyTable.remove(uin);
+		incCounter(false);
 	}
 
 	// Returns if the chat history at the given number is shown
