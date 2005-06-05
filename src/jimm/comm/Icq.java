@@ -146,11 +146,10 @@ public class Icq implements Runnable
         SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
         wait.setMessage(ResourceBundle.getString("connecting"));
         wait.setProgress(0);
-        Jimm.display.setCurrent(wait);
-        // #sijapp cond.if target is "MIDP2" | target is "DEFAULT" #     
+        Jimm.display.setCurrent(wait);   
         if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_SHADOW_CON))
         {
-            // Make the shadow connection for Nokia 6230 if needed
+            // Make the shadow connection for Nokia 6230 of other devices if needed
             ContentConnection ctemp = null;
             DataInputStream istemp = null;
             try
@@ -164,7 +163,6 @@ public class Icq implements Runnable
                 // Do nothing
             }
         }
-        // #sijapp cond.end#
         Options options = Jimm.jimm.getOptionsRef();
         // Connect
         ConnectAction act = new ConnectAction(options.getStringOption(Options.OPTION_UIN), options.getStringOption(Options.OPTION_PASSWORD), options.getStringOption(Options.OPTION_SRV_HOST), options.getStringOption(Options.OPTION_SRV_PORT));
