@@ -82,9 +82,7 @@ public class Options
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
 	public static final int OPTION_AUTO_CONNECT					  = 138;   /* boolean */
-	// #sijapp cond.if target is "MIDP2" | target is "DEFAULT"#
 	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
-	// #sijapp cond.end#
 	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
 	public static final int OPTION_CL_SORT_BY                     =  65;   /* int     */
@@ -144,9 +142,7 @@ public class Options
 			this.setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 			this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
 			this.setIntOption    (Options.OPTION_CONN_TYPE,                      0);
-			// #sijapp cond.if target is "MIDP2" | target is "DEFAULT"#
 			this.setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
-			// #sijapp cond.end#
 			this.setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
 			this.setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
 			this.setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
@@ -542,9 +538,7 @@ public class Options
                 this.keepConnAliveChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
                 this.connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.MULTIPLE);
                 this.connTypeChoiceGroup.append(ResourceBundle.getString("async"), null);
-                // #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
                 this.connTypeChoiceGroup.append(ResourceBundle.getString("shadow_con"), null);
-            	// #sijapp cond.end#
                 if (Options.this.getIntOption(Options.OPTION_CONN_TYPE) == 0)
                     this.connTypeChoiceGroup.setSelectedIndex(0, false);
                 else
@@ -600,12 +594,13 @@ public class Options
                 this.colorScheme.append(ResourceBundle.getString("white_on_black"), null);
                 this.colorScheme.append(ResourceBundle.getString("white_on_blue"), null);
                 this.colorScheme.setSelectedIndex(Options.this.getIntOption(Options.OPTION_COLOR_SCHEME), true);
-		// #sijapp cond.if target is "MOTOROLA"#
-		this.lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.this.getIntOption(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
-		this.lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
-		this.lightManual.append(ResourceBundle.getString("yes"), null);
-		this.lightManual.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_LIGHT_MANUAL));
-		// #sijapp cond.end#
+                
+				// #sijapp cond.if target is "MOTOROLA"#
+				this.lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.this.getIntOption(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
+				this.lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
+				this.lightManual.append(ResourceBundle.getString("yes"), null);
+				this.lightManual.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_LIGHT_MANUAL));
+				// #sijapp cond.end#
 
                 break;
             case 3:
@@ -805,9 +800,7 @@ public class Options
 							Options.this.setIntOption(Options.OPTION_CONN_TYPE,1);
 						else
 						    Options.this.setIntOption(Options.OPTION_CONN_TYPE,0);
-		                // #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
 						Options.this.setBooleanOption(Options.OPTION_SHADOW_CON,this.connTypeChoiceGroup.isSelected(1));
-						// #sijapp cond.end#
 						break;
 					case 2:
 						Options.this.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.LANG_AVAILABLE[this.uiLanguageChoiceGroup.getSelectedIndex()]);
