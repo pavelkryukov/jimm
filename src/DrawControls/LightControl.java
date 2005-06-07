@@ -35,8 +35,8 @@ private static boolean lightOn = true;
     {
 	if (!Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_LIGHT_MANUAL))
 		{
-		if (constant) Jimm.display.flashBacklight(Integer.MAX_VALUE);
-		else    	Jimm.display.flashBacklight(TIMEOUT);
+		    if (constant) Jimm.display.flashBacklight(Integer.MAX_VALUE);
+		    else    	Jimm.display.flashBacklight(TIMEOUT);
 		}
 
     }
@@ -44,16 +44,8 @@ private static boolean lightOn = true;
     {
 	if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_LIGHT_MANUAL))
 	{
-		if (lightOn)
-		{
-			Jimm.display.flashBacklight(1);
-			lightOn = false;
-		}
-		else
-		{
-			Jimm.display.flashBacklight(Integer.MAX_VALUE);
-			lightOn = true;
-		}
+		if (lightOn)	Off();
+		else		On();
 	}
     }
     public static void Off()
