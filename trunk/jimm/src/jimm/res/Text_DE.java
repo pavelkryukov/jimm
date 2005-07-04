@@ -192,6 +192,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("remove_user",                 "Kontakt löschen");
 		resources.put("rename",                      "Umbenennen");
 		resources.put("requauth",                    "Beantrage Auth");
+        resources.put("reqstatmsg",                  "Statusnachricht anfordern");
 		resources.put("requ",                        "Benötigt");
 		resources.put("requno",                      "Nicht Ben.");
 		resources.put("res",                         "Auflösung");

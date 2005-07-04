@@ -137,7 +137,7 @@ public class SendMessageAction extends Action
         if (this.plainMsg != null)
             rcvr = this.plainMsg.getRcvr();
         else
-            rcvr = this.fileTrans.getRcvr();
+            rcvr = this.fileTrans.getRcvr(); 
         // #sijapp cond.else#
         rcvr = this.plainMsg.getRcvr();
         // #sijapp cond.end#
@@ -146,7 +146,6 @@ public class SendMessageAction extends Action
         // #sijapp cond.end#
         // What message format/encoding should we use?
         int type = 1;
-
         boolean utf8;
         utf8 = rcvr.hasCapability(ContactListContactItem.CAP_UTF8_INTERNAL);
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -157,7 +156,11 @@ public class SendMessageAction extends Action
         }
         // #sijapp cond.end#
         // #sijapp cond.end#
-
+        
+        if((this.plainMsg != null) && (this.plainMsg.getMessageType() == Message.MESSAGE_TYPE_AWAY))
+        {
+            type = 2;
+        }
         //////////////////////
         // Message format 1 //
         //////////////////////
@@ -230,10 +233,7 @@ public class SendMessageAction extends Action
             this.icq.c.sendPacket(snacPkt);
 
         }
-        
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-        // #sijapp cond.if modules_FILES is "true"#
-        
+                
         //////////////////////
         // Message format 2 //
         //////////////////////
@@ -271,7 +271,6 @@ public class SendMessageAction extends Action
                 // #sijapp cond.end#
 
                 // Set length
-
                 // file request: 192 + UIN len + file description (no null) +
                 // file name (null included)
                 // normal msg: 163 + UIN len + message length;
@@ -297,7 +296,6 @@ public class SendMessageAction extends Action
                 //int tlv11len = 108;
 
                 // Build the packet
-
                 byte[] buf = new byte[p_sz];
                 int marker = 0;
                 long tim = System.currentTimeMillis();
@@ -393,7 +391,6 @@ public class SendMessageAction extends Action
                 Util.putWord(buf, marker, 104 + textRaw.length, true);
                 // #sijapp cond.end#
                 marker += 2;
-
                 // Put 0x1b00 (unknown)
                 Util.putWord(buf, marker, 0x1B00);
                 marker += 2;
@@ -431,7 +428,6 @@ public class SendMessageAction extends Action
                 Util.putDWord(buf, marker, 0x00000000);
                 // #sijapp cond.end#
                 marker += 4;
-
                 // Put cookie, unkown 0x0e00 and cookie again
                 Util.putWord(buf, marker, SEQ1, false);
                 marker += 2;
@@ -448,22 +444,18 @@ public class SendMessageAction extends Action
                 Util.putDWord(buf, marker, 0x00000000);
                 marker += 4;
 
-                // Put message type 0x01 if normal message else 0x1a for file request
+                // Put message type 0x0001 if normal message else 0x001a for file request
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_FILES is "true"#
                 if (this.fileTrans == null)
-                    Util.putByte(buf, marker, 0x01);
+                    Util.putWord(buf, marker, this.plainMsg.getMessageType(),false);
                 else
-                    Util.putByte(buf, marker, 0x1a);
+                    Util.putWord(buf, marker, this.fileTrans.getMessageType(),false);
                 // #sijapp cond.end#
                 // #sijapp cond.else#
-                Util.putByte(buf, marker, 0x01);
+                Util.putWord(buf, marker, this.plainMsg.getMessageType(),false);
                 // #sijapp cond.end#
-                marker += 1;
-
-                // Put message flag ( 0x0 - normal message)
-                Util.putByte(buf, marker, 0x00);
-                marker += 1;
+                marker += 2;
 
                 // Put contact status
                 Util.putWord(buf, marker, Util.translateStatusSend(Jimm.jimm.getContactListRef().getOnlineStatus()), false);
@@ -472,7 +464,6 @@ public class SendMessageAction extends Action
                 // Put priority
                 Util.putWord(buf, marker, 0x01, false);
                 marker += 2;
-
                 // Put message
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_FILES is "true"#
@@ -509,7 +500,6 @@ public class SendMessageAction extends Action
                     // Put message (unused in file transfer request)
                     Util.putByte(buf, marker, 0x00);
                     marker++;
-
                     // Put file transfer request command
                     Util.putWord(buf, marker, 0x029, false);
                     marker += 2;
@@ -571,7 +561,6 @@ public class SendMessageAction extends Action
                     // Put total size of file transfer
                     Util.putDWord(buf, marker, this.fileTrans.getSize(), false);
                     marker += 4;
-
                     // Put unknown 4 bytes
                     Util.putDWord(buf, marker, 0x00008c82, false);
                     marker += 4;
@@ -587,7 +576,6 @@ public class SendMessageAction extends Action
                 marker += textRaw.length;
                 Util.putByte(buf, marker, 0x00);
                 marker++;
-
                 // Put foreground, background color and guidlength
                 Util.putDWord(buf, marker, 0x00000000);
                 marker += 4;
@@ -605,15 +593,12 @@ public class SendMessageAction extends Action
                 marker += 2;
                 Util.putWord(buf, marker, 0x0000);
                 marker += 2;
-
                 // Send packet
                 SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
                 this.icq.c.sendPacket(snacPkt);
                 // System.out.println("SendMessageAction: Sent the packet");
             }
            
-        // #sijapp cond.end #
-        // #sijapp cond.end #
         SEQ1--;
 
     }

@@ -25,12 +25,16 @@ package jimm.comm;
 
 import java.util.Date;
 
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
+
 import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
+import jimm.util.ResourceBundle;
 
 public class ActionListener
 {
@@ -211,6 +215,29 @@ public class ActionListener
             }
 
             /** ********************************************************************* */
+            
+            // Watch out for CLI_ACKMSG_COMMAND packets
+            if ((snacPacket.getFamily() == SnacPacket.CLI_ACKMSG_FAMILY)
+                    && (snacPacket.getCommand() == SnacPacket.CLI_ACKMSG_COMMAND))
+            {
+                
+                // Get raw data
+                byte[] buf = snacPacket.getData();
+                
+                // Get length of the uin (needed for skipping)
+                int uinLen = Util.getByte(buf,10);
+                
+                // Get message type
+                int msgType = Util.getWord(buf,58+uinLen,false);
+                if((msgType>=Message.MESSAGE_TYPE_AWAY) && (msgType<=Message.MESSAGE_TYPE_FFC))
+                {
+                    // Create an message entry
+                    int textLen = Util.getWord(buf,64+uinLen,false);
+                    Jimm.jimm.getContactListRef().activate(new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf,66+uinLen,textLen),null,AlertType.INFO));
+                }
+            }
+
+            /** ********************************************************************* */            
 
             // Watch out for SRV_RECVMSG
             if ((snacPacket.getFamily() == SnacPacket.SRV_RECVMSG_FAMILY)
@@ -461,7 +488,7 @@ public class ActionListener
                             String text = Util.crlfToCr(Util.byteArrayToString(rawText, isUtf8));
 
                             // Instantiate message object
-                            message = new PlainMessage(uin, this.icq.getUin(), new Date(), text);
+                            message = new PlainMessage(uin, this.icq.getUin(),new Date(), text);
 
                         } else
                         {
@@ -518,7 +545,7 @@ public class ActionListener
                         Util.putByte(ackBuf, ackMarker, 0x00);
                         ackMarker += 1;
                         SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
-                                SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
+                        SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
                         this.icq.c.sendPacket(ackPacket);
 
                     }
@@ -748,11 +775,9 @@ public class ActionListener
                     // Plain message
                     if (msgType == 0x0001)
                     {
-
                         // Forward message to contact list
                         PlainMessage plainMsg = new PlainMessage(uin, this.icq.getUin(), new Date(), text);
                         Jimm.jimm.getContactListRef().addMessage(plainMsg);
-
                     }
                     // URL message
                     else if (msgType == 0x0004)
