@@ -54,10 +54,11 @@ public class UrlMessage extends Message
 
 
 	// Constructs an outgoing message
-	public UrlMessage(String sndrUin, ContactListContactItem rcvr, Date date, String url, String text)
+	public UrlMessage(String sndrUin, ContactListContactItem rcvr, int _messageType, Date date, String url, String text)
 	{
 		this.sndrUin = new String(sndrUin);
 		this.rcvr = rcvr;
+        this.messageType = _messageType;
 		this.date = new Date(date.getTime());
 		this.url = new String(url);
 		this.text = new String(text);

@@ -202,4 +202,6 @@ ________________________________________________________________________________
 VERSION 0.4.0
 
   * NEW FEATURE: Now Jimm is able to send out status messages
+  * NEW FEATURE: Now Jimm is able to request the status messages from other users
+  * BUGFIX: Problems with filetransfer to ips with more then 2 digits resolved
   

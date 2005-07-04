@@ -724,6 +724,38 @@ public class ContactListContactItem extends ContactListItem
 					MenuUtil.reasonTextbox.setCommandListener(this);
 					Jimm.display.setCurrent(MenuUtil.reasonTextbox);
 				}
+                
+                // Reqeust status message
+                else if (selIndex == MenuUtil.status_message_idx)
+                {                  
+                    if (!((ContactListContactItem.this.getStatus() == ContactList.STATUS_ONLINE) || (ContactListContactItem.this.getStatus() == ContactList.STATUS_OFFLINE) || (ContactListContactItem.this.getStatus() == ContactList.STATUS_INVISIBLE)))
+                    {
+                            int msgType;
+                        // Send a status message request message
+                        if (ContactListContactItem.this.getStatus() == ContactList.STATUS_AWAY)
+                            msgType = Message.MESSAGE_TYPE_AWAY;
+                        else if (ContactListContactItem.this.getStatus() ==  ContactList.STATUS_OCCUPIED)
+                            msgType = Message.MESSAGE_TYPE_OCC;
+                        else if (ContactListContactItem.this.getStatus() == ContactList.STATUS_DND)
+                            msgType = Message.MESSAGE_TYPE_DND;
+                        else if (ContactListContactItem.this.getStatus() == ContactList.STATUS_CHAT)
+                            msgType = Message.MESSAGE_TYPE_FFC;
+                        else
+                            msgType = Message.MESSAGE_TYPE_AWAY;
+    
+                        PlainMessage awayReq = new PlainMessage(Jimm.jimm.getIcqRef().getUin(), ContactListContactItem.this,msgType, new Date(), "");
+                        SendMessageAction act = new SendMessageAction(awayReq);
+                        try
+                        {
+                            Jimm.jimm.getIcqRef().requestAction(act);
+    
+                        } catch (JimmException e)
+                        {
+                            JimmException.handleException(e);
+                            if (e.isCritical()) return;
+                        }
+                    }
+                }
 
 			}
 			// Textbox has been closed
@@ -750,7 +782,7 @@ public class ContactListContactItem extends ContactListItem
 						// Construct plain message object and request new SendMessageAction
 						// Add the new message to the chat history
 						PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
-								ContactListContactItem.this, new Date(), MenuUtil.messageTextbox.getString());
+								ContactListContactItem.this,Message.MESSAGE_TYPE_NORM, new Date(), MenuUtil.messageTextbox.getString());
 						
 						Jimm.jimm.getChatHistoryRef().addMyMessage(uin,plainMsg.getText(),plainMsg.getDate(),name);
 						
@@ -795,7 +827,7 @@ public class ContactListContactItem extends ContactListItem
 
 					// Construct URL message object and request new
 					// SendMessageAction
-					UrlMessage urlMsg = new UrlMessage(Jimm.jimm.getIcqRef().getUin(), ContactListContactItem.this,
+					UrlMessage urlMsg = new UrlMessage(Jimm.jimm.getIcqRef().getUin(), ContactListContactItem.this, Message.MESSAGE_TYPE_NORM,
 							new Date(), MenuUtil.urlTextbox.getString(), MenuUtil.messageTextbox.getString());
 					SendMessageAction sendMsgAct = new SendMessageAction(urlMsg);
 					try
@@ -1000,7 +1032,8 @@ public class ContactListContactItem extends ContactListItem
 			remove_idx,
 			rename_idx,
 			auth_idx,
-			history_idx;
+			history_idx,
+            status_message_idx;
 		  
 		// Menu list
 		private static List menuList;
@@ -1091,27 +1124,22 @@ public class ContactListContactItem extends ContactListItem
 		
 		static void initList(boolean showAuthItem)
 		{
-			 // #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"# 
-			 // #sijapp cond.if modules_FILES is "true"#
-			 send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
-			 ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
-			 // #sijapp cond.else#
-			 send_message_idx =  send_url_idx = history_idx = 
-			 info_idx = remove_idx = rename_idx = auth_idx = -1;
-			 // #sijapp cond.end#
-			 // #sijapp cond.else#
-			 send_message_idx =  send_url_idx = history_idx = 
-			 info_idx = remove_idx = rename_idx = auth_idx = -1;
-			 // #sijapp cond.end#
-                         // #sijapp cond.if target is "MOTOROLA"#
-                         // #sijapp cond.if modules_FILES is "true"#
-                         send_message_idx =  send_url_idx = dc_info_idx = history_idx = 
-			 ft_name_idx = info_idx = remove_idx = rename_idx = auth_idx = -1;
-                         // #sijapp cond.else#
-                         send_message_idx =  send_url_idx = history_idx = 
-			 info_idx = remove_idx = rename_idx = auth_idx = -1;
-                         // #sijapp cond.end#
-                         // #sijapp cond.end#
+			 // #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+            // #sijapp cond.if modules_FILES is "true"#
+            send_message_idx = send_url_idx = dc_info_idx = history_idx = ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            // #sijapp cond.else#
+            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            // #sijapp cond.end#
+            // #sijapp cond.else#
+            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            // #sijapp cond.end#
+            // #sijapp cond.if target is "MOTOROLA"#
+            // #sijapp cond.if modules_FILES is "true"#
+            send_message_idx = send_url_idx = dc_info_idx = history_idx = ft_name_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            // #sijapp cond.else#
+            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            // #sijapp cond.end#
+            // #sijapp cond.end#
 			
 			while (menuList.size() != 0) menuList.delete(0);
 			
@@ -1126,13 +1154,17 @@ public class ContactListContactItem extends ContactListItem
 
 			ft_name_idx = MenuUtil.menuList.size();
 			menuList.append(ResourceBundle.getString("ft_name"),null);
-                        // #sijapp cond.if target isnot "MOTOROLA"#
+            // #sijapp cond.if target isnot "MOTOROLA"#
 			
 			ft_cam_idx = menuList.size();
 			menuList.append(ResourceBundle.getString("ft_cam"),null);
-                        // #sijapp cond.end#
+            // #sijapp cond.end#
 			// #sijapp cond.end#
 			// #sijapp cond.end#
+            
+            status_message_idx = menuList.size();
+            menuList.append(ResourceBundle.getString("reqstatmsg"), null);
+            
 			info_idx = menuList.size();
 			menuList.append(ResourceBundle.getString("info"), null);
 			
@@ -1159,7 +1191,7 @@ public class ContactListContactItem extends ContactListItem
 			menuList.append("DC Info", null);
 			// #sijapp cond.end#
 			// #sijapp cond.end#
-			
+            
 		}
 		
 		// Initializer

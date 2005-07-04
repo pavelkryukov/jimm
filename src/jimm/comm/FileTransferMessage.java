@@ -41,11 +41,11 @@ public class FileTransferMessage extends Message
     byte[] file;
 
     // Constructs an outgoing message
-    public FileTransferMessage(String sndrUin, ContactListContactItem _rcvr, String _filename, String _description, byte[] _file)
+    public FileTransferMessage(String sndrUin, ContactListContactItem _rcvr, int _messageType, String _filename, String _description, byte[] _file)
     {
-        // System.out.println("Constr: FileTransferRequest");
         this.sndrUin = new String(sndrUin);
         this.rcvr = _rcvr;
+        this.messageType = _messageType;
         this.filename = _filename;
         this.description = _description;
         this.file = _file;

@@ -58,6 +58,7 @@ import javax.microedition.media.Player;
 import javax.microedition.media.control.VideoControl;
 
 import jimm.comm.FileTransferMessage;
+import jimm.comm.Message;
 import jimm.comm.SendMessageAction;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
@@ -168,7 +169,7 @@ public class FileTransfer implements CommandListener
         Display.getDisplay(Jimm.jimm).setCurrent(Jimm.jimm.getSplashCanvasRef());
 
         // Send the ft message
-        FileTransferMessage ftm = new FileTransferMessage(Jimm.jimm.getIcqRef().getUin(), this.cItem, filename, description, this.data);
+        FileTransferMessage ftm = new FileTransferMessage(Jimm.jimm.getIcqRef().getUin(), this.cItem,Message.MESSAGE_TYPE_EXTENDED, filename, description, this.data);
         SendMessageAction act = new SendMessageAction(ftm);
         try
         {

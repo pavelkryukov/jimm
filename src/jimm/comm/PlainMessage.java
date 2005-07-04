@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/PlainMessage.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 
@@ -49,10 +49,11 @@ public class PlainMessage extends Message
 
 
 	// Constructs an outgoing message
-	public PlainMessage(String sndrUin, ContactListContactItem rcvr, Date date, String text)
+	public PlainMessage(String sndrUin, ContactListContactItem rcvr, int _messageType, Date date, String text)
 	{
 		this.sndrUin = new String(sndrUin);
 		this.rcvr = rcvr;
+        this.messageType = _messageType;
 		this.date = new Date(date.getTime());
 		this.text = new String(text);
 	}

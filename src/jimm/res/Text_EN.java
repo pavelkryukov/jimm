@@ -194,6 +194,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("remove_user",                 "Remove user");
 		resources.put("rename",                      "Rename");
 		resources.put("requauth",                    "Request auth");
+        resources.put("reqstatmsg",                  "Request status message");
 		resources.put("requ",                        "Required");
 		resources.put("requno",                      "Not req");
 		resources.put("res",                         "Resolution");
