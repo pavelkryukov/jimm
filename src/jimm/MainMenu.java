@@ -32,6 +32,7 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.StringItem;
+import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -74,11 +75,11 @@ public class MainMenu implements CommandListener
     
     // Send command
     private static Command sendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
-
-    // #sijapp cond.if target is "MOTOROLA" # 
+ 
     // Select command
     private static Command selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
-
+   
+    // #sijapp cond.if target is "MOTOROLA" #
     private static Command exitCommand = new Command(ResourceBundle.getString("exit_button"), Command.EXIT, 1);
     //#sijapp cond.end# 
 
@@ -118,6 +119,9 @@ public class MainMenu implements CommandListener
     // Text box for adding users to the contact list
     private TextField uinTextField;
     private TextField nameTextField;
+    
+    // Textbox for  Status messages
+    private TextBox statusMessage;
 
     // Connected
     private boolean isConnected;
@@ -541,7 +545,7 @@ public class MainMenu implements CommandListener
         //#sijapp cond.else#
         else if ((c == List.SELECT_COMMAND) && (d == MainMenu.statusList))
         //#sijapp cond.end#
-         {
+        {
 
             // Request online status change
             long onlineStatus = ContactList.STATUS_ONLINE;
@@ -575,7 +579,31 @@ public class MainMenu implements CommandListener
                 JimmException.handleException(e);
                 if (e.isCritical()) return;
             }
-
+            
+            if (!((onlineStatus == ContactList.STATUS_CHAT) || (onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_ONLINE)))
+            {
+                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY);
+                statusMessage.addCommand(selectCommand);
+                statusMessage.setCommandListener(this);
+                Jimm.display.setCurrent(statusMessage);
+            }
+            else
+            {
+                // Activate main menu
+                Jimm.jimm.getContactListRef().activate();
+            }
+        }
+        else if ((c == selectCommand) && (d == statusMessage))
+        {
+            Jimm.jimm.getOptionsRef().setStringOption(Options.OPTION_STATUS_MESSAGE,statusMessage.getString());
+            try
+            {
+                Jimm.jimm.getOptionsRef().save();
+            }
+            catch (Exception e)
+            {
+                JimmException.handleException(new JimmException(72,0,true));
+            }
             // Activate main menu
             Jimm.jimm.getContactListRef().activate();
         }

@@ -29,6 +29,7 @@ import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.Jimm;
 import jimm.JimmException;
+import jimm.Options;
 import jimm.SplashCanvas;
 
 public class ActionListener
@@ -335,7 +336,6 @@ public class ActionListener
                 //////////////////////
                 else if (format == 0x0002)
                 {
-
         			// TLV(A): Acktype 0x0000 - normal message
         			//                 0x0001 - file request / abort request
         			//                 0x0002 - file ack
@@ -402,7 +402,7 @@ public class ActionListener
                     // Get and validate message type
                     int msgType = Util.getWord(msg2Buf, msg2Marker, false);
                     msg2Marker += 2;
-                    if ((msgType != 0x0001) && (msgType != 0x0004) && (msgType != 0x001A)) return;
+                    if (!((msgType == 0x0001) || (msgType == 0x0004) || (msgType == 0x001A) || ((msgType >= 1000) && (msgType <= 1004)))) return;
 
                     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                     // #sijapp cond.if modules_FILES is "true"#
@@ -419,13 +419,13 @@ public class ActionListener
                     msg2Marker += 2;
 
                     // Check length
-                    if (msg2Buf.length < msg2Marker + textLen + 4 + 4) { throw (new JimmException(152, 4, false)); }
+                    if (!((msgType >= 1000) && (msgType <= 1004)))
+                        if (msg2Buf.length < msg2Marker + textLen + 4 + 4) { throw (new JimmException(152, 4, false)); }
 
                     // Get raw text
                     byte[] rawText = new byte[textLen];
                     System.arraycopy(msg2Buf, msg2Marker, rawText, 0, textLen);
                     msg2Marker += textLen;
-                    
                     // Plain message or URL message
                     if (((msgType == 0x0001) || (msgType == 0x0004)) && (rawText.length > 1))
                     {
@@ -545,6 +545,7 @@ public class ActionListener
 
                         // Get plugin string
                         String plugin = Util.byteArrayToString(msg2Buf, msg2Marker, pluginLen);
+                        System.out.println("Plugin: "+plugin);
                         msg2Marker += pluginLen;
 
                         // Skip EXTMSG.UNKNOWN and EXTMSG.LEN
@@ -678,21 +679,39 @@ public class ActionListener
                             this.icq.c.sendPacket(ackPacket);
 
                         }
-                        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                        // #sijapp cond.if modules_FILES is "true"#
-                        // File transfer request or request ack
-                        else  if (msgType == 0x001A)
-                        {
-                         
-                        }
-                        // #sijapp cond.end#
-                        // #sijapp cond.end#
                         // Other messages
                         else 
                         {
                             // Discard
                         }
 
+                    }                    
+                    // Status message requests
+                    else if (((msgType >= 1000) && (msgType <= 1004)))
+                    {
+                        // Acknowledge message with  away message
+                        byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 2 + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).length() +1];
+                        int ackMarker = 0;
+                        System.arraycopy(buf, 0, ackBuf, ackMarker, 10);
+                        ackMarker += 10;
+                        Util.putByte(ackBuf, ackMarker, uinLen);
+                        ackMarker += 1;
+                        byte[] uinRaw = Util.stringToByteArray(uin);
+                        System.arraycopy(uinRaw, 0, ackBuf, ackMarker, uinRaw.length);
+                        ackMarker += uinRaw.length;
+                        Util.putWord(ackBuf, ackMarker, 0x0003);
+                        ackMarker += 2;
+                        System.arraycopy(msg2Buf, 0, ackBuf, ackMarker, 51);
+                        Util.putWord(ackBuf, ackMarker+2, 0x0800);
+                        ackMarker += 51;
+                        Util.putWord(ackBuf, ackMarker, Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).length()+1, false);
+                        ackMarker += 2;
+                        System.arraycopy(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).getBytes(),0,ackBuf,ackMarker,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).length());
+                        Util.putByte(ackBuf, ackMarker+Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).length(), 0x00);
+                        SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
+                                SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
+                        
+                        this.icq.c.sendPacket(ackPacket);
                     }
 
                 }
