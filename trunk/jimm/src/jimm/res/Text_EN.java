@@ -218,6 +218,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("sort_by_status",              "By status");
 		resources.put("speed",                       "Speed");
 		resources.put("status",                      "Status");
+        resources.put("status_message",              "Status message");
 		resources.put("status_away",                 "Away");
 		resources.put("status_chat",                 "Free for Chat");
 		resources.put("status_dnd",                  "Do Not Disturb");
@@ -319,6 +320,7 @@ public class Text_EN extends ResourceBundle
 		// Other errors
 		resources.put("error_170",                   "Possibly not enough heap memory available (#170.EXT)");
 		resources.put("error_171",                   "Could not fetch meta info (#171.EXT)");
+        resources.put("error_172",                   "Date could not be saved (#172.EXT)");
 		
 		// Camera errors
 		resources.put("error_180",                   "Error creating the VideoControl (#180.EXT)");

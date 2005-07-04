@@ -216,6 +216,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("sort_by_status",              "nach Status");
 		resources.put("speed",                       "Geschwindigkeit");
 		resources.put("status",                      "Status");
+        resources.put("status_message",              "Status Nachricht");
 		resources.put("status_away",                 "Abwesend");
 		resources.put("status_chat",                 "Free for Chat");
 		resources.put("status_dnd",                  "Bitte nicht stören");
@@ -317,6 +318,7 @@ public class Text_DE extends ResourceBundle
 		// other errors
 		resources.put("error_170",                   "Möglicherweise nicht genügend Heap-Speicher verfügbar (#170.EXT)");
 		resources.put("error_171",                   "Meta-Informationen nicht verfügbar (#171.EXT)");
+        resources.put("error_172",                   "Einstellungen konnten nicht gespeichert werden (#172.EXT)");
 		
 		// Camera errors
 		resources.put("error_180",                   "Fehler beim Erstellen der VideoControl (#180.EXT)");

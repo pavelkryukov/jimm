@@ -106,9 +106,10 @@ public class Options
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
 	public static final int OPTION_HISTORY                        = 137;   /* boolean */
 	public static final int OPTION_COLOR_SCHEME                   =  73;   /* int     */
+    public static final int OPTION_STATUS_MESSAGE                 =   7;   /* String  */
 	// #sijapp cond.if target is "MOTOROLA"#
-	public static final int OPTION_LIGHT_TIMEOUT		      =  74;   /* int     */
-	public static final int OPTION_LIGHT_MANUAL		      = 140;   /* boolean */
+	public static final int OPTION_LIGHT_TIMEOUT		          =  74;   /* int     */
+	public static final int OPTION_LIGHT_MANUAL		              = 140;   /* boolean */
 	// #sijapp cond.end#
 	
 
@@ -200,6 +201,7 @@ public class Options
 			this.setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
 			this.setBooleanOption(Options.OPTION_HISTORY,                        false);
 			this.setIntOption    (Options.OPTION_COLOR_SCHEME,                   CLRSCHHEME_BOW);
+            this.setStringOption (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
 			 
 			
 			// Construct option form
@@ -892,7 +894,7 @@ public class Options
 				}
 				catch (Exception e)
 				{
-					// Do nothing
+					JimmException.handleException(new JimmException(72,0,true));
 				}
 
 				// Activate MM/CL
