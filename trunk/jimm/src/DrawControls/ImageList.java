@@ -108,6 +108,7 @@ public class ImageList
   {
     Image resImage = Image.createImage(resName);
     height = resImage.getHeight();
+	if(width == -1) width = height;
     int size = resImage.getWidth()/width;
     for (int i = 0; i < size; i++)
     {

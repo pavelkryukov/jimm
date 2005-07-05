@@ -199,9 +199,12 @@ VERSION 0.4.0
   * Added Polish translation
   
 ________________________________________________________________________________
-VERSION 0.4.0
+VERSION 0.4.1
 
   * NEW FEATURE: Now Jimm is able to send out status messages
   * NEW FEATURE: Now Jimm is able to request the status messages from other users
+  * NEW FEATURE: You can now select Jimm to only vibrate in keylock mode
+  * NEW FEATURE: You can now remove yourself from another users contact list
   * BUGFIX: Problems with filetransfer to ips with more then 2 digits resolved
+  * BUGFIX: Timestamp for offline messages is now correct
   

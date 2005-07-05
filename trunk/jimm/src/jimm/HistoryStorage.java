@@ -26,6 +26,7 @@
 package jimm;
 
 import java.util.Hashtable;
+import java.util.Date;
 import java.lang.StringBuffer;
 import java.lang.System;
 import java.lang.Exception;
@@ -368,7 +369,7 @@ final public class HistoryStorage
 	}
 	
 	// Add message text to contact history
-	synchronized public void addText(String uin, String text, byte type, String from)
+	synchronized public void addText(String uin, String text, byte type, String from, Date time)
 	{
 		byte[] buffer, textData;
 		int textLen;
@@ -394,7 +395,7 @@ final public class HistoryStorage
 			DataOutputStream das = new DataOutputStream(baos);
 			das.writeUTF(from);
 			das.writeUTF(text);
-			das.writeUTF(Util.getDateString(false));
+			das.writeUTF(Util.getDateString(false, time));
 			textData = baos.toByteArray();
 			textLen = textData.length;
 			

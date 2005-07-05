@@ -253,7 +253,7 @@ public class ContactList implements CommandListener
         	imageList = new ImageList();
         	
         	// reads and divides image "icons.png" to several icons
-			imageList.load("/icons.png", 16);
+			imageList.load("/icons.png", -1);
             ContactList.statusAwayImg        = imageList.elementAt(0);
             ContactList.statusChatImg        = imageList.elementAt(1);
             ContactList.statusDndImg         = imageList.elementAt(2);
@@ -297,6 +297,7 @@ public class ContactList implements CommandListener
         // #sijapp cond.end#
 		
 		tree.setImageList(imageList);
+		tree.setFontSize(VirtualList.SMALL_FONT);
 		tree.setStepSize( -tree.getItemHeight()/2 );
 		
         // #sijapp cond.if modules_TRAFFIC is "true" #
@@ -1350,7 +1351,9 @@ public class ContactList implements CommandListener
         Light.setLightOn();
         // #sijapp cond.end#
         
-        if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_VIBRATOR) && (notType == SOUND_TYPE_MESSAGE))
+        int vibraKind = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_VIBRATOR);
+        if(vibraKind == 2) vibraKind = Jimm.jimm.getSplashCanvasRef().locked()?1:0;
+        if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
         {
             // #sijapp cond.if target is "SIEMENS"#
             Vibrator.triggerVibrator(500);

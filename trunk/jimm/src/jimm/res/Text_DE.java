@@ -96,7 +96,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("cpp",                         "Paketgebühr (cent)");
 		resources.put("currency",                    "Währung");
 		resources.put("del_group",                   "Gruppe löschen");
-		resources.put("delete_chat",                 "Lösche Chat");
+		resources.put("delete_chat",                 "Verwerfe Chat");
 		resources.put("deny",						 "Auth ablehnen");
 		resources.put("denyedby",					 "Ihre Authorisierungsanfrage wurde abgelehnt durch: ");
 		resources.put("description",                 "Beschreibung");
@@ -188,6 +188,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("prev",						 "Voheriges");
 		resources.put("reason",						 "Grund");
 		resources.put("remove",                      "Aus der Liste entfernen");
+        resources.put("remove_me",                   "Lösche mich"); 
+        resources.put("remove_me_from",              "Lösche Deinen Eintrag in der Liste von ");        
 		resources.put("remove_group",                "Gruppe löschen");
 		resources.put("remove_user",                 "Kontakt löschen");
 		resources.put("rename",                      "Umbenennen");

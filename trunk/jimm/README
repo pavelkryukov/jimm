@@ -88,8 +88,8 @@ sub directories in the bin folder of this archive.
 You should pick the version you need depending on the device you have:
 
   * DEFAULT  - Use this version if non of the other versions fits
-  * MIDP2    - Use this version is for devices supporting the MIDP 2 profile.
-               Look in the technicla specs of your device to find out if it
+  * MIDP2    - Use this version for devices supporting the MIDP 2 profile.
+               Look in the technical specs of your device to find out if it
                supports MIDP 2.
   * RIM      - Use this version for RIM Blackberry devices.
   * SIEMENS  - Use this version for Siemens MIDP 1 devices. (e.g. S55, M55...)
@@ -112,7 +112,6 @@ ________________________________________________________________________________
 KNOWN BUGS
 
  * On Siemens S55 mobiles there are the following graphical errors:
-  - In the ICQ Flowers if there is an active chat
   - In the chat histroy the name is shifted left
     (Both depend on errors on the S55 and they might be fixed by Siemens in
     upcoming firmware releases)
@@ -228,14 +227,25 @@ Core development team:
   *  Andreas Rossbacher <andreas at jimm.org>
 
 Contributors:
-  *  Spassky Alexander (Type-2 Message support)
-  *  Sergey Chernov (Cyrillic character support)
-  *  David Ethell (RIM sound and vibra support) 
-  *  Mathias Huelsbusch (Mathematical art used for splash screen)
-  *  Andrey B. Ivlev (Cyrillic character support)
-  *  Sergey Mymrikov (Contact status and program icons)
-  *  Tomas Spal (better ContactList title update routine)
-  *  Dmitry Tunin (MOTOROLA build maintainer, some bugfixes)
+  *  Spassky Alexander 
+  		(Type-2 Message support)
+  *  Sergey Chernov 
+  		(Cyrillic character support)
+  *  David Ethell 
+  		(RIM sound and vibra support) 
+  *  Mathias Huelsbusch 
+  		(Mathematical art used for splash screen)
+  *  Andrey B. Ivlev 
+  		(Cyrillic character support)
+  *  Sergey Mymrikov 
+  		(Contact status and program icons)
+  *  Tomas Spal 
+  		(Better ContactList title update routine)
+  *  Denis Stanishevskiy 
+  		(Offline messages timestamp, new vibra option, remove you fromusers 
+  		contact list)
+  *  Dmitry Tunin 
+  		(MOTOROLA build maintainer, some bugfixes)
 
 Translators:
   *  Guy Aroshas (Hebrew translation)

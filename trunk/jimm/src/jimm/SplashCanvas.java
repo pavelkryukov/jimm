@@ -128,7 +128,7 @@ public class SplashCanvas extends Canvas
 
 
 	// True if keylock has been enabled
-	private boolean isLocked; // = false
+	private boolean isLocked;
 
 
 	// True if at least one message is available
@@ -266,6 +266,12 @@ public class SplashCanvas extends Canvas
 		}
 		Jimm.jimm.getContactListRef().activate();
 	}
+    
+    // Is the screen locked?
+    public boolean locked()
+    {
+        return(this.isLocked);
+    }
 
 
 	// Called when message has been received
@@ -278,10 +284,10 @@ public class SplashCanvas extends Canvas
 	        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
 	        LED.setState(LED.STATE_BLINKING);
             // #sijapp cond.end#
-		// #sijapp cond.if target is "MOTOROLA"#
-		if (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE) == 0)
-		Jimm.display.flashBacklight(1000);
-		// #sijapp cond.end#
+			// #sijapp cond.if target is "MOTOROLA"#
+			if (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE) == 0)
+			Jimm.display.flashBacklight(1000);
+			// #sijapp cond.end#
 			this.repaint();
 		}
 	}
