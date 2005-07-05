@@ -98,7 +98,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("cpp",                         "Cost per packet");
 		resources.put("currency",                    "Currency");
 		resources.put("del_group",                   "Delete group");
-		resources.put("delete_chat",                 "Delete chat");
+		resources.put("delete_chat",                 "Drop chat");
 		resources.put("deny",						 "Deny Auth");
 		resources.put("denyedby",					 "Your auth request was denyed by: ");
 		resources.put("description",                 "Description");
@@ -190,6 +190,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("prev",						 "Previous");
 		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
+		resources.put("remove_me",                   "Remove me"); 
+		resources.put("remove_me_from",              "Remove you from contact list of ");
 		resources.put("remove_group",                "Remove group");
 		resources.put("remove_user",                 "Remove user");
 		resources.put("rename",                      "Rename");
@@ -240,6 +242,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("viewfinder",                  "Viewfinder");
 		resources.put("volume",                      "Volume");		
 		resources.put("wait",                        "Please wait ...");
+		resources.put("when_locked",                 "When locked");
 		resources.put("warning",                     "Warning");
 		resources.put("wantsyourauth",				 " wants your Authorisation. Reason: ");
 		resources.put("was",                         "was");

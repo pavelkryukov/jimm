@@ -103,7 +103,7 @@ public class ChatHistory
 
 			// #sijapp cond.if modules_HISTORY is "true" #
 			if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
-				Jimm.jimm.getHistory().addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName());
+				Jimm.jimm.getHistory().addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName(), plainMsg.getDate());
 			// #sijapp cond.end#	
 		}
 		if (message instanceof UrlMessage)
@@ -163,7 +163,7 @@ public class ChatHistory
 		int lastSize = msgDisplay.getItemCount();
 		msgDisplay.addBigText
 		(
-		  from + " (" + Util.getDateString(true) + "):",
+		  from + " (" + Util.getDateString(true, time) + "):",
 		  red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
 		  Font.STYLE_BOLD
 		);

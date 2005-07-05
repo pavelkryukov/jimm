@@ -95,7 +95,7 @@ public class Options
 	public static final int OPTION_ONLINE_NOTIFICATION_MODE       =  68;   /* int     */
 	public static final int OPTION_ONLINE_NOTIFICATION_SOUNDFILE  =   5;   /* String  */
 	public static final int OPTION_ONLINE_NOTIFICATION_VOLUME     =  69;   /* int     */
-	public static final int OPTION_VIBRATOR                       = 131;   /* boolean */
+	public static final int OPTION_VIBRATOR                       =  75;   /* integer */
 	public static final int OPTION_CP1251_HACK                    = 133;   /* boolean */
 	public static final int OPTION_COST_PER_PACKET                =  70;   /* int     */
 	public static final int OPTION_COST_PER_DAY                   =  71;   /* int     */
@@ -191,7 +191,7 @@ public class Options
 			this.setBooleanOption(Options.OPTION_CP1251_HACK,                    false);
 			// #sijapp cond.end#
 			
-			this.setBooleanOption(Options.OPTION_VIBRATOR,                       false);
+			this.setIntOption    (Options.OPTION_VIBRATOR,                       0);
 			this.setIntOption    (Options.OPTION_COST_PER_PACKET,                0);
 			this.setIntOption    (Options.OPTION_COST_PER_DAY,                   0);
 			this.setIntOption    (Options.OPTION_COST_PACKET_LENGTH,             1024);
@@ -641,9 +641,11 @@ public class Options
                 this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE),true);
                 // #sijapp cond.end#
                 // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration") + "?", Choice.MULTIPLE);
+                this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration") + "?", Choice.EXCLUSIVE);
+                this.vibratorChoiceGroup.append(ResourceBundle.getString("no"), null);
                 this.vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
-                this.vibratorChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_VIBRATOR));
+                this.vibratorChoiceGroup.append(ResourceBundle.getString("when_locked"), null);
+                this.vibratorChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_VIBRATOR), true);
                 // #sijapp cond.end#
 
                 // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -870,7 +872,7 @@ public class Options
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());
 						// #sijapp cond.end#
 						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-						Options.this.setBooleanOption(Options.OPTION_VIBRATOR,this.vibratorChoiceGroup.isSelected(0));
+						Options.this.setIntOption(Options.OPTION_VIBRATOR,this.vibratorChoiceGroup.getSelectedIndex());
 						break;
 						// #sijapp cond.end#
 					// #sijapp cond.if modules_TRAFFIC is "true" #

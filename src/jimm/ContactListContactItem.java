@@ -43,6 +43,7 @@ import jimm.comm.FileTransferMessage;
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.RequestInfoAction;
+import jimm.comm.RemoveMeAction;
 import jimm.comm.SendMessageAction;
 import jimm.comm.SysNoticeAction;
 import jimm.comm.SystemNotice;
@@ -508,6 +509,7 @@ public class ContactListContactItem extends ContactListItem
 	private class Menu implements CommandListener
 	{
 		final public static int MSGBS_DELETECONTACT = 1; 
+		final public static int MSGBS_REMOVEME = 2; 
 
 		// Command listener
 		public void commandAction(Command c, Displayable d)
@@ -703,6 +705,19 @@ public class ContactListContactItem extends ContactListItem
 					);
 				}
 
+				// Remove Me
+				else if (selIndex == MenuUtil.remove_me_idx)
+				{
+					Jimm.jimm.messageBox
+					(
+						ResourceBundle.getString("remove_me")+"?",
+						ResourceBundle.getString("remove_me_from")+ContactListContactItem.this.getName()+"?",
+						Jimm.MESBOX_OKCANCEL,
+						this,
+						MSGBS_REMOVEME
+					);
+				}
+
 				// Rename Contact
 				else if (selIndex == MenuUtil.rename_idx)
 				{
@@ -782,13 +797,13 @@ public class ContactListContactItem extends ContactListItem
 						// Construct plain message object and request new SendMessageAction
 						// Add the new message to the chat history
 						PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
-								ContactListContactItem.this,Message.MESSAGE_TYPE_NORM, new Date(), MenuUtil.messageTextbox.getString());
+					    ContactListContactItem.this,Message.MESSAGE_TYPE_NORM, new Date(), MenuUtil.messageTextbox.getString());
 						
 						Jimm.jimm.getChatHistoryRef().addMyMessage(uin,plainMsg.getText(),plainMsg.getDate(),name);
 						
 						// #sijapp cond.if modules_HISTORY is "true" #
 						if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
-							Jimm.jimm.getHistory().addText(getUin(), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"));
+							Jimm.jimm.getHistory().addText(getUin(), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
 						// #sijapp cond.end#
 							
 						SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
@@ -902,7 +917,29 @@ public class ContactListContactItem extends ContactListItem
 			{
 				this.activate();
 			}
+
+			// user select Ok in delete me message box
+			else if (Jimm.jimm.isMsgBoxCommand(c, MSGBS_REMOVEME) == 1)
+			{
+				RemoveMeAction remAct = new RemoveMeAction(ContactListContactItem.this.getUin());
+
+				try
+				{
+					Jimm.jimm.getIcqRef().requestAction(remAct);
+				} catch (JimmException e)
+				{
+					JimmException.handleException(e);
+					if (e.isCritical()) return;
+				}
+				Jimm.jimm.getContactListRef().activate();
+			}
 			
+			// user select CANCEL in delete contact message box
+			else if (Jimm.jimm.isMsgBoxCommand(c, MSGBS_REMOVEME) == 2)
+			{
+				this.activate();
+			}
+
 			// Textbox has been canceled
 			else if (c == MenuUtil.textboxCancelCommand)
 			{
@@ -1030,6 +1067,7 @@ public class ContactListContactItem extends ContactListItem
 			// #sijapp cond.end#
 			info_idx,
 			remove_idx,
+			remove_me_idx,
 			rename_idx,
 			auth_idx,
 			history_idx,
@@ -1126,18 +1164,18 @@ public class ContactListContactItem extends ContactListItem
 		{
 			 // #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
             // #sijapp cond.if modules_FILES is "true"#
-            send_message_idx = send_url_idx = dc_info_idx = history_idx = ft_name_idx = ft_cam_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            send_message_idx = send_url_idx = dc_info_idx = history_idx = ft_name_idx = ft_cam_idx = info_idx = remove_idx = remove_me_idx = rename_idx = auth_idx = status_message_idx = -1;
             // #sijapp cond.else#
-            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = remove_me_idx = rename_idx = auth_idx = status_message_idx = -1;
             // #sijapp cond.end#
             // #sijapp cond.else#
-            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = remove_me_idx = rename_idx = auth_idx = status_message_idx = -1;
             // #sijapp cond.end#
             // #sijapp cond.if target is "MOTOROLA"#
             // #sijapp cond.if modules_FILES is "true"#
-            send_message_idx = send_url_idx = dc_info_idx = history_idx = ft_name_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            send_message_idx = send_url_idx = dc_info_idx = history_idx = ft_name_idx = info_idx = remove_idx = remove_me_idx = rename_idx = auth_idx = status_message_idx = -1;
             // #sijapp cond.else#
-            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = rename_idx = auth_idx = status_message_idx = -1;
+            send_message_idx = send_url_idx = history_idx = info_idx = remove_idx = remove_me_idx = rename_idx = auth_idx = status_message_idx = -1;
             // #sijapp cond.end#
             // #sijapp cond.end#
 			
@@ -1171,6 +1209,10 @@ public class ContactListContactItem extends ContactListItem
 			remove_idx = menuList.size();
 			menuList.append(ResourceBundle.getString("remove"), null);
 			
+			// Remove me from user's contact list
+			remove_me_idx = menuList.size();
+			menuList.append(ResourceBundle.getString("remove_me"), null);
+
 			rename_idx = menuList.size();
 			menuList.append(ResourceBundle.getString("rename"), null);
 			
