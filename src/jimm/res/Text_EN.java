@@ -97,6 +97,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("cpd",                         "Cost per day");
 		resources.put("cpp",                         "Cost per packet");
 		resources.put("currency",                    "Currency");
+        resources.put("dc_info",                     "DC Info");        
 		resources.put("del_group",                   "Delete group");
 		resources.put("delete_chat",                 "Drop chat");
 		resources.put("deny",						 "Deny Auth");

@@ -95,6 +95,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("cpd",                         "Tagesnutzungsgebühr (cent)");
 		resources.put("cpp",                         "Paketgebühr (cent)");
 		resources.put("currency",                    "Währung");
+        resources.put("dc_info",                     "DC Info");
 		resources.put("del_group",                   "Gruppe löschen");
 		resources.put("delete_chat",                 "Verwerfe Chat");
 		resources.put("deny",						 "Auth ablehnen");
