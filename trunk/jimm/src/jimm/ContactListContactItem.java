@@ -991,7 +991,7 @@ public class ContactListContactItem extends ContactListItem
 			{
 				MenuUtil.initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH));
 				Displayable msgDisplay = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.uin);
-				msgDisplay.removeCommand(MenuUtil.addUrsCommand);
+                msgDisplay.removeCommand(MenuUtil.addUrsCommand);
 				msgDisplay.removeCommand(MenuUtil.grantAuthCommand);
 				msgDisplay.removeCommand(MenuUtil.denyAuthCommand);
 				msgDisplay.removeCommand(MenuUtil.reqAuthCommand);
@@ -1020,8 +1020,8 @@ public class ContactListContactItem extends ContactListItem
 			// Display menu
 			else
 			{
-				MenuUtil.menuList.setTitle(ContactListContactItem.this.name);
 				MenuUtil.initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH));
+                MenuUtil.menuList.setTitle(ContactListContactItem.this.name);
 				MenuUtil.menuList.setSelectedIndex(0, true);
 				MenuUtil.menuList.setCommandListener(this);
 				Jimm.display.setCurrent(MenuUtil.menuList);
@@ -1148,6 +1148,11 @@ public class ContactListContactItem extends ContactListItem
             eventList = new int[USER_MENU_USER_INFO];
             menuList = new List("",List.IMPLICIT);
             
+            // #sijapp cond.if target is "MOTOROLA"#
+            MenuUtil.menuList.addCommand(MenuUtil.selectCommand);
+            // #sijapp cond.end#
+            MenuUtil.menuList.addCommand(MenuUtil.backCommand);
+            
             // Add the needed elements to the event list
             eventList[menuList.append(ResourceBundle.getString("send_message"), null)] = USER_MENU_MESSAGE;
             eventList[menuList.append(ResourceBundle.getString("send_url"), null)]     = USER_MENU_URL;
@@ -1179,14 +1184,6 @@ public class ContactListContactItem extends ContactListItem
 		// Initializer
 		static
 		{
-			// Initialize the menu list
-			MenuUtil.menuList = new List("", Choice.IMPLICIT);
-			
-			// #sijapp cond.if target is "MOTOROLA"#
-			MenuUtil.menuList.addCommand(MenuUtil.selectCommand);
-			// #sijapp cond.end#
-			MenuUtil.menuList.addCommand(MenuUtil.backCommand);
-
 			// Initialize the textbox for entering messages
 			MenuUtil.messageTextbox = new TextBox(ResourceBundle.getString("message"), null, 1000, TextField.ANY);
 			MenuUtil.messageTextbox.addCommand(MenuUtil.textboxCancelCommand);
@@ -1200,7 +1197,6 @@ public class ContactListContactItem extends ContactListItem
 			MenuUtil.reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 1000, TextField.ANY);
 			MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxCancelCommand);
 			MenuUtil.reasonTextbox.addCommand(MenuUtil.textboxSendCommand);
-
 		}
 	}
 }

@@ -572,7 +572,6 @@ public class ActionListener
 
                         // Get plugin string
                         String plugin = Util.byteArrayToString(msg2Buf, msg2Marker, pluginLen);
-                        System.out.println("Plugin: "+plugin);
                         msg2Marker += pluginLen;
 
                         // Skip EXTMSG.UNKNOWN and EXTMSG.LEN
