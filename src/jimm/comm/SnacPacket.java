@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -231,6 +231,10 @@ public class SnacPacket extends Packet
 	// CLI_ADDEND packet family and command
 	public static final int CLI_ADDEND_FAMILY = 0x0013;
 	public static final int CLI_ADDEND_COMMAND = 0x0012;
+	
+	// CLI_REMOVEME packet family and command
+	public static final int CLI_REMOVEME_FAMILY = 0x0013;
+	public static final int CLI_REMOVEME_COMMAND = 0x0016;
 
     // CLI_REQAUTH packet family and command
 	public static final int CLI_REQAUTH_FAMILY = 0x0013;
