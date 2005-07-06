@@ -28,6 +28,7 @@ package jimm.comm;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
+import java.util.TimeZone;
 
 
 import jimm.ContactListContactItem;
@@ -926,6 +927,7 @@ public class ConnectAction extends Action
 							c.set(Calendar.MINUTE, dateMinute);
 							c.set(Calendar.SECOND, 0);
 							Date date = c.getTime();
+							date.setTime(date.getTime() - (TimeZone.getDefault().useDaylightTime()?(60*60*1000):0));
 	
 							// Get type
 							int type = Util.getWord(buf, 10, false);

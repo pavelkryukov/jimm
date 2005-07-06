@@ -74,13 +74,19 @@ public class Util
 	// Called to get a date String
     public static String getDateString(boolean onlyTime)
     {
+        return(getDateString(onlyTime,new Date()));
+    }
+	
+	// Called to get a date String
+    public static String getDateString(boolean onlyTime, Date value)
+    {
         Calendar time = Calendar.getInstance();
         String datestr = new String("failed");
 
         // Get time an apply time zone correction
         Date date = new Date();
     	// #sijapp cond.if target is "SIEMENS2" #
-        date.setTime(date.getTime() + TimeZone.getDefault().getRawOffset() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 )); 
+        date.setTime(value.getTime() + TimeZone.getDefault().getRawOffset() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 )); 
         // #sijapp cond.end #
         time.setTime(date);
 
@@ -94,7 +100,7 @@ public class Util
         }
         return datestr;
     }
-	
+
 	public static String toHexString(byte[] b) {
 		StringBuffer sb = new StringBuffer(b.length * 2);
 		for (int i = 0; i < b.length; i++) {
