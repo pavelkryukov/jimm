@@ -38,37 +38,38 @@ public class Text_EN extends ResourceBundle
 	public Text_EN()
 	{
 
-	    
-        // Labels
-        // MOTOROLA formatted buttons
-        // #sijapp cond.if target is "MOTOROLA"#
-    	resources.put("backlight_timeout",           "Backlight timeout (sec)");
-	    resources.put("backlight_manual",            "Manual backlight (* key)");
-        resources.put("select",                      "Select      ");
-        resources.put("reset",                       "       Reset");
-        resources.put("cancel",                      "      Cancel");
-        resources.put("back",                        "       Back");
-        resources.put("exit_button",                 "       Exit");
-        resources.put("menu_button",                 "      Menu");
-        resources.put("save",                        "Save       ");
-        resources.put("ok",                          "OK          ");
-        resources.put("reply",                       "Reply       ");
-        resources.put("close",                       "       Close");
-        resources.put("send",                        "Send        ");
-        resources.put("next",	             	     "Next        ");
-        // #sijapp cond.else# 
-        resources.put("reply",                       "Reply");
-        resources.put("close",                       "Close");
-        resources.put("select",                      "Select");
-        resources.put("reset",                       "Reset");
-        resources.put("cancel",                      "Cancel");
-        resources.put("back",                        "Back");
-        resources.put("save",                        "Save");
-        resources.put("ok",                          "OK");
-        resources.put("send",                        "Send");
-        resources.put("next",	                     "Next");
-    	// #sijapp cond.end#
-                                  
+		// Labels
+		// MOTOROLA formatted buttons
+		// #sijapp cond.if target is "MOTOROLA"#
+		resources.put("backlight_timeout",           "Backlight timeout (sec)");
+		resources.put("backlight_manual",            "Manual backlight (* key)");
+		resources.put("select",                      "Select      ");
+		resources.put("reset",                       "       Reset");
+		resources.put("cancel",                      "      Cancel");
+		resources.put("back",                        "       Back");
+		resources.put("exit_button",                 "       Exit");
+		resources.put("menu_button",                 "      Menu");
+		resources.put("save",                        "Save       ");
+		resources.put("ok",                          "OK          ");
+		resources.put("reply",                       "Reply       ");
+		resources.put("close",                       "       Close");
+		resources.put("search_user",                 "Search for User");
+		resources.put("send",                        "Send        ");
+		resources.put("next",	             	     "Next        ");
+		// #sijapp cond.else# 
+		resources.put("reply",                       "Reply");
+		resources.put("close",                       "Close");
+		resources.put("select",                      "Select");
+		resources.put("reset",                       "Reset");
+		resources.put("cancel",                      "Cancel");
+		resources.put("back",                        "Back");
+		resources.put("save",                        "Save");
+		resources.put("ok",                          "OK");
+		resources.put("search_user",                 "Search for User");
+		resources.put("send",                        "Send");
+		resources.put("next",	                     "Next");
+		// #sijapp cond.end#
+
 		resources.put(".",                           ".");
 		resources.put("about",                       "About");
 		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModules: ###MODULES###\n\nSee http://www.jimm.org/");
@@ -97,7 +98,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("cpd",                         "Cost per day");
 		resources.put("cpp",                         "Cost per packet");
 		resources.put("currency",                    "Currency");
-        resources.put("dc_info",                     "DC Info");        
+		resources.put("dc_info",                     "DC Info");        
 		resources.put("del_group",                   "Delete group");
 		resources.put("delete_chat",                 "Drop chat");
 		resources.put("deny",						 "Deny Auth");
@@ -110,9 +111,9 @@ public class Text_EN extends ResourceBundle
 		resources.put("display_date",                "Display date on splash screen?");
 		resources.put("email",                       "Email");
 		resources.put("error",                       "Error");
-		resources.put("exec",                        "Execute");
 		resources.put("exit",                        "Exit");
 		resources.put("female",                      "F");
+		resources.put("filename",                    "File Name");
 		resources.put("filetransfer",                "File transfer");
 		resources.put("filepath",                    "File path");
 		resources.put("find",                        "Find");
@@ -197,12 +198,11 @@ public class Text_EN extends ResourceBundle
 		resources.put("remove_user",                 "Remove user");
 		resources.put("rename",                      "Rename");
 		resources.put("requauth",                    "Request auth");
-        resources.put("reqstatmsg",                  "Request status message");
+		resources.put("reqstatmsg",                  "Request status message");
 		resources.put("requ",                        "Required");
 		resources.put("requno",                      "Not req");
 		resources.put("res",                         "Resolution");
 		resources.put("results",                     "Results");
-		resources.put("search_user",                 "Search for User");
 		resources.put("send_img",                    "Send image");
 		resources.put("send_message",                "New Message");
 		resources.put("send_url",                    "New URL");
@@ -216,13 +216,12 @@ public class Text_EN extends ResourceBundle
 		resources.put("since",                       "Since");
 		resources.put("size",                        "Size");
 		resources.put("sound",                       "Sound file");
-		resources.put("sound_file_name",             "Sound file name");
 		resources.put("sort_by",                     "Sort contact list");
 		resources.put("sort_by_name",                "By name");
 		resources.put("sort_by_status",              "By status");
 		resources.put("speed",                       "Speed");
 		resources.put("status",                      "Status");
-        resources.put("status_message",              "Status message");
+		resources.put("status_message",              "Status message");
 		resources.put("status_away",                 "Away");
 		resources.put("status_chat",                 "Free for Chat");
 		resources.put("status_dnd",                  "Do Not Disturb");
@@ -252,7 +251,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("white_on_blue",               "White on blue");
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
-			
+
 		//#sijapp cond.if modules_HISTORY is "true" #
 		resources.put("text_to_find",                "Text");
 		resources.put("find_backwards",              "Backward");
@@ -288,13 +287,6 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_123",                   "Connection has not been established (#123.EXT)");
 		resources.put("error_124",                   "Input stream is out of sync (#124.EXT)");
 		
-		// Peer connection
-		resources.put("error_125",                   "An I/O error occured (#125.EXT)");
-		resources.put("error_126",                   "Requested TCP connection cannot be made (#126.EXT)");
-		resources.put("error_127",                   "Specified server host and/or port is invalid (#127.EXT)");
-		resources.put("error_128",                   "Connection has not been established (#128.EXT)");
-		resources.put("error_129",                   "Input stream is out of sync (#129.EXT)");
-
 		// Parsing specific errors
 		resources.put("error_130",                   "FLAP header could not be parsed (#130.EXT)");
 		resources.put("error_131",                   "Unknown channel (#131.EXT)");
@@ -325,20 +317,18 @@ public class Text_EN extends ResourceBundle
 		// Other errors
 		resources.put("error_170",                   "Possibly not enough heap memory available (#170.EXT)");
 		resources.put("error_171",                   "Could not fetch meta info (#171.EXT)");
-        resources.put("error_172",                   "Date could not be saved (#172.EXT)");
-		
+
 		// Camera errors
 		resources.put("error_180",                   "Error creating the VideoControl (#180.EXT)");
 		resources.put("error_181",                   "Viewfinder initialization error (#181.EXT)");
 		resources.put("error_182",                   "Viewfinder start error (#182.EXT)");
 		resources.put("error_183",                   "Snapshot error (#183.EXT)");
 		resources.put("error_185",                   "Taking pictures not supported (#185.EXT)");
-		
+
 		// File transfer errors
 		resources.put("error_190",                   "File transfer with < ICQv8 clients not supported (#190.EXT)");
 		resources.put("error_191",                   "Error reading the file. Possibly not supported (#191.EXT)");
 		resources.put("error_192",                   "Error reading the file. File not found, or not supported (#192.EXT)");
-		resources.put("error_193",                   "Error accessing file system for browsing. Security error (#193.EXT)");
 
 	}
 }
