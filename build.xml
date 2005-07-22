@@ -276,7 +276,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Internal target: compile   -->
 	<target name="compile" depends="preprocess-source">
 		<mkdir dir="${build}/compile/classes" />
-		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" debug="off" />
+		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.2" source="1.2" debug="off" />
 	</target>
 	
 	<!--  Internal target: obfuscate -->
