@@ -201,10 +201,13 @@ VERSION 0.4.0
 ________________________________________________________________________________
 VERSION 0.4.1
 
+  * Improved navigation in chat
   * NEW FEATURE: Now Jimm is able to send out status messages
   * NEW FEATURE: Now Jimm is able to request the status messages from other users
   * NEW FEATURE: You can now select Jimm to only vibrate in keylock mode
   * NEW FEATURE: You can now remove yourself from another users contact list
+  * NEW FEATURE: It is possible to add any message from chat to history  
+  * NEW FEATURE: Added menu to clear history for all contacts
   * BUGFIX: Problems with filetransfer to ips with more then 2 digits resolved
   * BUGFIX: Timestamp for offline messages is now correct
   
