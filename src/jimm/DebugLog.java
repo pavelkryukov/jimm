@@ -58,6 +58,7 @@ public class DebugLog
         //#sijapp cond.else#
         list.setCaption("Debug log");
         //#sijapp cond.end#
+        list.setCursorMode(TextList.SEL_NONE);
 
     }
 
@@ -70,8 +71,9 @@ public class DebugLog
 
     synchronized public static void addText(String text)
     {
-        list.addBigText("[" + Integer.toString(++counter) + "]", 0xFF, Font.STYLE_PLAIN);
-        list.addBigText(text, 0, Font.STYLE_PLAIN);
+        list.addBigText("[" + Integer.toString(counter+1) + "]", 0xFF, Font.STYLE_PLAIN, counter);
+        list.addBigText(text, 0, Font.STYLE_PLAIN, counter);
+        counter++;
     }
 
 }

@@ -297,7 +297,7 @@ public class ContactList implements CommandListener
         // #sijapp cond.end#
 		
 		tree.setImageList(imageList);
-		tree.setFontSize(VirtualList.SMALL_FONT);
+		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT : VirtualList.MEDIUM_FONT);
 		tree.setStepSize( -tree.getItemHeight()/2 );
 		
         // #sijapp cond.if modules_TRAFFIC is "true" #

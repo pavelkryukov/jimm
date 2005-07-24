@@ -253,6 +253,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("youwereadded",				 "You were added by UIN: ");
 
 		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("add_to_history",              "Add to history");
 		resources.put("text_to_find",                "Text");
 		resources.put("find_backwards",              "Backward");
 		resources.put("find_case_sensitiv",          "Case sensitive");
@@ -263,6 +264,13 @@ public class Text_EN extends ResourceBundle
 		resources.put("hist_avail",                  "Total space (kB)"); 
 		resources.put("history",                     "Stored history");
 		resources.put("not_found",                   "not found");
+		resources.put("clear_all",                   "Clear all history");
+		resources.put("clear_all2",                  "Do clear stored history for all contacts?");
+		resources.put("clear_history",               "Clear stored history");
+		resources.put("ch_never",                    "Never");
+		resources.put("ch_day",                      "Every day");
+		resources.put("ch_week",                     "Every week");
+		resources.put("ch_month",                    "Every month");
 		//#sijapp cond.end#
 
 		// Generic errors

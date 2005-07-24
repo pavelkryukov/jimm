@@ -24,8 +24,7 @@
 package jimm;
 
 import java.util.Enumeration;
-import java.util.Date;
-import java.util.Hashtable;
+import java.util.*;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Canvas;
 
@@ -37,6 +36,26 @@ import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 import DrawControls.TextList;
+
+//#sijapp cond.if modules_HISTORY is "true" #
+class MessData
+{
+	private boolean incoming;
+	private Date time;
+	private String from;
+	
+	public MessData(boolean incoming, Date time, String from)
+	{
+		this.incoming = incoming;
+		this.time = time;
+		this.from = from;
+	}
+		
+	public boolean getIncoming() { return incoming; }
+	public String getFrom() { return from; }
+	public Date getTime() { return time; }
+}
+//#sijapp cond.end#
 
 class ChatTextList extends TextList
 {
@@ -54,7 +73,7 @@ class ChatTextList extends TextList
 			TextList.SEL_NONE
 		);
 		ChatName = name;
-			Jimm.setColorScheme(this);
+		Jimm.setColorScheme(this);
 	}
 
 	protected void userPressKey(int keyCode)
@@ -72,14 +91,37 @@ class ChatTextList extends TextList
 			break;
 		}
 	}
-
 }
 
 public class ChatHistory
 {
 	private Hashtable historyTable;
 	private int counter;
+	private static int messTotalCounter = 0;
 	
+	//#sijapp cond.if modules_HISTORY is "true" #
+	private Vector messData = new Vector();
+	
+	// Adds selected message to history
+	public void addTextToHistory(String uin)
+	{
+		DrawControls.TextList list = getChatHistoryAt(uin);
+		int textIndex = list.getCurrTextIndex();
+		String[] text = list.getCurrText();
+		if (text == null) return;
+		StringBuffer strings = new StringBuffer();
+		for (int i = 1; i < text.length; i++) strings.append(text[i]).append(' ');
+		
+		MessData data = (MessData)messData.elementAt(textIndex);
+		Jimm.jimm.getHistory().addText(
+			uin, 
+			strings.toString(), 
+			data.getIncoming() ? (byte)0 : (byte)1, 
+			data.getFrom(), 
+			data.getTime()
+		);
+	}
+	//#sijapp cond.end#
 
 	public ChatHistory()
 	{
@@ -156,27 +198,44 @@ public class ChatHistory
 	// Add text to message form
 	synchronized private void addTextToForm(String uin,String from, String message, String url, Date time, boolean red)
 	{
-
 		TextList msgDisplay = (TextList) historyTable.get(uin);
 
 		msgDisplay.lock();
 		int lastSize = msgDisplay.getItemCount();
 		msgDisplay.addBigText
 		(
-		  from + " (" + Util.getDateString(true, time) + "):",
-		  red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
-		  Font.STYLE_BOLD
+			from + " (" + Util.getDateString(true, time) + "):",
+			red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
+			Font.STYLE_BOLD,
+			messTotalCounter
 		);
 
 		if (url.length() > 0)
 		{
-			msgDisplay.addBigText(ResourceBundle.getString("url")+": "+url, 0x00FF00, Font.STYLE_PLAIN);
+			msgDisplay.addBigText
+			(
+				ResourceBundle.getString("url")+": "+url, 
+				0x00FF00, 
+				Font.STYLE_PLAIN, messTotalCounter
+			);
 		}
 
-		msgDisplay.addBigText(message, msgDisplay.getTextColor(), Font.STYLE_PLAIN);
+		msgDisplay.addBigText
+		(
+			message, 
+			msgDisplay.getTextColor(), 
+			Font.STYLE_PLAIN,
+			messTotalCounter
+		);
 		
 		msgDisplay.setTopItem(lastSize);		
 		msgDisplay.unlock();
+		
+		//#sijapp cond.if modules_HISTORY is "true" #
+		messData.addElement( new MessData(red, time, from) );
+		//#sijapp cond.end#
+		
+		messTotalCounter++;
 	}
 
 	// Returns the chat history form at the given uin
@@ -210,7 +269,7 @@ public class ChatHistory
 	// Returns true if chat history exists for this uin
 	public boolean chatHistoryExists(String uin)
 	{
-	return historyTable.containsKey(uin);
+		return historyTable.containsKey(uin);
 	}
 
 	
@@ -220,7 +279,6 @@ public class ChatHistory
 		ChatTextList chatForm = new ChatTextList(name);
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
-		
 	}
 
 	public void UpdateCaption(String uin)
@@ -239,11 +297,11 @@ public class ChatHistory
 
 	public void setColorScheme()
 	{
-		int count = historyTable.size();
 		Enumeration AllChats = historyTable.elements();
 		while (AllChats.hasMoreElements())
 			Jimm.setColorScheme((ChatTextList)AllChats.nextElement());
 	}
+	
 	// Sets the counter for the ChatHistory
 	public void incCounter(boolean up)
 	{
@@ -252,6 +310,5 @@ public class ChatHistory
 	    else
 	        counter =((counter--) % historyTable.size())+1;
 	}
-	
 
 }

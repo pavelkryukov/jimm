@@ -352,6 +352,11 @@ public class Jimm extends MIDlet
 		if (vl == null) return;
 		vl.setBackgroundColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BACK));
 		vl.setTextColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT));
+		
+		if (vl instanceof TextList)
+		{
+			((TextList)vl).setTextSelColor( Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_MESS) );
+		}
 	}
 	
 	public void setColorScheme()
