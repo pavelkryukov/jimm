@@ -106,12 +106,12 @@ public class Options
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
 	public static final int OPTION_HISTORY                        = 137;   /* boolean */
 	public static final int OPTION_COLOR_SCHEME                   =  73;   /* int     */
-    public static final int OPTION_STATUS_MESSAGE                 =   7;   /* String  */
+	//public static final int OPTION_HISTORY_CLEAR                  =  75;   /* int     */
+	public static final int OPTION_STATUS_MESSAGE                 =   7;   /* String  */
 	// #sijapp cond.if target is "MOTOROLA"#
 	public static final int OPTION_LIGHT_TIMEOUT		          =  74;   /* int     */
 	public static final int OPTION_LIGHT_MANUAL		              = 140;   /* boolean */
 	// #sijapp cond.end#
-	
 
 
 	/**************************************************************************/
@@ -386,6 +386,7 @@ public class Options
 	public static final int  CLRSCHHEME_BACK = 1; // retrieving background color
 	public static final int  CLRSCHHEME_TEXT = 2; // retrieving text color
 	public static final int  CLRSCHHEME_BLUE = 3; // retrieving highlight color
+	public static final int  CLRSCHHEME_MESS = 4; // retrieving curr mess highlight color
 
 	// Retrieves color value from color scheme
 	final public int getSchemeColor(int type)
@@ -394,14 +395,17 @@ public class Options
 		{
 		case CLRSCHHEME_BOW:
 			if (type == CLRSCHHEME_BLUE) return 0xFF;
+			else if (type == CLRSCHHEME_MESS) return 0xE0E0E0;
 			return (type == CLRSCHHEME_BACK) ? 0xFFFFFF : 0x000000;
 			
 		case CLRSCHHEME_WOB:
 			if (type == CLRSCHHEME_BLUE) return 0xFFFF;
+			else if (type == CLRSCHHEME_MESS) return 0x80;
 			return (type == CLRSCHHEME_BACK) ? 0x000000 : 0xFFFFFF;
 			
 		case CLRSCHHEME_WOBL:
 			if (type == CLRSCHHEME_BLUE) return 0xFFFF;
+			else if (type == CLRSCHHEME_MESS) return 0x99;
 			return (type == CLRSCHHEME_BACK) ? 0x000080 : 0xFFFFFF;
 		}
 		return 0;
@@ -476,6 +480,7 @@ public class Options
 		
 		// #sijapp cond.if modules_HISTORY is "true" #
 		private ChoiceGroup useHistory;
+		//private ChoiceGroup clearHist;
 		// #sijapp cond.end#
 
 		// Constructor
@@ -595,6 +600,13 @@ public class Options
                 this.useHistory = new ChoiceGroup(ResourceBundle.getString("use_history") + "?", Choice.MULTIPLE);
                 this.useHistory.append(ResourceBundle.getString("yes"), null);
                 this.useHistory.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_HISTORY));
+                /*
+                this.clearHist = new ChoiceGroup(ResourceBundle.getString("clear_history"), Choice.EXCLUSIVE);
+                this.clearHist.append(ResourceBundle.getString("ch_never"), null);
+                this.clearHist.append(ResourceBundle.getString("ch_day"), null);
+                this.clearHist.append(ResourceBundle.getString("ch_week"), null);
+                this.clearHist.append(ResourceBundle.getString("ch_month"), null);
+                */
                 // #sijapp cond.end#
                 
                 this.colorScheme = new ChoiceGroup(ResourceBundle.getString("color_scheme"), Choice.EXCLUSIVE);
@@ -722,6 +734,7 @@ public class Options
 						
 						// #sijapp cond.if modules_HISTORY is "true" #
 						this.optionsForm.append(this.useHistory);
+						//this.optionsForm.append(this.clearHist);
 						// #sijapp cond.end#
 						
 						this.optionsForm.append(this.cp1251HackChoiceGroup);

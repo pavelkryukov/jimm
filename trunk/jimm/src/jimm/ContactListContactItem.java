@@ -35,6 +35,8 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 
+import java.util.*;
+
 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 // #sijapp cond.if modules_FILES is "true"#
 import jimm.comm.FileTransferMessage;
@@ -52,7 +54,7 @@ import jimm.comm.UrlMessage;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 // #sijapp cond.if target is "MOTOROLA"#
-import DrawControls.LightControl;
+import DrawControls.*;
 // #sijapp cond.end#
 
 
@@ -725,15 +727,21 @@ public class ContactListContactItem extends ContactListItem
                     Jimm.display.setCurrent(MenuUtil.reasonTextbox);
                     break;
                 }
-
-
             }
 			
 			// User wants to add temporary contact
 			else if (c == MenuUtil.addUrsCommand)
 			{
 				Jimm.jimm.getMainMenuRef().addUserOrGroupCmd(uin,true);
-			 }
+			}
+			
+			// User adds selected message to history
+			//#sijapp cond.if modules_HISTORY is "true" #
+			else if (c == MenuUtil.addToHistory)
+			{
+				Jimm.jimm.getChatHistoryRef().addTextToHistory(uin);
+			}
+			//#sijapp cond.end#
 			
 			// User wants to rename Contact
 			else if (c == MenuUtil.renameOkCommand)
@@ -999,6 +1007,9 @@ public class ContactListContactItem extends ContactListItem
 				msgDisplay.addCommand(MenuUtil.msgReplyCommand);
 				msgDisplay.addCommand(MenuUtil.deleteChatCommand);
 				msgDisplay.addCommand(MenuUtil.addMenuCommand);
+				//#sijapp cond.if modules_HISTORY is "true" #
+				msgDisplay.addCommand(MenuUtil.addToHistory);
+				//#sijapp cond.end#
 				if (ContactListContactItem.this.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
 				{
 					msgDisplay.addCommand(MenuUtil.grantAuthCommand);
@@ -1107,6 +1118,11 @@ public class ContactListContactItem extends ContactListItem
 
 		// Add temporary user to contact list
 		private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.OK, 2);
+		
+		// Add selected message to history 
+		//#sijapp cond.if modules_HISTORY is "true" #
+		private static Command addToHistory  = new Command(ResourceBundle.getString("add_to_history"), Command.ITEM, 3);
+		//#sijapp cond.end#
 
 		//Show the message menu
 		private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"), Command.OK, 4);
@@ -1143,7 +1159,6 @@ public class ContactListContactItem extends ContactListItem
         
 		static void initList(boolean showAuthItem)
 		{
-            
             // Size of the event list equals last entry number
             eventList = new int[USER_MENU_USER_INFO];
             menuList = new List("",List.IMPLICIT);

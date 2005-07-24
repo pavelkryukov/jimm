@@ -87,7 +87,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("byte",                        "Байт");
 		resources.put("chat_small_font",             "Мелкий шрифт в окне чата?");
 		resources.put("city",                        "Город");
-		resources.put("clear",                       "Стереть всё");
+		resources.put("clear",                       "Стереть");
 		resources.put("color_scheme",                "Цветовая схема");
 		resources.put("conn_type",                   "Тип подключения");
 		resources.put("connect",                     "Подключиться");
@@ -253,6 +253,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("youwereadded",				 "Вас добавил: ");
 
 		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("add_to_history",              "В историю");
 		resources.put("text_to_find",                "Текст");
 		resources.put("find_backwards",              "В обратном направлении");
 		resources.put("find_case_sensitiv",          "С учётом регистра");
@@ -263,6 +264,13 @@ public class Text_RU extends ResourceBundle
 		resources.put("hist_avail",                  "Всего места (Кб)"); 
 		resources.put("history",                     "История сообщений");
 		resources.put("not_found",                   "не найден");
+		resources.put("clear_all",                   "Стереть все записи");
+		resources.put("clear_all2",                  "Стереть все записи для всех контактов?");
+		resources.put("clear_history",               "Очищать историю");
+		resources.put("ch_never",                    "Никогда");
+		resources.put("ch_day",                      "Каждый день");
+		resources.put("ch_week",                     "Каждую неделю");
+		resources.put("ch_month",                    "Каждый месяц");
 		//#sijapp cond.end#
 
 		// Generic errors

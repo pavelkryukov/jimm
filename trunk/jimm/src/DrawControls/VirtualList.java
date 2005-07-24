@@ -94,12 +94,13 @@ public abstract class VirtualList extends Canvas
   
   private String 
     caption;
-   
+  
+  protected int currItem = 0;
+  
   private int 
     width    = 0,
     height   = 0,
-    topItem  = 0, 
-    currItem = 0, 
+    topItem  = 0,  
     visCount = 0,
     fontHeightInt = -1,
     fontSize = MEDIUM_FONT,
@@ -149,6 +150,9 @@ public abstract class VirtualList extends Canvas
   	textColor = value;
   	repaint();
   }
+  
+  //! Returns number of visibled lines of text which fit in screen 
+  public int getVisCount() { return visCount; }
   
   //TODO: brief text
   public void setCursorMode(int value)
@@ -281,30 +285,31 @@ public abstract class VirtualList extends Canvas
   		return;
   	}
   	
-    if (cursorMode == SEL_NONE)
-    {
-      if ((size-topItem) <= visCount) topItem = size-visCount;
-    }
-    else 
-    {
-      if (currItem >= (topItem+visCount-1)) topItem = currItem-visCount+1;
-      if (currItem < topItem) topItem = currItem;
-    }  
+    if (currItem >= (topItem+visCount-1)) topItem = currItem-visCount+1;
+    if (currItem < topItem) topItem = currItem;
+    
+    if ((size-topItem) < visCount) topItem = (size > visCount) ? (size-visCount) : 0;  
     
     if (topItem < 0) topItem = 0;
+  }
+  
+  // Check does item with index visible
+  protected boolean visibleItem(int index)
+  {
+  	return (index >= topItem) && (index <= (topItem+visCount));
   }
   
   private int lastCurrItem = 0, lastTopItem = 0;
   
   // private void storelastItemIndexes()
-  private void storelastItemIndexes()
+  protected void storelastItemIndexes()
   {
     lastCurrItem = currItem;
     lastTopItem = topItem;
   }
   
   // private void repaintIfLastIndexesChanged()
-  private void repaintIfLastIndexesChanged()
+  protected void repaintIfLastIndexesChanged()
   {
     if ((lastCurrItem != currItem) || (lastTopItem != topItem))
     {
@@ -318,17 +323,9 @@ public abstract class VirtualList extends Canvas
   protected void moveCursor(int step)
   {
     storelastItemIndexes();
-    if (cursorMode == SEL_NONE) 
-    {
-      topItem += step;
-      checkTopItem();
-    }
-    else
-    {
-      currItem += step;
-      checkCurrItem();
-      checkTopItem();
-    }
+    currItem += step;
+    checkCurrItem();
+    checkTopItem();
     repaintIfLastIndexesChanged();
   }
   
@@ -337,8 +334,7 @@ public abstract class VirtualList extends Canvas
   {
     storelastItemIndexes();
     int endIndex = getSize()-1;
-    if (cursorMode == SEL_NONE) topItem = endIndex;
-    else currItem = endIndex;
+    currItem = endIndex;
     checkTopItem();
     repaintIfLastIndexesChanged();
   }
@@ -414,9 +410,8 @@ public abstract class VirtualList extends Canvas
 
   final public void setTopItem(int index)
   {
-    if (cursorMode != SEL_NONE) return;
     storelastItemIndexes();
-    topItem = index;
+    currItem = topItem = index;
     checkTopItem();
     repaintIfLastIndexesChanged();
   }
@@ -489,8 +484,10 @@ public abstract class VirtualList extends Canvas
     return bkgrndColor;
   }
   
+  protected int getItemBkColor(int index, int lastColor) { return lastColor; }
+  
   // private int drawItem(int index, Graphics g, int top_y, int th, ListItem item)
-  private int drawItem(int index, Graphics g, int top_y, int itemHeight, ListItem item, int fontHeight)
+  private int drawItem(int index, Graphics g, int top_y, int itemHeight, ListItem item, int fontHeight, int bkColor)
   {
     int y = 0, x = 0, w = 0, textColor = 0;
     boolean isSelected = ((currItem == index) && (cursorMode != SEL_NONE));
@@ -520,7 +517,7 @@ case SEL_DOTTED:
     }
     else
     {
-      g.setColor(bkgrndColor);
+      g.setColor(bkColor);
       g.fillRect(0, y, width, itemHeight);
       textColor = item.color;
     }  
@@ -545,8 +542,8 @@ case SEL_DOTTED:   x = 2;            break;
         y1, y2, itemCount,
         position;
         
-    position  = (cursorMode == SEL_NONE) ? topItem : currItem;
-    itemCount = (cursorMode == SEL_NONE) ? getSize()-visCount : getSize()-1;
+    position  = currItem;
+    itemCount = getSize()-1;
     
     if (itemCount < 1) itemCount = 1;
     y1 = position*(height-sliderSize-topY)/itemCount+topY;
@@ -583,7 +580,8 @@ case SEL_DOTTED:   x = 2;            break;
     y = top_y;
     for (i = topItem; i < size; i++)
     {
-      y = drawItem(i, g, top_y, itemHeight, item, fontHeight);
+      int bkColor = getItemBkColor(i, bkgrndColor);
+      y = drawItem(i, g, top_y, itemHeight, item, fontHeight, bkColor);
       if (y >= height) break;
     }
     if (y < height)

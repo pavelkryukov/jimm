@@ -25,8 +25,7 @@
 
 package jimm;
 
-import java.util.Hashtable;
-import java.util.Date;
+import java.util.*;
 import java.lang.StringBuffer;
 import java.lang.System;
 import java.lang.Exception;
@@ -53,8 +52,8 @@ final class CachedRecord
 }
 
 // Visual messages history list
-final class HistoryStorageList extends VirtualList
-                         implements CommandListener, VirtualListCommands
+final class HistoryStorageList extends    VirtualList
+                               implements CommandListener, VirtualListCommands
 {
 	// commands for message text
 	private static Command cmdMsgBack = new Command(ResourceBundle.getString("back"),   Command.BACK,   1);
@@ -62,13 +61,16 @@ final class HistoryStorageList extends VirtualList
 	private static Command cmdMsgPrev = new Command(ResourceBundle.getString("prev"),   Command.ITEM,   3);
 	
 	// commands for messages list
-	private static Command cmdSelect  = new Command(ResourceBundle.getString("select"), Command.SCREEN, 1);
-	private static Command cmdBack    = new Command(ResourceBundle.getString("back"),   Command.BACK,   2);
-	private static Command cmdClear   = new Command(ResourceBundle.getString("clear"),  Command.ITEM,   4); 
-	private static Command cmdFind    = new Command(ResourceBundle.getString("find"),   Command.ITEM,   3);
+	private static Command cmdClrAll  = new Command(ResourceBundle.getString("clear_all"),    Command.SCREEN, 6);
+	private static Command cmdSelect  = new Command(ResourceBundle.getString("select")   ,    Command.SCREEN, 1);
+	private static Command cmdBack    = new Command(ResourceBundle.getString("back"),         Command.BACK,   2);
+	private static Command cmdClear   = new Command(ResourceBundle.getString("clear"),        Command.ITEM,   4); 
+	private static Command cmdFind    = new Command(ResourceBundle.getString("find"),         Command.ITEM,   3);
 	private static Command cmdInfo    = new Command(ResourceBundle.getString("history_info"), Command.ITEM,   5);
 	
 	static TextList messText;
+	
+	private final static int MB_CLEAR_ALL_TAG = 1;
 	
 	// list UIN
 	private static String currUin  = new String(), 
@@ -90,6 +92,7 @@ final class HistoryStorageList extends VirtualList
 		addCommand(cmdClear);
 		addCommand(cmdFind);
 		addCommand(cmdInfo);
+		addCommand(cmdClrAll);
 		setCommandListener(this);
 		setVLCommands(this);
 		Jimm.setColorScheme(this);
@@ -214,7 +217,7 @@ final class HistoryStorageList extends VirtualList
 			Jimm.display.setCurrent(frmFind);
 		}
 		
-		// user select ok command in fin screen
+		// user select ok command in find screen
 		else if (c == cmdFindOk)
 		{
 			Jimm.jimm.getHistory().find
@@ -234,30 +237,54 @@ final class HistoryStorageList extends VirtualList
 		// commands info
 		else if (c == cmdInfo)
 		{
-			StringBuffer str = new StringBuffer(); 
 			RecordStore rs = Jimm.jimm.getHistory().getRS();
 			
 			try
 			{
-				str.append(ResourceBundle.getString("hist_cur")).append(": ").append(getSize()).append("\n")
-				   .append(ResourceBundle.getString("hist_size")).append(": ").append(rs.getSize()/1024).append("\n")
-				   .append(ResourceBundle.getString("hist_avail")).append(": ").append(rs.getSizeAvailable()/1024).append("\n")
-				   ;
+				Alert alert = new Alert
+				(
+					ResourceBundle.getString("history_info"),
+					(new StringBuffer())
+						.append(ResourceBundle.getString("hist_cur")).append(": ").append(getSize()).append("\n")
+						.append(ResourceBundle.getString("hist_size")).append(": ").append(rs.getSize()/1024).append("\n")
+						.append(ResourceBundle.getString("hist_avail")).append(": ").append(rs.getSizeAvailable()/1024).append("\n")
+						.toString(),
+					null,
+					AlertType.INFO 
+				);
+				alert.setTimeout(Alert.FOREVER);
+				Jimm.display.setCurrent(alert);
 			}
 			catch (Exception e)
 			{
-				str.append("Error while retrieving RS info!");
+				DebugLog.addText("Error while retrieving RS info!");
 			}
-			
-			Alert alert = new Alert
+		}
+		
+		// "Clear all" menu
+		else if (c == cmdClrAll)
+		{
+			Jimm.jimm.messageBox
 			(
-				ResourceBundle.getString("history_info"),
-				str.toString(),
-				null,
-				AlertType.INFO 
+				ResourceBundle.getString("attention"),
+				ResourceBundle.getString("clear_all2"),
+				Jimm.MESBOX_YESNO,
+				this,
+				MB_CLEAR_ALL_TAG
 			);
-			alert.setTimeout(Alert.FOREVER);
-			Jimm.display.setCurrent(alert);
+		}
+		
+		// "Clear all?" -> YES
+		else if (Jimm.jimm.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == 1)
+		{
+			Jimm.jimm.getHistory().clear_all();
+			Jimm.display.setCurrent(this);
+		}
+		
+		// "Clear all?" -> NO
+		else if (Jimm.jimm.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == 2)
+		{
+			Jimm.display.setCurrent(this);
 		}
 	}
 	
@@ -283,8 +310,8 @@ final class HistoryStorageList extends VirtualList
 		CachedRecord record = Jimm.jimm.getHistory().getRecord(currUin, this.getCurrIndex()); 
 		
 		messText.clear();
-		messText.addBigText(record.date+":", messText.getTextColor(), Font.STYLE_BOLD);
-		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN);
+		messText.addBigText(record.date+":", messText.getTextColor(), Font.STYLE_BOLD, -1);
+		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		messText.setTitle(record.from);
 		//#sijapp cond.else#
@@ -333,10 +360,17 @@ final public class HistoryStorage
 	//                                   //
 	//===================================//
 	
+	static final public int CLEAR_EACH_DAY   = 0;
+	static final public int CLEAR_EACH_WEEK  = 1;
+	static final public int CLEAR_EACH_MONTH = 2;
+	
+	static final private int VERSION = 1;
+	
+	static final private String prefix = "hist";
+	
 	private static RecordStore recordStore;
 	private static HistoryStorageList list;
 	private String currCacheUin = new String();
-	private int currRecIndex = -1, currRecId;
 	private Hashtable cachedRecords;
 	
 	final static private int TEXT_START_INDEX = 1;
@@ -351,6 +385,7 @@ final public class HistoryStorage
 		{
 			
 		}
+		autoClearAndTestVers();
 	}
 	
 	// Convert String UIN to long value
@@ -369,7 +404,14 @@ final public class HistoryStorage
 	}
 	
 	// Add message text to contact history
-	synchronized public void addText(String uin, String text, byte type, String from, Date time)
+	synchronized public void addText
+	(
+		String uin,  // uin sended text  
+		String text, // text to save
+		byte type,   // type of message 0 - incoming, 1 - outgouing
+		String from, // text sender
+		Date time    // date of message
+	)
 	{
 		byte[] buffer, textData;
 		int textLen;
@@ -383,8 +425,6 @@ final public class HistoryStorage
 			else if (list.getCurrIndex() == (list.getSize()-1)) lastLine = true;
 		}
 		
-		// TODO: 
-
 		boolean isCurrenty = currCacheUin.equals(uin);
 		
 		try
@@ -433,7 +473,7 @@ final public class HistoryStorage
 	// Returns record store name for UIN
 	static private String getRSName(String uin)
 	{
-		return "hist"+uin;
+		return prefix+uin;
 	}
 	
 	// Opens record store for UIN
@@ -498,9 +538,7 @@ final public class HistoryStorage
 		}
 		catch (Exception e)
 		{
-			result.text = "error";
-			result.date = "error";
-			result.from = "error"; 
+			result.text = result.date = result.from = "error"; 
 			return null;
 		}
 		
@@ -561,7 +599,6 @@ final public class HistoryStorage
 			RecordStore.deleteRecordStore( getRSName(uin) );
 			if (cachedRecords != null) cachedRecords.clear();
 			currCacheUin = new String();
-			openUINRecords(uin);
 		}
 		catch (Exception e)
 		{
@@ -581,7 +618,6 @@ final public class HistoryStorage
 		list = null;
 		
 		currCacheUin = new String();
-		currRecIndex = -1;
 	}
 	
 	// Sets color scheme for history UI controls
@@ -590,7 +626,8 @@ final public class HistoryStorage
 		if (list != null)
 		{
 			Jimm.setColorScheme(list);
-			if (HistoryStorageList.messText != null) Jimm.setColorScheme(HistoryStorageList.messText);
+			if (HistoryStorageList.messText != null) 
+				Jimm.setColorScheme(HistoryStorageList.messText);
 		}
 	}
 	
@@ -605,7 +642,8 @@ final public class HistoryStorage
 		{
 			if ((index < 0) || (index >= size)) break;
 			CachedRecord record = getRecord(uin, index);
-			String search_text = case_sens ? record.text : record.text.toLowerCase();
+			String search_text = 
+				case_sens ? record.text : record.text.toLowerCase();
 			if (search_text.indexOf(text) != -1)
 
 			{
@@ -626,14 +664,135 @@ final public class HistoryStorage
 		if (list == null) return;
 		boolean result = find_intern(uin, text, case_sens, back);
 		if (result == true) return;
-		StringBuffer errstr = new StringBuffer();
-		errstr
-			.append(text)
-			.append("\n")
-			.append(ResourceBundle.getString("not_found"));
-		Alert alert = new Alert(ResourceBundle.getString("find"), errstr.toString(), null, AlertType.INFO);
+		
+		Alert alert = new Alert
+		(
+			ResourceBundle.getString("find"),
+			(new StringBuffer())
+				.append(text)
+			    .append("\n")
+				.append(ResourceBundle.getString("not_found"))
+				.toString(),
+			null,
+			AlertType.INFO
+		);
+		
 		alert.setTimeout(Alert.FOREVER);
 		Jimm.display.setCurrent(alert, list);
+	}
+	
+	// Clears all records for all uins
+	synchronized void clear_all()
+	{
+		try
+		{
+			if (recordStore != null)
+			{
+				recordStore.closeRecordStore();
+				recordStore = null;
+				System.gc();
+				currCacheUin = new String();
+			}
+			
+			String[] stores = RecordStore.listRecordStores();
+			
+			for (int i = 0; i < stores.length; i++)
+			{
+				if (stores[i].indexOf(prefix) == -1) continue;
+				RecordStore.deleteRecordStore(stores[i]);
+				DebugLog.addText(stores[i]+" deleted...");
+			}
+		}
+		catch (Exception e)
+		{
+			DebugLog.addText("HistoryStorageList.clear_all "+e.toString());
+		}
+	}
+	
+	private final static String histMainRSName = "hst";  
+	
+	// Checks if clraring needs and clears
+	private void autoClearAndTestVers()
+	{/*
+		RecordStore rs = null;
+		boolean needToClear = false;
+		int version, day, day_of_week, month;
+		
+		try
+		{
+			rs = RecordStore.openRecordStore(histMainRSName, false);
+		}
+		catch (Exception e)
+		{
+			saveLastClearTime();
+			return;
+		}
+		
+		try
+		{
+			ByteArrayInputStream bais = new ByteArrayInputStream(rs.getRecord(1));
+			DataInputStream dis = new DataInputStream(bais);
+			version = dis.readInt();
+			if (version != VERSION) throw new Exception();
+			day = dis.readInt();
+			day_of_week = dis.readInt();
+			month = dis.readInt();
+
+//			static final public int CLEAR_EACH_DAY   = 0;
+			//static final public int CLEAR_EACH_WEEK  = 1;
+			///static final public int CLEAR_EACH_MONTH = 2;
+			
+			
+			//switch (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY_CLEAR))
+			//{
+			//case CLEAR_EACH_DAY:
+			//}
+		}
+		catch (Exception e)
+		{
+			needToClear = true;
+		}
+		finally
+		{
+			try
+			{
+				rs.closeRecordStore();
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+		
+		
+		if (needToClear)
+		{
+			clear_all();
+			saveLastClearTime();
+		}*/
+	}
+
+	// Saves last clearing time
+	private void saveLastClearTime()
+	{
+		/*
+		Calendar calend = Calendar.getInstance();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(baos);
+		
+		try
+		{
+			RecordStore rs = RecordStore.openRecordStore(histMainRSName, true);
+			dos.write(VERSION);
+			dos.write(calend.get(Calendar.DAY_OF_MONTH));
+			dos.write(calend.get(Calendar.DAY_OF_WEEK));
+			dos.write(calend.get(Calendar.MONTH));
+			rs.addRecord(baos.toByteArray(), 0, baos.size());
+		}
+		catch (Exception e)
+		{
+			DebugLog.addText("HistoryStorage.saveLastClearTime "+e.toString());
+		}*/
 	}
 }
 

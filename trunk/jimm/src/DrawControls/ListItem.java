@@ -26,8 +26,8 @@ package DrawControls;
 
 import javax.microedition.lcdui.Font;
 
-//! Data for tree node
-/*! All member of class are made as public 
+//! Data for list item
+/*! All members of class are made as public 
     in order to easy access. 
 */
 public class ListItem
@@ -36,22 +36,25 @@ public class ListItem
     text;        //!< Text of node
     
   public int 
-    fontStyle,
-    color,       //!< Color of node text
-    imageIndex;  //!< Index of node image. Must be -1 for disabling image
+    bigTextIndex,
+    fontStyle,    //!< Font style
+    color,        //!< Color of node text
+    imageIndex;   //!< Index of node image. Must be -1 for disabling image
     
   ListItem()
   {
+  	bigTextIndex = -1;
     color = imageIndex = 0;
     fontStyle = Font.STYLE_PLAIN;
   }
     
-  ListItem(String text, int color, int imageIndex)
+  ListItem(String text, int color, int imageIndex, int bigTextIndex)
   {
+  	this.bigTextIndex = bigTextIndex;
     this.text = text;
     this.color = color;
     this.imageIndex = imageIndex;
-    fontStyle = Font.STYLE_PLAIN;
+    this.fontStyle = Font.STYLE_PLAIN;
   }
   
   //! Set all member to default values
