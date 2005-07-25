@@ -1113,11 +1113,11 @@ public class ContactListContactItem extends ContactListItem
         //#sijapp cond.if target is "MOTOROLA"#
         = new Command(ResourceBundle.getString("reply"),Command.BACK, 2);
         //#sijapp cond.else#
-        = new Command(ResourceBundle.getString("reply"),Command.BACK, 3);
+        = new Command(ResourceBundle.getString("reply"),Command.OK, 1);
         //#sijapp cond.end#
 
 		// Add temporary user to contact list
-		private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.OK, 2);
+		private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.ITEM, 2);
 		
 		// Add selected message to history 
 		//#sijapp cond.if modules_HISTORY is "true" #
@@ -1125,10 +1125,10 @@ public class ContactListContactItem extends ContactListItem
 		//#sijapp cond.end#
 
 		//Show the message menu
-		private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"), Command.OK, 4);
+		private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 4);
 
 		//Delete Chat History
-		private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat"), Command.BACK, 5);
+		private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat"), Command.ITEM, 5);
 
 		// Textbox OK command
 		private static Command textboxOkCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 2);
@@ -1146,7 +1146,7 @@ public class ContactListContactItem extends ContactListItem
 		private static Command denyAuthCommand = new Command(ResourceBundle.getString("deny"), Command.CANCEL, 1);
 
 		// Request authorisation from a contact
-		private static Command reqAuthCommand = new Command(ResourceBundle.getString("requauth"), Command.OK, 1);
+		private static Command reqAuthCommand = new Command(ResourceBundle.getString("requauth"), Command.ITEM, 1);
         
         // Rename a contat
         private static Command renameOkCommand
