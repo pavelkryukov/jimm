@@ -400,7 +400,7 @@ public class Options
 			
 		case CLRSCHHEME_WOB:
 			if (type == CLRSCHHEME_BLUE) return 0xFFFF;
-			else if (type == CLRSCHHEME_MESS) return 0x80;
+			else if (type == CLRSCHHEME_MESS) return 0x505050;
 			return (type == CLRSCHHEME_BACK) ? 0x000000 : 0xFFFFFF;
 			
 		case CLRSCHHEME_WOBL:
