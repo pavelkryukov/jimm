@@ -323,6 +323,7 @@ public abstract class VirtualList extends Canvas
   protected void moveCursor(int step)
   {
     storelastItemIndexes();
+    if (cursorMode == SEL_NONE) topItem += step; 
     currItem += step;
     checkCurrItem();
     checkTopItem();
