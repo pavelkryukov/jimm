@@ -240,9 +240,6 @@ public class ContactList implements CommandListener
 
 	// Images for icons
 	private static ImageList imageList;
-	
-    // The current online status
-    private long onlineStatus;
 
     // Initializer
     static
@@ -276,7 +273,6 @@ public class ContactList implements CommandListener
     // Constructor
     public ContactList()
     {
-        onlineStatus = STATUS_ONLINE;
         
         try
         {
@@ -342,11 +338,6 @@ public class ContactList implements CommandListener
         return (this.versionId2);
     }
     
-    // Returns the current status
-    public long getOnlineStatus()
-    {
-        return (this.onlineStatus);
-    }
 
     // Returns all contact items as array
     public synchronized ContactListContactItem[] getContactItems()
@@ -376,7 +367,7 @@ public class ContactList implements CommandListener
     // Request display of the main menu
     public void activate()
     {
-    	//DebugLog.addText("Contact list activated");
+    	// DebugLog.addText("Contact list activated");
     	
         //System.out.println("Show the contact list");
         //		#sijapp cond.if modules_TRAFFIC is "true" #
@@ -1227,7 +1218,7 @@ public class ContactList implements CommandListener
         contactChanged(cItem, true, false, false);
         //#sijapp cond.if target is "MIDP2" #  
         // Bring Jimm to front if it was in background
-        if (Jimm.jimm.minimized())
+        if (Jimm.jimm.minimized() && ((Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS) == ContactList.STATUS_ONLINE) || (Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS) == ContactList.STATUS_CHAT)))
         {
             Jimm.jimm.setMinimized(false);
             this.activate();
