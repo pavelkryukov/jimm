@@ -28,6 +28,7 @@ import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.Jimm;
 import jimm.JimmException;
+import jimm.Options;
 
 
 public class SendMessageAction extends Action
@@ -458,7 +459,7 @@ public class SendMessageAction extends Action
                 marker += 2;
 
                 // Put contact status
-                Util.putWord(buf, marker, Util.translateStatusSend(Jimm.jimm.getContactListRef().getOnlineStatus()), false);
+                Util.putWord(buf, marker, Util.translateStatusSend(Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS)), false);
                 marker += 2;
 
                 // Put priority
