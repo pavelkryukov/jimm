@@ -737,7 +737,7 @@ public class ContactListContactItem extends ContactListItem
 			
 			// User adds selected message to history
 			//#sijapp cond.if modules_HISTORY is "true" #
-			else if (c == MenuUtil.addToHistory)
+			else if (c == MenuUtil.addToHistoryCommand)
 			{
 				Jimm.jimm.getChatHistoryRef().addTextToHistory(uin);
 			}
@@ -1008,7 +1008,9 @@ public class ContactListContactItem extends ContactListItem
 				msgDisplay.addCommand(MenuUtil.deleteChatCommand);
 				msgDisplay.addCommand(MenuUtil.addMenuCommand);
 				//#sijapp cond.if modules_HISTORY is "true" #
-				msgDisplay.addCommand(MenuUtil.addToHistory);
+				msgDisplay.removeCommand(MenuUtil.addToHistoryCommand);
+				if ( !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
+					msgDisplay.addCommand(MenuUtil.addToHistoryCommand);
 				//#sijapp cond.end#
 				if (ContactListContactItem.this.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
 				{
@@ -1105,30 +1107,30 @@ public class ContactListContactItem extends ContactListItem
         //#sijapp cond.if target is "MOTOROLA"#
         = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
         //#sijapp cond.else#
-        = new Command(ResourceBundle.getString("close"),Command.BACK, 3);
+        = new Command(ResourceBundle.getString("close"),Command.BACK, 1);
         //#sijapp cond.end#
         
         // Message reply command
         private static Command msgReplyCommand
         //#sijapp cond.if target is "MOTOROLA"#
-        = new Command(ResourceBundle.getString("reply"),Command.BACK, 2);
+        = new Command(ResourceBundle.getString("reply"),Command.OK, 2);
         //#sijapp cond.else#
         = new Command(ResourceBundle.getString("reply"),Command.OK, 1);
         //#sijapp cond.end#
 
 		// Add temporary user to contact list
-		private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.ITEM, 2);
+		private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.ITEM, 3);
 		
 		// Add selected message to history 
 		//#sijapp cond.if modules_HISTORY is "true" #
-		private static Command addToHistory  = new Command(ResourceBundle.getString("add_to_history"), Command.ITEM, 3);
+		private static Command addToHistoryCommand  = new Command(ResourceBundle.getString("add_to_history"), Command.ITEM, 4);
 		//#sijapp cond.end#
 
 		//Show the message menu
-		private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 4);
+		private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 5);
 
 		//Delete Chat History
-		private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat"), Command.ITEM, 5);
+		private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat"), Command.ITEM, 6);
 
 		// Textbox OK command
 		private static Command textboxOkCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 2);
@@ -1148,7 +1150,7 @@ public class ContactListContactItem extends ContactListItem
 		// Request authorisation from a contact
 		private static Command reqAuthCommand = new Command(ResourceBundle.getString("requauth"), Command.ITEM, 1);
         
-        // Rename a contat
+        // Rename a contact
         private static Command renameOkCommand
 
         //#sijapp cond.if target is "MOTOROLA"#
