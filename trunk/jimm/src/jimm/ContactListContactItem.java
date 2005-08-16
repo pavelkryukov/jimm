@@ -1107,7 +1107,7 @@ public class ContactListContactItem extends ContactListItem
         //#sijapp cond.if target is "MOTOROLA"#
         = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
         //#sijapp cond.else#
-        = new Command(ResourceBundle.getString("close"),Command.BACK, 1);
+        = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
         //#sijapp cond.end#
         
         // Message reply command
