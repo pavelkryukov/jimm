@@ -258,7 +258,7 @@ public abstract class VirtualList extends Canvas
   }
   
   //! Return current image list, used for tree node icons
-  /*! If no image list storad, null is returned */
+  /*! If no image list stored, null is returned */
   public ImageList getImageList()
   {
     return imageList;
@@ -456,14 +456,25 @@ public abstract class VirtualList extends Canvas
     return tmp_y+1;
   }
   
+  static void drawGradient(Graphics g, int x, int y, int w, int h, int color, int count, int light1, int light2)
+  {
+    for (int i = 0; i < count; i++)
+    {
+      g.setColor( transformColorLight(color, (light2-light1)*i/(count-1)+light1) );
+      int y1 = y+(i*h)/count;
+      int y2 = y+(i*h+h)/count;
+      g.fillRect(x, y1, w, y2-y1);
+    }
+  }
+  
   // private void drawDottedSelectedBgrnd(Graphics g, int x, int y, int w, int h, ListItem item)
   private int drawDottedSelectedBgrnd(Graphics g, int x, int y, int w, int h, ListItem item)
   {
-    g.setColor(bkgrndColor);
-    g.fillRect(x, y, w, h);
-    g.setStrokeStyle(Graphics.DOTTED);
-    
-    g.setColor(item.color);
+    int color = (bkgrndColor != 0) ? transformColorLight(bkgrndColor, 32) : 0x404040;
+    drawGradient(g, x, y, w, h, color, 6, -32, 16);
+    int frameColor = transformColorLight(color, -64);
+    if (frameColor == 0) frameColor = 0x606060;
+    g.setColor(frameColor);
     g.drawRect(x, y, w-1, h-1);
     return item.color;
   }
@@ -549,11 +560,25 @@ case SEL_DOTTED:   x = 2;            break;
     if (itemCount < 1) itemCount = 1;
     y1 = position*(height-sliderSize-topY)/itemCount+topY;
     y2 = y1+sliderSize;
-    g.setColor(defCapColor);
-    g.fillRect(width, topY, scrollerWidth, y1);
-    g.fillRect(width, y2, scrollerWidth, height-y2);
-    g.setColor(0x00);
-    g.fillRect(width, y1, scrollerWidth, y2-y1);
+    int color = transformColorLight(transformColorLight(bkgrndColor, 32), -32);
+  
+    if (color == 0) color = 0x808080; 
+    g.setColor(color);
+    g.fillRect(width+1, topY, scrollerWidth-1, y1);
+    g.fillRect(width+1, y2, scrollerWidth-1, height-y2);
+    g.setColor( transformColorLight(color, -64) );
+    g.drawLine(width, topY, width, y1);
+    g.drawLine(width, y2, width, height);
+    
+    g.setColor(color);
+    g.fillRect(width+2, y1+2, scrollerWidth-3, y2-y1-3);
+    
+    g.setColor( transformColorLight(color, -192) );
+    g.drawRect(width, y1, scrollerWidth-1, y2-y1-1);
+    
+    g.setColor(transformColorLight(color, 96));
+    g.drawLine(width+1, y1+1, width+1, y2-2);
+    g.drawLine(width+1, y1+1, width+scrollerWidth-2, y1+1);
   }
   
   //! returns font height
@@ -607,7 +632,22 @@ case SEL_DOTTED:   x = 2;            break;
   // final protected int getScrollerWidth()
   final protected int getScrollerWidth()
   {
-    return getFontHeight()/5;
+    int width = getFontHeight()/4;
+    return width > 4 ? width : 4;
+  }
+  
+  static public int transformColorLight(int color, int light)
+  {
+  	int r = (color & 0xFF)+light;
+  	int g = ((color & 0xFF00) >> 8)+light;
+  	int b = ((color & 0xFF0000) >> 16)+light;
+  	if (r < 0) r = 0;
+  	if (r > 255) r = 255;
+  	if (g < 0) g = 0;
+  	if (g > 255) g = 255;
+  	if (b < 0) b = 0;
+  	if (b > 255) b = 255;
+  	return r | (g<<8) | (b<<16);
   }
   
   // private void paintAllOnGraphics(Graphics graphics)
