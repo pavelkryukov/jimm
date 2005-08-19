@@ -505,10 +505,26 @@ public class ContactListContactItem extends ContactListItem
 	/** ************************************************************************* */
 	/** ************************************************************************* */
 
+	static String lastAnsUIN = new String();
+	
 	private class Menu implements CommandListener
 	{
 		final public static int MSGBS_DELETECONTACT = 1; 
-		final public static int MSGBS_REMOVEME = 2; 
+		final public static int MSGBS_REMOVEME = 2;
+		
+		// Shows new message form 
+		private void writeMessage()
+		{
+			// Keep old text if press "cancel" while last edit 
+			if ( !lastAnsUIN.equals(getUin()) ) MenuUtil.messageTextbox.setString(null);
+			
+			// Display textbox for entering messages
+			MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
+			MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
+			MenuUtil.messageTextbox.setCommandListener(this);
+			Jimm.display.setCurrent(MenuUtil.messageTextbox);
+			lastAnsUIN = getUin();
+		}
 
 		// Command listener
 		public void commandAction(Command c, Displayable d)
@@ -535,14 +551,9 @@ public class ContactListContactItem extends ContactListItem
 			{
 				// Select first list element (new message)
 				MenuUtil.menuList.setSelectedIndex(0, true);
-
-				// Reset and display textbox for entering messages
-				MenuUtil.messageTextbox.setString(null);
-				MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
-				MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
-				MenuUtil.messageTextbox.setCommandListener(this);
-				Jimm.display.setCurrent(MenuUtil.messageTextbox);
-
+				
+				// Show message form
+				writeMessage();
 			}
             
             // Menu item has been selected
@@ -552,17 +563,11 @@ public class ContactListContactItem extends ContactListItem
             // #sijapp cond.end#
             )
             {
-                
                 switch(MenuUtil.eventList[MenuUtil.menuList.getSelectedIndex()])
                 {
                 case MenuUtil.USER_MENU_MESSAGE: 
                     // Send plain message
-                    // Reset and display textbox for entering messages
-                    MenuUtil.messageTextbox.setString(null);
-                    MenuUtil.messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
-                    MenuUtil.messageTextbox.addCommand(MenuUtil.textboxSendCommand);
-                    MenuUtil.messageTextbox.setCommandListener(this);
-                    Jimm.display.setCurrent(MenuUtil.messageTextbox);
+                	writeMessage();
                     break;
                     
                 case MenuUtil.USER_MENU_URL:
@@ -814,6 +819,9 @@ public class ContactListContactItem extends ContactListItem
 						
 						// Return to contact list
 						this.activate();
+						
+						// Clear text in MenuUtil.messageTextbox
+						MenuUtil.messageTextbox.setString(null);
 					}
 					
 					// Send URL message (continue creation)
