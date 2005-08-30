@@ -55,6 +55,7 @@ public class Search
     private String reqEmail;
     private String reqCity;
     private String reqKeyword;
+    private int gender;
     private boolean onlyOnline;
     
     // Results
@@ -83,13 +84,14 @@ public class Search
     }
 
     // Set a search request
-    public void setSearchRequest(String uin, String nick, String firstname, String lastname, String email, String city,
-            String keyword,boolean onlyOnline)
+    public void setSearchRequest(String uin, String nick, String firstname, String lastname, String email,
+    		String city, String keyword, int gender, boolean onlyOnline)
     {
         this.reqUin = uin;
         this.reqNick = nick;
         this.reqFirstname = firstname;
         this.reqLastname = lastname;
+        this.gender = gender;
         this.reqEmail = email;
         this.reqCity = city;
         this.reqKeyword = keyword;
@@ -99,7 +101,7 @@ public class Search
     // Returns data from the TextFields as an array
     public String[] getSearchRequest()
     {
-        String request[] = new String[8];
+        String request[] = new String[9];
         request[0] = reqUin;
         request[1] = reqNick;
         request[2] = reqFirstname;
@@ -107,10 +109,11 @@ public class Search
         request[4] = reqEmail;
         request[5] = reqCity;
         request[6] = reqKeyword;
+        request[7] = "" + gender;
         if (onlyOnline)
-            request[7] = "1";
+            request[8] = "1";
         else
-            request[7] = "0";
+            request[8] = "0";
         return request;
     }
 
@@ -244,7 +247,8 @@ public class Search
         private TextField citySearchTextBox;
         private TextField keywordSearchTextBox;
         
-        // Choice box for online choice
+        // Choice boxes for gender and online choice
+        private ChoiceGroup gender;
         private ChoiceGroup onlyOnline;
 
         // Selectet index in result screen
@@ -279,7 +283,11 @@ public class Search
             this.keywordSearchTextBox = new TextField(ResourceBundle.getString("keyword"), "", 32,
                     TextField.ANY);
             
-            // Choice Group
+            // Choice Groups
+            this.gender = new ChoiceGroup(ResourceBundle.getString("gender"),Choice.EXCLUSIVE);
+            this.gender.append(ResourceBundle.getString("female_male"),null);
+            this.gender.append(ResourceBundle.getString("female"),null);
+            this.gender.append(ResourceBundle.getString("male"),null);
             this.onlyOnline = new ChoiceGroup("",Choice.MULTIPLE);
             this.onlyOnline.append(ResourceBundle.getString("only_online"),null);
 
@@ -288,6 +296,7 @@ public class Search
             this.searchForm.append(this.nickSearchTextBox);
             this.searchForm.append(this.firstnameSearchTextBox);
             this.searchForm.append(this.lastnameSearchTextBox);
+            this.searchForm.append(this.gender);
             this.searchForm.append(this.emailSearchTextBox);
             this.searchForm.append(this.citySearchTextBox);
             this.searchForm.append(this.keywordSearchTextBox);
@@ -442,8 +451,9 @@ public class Search
 
                 Search.this.setSearchRequest(this.uinSearchTextBox.getString(), this.nickSearchTextBox.getString(),
                         this.firstnameSearchTextBox.getString(), this.lastnameSearchTextBox.getString(),
-                        this.emailSearchTextBox.getString(), this.citySearchTextBox.getString(),
-                        this.keywordSearchTextBox.getString(),this.onlyOnline.isSelected(0));
+						this.emailSearchTextBox.getString(), this.citySearchTextBox.getString(),
+						this.keywordSearchTextBox.getString(), this.gender.getSelectedIndex(),
+						this.onlyOnline.isSelected(0));
 
                 SearchAction act = new SearchAction(Search.this,SearchAction.CALLED_BY_SEARCHUSER);
                 try

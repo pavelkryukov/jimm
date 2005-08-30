@@ -113,6 +113,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("error",                       "Error");
 		resources.put("exit",                        "Exit");
 		resources.put("female",                      "F");
+		resources.put("female_male",                 "F/M");
 		resources.put("filename",                    "File Name");
 		resources.put("filetransfer",                "File transfer");
 		resources.put("filepath",                    "File path");
