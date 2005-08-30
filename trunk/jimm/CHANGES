@@ -212,4 +212,5 @@ VERSION 0.4.1
   * BUGFIX: Timestamp for offline messages is now correct
   * Jimm wil now only weakup from minimized if your status is online of free for chat
   * Added counter to message notifyer on keylock splashscreen
+  * Added choice of gender to search user function
   

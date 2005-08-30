@@ -324,7 +324,7 @@ public class MainMenu implements CommandListener
             if (addUserFlag) // Make a search for the given UIN
             {
                 Search search = new Search();
-                search.setSearchRequest(uinTextField.getString(), "", "", "", "", "", "", false);
+                search.setSearchRequest(uinTextField.getString(), "", "", "", "", "", "", 0, false);
 
                 act1 = new SearchAction(search, SearchAction.CALLED_BY_ADDUSER);
                 act2 = null;

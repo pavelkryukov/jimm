@@ -50,6 +50,7 @@ public class SearchAction extends Action
     public static final int TLV_TYPE_EMAIL               = 0x5E01; // String (2 byte length + string + 1 byte email code)
     public static final int TLV_TYPE_CITY                = 0x9001; // String (2 byte length + string)
     public static final int TLV_TYPE_KEYWORD             = 0x2602; // String (2 byte length + string)
+    public static final int TLV_TYPE_GENDER              = 0x7C01; // UINT8 (1 byte: 1 - female, 2 - male)
     public static final int TLV_TYPE_ONLYONLINE          = 0x3002; // UINT8 (1 byte:  1 - search online, 0 - search all)
     
     // Search action was called by
@@ -122,6 +123,9 @@ public class SearchAction extends Action
                 length += 6 + search[i].length() + 1;
             }
         }
+        // Gender
+        if (!search[7].equals("0"))
+        	length+=5;
         // Search offline/online TLV
         length+=5;
             
@@ -191,11 +195,23 @@ public class SearchAction extends Action
                 marker += 1;
             }
         }
+        if (!search[7].equals("0"))
+	    {
+	        Util.putWord(buf, marker, TLV_TYPE_GENDER);
+	        marker+=2;
+	        Util.putWord(buf,marker,1,false);
+	        marker+=2;
+	        if (search[7].equals("1"))
+	            Util.putByte(buf,marker,1);
+	        else
+	            Util.putByte(buf,marker,2);
+	        marker+=1;
+	    }
         Util.putWord(buf, marker, TLV_TYPE_ONLYONLINE);
         marker+=2;
         Util.putWord(buf,marker,1,false);
         marker+=2;
-        if (search[7].equals("1"))
+        if (search[8].equals("1"))
             Util.putByte(buf,marker,1);
         else
             Util.putByte(buf,marker,0);

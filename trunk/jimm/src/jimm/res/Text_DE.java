@@ -153,6 +153,8 @@ public class Text_DE extends ResourceBundle
 		resources.put("lastname",                    "Nachname");
 		resources.put("loading",                     "Lade");
 		resources.put("male",                        "M");
+		resources.put("female",                      "W");
+		resources.put("female_male",                 "W/M");
 		resources.put("me",                          "Ich");
 		resources.put("menu",                        "Menü");
 		resources.put("msg_sound_file_name",         "Nachricht Sound Datei");
