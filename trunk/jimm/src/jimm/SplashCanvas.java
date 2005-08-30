@@ -131,8 +131,8 @@ public class SplashCanvas extends Canvas
 	private boolean isLocked;
 
 
-	// True if at least one message is available
-	private boolean isMessageAvailable; // = false
+	// Number of available messages
+	private int availableMessages;
 	
 
 	// Alert needed if any other key then the # is pressed during keylock
@@ -215,6 +215,8 @@ public class SplashCanvas extends Canvas
 		this.repaint(0, this.getHeight() - SplashCanvas.height - 2, this.getWidth(), SplashCanvas.height + 2);
 	}
 	
+	
+	
 	public void delVersionString()
 	{
 	    this.version = false;
@@ -249,7 +251,7 @@ public class SplashCanvas extends Canvas
 	private synchronized void unlock()
 	{
 		this.isLocked = false;
-		this.isMessageAvailable = false;
+		this.availableMessages = 0;
         // #sijapp cond.if target is "RIM"#
         LED.setState(LED.STATE_OFF);
         //  #sijapp cond.end#
@@ -279,8 +281,8 @@ public class SplashCanvas extends Canvas
 	{
 		if (this.isLocked)
 		{
-			this.isMessageAvailable = true;
-	        // #sijapp cond.if target is "RIM"#
+			++this.availableMessages;
+			// #sijapp cond.if target is "RIM"#
 	        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
 	        LED.setState(LED.STATE_BLINKING);
             // #sijapp cond.end#
@@ -368,9 +370,12 @@ public class SplashCanvas extends Canvas
 			}
 
 			// Display message icon, if keylock is enabled
-			if (this.isLocked && this.isMessageAvailable)
+			if (this.isLocked && this.availableMessages > 0)
 			{
 				g.drawImage(ContactList.eventPlainMessageImg, 1, 1, Graphics.LEFT | Graphics.TOP);
+				g.setColor(255, 255, 255);
+				g.setFont(SplashCanvas.font);
+				g.drawString("# " + this.availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, 5, Graphics.LEFT | Graphics.TOP);
 			}
 
 		}
