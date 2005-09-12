@@ -40,7 +40,7 @@ import javax.microedition.lcdui.TextField;
 
 import jimm.comm.SearchAction;
 import jimm.util.ResourceBundle;
-import DrawControls.RichTextList;
+import DrawControls.TextList;
 
 public class Search
 {
@@ -199,11 +199,12 @@ public class Search
     /** ************************************************************************* */
     
     // Class for show user info and react to left or right keys 
-    private class SearchTextList extends RichTextList  
+    private class SearchTextList extends TextList  
 	{
     	public SearchTextList()
     	{
     		super(null);
+    		setCursorMode(SEL_NONE);
     	}
     	
     	protected void userPressKey(int keyCode) 
@@ -233,7 +234,7 @@ public class Search
 
         // Forms for results and query
         private Form searchForm;
-        private RichTextList screen;
+        private TextList screen;
 
         // List for group selection
         private List groupList;
@@ -323,15 +324,19 @@ public class Search
                 Jimm.display.setCurrent(this.searchForm);
         }
         
+        int bigTextIndex;
+        
         private void showString(int n, String resName, int id, boolean nextLine)
         {
         	String text = Search.this.getResult(n).getStringValue(id);
         	if (text == null)  return;
         	if (text.trim().length() == 0) return;
         	String name = ResourceBundle.getString(resName)+": ";
-        	if (nextLine) screen.println(name,0x0,Font.STYLE_BOLD);
-        	else screen.print(name,0x0,Font.STYLE_BOLD);
-        	screen.println(text, 0x0000ff, Font.STYLE_PLAIN);
+        	screen.addBigText(name, 0x0, Font.STYLE_BOLD, bigTextIndex);
+        	if (nextLine) screen.doCRLF(); 
+        	screen.addBigText(text, 0x0000ff, Font.STYLE_PLAIN, bigTextIndex);
+        	screen.doCRLF();
+        	bigTextIndex++;
         }
 
         public void drawResultScreen(int n)
@@ -357,7 +362,8 @@ public class Search
                 screen.setCaption(ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
                 // #sijapp cond.end#
                 
-                screen.setFontSize(Font.SIZE_SMALL);
+                screen.setFontSize(Font.SIZE_MEDIUM);
+                bigTextIndex = 0;
                 
                 // UIN
                 showString(n, "uin", SearchResult.FIELD_UIN, false);
@@ -388,16 +394,13 @@ public class Search
                 else if (stat == 2) imgIndex = 3;
                 
                 screen
-					.print(ResourceBundle.getString("status") + ": ",0x0,Font.STYLE_BOLD)
-					.insertImage
-					 ( 
-					 		ContactList.getImageList().elementAt(imgIndex),
-							true
-					 );
+					.addBigText(ResourceBundle.getString("status") + ": ",0x0,Font.STYLE_BOLD, bigTextIndex++)
+					.addImage(ContactList.getImageList().elementAt(imgIndex), null)
+					.doCRLF();
                 screen.unlock();
             } else
             {
-                // Draw a result entry
+                // Show a result entry
             	
             	screen.lock();
             	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -407,7 +410,7 @@ public class Search
                 screen.setCaption(ResourceBundle.getString("results")+" 0/0");
                 // #sijapp cond.end#
             	
-                screen.println(ResourceBundle.getString("no_results")+": ",0x0,Font.STYLE_BOLD);
+                screen.addBigText(ResourceBundle.getString("no_results")+": ",0x0,Font.STYLE_BOLD, -1);
                 screen.unlock();
             }
 

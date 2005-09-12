@@ -25,6 +25,7 @@
 package DrawControls;
 
 import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Image;
 
 //! Data for list item
 /*! All members of class are made as public 
@@ -32,25 +33,23 @@ import javax.microedition.lcdui.Font;
 */
 public class ListItem
 {
-  public String 
-    text;        //!< Text of node
+  public String text; //!< Text of node
+  
+  Image image; // Used for TextList in SEL_NONE mode
     
   public int 
-    bigTextIndex,
     fontStyle,    //!< Font style
     color,        //!< Color of node text
     imageIndex;   //!< Index of node image. Must be -1 for disabling image
     
   ListItem()
   {
-  	bigTextIndex = -1;
     color = imageIndex = 0;
     fontStyle = Font.STYLE_PLAIN;
   }
     
   ListItem(String text, int color, int imageIndex, int bigTextIndex)
   {
-  	this.bigTextIndex = bigTextIndex;
     this.text = text;
     this.color = color;
     this.imageIndex = imageIndex;
@@ -61,6 +60,7 @@ public class ListItem
   public void clear()
   {
     text = "";
+    image = null;
     color = 0;
     imageIndex = -1;
   }
@@ -75,5 +75,21 @@ public class ListItem
     dest.color      = color;
     dest.imageIndex = imageIndex;
     dest.fontStyle  = fontStyle;
+  }
+  
+  int getHeight(int fontSize)
+  {
+  	if (image != null) return image.getHeight();
+  	if (text == null) return 0;
+	Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
+	return font.getHeight();
+  }
+  
+  int getWidth(int fontSize)
+  {
+  	if (image != null) return image.getWidth();
+  	if (text == null) return 0;
+	Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
+	return font.stringWidth(text);
   }
 }

@@ -110,6 +110,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("disconnecting",               "Disconnecting");
 		resources.put("display_date",                "Display date on splash screen?");
 		resources.put("email",                       "Email");
+		resources.put("emotions",                    "Emotions");
 		resources.put("error",                       "Error");
 		resources.put("exit",                        "Exit");
 		resources.put("female",                      "F");
@@ -131,6 +132,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("hide_offline",                "Hide offline contacts");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initializing");
+		resources.put("insert_emotion",              "Insert emotion");
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Keep chat history?");

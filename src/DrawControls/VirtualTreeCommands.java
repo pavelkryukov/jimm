@@ -16,18 +16,15 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
- File: src/DrawControls/VirtualListCommands.java
+ File: src/DrawControls/VirtualTreeCommands.java
  Version: ###VERSION###  Date: ###DATE###
  Author(s): Artyomov Denis
  *******************************************************************************/
 
 package DrawControls;
 
-import DrawControls.VirtualList;
-
-public interface VirtualListCommands
+public interface VirtualTreeCommands
 {
-  public void onKeyPress(VirtualList sender, int keyCode);
-  public void onCursorMove(VirtualList sender);
-  public void onItemSelected(VirtualList sender);
+	public void VTGetItemDrawData(TreeNode src, ListItem dst);
+	public void VTnodeClicked(TreeNode node);
 }

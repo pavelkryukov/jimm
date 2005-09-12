@@ -27,28 +27,99 @@ package DrawControls;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.microedition.lcdui.*;
+
 import DrawControls.VirtualList;
 import DrawControls.ListItem;
 
+class TextLine
+{
+	final Vector items = new Vector();
+	int height = -1;
+  	int bigTextIndex = -1;	
+	
+	ListItem elementAt(int index)
+	{
+		return (ListItem) items.elementAt(index); 
+	}
+	
+	int getHeight(int fontSize)
+	{
+		if (height == -1)
+		{
+			height = fontSize;
+			for (int i = items.size()-1; i >= 0; i--)
+			{
+				int currHeight = elementAt(i).getHeight(fontSize); 
+				if (currHeight > height) height = currHeight; 
+			}
+		}
+		return height;
+	}
+	
+	int getWidth(int fontSize)
+	{
+		int width = 0;
+		for (int i = items.size()-1; i >= 0; i--) width += elementAt(i).getWidth(fontSize);  
+		return width;
+	}
+	
+	void setItemColor(int value)
+	{
+		for (int i = items.size()-1; i >= 0; i--)
+		{
+			ListItem listItem = elementAt(i);
+			if ((listItem.color == 0x000000) || (listItem.color == 0xFFFFFF)) listItem.color = value;
+		}
+	}
+	
+	void paint(int ypos, Graphics g, int fontSize, VirtualList vl)
+	{
+		int xpos = 1, 
+		    count = items.size(), 
+			intemHeight = getHeight(fontSize);
+		
+		for (int i = 0; i < count; i++)
+		{
+			ListItem item = elementAt(i);
+			int drawYPos = ypos+intemHeight-item.getHeight(fontSize);
+			if (item.image != null)
+			{
+				g.drawImage(item.image, xpos, drawYPos, Graphics.TOP|Graphics.LEFT);
+			}
+			else if (item.text != null)
+			{
+				g.setColor(item.color);
+				g.setFont(vl.getQuickFont(item.fontStyle));
+				g.drawString(item.text, xpos, drawYPos, Graphics.TOP|Graphics.LEFT);
+			}
+			xpos += item.getWidth(fontSize);
+		}
+	}
+}
+
 //! Text list
-/*! This class store text and data of items internally
+/*! This class store text and data of lines internally
     You may use it to show text with colorised lines :) */
 public class TextList extends VirtualList
 {
-	private Vector items = new Vector();
+	// Vector of lines. Each line contains cols. Col can be text or image
+	private Vector lines = new Vector();
+	private int textSelColor = 0xE0E0E0;
 
 	// protected int getSize()
 	public int getSize()
 	{
-		return items.size();
+		if (lines.isEmpty()) return 0;
+		int size = lines.size();
+		return ((TextLine)lines.lastElement()).items.isEmpty() ? size-1 : size;
 	}
-
-	public int getItemCount()
+	
+	// Retursn ListItem by col and line; 
+	ListItem getListItem(int line, int col)
 	{
-		return items.size();
+		TextLine ln = (TextLine)lines.elementAt(line);
+		return ln.elementAt(col);
 	}
-
-	private int textSelColor = 0xE0E0E0;
 
 	public void setTextSelColor(int value)
 	{
@@ -60,25 +131,25 @@ public class TextList extends VirtualList
 	protected int getItemBkColor(int index, int lastColor)
 	{
 		int selIndex = getCurrIndex();
-		int textIndex = (selIndex >= items.size()) ? -1 : ((ListItem) items
-				.elementAt(selIndex)).bigTextIndex;
+		int textIndex = (selIndex >= lines.size()) ?
+				-1 : ((TextLine) lines.elementAt(selIndex)).bigTextIndex;
 		if (textIndex == -1) return lastColor;
-		int retColor = (((ListItem) items.elementAt(index)).bigTextIndex == textIndex) ? textSelColor : lastColor;
+		int retColor = (((TextLine) lines.elementAt(index)).bigTextIndex == textIndex) ? textSelColor : lastColor;
 		return retColor;
 	}
 
 	// protected void get(int index, ListItem item)
 	protected void get(int index, ListItem item)
 	{
-		ListItem listItem = (ListItem) items.elementAt(index);
-
-		listItem.assignTo(item);
+		TextLine listItem = (TextLine)lines.elementAt(index);
+		if (listItem.items.isEmpty()) item.clear();
+		else listItem.elementAt(0).assignTo(item);
 	}
 
-	//! Remove all items form list
+	//! Remove all lines form list
 	public void clear()
 	{
-		items.removeAllElements();
+		lines.removeAllElements();
 		setCurrentItem(0);
 	}
 
@@ -88,10 +159,10 @@ public class TextList extends VirtualList
 		String text,   //!< Text of new item
 		int color,     //!< Color of new item
 		int imageIndex /*!< Index of image in images list. You must use 
-	                        setImageList to set images for list items */
+	                        setImageList to set images for list lines */
 	)
 	{
-		internAdd(text, color, imageIndex, Font.STYLE_PLAIN, -1);
+		internAdd(text, color, imageIndex, Font.STYLE_PLAIN, -1, true);
 		invalidate();
 	}
 
@@ -101,11 +172,11 @@ public class TextList extends VirtualList
 		String text,    //!< Text of new item
 		int color,      //!< Color of new item
 		int imageIndex, /*!< Index of image in images list. You must use 
-		                     setImageList to set images for list items */
+		                     setImageList to set images for list lines */
 		int fontStyle   //!< Text font style. See MID profile for details
 	)
 	{
-		internAdd(text, color, imageIndex, fontStyle, -1);
+		internAdd(text, color, imageIndex, fontStyle, -1, true);
 		invalidate();
 	}
 
@@ -115,15 +186,20 @@ public class TextList extends VirtualList
 		int color,
 		int imageIndex,
 		int fontStyle,
-		int textIndex)
+		int textIndex,
+		boolean doCRLF)
 	{
 		ListItem new_item = new ListItem();
 		new_item.color = color;
 		new_item.imageIndex = imageIndex;
 		new_item.text = text;
 		new_item.fontStyle = fontStyle;
-		new_item.bigTextIndex = textIndex;
-		items.addElement(new_item);
+
+		if (lines.isEmpty()) lines.addElement(new TextLine());
+		TextLine textLine = (TextLine) lines.lastElement();
+		textLine.items.addElement(new_item);
+		textLine.bigTextIndex = textIndex;
+		if (doCRLF) lines.addElement(new TextLine());
 	}
 
 	//! Add new black text item to list
@@ -141,6 +217,35 @@ public class TextList extends VirtualList
 	{
 		super(capt);
 	}
+	
+	public int getItemHeight(int itemIndex)
+	{
+		if (getCursorMode() != SEL_NONE) return super.getItemHeight(itemIndex);
+		if (itemIndex >= lines.size()) return 1;
+		return ((TextLine)lines.elementAt(itemIndex)).getHeight( getFontSize() );
+	}
+	
+	// Overrides VirtualList.drawItemData
+	protected void drawItemData(
+		Graphics g,
+		boolean isSelected,
+		int index,
+		int x1,
+		int y1,
+		int x2,
+		int y2,
+		int fontHeight)
+	{
+		if (getCursorMode() != SEL_NONE)
+		{
+			super.drawItemData(g, isSelected, index, x1, y1, x2, y2, fontHeight);
+			return;
+		}
+		
+		TextLine line = (TextLine)lines.elementAt(index);
+		line.paint(y1, g, getFontSize(), this);
+	}
+	
 
 	// Overrides VirtualList.moveCursor
 	protected void moveCursor(int step)
@@ -152,7 +257,7 @@ public class TextList extends VirtualList
 		case -1:
 		case 1:
 			currTextIndex = getCurrTextIndex();
-			size = items.size();
+			size = lines.size();
 			if (currTextIndex == -1)
 			{
 				super.moveCursor(step);
@@ -165,7 +270,7 @@ public class TextList extends VirtualList
 			{
 				currItem += step;
 				if ((currItem < 0) || (currItem >= size)) break;
-				ListItem item = (ListItem) items.elementAt(currItem);
+				TextLine item = (TextLine) lines.elementAt(currItem);
 				if (currTextIndex != item.bigTextIndex)
 				{
 					currTextIndex = item.bigTextIndex;
@@ -193,7 +298,7 @@ public class TextList extends VirtualList
 
 	// Returns lines of text which were added by 
 	// methon addBigText in current selection
-	synchronized public String[] getCurrText()
+	public String[] getCurrText()
 	{
 		String[] result = null;
 		int currTextIndex = getCurrTextIndex();
@@ -201,17 +306,23 @@ public class TextList extends VirtualList
 		{
 			// How much lines in current text?
 			int linesCount = 0;
-			Enumeration allItems = items.elements();
-			while (allItems.hasMoreElements())
-				if (((ListItem) allItems.nextElement()).bigTextIndex == currTextIndex) linesCount++;
+			Enumeration allLines = lines.elements();
+			while (allLines.hasMoreElements())
+				if (((TextLine) allLines.nextElement()).bigTextIndex == currTextIndex) linesCount++;
 
 			// Fills the lines
 			result = new String[linesCount];
-			int size = items.size();
+			int size = lines.size();
 			for (int i = 0, j = 0; i < size; i++)
 			{
-				ListItem listItem = (ListItem) items.elementAt(i);
-				if (listItem.bigTextIndex == currTextIndex) result[j++] = listItem.text;
+				TextLine line = (TextLine) lines.elementAt(i);
+				if (line.bigTextIndex == currTextIndex)
+				{
+					StringBuffer lineText = new StringBuffer();
+					int count = line.items.size(); 
+					for (int k = 0; k < count; k++) lineText.append(line.elementAt(k).text);
+					result[j++] = lineText.toString();
+				}
 			}
 		}
 		return result;
@@ -220,8 +331,8 @@ public class TextList extends VirtualList
 	public int getCurrTextIndex()
 	{
 		int currItemIndex = getCurrIndex();
-		if (currItemIndex < 0) return -1;
-		return ((ListItem) items.elementAt(currItemIndex)).bigTextIndex;
+		if ((currItemIndex < 0) || (currItemIndex >= lines.size())) return -1;
+		return ((TextLine) lines.elementAt(currItemIndex)).bigTextIndex;
 	}
 
 	//! Construct new text list 
@@ -231,7 +342,7 @@ public class TextList extends VirtualList
 		int capBackColor, //!< Background color of caption
 		int capTextColor, //!< Text color of caption
 		int backColor,    //!< Background color of list
-		int fontSize,     /*!< Font size for list items and caption. 
+		int fontSize,     /*!< Font size for list lines and caption. 
 		                       Can be VirtualList.SMALL_FONT, VirtualList.MEDIUM_FONT 
 		                       or VirtualList.LARGE_FONT */
 		int cursorMode    //!< Cursor mode. Can be VirtualList.SEL_INVERTED, VirtualList.SEL_DOTTED, VirtualList.SEL_NONE
@@ -242,21 +353,48 @@ public class TextList extends VirtualList
 
 	public void setTextColor(int value)
 	{
-		int count = items.size();
-		for (int i = 0; i < count; i++)
-		{
-			ListItem listItem = (ListItem) items.elementAt(i);
-			if ((listItem.color == 0x000000) || (listItem.color == 0xFFFFFF)) listItem.color = value;
-
-		}
+		Enumeration allLines = lines.elements();
+		while (allLines.hasMoreElements())
+			((TextLine) allLines.nextElement()).setItemColor(value);
 		super.setTextColor(value);
 	}
+	
+	public TextList doCRLF()
+	{
+		TextLine newLine = new TextLine();
+		newLine.bigTextIndex = lines.isEmpty() ? -1 : ((TextLine) lines.lastElement()).bigTextIndex; 
+		lines.addElement(newLine);
+		return this;
+	}
+	
+	public TextList addImage(Image image, String altarnateText)
+	{
+		if (lines.isEmpty()) lines.addElement(new TextLine());
+		TextLine textLine = (TextLine) lines.lastElement();
+		
+		if ((textLine.getWidth(getFontSize())+image.getWidth()) > getTrueWidth())
+		{
+			doCRLF();
+			textLine = (TextLine) lines.lastElement();
+		}
+		
+		ListItem item = new ListItem();
+		item.image = image;
+		item.text = altarnateText;
+		textLine.items.addElement(item);
+		return this;
+	}
 
+	private int getTrueWidth()
+	{
+		return getWidth() - getScrollerWidth() - 3;
+	}
+	
 	//! Add big multiline text. 
 	/*! Text visial width can be larger then screen width.
 	    Method addBigText automatically divides text to short lines 
 	    and adds lines to text list */
-	public void addBigText
+	public TextList addBigText
 	(
 		String text,   //!< Text to add
 		int color,     //!< Text color
@@ -265,15 +403,27 @@ public class TextList extends VirtualList
 	)
 	{
 		Font font;
-		int textLen, curPos, lastWordEnd, startPos, width;
+		int textLen, curPos, lastWordEnd, startPos, width, trueWidth, testStringWidth = 0;
 		char curChar;
-		boolean lineBreak, wordEnd, textEnd;
-		String testString;
+		boolean lineBreak, wordEnd, textEnd, divideLineToWords;
+		String testString = null;
 
-		width = getWidth() - getScrollerWidth() - 3;
+		font = getQuickFont(fontStyle);
+		
+		// Width of screen
+		trueWidth = getTrueWidth();
+		
+		// Width of free space in last line 
+		width = lines.isEmpty() 
+		        ? trueWidth 
+		        : trueWidth-((TextLine)lines.lastElement()).getWidth( getFontSize() );
+		
+		// Start pos of new line
 		startPos = 0;
+		
+		// Pos of last word end
 		lastWordEnd = -1;
-		font = createFont(fontStyle);
+		
 		textLen = text.length();
 		for (curPos = 0; curPos < textLen;)
 		{
@@ -281,49 +431,87 @@ public class TextList extends VirtualList
 			wordEnd = (curChar == ' ');
 			lineBreak = (curChar == '\n') || (curChar == '\r'); // ???
 			textEnd = (curPos == (textLen - 1));
+			divideLineToWords = false;
 			if (textEnd) curPos++;
-
-			if (lineBreak || textEnd) // simply add line
+			
+			if (lineBreak || textEnd || wordEnd)
 			{
 				testString = text.substring(startPos, curPos);
-				if (font.stringWidth(testString) <= width)
+				testStringWidth = font.stringWidth(testString);
+			}
+			
+			// simply add line
+			if ((lineBreak || textEnd) && (testStringWidth <= width)) 
+			{
+				//System.out.println("*1*");
+				internAdd(testString, color, -1, fontStyle, textIndex, lineBreak);
+				width = trueWidth;
+				curPos++;
+				startPos = curPos;
+				lastWordEnd = -1;
+				continue;
+			}
+			
+			if ((lineBreak || textEnd || wordEnd) && (testStringWidth > width))
+			{
+				if ((testStringWidth < trueWidth) && (lastWordEnd != -1))
 				{
-					internAdd(testString, color, -1, fontStyle, textIndex);
-					curPos++;
+					//System.out.println("*3*");
+					divideLineToWords = true;
+				}
+				
+				// Insert new line and try again
+				else if (trueWidth != width)
+				{
+					//System.out.println("*2*");
+					doCRLF();
+					curPos = startPos;
+					width = trueWidth;
+					lastWordEnd = -1;
+					continue;
+				}
+			}
+			
+			if ((lineBreak || textEnd || wordEnd) && (testStringWidth > trueWidth) && (!divideLineToWords))
+			{
+				// divide big word to several lines
+				if (lastWordEnd == -1)
+				{
+					//System.out.println("*4*");
+					for (; curPos >= 1; curPos--)
+					{
+						testString = text.substring(startPos, curPos);
+						if (font.stringWidth(testString) <= width) break;
+					}
+					internAdd(testString, color, -1, fontStyle, textIndex, true);
+					width = trueWidth;
 					startPos = curPos;
 					lastWordEnd = -1;
 					continue;
 				}
-			}
-
-			if (wordEnd || lineBreak || textEnd)
-			{
-				testString = text.substring(startPos, curPos);
-				if (font.stringWidth(testString) > width)
+				
+				// several words in line
+				else
 				{
-					if (lastWordEnd != -1) // several words in line
-					{
-						internAdd(text.substring(startPos, lastWordEnd), color, -1, fontStyle, textIndex);
-						curPos = lastWordEnd + 1;
-						startPos = curPos;
-					}
-					else
-					// divide big word to several lines
-					{
-						for (; curPos >= 1; curPos--)
-						{
-							testString = text.substring(startPos, curPos);
-							if (font.stringWidth(testString) <= width) break;
-						}
-						internAdd(testString, color, -1, fontStyle, textIndex);
-						startPos = curPos;
-					}
-					lastWordEnd = -1;
-					continue;
+					//System.out.println("*5*");
+					divideLineToWords = true;
 				}
 			}
+			
+			if (divideLineToWords)
+			{
+				String insString = text.substring(startPos, lastWordEnd);
+				internAdd(insString, color, -1, fontStyle, textIndex, true);
+				curPos = lastWordEnd + 1;
+				startPos = curPos;
+				width = trueWidth;
+				lastWordEnd = -1;
+				continue;
+			}
+			
 			if (wordEnd) lastWordEnd = curPos;
 			curPos++;
 		}
+		return this;
 	}
 }
