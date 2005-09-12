@@ -31,6 +31,7 @@ import jimm.DebugLog;
 import DrawControls.ImageList;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
+import DrawControls.LightControl;
 
 //! This class is base class of owner draw list controls
 /*!
@@ -444,6 +445,11 @@ public abstract class VirtualList extends Canvas
 		case KEY_NUM9:
 			moveCursor(getVisCount());
 			break;
+                // #sijapp cond.if target is "MOTOROLA"#
+	        case KEY_STAR: 
+                        LightControl.changeState();
+                        break;
+                // #sijapp cond.end#
 		}
 
 	}
@@ -451,6 +457,9 @@ public abstract class VirtualList extends Canvas
 	// protected void keyPressed(int keyCode) 
 	protected void keyPressed(int keyCode)
 	{
+                //#sijapp cond.if target is "MOTOROLA"#
+                LightControl.flash(false);
+                //#sijapp cond.end#
 		keyReaction(keyCode);
 		userPressKey(keyCode);
 		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode);
