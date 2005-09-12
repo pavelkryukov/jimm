@@ -26,6 +26,7 @@ package DrawControls;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 
+import DrawControls.VirtualTreeCommands;
 import DrawControls.VirtualList;
 import DrawControls.TreeNode;
 import DrawControls.TreeNodeComparer;
@@ -39,13 +40,14 @@ import DrawControls.TreeNodeComparer;
     VirtualTree#getItemDrawData Tree control call this function for request
     of data for tree node to be drawn
 */
-public abstract class VirtualTree extends VirtualList
+public class VirtualTree extends VirtualList
 {
   final protected TreeNode root = new TreeNode(null);
   private Vector drawItems;
   private boolean isChanged = false;
   private int stepSize = 6;
   private boolean showButtons = true, autoExpand = true;
+  private VirtualTreeCommands commands;
   
   {
   	root.expanded = true;
@@ -74,34 +76,21 @@ public abstract class VirtualTree extends VirtualList
     this.autoExpand = autoExpand;
   }
   
-  //! Tree control call this function for request of data for tree node to be drawn
-  /*! Reload this function in successor of VirtualDrawTree.
-      When tree control call this function you must fill memebers of 
-      ListItem class in order to draw node. */
-  abstract protected void getItemDrawData
-  (
-    TreeNode src, //!< Node
-    ListItem dst  //!< Structure to fill
-  );
-  
-  //! VirtualDrawTree call this method when user click or expand/collapse tree node
-  /*! You can overload this method to react of user choice */
-  protected void nodeClicked
-  (
-    TreeNode node //!< Current node
-  ) 
-  {}
+  public void setVTCommands(VirtualTreeCommands commands)
+  {
+    this.commands = commands;  	
+  }
   
   //! For internal use only
   /*! If someone change node structure wasChanged mast be called! */
-  final protected void wasChanged()
+  protected void wasChanged()
   {
     isChanged = true;
   }
   
  
-  // final private TreeNode getDrawItem(int index)
-  final private TreeNode getDrawItem(int index)
+  // private TreeNode getDrawItem(int index)
+  private TreeNode getDrawItem(int index)
   {
     return (TreeNode)drawItems.elementAt(index);
   }
@@ -116,20 +105,20 @@ public abstract class VirtualTree extends VirtualList
   }
   
   //! Sets size of space for next level node
-  final public void setStepSize(int value)
+  public void setStepSize(int value)
   {
     stepSize = value;
     invalidate();
   }
   
-  final public void setShowButtons(boolean value)
+  public void setShowButtons(boolean value)
   {
   	if (value == showButtons) return;
   	showButtons = value;
   	invalidate();
   }
   
-  final public boolean getShowButtons()
+  public boolean getShowButtons()
   {
   	return showButtons;
   }
@@ -226,11 +215,11 @@ public abstract class VirtualTree extends VirtualList
         invalidate();
       }
   	}
-    nodeClicked(currItem);
+  	commands.VTnodeClicked(currItem);
   }
   
   //! For internal use only
-  final protected int getSize()
+  protected int getSize()
   {
     checkToRebuildTree();
     return drawItems.size();
@@ -260,10 +249,10 @@ public abstract class VirtualTree extends VirtualList
   }
   
   // protected void get(int index, ListItem item)
-  final protected void get(int index, ListItem item)
+  protected void get(int index, ListItem item)
   {
     checkToRebuildTree();
-    getItemDrawData(getDrawItem(index), item);
+    commands.VTGetItemDrawData(getDrawItem(index), item);
   }
   
   // private static int drawNodeRect(Graphics g, TreeNode item, int x, int y1, int y2) - 
@@ -292,10 +281,9 @@ public abstract class VirtualTree extends VirtualList
   
   //! For internal use only
   /*! Draw a tree node. Called by base class DrawControls#VirtualDrawList */
-  final protected void drawItemData
+  protected void drawItemData
   (
     Graphics g, 
-    ListItem item,
     boolean isSelected, 
     int index, 
     int x1, int y1, int x2, int y2,
@@ -304,25 +292,33 @@ public abstract class VirtualTree extends VirtualList
   {
     int x, rectWidth, imgWidth;
     checkToRebuildTree();
+    
+    TreeNode node = (TreeNode)drawItems.elementAt(index);
+
+    commands.VTGetItemDrawData(node, paintedItem);
+    
+    g.setFont(getQuickFont(paintedItem.fontStyle));
+    g.setColor(paintedItem.color);
+    
     TreeNode treeItem = getDrawItem(index);
     x = x1+treeItem.level*stepSize;
     rectWidth = showButtons ? drawNodeRect(g, treeItem, x, y1, y2, fontHeight) : 0;
     
     ImageList imageList = getImageList();
-    if ((imageList != null) && (item.imageIndex >= 0) && (item.imageIndex < imageList.size()))
+    if ((imageList != null) && (paintedItem.imageIndex >= 0) && (paintedItem.imageIndex < imageList.size()))
     {
       imgWidth = imageList.getWidth()+3;
       g.drawImage
       (
-        imageList.elementAt(item.imageIndex), 
+        imageList.elementAt(paintedItem.imageIndex), 
         x+rectWidth+1, 
         (y1+y2-imageList.getHeight())/2, 
         Graphics.TOP|Graphics.LEFT
       );
     }
     else imgWidth = 0;
-    if (item.text != null)
-      g.drawString(item.text, x+rectWidth+imgWidth, (y1+y2-fontHeight)/2, Graphics.TOP|Graphics.LEFT);
+    if (paintedItem.text != null)
+      g.drawString(paintedItem.text, x+rectWidth+imgWidth, (y1+y2-fontHeight)/2, Graphics.TOP|Graphics.LEFT);
   }
   
   //! Add new node
@@ -396,7 +392,7 @@ public abstract class VirtualTree extends VirtualList
   	return 0;
   }
   
-  final public void sortNode(TreeNode node, TreeNodeComparer comparer)
+  public void sortNode(TreeNode node, TreeNodeComparer comparer)
   {
     storeLastNode();
   	if (node == null) node = getRoot();
@@ -409,7 +405,7 @@ public abstract class VirtualTree extends VirtualList
   	restoreLastNode();
   }
   
-  final public void insertChild(TreeNode root, TreeNode element, int index)
+  public void insertChild(TreeNode root, TreeNode element, int index)
   {
  	if (root == null) root = getRoot();
   	storeLastNode();
@@ -422,7 +418,7 @@ public abstract class VirtualTree extends VirtualList
   	restoreLastNode();
   }
   
-  final public void deleteChild(TreeNode root, int index)
+  public void deleteChild(TreeNode root, int index)
   {
     if (root == null) root = getRoot();
     storeLastNode();
@@ -435,7 +431,7 @@ public abstract class VirtualTree extends VirtualList
   	restoreLastNode();
   }
   
-  final public int getIndexOfChild(TreeNode root, TreeNode element)
+  public int getIndexOfChild(TreeNode root, TreeNode element)
   {
   	if (root.items == null) return -1;
   	return root.items.indexOf(element); 

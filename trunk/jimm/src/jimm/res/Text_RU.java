@@ -110,6 +110,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("disconnecting",               "Отключение");
 		resources.put("display_date",                "Дата на заставке");
 		resources.put("email",                       "E-mail");
+		resources.put("emotions",                    "Смайлы");
 		resources.put("error",                       "Ошибка");
 		resources.put("exit",                        "Выход");
 		resources.put("female",                      "Ж");
@@ -130,6 +131,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("hide_offline",                "Скрывать отключившихся");
 		resources.put("info",                        "Информация");
 		resources.put("init_ft",                     "Инициализация...");
+		resources.put("insert_emotion",              "Вставить смайлик");
 		resources.put("kb",                          " КБ");
 		resources.put("kbs",                         "КБ/сек");
 		resources.put("keep_chat",                   "Хранить историю чата?");

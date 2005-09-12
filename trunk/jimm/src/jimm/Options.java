@@ -389,7 +389,7 @@ public class Options
 	public static final int  CLRSCHHEME_MESS = 4; // retrieving curr mess highlight color
 
 	// Retrieves color value from color scheme
-	final public int getSchemeColor(int type)
+	public int getSchemeColor(int type)
 	{
 		switch (getIntOption(OPTION_COLOR_SCHEME))
 		{

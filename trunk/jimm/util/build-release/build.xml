@@ -23,9 +23,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 ********************************************************************************
 -->
 
-
 <project name="Jimm" default="release-part1">
-
 
 	<!-- ******************************************************************* -->
 	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   -->

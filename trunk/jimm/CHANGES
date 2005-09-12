@@ -208,6 +208,7 @@ VERSION 0.4.1
   * NEW FEATURE: You can now remove yourself from another users contact list
   * NEW FEATURE: It is possible to add any message from chat to history  
   * NEW FEATURE: Added menu to clear history for all contacts
+  * NEW FEATURE: Added smiles in message chat
   * BUGFIX: Problems with filetransfer to ips with more then 2 digits resolved
   * BUGFIX: Timestamp for offline messages is now correct
   * Jimm wil now only weakup from minimized if your status is online of free for chat

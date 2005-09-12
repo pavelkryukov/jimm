@@ -151,7 +151,6 @@ public class MainMenu implements CommandListener
                 this.list.addCommand(MainMenu.selectCommand);
                 this.list.addCommand(MainMenu.exitCommand);
                 // #sijapp cond.end#
-                this.list.setCommandListener(this);
             } else
             {           
                 this.eventList[this.list.append(ResourceBundle.getString("keylock_enable"), null)] 	= MENU_KEYLOCK;
@@ -166,8 +165,8 @@ public class MainMenu implements CommandListener
                 // #sijapp cond.if target is "MOTOROLA" #
                 this.list.addCommand(MainMenu.selectCommand);
 		        // #sijapp cond.end#
-                this.list.setCommandListener(this);
-            } 
+            }
+            this.list.setCommandListener(this);
                 
             // #sijapp cond.if modules_TRAFFIC is "true" #
             this.eventList[this.list.append(ResourceBundle.getString("traffic"), null)] 	= MENU_TRAFFIC;
@@ -271,11 +270,11 @@ public class MainMenu implements CommandListener
     {
    		if (Jimm.jimm.getContactListRef().getUnreadMessCount() > 0)
    		{
-   	    	Jimm.jimm.messageBox
+   	    	JimmUI.messageBox
 			(
 				ResourceBundle.getString("attention"),
 				ResourceBundle.getString("have_unread_mess"),
-				Jimm.MESBOX_YESNO,
+				JimmUI.MESBOX_YESNO,
 				this,
 				MSGBS_EXIT
 			);
@@ -398,13 +397,13 @@ public class MainMenu implements CommandListener
         }
         
         // User select OK in exit questiom message box
-        else if (Jimm.jimm.isMsgBoxCommand(c, MSGBS_EXIT) == 1)
+        else if (JimmUI.isMsgBoxCommand(c, MSGBS_EXIT) == JimmUI.CMD_YES)
         {
         	doExit();
         }
         
         // User select CANCEL in exit questiom message box
-        else if (Jimm.jimm.isMsgBoxCommand(c, MSGBS_EXIT) == 2)
+        else if (JimmUI.isMsgBoxCommand(c, MSGBS_EXIT) == JimmUI.CMD_NO)
         {
         	Jimm.jimm.getContactListRef().activate();
         }
@@ -518,12 +517,9 @@ public class MainMenu implements CommandListener
                  // #sijapp cond.end #
                      
                  case MENU_ABOUT:
-                     // Display an info alert
-                     System.gc();
-                     Alert about = new Alert(ResourceBundle.getString("about"),ResourceBundle.getString("about_info")+"\n" + ResourceBundle.getString("free_heap") + ": " + Runtime.getRuntime().freeMemory()/1024 + ResourceBundle.getString("kb"), null, AlertType.INFO);
-                     about.setTimeout(Alert.FOREVER);
-                     Jimm.display.setCurrent(about);
-                     break;
+                	// Display an info
+                 	Jimm.jimm.getUIRef().about(list);
+                    break;
   
                  //#sijapp cond.if target is "MIDP2"#
                  case MENU_MINIMIZE:

@@ -45,14 +45,14 @@ import jimm.DebugLog;
 
 // Class to cache one line in messages list
 // All fields are public to easy and fast access
-final class CachedRecord
+class CachedRecord
 {
-	public String shortText, text, date, from;
+	String shortText, text, date, from;
 	byte type; // 1 - incoming message, 0 - outgoing message
 }
 
 // Visual messages history list
-final class HistoryStorageList extends    VirtualList
+class HistoryStorageList extends    VirtualList
                                implements CommandListener, VirtualListCommands
 {
 	// commands for message text
@@ -264,25 +264,25 @@ final class HistoryStorageList extends    VirtualList
 		// "Clear all" menu
 		else if (c == cmdClrAll)
 		{
-			Jimm.jimm.messageBox
+			JimmUI.messageBox
 			(
 				ResourceBundle.getString("attention"),
 				ResourceBundle.getString("clear_all2"),
-				Jimm.MESBOX_YESNO,
+				JimmUI.MESBOX_YESNO,
 				this,
 				MB_CLEAR_ALL_TAG
 			);
 		}
 		
 		// "Clear all?" -> YES
-		else if (Jimm.jimm.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == 1)
+		else if (JimmUI.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == JimmUI.CMD_YES)
 		{
 			Jimm.jimm.getHistory().clear_all();
 			Jimm.display.setCurrent(this);
 		}
 		
 		// "Clear all?" -> NO
-		else if (Jimm.jimm.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == 2)
+		else if (JimmUI.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == JimmUI.CMD_NO)
 		{
 			Jimm.display.setCurrent(this);
 		}
@@ -311,7 +311,10 @@ final class HistoryStorageList extends    VirtualList
 		
 		messText.clear();
 		messText.addBigText(record.date+":", messText.getTextColor(), Font.STYLE_BOLD, -1);
-		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
+		messText.doCRLF();
+		Jimm.jimm.getEmotionsRef().addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN, messText.getTextColor(), -1);
+		messText.doCRLF();
+		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		messText.setTitle(record.from);
 		//#sijapp cond.else#
@@ -352,7 +355,7 @@ final class HistoryStorageList extends    VirtualList
 }
 
 // History storage implementation
-final public class HistoryStorage
+public class HistoryStorage
 {
 	//===================================//
 	//                                   //
@@ -582,6 +585,7 @@ final public class HistoryStorage
 		HistoryStorageList.setCurrUin(uin, nick);
 		
 		list.lock();
+		
 		if (list.getSize() != 0) list.setCurrentItem(list.getSize()-1);
 		list.unlock();
 		Jimm.display.setCurrent(list);

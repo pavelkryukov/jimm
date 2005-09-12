@@ -201,14 +201,15 @@ public class ChatHistory
 		TextList msgDisplay = (TextList) historyTable.get(uin);
 
 		msgDisplay.lock();
-		int lastSize = msgDisplay.getItemCount();
+		int lastSize = msgDisplay.getSize();
 		msgDisplay.addBigText
 		(
-			from + " (" + Util.getDateString(true, time) + "):",
+			from + " (" + Util.getDateString(true, time) + "): ",
 			red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
 			Font.STYLE_BOLD,
 			messTotalCounter
 		);
+		msgDisplay.doCRLF();
 
 		if (url.length() > 0)
 		{
@@ -219,14 +220,9 @@ public class ChatHistory
 				Font.STYLE_PLAIN, messTotalCounter
 			);
 		}
-
-		msgDisplay.addBigText
-		(
-			message, 
-			msgDisplay.getTextColor(), 
-			Font.STYLE_PLAIN,
-			messTotalCounter
-		);
+		
+		Jimm.jimm.getEmotionsRef().addTextWithEmotions(msgDisplay, message, Font.STYLE_PLAIN, msgDisplay.getTextColor(), messTotalCounter);
+		msgDisplay.doCRLF();
 		
 		msgDisplay.setTopItem(lastSize);		
 		msgDisplay.unlock();

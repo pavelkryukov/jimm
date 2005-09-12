@@ -135,34 +135,9 @@ class NodeComparer implements TreeNodeComparer
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-
-// Class for tree implementation
-class Tree extends VirtualTree
-{
-	protected void getItemDrawData(TreeNode src, ListItem dst)
-	{
-		ContactListItem item = (ContactListItem)src.getData();
-		dst.text       = item.getText();
-		dst.imageIndex = item.getImageIndex();
-		dst.color      = item.getTextColor();
-		dst.fontStyle  = item.getFontStyle(); 
-	}
-
-	public Tree(String caption)
-	{
-		super(caption, false);
-	}
-	
-	protected void nodeClicked(TreeNode node)
-	{
-	    Jimm.jimm.getContactListRef().itemClicked();
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////
-public class ContactList implements CommandListener 
+public class ContactList implements CommandListener, VirtualTreeCommands
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                                     , PlayerListener
 //#sijapp cond.end#
@@ -236,7 +211,7 @@ public class ContactList implements CommandListener
 	Hashtable gNodes = new Hashtable();
 	
 	// Tree object
-	Tree tree;
+	VirtualTree tree;
 
 	// Images for icons
 	private static ImageList imageList;
@@ -286,7 +261,9 @@ public class ContactList implements CommandListener
             this.gItems = new Vector();
         }
 		
-		tree = new Tree(null);
+     
+		tree = new VirtualTree(null, false);
+		tree.setVTCommands(this);
 		
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		tree.setFullScreenMode(false);
@@ -294,7 +271,7 @@ public class ContactList implements CommandListener
 		
 		tree.setImageList(imageList);
 		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT : VirtualList.MEDIUM_FONT);
-		tree.setStepSize( -tree.getItemHeight()/2 );
+		tree.setStepSize( -tree.getFontHeight()/2 );
 		
         // #sijapp cond.if modules_TRAFFIC is "true" #
         this.updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
@@ -1469,11 +1446,18 @@ public class ContactList implements CommandListener
 
     
     ContactListContactItem lastChatItem = null;
-   
-	// Is called when user click to contact
-	void itemClicked()
+    
+	public void VTGetItemDrawData(TreeNode src, ListItem dst)
 	{
-		TreeNode node = tree.getCurrentItem();
+		ContactListItem item = (ContactListItem)src.getData();
+		dst.text       = item.getText();
+		dst.imageIndex = item.getImageIndex();
+		dst.color      = item.getTextColor();
+		dst.fontStyle  = item.getFontStyle(); 
+	}
+	
+	public void VTnodeClicked(TreeNode node)
+	{
 		if (node == null) return;
 		ContactListItem item = (ContactListItem)node.getData();
 		if (item instanceof ContactListContactItem)
@@ -1490,7 +1474,6 @@ public class ContactList implements CommandListener
 		{
 			tree.setExpandFlag(node, !node.getExpanded());
 		}
-		
 	}
 	
 	// shows next or previos chat 
@@ -1540,7 +1523,7 @@ public class ContactList implements CommandListener
         // Contact item has been selected
         else if (c == selectCommand)
         {
-        	itemClicked();
+        	VTnodeClicked(tree.getCurrentItem());
         }
         
 //#sijapp cond.if modules_DEBUGLOG is "true" #
