@@ -191,6 +191,12 @@ public abstract class VirtualList extends Canvas
 		int y = getCapHeight();
 		int counter = 0, i;
 		int height = getDrawHeight();
+		int topItem = this.topItem;
+		
+		if (size == 0) return 0;
+		
+		if (topItem < 0) topItem = 0;
+		if (topItem >= size) topItem = size-1;
 		
 		for (i = topItem; i < (size-1); i++)
 		{
@@ -529,41 +535,26 @@ public abstract class VirtualList extends Canvas
 		return tmp_y + 1;
 	}
 
-	static void drawGradient(
+	// private void drawDottedSelectedBgrnd(Graphics g, int x, int y, int w, int h, ListItem item)
+	public void drawDottedSelectedBgrnd(
 		Graphics g,
 		int x,
 		int y,
 		int w,
 		int h,
-		int color,
-		int count,
-		int light1,
-		int light2)
+		int bkColor)
 	{
-		for (int i = 0; i < count; i++)
-		{
-			g.setColor(transformColorLight(color, (light2 - light1) * i
-					/ (count - 1) + light1));
-			int y1 = y + (i * h) / count;
-			int y2 = y + (i * h + h) / count;
-			g.fillRect(x, y1, w, y2 - y1);
-		}
-	}
-
-	// private void drawDottedSelectedBgrnd(Graphics g, int x, int y, int w, int h, ListItem item)
-	private void drawDottedSelectedBgrnd(
-		Graphics g,
-		int x,
-		int y,
-		int w,
-		int h)
-	{
-		int color = (bkgrndColor != 0) ? transformColorLight(bkgrndColor, 32) : 0x404040;
-		drawGradient(g, x, y, w, h, color, 6, -32, 16);
-		int frameColor = transformColorLight(color, -64);
-		if (frameColor == 0) frameColor = 0x606060;
-		g.setColor(frameColor);
-		g.drawRect(x, y, w - 1, h - 1);
+		// Draw bkgrn
+		g.setColor(bkColor);
+		g.fillRect(x, y, w, h);
+		
+		// draw rect
+		g.setStrokeStyle(Graphics.DOTTED);
+		g.setColor(textColor);
+		g.drawRect(x, y, w-1, h-1);
+		
+		// restore line style
+		g.setStrokeStyle(Graphics.SOLID);
 	}
 
 	protected int getItemBkColor(int index, int lastColor)
@@ -585,14 +576,13 @@ public abstract class VirtualList extends Canvas
 
 		if (isSelected)
 		{
-			drawDottedSelectedBgrnd(g, 0, yCrd, width, itemHeight);
+			drawDottedSelectedBgrnd(g, 0, yCrd, width, itemHeight, bkgrndColor);
 		}
 		else
 		{
 			g.setColor(bkColor);
 			g.fillRect(0, yCrd, width, itemHeight);
 		}
-
 
 		g.setStrokeStyle(Graphics.SOLID);
 		drawItemData(g, isSelected, index, 2, yCrd, width - itemHeight / 3, yCrd
