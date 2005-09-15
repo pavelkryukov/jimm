@@ -143,7 +143,7 @@ public class FileTransfer implements CommandListener
             FileSelector fc = new FileSelector();
             try 
             {
-                fc.startFS();
+                fc.showCurrDir();
             }
             catch (JimmException e)
             {
@@ -524,19 +524,6 @@ public class FileTransfer implements CommandListener
 
         }
 
-        public void startFS() throws JimmException
-        {
-            try
-            {
-                showCurrDir();
-            } catch (SecurityException e)
-            {
-                throw new JimmException(193,0,true);
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
         
         public void commandAction(Command c, Displayable d)
         {
@@ -563,7 +550,14 @@ public class FileTransfer implements CommandListener
             }
             else
                 if (c == back)
+                    try 
+                {
                     showCurrDir();
+                }
+                catch (JimmException e)
+                {
+                    JimmException.handleException(e);
+                }
                 else
                     if (c == exit) 
                         FileTransfer.this.getCItem().activateMenu();
@@ -572,7 +566,7 @@ public class FileTransfer implements CommandListener
         /**
          * Show file list in the current directory .
          */
-        void showCurrDir()
+        void showCurrDir()  throws JimmException
         {
             // #sijapp cond.if target is "MOTOROLA"#
             FileConnection currDir = null;
@@ -666,9 +660,12 @@ public class FileTransfer implements CommandListener
                     currDir.close();
 
                 Jimm.display.setCurrent(browser);
-            } catch (IOException ioe)
+            } catch (SecurityException se)
             {
-                ioe.printStackTrace();
+                throw new JimmException(193,0,true);
+            } catch (Exception ex)
+            {
+                ex.printStackTrace();
             }
         }
 
@@ -708,7 +705,14 @@ public class FileTransfer implements CommandListener
                 {
                     currDirName = currDirName + fileName;
                 }
-            showCurrDir();
+            try 
+            {
+                showCurrDir();
+            }
+            catch (JimmException e)
+            {
+                JimmException.handleException(e);
+            }
         }
 
         void startFT(String fileName) throws JimmException
