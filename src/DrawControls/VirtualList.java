@@ -31,7 +31,9 @@ import jimm.DebugLog;
 import DrawControls.ImageList;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
+//#sijapp cond.if target is "MOTOROLA"#
 import DrawControls.LightControl;
+//#sijapp cond.end#
 
 //! This class is base class of owner draw list controls
 /*!
