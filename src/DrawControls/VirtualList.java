@@ -601,31 +601,30 @@ public abstract class VirtualList extends Canvas
 		int height = getDrawHeight();
 		
 		int fh = getFontHeight();
-
 		position = topItem;
 		itemCount = getSize();
 		
 		haveToShowScroller = ((itemCount >= visCount) && (itemCount > 0));
 	
 		int color = transformColorLight(transformColorLight(bkgrndColor, 32), -32);
-
 		if (color == 0) color = 0x808080;
 		g.setColor(color);
 		g.fillRect(width + 1, topY, scrollerWidth - 1, height - topY);
 		g.setColor(transformColorLight(color, -64));
 		g.drawLine(width, topY, width, height);
-		
 		if (haveToShowScroller)
 		{
 			sliderSize = (height-topY)*visCount/itemCount;
-			y1 = position * (height - sliderSize - topY) / (itemCount-visCount) + topY;
+			try 
+            {
+			    y1 = position * (height - sliderSize - topY) / (itemCount-visCount) + topY;
+            }
+            catch (ArithmeticException ae) {y1 = 0;}
 			y2 = y1 + sliderSize;
 			g.setColor(color);
 			g.fillRect(width + 2, y1 + 2, scrollerWidth - 3, y2 - y1 - 3);
-
 			g.setColor(transformColorLight(color, -192));
 			g.drawRect(width, y1, scrollerWidth - 1, y2 - y1 - 1);
-
 			g.setColor(transformColorLight(color, 96));
 			g.drawLine(width + 1, y1 + 1, width + 1, y2 - 2);
 			g.drawLine(width + 1, y1 + 1, width + scrollerWidth - 2, y1 + 1);
