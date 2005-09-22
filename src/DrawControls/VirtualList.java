@@ -27,7 +27,6 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Font;
 
-import jimm.DebugLog;
 import DrawControls.ImageList;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
@@ -136,7 +135,9 @@ public abstract class VirtualList extends Canvas
 	/*! You must reload this method. With help of method "get" class finds out
 	 data of each item. Method "get" is called each time when list item 
 	 is drawn */
-	abstract protected void get(int index, //!< Number of requested list item 
+	abstract protected void get
+	(
+		int index,    //!< Number of requested list item 
 		ListItem item //!< Data of list item. Fill this object with item data.
 	);
 
@@ -258,15 +259,14 @@ public abstract class VirtualList extends Canvas
 
 	//! Set new default values for all new classes based on VirtualList
 	/*! To create new class based on VirtualList you must to call constructor
-	 only with caption argument. */
-	public static void setDefaults(
+	    only with caption argument. */
+	public static void setDefaults
+	(
 		int capBackColor, //!< Caption background color
 		int capTextColor, //!< Caption text color
-		int backColor, //!< Control back color
-		int fontSize, /*!< Control font size. This font size if used both 
-		                   for caption and text in tree nodes */
-		int cursorMode /*!< Cursor mode. Can be VirtualList.SEL_DOTTED 
-	 or VirtualList.SEL_INVERTED */
+		int backColor,    //!< Control back color
+		int fontSize,     /*!< Control font size. This font size if used both for caption and text in tree nodes */
+		int cursorMode    /*!< Cursor mode. Can be VirtualList.SEL_DOTTED or VirtualList.SEL_INVERTED */
 	)
 	{
 		defCapColor = capBackColor;
@@ -291,14 +291,14 @@ public abstract class VirtualList extends Canvas
 	}
 
 	// public VirtualList
-	public VirtualList(String capt, //!< Caption text of new virtual list
+	public VirtualList
+	(
+		String capt,      //!< Caption text of new virtual list
 		int capBackColor, //!< Caption background color
 		int capTextColor, //!< Caption text color
-		int backColor, //!< Control back color
-		int fontSize, /*!< Control font size. This font size if used both 
-		 for caption and text in tree nodes */
-		int cursorMode /*!< Cursor mode. Can be VirtualList.SEL_DOTTED 
-	 or VirtualList.SEL_INVERTED */
+		int backColor,    //!< Control back color
+		int fontSize,     /*!< Control font size. This font size if used both for caption and text in tree nodes */
+		int cursorMode    /*!< Cursor mode. Can be VirtualList.SEL_DOTTED or VirtualList.SEL_INVERTED */
 	)
 	{
 		super();
@@ -604,7 +604,7 @@ public abstract class VirtualList extends Canvas
 		position = topItem;
 		itemCount = getSize();
 		
-		haveToShowScroller = ((itemCount >= visCount) && (itemCount > 0));
+		haveToShowScroller = ((itemCount > visCount) && (itemCount > 0));
 	
 		int color = transformColorLight(transformColorLight(bkgrndColor, 32), -32);
 		if (color == 0) color = 0x808080;
@@ -615,11 +615,7 @@ public abstract class VirtualList extends Canvas
 		if (haveToShowScroller)
 		{
 			sliderSize = (height-topY)*visCount/itemCount;
-			try 
-            {
-			    y1 = position * (height - sliderSize - topY) / (itemCount-visCount) + topY;
-            }
-            catch (ArithmeticException ae) {y1 = 0;}
+		    y1 = position * (height - sliderSize - topY) / (itemCount-visCount) + topY;
 			y2 = y1 + sliderSize;
 			g.setColor(color);
 			g.fillRect(width + 2, y1 + 2, scrollerWidth - 3, y2 - y1 - 3);

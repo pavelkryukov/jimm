@@ -30,6 +30,7 @@ import javax.microedition.lcdui.*;
 
 import DrawControls.VirtualList;
 import DrawControls.ListItem;
+import jimm.DebugLog;
 
 class TextLine
 {
@@ -72,10 +73,9 @@ class TextLine
 		}
 	}
 	
-	void paint(int ypos, Graphics g, int fontSize, VirtualList vl)
+	void paint(int xpos, int ypos, Graphics g, int fontSize, VirtualList vl)
 	{
-		int xpos = 1, 
-		    count = items.size(), 
+		int count = items.size(), 
 			intemHeight = getHeight(fontSize);
 		
 		for (int i = 0; i < count; i++)
@@ -113,12 +113,10 @@ public class TextList extends VirtualList
 		int size = lines.size();
 		return ((TextLine)lines.lastElement()).items.isEmpty() ? size-1 : size;
 	}
-	
-	// Retursn ListItem by col and line; 
-	ListItem getListItem(int line, int col)
+
+	private TextLine getLine(int index)
 	{
-		TextLine ln = (TextLine)lines.elementAt(line);
-		return ln.elementAt(col);
+		return (TextLine)lines.elementAt(index);
 	}
 
 	public void setTextSelColor(int value)
@@ -132,16 +130,16 @@ public class TextList extends VirtualList
 	{
 		int selIndex = getCurrIndex();
 		int textIndex = (selIndex >= lines.size()) ?
-				-1 : ((TextLine) lines.elementAt(selIndex)).bigTextIndex;
+				-1 : getLine(selIndex).bigTextIndex;
 		if (textIndex == -1) return lastColor;
-		int retColor = (((TextLine) lines.elementAt(index)).bigTextIndex == textIndex) ? textSelColor : lastColor;
+		int retColor = (getLine(index).bigTextIndex == textIndex) ? textSelColor : lastColor;
 		return retColor;
 	}
 
 	// protected void get(int index, ListItem item)
 	protected void get(int index, ListItem item)
 	{
-		TextLine listItem = (TextLine)lines.elementAt(index);
+		TextLine listItem = getLine(index);
 		if (listItem.items.isEmpty()) item.clear();
 		else listItem.elementAt(0).assignTo(item);
 	}
@@ -222,7 +220,7 @@ public class TextList extends VirtualList
 	{
 		if (getCursorMode() != SEL_NONE) return super.getItemHeight(itemIndex);
 		if (itemIndex >= lines.size()) return 1;
-		return ((TextLine)lines.elementAt(itemIndex)).getHeight( getFontSize() );
+		return getLine(itemIndex).getHeight( getFontSize() );
 	}
 	
 	// Overrides VirtualList.drawItemData
@@ -242,8 +240,8 @@ public class TextList extends VirtualList
 			return;
 		}
 		
-		TextLine line = (TextLine)lines.elementAt(index);
-		line.paint(y1, g, getFontSize(), this);
+		TextLine line = getLine(index);
+		line.paint(1, y1, g, getFontSize(), this);
 	}
 	
 
@@ -270,7 +268,7 @@ public class TextList extends VirtualList
 			{
 				currItem += step;
 				if ((currItem < 0) || (currItem >= size)) break;
-				TextLine item = (TextLine) lines.elementAt(currItem);
+				TextLine item = getLine(currItem);
 				if (currTextIndex != item.bigTextIndex)
 				{
 					currTextIndex = item.bigTextIndex;
@@ -315,7 +313,7 @@ public class TextList extends VirtualList
 			int size = lines.size();
 			for (int i = 0, j = 0; i < size; i++)
 			{
-				TextLine line = (TextLine) lines.elementAt(i);
+				TextLine line = getLine(i);
 				if (line.bigTextIndex == currTextIndex)
 				{
 					StringBuffer lineText = new StringBuffer();
@@ -332,7 +330,7 @@ public class TextList extends VirtualList
 	{
 		int currItemIndex = getCurrIndex();
 		if ((currItemIndex < 0) || (currItemIndex >= lines.size())) return -1;
-		return ((TextLine) lines.elementAt(currItemIndex)).bigTextIndex;
+		return getLine(currItemIndex).bigTextIndex;
 	}
 
 	//! Construct new text list 
@@ -390,28 +388,22 @@ public class TextList extends VirtualList
 		return getWidth() - getScrollerWidth() - 3;
 	}
 	
-	//! Add big multiline text. 
-	/*! Text visial width can be larger then screen width.
-	    Method addBigText automatically divides text to short lines 
-	    and adds lines to text list */
-	public TextList addBigText
+	private void addBigTextInternal
 	(
-		String text,   //!< Text to add
-		int color,     //!< Text color
-		int fontStyle, //!< Text font style. See MID profile for details
-		int textIndex  //!< Whole text index
+		String text,  
+		int color,    
+		int fontStyle,
+		int textIndex,
+		int trueWidth
 	)
 	{
 		Font font;
-		int textLen, curPos, lastWordEnd, startPos, width, trueWidth, testStringWidth = 0;
+		int textLen, curPos, lastWordEnd, startPos, width, testStringWidth = 0;
 		char curChar;
 		boolean lineBreak, wordEnd, textEnd, divideLineToWords;
 		String testString = null;
 
 		font = getQuickFont(fontStyle);
-		
-		// Width of screen
-		trueWidth = getTrueWidth();
 		
 		// Width of free space in last line 
 		width = lines.isEmpty() 
@@ -512,6 +504,45 @@ public class TextList extends VirtualList
 			if (wordEnd) lastWordEnd = curPos;
 			curPos++;
 		}
+	}
+	
+	//! Add big multiline text. 
+	/*! Text visial width can be larger then screen width.
+	    Method addBigText automatically divides text to short lines 
+	    and adds lines to text list */
+	public TextList addBigText
+	(
+		String text,   //!< Text to add
+		int color,     //!< Text color
+		int fontStyle, //!< Text font style. See MID profile for details
+		int textIndex  //!< Whole text index
+	)
+	{
+		addBigTextInternal(text, color, fontStyle, textIndex, getTrueWidth());
 		return this;
+	}
+	
+	static public void showText
+	(
+		Graphics g, 
+		String s, 
+		int x, int y, int width, int height, 
+		int fontSize, int fontStyle, int textColor
+	)
+	{
+		TextList paintList = new TextList(null);
+		paintList.setFontSize(fontSize);
+		paintList.addBigTextInternal(s, textColor, fontStyle, -1, width);
+		
+		int line, textHeight = 0;
+		int linesCount = paintList.getSize();
+		for (line = 0; line < linesCount; line++) textHeight += paintList.getLine(line).getHeight(fontSize);
+		int top = y+(height-textHeight)/2;
+		for (line = 0; line < linesCount; line++)
+		{
+			paintList.getLine(line).paint(x, top, g, fontSize, paintList);
+			DebugLog.addText("top="+top);
+			top += paintList.getLine(line).getHeight(fontSize);
+		}
 	}
 }
