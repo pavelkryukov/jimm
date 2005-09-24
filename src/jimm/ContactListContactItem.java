@@ -898,6 +898,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			else if (JimmUI.isMsgBoxCommand(c, MSGBS_DELETECONTACT) == JimmUI.CMD_OK)
 			{
 				Jimm.jimm.getIcqRef().delFromContactList(ContactListContactItem.this);
+				//#sijapp cond.if modules_HISTORY is "true" #
+				Jimm.jimm.getHistory().clearHistory(uin);
+				//#sijapp cond.end# 
 			}
 			
 			// user select CANCEL in delete contact message box
