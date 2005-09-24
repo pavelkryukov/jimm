@@ -24,7 +24,8 @@
 package jimm;
 
 import java.util.Vector;
-import javax.microedition.lcdui.*; 
+import javax.microedition.lcdui.*;
+import java.io.*;
 
 import jimm.util.ResourceBundle;
 import DrawControls.*;
@@ -33,6 +34,112 @@ public class Emotions implements VirtualListCommands, CommandListener
 {
 	final private ImageList images = new ImageList();
 	final private Vector findedEmotions = new Vector();
+	boolean used;
+	final private Vector textCorr = new Vector();
+	final private Vector selEmotions = new Vector();
+	
+	public Emotions()
+	{
+		int iconsSize;
+		used = false;
+
+		// Load file "smiles.txt"
+		InputStream stream = this.getClass().getResourceAsStream("/smiles.txt");
+		if (stream == null) return;
+		
+		DataInputStream dos = new DataInputStream(stream); 
+
+		try
+		{
+			StringBuffer strBuffer = new StringBuffer();
+			boolean eof = false, clrf = false;
+			
+			// Read icon size
+			readStringFromStream(strBuffer, dos);
+			iconsSize = Integer.parseInt(strBuffer.toString());
+			
+			for (;;)
+			{
+				// Read smile index
+				readStringFromStream(strBuffer, dos);
+				Integer currIndex = Integer.valueOf(strBuffer.toString());
+				
+				// Read smile name				
+				readStringFromStream(strBuffer, dos);
+				String smileName = strBuffer.toString();
+				
+				// Read smile strings
+				for (int i = 0;; i++)
+				{
+					try
+					{
+						clrf = readStringFromStream(strBuffer, dos);
+					}
+					catch (EOFException eofExcept)
+					{
+						eof = true;
+					}
+					
+					String word = new String(strBuffer).trim();
+				
+					// Add pair (word, integer) to textCorr
+					if (word.length() != 0) insertTextCorr(word, currIndex);
+					
+					// Add triple (index, word, name) to selEmotions  
+					if (i == 0) selEmotions.addElement(new Object[] {currIndex, word, smileName});
+					
+					if (clrf || eof) break;
+				}
+				if (eof) break;
+			}
+			
+			// Read images
+			images.load("/smiles.png", iconsSize, iconsSize, -1);
+		}
+		catch (Exception e)
+		{
+			//DebugLog.addText(e.toString());
+			return;
+		}
+		
+		used = true;
+	}
+	
+	// Add smile text and index to textCorr in decreasing order of text length 
+	void insertTextCorr(String word, Integer index)
+	{
+		Object[] data = new Object[] {word, index};
+		int wordLen = word.length();
+		int size = textCorr.size();
+		int insIndex = 0;
+		for (; insIndex < size; insIndex++)
+		{
+			Object[] cvtData = (Object[])textCorr.elementAt(insIndex);
+			int cvlDataWordLen = ((String)cvtData[0]).length();
+			if (cvlDataWordLen <= wordLen)
+			{
+				textCorr.insertElementAt(data, insIndex);
+				return;
+			}
+		}
+		textCorr.addElement(data);
+	}
+
+	// Reads simple word from stream. Used in Emotions(). 
+	// Returns "true" if break was found after word
+	static boolean readStringFromStream(StringBuffer buffer, DataInputStream stream) throws IOException, EOFException
+	{
+		byte chr;
+		buffer.setLength(0);
+		for (;;)
+		{
+			chr = stream.readByte();
+			if ((chr == ' ') || (chr == '\n') || (chr == '\t')) break;
+			if (chr == '_') chr = ' ';
+			if (chr >= ' ') buffer.append((char)chr);
+		}
+		return (chr == '\n');
+	}
 	
 	private void findEmotionInText(String text, String emotion, Integer index, int startIndex)
 	{
@@ -43,81 +150,29 @@ public class Emotions implements VirtualListCommands, CommandListener
 		findedEmotions.addElement( new int[] {findedIndex, len, index.intValue()} );
 	}
 	
-	static final private Object[] knownEmotions = 
-	{
-			":-))))", new Integer(3), 
-			
-			":-)))",  new Integer(2), 
-			":))))",  new Integer(3), 
-			
-			"]:-<",   new Integer(14),
-			"]:->",   new Integer(15),
-			":-))",   new Integer(1), 
-			":)))",   new Integer(2), 
-			":-[[",   new Integer(18), 
-			"OOPS",   new Integer(22), 
-			":-PP",   new Integer(30), 
-			";-PP",   new Integer(30), 
-			"LOVE",   new Integer(21), 
-			
-			":-\\",   new Integer(13), 
-			":-)",    new Integer(0),  
-			":))",    new Integer(1),  
-			"LOL",    new Integer(3),  
-			":-D",    new Integer(3),  
-			";-)",    new Integer(4),  
-			":-]",    new Integer(6),  
-			";-]",    new Integer(7),  
-			"8-)",    new Integer(9),  
-			"8-P",    new Integer(10), 
-			":-o",    new Integer(11), 
-			":-O",    new Integer(11), 
-			"WOW",    new Integer(10), 
-			":-/",    new Integer(12), 
-			":-@",    new Integer(16), 
-			":-[",    new Integer(17), 
-			";-[",    new Integer(19), 
-			":\")",   new Integer(20), 
-			":-L",    new Integer(21), 
-			";-L",    new Integer(21), 
-			":-.",    new Integer(22), 
-			":-(",    new Integer(23), 
-			";-<",    new Integer(23), 
-			":-<",    new Integer(24), 
-			";-(",    new Integer(25), 
-			":-|",    new Integer(26), 
-			";-|",    new Integer(27), 
-			":-S",    new Integer(28), 
-			":->",    new Integer(29), 
-			";->",    new Integer(29), 
-			":-P",    new Integer(30), 
-			";-P",    new Integer(30), 
-			";-D",    new Integer(31), 
-			"*G*",    new Integer(31), 
-			
-			":)",     new Integer(0),  
-			";)",     new Integer(4), 
-			"^^",     new Integer(5), 
-			":]",     new Integer(6), 
-			";]",     new Integer(7), 
-			"(:",     new Integer(8), 
-			":D",     new Integer(3)
-	};
-	
 	public void addTextWithEmotions(TextList textList, String text, int fontStyle, int textColor, int bigTextIndex)
 	{
+		if (!used)
+		{
+			textList.addBigText(text, textColor, fontStyle, bigTextIndex);
+			return;
+		}
+		
 		int startIndex = 0;
 		for (;;)
 		{
 			findedEmotions.removeAllElements();
 			
-			for (int i = 0; i < knownEmotions.length; i += 2)
+			int size = textCorr.size();
+			for (int i = 0; i < size; i++)
 			{
+				Object[] array = (Object[])textCorr.elementAt(i); 
 				findEmotionInText
 				(
 					text,
-					(String)knownEmotions[i],
-					(Integer)knownEmotions[i+1], startIndex
+					(String)array[0],
+					(Integer)array[1], 
+					startIndex
 				);  
 			}
 			
@@ -148,14 +203,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 			textList.addBigText(text.substring(startIndex, lastIndex), textColor, fontStyle, bigTextIndex);
 	}
 	
-	public void load(String resName, int height)
-	{
-		try
-		{
-			images.load(resName, height);
-		}
-		catch (Exception e) {}
-	}
 	
 	///////////////////////////////////
 	//                               // 
@@ -169,43 +216,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 	static private Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Command.BACK, 2); 
 	private TextList selList;
 	private String emotionText; 
-	
-	private static final Object[] selEmotionsStrings = 
-	{
-		new Integer(0),  ":-)",   "Smile",
-		new Integer(1),  ":-))",  "More smile",
-		new Integer(2),  ":-)))", "Most smile",
-		new Integer(3),  "LOL",   "LOL",
-		new Integer(4),  ";-)",   "Ironic",
-		new Integer(5),  "^^",    "Sly",
-		new Integer(6),  ":-]",   "Content",
-		new Integer(7),  ";-]",   "Ironic content",
-		new Integer(8),  "(:",    "Embarrassed",
-		new Integer(9),  "8-)",   "Boss",
-		new Integer(10), "8-P",   "Super",
-		new Integer(11), ":-O",   "Scared",
-		new Integer(12), ":-/",   "Discontent",
-		new Integer(13), ":-\\",  "Suspirious",
-		new Integer(14), "]:-<",  "Devil",
-		new Integer(15), "]:->",  "Malicious devil",
-		new Integer(16), ":-@",   "Shouter",
-		new Integer(17), ":-[",   "Disappointed",
-		new Integer(18), ":-[[",  "Angry",
-		new Integer(19), ";-[",   "Furious",
-		new Integer(20), ":\")",  "Shy",
-		new Integer(21), ":-L",   "Love",
-		new Integer(22), ":-.",   "Ooops",
-		new Integer(23), ":-(",   "Sad",
-		new Integer(24), ":-<",   "Very sad",
-		new Integer(25), ";-(",   "Crying",
-		new Integer(26), ":-|",   "Worried",
-		new Integer(27), ";-|",   "Upset",
-		new Integer(28), ":-S",   "Spooked",
-		new Integer(29), ":->",   "Miser",
-		new Integer(30), ":-P",   "Amused",
-		new Integer(31), ";-D",   "Big green"
-	};
-	
 
 	public void selectEmotion(CommandListener selectionListener, Displayable lastDisplay)
 	{
@@ -226,13 +236,15 @@ public class Emotions implements VirtualListCommands, CommandListener
 		selList.setVLCommands(this);
 		selList.setCommandListener(this);
 		
-		for (int i = 0; i < selEmotionsStrings.length; i += 3)
+		int size = selEmotions.size();
+		for (int i = 0; i < size; i++)
 		{
+			Object[] data = (Object[])selEmotions.elementAt(i);
 			selList.add
 			(
-				(String)selEmotionsStrings[i+2],
+				(String)data[2],
 				0,
-				((Integer)selEmotionsStrings[i]).intValue()
+				((Integer)data[0]).intValue()
 			);
 		}
 		
@@ -259,8 +271,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 	private void select()
 	{
-		int index = selList.getCurrIndex();
-		emotionText = (String)selEmotionsStrings[index*3+1];
+		Object[] data = (Object[])selEmotions.elementAt( selList.getCurrIndex() );
+		emotionText = (String)data[1];
 		Jimm.display.setCurrent(lastDisplay);
 		selList = null;
 		System.gc();

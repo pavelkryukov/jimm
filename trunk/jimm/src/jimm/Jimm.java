@@ -195,7 +195,6 @@ public class Jimm extends MIDlet
 		
 		// Create and load emotion icons
 		emotions = new Emotions();
-		emotions.load("/smiles.png", 12);
 		
 		ui = new JimmUI();
 		

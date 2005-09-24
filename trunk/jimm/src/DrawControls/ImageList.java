@@ -103,24 +103,34 @@ public class ImageList
   public void load
   (
     String resName, //!< Name of image in resouce
-    int width       //!< Width of of result images
+    int width,      //!< Width of result images
+	int height,     //!< Height of result images
+	int count
   ) throws IOException
   {
     Image resImage = Image.createImage(resName);
-    height = resImage.getHeight();
-	if(width == -1) width = height;
-    int size = resImage.getWidth()/width;
-    for (int i = 0; i < size; i++)
-    {
-//      #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-        Image newImage = Image.createImage(Image.createImage(resImage, i * width, 0, width, height, Sprite.TRANS_NONE));
-//      #sijapp cond.else#
-        Image newImage = Image.createImage(width, height);
-        newImage.getGraphics().drawImage(resImage, -width*i, 0, Graphics.TOP|Graphics.LEFT);
-//      #sijapp cond.end#     
-      items.addElement( Image.createImage(newImage) );
-    }
+    int imgHeight = resImage.getHeight();
+    int imgWidth = resImage.getWidth();
+    
+    if (width == -1) width = imgHeight;
+    if (height == -1) height = imgHeight;
+    
     this.width = width;
+    this.height = height;
+    
+    for (int y = 0; y < imgHeight; y += height)
+    {
+    	for (int x = 0; x < imgWidth; x += width)
+    	{
+    		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+    		Image newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
+    		// #sijapp cond.else#
+    		Image newImage = Image.createImage(width, height);
+    		newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP|Graphics.LEFT);
+    		// #sijapp cond.end#     
+    		items.addElement( Image.createImage(newImage) );
+    	}
+    }
   }
   
   public void load

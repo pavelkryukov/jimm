@@ -225,7 +225,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
         	imageList = new ImageList();
         	
         	// reads and divides image "icons.png" to several icons
-			imageList.load("/icons.png", -1);
+			imageList.load("/icons.png", -1, -1, -1);
             ContactList.statusAwayImg        = imageList.elementAt(0);
             ContactList.statusChatImg        = imageList.elementAt(1);
             ContactList.statusDndImg         = imageList.elementAt(2);
