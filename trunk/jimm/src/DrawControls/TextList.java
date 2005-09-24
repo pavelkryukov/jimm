@@ -521,6 +521,15 @@ public class TextList extends VirtualList
 		return this;
 	}
 	
+    static public int getLineNumbers(String s, int width, int fontSize, int fontStyle, int textColor)
+    {
+        TextList paintList = new TextList(null);
+        paintList.setFontSize(fontSize);
+        paintList.addBigTextInternal(s, textColor, fontStyle, -1, width);
+        
+        return (paintList.getSize());
+    }
+    
 	static public void showText
 	(
 		Graphics g, 
