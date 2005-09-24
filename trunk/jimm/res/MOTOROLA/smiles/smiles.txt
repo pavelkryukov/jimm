@@ -1,7 +1,7 @@
 12
 0 Smile :-) :)
-1 More_smile :-))
-2 Most_smile :-)))
+1 More_smile :-)) :))
+2 Most_smile :-))) :)))
 3 LOL :D ;D LOL :-)))) :-))))) :-)))))) :)))) :))))) :))))))
 4 Ironic ;-)
 5 Sly ^^
