@@ -24,7 +24,7 @@
 
 package jimm;
 
-
+import DrawControls.TextList;
 import jimm.comm.ConnectAction;
 //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 //  #sijapp cond.if modules_FILES is "true"#
@@ -65,7 +65,7 @@ import net.rim.device.api.system.LED;
 public class SplashCanvas extends Canvas
 {
 	//Timer for repaint
-	private Timer t;
+	private Timer t1,t2;
 
 	// Location of the splash image (inside the JAR file)
 	private static final String SPLASH_IMG = "/splash.png";
@@ -135,8 +135,8 @@ public class SplashCanvas extends Canvas
 	private int availableMessages;
 	
 
-	// Alert needed if any other key then the # is pressed during keylock
-	private Alert keylockMessage;
+	// Should the keylock message be drawn to the screen?
+	private boolean showKeylock;
 
 
 	// Timestamp
@@ -153,8 +153,7 @@ public class SplashCanvas extends Canvas
 		this.setFullScreenMode(true);
 		//  #sijapp cond.end#
 		this.message = new String(message);
-		this.keylockMessage = new Alert(null,null,null,AlertType.INFO);
-		this.keylockMessage.setTimeout(2000);
+		this.showKeylock = false;
 		//  #sijapp cond.if target is "MOTOROLA"#
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight()+22);
 		//  #sijapp cond.else#
@@ -234,15 +233,17 @@ public class SplashCanvas extends Canvas
 		//  #sijapp cond.end#
 		Jimm.display.setCurrent(this);
 		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
-		{
-			t = new Timer();
-			t.schedule(new TimerTask() {
-		public void run()
-		{
-			SplashCanvas.this.repaint();
-		}
-		},20000,20000);
-		}
+        {
+            t1 = new Timer();
+            t1.schedule(new TimerTask()
+            {
+
+                public void run()
+                {
+                    SplashCanvas.this.repaint();
+                }
+            }, 20000, 20000);
+        }
 		
 	}
 
@@ -264,7 +265,7 @@ public class SplashCanvas extends Canvas
 		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
 		{
 			
-			t.cancel();
+			t1.cancel();
 		}
 		Jimm.jimm.getContactListRef().activate();
 	}
@@ -304,12 +305,11 @@ public class SplashCanvas extends Canvas
 		        this.pressed = new Date();
 		    else
 		    {
-		        this.keylockMessage.setTitle(ResourceBundle.getString("keylock"));
-		        this.keylockMessage.setString(ResourceBundle.getString("keylock_message"));
+		        this.showKeylock = true;
+                this.repaint();
 			//  #sijapp cond.if target is "MOTOROLA"#
 		       Jimm.display.flashBacklight(2000);
 			// #sijapp cond.end#
-		       Jimm.display.setCurrent(this.keylockMessage);
 		    }
 		}
 	}
@@ -342,9 +342,8 @@ public class SplashCanvas extends Canvas
 
 	// Render the splash image
 	protected void paint(Graphics g)
-	{
-
-		// Do we need to draw the splash image?
+	{	
+        // Do we need to draw the splash image?
 		if (g.getClipY() < this.getHeight() - SplashCanvas.height - 2)
 		{
 			// Draw background
@@ -372,11 +371,40 @@ public class SplashCanvas extends Canvas
 			// Display message icon, if keylock is enabled
 			if (this.isLocked && this.availableMessages > 0)
 			{
-				g.drawImage(ContactList.eventPlainMessageImg, 1, 1, Graphics.LEFT | Graphics.TOP);
+				g.drawImage(ContactList.eventPlainMessageImg, 1, 7, Graphics.LEFT | Graphics.TOP);
 				g.setColor(255, 255, 255);
 				g.setFont(SplashCanvas.font);
-				g.drawString("# " + this.availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, 5, Graphics.LEFT | Graphics.TOP);
+				g.drawString("# " + this.availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, 11, Graphics.LEFT | Graphics.TOP);
 			}
+            
+            // Display the keylock message if someone hit the wrong key
+            if (this.showKeylock)
+            {
+                
+                // Init the dimensions
+                int x,y,size_x,size_y;
+                size_x = this.getWidth()/10*8;
+                size_y = Font.getFont(Font.FACE_SYSTEM,Font.STYLE_PLAIN,Font.SIZE_MEDIUM).getHeight()*2+8;
+                x = this.getWidth()/2-(this.getWidth()/10*4);
+                y = this.getHeight()/2-(size_y/2);
+                
+                g.setColor(255, 255, 255);
+                g.fillRect(x,y,size_x,size_y);
+                g.setColor(0,0,0);
+                g.drawRect(x+2,y+2,size_x-5,size_y-5);
+                TextList.showText(g,ResourceBundle.getString("keylock_message"),x+4,y+4,size_x-8,size_y-8,TextList.MEDIUM_FONT,0,0);
+                
+                t2 = new Timer();
+                t2.schedule(new TimerTask()
+                {
+
+                    public void run()
+                    {
+                        SplashCanvas.this.showKeylock = false;
+                        SplashCanvas.this.repaint();
+                    }
+                }, 3000);
+            }
 
 		}
 
