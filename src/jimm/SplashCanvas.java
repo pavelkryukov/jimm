@@ -371,10 +371,10 @@ public class SplashCanvas extends Canvas
 			// Display message icon, if keylock is enabled
 			if (this.isLocked && this.availableMessages > 0)
 			{
-				g.drawImage(ContactList.eventPlainMessageImg, 1, 7, Graphics.LEFT | Graphics.TOP);
+				g.drawImage(ContactList.eventPlainMessageImg, 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
 				g.setColor(255, 255, 255);
 				g.setFont(SplashCanvas.font);
-				g.drawString("# " + this.availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, 11, Graphics.LEFT | Graphics.TOP);
+				g.drawString("# " + this.availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
 			}
             
             // Display the keylock message if someone hit the wrong key
@@ -384,9 +384,10 @@ public class SplashCanvas extends Canvas
                 // Init the dimensions
                 int x,y,size_x,size_y;
                 size_x = this.getWidth()/10*8;
-                size_y = Font.getFont(Font.FACE_SYSTEM,Font.STYLE_PLAIN,Font.SIZE_MEDIUM).getHeight()*2+8;
+                size_y = Font.getFont(Font.FACE_SYSTEM,Font.STYLE_PLAIN,Font.SIZE_MEDIUM).getHeight()*TextList.getLineNumbers(ResourceBundle.getString("keylock_message"),size_x-8,0,0,0)+8;
                 x = this.getWidth()/2-(this.getWidth()/10*4);
                 y = this.getHeight()/2-(size_y/2);
+                
                 
                 g.setColor(255, 255, 255);
                 g.fillRect(x,y,size_x,size_y);
@@ -435,7 +436,7 @@ public class SplashCanvas extends Canvas
 		{
 		    g.setColor(0,0,0);
 		    g.setFont(versionFont);
-		    g.drawString(Jimm.VERSION,this.getWidth()-3,this.getHeight()-17, Graphics.BOTTOM | Graphics.RIGHT);
+		    g.drawString(Jimm.VERSION,this.getWidth()-3,this.getHeight()-SplashCanvas.height-5, Graphics.BOTTOM | Graphics.RIGHT);
 		}
 
 		// Draw current progress
