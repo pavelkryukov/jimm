@@ -107,15 +107,14 @@ public class ChatHistory
 	{
 		DrawControls.TextList list = getChatHistoryAt(uin);
 		int textIndex = list.getCurrTextIndex();
-		String[] text = list.getCurrText();
+		String text = list.getCurrText(1);
 		if (text == null) return;
-		StringBuffer strings = new StringBuffer();
-		for (int i = 1; i < text.length; i++) strings.append(text[i]).append(' ');
 		
 		MessData data = (MessData)messData.elementAt(textIndex);
-		Jimm.jimm.getHistory().addText(
+		Jimm.jimm.getHistory().addText
+		(
 			uin, 
-			strings.toString(), 
+			text, 
 			data.getIncoming() ? (byte)0 : (byte)1, 
 			data.getFrom(), 
 			data.getTime()

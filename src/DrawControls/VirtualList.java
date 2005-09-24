@@ -600,7 +600,6 @@ public abstract class VirtualList extends Canvas
 		boolean haveToShowScroller;
 		int height = getDrawHeight();
 		
-		int fh = getFontHeight();
 		position = topItem;
 		itemCount = getSize();
 		
@@ -615,6 +614,7 @@ public abstract class VirtualList extends Canvas
 		if (haveToShowScroller)
 		{
 			sliderSize = (height-topY)*visCount/itemCount;
+			if (sliderSize < 7) sliderSize = 7;
 		    y1 = position * (height - sliderSize - topY) / (itemCount-visCount) + topY;
 			y2 = y1 + sliderSize;
 			g.setColor(color);

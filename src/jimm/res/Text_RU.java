@@ -92,6 +92,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("conn_type",                   "Тип подключения");
 		resources.put("connect",                     "Подключиться");
 		resources.put("connecting",                  "Подключение");
+		resources.put("copy_text",                   "Копировать текст");
 		resources.put("cost",                        "Стоимость");
 		resources.put("contact_list",                "Список");
 		resources.put("cp1251",                      "Исправлять ошибку CP1251?");
@@ -192,6 +193,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("plength",                     "Длина оплачиваемого пакета в КБ");
 		resources.put("plsauthme",                   "Привет! Пожалуйста, авторизируй меня и разреши добавить тебя в контакт-лист");
 		resources.put("prev",						 "Предыдущий");
+		resources.put("quote",                       "Цитировать");
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Удалить из списка");
 		resources.put("remove_me",                   "Удалиться из его КЛ"); 

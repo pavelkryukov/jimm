@@ -92,6 +92,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("conn_type",                   "Connection type");
 		resources.put("connect",                     "Connect");
 		resources.put("connecting",                  "Connecting");
+		resources.put("copy_text",                   "Copy text");
 		resources.put("cost",                        "Cost");
 		resources.put("contact_list",                "List");
 		resources.put("cp1251",                      "Use CP1251 hack?");
@@ -193,6 +194,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("plength",                     "Length of charge packet in kB");
 		resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
 		resources.put("prev",						 "Previous");
+		resources.put("quote",                       "Quote");                        
 		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
 		resources.put("remove_me",                   "Remove me"); 

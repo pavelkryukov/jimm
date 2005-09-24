@@ -488,6 +488,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	/** ************************************************************************* */
 
 	static String lastAnsUIN = new String();
+	static boolean repliedWithQuota = false;
 	
 	//private class Menu implements CommandListener
 	//{
@@ -495,10 +496,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		final public static int MSGBS_REMOVEME = 2;
 		
 		// Shows new message form 
-		private void writeMessage()
+		private void writeMessage(String initText)
 		{
+			// If user want reply with quotation 
+			if (initText != null) messageTextbox.setString(initText);
+			
 			// Keep old text if press "cancel" while last edit 
-			if ( !lastAnsUIN.equals(getUin()) ) messageTextbox.setString(null);
+			else if ( !lastAnsUIN.equals(getUin()) ) messageTextbox.setString(null);
 			
 			// Display textbox for entering messages
 			messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
@@ -529,13 +533,15 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				Jimm.jimm.getContactListRef().activate();
 			}
 			// User wants to send a reply
-			else if (c == msgReplyCommand)
+			else if ((c == msgReplyCommand) || (c == replWithQuotaCommand))
 			{
+				repliedWithQuota = (c == replWithQuotaCommand); 
+				
 				// Select first list element (new message)
 				menuList.setSelectedIndex(0, true);
 				
 				// Show message form
-				writeMessage();
+				writeMessage(repliedWithQuota ? JimmUI.getClipBoardText() : null);
 			}
             
             // Menu item has been selected
@@ -549,7 +555,14 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 {
                 case USER_MENU_MESSAGE: 
                     // Send plain message
-                	writeMessage();
+                	writeMessage(null);
+                    break;
+                    
+                case USER_MENU_QUOTA:
+                    // Send plain message with quotation
+                	menuList.setSelectedIndex(0, true);
+                	repliedWithQuota = true;
+                	writeMessage(JimmUI.getClipBoardText());
                     break;
                     
                 case USER_MENU_URL:
@@ -695,12 +708,18 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 // #sijapp cond.if modules_FILES is "true"#                     
                 case USER_MENU_DC_INFO:
                     Alert info = new Alert("DC Infos");
-                    info.setString("DC typ: " + ContactListContactItem.this.getDCType() + "\n" + "ICQ version: "
-                            + ContactListContactItem.this.getICQVersion() + "\n" + "Int IP: "
-                            + Util.ipToString(ContactListContactItem.this.getInternalIP()) + "\n" + "Ext IP: "
-                            + Util.ipToString(ContactListContactItem.this.getExternalIP()) + "\n" + "Port: "
-                            + ContactListContactItem.this.getPort() + "\n");
+                    StringBuffer buf = new StringBuffer();
+                    final String clrf = "\n";
+                    
+                    buf.append("DC typ: ")     .append(ContactListContactItem.this.getDCType())                     .append(clrf)
+					   .append("ICQ version: ").append(ContactListContactItem.this.getICQVersion())                 .append(clrf)
+					   .append("Int IP: ")     .append(Util.ipToString(ContactListContactItem.this.getInternalIP())).append(clrf)
+					   .append("Ext IP: ")     .append(Util.ipToString(ContactListContactItem.this.getExternalIP())).append(clrf)
+					   .append("Port: ")       .append(ContactListContactItem.this.getPort())                       .append(clrf);
+                    
+                    info.setString(buf.toString());
                     info.setTimeout(Alert.FOREVER);
+                    
                     Jimm.display.setCurrent(info);
                     break;
                 // #sijapp cond.end#
@@ -732,6 +751,14 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			}
 			//#sijapp cond.end#
 			
+			// "Copy text" command selected
+			else if (c == copyTextCommand)
+			{
+				DrawControls.TextList list = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(uin);
+				JimmUI.setClipBoardText(list.getCurrText(1));
+				getCurrDisplay().addCommand(replWithQuotaCommand);
+			}
+			
 			// User wants to rename Contact
 			else if (c == renameOkCommand)
 			{
@@ -761,7 +788,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Textbox has been closed
 			else if ((c == textboxOkCommand) || (c == textboxSendCommand))
 			{
-
 				// Message has been entered
 				if (d == messageTextbox)
 				{
@@ -806,6 +832,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 						
 						// Clear text in messageTextbox
 						messageTextbox.setString(null);
+						
+						// Clear clipboard
+						if (repliedWithQuota) JimmUI.setClipBoardText(null);
+						getCurrDisplay().removeCommand(replWithQuotaCommand);
+						repliedWithQuota = false;
 					}
 					
 					// Send URL message (continue creation)
@@ -1002,6 +1033,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			}
 		}
 		
+		Displayable getCurrDisplay()
+		{
+			return Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.uin);
+		}
+		
 		// Activates the contact item menu
 		public void activate()
 		{
@@ -1009,11 +1045,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
 			{
 				initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH));
-				Displayable msgDisplay = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.uin);
+				Displayable msgDisplay = getCurrDisplay();
                 msgDisplay.removeCommand(addUrsCommand);
 				msgDisplay.removeCommand(grantAuthCommand);
 				msgDisplay.removeCommand(denyAuthCommand);
 				msgDisplay.removeCommand(reqAuthCommand);
+				msgDisplay.removeCommand(replWithQuotaCommand);
+				msgDisplay.addCommand(copyTextCommand);
 				msgDisplay.addCommand(msgCloseCommand);
 				msgDisplay.addCommand(msgReplyCommand);
 				msgDisplay.addCommand(deleteChatCommand);
@@ -1028,6 +1066,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					msgDisplay.addCommand(grantAuthCommand);
 					msgDisplay.addCommand(denyAuthCommand);
 				}
+				
+				if (JimmUI.getClipBoardText() != null) msgDisplay.addCommand(replWithQuotaCommand);
+				
 				if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
 				msgDisplay.setCommandListener(this);
 				if (temporary && !noAuth) 
@@ -1085,6 +1126,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
     // #sijapp cond.end#
     // #sijapp cond.end#  
     private static final int USER_MENU_USER_INFO        = 12;
+    private static final int USER_MENU_QUOTA            = 14;
+    
+    private static final int USER_MENU_LAST_ITEM        = 15; // YOU NEED TO CHANGE IT!
 
     
 	// Menu list
@@ -1125,20 +1169,24 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
     //#sijapp cond.else#
     = new Command(ResourceBundle.getString("reply"),Command.OK, 1);
     //#sijapp cond.end#
+    
+    private static Command replWithQuotaCommand = new Command(ResourceBundle.getString("quote"), Command.ITEM, 3);
+    
+    private static Command copyTextCommand = new Command(ResourceBundle.getString("copy_text"), Command.ITEM, 4);
 
 	// Add temporary user to contact list
-	private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.ITEM, 3);
+	private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user"), Command.ITEM, 5);
 	
 	// Add selected message to history 
 	//#sijapp cond.if modules_HISTORY is "true" #
-	private static Command addToHistoryCommand  = new Command(ResourceBundle.getString("add_to_history"), Command.ITEM, 4);
+	private static Command addToHistoryCommand  = new Command(ResourceBundle.getString("add_to_history"), Command.ITEM, 6);
 	//#sijapp cond.end#
 
 	//Show the message menu
-	private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 5);
+	private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 7);
 
 	//Delete Chat History
-	private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat"), Command.ITEM, 6);
+	private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat"), Command.ITEM, 8);
 
 	// Textbox OK command
 	private static Command textboxOkCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 2);
@@ -1173,7 +1221,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	static void initList(boolean showAuthItem)
 	{
         // Size of the event list equals last entry number
-        eventList = new int[USER_MENU_USER_INFO];
+        eventList = new int[USER_MENU_LAST_ITEM];
         menuList = new List("",List.IMPLICIT);
         
         // #sijapp cond.if target is "MOTOROLA"#
@@ -1183,6 +1231,10 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         
         // Add the needed elements to the event list
         eventList[menuList.append(ResourceBundle.getString("send_message"), null)] = USER_MENU_MESSAGE;
+        
+        if (JimmUI.getClipBoardText() != null)
+        	eventList[menuList.append(ResourceBundle.getString("quote"), null)] = USER_MENU_QUOTA;
+        
         eventList[menuList.append(ResourceBundle.getString("send_url"), null)]     = USER_MENU_URL;
         if (showAuthItem)
             eventList[menuList.append(ResourceBundle.getString("requauth"), null)] = USER_MENU_REQU_AUTH;
