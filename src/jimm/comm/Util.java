@@ -565,7 +565,7 @@ public class Util
             randint = randint * (-1);
         randint = randint % range + 4096;
         
-        DebugLog.addText("rand: 0x"+Integer.toHexString(randint));
+        //DebugLog.addText("rand: 0x"+Integer.toHexString(randint));
         
         do
         {
