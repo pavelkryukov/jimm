@@ -41,7 +41,6 @@ import DrawControls.TextList;
 import DrawControls.VirtualListCommands;
 
 import jimm.comm.Util;
-import jimm.DebugLog;
 
 // Class to cache one line in messages list
 // All fields are public to easy and fast access
@@ -56,17 +55,19 @@ class HistoryStorageList extends    VirtualList
                                implements CommandListener, VirtualListCommands
 {
 	// commands for message text
-	private static Command cmdMsgBack = new Command(ResourceBundle.getString("back"),   Command.BACK,   1);
-	private static Command cmdMsgNext = new Command(ResourceBundle.getString("next"),   Command.ITEM,   2);
-	private static Command cmdMsgPrev = new Command(ResourceBundle.getString("prev"),   Command.ITEM,   3);
+	private static Command cmdMsgBack     = new Command(ResourceBundle.getString("back"),      Command.BACK,   1);
+	private static Command cmdMsgNext     = new Command(ResourceBundle.getString("next"),      Command.ITEM,   2);
+	private static Command cmdMsgPrev     = new Command(ResourceBundle.getString("prev"),      Command.ITEM,   3);
+	private static Command cmdMsgCopyText = new Command(ResourceBundle.getString("copy_text"), Command.ITEM,   4);
 	
 	// commands for messages list
-	private static Command cmdClrAll  = new Command(ResourceBundle.getString("clear_all"),    Command.SCREEN, 6);
-	private static Command cmdSelect  = new Command(ResourceBundle.getString("select")   ,    Command.SCREEN, 1);
-	private static Command cmdBack    = new Command(ResourceBundle.getString("back"),         Command.BACK,   2);
-	private static Command cmdClear   = new Command(ResourceBundle.getString("clear"),        Command.ITEM,   4); 
-	private static Command cmdFind    = new Command(ResourceBundle.getString("find"),         Command.ITEM,   3);
-	private static Command cmdInfo    = new Command(ResourceBundle.getString("history_info"), Command.ITEM,   5);
+	private static Command cmdClrAll   = new Command(ResourceBundle.getString("clear_all"),    Command.SCREEN, 10);
+	private static Command cmdSelect   = new Command(ResourceBundle.getString("select")   ,    Command.SCREEN, 1);
+	private static Command cmdBack     = new Command(ResourceBundle.getString("back"),         Command.BACK,   2);
+	private static Command cmdClear    = new Command(ResourceBundle.getString("clear"),        Command.ITEM,   4); 
+	private static Command cmdFind     = new Command(ResourceBundle.getString("find"),         Command.ITEM,   3);
+	private static Command cmdInfo     = new Command(ResourceBundle.getString("history_info"), Command.ITEM,   6);
+	private static Command cmdCopytext = new Command(ResourceBundle.getString("copy_text"),    Command.ITEM,   5);
 	
 	static TextList messText;
 	
@@ -93,6 +94,7 @@ class HistoryStorageList extends    VirtualList
 		addCommand(cmdFind);
 		addCommand(cmdInfo);
 		addCommand(cmdClrAll);
+		addCommand(cmdCopytext);
 		setCommandListener(this);
 		setVLCommands(this);
 		Jimm.setColorScheme(this);
@@ -169,6 +171,16 @@ class HistoryStorageList extends    VirtualList
 			repaint();
 		}
 		
+		// Copy text from messages list
+		else if (c == cmdCopytext)
+		{
+			int index = getCurrIndex();
+			if (index == -1) return;
+			CachedRecord record = Jimm.jimm.getHistory().getCachedRecord(currUin, index);
+			if (record == null) return;
+			JimmUI.setClipBoardText(record.text);
+		}
+		
 		// back to messages list
 		else if (c == cmdMsgBack)
 		{
@@ -185,6 +197,12 @@ class HistoryStorageList extends    VirtualList
 		else if (c == cmdMsgPrev)
 		{
 			moveInList(-1);
+		}
+		
+		// copy text in message text menu
+		else if (c == cmdMsgCopyText)
+		{
+			JimmUI.setClipBoardText(messText.getCurrText(1));
 		}
 		
 		// find command
@@ -303,6 +321,7 @@ class HistoryStorageList extends    VirtualList
 			messText.addCommand(cmdMsgBack);
 			messText.addCommand(cmdMsgNext);
 			messText.addCommand(cmdMsgPrev);
+			messText.addCommand(cmdMsgCopyText);
 			messText.setVLCommands(this);
 			Jimm.setColorScheme(messText);
 		}

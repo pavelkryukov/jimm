@@ -295,34 +295,31 @@ public class TextList extends VirtualList
 
 	// Returns lines of text which were added by 
 	// methon addBigText in current selection
-	public String[] getCurrText()
+	public String getCurrText(int offset)
 	{
-		String[] result = null;
+		int offsetCounter = 0;
+		StringBuffer result = new StringBuffer();
 		int currTextIndex = getCurrTextIndex();
-		if (currTextIndex != -1)
+		
+		// Fills the lines
+		int size = lines.size();
+		for (int i = 0; i < size; i++)
 		{
-			// How much lines in current text?
-			int linesCount = 0;
-			Enumeration allLines = lines.elements();
-			while (allLines.hasMoreElements())
-				if (((TextLine) allLines.nextElement()).bigTextIndex == currTextIndex) linesCount++;
-
-			// Fills the lines
-			result = new String[linesCount];
-			int size = lines.size();
-			for (int i = 0, j = 0; i < size; i++)
+			TextLine line = getLine(i);
+			if (line.bigTextIndex == currTextIndex)
 			{
-				TextLine line = getLine(i);
-				if (line.bigTextIndex == currTextIndex)
+				if (offset != offsetCounter)
 				{
-					StringBuffer lineText = new StringBuffer();
-					int count = line.items.size(); 
-					for (int k = 0; k < count; k++) lineText.append(line.elementAt(k).text);
-					result[j++] = lineText.toString();
+					offsetCounter++;
+					continue;
 				}
+				int count = line.items.size(); 
+				for (int k = 0; k < count; k++) result.append(line.elementAt(k).text);
+				result.append(' ');
 			}
 		}
-		return result;
+		
+		return (result.length() == 0) ? null : result.toString();
 	}
 
 	public int getCurrTextIndex()

@@ -169,4 +169,15 @@ public class JimmUI implements CommandListener
 		}
 	}
 	
+	static private String clipBoardText;
+	
+	static public String getClipBoardText()
+	{
+		return clipBoardText;
+	}
+	
+	static public void setClipBoardText(String value)
+	{
+		clipBoardText = value;
+	}
 }
