@@ -348,7 +348,7 @@ public class MainMenu implements CommandListener
                 if (e.isCritical()) return;
             }
 
-            DebugLog.addText("Send action");
+            //DebugLog.addText("Send action");
             
             // Start timer
             if (addUserFlag)

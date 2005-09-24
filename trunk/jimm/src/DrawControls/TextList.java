@@ -30,7 +30,6 @@ import javax.microedition.lcdui.*;
 
 import DrawControls.VirtualList;
 import DrawControls.ListItem;
-import jimm.DebugLog;
 
 class TextLine
 {
@@ -541,7 +540,6 @@ public class TextList extends VirtualList
 		for (line = 0; line < linesCount; line++)
 		{
 			paintList.getLine(line).paint(x, top, g, fontSize, paintList);
-			DebugLog.addText("top="+top);
 			top += paintList.getLine(line).getHeight(fontSize);
 		}
 	}
