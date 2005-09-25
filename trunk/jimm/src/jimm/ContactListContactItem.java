@@ -1025,10 +1025,18 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// User select a emotion
 			else if ( Jimm.jimm.getEmotionsRef().isMyOkCommand(c) )
 			{
+				int insertPos;
+
+				// #sijapp cond.if target is "MOTOROLA"#
+				insertPos = messageTextbox.getString().length();
+				// #sijapp cond.else#
+				insertPos = messageTextbox.getCaretPosition();
+				// #sijapp cond.end#
+				
 				messageTextbox.insert
 				(
 					new String(" ").concat(Jimm.jimm.getEmotionsRef().getSelectedEmotion()).concat(" "),
-					messageTextbox.getCaretPosition()
+					insertPos
 				);
 			}
 		}
