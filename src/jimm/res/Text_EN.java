@@ -209,6 +209,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("requno",                      "Not req");
 		resources.put("res",                         "Resolution");
 		resources.put("results",                     "Results");
+        resources.put("search_user",                 "Search for User");
 		resources.put("send_img",                    "Send image");
 		resources.put("send_message",                "New Message");
 		resources.put("send_url",                    "New URL");
@@ -222,6 +223,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("since",                       "Since");
 		resources.put("size",                        "Size");
 		resources.put("sound",                       "Sound file");
+        resources.put("sound_file_name",             "Sound file name");
 		resources.put("sort_by",                     "Sort contact list");
 		resources.put("sort_by_name",                "By name");
 		resources.put("sort_by_status",              "By status");
@@ -301,8 +303,15 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_122",                   "Specified server host and/or port is invalid (#122.EXT)");
 		resources.put("error_123",                   "Connection has not been established (#123.EXT)");
 		resources.put("error_124",                   "Input stream is out of sync (#124.EXT)");
+   
+        // Peer connection      
+        resources.put("error_125",                   "An I/O error occured (#125.EXT)");     
+        resources.put("error_126",                   "Requested TCP connection cannot be made (#126.EXT)");      
+        resources.put("error_127",                   "Specified server host and/or port is invalid (#127.EXT)");     
+        resources.put("error_128",                   "Connection has not been established (#128.EXT)");      
+        resources.put("error_129",                   "Input stream is out of sync (#129.EXT)");
 		
-		// Parsing specific errors
+        // Parsing specific errors
 		resources.put("error_130",                   "FLAP header could not be parsed (#130.EXT)");
 		resources.put("error_131",                   "Unknown channel (#131.EXT)");
 		resources.put("error_132",                   "Connect channel packet  could not be parsed (#132.EXT)");
@@ -331,7 +340,7 @@ public class Text_EN extends ResourceBundle
 
 		// Other errors
 		resources.put("error_170",                   "Possibly not enough heap memory available (#170.EXT)");
-		resources.put("error_171",                   "Could not fetch meta info (#171.EXT)");
+		resources.put("error_171",                   "Could not fetch meta info (#171.EXT)");  
 
 		// Camera errors
 		resources.put("error_180",                   "Error creating the VideoControl (#180.EXT)");
@@ -344,6 +353,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("error_190",                   "File transfer with < ICQv8 clients not supported (#190.EXT)");
 		resources.put("error_191",                   "Error reading the file. Possibly not supported (#191.EXT)");
 		resources.put("error_192",                   "Error reading the file. File not found, or not supported (#192.EXT)");
+        resources.put("error_193",                   "Error accessing file system for browsing. Security error (#193.EXT)");
 
 	}
 }
