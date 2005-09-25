@@ -112,6 +112,8 @@ public class Options
 	public static final int OPTION_LIGHT_TIMEOUT		          =  74;   /* int     */
 	public static final int OPTION_LIGHT_MANUAL		              = 140;   /* boolean */
 	// #sijapp cond.end#
+	
+	public static final int OPTION_USE_SMILES		              = 141;   /* boolean */
 
 
 	/**************************************************************************/
@@ -202,6 +204,7 @@ public class Options
 			this.setBooleanOption(Options.OPTION_HISTORY,                        false);
 			this.setIntOption    (Options.OPTION_COLOR_SCHEME,                   CLRSCHHEME_BOW);
             this.setStringOption (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
+            this.setBooleanOption(Options.OPTION_USE_SMILES,                     true);
 			 
 			
 			// Construct option form
@@ -448,6 +451,7 @@ public class Options
 		private ChoiceGroup uiLanguageChoiceGroup;
 		private ChoiceGroup displayDateChoiceGroup;
 		private ChoiceGroup clSortByChoiceGroup;
+		private ChoiceGroup chrgChat;
 		private ChoiceGroup clHideOfflineChoiceGroup;
 		// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		private ChoiceGroup messageNotificationModeChoiceGroup;
@@ -470,17 +474,11 @@ public class Options
 		private TextField costPacketLengthTextField;
 		private TextField currencyTextField;
 		// #sijapp cond.end#
-		private ChoiceGroup useSmallFont;
 		private ChoiceGroup showUserGroups;
 		private ChoiceGroup colorScheme;
 		// #sijapp cond.if target is "MOTOROLA"#
 		private TextField lightTimeout;
 		private ChoiceGroup lightManual;
-		// #sijapp cond.end#
-		
-		// #sijapp cond.if modules_HISTORY is "true" #
-		private ChoiceGroup useHistory;
-		//private ChoiceGroup clearHist;
 		// #sijapp cond.end#
 
 		// Constructor
@@ -588,32 +586,26 @@ public class Options
                 this.cp1251HackChoiceGroup = new ChoiceGroup(ResourceBundle.getString("cp1251"), Choice.MULTIPLE);
                 this.cp1251HackChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.cp1251HackChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CP1251_HACK));
-                this.useSmallFont = new ChoiceGroup(ResourceBundle.getString("chat_small_font"), Choice.MULTIPLE);
-                this.useSmallFont.append(ResourceBundle.getString("yes"), null);
-                this.useSmallFont.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT));
 
                 this.showUserGroups = new ChoiceGroup(ResourceBundle.getString("show_user_groups"), Choice.MULTIPLE);
                 this.showUserGroups.append(ResourceBundle.getString("yes"), null);
                 this.showUserGroups.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_USER_GROUPS));
 
-                // #sijapp cond.if modules_HISTORY is "true" #
-                this.useHistory = new ChoiceGroup(ResourceBundle.getString("use_history") + "?", Choice.MULTIPLE);
-                this.useHistory.append(ResourceBundle.getString("yes"), null);
-                this.useHistory.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_HISTORY));
-                /*
-                this.clearHist = new ChoiceGroup(ResourceBundle.getString("clear_history"), Choice.EXCLUSIVE);
-                this.clearHist.append(ResourceBundle.getString("ch_never"), null);
-                this.clearHist.append(ResourceBundle.getString("ch_day"), null);
-                this.clearHist.append(ResourceBundle.getString("ch_week"), null);
-                this.clearHist.append(ResourceBundle.getString("ch_month"), null);
-                */
-                // #sijapp cond.end#
-                
                 this.colorScheme = new ChoiceGroup(ResourceBundle.getString("color_scheme"), Choice.EXCLUSIVE);
                 this.colorScheme.append(ResourceBundle.getString("black_on_white"), null);
                 this.colorScheme.append(ResourceBundle.getString("white_on_black"), null);
                 this.colorScheme.append(ResourceBundle.getString("white_on_blue"), null);
                 this.colorScheme.setSelectedIndex(Options.this.getIntOption(Options.OPTION_COLOR_SCHEME), true);
+                
+                this.chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"), Choice.MULTIPLE);
+                this.chrgChat.append(ResourceBundle.getString("chat_small_font"), null);
+                this.chrgChat.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT));
+                this.chrgChat.append(ResourceBundle.getString("use_smiles"), null);
+                this.chrgChat.setSelectedIndex(1, Options.this.getBooleanOption(Options.OPTION_USE_SMILES));
+				//#sijapp cond.if modules_HISTORY is "true" #                
+                this.chrgChat.append(ResourceBundle.getString("use_history"), null);
+                this.chrgChat.setSelectedIndex(2, Options.this.getBooleanOption(Options.OPTION_HISTORY));
+                //#sijapp cond.end#
                 
 				// #sijapp cond.if target is "MOTOROLA"#
 				this.lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.this.getIntOption(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
@@ -730,12 +722,8 @@ public class Options
 						this.optionsForm.append(this.showUserGroups);
 						this.optionsForm.append(this.clSortByChoiceGroup);
 						this.optionsForm.append(this.clHideOfflineChoiceGroup);
-						this.optionsForm.append(this.useSmallFont);
 						
-						// #sijapp cond.if modules_HISTORY is "true" #
-						this.optionsForm.append(this.useHistory);
-						//this.optionsForm.append(this.clearHist);
-						// #sijapp cond.end#
+						this.optionsForm.append(this.chrgChat);
 						
 						this.optionsForm.append(this.cp1251HackChoiceGroup);
 						this.optionsForm.append(this.colorScheme);
@@ -846,11 +834,12 @@ public class Options
 						
 						Options.this.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,this.clHideOfflineChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CP1251_HACK,this.cp1251HackChoiceGroup.isSelected(0));
-						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.useSmallFont.isSelected(0));
 						
-						// #sijapp cond.if modules_HISTORY is "true" #
-						Options.this.setBooleanOption(Options.OPTION_HISTORY, this.useHistory.isSelected(0));
-						// #sijapp cond.end#
+						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.chrgChat.isSelected(0));
+						Options.this.setBooleanOption(Options.OPTION_USE_SMILES,      this.chrgChat.isSelected(1));
+						//#sijapp cond.if modules_HISTORY is "true" #
+						Options.this.setBooleanOption(Options.OPTION_HISTORY,         this.chrgChat.isSelected(2));
+						//#sijapp cond.end#
 						
 						boolean newUseGroups = this.showUserGroups.isSelected(0);
 						Options.this.setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);

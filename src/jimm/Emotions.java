@@ -152,7 +152,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 	
 	public void addTextWithEmotions(TextList textList, String text, int fontStyle, int textColor, int bigTextIndex)
 	{
-		if (!used)
+		if (!used || !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USE_SMILES))
 		{
 			textList.addBigText(text, textColor, fontStyle, bigTextIndex);
 			return;

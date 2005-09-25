@@ -319,7 +319,7 @@ public class TextList extends VirtualList
 			}
 		}
 		
-		return (result.length() == 0) ? null : result.toString();
+		return (result.length() == 0) ? null : result.toString().trim();
 	}
 
 	public int getCurrTextIndex()

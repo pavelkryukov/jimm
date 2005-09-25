@@ -85,7 +85,8 @@ public class Text_EN extends ResourceBundle
 		resources.put("beep",                        "Beep");
 		resources.put("black_on_white",              "Black on white");
 		resources.put("byte",                        "Byte");
-		resources.put("chat_small_font",			 "Small font in chat");
+		resources.put("chat",                        "Chat");
+		resources.put("chat_small_font",			 "Small font");
 		resources.put("city",                        "City");
 		resources.put("clear",                       "Clear");
 		resources.put("color_scheme",                "Color scheme");
@@ -241,6 +242,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
 		resources.put("use_history",                 "Store history");
+		resources.put("use_smiles",                  "Show emotions");
 		resources.put("user_add",                    "Add user");
 		resources.put("user_search",                 "Search for user");
 		resources.put("vibration",                   "Vibration");

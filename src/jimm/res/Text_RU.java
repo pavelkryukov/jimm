@@ -85,7 +85,8 @@ public class Text_RU extends ResourceBundle
 		resources.put("beep",                        "Гудок");
 		resources.put("black_on_white",              "Чёрная на белом");
 		resources.put("byte",                        "Байт");
-		resources.put("chat_small_font",             "Мелкий шрифт в окне чата?");
+		resources.put("chat",                        "Настройки чата");
+		resources.put("chat_small_font",             "Мелкий шрифт");
 		resources.put("city",                        "Город");
 		resources.put("clear",                       "Стереть");
 		resources.put("color_scheme",                "Цветовая схема");
@@ -239,7 +240,8 @@ public class Text_RU extends ResourceBundle
 		resources.put("traffic",                     "Трафик");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
-		resources.put("use_history",                 "Хранить историю сообщений");
+		resources.put("use_history",                 "Хранить историю");
+		resources.put("use_smiles",                  "Показывать смайлики");
 		resources.put("user_add",                    "Добавить контакт");
 		resources.put("user_search",                 "Найти контакт");
 		resources.put("vibration",                   "Вибрация");
