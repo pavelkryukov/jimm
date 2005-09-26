@@ -1309,7 +1309,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 	//#sijapp cond.end#
 
     // Play a sound notification
-    private void playSoundNotification(int notType)
+    synchronized private void playSoundNotification(int notType)
     {
     	if (!treeBuilt) return;
     	
