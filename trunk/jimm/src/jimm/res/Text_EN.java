@@ -199,7 +199,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("reason",						 "Reason");
 		resources.put("remove",                      "Remove from List");
 		resources.put("remove_me",                   "Remove me"); 
-		resources.put("remove_me_from",              "Remove you from contact list of ");
+		resources.put("remove_me_from",              "Remove yourself from contact list of ");
 		resources.put("remove_group",                "Remove group");
 		resources.put("remove_user",                 "Remove user");
 		resources.put("rename",                      "Rename");
