@@ -17,7 +17,7 @@
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
  File: src/jimm/res/Text_CZ.java
- Version: ###VERSION###  Date: ###DATE###
+ Version: 0.4.1  Date: 2005/05/15
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Petr Krčmář
  *******************************************************************************/
 
@@ -53,6 +53,7 @@ public class Text_CZ extends ResourceBundle
         resources.put("ok",                          "OK          ");
         resources.put("reply",                       "Odpověď       ");
         resources.put("close",                       "       Zavřít");
+	    resources.put("search_user",                 "Hledat uživatele");
         resources.put("send",                        "Odeslat     ");
         // #sijapp cond.else#
         resources.put("reply",                       "Odpověď");
@@ -63,11 +64,12 @@ public class Text_CZ extends ResourceBundle
         resources.put("back",                        "Zpět");
         resources.put("save",                        "Uložit");
         resources.put("ok",                          "OK");
+	    resources.put("search_user",                 "Hledat uživatele");
         resources.put("send",                        "Odeslat");
         // #sijapp cond.end#
 		resources.put(".",                           ".");
 		resources.put("about",                       "O programu");
-		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ klient pro J2ME\n\nVerze: ###VERSION###\nTarget: ###TARGET###\nModules: ###MODULES###\n\nKoukněte na http://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Mobile Messaging\n\nICQ klient pro J2ME\n\nVerze: 0.4.1\nTarget: ###TARGET###\nModules: ###MODULES###\n\nKoukněte na http://www.jimm.org/");
 		resources.put("account",                     "Účet");
 		resources.put("add_group",                   "Přidat skupinu");
 		resources.put("add_user",                    "Přidat uživatele");
@@ -80,7 +82,8 @@ public class Text_CZ extends ResourceBundle
 		resources.put("beep",                        "Píp");
 		resources.put("black_on_white",              "Černé na bílem");
 		resources.put("byte",                        "Byte");
-		resources.put("chat_small_font",             "Malé písmo v chatu");
+		resources.put("chat",                        "Chat");
+		resources.put("chat_small_font",             "Malé písmo");
 		resources.put("cancel",                      "Zpět");
 		resources.put("city",                        "Město");
 		resources.put("clear",                       "Smazat");
@@ -89,12 +92,14 @@ public class Text_CZ extends ResourceBundle
 		resources.put("con_wait",                    "Prodleva mezi spojeními(sec)");
 		resources.put("connect",                     "Připojit");
 		resources.put("connecting",                  "Připojuji");
+		resources.put("copy_text",                   "Zkopírovat text");
 		resources.put("cost",                        "Cena");
 		resources.put("contact_list",                "Seznam");
 		resources.put("cp1251",                      "Použít CP1251 hack?");
 		resources.put("cpd",                         "Cena za den");
 		resources.put("cpp",                         "Cena za paket");
 		resources.put("currency",                    "Měna");
+		resources.put("dc_info",                     "DC Info");
 		resources.put("del_group",                   "Smazat skupinu");
 		resources.put("delete_chat",                 "Smazat diskusi");
 		resources.put("deny",						 "Odmítnout autorizaci");
@@ -106,15 +111,17 @@ public class Text_CZ extends ResourceBundle
 		resources.put("disconnecting",               "Odpojuji");
 		resources.put("display_date",                "Ukázat datum?");
 		resources.put("email",                       "Email");
+		resources.put("emotions",                    "Smajlíci");
 		resources.put("error",                       "Chyba");
-		resources.put("exec",                        "Spustit");
 		resources.put("exit",                        "Konec");
 		resources.put("female",                      "Ž");
+		resources.put("female_male",                 "Ž/M");
+		resources.put("filename",                    "Jméno souboru");
 		resources.put("filetransfer",                "Přenos souboru");
 		resources.put("filepath",                    "Cesta k souboru");
 		resources.put("find",                        "Hledat");
 		resources.put("firstname",                   "Jméno");
-		resources.put("free_heap",                   "Uvolnit paměť");
+		resources.put("free_heap",                   "Volná paměť");
 		resources.put("ft_name",                     "Odeslat soubor");		
 		resources.put("ft_cam",                      "Odeslat fotku");		
 		resources.put("gender",                      "Pohlaví");
@@ -126,6 +133,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("hide_offline",                "Skrýt odpojené uživatele");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Inicializace");
+		resources.put("insert_emotion",              "Vložit smajlíka");
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Ponechat historii?");
@@ -187,13 +195,17 @@ public class Text_CZ extends ResourceBundle
 		resources.put("plength",                     "Velikost paketu v kB");
 		resources.put("plsauthme",                   "Nazdar! Prosím autorizuj mě pro přidání do seznamu.");
 		resources.put("prev",						 "Předchozí");
+		resources.put("quote",                       "Citace");
 		resources.put("reason",						 "Důvod");
 		resources.put("remove",                      "Odstranit ze seznamu");
+		resources.put("remove_me",                   "Odstraň mě");
+		resources.put("remove_me_from",              "Odstranit z kontakt listu ");
 		resources.put("rename",                      "Přejmenovat");
 		resources.put("remove_group",                "Odstranit skupinu");
   	    resources.put("remove_user",                 "Odstranit uživatele");
   	    resources.put("rename",                      "Přejmenovat");
 		resources.put("requauth",                    "Autorizační požadavek");
+		resources.put("reqstatmsg",                  "Požadovat zprávu o stavu");
 		resources.put("requ",                        "Požadován");
 		resources.put("requno",                      "Nepožadován");
 		resources.put("res",                         "Rozlišení");
@@ -218,6 +230,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("sort_by_status",              "Podle stavu");
 		resources.put("speed",                       "Rychlost");
 		resources.put("status",                      "Stav");
+		resources.put("status_message",              "Zpráva o stavu");
 		resources.put("status_away",                 "Pryč");
 		resources.put("status_chat",                 "Chci si povídat");
 		resources.put("status_dnd",                  "Neobtěžuj");
@@ -232,12 +245,14 @@ public class Text_CZ extends ResourceBundle
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
 		resources.put("use_history",                 "Uložit historii");
+		resources.put("use_smiles",                  "Ukázat smajlíky");
 		resources.put("user_add",                    "Přidat uživatele");
 		resources.put("user_search",                 "Vyhledat uživatele");
 		resources.put("vibration",                   "Vibrace");
 		resources.put("viewfinder",                  "Hledáček");
 		resources.put("volume",                      "Hlasitost");		
 		resources.put("wait",                        "Prosím počkejte ...");
+		resources.put("when_locked",                 "Pokud zamčeno");
 		resources.put("warning",                     "Varování");
 		resources.put("wantsyourauth",				 " chce Vaši autorizaci. Důvod: ");
 		resources.put("was",                         "byl");
@@ -252,6 +267,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("have_unread_mess",            "Máte nepřečtené zprávy. Přesto skončit?");
 		
 		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("add_to_history",              "Přidat do historie");
 		resources.put("text_to_find",                "Text");
 		resources.put("find_backwards",              "Dozadu");
 		resources.put("find_case_sensitiv",          "Velká/malá písmena");
@@ -262,6 +278,15 @@ public class Text_CZ extends ResourceBundle
 		resources.put("hist_avail",                  "Celková kapacita (kB)");
 		resources.put("history",                     "Uložená historie");
 		resources.put("not_found",                   "Nenalezeno");
+
+		resources.put("clear_all",                   "Smazat celou historii");
+		resources.put("clear_all2",                  "Opravdu smazat pro všechny kontakty?");
+		resources.put("clear_history",               "Smazat uloženou historii");
+		resources.put("ch_never",                    "Nikdy");
+		resources.put("ch_day",                      "Denně");
+		resources.put("ch_week",                     "Týdně");
+		resources.put("ch_month",                    "Měsíčně");
+
 		//#sijapp cond.end#
 
 		// Generic errors
@@ -272,7 +297,7 @@ public class Text_CZ extends ResourceBundle
 		resources.put("error_111",                   "Špatné heslo (#111.EXT)");
 		resources.put("error_112",                   "Neexistující UIN (#112.EXT)");
 		resources.put("error_113",                   "Příliš mnoho klientů z jedné IP (#113.EXT)");
-		resources.put("error_114",                   "Cena překročena (#114.EXT)");
+		resources.put("error_114",                   "Příliš mnoho pokusů (#114.EXT)");
 		resources.put("error_115",                   "Nemůžu převzít seznam kontaktů (#115.EXT)");
 		resources.put("error_116",                   "Nemůžu převzít offline zprávu (#116.EXT)");
 		resources.put("error_117",                   "Prázdné UIN a/nebo heslo (#117.EXT)");

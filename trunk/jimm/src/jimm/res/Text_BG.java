@@ -1,28 +1,28 @@
-/*******************************************************************************
-Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-05  Jimm Project
+﻿/*******************************************************************************
+ Jimm - Mobile Messaging - J2ME ICQ clone
+ Copyright (C) 2003-05  Jimm Project
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-********************************************************************************
-File: src/jimm/res/Text_BG.java
-Version: ###VERSION###  Date: ###DATE###
-Author(s): Manuel Linsmayer, Andreas Rossbacher, Ivaylo Donchev
-*******************************************************************************/
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ ********************************************************************************
+ File: src/jimm/res/Text_BG.java
+ Version: ###VERSION###  Date: ###DATE###
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Ivaylo Donchev
+ *******************************************************************************/
 
 
-//#sijapp cond.if lang_BG is "true" #
+// #sijapp cond.if lang_BG is "true" #
 
 
 package jimm.res;
@@ -38,37 +38,36 @@ public class Text_BG extends ResourceBundle
 	public Text_BG()
 	{
 
-	
 		// Labels
 		// MOTOROLA formatted buttons
- 	    // #sijapp cond.if target is "MOTOROLA"#
-	    resources.put("backlight_timeout",           "Изключване на осветлението (сек)");
-	    resources.put("backlight_manual",            "Ръчно светване (клавиш *)");
- 	    resources.put("select",                      "Избери      ");
- 	    resources.put("reset",                       "       Ресет");
- 	    resources.put("cancel",                      "      Отказ");
- 	    resources.put("back",                        "       Назад");
- 	    resources.put("exit_button",                 "       Изход");
- 	    resources.put("menu_button",                 "      Меню");
- 	    resources.put("save",                        "Запази       ");
- 	    resources.put("ok",                          "OK          ");
- 	    resources.put("reply",                       "Отговори       ");
- 	    resources.put("close",                       "       Затвори");
- 	    resources.put("send",                        "Изпрати        ");
- 	    resources.put("next",                        "       Нататък");
- 	    // #sijapp cond.else#
- 	    resources.put("reply",                       "Отговори");
- 	    resources.put("close",                       "Затвори");
- 	    resources.put("select",                      "Избери");
- 	    resources.put("reset",                       "Ресет");
- 	    resources.put("cancel",                      "Отказ");
- 	    resources.put("back",                        "Назад");
- 	    resources.put("save",                        "Запази");
- 	    resources.put("ok",                          "OK");
- 	    resources.put("send",                        "Изпрати");
- 	    resources.put("next",                        "Нататък");
- 	    // #sijapp cond.end#
- 	 
+  	    // #sijapp cond.if target is "MOTOROLA"#
+  	    resources.put("select",                      "Избери      ");
+  	    resources.put("reset",                       "       Ресет");
+  	    resources.put("cancel",                      "      Отказ");
+  	    resources.put("back",                        "       Назад");
+  	    resources.put("exit_button",                 "       Изход");
+  	    resources.put("menu_button",                 "      Меню");
+  	    resources.put("save",                        "Запази       ");
+  	    resources.put("ok",                          "OK          ");
+  	    resources.put("reply",                       "Отговори       ");
+  	    resources.put("close",                       "       Затвори");
+		resources.put("search_user",                 "Търси потребител");
+  	    resources.put("send",                        "Изпрати        ");
+  	    resources.put("next",                        "       Нататък");
+  	    // #sijapp cond.else#
+  	    resources.put("reply",                       "Отговори");
+  	    resources.put("close",                       "Затвори");
+  	    resources.put("select",                      "Избери");
+  	    resources.put("reset",                       "Ресет");
+  	    resources.put("cancel",                      "Отказ");
+  	    resources.put("back",                        "Назад");
+  	    resources.put("save",                        "Запази");
+  	    resources.put("ok",                          "OK");
+		resources.put("search_user",                 "Търси потребител");
+  	    resources.put("send",                        "Изпрати");
+  	    resources.put("next",                        "Нататък");
+  	    // #sijapp cond.end#
+  	 
 		resources.put(".",                           ".");
 		resources.put("about",                       "Относно");
 		resources.put("about_info",                  "Jimm - Мобилен ICQ\n\nICQ клиент за J2ME\n\nВерсия: ###VERSION###\n За: ###TARGET###\nМодули: ###MODULES###\n\nВиж http://www.jimm.org/");
@@ -84,22 +83,25 @@ public class Text_BG extends ResourceBundle
 		resources.put("beep",                        "Beep");
 		resources.put("black_on_white",              "Черно-бяло");
 		resources.put("byte",                        "Байт");
+		resources.put("chat",                        "Чат");
 		resources.put("chat_small_font",             "Малки шрифтове за чат");
 		resources.put("city",                        "Град");
 		resources.put("clear",                       "Изчисти");
- 	    resources.put("color_scheme",                "Цветова схема");
+  	    resources.put("color_scheme",                "Цветова схема");
 		resources.put("conn_type",                   "Тип на връзката");
 	
 		resources.put("connect",                     "Свържи");
 		resources.put("connecting",                  "Свързване");
+		resources.put("copy_text",                   "Копирай текст");
 		resources.put("cost",                        "Цена");
 		resources.put("contact_list",                "Лист");
 		resources.put("cp1251",                      "Използвай CP1251 hack?");
 		resources.put("cpd",                         "Цена за ден");
 		resources.put("cpp",                         "Цена за пакет");
 		resources.put("currency",                    "Валута");
+		resources.put("dc_info",                     "DC инфо");
 		resources.put("del_group",                   "Изтрий група");
-		resources.put("delete_chat",                 "Изтрий чат");
+		resources.put("delete_chat",                 "Остави чат");
 		resources.put("deny",						 "Откажи оторизация");
 		resources.put("denyedby",					 "Беше ви отказана оторизация от: ");
 		resources.put("description",                 "Описание");
@@ -110,10 +112,13 @@ public class Text_BG extends ResourceBundle
 		
 		resources.put("display_date",                "Изписвай дата на нов екран?");
 		resources.put("email",                       "Email");
+		resources.put("emotions",                    "Емоции");
 		resources.put("error",                       "Грешка");
-		resources.put("exec",                        "Изпълни");
+		
 		resources.put("exit",                        "Изход");
 		resources.put("female",                      "Ж");
+		resources.put("female_male",                 "Ж/М");
+  	    resources.put("filename",                    "Име на файл");
 		resources.put("filetransfer",                "Файлов трансфер");
 		resources.put("filepath",                    "Път до файл");
 		resources.put("find",                        "Намери");
@@ -125,17 +130,18 @@ public class Text_BG extends ResourceBundle
 		resources.put("grant",						 "Потвърди оторизация");
 		resources.put("grantedby",					 "Оторизацията потвърдена от:");
 		resources.put("group_name",                  "Име на група");
- 	    resources.put("group_is_not_empty",          "Избраната група не е празна!\nПреместете всички потребители в други групи!");
- 	    resources.put("have_unread_mess",            "Имате непрочетени съобщения. Да изляза ли?");
+  	    resources.put("group_is_not_empty",          "Избраната група не е празна!\nПреместете всички потребители в други групи!");
+  	    resources.put("have_unread_mess",            "Имате непрочетени съобщения. Да изляза ли?");
 		resources.put("hide_offline",                "Скрий офлайн контактите");
 		resources.put("info",                        "Инфо");
 		resources.put("init_ft",                     "Инициализиране");
+		resources.put("insert_emotion",              "Вмъкни емоция");
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Пази чат историята?");
 		resources.put("keep_conn_alive",             "Дръж връзката жива?");
 		resources.put("keylock",                     "Keylock");
- 	    resources.put("keylock_message",             "Задръжте \"#\" за да изключите keylock-а");
+  	    resources.put("keylock_message",             "Задръжте \"#\" за да изключите keylock-а");
 		resources.put("keylock_enable",              "Заключи клавиатура");
 		resources.put("keylock_enabled",             "Клавиатура заключена");
 		resources.put("keyword",                     "Ключова дума");
@@ -194,13 +200,17 @@ public class Text_BG extends ResourceBundle
 		resources.put("plength",                     "Дължина на пакет данни в in kB");
 		resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
 		resources.put("prev",						 "Предишен");
+		resources.put("quote",                       "Цитат");
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Изтрий от листа");
+		resources.put("remove_me",                   "Изтрий ме");
+  	    resources.put("remove_me_from",              "Изтрий се от списъка на");
 		resources.put("remove_group",                "Изтрий група");
- 	    resources.put("remove_user",                 "Изтрий потребител");
+  	    resources.put("remove_user",                 "Изтрий потребител");
 		resources.put("rename",                      "Преименувай");
 		
 		resources.put("requauth",                    "Поискай отор.");
+		 resources.put("reqstatmsg",                 "Виж статус-съобщение");
 		resources.put("requ",                        "Изискван(и)");
 		resources.put("requno",                      "Неизискван(и)");
 		
@@ -219,7 +229,7 @@ public class Text_BG extends ResourceBundle
 		resources.put("session",                     "Сесия");
 		resources.put("set_status",                  "Промени статус");
 		resources.put("shadow_con",                  "Shadow connection");
- 	    resources.put("show_user_groups",            "Показвай групи");
+  	    resources.put("show_user_groups",            "Показвай групи");
 		resources.put("since",                       "От");
 		resources.put("size",                        "Размер");
 		resources.put("sound",                       "Звуков файл");
@@ -229,6 +239,7 @@ public class Text_BG extends ResourceBundle
 		resources.put("sort_by_status",              "По статус");
 		resources.put("speed",                       "Скорост");
 		resources.put("status",                      "Статус");
+		resources.put("status_message",              "Статус-съобщение");
 		resources.put("status_away",                 "Ауей");
 		resources.put("status_chat",                 "Свободен за чат");
 		resources.put("status_dnd",                  "Не ме притеснявай");
@@ -243,18 +254,20 @@ public class Text_BG extends ResourceBundle
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
 		resources.put("use_history",                 "Пази история");
+		resources.put("use_smiles",                  "Показвай емоции");
 		resources.put("user_add",                    "Добави потр.");
 		resources.put("user_search",                 "Търси потребител");
 		resources.put("vibration",                   "Вибрация");
 		resources.put("viewfinder",                  "Viewfinder");
 		resources.put("volume",                      "Сила");		
 		resources.put("wait",                        "Моля изчакайте ...");
+		resources.put("when_locked",                 "При заключване");
 		resources.put("warning",                     "Предупреждение");
 		resources.put("wantsyourauth",				 " иска вашата оторизация. Причина: ");
 		resources.put("was",                         "бе");
 		resources.put("whichgroup",				 	 "В коя група?");
 		resources.put("white_on_black",              "Бяло на черен фон");
- 	    resources.put("white_on_blue",               "Бяло на син фон");
+  	    resources.put("white_on_blue",               "Бяло на син фон");
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Бяхте добавен от UIN: ");
 		
@@ -263,6 +276,7 @@ public class Text_BG extends ResourceBundle
 		
 		
 		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("add_to_history",              "Добави към история");
 		resources.put("text_to_find",                "Текст");
 		resources.put("find_backwards",              "Назад");
 		resources.put("find_case_sensitiv",          "Case sensitive");
@@ -271,9 +285,16 @@ public class Text_BG extends ResourceBundle
 		resources.put("hist_rc",                     "Общ брой съобщения");
 		resources.put("hist_size",                   "Използвано място (kB)");
 		resources.put("hist_avail",                  "Място (kB)");
- 	    resources.put("history",                     "История");
- 	    resources.put("not_found",                   "не е намерен(а)");
- 	    //#sijapp cond.end#
+  	    resources.put("history",                     "История");
+  	    resources.put("not_found",                   "не е намерен(а)");
+		resources.put("clear_all",                   "Изтриване на цялата история");
+  	    resources.put("clear_all2",                  "Да изтрия ли цялата запазена история за всички контакти?");
+  	    resources.put("clear_history",               "Изтриване на цялата запазена история");
+  	    resources.put("ch_never",                    "Никога");
+  	    resources.put("ch_day",                      "Всеки ден");
+  	    resources.put("ch_week",                     "Всяка седмица");
+  	    resources.put("ch_month",                    "Всеки месец");
+  	    //#sijapp cond.end#
 		
 		// Generic errors
 		resources.put("error_100",                   "Незнайна грешка (#100.EXT)");
@@ -346,11 +367,11 @@ public class Text_BG extends ResourceBundle
 		resources.put("error_190",                   "Трансферът на файлове с < ICQv8 клиенти не се поддържа (#190.EXT)");
 		resources.put("error_191",                   "Грешка при четенето на файла. Няма поддръжка за него (#191.EXT)");
 		resources.put("error_192",                   "Грешка при четенето на файла. Файлът не  енамерен или не се поддържа (#192.EXT)");
- 	    resources.put("error_193",                   "Грешка при достъпа до файловата система. Грешка по сигурноста. (#193.EXT)");
+  	    resources.put("error_193",                   "Грешка при достъпа до файловата система. Грешка по сигурноста. (#193.EXT)");
 
 	}
 }
 
 
-//#sijapp cond.end #
+// #sijapp cond.end #
 

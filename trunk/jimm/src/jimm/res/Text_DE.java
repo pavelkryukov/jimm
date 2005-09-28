@@ -53,7 +53,9 @@ public class Text_DE extends ResourceBundle
         resources.put("ok",                          "OK          ");
         resources.put("reply",                       "Antworten   ");
         resources.put("close",                       "    Sliessen");
+        resources.put("search_user",                 "Nach Benutzer suchen");
         resources.put("send",                        "Senden   ");
+		resources.put("next",	             	     "Nächstes    ");        
         // #sijapp cond.else# 
         resources.put("reply",                       "Antworten");
         resources.put("close",                       "Schließen");
@@ -63,7 +65,9 @@ public class Text_DE extends ResourceBundle
         resources.put("back",                        "Zurück");
         resources.put("save",                        "Sichern");
         resources.put("ok",                          "OK");
+        resources.put("search_user",                 "Nach Benutzer suchen");
         resources.put("send",                        "Senden");
+  		resources.put("next",	                     "Next");
     	// #sijapp cond.end#
         
 		resources.put(".",                           ",");
@@ -81,6 +85,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("beep",                        "Beep");
 		resources.put("black_on_white",              "schwarz auf weiss");
 		resources.put("byte",                        "Byte");
+		resources.put("chat",                        "Chat");
 		resources.put("chat_small_font",			 "Kleiner Font im Chat");
 		resources.put("city",                        "Stadt");
 		resources.put("clear",                       "Löschen");                        
@@ -89,8 +94,9 @@ public class Text_DE extends ResourceBundle
 		resources.put("conn_type",                   "Verbindungsart");
 		resources.put("connect",                     "Verbinden");
 		resources.put("connecting",                  "Verbinde");
-		resources.put("contact_list",                "Liste");
+		resources.put("copy_text",                   "Kopiere Text");
 		resources.put("cost",                        "Kosten");
+		resources.put("contact_list",                "Liste");
 		resources.put("cp1251",                      "CP1251-Hack benutzen?");
 		resources.put("cpd",                         "Tagesnutzungsgebühr (cent)");
 		resources.put("cpp",                         "Paketgebühr (cent)");
@@ -108,8 +114,10 @@ public class Text_DE extends ResourceBundle
 		resources.put("display_date",                "Datum auf dem Splash-Screen anzeigen?");
 		resources.put("email",                       "E-Mail");
 		resources.put("error",                       "Fehler");
-		resources.put("exec",                        "Ausführen");
 		resources.put("exit",                        "Beenden");
+		resources.put("female",                      "W");
+		resources.put("female_male",                 "W/M");
+		resources.put("filename",                    "Dateiname");
 		resources.put("filetransfer",                "Dateiübertragung");	
 		resources.put("filepath",                    "Dateipfad");
 		resources.put("find",                        "Finden");
@@ -126,6 +134,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("hide_offline",                "Offline-Kontakte verbergen");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initialisierung");
+		resources.put("insert_emotion",              "Emotion einfügen");
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Chat-History behalten?");
@@ -153,8 +162,6 @@ public class Text_DE extends ResourceBundle
 		resources.put("lastname",                    "Nachname");
 		resources.put("loading",                     "Lade");
 		resources.put("male",                        "M");
-		resources.put("female",                      "W");
-		resources.put("female_male",                 "W/M");
 		resources.put("me",                          "Ich");
 		resources.put("menu",                        "Menü");
 		resources.put("msg_sound_file_name",         "Nachricht Sound Datei");
@@ -189,6 +196,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("plength",                     "Länge des Abrechnungspakets in kB");
 		resources.put("plsauthme",                   "Hallo! Bitte authorisieren sie meine Anfrage sie zu meiner Kontaktliste hinzuzufügen.");
 		resources.put("prev",						 "Voheriges");
+		resources.put("quote",                       "Zitat");
 		resources.put("reason",						 "Grund");
 		resources.put("remove",                      "Aus der Liste entfernen");
         resources.put("remove_me",                   "Lösche mich"); 
@@ -237,6 +245,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
 		resources.put("use_history",                 "Speichere History");
+		resources.put("use_smiles",                  "Emoticons anzeigen");
 		resources.put("user_add",                    "Benutzer hinzufügen");
 		resources.put("user_search",                 "Benutzer suchen");
 		resources.put("vibration",                   "Vibration");
@@ -253,6 +262,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
 
 		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("add_to_history",              "Zur History hinzufügen");
 		resources.put("text_to_find",                "Text");
 		resources.put("find_backwards",              "Rückwärts");
 		resources.put("find_case_sensitiv",          "Gross/Klein beachten");
@@ -263,6 +273,13 @@ public class Text_DE extends ResourceBundle
 		resources.put("hist_avail",                  "Gesamter Platz (kB)"); 
 		resources.put("history",                     "Gespeicherte History");
 		resources.put("not_found",                   "nicht gefunden");
+	    resources.put("clear_all",                   "Gesamte History löschen");
+		resources.put("clear_all2",                  "Gespeicherte History für alle Kontakte löschen");
+		resources.put("clear_history",               "Gespeicherte History löschen");
+		resources.put("ch_never",                    "Nie");
+		resources.put("ch_day",                      "Jenden Tag");
+		resources.put("ch_week",                     "Jede Woche");
+		resources.put("ch_month",                    "Jeden Monat");
 		//#sijapp cond.end#
 		
 		// Generic errors
@@ -324,7 +341,6 @@ public class Text_DE extends ResourceBundle
 		// other errors
 		resources.put("error_170",                   "Möglicherweise nicht genügend Heap-Speicher verfügbar (#170.EXT)");
 		resources.put("error_171",                   "Meta-Informationen nicht verfügbar (#171.EXT)");
-        resources.put("error_172",                   "Einstellungen konnten nicht gespeichert werden (#172.EXT)");
 		
 		// Camera errors
 		resources.put("error_180",                   "Fehler beim Erstellen der VideoControl (#180.EXT)");
@@ -342,4 +358,4 @@ public class Text_DE extends ResourceBundle
 	}
 }
 
-//#sijapp cond.end #
+// #sijapp cond.end #

@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/res/Text_LT.java
  Version: ###VERSION###  Date: ###DATE###
- Based on CVS 1.55 Text_EN (2005.04.25 12:00)
+ Based on CVS 1.74 Text_EN (2005.09.26 09:00)
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Linas Gricius 
  *******************************************************************************/
 
@@ -39,7 +39,6 @@ public class Text_LT extends ResourceBundle
 	public Text_LT()
 	{
 
-
 		// Labels
 		// MOTOROLA formatted buttons
 		// #sijapp cond.if target is "MOTOROLA"#
@@ -55,6 +54,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("ok",                          "OK          ");
 		resources.put("reply",                       "Atsakyti    ");
 		resources.put("close",                       "    Uždaryti");
+		resources.put("search_user",                 "Ieškoti vartotojo");
 		resources.put("send",                        "Saugoti     ");
 		// #sijapp cond.else#
 		resources.put("reply",                       "Atsakyti");
@@ -65,6 +65,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("back",                        "Atgal");
 		resources.put("save",                        "Saugoti");
 		resources.put("ok",                          "OK");
+		resources.put("search_user",                 "Ieškoti vartotojo");
 		resources.put("send",                        "Siųsti");
 		// #sijapp cond.end#
 
@@ -83,6 +84,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("beep",                        "Pyptelėjimas");
 		resources.put("black_on_white",              "Juodu ant balto");
 		resources.put("byte",                        "Baitas");
+		resources.put("chat",                        "Pokalbis");
 		resources.put("chat_small_font",             "Naudoti mažą šriftą dialogo lange");
 		resources.put("city",                        "Miestas");		
 		resources.put("clear",                       "Išvalyti");
@@ -91,13 +93,16 @@ public class Text_LT extends ResourceBundle
 		resources.put("con_wait",                    "Laukti tarp prisijungimų (sec)");
 		resources.put("connect",                     "Prisijungti");
 		resources.put("connecting",                  "Jungiamasi");
+		resources.put("copy_text",                   "Kopijuoti tekstą");
 		resources.put("cost",                        "Kaina");
 		resources.put("contact_list",                "Sąrašas");
 		resources.put("cp1251",                      "Naudoti CP1251 pritaikymą?");
 		resources.put("cpd",                         "Kaina per dieną");
 		resources.put("cpp",                         "Kaina per paketą");
 		resources.put("currency",                    "Valiuta");
+		resources.put("dc_info",                     "DC Info");
 		resources.put("del_group",                   "Ištrinti vartotojų grupę");
+		resources.put("delete_chat",                 "Ištrinti pokalbio istoriją");
 		resources.put("delete_chat",                 "Ištrinti istoriją");
 		resources.put("deny",				 		 "Atmesti autorizavimą");
 		resources.put("denyedby",					 "Atorizavimas atmestas: ");
@@ -108,10 +113,13 @@ public class Text_LT extends ResourceBundle
 		resources.put("disconnecting",               "Atsijungiama");
 		resources.put("display_date",                "Rodyti datą startiniame lange?");
 		resources.put("email",                       "El.paštas");
+		resources.put("emotions",                    "Šypsenėlės");
 		resources.put("error",                       "Klaida");
 		resources.put("exec",                        "Vykdyti");
 		resources.put("exit",                        "Išeiti");
 		resources.put("female",                      "M");
+		resources.put("female_male",                 "M/V");
+		resources.put("filename",                    "Bylos pavadinimas");
 		resources.put("filetransfer",                "File transfer");
 		resources.put("filepath",                    "File path");		
 		resources.put("find",                        "Rasti");
@@ -130,6 +138,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("init_ft",                     "Pradedama");
+		resources.put("insert_emotion",              "Įterpti veiduką");
 		resources.put("keep_chat",                   "Išsaugoti istoriją?");
 		resources.put("keep_conn_alive",             "Palaikyti pastovų ryšį?");
 		resources.put("keylock",                     "Užrakinta klaviatūra");
@@ -190,12 +199,16 @@ public class Text_LT extends ResourceBundle
 		resources.put("plength",                     "Apmokestinamo paketo dydis kilobaitais");
 	    resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
 	  	resources.put("prev",                        "Ankstesnis");
+		resources.put("quote",                       "Cituoti");
 		resources.put("reason",		    			 "Priežastis");		
 		resources.put("remove",                      "Pašalinti iš sąrašo");
+		resources.put("remove_me",                   "Pašalinti mane");
+		resources.put("remove_me_from",              "Pašalinti jus iš kontaktų sąrašo ");
 		resources.put("rename",                      "Pervadinti");
 		resources.put("remove_group",                "Ištrinti grupę");
 		resources.put("remove_user",                 "Ištrinti vartotoją");
 		resources.put("requauth",                    "Prašyti autorizavimo");
+		resources.put("reqstatmsg",                  "Sužinoti statusą");
 		resources.put("requ",                        "Reikalingas");
 		resources.put("requno",                      "Nereikalingas");
 		resources.put("res",                         "Raiška");
@@ -220,6 +233,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("sort_by_status",              "Pagal statusą");
 		resources.put("speed",                       "Greitis");
 		resources.put("status",                      "Statusas");
+		resources.put("status_message",              "Būsenos pranešimas");
 		resources.put("status_away",                 "Kažkur šalia");
 		resources.put("status_chat",                 "Noriu kalbėtis!");
 		resources.put("status_dnd",                  "Netrukdyti!");
@@ -234,12 +248,14 @@ public class Text_LT extends ResourceBundle
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "Nuoroda");
 		resources.put("use_history",                 "Saugoti istoriją");
+		resources.put("use_smiles",                  "Rodyti veidukus");
 		resources.put("user_add",                    "Prideti vartotoja");
 		resources.put("user_search",                 "Ieškoti vartotojo");
 		resources.put("vibration",                   "Vibracija");
 		resources.put("viewfinder",                  "Viewfinder");
 		resources.put("volume",                      "Garsas");		
 		resources.put("wait",                        "Prašome palaukti ...");
+		resources.put("when_locked",                 "Kai užrakinta");
 		resources.put("warning",                     "Įspėjimas");
 		resources.put("wantsyourauth",	  			 " nori būti autorizuotas. Tikslas: ");
 		resources.put("was",                         "buvo");
@@ -250,6 +266,7 @@ public class Text_LT extends ResourceBundle
 		resources.put("youwereadded",	    		 "Įtraukas į sąrašą pas: ");
 		
 		//#sijapp cond.if modules_HISTORY is "true" #
+		resources.put("add_to_history",              "Įtraukti į istoriją");
 		resources.put("text_to_find",                "Tekstas");
 		resources.put("find_backwards",              "Atgalinis");
 		resources.put("find_case_sensitiv",          "Case sensitive");
@@ -260,6 +277,13 @@ public class Text_LT extends ResourceBundle
 		resources.put("hist_avail",                  "Viso (kB)");
 		resources.put("history",                     "Pokalbių istorija");
 		resources.put("not_found",                   "nerasta");
+		resources.put("clear_all",                   "Išvalyti istoriją");
+		resources.put("clear_all2",                  "Išvalyti visų kontaktų istorijas?");
+		resources.put("clear_history",               "Išvalyti išsaugotas istorijas");
+		resources.put("ch_never",                    "Niekada");
+		resources.put("ch_day",                      "Kiekvieną dieną");
+		resources.put("ch_week",                     "Kiekvieną savaitę");
+		resources.put("ch_month",                    "Kiekvieną mėnesį");
 	 	//#sijapp cond.end#
 		
 		// Generic errors
