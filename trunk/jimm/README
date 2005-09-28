@@ -19,6 +19,7 @@ the following features:
   *  Send plain messages (type 1 and 2)
   *  Receive plain messages (type 1, 2 and 4, and offline messages)
   *  Send URL messages (type 4)
+  *  Send and receive status messages (away, n/a, etc.)
   *  Receive URL messages (type 1, 2 and 4, and offline messages)
   *  Send file transfer messages and send files (type 2 and direct connection)
   *  Set your status (away, n/a, etc.)
@@ -244,6 +245,8 @@ Contributors:
   *  Denis Stanishevskiy 
   		(Offline messages timestamp, new vibra option, remove you fromusers 
   		contact list)
+  *  Mattias Stoeneberg
+  		Message counter on splash screen, Search for f/m
   *  Dmitry Tunin 
   		(MOTOROLA build maintainer, some bugfixes)
 

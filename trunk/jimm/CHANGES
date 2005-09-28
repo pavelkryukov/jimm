@@ -213,6 +213,9 @@ VERSION 0.4.1
   * BUGFIX: Problems with filetransfer to ips with more then 2 digits resolved
   * BUGFIX: Timestamp for offline messages is now correct
   * BUGFIX: Working with file browser cannot close app on Nokia phones anymore
+  * BUGFIX: Play sound is synchronized now. Should fix sound bug on Nokia
+  * Jimm wil now only weakup from minimized if your status is online of free for chat
+  * Keylock message is now directly drawn to splash canvas
   * Improved navigation in chat
   * Jimm will now only weakup from minimized if your status is online of free for chat
   * Added counter to message notifyer on keylock splashscreen
