@@ -3,13 +3,13 @@
 1 More_smile :-)) :))
 2 Most_smile :-))) :)))
 3 LOL :D ;D LOL :-)))) :-))))) :-)))))) :)))) :))))) :))))))
-4 Ironic ;-)
+4 Ironic ;-) ;)
 5 Sly ^^
 6 Content :-]
-7 Ironic_content ;-]
-8 Embarrassed (:
+7 Ironic_content ;-] ;]
+8 Embarrassed (: (;
 9 Boss 8-)
-10 Super 8-P WOW
+10 Super 8-P 8-p WOW
 11 Scared :-O :-o
 12 Discontent :-/
 13 Suspirious :-\
@@ -27,7 +27,7 @@
 25 Crying ;-( ;-(( ;-(((
 26 Worried :-|
 27 Upset ;-|
-28 Spooked :-S
+28 Spooked :-S :-s
 29 Miser :->
 30 Amused :-P :P :p :-p
 31 Big_green ;-D *G*
