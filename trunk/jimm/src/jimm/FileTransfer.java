@@ -733,6 +733,7 @@ public class FileTransfer implements CommandListener
 
                 InputStream fis = fc.openInputStream();
                 int size = (int)fc.fileSize();
+                System.gc();
                 if (Runtime.getRuntime().freeMemory() / 4 < size) { throw new IOException(); }
                 byte[] b = new byte[size];
                 
