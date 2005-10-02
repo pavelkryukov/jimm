@@ -36,6 +36,8 @@ import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 import DrawControls.TextList;
+import DrawControls.VirtualList;
+import DrawControls.VirtualListCommands;
 
 //#sijapp cond.if modules_HISTORY is "true" #
 class MessData
@@ -57,26 +59,30 @@ class MessData
 }
 //#sijapp cond.end#
 
-class ChatTextList extends TextList
+class ChatTextList extends TextList implements VirtualListCommands
 {
 	public String ChatName;
 	ChatTextList(String name)
 	{
-		super
+		super(null);
+		
+		this.setCursorMode(TextList.SEL_NONE);
+		this.setFontSize
 		(
-			null, 
-			TextList.getDefCapColor(),
-			TextList.getDefCapFontColor(),
-			TextList.getDefBackColor(),
 			Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CHAT_SMALL_FONT)
-			   ? TextList.SMALL_FONT : TextList.MEDIUM_FONT,
-			TextList.SEL_NONE
+				   ? TextList.SMALL_FONT : TextList.MEDIUM_FONT
 		);
+		
 		ChatName = name;
-		Jimm.setColorScheme(this);
+		JimmUI.setColorScheme(this);
+		
+		setVLCommands(this);
 	}
+	
+	public void onCursorMove(VirtualList sender) {}
+	public void onItemSelected(VirtualList sender) {}
 
-	protected void userPressKey(int keyCode)
+	public void onKeyPress(VirtualList sender, int keyCode)
 	{
 		switch (getGameAction(keyCode))
 		{
@@ -294,7 +300,7 @@ public class ChatHistory
 	{
 		Enumeration AllChats = historyTable.elements();
 		while (AllChats.hasMoreElements())
-			Jimm.setColorScheme((ChatTextList)AllChats.nextElement());
+			JimmUI.setColorScheme((ChatTextList)AllChats.nextElement());
 	}
 	
 	// Sets the counter for the ChatHistory

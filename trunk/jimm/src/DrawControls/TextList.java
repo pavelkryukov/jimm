@@ -245,7 +245,7 @@ public class TextList extends VirtualList
 	
 
 	// Overrides VirtualList.moveCursor
-	protected void moveCursor(int step)
+	protected void moveCursor(int step, boolean moveTop)
 	{
 		int size, changeCounter = 0, currTextIndex, i, halfSize = getVisCount()/2;
 
@@ -257,7 +257,7 @@ public class TextList extends VirtualList
 			size = lines.size();
 			if (currTextIndex == -1)
 			{
-				super.moveCursor(step);
+				super.moveCursor(step, true);
 				return;
 			}
 
@@ -288,7 +288,7 @@ public class TextList extends VirtualList
 			break;
 
 		default:
-			super.moveCursor(step);
+			super.moveCursor(step, moveTop);
 			return;
 		}
 	}
@@ -333,7 +333,6 @@ public class TextList extends VirtualList
 	public TextList
 	(
 		String capt,      //!< Caption of list
-		int capBackColor, //!< Background color of caption
 		int capTextColor, //!< Text color of caption
 		int backColor,    //!< Background color of list
 		int fontSize,     /*!< Font size for list lines and caption. 
@@ -342,7 +341,7 @@ public class TextList extends VirtualList
 		int cursorMode    //!< Cursor mode. Can be VirtualList.SEL_INVERTED, VirtualList.SEL_DOTTED, VirtualList.SEL_NONE
 	)
 	{
-		super(capt, capBackColor, capTextColor, backColor, fontSize, cursorMode);
+		super(capt, capTextColor, backColor, fontSize, cursorMode);
 	}
 
 	public void setTextColor(int value)
@@ -381,7 +380,7 @@ public class TextList extends VirtualList
 
 	private int getTrueWidth()
 	{
-		return getWidth() - getScrollerWidth() - 3;
+		return getWidth()-scrollerWidth-3;
 	}
 	
 	private void addBigTextInternal

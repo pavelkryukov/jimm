@@ -75,11 +75,11 @@ public class JimmUI implements CommandListener
 		System.gc();
 	}
 	
-	///////////////////////////////////////////////////
-	//                                               // 
-	//           Message Box implementation          //
-	//                                               //
-	///////////////////////////////////////////////////
+	/////////////////////////
+	//                     // 
+	//     Message Box     //
+	//                     //
+	/////////////////////////
 	static private Form msgForm;
 	static private int msgBoxTag;
 
@@ -153,7 +153,7 @@ public class JimmUI implements CommandListener
 			aboutTextList.setCommandListener(this);
            
             // Set the color sceme (background would not fit otherwise)
-            Jimm.setColorScheme(aboutTextList);
+            setColorScheme(aboutTextList);
 			Jimm.display.setCurrent(aboutTextList);
 		}
 		catch (Exception e) {}
@@ -169,6 +169,13 @@ public class JimmUI implements CommandListener
 		}
 	}
 	
+	
+	//////////////////////
+	//                  //
+	//    Clipboard     //
+	//                  //
+	//////////////////////
+	
 	static private String clipBoardText;
 	
 	static public String getClipBoardText()
@@ -180,4 +187,35 @@ public class JimmUI implements CommandListener
 	{
 		clipBoardText = value;
 	}
+	
+	
+	////////////////////////
+	//                    //
+	//    Color scheme    //
+	//                    //
+	////////////////////////
+	
+	static public void setColorScheme(VirtualList vl)
+	{
+		if (vl == null) return;
+		vl.setBackgroundColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BACK));
+		vl.setTextColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT));
+		vl.setCapTxtColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE));
+		
+		if (vl instanceof TextList)
+		{
+			((TextList)vl).setTextSelColor( Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_MESS) );
+		}
+	}
+	
+	static public void setColorScheme()
+	{
+		// #sijapp cond.if modules_HISTORY is "true" #
+		Jimm.jimm.getHistory().setColorScheme();
+		// #sijapp cond.end#
+		
+		Jimm.jimm.getChatHistoryRef().setColorScheme();
+		setColorScheme((VirtualList)Jimm.jimm.getContactListRef().getVisibleContactListRef());
+	}
+	
 }

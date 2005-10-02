@@ -25,9 +25,9 @@
 package jimm;
 
 
-import DrawControls.*;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
+import jimm.JimmUI;
 
 import java.util.Timer;
 
@@ -199,7 +199,7 @@ public class Jimm extends MIDlet
 		ui = new JimmUI();
 		
 		// set color scheme for all forms
-		setColorScheme();
+		JimmUI.setColorScheme();
 		
 		if (this.getOptionsRef().getBooleanOption(Options.OPTION_AUTO_CONNECT))
         {
@@ -319,27 +319,5 @@ public class Jimm extends MIDlet
 	    return(this.minimized);
 	}
     // #sijapp cond.end #
-
-	static public void setColorScheme(VirtualList vl)
-	{
-		if (vl == null) return;
-		vl.setBackgroundColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BACK));
-		vl.setTextColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT));
-		
-		if (vl instanceof TextList)
-		{
-			((TextList)vl).setTextSelColor( Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_MESS) );
-		}
-	}
-	
-	public void setColorScheme()
-	{
-		// #sijapp cond.if modules_HISTORY is "true" #
-		history.setColorScheme();
-		// #sijapp cond.end#
-		ch.setColorScheme();
-		setColorScheme((VirtualList)cl.getVisibleContactListRef());
-	}
-
 }
 

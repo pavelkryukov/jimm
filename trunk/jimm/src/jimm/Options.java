@@ -854,7 +854,7 @@ public class Options
 							(newSortMethod != lastSortMethod)
 						);
 						
-						if (lastColorScheme != newColorScheme) Jimm.jimm.setColorScheme();
+						if (lastColorScheme != newColorScheme) JimmUI.setColorScheme();
 						// #sijapp cond.if target is "MOTOROLA" #
 						Options.this.setIntOption(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(this.lightTimeout.getString()));
 						Options.this.setBooleanOption(Options.OPTION_LIGHT_MANUAL, this.lightManual.isSelected(0));

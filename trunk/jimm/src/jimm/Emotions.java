@@ -25,6 +25,7 @@ package jimm;
 
 import java.util.Vector;
 import javax.microedition.lcdui.*;
+
 import java.io.*;
 
 import jimm.util.ResourceBundle;
@@ -214,41 +215,28 @@ public class Emotions implements VirtualListCommands, CommandListener
 	private CommandListener selectionListener;
 	static private Command cmdOk = new Command(ResourceBundle.getString("select"), Command.OK, 1); 
 	static private Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Command.BACK, 2); 
-	private TextList selList;
 	private String emotionText; 
+	
+	private Selector selector;
 
 	public void selectEmotion(CommandListener selectionListener, Displayable lastDisplay)
 	{
 		this.selectionListener = selectionListener;
 		this.lastDisplay       = lastDisplay;
-		selList = new TextList(null);
+		//selList = new TextList(null);
+		selector = new Selector();
+		JimmUI.setColorScheme(selector);
 		
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		selList.setTitle(ResourceBundle.getString("emotions"));
-		selList.setFullScreenMode(false);
-		// #sijapp cond.else#
-		selList.setCaption(ResourceBundle.getString("emotions"));
+		selector.setFullScreenMode(false);
 		// #sijapp cond.end#
 		
-		selList.addCommand(cmdOk);
-		selList.addCommand(cmdCancel);
-		selList.setImageList(images);
-		selList.setVLCommands(this);
-		selList.setCommandListener(this);
+		selector.addCommand(cmdOk);
+		selector.addCommand(cmdCancel);
+		selector.setCommandListener(this);
 		
-		int size = selEmotions.size();
-		for (int i = 0; i < size; i++)
-		{
-			Object[] data = (Object[])selEmotions.elementAt(i);
-			selList.add
-			(
-				(String)data[2],
-				0,
-				((Integer)data[0]).intValue()
-			);
-		}
 		
-		Jimm.display.setCurrent(selList);
+		Jimm.display.setCurrent(selector);
 	}
 	
 	public void commandAction(Command c, Displayable d)
@@ -257,7 +245,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		else if (c == cmdCancel)
 		{
 			Jimm.display.setCurrent(lastDisplay);
-			selList = null;
+			selector = null;
 			System.gc();
 		}
 	}
@@ -271,12 +259,9 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 	private void select()
 	{
-		Object[] data = (Object[])selEmotions.elementAt( selList.getCurrIndex() );
-		emotionText = (String)data[1];
 		Jimm.display.setCurrent(lastDisplay);
-		selList = null;
 		System.gc();
-		selectionListener.commandAction(cmdOk, selList);
+		selectionListener.commandAction(cmdOk, selector);
 	}
 	
 	public String getSelectedEmotion()
@@ -287,5 +272,129 @@ public class Emotions implements VirtualListCommands, CommandListener
 	public boolean isMyOkCommand(Command command)
 	{
 		return (command == cmdOk);
+	}
+	
+	
+	
+	/////////////////////////
+	//                     //
+	//    class Selector   //
+	//                     //
+	/////////////////////////
+		
+	private class Selector extends VirtualList implements VirtualListCommands
+	{
+		private int cols, rows, itemHeight, curCol; 
+		
+		Selector()
+		{
+			super(null);
+			setVLCommands(this);
+			
+			int drawWidth = getWidth()-scrollerWidth-2;
+			int drawHeight = getDrawHeight();
+			
+			setCursorMode(SEL_NONE);
+			
+			int imgHeight = images.getHeight();
+			int imgWidth = images.getWidth();
+			
+			itemHeight = imgHeight+5;
+			
+			cols = drawWidth/itemHeight;
+			rows = (selEmotions.size()+cols-1)/cols;
+			curCol = 0;
+			
+			showCurrSmileName();
+		}
+		
+		protected void drawItemData
+		(
+			Graphics g, 
+		    boolean isSelected, 
+		    int index, 
+		    int x1, int y1, int x2, int y2,
+		    int fontHeight
+		)
+		{
+			int xa, xb;
+			int startIdx = cols*index;
+			xa = x1;
+			for (int i = 0; i < cols; i++, startIdx++)
+			{
+				if (startIdx >= selEmotions.size()) break;
+				Object[] data = (Object[])selEmotions.elementAt(startIdx);
+				int smileIdx = ((Integer)data[0]).intValue(); 
+				
+				xb = xa+itemHeight;
+				
+				g.drawImage(images.elementAt(smileIdx), xa+3, y1+3, Graphics.TOP|Graphics.LEFT);
+				
+				if (isSelected && (i == curCol))
+				{
+					g.setColor(this.getTextColor());
+					g.setStrokeStyle(Graphics.DOTTED);
+					g.drawRect(xa, y1, itemHeight-1, y2-y1-1);
+				}
+				xa = xb;
+			}
+		}
+		
+		private void showCurrSmileName()
+		{
+			int selIdx = getCurrIndex()*cols+curCol;
+			if (selIdx >= selEmotions.size()) return;
+			Object[] data = (Object[])selEmotions.elementAt(selIdx);
+			emotionText = (String)data[1];			
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			setTitle((String)data[2]);
+			// #sijapp cond.else#
+			setCaption((String)data[2]);
+			// #sijapp cond.end#			
+		}
+		
+		public int getItemHeight(int itemIndex)
+		{
+			return itemHeight;
+		}
+		
+		protected int getSize()
+		{
+			return rows;
+		}
+		
+		protected void get(int index, ListItem item)
+		{
+			
+		}
+		
+		public void onKeyPress(VirtualList sender, int keyCode) 
+		{
+			int lastCol = curCol;
+			switch (getGameAction(keyCode))
+			{
+			case LEFT:
+				if (curCol != 0) curCol--;
+				break;
+			case RIGHT:	
+				if (curCol < (cols-1)) curCol++;
+				break;
+			}
+			if (lastCol != curCol)
+			{
+				repaint();
+				showCurrSmileName();
+			}
+		}
+		
+		public void onCursorMove(VirtualList sender) 
+		{
+			showCurrSmileName();
+		}
+		
+		public void onItemSelected(VirtualList sender) 
+		{
+			select();
+		}
 	}
 }

@@ -62,7 +62,7 @@ class HistoryStorageList extends    VirtualList
 	
 	// commands for messages list
 	private static Command cmdClrAll   = new Command(ResourceBundle.getString("clear_all"),    Command.SCREEN, 10);
-	private static Command cmdSelect   = new Command(ResourceBundle.getString("select")   ,    Command.SCREEN, 1);
+	private static Command cmdSelect   = new Command(ResourceBundle.getString("select")   ,    Command.OK,     1);
 	private static Command cmdBack     = new Command(ResourceBundle.getString("back"),         Command.BACK,   2);
 	private static Command cmdClear    = new Command(ResourceBundle.getString("clear"),        Command.ITEM,   4); 
 	private static Command cmdFind     = new Command(ResourceBundle.getString("find"),         Command.ITEM,   3);
@@ -97,7 +97,7 @@ class HistoryStorageList extends    VirtualList
 		addCommand(cmdCopytext);
 		setCommandListener(this);
 		setVLCommands(this);
-		Jimm.setColorScheme(this);
+		JimmUI.setColorScheme(this);
 	}
 	
 	// VirtualList command impl.
@@ -134,7 +134,7 @@ class HistoryStorageList extends    VirtualList
 	// Moves on next/previous message in list and shows message text
 	private void moveInList(int offset)
 	{
-		moveCursor(offset);
+		moveCursor(offset, false);
 		showMessText();
 	}
 	
@@ -172,7 +172,7 @@ class HistoryStorageList extends    VirtualList
 		}
 		
 		// Copy text from messages list
-		else if (c == cmdCopytext)
+		else if ((c == cmdCopytext) || (c == cmdMsgCopyText))
 		{
 			int index = getCurrIndex();
 			if (index == -1) return;
@@ -197,12 +197,6 @@ class HistoryStorageList extends    VirtualList
 		else if (c == cmdMsgPrev)
 		{
 			moveInList(-1);
-		}
-		
-		// copy text in message text menu
-		else if (c == cmdMsgCopyText)
-		{
-			JimmUI.setClipBoardText(messText.getCurrText(1));
 		}
 		
 		// find command
@@ -323,7 +317,7 @@ class HistoryStorageList extends    VirtualList
 			messText.addCommand(cmdMsgPrev);
 			messText.addCommand(cmdMsgCopyText);
 			messText.setVLCommands(this);
-			Jimm.setColorScheme(messText);
+			JimmUI.setColorScheme(messText);
 		}
 		
 		CachedRecord record = Jimm.jimm.getHistory().getRecord(currUin, this.getCurrIndex()); 
@@ -648,9 +642,9 @@ public class HistoryStorage
 	{
 		if (list != null)
 		{
-			Jimm.setColorScheme(list);
+			JimmUI.setColorScheme(list);
 			if (HistoryStorageList.messText != null) 
-				Jimm.setColorScheme(HistoryStorageList.messText);
+				JimmUI.setColorScheme(HistoryStorageList.messText);
 		}
 	}
 	

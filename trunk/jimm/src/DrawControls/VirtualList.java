@@ -59,15 +59,103 @@ public abstract class VirtualList extends Canvas
 
 	/*! Constant for small sized font of caption and item text */
 	public final static int SMALL_FONT = Font.SIZE_SMALL;
-
-	// default values 
-	protected static int defCapColor = 0xD0D0D0, defCapFontColor = 0xFF,
-			defBackColor = 0xFFFFFF, defCursorMode = SEL_DOTTED,
-			defFontSize = MEDIUM_FONT;
 	
 	// Set of fonts for quick selecting
 	private Font normalFont, boldFont, italicFont;
 	
+	// Width of scroller line
+	protected final static int scrollerWidth;
+	
+	// Font for drawing caption
+	private final static Font capFont;
+	
+	// Commands to react to VL events
+	private VirtualListCommands vlCommands;
+
+	// Caption of VL
+	private String caption;
+	
+	// Used by "Invalidate" method to prevent invalidate when locked 
+	private boolean dontRepaint = false;
+
+	// Images for VL
+	private ImageList imageList = null;
+
+	// Index for current item of VL
+	protected int currItem = 0;
+	
+	// Used for passing params of items whan painting 
+	final static protected ListItem paintedItem;
+	
+	// Used to catch changes to repaint data
+	private int lastCurrItem = 0, lastTopItem = 0;
+
+	private int 
+		topItem     = 0,            // Index of top visilbe item 
+		fontSize    = MEDIUM_FONT,  // Current font size of VL
+		bkgrndColor = 0xFFFFFF,     // bk color of VL
+		textColor   = 0x000000,     // Default text color. Not used when drawing focus rect.   
+		capTxtColor = 0xFFFFFF,     // Color of caprion text
+		cursorMode  = SEL_DOTTED;   // Cursor mode
+	
+	static
+	{
+		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+		int width = capFont.getHeight() / 4;
+		scrollerWidth = width > 4 ? width : 4;
+		paintedItem = new ListItem();
+	}
+	
+	//! Create new virtual list with default values  
+	public VirtualList
+	(
+		String capt //!< Caption text of new virtual list
+	)
+	{
+		super();
+		setCaption(capt);
+		this.capTxtColor = 0xFFFFFF;
+		this.bkgrndColor = 0xFFFFFF;
+		this.fontSize = Font.SIZE_MEDIUM; 
+		createSetOfFonts(this.fontSize);
+		this.cursorMode = SEL_DOTTED;
+	}
+
+	// public VirtualList
+	public VirtualList
+	(
+		String capt,      //!< Caption text of new virtual list
+		int capTextColor, //!< Caption text color
+		int backColor,    //!< Control back color
+		int fontSize,     /*!< Control font size. This font size if used both for caption and text in tree nodes */
+		int cursorMode    /*!< Cursor mode. Can be VirtualList.SEL_DOTTED or VirtualList.SEL_INVERTED */
+	)
+	{
+		super();
+		setCaption(capt);
+		this.capTxtColor = capTextColor;
+		this.bkgrndColor = backColor;
+		
+		this.fontSize = fontSize; 
+		createSetOfFonts(this.fontSize);
+		this.cursorMode = cursorMode;
+	}
+
+	//! Request number of list elements to be shown in list
+	/*! You must return number of list elements in successtor of
+	    VirtualList. Class calls method "getSize" each time before it drawn */
+	abstract protected int getSize();
+
+	//! Request of data of one list item
+	/*! You have to reload this method. With help of method "get" class finds out
+	    data of each item. Method "get" is called each time when list item 
+	    is drawn */
+	abstract protected void get
+	(
+		int index,    //!< Number of requested list item 
+		ListItem item //!< Data of list item. Fill this object with item data.
+	);
+
 	Font getQuickFont(int style)
 	{
 		switch (style)
@@ -77,75 +165,6 @@ public abstract class VirtualList extends Canvas
 		case Font.STYLE_ITALIC: return italicFont;
 		}
 		return Font.getFont(Font.FACE_SYSTEM, style, fontSize);
-	}
-
-	public static int getDefCapColor()
-	{
-		return defCapColor;
-	}
-
-	public static int getDefCapFontColor()
-	{
-		return defCapFontColor;
-	}
-
-	public static int getDefBackColor()
-	{
-		return defBackColor;
-	}
-
-	public static int getDefCursorMode()
-	{
-		return defCursorMode;
-	}
-
-	public static int getDefFontSize()
-	{
-		return defFontSize;
-	}
-
-	private VirtualListCommands vlCommands;
-
-	public void setVLCommands(VirtualListCommands vlCommands)
-	{
-		this.vlCommands = vlCommands;
-	}
-
-	private boolean dontRepaint = false;
-
-	private ImageList imageList = null;
-
-	private String caption;
-
-	protected int currItem = 0;
-	
-	protected ListItem paintedItem = new ListItem(); 
-
-	private int width = 0, topItem = 0,
-			fontHeightInt = -1, fontSize = MEDIUM_FONT, bkgrndColor = 0xFFFFFF,
-			capColor = 0x0000D0, textColor = 0x000000, capTxtColor = 0xFFFFFF,
-			cursorMode = SEL_DOTTED;
-
-	//! Request number of list elements to be shown in list
-	/*! You must return number of list elements in successtor of
-	 VirtualList. Class calls method "getSize" each time before it drawn */
-	abstract protected int getSize();
-
-	//! Request of data of one list item
-	/*! You must reload this method. With help of method "get" class finds out
-	 data of each item. Method "get" is called each time when list item 
-	 is drawn */
-	abstract protected void get
-	(
-		int index,    //!< Number of requested list item 
-		ListItem item //!< Data of list item. Fill this object with item data.
-	);
-
-	// public void setCapColor(int value)
-	public void setCapColor(int value)
-	{
-		capColor = value;
-		repaint();
 	}
 	
 	// returns height of draw area in pixels  
@@ -157,10 +176,23 @@ public abstract class VirtualList extends Canvas
 	//! Sets new font size and invalidates items
 	public void setFontSize(int value)
 	{
+		if (fontSize == value) return;
 		fontSize = value;
 		createSetOfFonts(fontSize);
 		checkTopItem();
-		repaint();
+		invalidate();
+	}
+	
+	public void setVLCommands(VirtualListCommands vlCommands)
+	{
+		this.vlCommands = vlCommands;
+	}
+	
+	public void setCapTxtColor(int value)
+	{
+		if (value == capTxtColor) return;
+		capTxtColor = value;
+		invalidate();
 	}
 	
 	private void createSetOfFonts(int size)
@@ -182,16 +214,16 @@ public abstract class VirtualList extends Canvas
 
 	public void setTextColor(int value)
 	{
+		if (textColor == value) return;
 		textColor = value;
-		repaint();
+		invalidate();
 	}
 
 	//! Returns number of visibled lines of text which fits in screen 
 	public int getVisCount()
 	{
-		int capHeight = getCapHeight(); 
 		int size = getSize();
-		int y = getCapHeight();
+		int y = 0;
 		int counter = 0, i;
 		int height = getDrawHeight();
 		int topItem = this.topItem;
@@ -213,7 +245,7 @@ public abstract class VirtualList extends Canvas
 		for (i = size-1; i >= 0; i--)
 		{
 			y -= getItemHeight(i);
-			if (y < capHeight) break;
+			if (y < 0) break;
 			counter++;
 		}
 		
@@ -234,11 +266,13 @@ public abstract class VirtualList extends Canvas
 	}
 
 	//! Set background color of items
-	public void setBackgroundColor(int value //!< New color for background
+	public void setBackgroundColor
+	(
+		int value //!< New color for background
 	)
 	{
 		bkgrndColor = value;
-		repaint();
+		invalidate();
 	}
 
 	//! Returns height of each item in list
@@ -257,65 +291,8 @@ public abstract class VirtualList extends Canvas
 		repaint();
 	}
 
-	//! Set new default values for all new classes based on VirtualList
-	/*! To create new class based on VirtualList you must to call constructor
-	    only with caption argument. */
-	public static void setDefaults
-	(
-		int capBackColor, //!< Caption background color
-		int capTextColor, //!< Caption text color
-		int backColor,    //!< Control back color
-		int fontSize,     /*!< Control font size. This font size if used both for caption and text in tree nodes */
-		int cursorMode    /*!< Cursor mode. Can be VirtualList.SEL_DOTTED or VirtualList.SEL_INVERTED */
-	)
-	{
-		defCapColor = capBackColor;
-		defCapFontColor = capTextColor;
-		defBackColor = backColor;
-		defFontSize = fontSize;
-		defCursorMode = cursorMode;
-	}
-
-	//! Create new virtual list with default values  
-	public VirtualList(String capt //!< Caption text of new virtual list
-	)
-	{
-		super();
-		this.caption = capt;
-		this.capColor = defCapColor;
-		this.capTxtColor = defCapFontColor;
-		this.bkgrndColor = defBackColor;
-		this.fontSize = defFontSize; 
-		createSetOfFonts(this.fontSize);
-		this.cursorMode = defCursorMode;
-	}
-
-	// public VirtualList
-	public VirtualList
-	(
-		String capt,      //!< Caption text of new virtual list
-		int capBackColor, //!< Caption background color
-		int capTextColor, //!< Caption text color
-		int backColor,    //!< Control back color
-		int fontSize,     /*!< Control font size. This font size if used both for caption and text in tree nodes */
-		int cursorMode    /*!< Cursor mode. Can be VirtualList.SEL_DOTTED or VirtualList.SEL_INVERTED */
-	)
-	{
-		super();
-		this.caption = capt;
-		this.capColor = capBackColor;
-		this.capTxtColor = capTextColor;
-		this.bkgrndColor = backColor;
-		
-		this.fontSize = fontSize; 
-		createSetOfFonts(this.fontSize);
-		this.cursorMode = cursorMode;
-	}
-
-	//! Setting image list for items
-	public void setImageList(ImageList list /*!< Reference to ImageList object or null 
-	 if you don't need to show images in list */
-	)
+	// Setting image list for items
+	public void setImageList(ImageList list)
 	{
 		imageList = list;
 		repaint();
@@ -335,7 +312,6 @@ public abstract class VirtualList extends Canvas
 		if (currItem >= getSize() - 1) currItem = getSize() - 1;
 	}
 	
-
 	// protected void checkTopItem() - internal
 	// check for position of top element of list and change it, if nesessary
 	protected void checkTopItem()
@@ -362,8 +338,6 @@ public abstract class VirtualList extends Canvas
 		return (index >= topItem) && (index <= (topItem + getVisCount()));
 	}
 
-	private int lastCurrItem = 0, lastTopItem = 0;
-
 	// private void storelastItemIndexes()
 	protected void storelastItemIndexes()
 	{
@@ -377,60 +351,33 @@ public abstract class VirtualList extends Canvas
 		if ((lastCurrItem != currItem) || (lastTopItem != topItem))
 		{
 			invalidate();
-			cursorMoved();
 			if (vlCommands != null) vlCommands.onCursorMove(this);
 		}
 	}
 
 	// protected void moveCursor(int step)
-	protected void moveCursor(int step)
+	protected void moveCursor(int step, boolean moveTop)
 	{
 		storelastItemIndexes();
-		if (cursorMode == SEL_NONE) topItem += step;
+		if (moveTop && (cursorMode == SEL_NONE)) topItem += step;
 		currItem += step;
 		checkCurrItem();
 		checkTopItem();
 		repaintIfLastIndexesChanged();
 	}
 
-	// private void moveToBottom()
-	private void moveToBottom()
-	{
-		storelastItemIndexes();
-		int endIndex = getSize() - 1;
-		currItem = endIndex;
-		checkTopItem();
-		repaintIfLastIndexesChanged();
-	}
-
-	// private void moveToTop()
-	private void moveToTop()
-	{
-		storelastItemIndexes();
-		currItem = topItem = 0;
-		repaintIfLastIndexesChanged();
-	}
-
-	//! Is called when user press a key
-	/*! You may reload it in successor to react on key event */
-	protected void userPressKey(int keyCode)
-	{
-	}
-
 	protected void itemSelected() {}
 	
-	protected void cursorMoved() {}
-
 	// private keyReaction(int keyCode)
 	private void keyReaction(int keyCode)
 	{
 		switch (getGameAction(keyCode))
 		{
 		case Canvas.DOWN:
-			moveCursor(1);
+			moveCursor(1, false);
 			break;
 		case Canvas.UP:
-			moveCursor(-1);
+			moveCursor(-1, false);
 			break;
 		case Canvas.FIRE:
 			itemSelected();
@@ -441,23 +388,32 @@ public abstract class VirtualList extends Canvas
 		switch (keyCode)
 		{
 		case KEY_NUM1:
-			moveToTop();
+			storelastItemIndexes();
+			currItem = topItem = 0;
+			repaintIfLastIndexesChanged();
 			break;
+			
 		case KEY_NUM7:
-			moveToBottom();
+			storelastItemIndexes();
+			int endIndex = getSize() - 1;
+			currItem = endIndex;
+			checkTopItem();
+			repaintIfLastIndexesChanged();
 			break;
 
 		case KEY_NUM3:
-			moveCursor(-getVisCount());
+			moveCursor(-getVisCount(), false);
 			break;
+			
 		case KEY_NUM9:
-			moveCursor(getVisCount());
+			moveCursor(getVisCount(), false);
 			break;
-                // #sijapp cond.if target is "MOTOROLA"#
-	        case KEY_STAR: 
-                        LightControl.changeState();
-                        break;
-                // #sijapp cond.end#
+			
+		// #sijapp cond.if target is "MOTOROLA"#
+		case KEY_STAR: 
+			LightControl.changeState();
+			break;
+		// #sijapp cond.end#
 		}
 
 	}
@@ -465,11 +421,11 @@ public abstract class VirtualList extends Canvas
 	// protected void keyPressed(int keyCode) 
 	protected void keyPressed(int keyCode)
 	{
-                //#sijapp cond.if target is "MOTOROLA"#
-                LightControl.flash(false);
-                //#sijapp cond.end#
+		//#sijapp cond.if target is "MOTOROLA"#
+		LightControl.flash(false);
+		//#sijapp cond.end#
+		
 		keyReaction(keyCode);
-		userPressKey(keyCode);
 		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode);
 	}
 
@@ -482,6 +438,7 @@ public abstract class VirtualList extends Canvas
 	//! Set caption text for list
 	public void setCaption(String capt)
 	{
+		if (caption != null) if (caption.equals(capt)) return;
 		caption = capt;
 		repaint();
 	}
@@ -512,51 +469,25 @@ public abstract class VirtualList extends Canvas
 	// Return height of caption in pixels
 	private int getCapHeight()
 	{
-		return (caption == null) ? 0 : getQuickFont(Font.STYLE_BOLD).getHeight();
+		if (caption == null) return 0;
+		return (caption.length() == 0) ? 0 : capFont.getHeight()+3;
 	}
-
+	
 	// private int drawCaption(Graphics g)
 	private int drawCaption(Graphics g)
 	{
-		if (caption == null) return 0;
-
-		int tmp_y, th;
-		Font font = getQuickFont(Font.STYLE_BOLD);
-		g.setFont(font);
-		th = font.getHeight();
-		g.setColor(capColor);
-		g.fillRect(0, 0, width, th + 2);
-		g.setColor(capTxtColor);
-		g.drawString(caption, th / 3, 1, Graphics.TOP | Graphics.LEFT);
-		g.setColor(0);
-		tmp_y = th + 1;
-		g.drawLine(0, tmp_y, width, tmp_y);
+		if (this.caption == null) return 0;
+		if (caption.length() == 0) return 0;
+		int width = getWidth();
+		g.setFont(capFont);
+		int th = capFont.getHeight();
 		g.setColor(bkgrndColor);
-		tmp_y++;
-		g.drawLine(0, tmp_y, width, tmp_y);
-		return tmp_y + 1;
-	}
-
-	// private void drawDottedSelectedBgrnd(Graphics g, int x, int y, int w, int h, ListItem item)
-	public void drawDottedSelectedBgrnd(
-		Graphics g,
-		int x,
-		int y,
-		int w,
-		int h,
-		int bkColor)
-	{
-		// Draw bkgrn
-		g.setColor(bkColor);
-		g.fillRect(x, y, w, h);
-		
-		// draw rect
-		g.setStrokeStyle(Graphics.DOTTED);
-		g.setColor(textColor);
-		g.drawRect(x, y, w-1, h-1);
-		
-		// restore line style
-		g.setStrokeStyle(Graphics.SOLID);
+		g.fillRect(0, 0, width, th+3);
+		g.setColor(capTxtColor);
+		g.drawString(caption, 2, 1, Graphics.TOP | Graphics.LEFT);
+		int lineY = th+1;
+		g.drawLine(0, lineY, width, lineY);
+		return lineY+2;
 	}
 
 	protected int getItemBkColor(int index, int lastColor)
@@ -569,54 +500,52 @@ public abstract class VirtualList extends Canvas
 		int index,
 		Graphics g,
 		int yCrd,
+		int itemWidth,
 		int itemHeight,
 		int fontHeight,
 		int bkColor)
 	{
 		int w = 0;
 		boolean isSelected = ((currItem == index) && (cursorMode != SEL_NONE));
-
+		
+		g.setColor(bkColor);
+		
+		g.fillRect(0, yCrd, itemWidth, itemHeight);
+		
 		if (isSelected)
 		{
-			drawDottedSelectedBgrnd(g, 0, yCrd, width, itemHeight, bkgrndColor);
-		}
-		else
-		{
-			g.setColor(bkColor);
-			g.fillRect(0, yCrd, width, itemHeight);
+			g.setStrokeStyle(Graphics.DOTTED);
+			g.setColor(textColor);
+			g.drawRect(0, yCrd, itemWidth-1, itemHeight-1);
 		}
 
 		g.setStrokeStyle(Graphics.SOLID);
-		drawItemData(g, isSelected, index, 2, yCrd, width - itemHeight / 3, yCrd
-				+ itemHeight, fontHeight);
+		drawItemData(g, (currItem == index), index, 2, yCrd, itemWidth-itemHeight/3, 
+				yCrd+itemHeight, fontHeight);
 
 		return yCrd + itemHeight;
 	}
 
-	// private void drawScroller(Graphics g, int scrollerWidth)
-	private void drawScroller(Graphics g, int scrollerWidth, int topY, int visCount)
+	// Draw scroller is items doesn't fit in VL area 
+	private void drawScroller(Graphics g, int topY, int visCount)
 	{
-		int sliderSize, y1, y2, itemCount, position;
-		boolean haveToShowScroller;
-		int height = getDrawHeight();
-		
-		position = topItem;
-		itemCount = getSize();
-		
-		haveToShowScroller = ((itemCount > visCount) && (itemCount > 0));
-	
+		int width = getWidth()-scrollerWidth;
+		int height = getHeight();
+		int itemCount = getSize();
+		boolean haveToShowScroller = ((itemCount > visCount) && (itemCount > 0));
 		int color = transformColorLight(transformColorLight(bkgrndColor, 32), -32);
 		if (color == 0) color = 0x808080;
+		g.setStrokeStyle(Graphics.SOLID);
 		g.setColor(color);
 		g.fillRect(width + 1, topY, scrollerWidth - 1, height - topY);
 		g.setColor(transformColorLight(color, -64));
 		g.drawLine(width, topY, width, height);
 		if (haveToShowScroller)
 		{
-			sliderSize = (height-topY)*visCount/itemCount;
+			int sliderSize = (height-topY)*visCount/itemCount;
 			if (sliderSize < 7) sliderSize = 7;
-		    y1 = position * (height - sliderSize - topY) / (itemCount-visCount) + topY;
-			y2 = y1 + sliderSize;
+		    int y1 = topItem * (height - sliderSize - topY) / (itemCount-visCount) + topY;
+			int y2 = y1 + sliderSize;
 			g.setColor(color);
 			g.fillRect(width + 2, y1 + 2, scrollerWidth - 3, y2 - y1 - 3);
 			g.setColor(transformColorLight(color, -192));
@@ -630,33 +559,29 @@ public abstract class VirtualList extends Canvas
 	//! returns font height
 	public int getFontHeight()
 	{
-		if (fontHeightInt != -1) return fontHeightInt;
-		Font font = getQuickFont(Font.STYLE_PLAIN);
-		fontHeightInt = font.getHeight();
-		return fontHeightInt;
+		return getQuickFont(Font.STYLE_PLAIN).getHeight();
 	}
 
 	// private int drawItems(Graphics g, int top_y)
 	private int drawItems(Graphics g, int top_y, int fontHeight)
 	{
-		int size, itemHeight, i, y = 0;
-		int height = getDrawHeight();
+		int height = getHeight();
 		ListItem item = new ListItem();
-
-		size = getSize();
-
-		y = top_y;
-		for (i = topItem; i < size; i++)
+		int size = getSize();
+		int y = top_y;
+		int itemWidth = getWidth()-scrollerWidth;
+		for (int i = topItem; i < size; i++)
 		{
-			itemHeight = getItemHeight(i);
+			int itemHeight = getItemHeight(i);
 			int bkColor = getItemBkColor(i, bkgrndColor);
-			y = drawItem(i, g, y, itemHeight, fontHeight, bkColor);
+			y = drawItem(i, g, y, itemWidth, itemHeight, fontHeight, bkColor);
 			if (y >= height) break;
 		}
+		
 		if (y < height)
 		{
 			g.setColor(bkgrndColor);
-			g.fillRect(0, y, width, height);
+			g.fillRect(0, y, itemWidth, height);
 		}
 
 		return y;
@@ -670,15 +595,8 @@ public abstract class VirtualList extends Canvas
 	{
 	}
 
-	// protected int getScrollerWidth()
-	protected int getScrollerWidth()
-	{
-		int width = getFontHeight() / 4;
-		return width > 4 ? width : 4;
-	}
-
 	// change light of color 
-	static public int transformColorLight(int color, int light)
+	static private int transformColorLight(int color, int light)
 	{
 		int r = (color & 0xFF) + light;
 		int g = ((color & 0xFF00) >> 8) + light;
@@ -695,12 +613,10 @@ public abstract class VirtualList extends Canvas
 	// private void paintAllOnGraphics(Graphics graphics)
 	private void paintAllOnGraphics(Graphics graphics)
 	{
-		int scrollerWidth = getScrollerWidth();
 		int visCount = getVisCount();
-		width = getWidth() - scrollerWidth;
 		int y = drawCaption(graphics);
 		drawItems(graphics, y, getFontHeight());
-		drawScroller(graphics, scrollerWidth, y, visCount);
+		drawScroller(graphics, y, visCount);
 	}
 
 	static Image bDIimage = null;
