@@ -1330,11 +1330,22 @@ public class ContactList implements CommandListener, VirtualTreeCommands
             // #sijapp cond.end#
         }
         
-        int not_mode;
-        if (notType == SOUND_TYPE_MESSAGE)
-            not_mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
-        else
-            not_mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
+        int not_mode = 0;
+        
+        switch (notType)
+		{
+		case SOUND_TYPE_MESSAGE:
+			// #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+			Jimm.display.flashBacklight(800);
+			// #sijapp cond.end#
+			not_mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
+			
+			break;
+			
+		case SOUND_TYPE_ONLINE:
+			not_mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
+			break;
+		}
             
         switch (not_mode)
         {

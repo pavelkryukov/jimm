@@ -40,7 +40,7 @@ import javax.microedition.lcdui.TextField;
 
 import jimm.comm.SearchAction;
 import jimm.util.ResourceBundle;
-import DrawControls.TextList;
+import DrawControls.*;
 
 public class Search
 {
@@ -199,15 +199,16 @@ public class Search
     /** ************************************************************************* */
     
     // Class for show user info and react to left or right keys 
-    private class SearchTextList extends TextList  
+    private class SearchTextList extends TextList implements VirtualListCommands  
 	{
     	public SearchTextList()
     	{
     		super(null);
     		setCursorMode(SEL_NONE);
+    		setVLCommands(this);
     	}
     	
-    	protected void userPressKey(int keyCode) 
+    	public void onKeyPress(VirtualList sender, int keyCode) 
     	{
     		switch (getGameAction(keyCode))
 			{
@@ -220,6 +221,9 @@ public class Search
     			break;
 			}
     	}
+    	
+    	public void onCursorMove(VirtualList sender) {}
+    	public void onItemSelected(VirtualList sender) {}
 	}
 
     // Class for the search forms

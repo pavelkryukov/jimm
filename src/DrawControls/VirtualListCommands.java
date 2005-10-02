@@ -27,7 +27,7 @@ import DrawControls.VirtualList;
 
 public interface VirtualListCommands
 {
-  public void onKeyPress(VirtualList sender, int keyCode);
-  public void onCursorMove(VirtualList sender);
-  public void onItemSelected(VirtualList sender);
+	public void onKeyPress(VirtualList sender, int keyCode);
+	public void onCursorMove(VirtualList sender);
+	public void onItemSelected(VirtualList sender);
 }
