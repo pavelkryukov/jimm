@@ -220,7 +220,6 @@ public class ActionListener
             if ((snacPacket.getFamily() == SnacPacket.CLI_ACKMSG_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.CLI_ACKMSG_COMMAND))
             {
-                
                 // Get raw data
                 byte[] buf = snacPacket.getData();
                 
@@ -233,7 +232,7 @@ public class ActionListener
                 {
                     // Create an message entry
                     int textLen = Util.getWord(buf,64+uinLen,false);
-                    Jimm.jimm.getContactListRef().activate(new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf,66+uinLen,textLen),null,AlertType.INFO));
+                    Jimm.jimm.getContactListRef().activate(new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf,66+uinLen,textLen, false),null,AlertType.INFO));
                 }
             }
 
@@ -715,8 +714,18 @@ public class ActionListener
                     // Status message requests
                     else if (((msgType >= 1000) && (msgType <= 1004)))
                     {
-                        // Acknowledge message with  away message
-                        byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 2 + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).length() +1];
+                    	String statusMess;
+                    	
+                    	long currStatus = Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS);
+						if ((currStatus != ContactList.STATUS_ONLINE) && (currStatus != ContactList.STATUS_CHAT))
+							statusMess = Util.crlfToCr(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE));
+						else
+							statusMess = new String();
+                   	
+                        // Acknowledge message with away message
+                    	final byte[] statusMessBytes = Util.stringToByteArray(statusMess, false);
+                    	
+                        byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 2 + statusMessBytes.length +1];
                         int ackMarker = 0;
                         System.arraycopy(buf, 0, ackBuf, ackMarker, 10);
                         ackMarker += 10;
@@ -730,10 +739,10 @@ public class ActionListener
                         System.arraycopy(msg2Buf, 0, ackBuf, ackMarker, 51);
                         Util.putWord(ackBuf, ackMarker+2, 0x0800);
                         ackMarker += 51;
-                        Util.putWord(ackBuf, ackMarker, Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).length()+1, false);
+                        Util.putWord(ackBuf, ackMarker, statusMessBytes.length+1, false);
                         ackMarker += 2;
-                        System.arraycopy(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).getBytes(),0,ackBuf,ackMarker,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).length());
-                        Util.putByte(ackBuf, ackMarker+Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE).length(), 0x00);
+                        System.arraycopy(statusMessBytes,0,ackBuf,ackMarker,statusMessBytes.length);
+                        Util.putByte(ackBuf, ackMarker+statusMessBytes.length, 0x00);
                         SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                                 SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
                         
