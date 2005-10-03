@@ -281,6 +281,13 @@ public class ChatHistory
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
 	}
+	
+	public void contactRenamed(String uin, String newName)
+	{
+		ChatTextList temp = (ChatTextList) this.historyTable.get(uin);
+		temp.ChatName = newName;
+		UpdateCaption(uin);
+	}
 
 	public void UpdateCaption(String uin)
 	{
