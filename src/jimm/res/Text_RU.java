@@ -133,7 +133,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("hide_offline",                "Скрывать отключившихся");
 		resources.put("info",                        "Информация");
 		resources.put("init_ft",                     "Инициализация...");
-		resources.put("insert_emotion",              "Вставить смайлик");
+		resources.put("insert_emotion",              "Смайлики");
 		resources.put("kb",                          " КБ");
 		resources.put("kbs",                         "КБ/сек");
 		resources.put("keep_chat",                   "Хранить историю чата?");
@@ -215,7 +215,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("server_host",                 "Имя сервера");
 		resources.put("server_port",                 "Порт");
 		resources.put("session",                     "Сессия");
-		resources.put("set_status",                  "Установить статус");
+		resources.put("set_status",                  "Статус");
 		resources.put("shadow_con",                  "Дополнительное подключение");
 		resources.put("show_user_groups",            "Группировать контакты");
 		resources.put("since",                       "Начиная с");

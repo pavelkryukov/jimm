@@ -482,6 +482,14 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		ContactListContactItem ci = (ContactListContactItem) obj;
 		return (this.uin.equals(ci.getUin()) && (this.temporary == ci.returnBoolValue(VALUE_IS_TEMP)));
 	}
+	
+	private void clearMessBoxCommands()
+	{
+		messageTextbox.removeCommand(renameOkCommand);
+		messageTextbox.removeCommand(textboxOkCommand);
+		messageTextbox.removeCommand(textboxSendCommand);
+		messageTextbox.removeCommand(insertEmotionCommand);
+	}
 
 	/** ************************************************************************* */
 	/** ************************************************************************* */
@@ -506,6 +514,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			
 			// Display textbox for entering messages
 			messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
+			clearMessBoxCommands();
+			messageTextbox.addCommand(insertEmotionCommand);
 			messageTextbox.addCommand(textboxSendCommand);
 			messageTextbox.setCommandListener(this);
 			Jimm.display.setCurrent(messageTextbox);
@@ -569,6 +579,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     // Send URL message
                     // Reset and display textbox for entering messages
                     messageTextbox.setString(null);
+                    messageTextbox.setTitle(ResourceBundle.getString("send_url"));
+                    clearMessBoxCommands();
                     messageTextbox.addCommand(textboxOkCommand);
                     messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(messageTextbox);
@@ -668,6 +680,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     // Reset and display textbox for entering name
                     messageTextbox.setTitle(ResourceBundle.getString("rename"));
                     messageTextbox.setString(ContactListContactItem.this.getName());
+                    clearMessBoxCommands();
                     messageTextbox.addCommand(renameOkCommand);
                     messageTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(messageTextbox);
@@ -727,6 +740,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     
                 case USER_MENU_REQU_AUTH:
                     // Request auth
+                	
                     requReason = true;
                     reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
                     reasonTextbox.removeCommand(textboxOkCommand);
@@ -762,7 +776,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// User wants to rename Contact
 			else if (c == renameOkCommand)
 			{
-				messageTextbox.removeCommand(renameOkCommand);
 				ContactListContactItem.this.setName(messageTextbox.getString());
 				try 
 				{
@@ -775,6 +788,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				}
 				catch (JimmException je)
 				{
+					messageTextbox.setString(null);
 					if (je.isCritical()) return;
 				}
 				catch (Exception e)
@@ -782,8 +796,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					// Do nothing
 				}
 				
-				messageTextbox.setTitle(ResourceBundle.getString("message"));
+				Jimm.jimm.getChatHistoryRef().contactRenamed(uin, this.name);
 				Jimm.jimm.getContactListRef().activate();
+				messageTextbox.setString(null);
 			}
 			// Textbox has been closed
 			else if ((c == textboxOkCommand) || (c == textboxSendCommand))
@@ -791,9 +806,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				// Message has been entered
 				if (d == messageTextbox)
 				{
-					messageTextbox.removeCommand(textboxOkCommand);
-					messageTextbox.removeCommand(textboxSendCommand);
-					
 					// Abort if nothing has been entered
 					if (messageTextbox.getString().length() < 1)
 					{
@@ -1203,7 +1215,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	private static Command textboxSendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
 	// Textbox cancel command
-	private static Command textboxCancelCommand = new Command(ResourceBundle.getString("cancel"), Command.CANCEL, 3);
+	private static Command textboxCancelCommand = new Command(ResourceBundle.getString("cancel"), Command.BACK, 3);
 
 	// Grand authorisation a for authorisation asking contact
 	private static Command grantAuthCommand = new Command(ResourceBundle.getString("grant"), Command.OK, 1);
@@ -1221,9 +1233,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
     private static Command renameOkCommand
 
     //#sijapp cond.if target is "MOTOROLA"#
-    = new Command(ResourceBundle.getString("ok"),Command.BACK, 2);
+    = new Command(ResourceBundle.getString("ok"),Command.OK, 2);
     // #sijapp cond.else#
-    = new Command(ResourceBundle.getString("rename"),Command.BACK, 2);
+    = new Command(ResourceBundle.getString("rename"),Command.OK, 2);
     //#sijapp cond.end#
     
 	static void initList(boolean showAuthItem)
@@ -1275,7 +1287,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		// Initialize the textbox for entering messages
 		messageTextbox = new TextBox(ResourceBundle.getString("message"), null, 1000, TextField.ANY);
 		messageTextbox.addCommand(textboxCancelCommand);
-		messageTextbox.addCommand(insertEmotionCommand);
 
 		// Initialize the textbox for entering URLs
 		urlTextbox = new TextBox(ResourceBundle.getString("url"), null, 1000, TextField.URL);

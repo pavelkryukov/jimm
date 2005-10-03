@@ -235,7 +235,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 		selector.addCommand(cmdCancel);
 		selector.setCommandListener(this);
 		
-		
 		Jimm.display.setCurrent(selector);
 	}
 	
