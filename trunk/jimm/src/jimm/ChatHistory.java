@@ -285,6 +285,7 @@ public class ChatHistory
 	public void contactRenamed(String uin, String newName)
 	{
 		ChatTextList temp = (ChatTextList) this.historyTable.get(uin);
+		if (temp == null) return;
 		temp.ChatName = newName;
 		UpdateCaption(uin);
 	}
