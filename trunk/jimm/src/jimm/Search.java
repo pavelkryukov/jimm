@@ -198,36 +198,8 @@ public class Search
     /** ************************************************************************* */
     /** ************************************************************************* */
     
-    // Class for show user info and react to left or right keys 
-    private class SearchTextList extends TextList implements VirtualListCommands  
-	{
-    	public SearchTextList()
-    	{
-    		super(null);
-    		setCursorMode(SEL_NONE);
-    		setVLCommands(this);
-    	}
-    	
-    	public void onKeyPress(VirtualList sender, int keyCode) 
-    	{
-    		switch (getGameAction(keyCode))
-			{
-    		case Canvas.LEFT:
-    			searchForm.nextOrPrev(false);
-    			break;
-    		
-    		case Canvas.RIGHT:
-    			searchForm.nextOrPrev(true);
-    			break;
-			}
-    	}
-    	
-    	public void onCursorMove(VirtualList sender) {}
-    	public void onItemSelected(VirtualList sender) {}
-	}
-
     // Class for the search forms
-    public class SearchForm implements CommandListener
+    public class SearchForm implements CommandListener, VirtualListCommands
     {
         // Commands
         private Command backCommand;
@@ -311,7 +283,9 @@ public class Search
             this.searchForm.setCommandListener(this);
 
             // Result Screen
-            screen = new SearchTextList();
+            screen = new TextList(null);
+            screen.setCursorMode(TextList.SEL_NONE);
+            screen.setVLCommands(this);
             screen.addCommand(this.previousCommand);
             screen.addCommand(this.nextCommand);
             screen.addCommand(this.addCommand);
@@ -442,6 +416,24 @@ public class Search
             }
       	
         }
+        
+    	public void onKeyPress(VirtualList sender, int keyCode) 
+    	{
+    		switch (sender.getGameAction(keyCode))
+			{
+    		case Canvas.LEFT:
+    			nextOrPrev(false);
+    			break;
+    		
+    		case Canvas.RIGHT:
+    			nextOrPrev(true);
+    			break;
+			}
+    	}
+    	
+    	public void onCursorMove(VirtualList sender) {}
+    	public void onItemSelected(VirtualList sender) {}
+        
 
         public void commandAction(Command c, Displayable d)
         {

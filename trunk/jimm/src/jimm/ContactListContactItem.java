@@ -42,6 +42,7 @@ import jimm.util.ResourceBundle;
 // #sijapp cond.if target is "MOTOROLA"#
 import DrawControls.*;
 // #sijapp cond.end#
+import DrawControls.VirtualList;
 
 
 public class ContactListContactItem extends ContactListItem implements CommandListener
@@ -109,6 +110,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	private FileTransfer ft;
 	//  #sijapp cond.end#
 	//  #sijapp cond.end#
+	
+	public static String currentUin = new String();
 
 	// Constructor for an existing contact item
 	public ContactListContactItem(int id, int group, String uin, String name, boolean noAuth, boolean added)
@@ -335,15 +338,28 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	
 	public static int getStatusImageIndex(long status)
 	{
-		if (status == ContactList.STATUS_AWAY)	  return 0;
-		else if (status == ContactList.STATUS_CHAT)	 return  1;
-		else if (status == ContactList.STATUS_DND)	   return 2;
+		if (status == ContactList.STATUS_AWAY)	         return 0;
+		else if (status == ContactList.STATUS_CHAT)	     return  1;
+		else if (status == ContactList.STATUS_DND)	     return 2;
 		else if (status == ContactList.STATUS_INVISIBLE) return 3;
-		else if (status == ContactList.STATUS_NA)		return 4;
+		else if (status == ContactList.STATUS_NA)		 return 4;
 		else if (status == ContactList.STATUS_OCCUPIED)  return 5;
 		else if (status == ContactList.STATUS_OFFLINE)   return 6;
-		else if (status == ContactList.STATUS_ONLINE)	return  7;
+		else if (status == ContactList.STATUS_ONLINE)	 return  7;
 		return -1;
+	}
+	
+	public static String getStatusString(long status)
+	{
+		if (status == ContactList.STATUS_AWAY)	         return ResourceBundle.getString("status_away");
+		else if (status == ContactList.STATUS_CHAT)	     return  ResourceBundle.getString("status_chat");
+		else if (status == ContactList.STATUS_DND)	     return ResourceBundle.getString("status_dnd");
+		else if (status == ContactList.STATUS_INVISIBLE) return ResourceBundle.getString("status_invisible");
+		else if (status == ContactList.STATUS_NA)		 return ResourceBundle.getString("status_na");
+		else if (status == ContactList.STATUS_OCCUPIED)  return ResourceBundle.getString("status_occupied");
+		else if (status == ContactList.STATUS_OFFLINE)   return ResourceBundle.getString("status_offline");
+		else if (status == ContactList.STATUS_ONLINE)	 return  ResourceBundle.getString("status_online");
+		return "---";
 	}
 	
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -497,6 +513,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 
 	static String lastAnsUIN = new String();
 	static boolean repliedWithQuota = false;
+
 	
 	//private class Menu implements CommandListener
 	//{
@@ -1061,6 +1078,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		// Activates the contact item menu
 		public void activate()
 		{
+			if (!currentUin.equals(uin)) infoThread.setData(InfoThread.NONE, null, null);
+			currentUin = new String(uin);
+			
 			// Display chat history
 			if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
 			{
@@ -1278,7 +1298,126 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         // #sijapp cond.if modules_FILES is "true"#
         eventList[menuList.append(ResourceBundle.getString("dc_info"), null)]      = USER_MENU_DC_INFO;
         // #sijapp cond.end#
-        // #sijapp cond.end#            
+        // #sijapp cond.end#
+	}
+	
+	// Thread for notifing user about changing contact status
+	static class InfoThread extends Thread
+	{
+		static public final int NONE  = 0;
+		static public final int FLASH = 1;
+		static public final int RUNNL = 2;
+		
+		static Object visObject;
+		static private String textToShow;
+		static private String text;
+		static private int type, counter;
+		static private boolean neetToStop;
+		
+		protected InfoThread()
+		{
+			type = NONE;
+			counter = 0;
+		}
+		
+		synchronized public void setData(int type_, String text_, Object object)
+		{
+			visObject = object;
+			type = type_;
+			text = text_;
+			counter = 0;
+		}
+		
+		public void run()
+		{
+			int curType;
+			String currTextValue;
+			
+			for (;;)
+			{
+				neetToStop = false;
+				
+				try { sleep(500); } catch (Exception e) { break; }
+				
+				synchronized(this) 
+				{
+					curType = type;
+					currTextValue = (text == null) ? null : new String(text); 
+				}
+				
+				switch (curType)
+				{
+				case NONE: continue;
+				case FLASH:
+					textToShow = ((counter&1) == 0) ? new String() : currTextValue;
+					if (counter > 30) neetToStop = true;
+					break;
+					
+				case RUNNL:
+					if ((counter-5) >= currTextValue.length()) counter = 0;
+					textToShow = currTextValue.substring((counter < 5) ? 0 : counter-5);
+					break;
+					
+				}
+				
+				Jimm.display.callSerially (new Runnable() {
+					public void run()
+					{
+						if (visObject instanceof VirtualList)
+						{
+							VirtualList tl = (VirtualList)visObject;
+							if (tl.isShown())
+							{
+								// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+								tl.setTitle(textToShow);
+								// #sijapp cond.else#
+								tl.setCaption(textToShow);
+								// #sijapp cond.end#
+							}
+							else neetToStop = true;
+						}
+					
+						// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+						else if (visObject instanceof Displayable)
+						{
+							Displayable box = (TextBox)visObject;
+							if (box.isShown()) box.setTitle(textToShow);
+							else neetToStop = true;
+						}
+						// #sijapp cond.end#						
+					}}
+				);
+				if (neetToStop) synchronized(this) { type = NONE; }
+				counter++;
+			}
+		}
+	}
+	
+	final public static InfoThread infoThread;
+	
+	static private void showTopString(String uin, String text, int type)
+	{
+		Object vis = null;
+		if (messageTextbox.isShown()) 
+			vis = messageTextbox;
+		else if (Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) 
+			vis = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(uin);
+		else if (menuList != null) if (menuList.isShown()) vis = menuList; 
+		if (vis == null) return;
+		
+		infoThread.setData(type, text, vis);
+	}
+	
+	static public void statusChanged(String uin, long status)
+	{
+		if (currentUin.equals(uin)) showTopString(uin, getStatusString(status), InfoThread.FLASH);
+	}
+	
+	static public void messageReceived(String uin, String text)
+	{
+		if ( currentUin.equals(uin) && 
+		     !Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) 
+				showTopString(uin, Util.removeClRfAndTabs(text), InfoThread.RUNNL);
 	}
 	
 	// Initializer
@@ -1297,6 +1436,10 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 1000, TextField.ANY);
 		reasonTextbox.addCommand(textboxCancelCommand);
 		reasonTextbox.addCommand(textboxSendCommand);
+		
+		// Create and start thread for info about status changing
+		infoThread = new InfoThread();
+		infoThread.start();
 	}
 }
 

@@ -956,6 +956,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands
         // Set Status
         cItem.setStatus(status);
         cItem.setCapabilities(capabilities);
+        
+        if (treeBuilt && statusChanged) ContactListContactItem.statusChanged(uin, trueStatus);
 
         // Update DC values
         if (dcType != -1)
@@ -999,6 +1001,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands
         // Set Status
         cItem.setStatus(status);
         cItem.setCapabilities(capabilities);
+        
+        if (treeBuilt && statusChanged) ContactListContactItem.statusChanged(uin, trueStatus);
 
         // Play sound notice if selected
         if ((trueStatus == STATUS_ONLINE) && statusChanged)
@@ -1036,6 +1040,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands
         // Set Status
         cItem.setStatus(status);
         cItem.setCapabilities(capabilities);
+        
+        if (treeBuilt && statusChanged) ContactListContactItem.statusChanged(uin, trueStatus);
 
         // Play sound notice if selected
         if ((trueStatus == STATUS_ONLINE) && statusChanged)

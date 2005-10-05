@@ -152,6 +152,8 @@ public class ChatHistory
 			if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
 				Jimm.jimm.getHistory().addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName(), plainMsg.getDate());
 			// #sijapp cond.end#	
+			
+			ContactListContactItem.messageReceived(uin, plainMsg.getText());
 		}
 		if (message instanceof UrlMessage)
 		{

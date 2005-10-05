@@ -718,7 +718,7 @@ public class ActionListener
                     	
                     	long currStatus = Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS);
 						if ((currStatus != ContactList.STATUS_ONLINE) && (currStatus != ContactList.STATUS_CHAT))
-							statusMess = Util.crlfToCr(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE));
+							statusMess = Util.removeClRfAndTabs(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE));
 						else
 							statusMess = new String();
                    	
