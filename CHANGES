@@ -220,4 +220,5 @@ VERSION 0.4.1
   * Jimm will now only weakup from minimized if your status is online of free for chat
   * Added counter to message notifyer on keylock splashscreen
   * Added choice of gender to search user function
-  
+  * Added visual notification about incoming message or about contact status 
+    changing when message is writing
