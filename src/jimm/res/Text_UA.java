@@ -198,7 +198,7 @@ public class Text_UA extends ResourceBundle
 		resources.put("quote",                       "Цитувати");                        
 		resources.put("reason",						 "Причина");
 		resources.put("remove",                      "Знищити зi списку");
-		resources.put("remove_me",                   "Знищити з його списку""); 
+		resources.put("remove_me",                   "Знищити з його списку"); 
 		resources.put("remove_me_from",              "Знищити зi списку ");
 		resources.put("remove_group",                "Знищити групу");
 		resources.put("remove_user",                 "Знищити контакт");
