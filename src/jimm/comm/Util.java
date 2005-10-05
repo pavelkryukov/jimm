@@ -427,6 +427,19 @@ public class Util
 		}
 		return (new String(dst, 0, dstLen));
 	}
+	
+	public static String removeClRfAndTabs(String val)
+	{
+		int len = val.length();
+		char[] dst = new char[len];
+		for (int i = 0; i < len; i++)
+		{
+			char chr = val.charAt(i);
+			if ((chr == '\n') || (chr == '\r') || (chr == '\t')) chr = ' ';
+			dst[i] = chr; 
+		}
+		return new String(dst, 0, len);  
+	}
 
 
 	// Compare to byte arrays (return true if equals, false otherwise)
