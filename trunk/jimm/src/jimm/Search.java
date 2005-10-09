@@ -336,11 +336,15 @@ public class Search
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 screen.setFullScreenMode(false);
                 screen.setTitle(ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+                screen.setFontSize(Font.SIZE_MEDIUM);
                 // #sijapp cond.else #
-                screen.setCaption(ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+                screen.setCaption(  ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+                screen.setFontSize(Font.SIZE_SMALL);
                 // #sijapp cond.end#
                 
-                screen.setFontSize(Font.SIZE_MEDIUM);
+                JimmUI.setColorScheme(screen);
+                
+                
                 bigTextIndex = 0;
                 
                 // UIN

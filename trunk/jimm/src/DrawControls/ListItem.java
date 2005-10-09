@@ -37,7 +37,7 @@ public class ListItem
 
 	Image image; // Used for TextList in SEL_NONE mode
 
-	private int imageWidth, imageHeigth;
+	private int itemWidth, itemHeigth;
 
 	public int fontStyle, //!< Font style
 			color,        //!< Color of node text
@@ -55,14 +55,15 @@ public class ListItem
 		this.color = color;
 		this.imageIndex = imageIndex;
 		this.fontStyle = fontStyle;
+		itemWidth = itemHeigth = -1; 
 	}
 
-	ListItem(Image image, String text, int imageWidth, int imageHeigth)
+	ListItem(Image image, String text, int itemWidth, int itemHeigth)
 	{
 		this.image = image;
 		this.text = text;
-		this.imageWidth = imageWidth;
-		this.imageHeigth = imageHeigth;
+		this.itemWidth = itemWidth;
+		this.itemHeigth = itemHeigth;
 	}
 
 	//! Set all member to default values
@@ -82,23 +83,31 @@ public class ListItem
 		dest.color = color;
 		dest.imageIndex = imageIndex;
 		dest.fontStyle = fontStyle;
-		dest.imageWidth = imageWidth;
-		dest.imageHeigth = imageHeigth;
+		dest.itemWidth = itemWidth;
+		dest.itemHeigth = itemHeigth;
 	}
 
 	int getHeight(int fontSize)
 	{
-		if (image != null) return imageHeigth;
+		if (image != null) return itemHeigth;
 		if (text == null) return 0;
-		Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
-		return font.getHeight();
+		if (itemHeigth == -1)
+		{
+			Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
+			itemHeigth = font.getHeight();
+		}
+		return itemHeigth;
 	}
 
 	int getWidth(int fontSize)
 	{
-		if (image != null) return imageWidth;
+		if (image != null) return itemWidth;
 		if (text == null) return 0;
-		Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
-		return font.stringWidth(text);
+		if (itemWidth == -1)
+		{
+			Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
+			itemWidth = font.stringWidth(text);
+		}
+		return itemWidth;
 	}
 }
