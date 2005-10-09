@@ -321,7 +321,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	{
 		return returnBoolValue(VALUE_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
 	}
-	
 
 	// Returns imaghe index for contact
 	public int getImageIndex()
@@ -335,31 +334,49 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		else tempIndex = getStatusImageIndex(status);
 		return tempIndex;
 	}
-	
-	public static int getStatusImageIndex(long status)
+
+	private final static long[] statuses = 
 	{
-		if (status == ContactList.STATUS_AWAY)	         return 0;
-		else if (status == ContactList.STATUS_CHAT)	     return  1;
-		else if (status == ContactList.STATUS_DND)	     return 2;
-		else if (status == ContactList.STATUS_INVISIBLE) return 3;
-		else if (status == ContactList.STATUS_NA)		 return 4;
-		else if (status == ContactList.STATUS_OCCUPIED)  return 5;
-		else if (status == ContactList.STATUS_OFFLINE)   return 6;
-		else if (status == ContactList.STATUS_ONLINE)	 return  7;
+		ContactList.STATUS_AWAY,
+		ContactList.STATUS_CHAT,
+		ContactList.STATUS_DND,
+		ContactList.STATUS_INVISIBLE,
+		ContactList.STATUS_NA,
+		ContactList.STATUS_OCCUPIED,
+		ContactList.STATUS_OFFLINE,
+		ContactList.STATUS_ONLINE
+	};
+	
+	private final static int[] imageIndexes = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	
+	private final static String[] statusStrings = 
+	{
+		"status_away",
+		"status_chat",
+		"status_dnd",
+		"status_invisible",
+		"status_na",
+		"status_occupied",
+		"status_offline",
+		"status_online"
+	};
+	
+	private static int getStatusIndex(long status)
+	{
+		for (int i = 0; i < statuses.length; i++) if (statuses[i] == status) return i;
 		return -1;
 	}
 	
+	public static int getStatusImageIndex(long status)
+	{
+		int index = getStatusIndex(status);
+		return (index == -1) ? -1 : imageIndexes[index];
+	}
+
 	public static String getStatusString(long status)
 	{
-		if (status == ContactList.STATUS_AWAY)	         return ResourceBundle.getString("status_away");
-		else if (status == ContactList.STATUS_CHAT)	     return  ResourceBundle.getString("status_chat");
-		else if (status == ContactList.STATUS_DND)	     return ResourceBundle.getString("status_dnd");
-		else if (status == ContactList.STATUS_INVISIBLE) return ResourceBundle.getString("status_invisible");
-		else if (status == ContactList.STATUS_NA)		 return ResourceBundle.getString("status_na");
-		else if (status == ContactList.STATUS_OCCUPIED)  return ResourceBundle.getString("status_occupied");
-		else if (status == ContactList.STATUS_OFFLINE)   return ResourceBundle.getString("status_offline");
-		else if (status == ContactList.STATUS_ONLINE)	 return  ResourceBundle.getString("status_online");
-		return "---";
+		int index = getStatusIndex(status);
+		return (index == -1) ? null : ResourceBundle.getString(statusStrings[index]);
 	}
 	
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#

@@ -470,14 +470,13 @@ public abstract class VirtualList extends Canvas
 	private int getCapHeight()
 	{
 		if (caption == null) return 0;
-		return (caption.length() == 0) ? 0 : capFont.getHeight()+3;
+		return capFont.getHeight()+3;
 	}
 	
 	// private int drawCaption(Graphics g)
 	private int drawCaption(Graphics g)
 	{
 		if (this.caption == null) return 0;
-		if (caption.length() == 0) return 0;
 		int width = getWidth();
 		g.setFont(capFont);
 		int th = capFont.getHeight();
@@ -566,7 +565,6 @@ public abstract class VirtualList extends Canvas
 	private int drawItems(Graphics g, int top_y, int fontHeight)
 	{
 		int height = getHeight();
-		ListItem item = new ListItem();
 		int size = getSize();
 		int y = top_y;
 		int itemWidth = getWidth()-scrollerWidth;

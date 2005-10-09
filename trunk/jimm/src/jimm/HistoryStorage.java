@@ -269,7 +269,6 @@ class HistoryStorageList extends    VirtualList
 			}
 			catch (Exception e)
 			{
-				//DebugLog.addText("Error while retrieving RS info!");
 			}
 		}
 		
@@ -470,7 +469,6 @@ public class HistoryStorage
 		}
 		catch (Exception e) 
 		{
-			//DebugLog.addText( "Add text error: "+e.toString() );
 		}
 		
 		if ( (list != null) && HistoryStorageList.getCurrUin().equals(uin) )
@@ -509,7 +507,6 @@ public class HistoryStorage
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText("HistoryStorage: can't open record store "+e.toString());
 			recordStore = null;
 			return;
 		}
@@ -619,7 +616,6 @@ public class HistoryStorage
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText("HistoryStorage.clearHistory: "+e.toString());
 		}
 	}
 	
@@ -717,12 +713,11 @@ public class HistoryStorage
 			{
 				if (stores[i].indexOf(prefix) == -1) continue;
 				RecordStore.deleteRecordStore(stores[i]);
-				//DebugLog.addText(stores[i]+" deleted...");
 			}
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText("HistoryStorageList.clear_all "+e.toString());
+
 		}
 	}
 	
@@ -808,7 +803,7 @@ public class HistoryStorage
 		}
 		catch (Exception e)
 		{
-			DebugLog.addText("HistoryStorage.saveLastClearTime "+e.toString());
+
 		}*/
 	}
 }

@@ -373,7 +373,13 @@ public class Search
                 
                 screen
 					.addBigText(ResourceBundle.getString("status") + ": ",0x0,Font.STYLE_BOLD, bigTextIndex++)
-					.addImage(ContactList.getImageList().elementAt(imgIndex), null)
+					.addImage
+					(
+						ContactList.getImageList().elementAt(imgIndex),
+						null,
+						ContactList.getImageList().getWidth(),
+						ContactList.getImageList().getHeight()
+					)
 					.doCRLF();
                 screen.unlock();
             } else

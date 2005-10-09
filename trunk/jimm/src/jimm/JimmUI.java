@@ -145,8 +145,9 @@ public class JimmUI implements CommandListener
 		
 		try
 		{
+			Image image = Image.createImage("/icon.png");
 			aboutTextList
-				.addImage(Image.createImage("/icon.png"), null)
+				.addImage(image, null, image.getWidth(), image.getHeight())
 				.addBigText(str.toString(), textColor, Font.STYLE_PLAIN, -1);
 		
 			aboutTextList.addCommand(cmdBack);

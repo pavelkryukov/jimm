@@ -127,8 +127,9 @@ public class ImageList
     		// #sijapp cond.else#
     		Image newImage = Image.createImage(width, height);
     		newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP|Graphics.LEFT);
-    		// #sijapp cond.end#     
-    		items.addElement( Image.createImage(newImage) );
+    		// #sijapp cond.end#
+    		Image imImage = Image.createImage(newImage);
+    		items.addElement( imImage );
     	}
     }
   }

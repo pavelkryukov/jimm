@@ -30,66 +30,75 @@ import javax.microedition.lcdui.Image;
 //! Data for list item
 /*! All members of class are made as public 
     in order to easy access. 
-*/
+ */
 public class ListItem
 {
-  public String text; //!< Text of node
-  
-  Image image; // Used for TextList in SEL_NONE mode
-    
-  public int 
-    fontStyle,    //!< Font style
-    color,        //!< Color of node text
-    imageIndex;   //!< Index of node image. Must be -1 for disabling image
-    
-  ListItem()
-  {
-    color = imageIndex = 0;
-    fontStyle = Font.STYLE_PLAIN;
-  }
-    
-  ListItem(String text, int color, int imageIndex, int bigTextIndex)
-  {
-    this.text = text;
-    this.color = color;
-    this.imageIndex = imageIndex;
-    this.fontStyle = Font.STYLE_PLAIN;
-  }
-  
-  //! Set all member to default values
-  public void clear()
-  {
-    text = "";
-    image = null;
-    color = 0;
-    imageIndex = -1;
-  }
-  
-  //! Copy data of class to another object
-  public void assignTo
-  (
-    ListItem dest //!< Destination object to copy data
-  )
-  {
-    dest.text       = text;
-    dest.color      = color;
-    dest.imageIndex = imageIndex;
-    dest.fontStyle  = fontStyle;
-  }
-  
-  int getHeight(int fontSize)
-  {
-  	if (image != null) return image.getHeight();
-  	if (text == null) return 0;
-	Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
-	return font.getHeight();
-  }
-  
-  int getWidth(int fontSize)
-  {
-  	if (image != null) return image.getWidth();
-  	if (text == null) return 0;
-	Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
-	return font.stringWidth(text);
-  }
+	public String text; //!< Text of node
+
+	Image image; // Used for TextList in SEL_NONE mode
+
+	private int imageWidth, imageHeigth;
+
+	public int fontStyle, //!< Font style
+			color,        //!< Color of node text
+			imageIndex;   //!< Index of node image. Must be -1 for disabling image
+
+	ListItem()
+	{
+		color = imageIndex = 0;
+		fontStyle = Font.STYLE_PLAIN;
+	}
+
+	ListItem(String text, int color, int imageIndex, int fontStyle)
+	{
+		this.text = text;
+		this.color = color;
+		this.imageIndex = imageIndex;
+		this.fontStyle = fontStyle;
+	}
+
+	ListItem(Image image, String text, int imageWidth, int imageHeigth)
+	{
+		this.image = image;
+		this.text = text;
+		this.imageWidth = imageWidth;
+		this.imageHeigth = imageHeigth;
+	}
+
+	//! Set all member to default values
+	public void clear()
+	{
+		text = "";
+		image = null;
+		color = 0;
+		imageIndex = -1;
+	}
+
+	//! Copy data of class to another object
+	public void assignTo(ListItem dest //!< Destination object to copy data
+	)
+	{
+		dest.text = text;
+		dest.color = color;
+		dest.imageIndex = imageIndex;
+		dest.fontStyle = fontStyle;
+		dest.imageWidth = imageWidth;
+		dest.imageHeigth = imageHeigth;
+	}
+
+	int getHeight(int fontSize)
+	{
+		if (image != null) return imageHeigth;
+		if (text == null) return 0;
+		Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
+		return font.getHeight();
+	}
+
+	int getWidth(int fontSize)
+	{
+		if (image != null) return imageWidth;
+		if (text == null) return 0;
+		Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
+		return font.stringWidth(text);
+	}
 }

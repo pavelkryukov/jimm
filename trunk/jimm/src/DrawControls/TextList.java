@@ -186,11 +186,7 @@ public class TextList extends VirtualList
 		int textIndex,
 		boolean doCRLF)
 	{
-		ListItem new_item = new ListItem();
-		new_item.color = color;
-		new_item.imageIndex = imageIndex;
-		new_item.text = text;
-		new_item.fontStyle = fontStyle;
+		ListItem new_item = new ListItem(text, color, imageIndex, fontStyle);
 
 		if (lines.isEmpty()) lines.addElement(new TextLine());
 		TextLine textLine = (TextLine) lines.lastElement();
@@ -360,21 +356,18 @@ public class TextList extends VirtualList
 		return this;
 	}
 	
-	public TextList addImage(Image image, String altarnateText)
+	public TextList addImage(Image image, String altarnateText, int imageWidth, int imageHeight)
 	{
 		if (lines.isEmpty()) lines.addElement(new TextLine());
 		TextLine textLine = (TextLine) lines.lastElement();
 		
-		if ((textLine.getWidth(getFontSize())+image.getWidth()) > getTrueWidth())
+		if ((textLine.getWidth(getFontSize())+imageWidth) > getTrueWidth())
 		{
 			doCRLF();
 			textLine = (TextLine) lines.lastElement();
 		}
 		
-		ListItem item = new ListItem();
-		item.image = image;
-		item.text = altarnateText;
-		textLine.items.addElement(item);
+		textLine.items.addElement( new ListItem(image, altarnateText, imageWidth, imageHeight) );
 		return this;
 	}
 
