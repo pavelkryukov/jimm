@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 import java.util.TimeZone;
+import java.lang.*;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
@@ -638,6 +639,42 @@ public class Util
 		{
 			return new String("0.0");
 		}
+	}
+	
+	// Check is data array utf-8 string
+	public static boolean isDataUTF8(byte[] array, int start, int lenght)
+	{
+		if (lenght == 0) return false;
+		if (array.length < (start + lenght)) return false;
+		
+		for (int i = start, len = lenght; len > 0;)
+		{
+			int seqLen = 0;
+			byte bt = array[i++];
+			len--;
+			
+			if      ((bt&0xE0) == 0xC0) seqLen = 1;
+			else if ((bt&0xF0) == 0xE0) seqLen = 2;
+			else if ((bt&0xF8) == 0xF0) seqLen = 3;
+			else if ((bt&0xFC) == 0xF8) seqLen = 4;
+			else if ((bt&0xFE) == 0xFC) seqLen = 5;
+			
+			if (seqLen == 0)
+			{
+				if ((bt&0x80) == 0x80) return false;
+				else continue;
+			}
+			
+			for (int j = 0; j < seqLen; j++)
+			{
+				if (len == 0) return false;
+				bt = array[i++];
+				if ((bt&0xC0) != 0x80) return false;
+				len--;
+			}
+			if (len == 0) break;
+		}
+		return true;
 	}
 
 

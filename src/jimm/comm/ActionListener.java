@@ -840,7 +840,6 @@ public class ActionListener
             if ((snacPacket.getFamily() == SnacPacket.SRV_AUTHREQ_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.SRV_AUTHREQ_COMMAND))
             {
-
                 int authMarker = 0;
                 
                 // Get data
@@ -854,14 +853,14 @@ public class ActionListener
 
                 // Get reason
                 length = Util.getWord(buf, authMarker);
-                String reason = Util.byteArrayToString(buf, authMarker, length + 2);
+                authMarker += 2;
+                String reason = Util.byteArrayToString(buf, authMarker, length, Util.isDataUTF8(buf, authMarker, length));
 
                 // Create a new system notice
                 SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHREQ, uin, false, reason);
 
                 // Handle the new system notice
                 Jimm.jimm.getContactListRef().addMessage(notice);
-
             }
 
             //	  Watch out for SRV_AUTHREPLY
