@@ -1397,7 +1397,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 						// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 						else if (visObject instanceof Displayable)
 						{
-							Displayable box = (TextBox)visObject;
+							Displayable box = (Displayable)visObject;
 							if (box.isShown()) box.setTitle(textToShow);
 							else neetToStop = true;
 						}
