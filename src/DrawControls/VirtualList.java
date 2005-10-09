@@ -439,7 +439,7 @@ public abstract class VirtualList extends Canvas
 	public void setCaption(String capt)
 	{
 		if (caption != null) if (caption.equals(capt)) return;
-		caption = capt;
+		caption = (capt == null) ? null : new String(capt);
 		repaint();
 	}
 

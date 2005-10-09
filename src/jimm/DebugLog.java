@@ -62,8 +62,15 @@ public class DebugLog
 
     }
 
+    private static boolean wasShown = false;
     public static void activate()
     {
+    	if (!wasShown)
+    	{
+    		JimmUI.setColorScheme(list);
+    		wasShown = true;
+    	}
+    	
         Jimm.display.setCurrent(list);
     }
 
