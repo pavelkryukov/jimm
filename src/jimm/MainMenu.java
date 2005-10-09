@@ -348,8 +348,6 @@ public class MainMenu implements CommandListener
                 if (e.isCritical()) return;
             }
 
-            //DebugLog.addText("Send action");
-            
             // Start timer
             if (addUserFlag)
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act1), 1000, 1000);

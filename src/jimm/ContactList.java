@@ -645,7 +645,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands
                 this.save();
             } catch (Exception e)
             {
-                //DebugLog.addText("Exception while saving list: " + e.toString());
             }
         }
         if (flags == 1)
@@ -875,8 +874,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands
     	else if (haveToDelete)
     	{
     		debugValue = 12;
-    		
-    		//DebugLog.addText("Deleting node");
     		tree.removeNode(cItemNode);
     		wasDeleted = true;
     	}
@@ -929,7 +926,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 		}
     	catch (Exception e) // TODO: remove try {} catch {} !
 		{
-    		//DebugLog.addText("contactChanged (Exception): "+e.toString()+" "+Integer.toString(debugValue));
     		tree.unlock();
 		}
     }
@@ -1248,16 +1244,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 		{
 			InputStream is = getClass().getResourceAsStream(source);
 			if (is == null) is = getClass().getResourceAsStream("/"+source);
-			if (is == null)
-			{
-				//DebugLog.addText("Create player: source "+source+"not found");
-				return null;
-			}
+			if (is == null) return null;
 			if (playerFree)
 			{
-			p = Manager.createPlayer(is, mediaType);
-			playerFree = false;
-			p.addPlayerListener(this);
+				p = Manager.createPlayer(is, mediaType);
+				playerFree = false;
+				p.addPlayerListener(this);
 			}
 			else
 			return null;
@@ -1265,7 +1257,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText("Create player exception: "+e.toString());
 			return null;
 		}
 		return p;
@@ -1284,7 +1275,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText("Create player exception: "+e.toString());
 			return null;
 		}
 		return p;
@@ -1308,7 +1298,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText("setVolume "+e.toString());
 		}
 	}
 	

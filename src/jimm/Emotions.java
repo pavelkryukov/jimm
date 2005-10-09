@@ -99,7 +99,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 		}
 		catch (Exception e)
 		{
-			//DebugLog.addText(e.toString());
 			return;
 		}
 		
@@ -193,7 +192,13 @@ public class Emotions implements VirtualListCommands, CommandListener
 			if (startIndex != minIndex)
 				textList.addBigText(text.substring(startIndex, minIndex), textColor, fontStyle, bigTextIndex);
 			
-			textList.addImage(images.elementAt(minArray[2]), text.substring(minIndex, minIndex+minArray[1]));
+			textList.addImage
+			(
+				images.elementAt(minArray[2]),
+				text.substring(minIndex, minIndex+minArray[1]),
+				images.getWidth(),
+				images.getHeight()
+			);
 			
 			startIndex = minIndex+minArray[1];
 		}
