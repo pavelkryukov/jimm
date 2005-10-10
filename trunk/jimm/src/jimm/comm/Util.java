@@ -555,6 +555,8 @@ public class Util
             ip = ip.substring(i + 1);
             
         }
+        
+        arrIP[3] = (byte)Integer.parseInt(ip);
 
         return arrIP;
     }
