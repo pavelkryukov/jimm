@@ -1279,7 +1279,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	{
         // Size of the event list equals last entry number
         eventList = new int[USER_MENU_LAST_ITEM];
-        menuList = new List("",List.IMPLICIT);
+        menuList = new List("", List.IMPLICIT);
         
         // #sijapp cond.if target is "MOTOROLA"#
         menuList.addCommand(selectCommand);
@@ -1441,7 +1441,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	static
 	{
 		// Initialize the textbox for entering messages
+		
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#		
+		messageTextbox = new TextBox(ResourceBundle.getString("message"), null, 1000, TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
+		//#sijapp cond.else#
 		messageTextbox = new TextBox(ResourceBundle.getString("message"), null, 1000, TextField.ANY);
+		//#sijapp cond.end#
+		
 		messageTextbox.addCommand(textboxCancelCommand);
 
 		// Initialize the textbox for entering URLs
