@@ -645,7 +645,7 @@ public class ConnectAction extends Action
 						// Send a CLI_REQROSTER or CLI_CHECKROSTER packet
 						long versionId1 = Jimm.jimm.getContactListRef().getVersionId1();
 						int versionId2 = Jimm.jimm.getContactListRef().getVersionId2();
-						if ((versionId1 == -1) && (versionId2 == -1))
+						if (((versionId1 == -1) && (versionId2 == -1)) || (Jimm.jimm.getContactListRef().getSize() == 0))
 						{
 							SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND,
 							                                   0x00000000, new byte[0], new byte[0]);
@@ -946,7 +946,7 @@ public class ConnectAction extends Action
 							{
 	
 								// Forward message to contact list
-								PlainMessage message = new PlainMessage(uin, this.uin, date, text);
+								PlainMessage message = new PlainMessage(uin, this.uin, date, text, true);
 								Jimm.jimm.getContactListRef().addMessage(message);
 	
 							}

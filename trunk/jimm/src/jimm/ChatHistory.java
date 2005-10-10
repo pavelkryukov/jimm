@@ -141,12 +141,14 @@ public class ChatHistory
 			newChatForm(uin,contact.getName());
 
 		TextList msgDisplay = (TextList) historyTable.get(uin);
+		
+		boolean offline = message.getOffline();
 
 		if (message instanceof PlainMessage)
 		{
 			PlainMessage plainMsg = (PlainMessage) message;
 			if (!msgDisplay.isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
-			this.addTextToForm(uin,contact.getName(), plainMsg.getText(), "", plainMsg.getDate(), true);
+			this.addTextToForm(uin,contact.getName(), plainMsg.getText(), "", plainMsg.getDate(), true, offline);
 
 			// #sijapp cond.if modules_HISTORY is "true" #
 			if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
@@ -159,7 +161,7 @@ public class ChatHistory
 		{
 			UrlMessage urlMsg = (UrlMessage) message;
 			if (!msgDisplay.isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_URL);
-			this.addTextToForm(uin,contact.getName(), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false);
+			this.addTextToForm(uin,contact.getName(), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false, offline);
 		}
 		if (message instanceof SystemNotice)
 		{
@@ -169,27 +171,27 @@ public class ChatHistory
 			if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
 			{
 				this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("youwereadded")
-						+ notice.getSndrUin(), "", notice.getDate(), false);
+						+ notice.getSndrUin(), "", notice.getDate(), false, offline);
 			} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
 			{
 				contact.increaseMessageCount(ContactListContactItem.MESSAGE_AUTH_REQUEST);
 				this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), notice.getSndrUin()
-						+ ResourceBundle.getString("wantsyourauth") + notice.getReason(), "", notice.getDate(), false);
+						+ ResourceBundle.getString("wantsyourauth") + notice.getReason(), "", notice.getDate(), false, offline);
 			} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
 			{
 				if (notice.isAUTH_granted())
 				{
 					contact.setBoolValue(ContactListContactItem.VALUE_NO_AUTH,false);
 					this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
-							+ notice.getSndrUin() + ".", "", notice.getDate(), false);
+							+ notice.getSndrUin() + ".", "", notice.getDate(), false, offline);
 				} else if (notice.getReason() != null)
 					this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
 							+ notice.getSndrUin() + ". " + ResourceBundle.getString("reason") + ": " + notice.getReason(),
-							"", notice.getDate(), false);
+							"", notice.getDate(), false, offline);
 				else
 					this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
 							+ notice.getSndrUin() + ". " + ResourceBundle.getString("noreason"), "", notice.getDate(),
-							false);
+							false, offline);
 			}
 		}
 	}
@@ -199,11 +201,11 @@ public class ChatHistory
 		if (!historyTable.containsKey(uin))
 			newChatForm(uin,ChatName);
 
-		addTextToForm(uin,ResourceBundle.getString("me"),message,"",time,false);
+		addTextToForm(uin,ResourceBundle.getString("me"),message,"",time, false, false);
 	}
 	
 	// Add text to message form
-	synchronized private void addTextToForm(String uin,String from, String message, String url, Date time, boolean red)
+	synchronized private void addTextToForm(String uin,String from, String message, String url, Date time, boolean red, boolean offline)
 	{
 		TextList msgDisplay = (TextList) historyTable.get(uin);
 
@@ -211,7 +213,7 @@ public class ChatHistory
 		int lastSize = msgDisplay.getSize();
 		msgDisplay.addBigText
 		(
-			from + " (" + Util.getDateString(true, time) + "): ",
+			from + " (" + Util.getDateString(!offline, time) + "): ",
 			red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
 			Font.STYLE_BOLD,
 			messTotalCounter
