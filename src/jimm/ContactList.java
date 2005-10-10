@@ -315,6 +315,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands
         return (this.versionId2);
     }
     
+    // Returns number of contact items
+    public int getSize()
+    {
+    	return cItems.size();
+    }
+    
 
     // Returns all contact items as array
     public synchronized ContactListContactItem[] getContactItems()

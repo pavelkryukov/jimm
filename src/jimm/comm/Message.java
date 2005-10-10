@@ -45,6 +45,8 @@ public abstract class Message
     // Message type
     protected int messageType;
     
+    protected boolean offline;
+    
     // Senders UIN (set for both incoming and outgoing messages)
     protected String sndrUin;
 
@@ -92,6 +94,11 @@ public abstract class Message
     public Date getDate()
     {
         return (new Date(this.date.getTime()));
+    }
+    
+    public boolean getOffline()
+    {
+    	return offline;
     }
 
 }

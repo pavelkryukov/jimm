@@ -32,19 +32,18 @@ import jimm.ContactListContactItem;
 
 public class PlainMessage extends Message
 {
-
-
 	// Message text
 	private String text;
 
 
 	// Constructs an incoming message
-	public PlainMessage(String sndrUin, String rcvrUin, Date date, String text)
+	public PlainMessage(String sndrUin, String rcvrUin, Date date, String text, boolean offline)
 	{
 		this.sndrUin = new String(sndrUin);
 		this.rcvrUin = new String(rcvrUin);
 		this.date = new Date(date.getTime());
 		this.text = new String(text);
+		this.offline = offline;
 	}
 
 
