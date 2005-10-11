@@ -72,7 +72,7 @@ public class Text_RU extends ResourceBundle
 
 		resources.put(".",                           ".");
 		resources.put("about",                       "О программе");
-		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\n Устройство: ###TARGET###\nМодули: ###MODULES###\n\nhttp://www.jimm.org/");
+		resources.put("about_info",                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\nУстройство: ###TARGET###\nМодули: ###MODULES###\n\nhttp://www.jimm.org/");
 		resources.put("account",                     "Учетная запись");
 		resources.put("add_group",                   "Добавить группу");
 		resources.put("add_user",                    "Добавить контакт");
