@@ -442,6 +442,11 @@ public abstract class VirtualList extends Canvas
 		caption = (capt == null) ? null : new String(capt);
 		repaint();
 	}
+	
+	public String getCaption()
+	{
+		return new String(caption); 
+	}
 
 	public void setTopItem(int index)
 	{

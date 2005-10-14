@@ -303,6 +303,7 @@ public class Search
         }
         
         int bigTextIndex;
+        private int textColor, brightColor;
         
         private void showString(int n, String resName, int id, boolean nextLine)
         {
@@ -310,9 +311,9 @@ public class Search
         	if (text == null)  return;
         	if (text.trim().length() == 0) return;
         	String name = ResourceBundle.getString(resName)+": ";
-        	screen.addBigText(name, 0x0, Font.STYLE_BOLD, bigTextIndex);
+        	screen.addBigText(name, textColor, Font.STYLE_PLAIN, bigTextIndex);
         	if (nextLine) screen.doCRLF(); 
-        	screen.addBigText(text, 0x0000ff, Font.STYLE_PLAIN, bigTextIndex);
+        	screen.addBigText(text, brightColor, Font.STYLE_BOLD, bigTextIndex);
         	screen.doCRLF();
         	bigTextIndex++;
         }
@@ -344,7 +345,9 @@ public class Search
                 
                 JimmUI.setColorScheme(screen);
                 
-                
+                Options opt = Jimm.jimm.getOptionsRef();
+                textColor = opt.getSchemeColor(Options.CLRSCHHEME_TEXT);
+				brightColor = opt.getSchemeColor(Options.CLRSCHHEME_BLUE);
                 bigTextIndex = 0;
                 
                 // UIN
@@ -376,7 +379,7 @@ public class Search
                 else if (stat == 2) imgIndex = 3;
                 
                 screen
-					.addBigText(ResourceBundle.getString("status") + ": ",0x0,Font.STYLE_BOLD, bigTextIndex++)
+					.addBigText(ResourceBundle.getString("status") + ": ",textColor,Font.STYLE_PLAIN, bigTextIndex++)
 					.addImage
 					(
 						ContactList.getImageList().elementAt(imgIndex),
