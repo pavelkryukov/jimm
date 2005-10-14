@@ -25,25 +25,12 @@ package jimm;
 
 import java.util.Date;
 
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.Choice;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Font;
-import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.TextBox;
-import javax.microedition.lcdui.TextField;
-import java.util.*;
+import javax.microedition.lcdui.*;
 
 import jimm.JimmUI;
 import jimm.comm.*;
 import jimm.util.ResourceBundle;
-// #sijapp cond.if target is "MOTOROLA"#
 import DrawControls.*;
-// #sijapp cond.end#
-import DrawControls.VirtualList;
-
 
 public class ContactListContactItem extends ContactListItem implements CommandListener
 {
@@ -1011,8 +998,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Textbox has been canceled
 			else if (c == textboxCancelCommand)
 			{
-				
-				this.activate();
+				if (infoThread.getType() != InfoThread.NONE) disableTopString();
+				else 
+					this.activate();
 			}
 			// Menu should be activated
 			else if (c == addMenuCommand)
@@ -1085,6 +1073,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					insertPos
 				);
 			}
+			
+			else if (c ==  InfoThread.cmdCancelTopText) disableTopString();
 		}
 		
 		Displayable getCurrDisplay()
@@ -1095,7 +1085,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		// Activates the contact item menu
 		public void activate()
 		{
-			if (!currentUin.equals(uin)) infoThread.setData(InfoThread.NONE, null, null);
+			// Disable creeping line or status flashing 
+			disableTopString();
 			currentUin = new String(uin);
 			
 			// Display chat history
@@ -1212,20 +1203,10 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	//#sijapp cond.end#		
 
     // Message close command
-    private static Command msgCloseCommand
-    //#sijapp cond.if target is "MOTOROLA"#
-    = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
-    //#sijapp cond.else#
-    = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
-    //#sijapp cond.end#
+    private static Command msgCloseCommand;
     
     // Message reply command
-    private static Command msgReplyCommand
-    //#sijapp cond.if target is "MOTOROLA"#
-    = new Command(ResourceBundle.getString("reply"),Command.OK, 2);
-    //#sijapp cond.else#
-    = new Command(ResourceBundle.getString("reply"),Command.OK, 1);
-    //#sijapp cond.end#
+    private static Command msgReplyCommand;
     
     private static Command replWithQuotaCommand = new Command(ResourceBundle.getString("quote"), Command.ITEM, 3);
     
@@ -1267,13 +1248,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	private static Command insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.ITEM, 3);
     
     // Rename a contact
-    private static Command renameOkCommand
-
-    //#sijapp cond.if target is "MOTOROLA"#
-    = new Command(ResourceBundle.getString("ok"),Command.OK, 2);
-    // #sijapp cond.else#
-    = new Command(ResourceBundle.getString("rename"),Command.OK, 2);
-    //#sijapp cond.end#
+    private static Command renameOkCommand;
     
 	static void initList(boolean showAuthItem)
 	{
@@ -1318,18 +1293,25 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         // #sijapp cond.end#
 	}
 	
-	// Thread for notifing user about changing contact status
+	// Thread for notifing user about changing contact status or incoming message 
+	// when chat is unvisible
 	static class InfoThread extends Thread
 	{
+		// Top string modes
 		static public final int NONE  = 0;
 		static public final int FLASH = 1;
 		static public final int RUNNL = 2;
 		
-		static Object visObject;
-		static private String textToShow;
-		static private String text;
+		// constants for some time lenght opers (in 1/2 seconds)
+		static private final int RL_START       = 5;
+		static private final int FLASH_DURATION = 30;
+		
+		static Displayable visObject;
+		static private String text, textToShow, lastCaption;
 		static private int type, counter;
-		static private boolean neetToStop;
+		static private boolean haveToStop;
+		
+		final static Command cmdCancelTopText = new Command("Cancel ticker", Command.BACK, 0);
 		
 		protected InfoThread()
 		{
@@ -1337,12 +1319,24 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			counter = 0;
 		}
 		
-		synchronized public void setData(int type_, String text_, Object object)
+		synchronized public void setData(int type_, String text_, Displayable object)
 		{
+			if (visObject != null)
+			{
+				setCaption(visObject, lastCaption);
+				visObject.removeCommand(cmdCancelTopText);
+			}
 			visObject = object;
 			type = type_;
 			text = text_;
 			counter = 0;
+			lastCaption = getCaption(visObject);
+			if (visObject != null) visObject.addCommand(cmdCancelTopText); 
+		}
+		
+		synchronized public int getType()
+		{
+			return type; 
 		}
 		
 		public void run()
@@ -1352,77 +1346,97 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			
 			for (;;)
 			{
-				neetToStop = false;
+				haveToStop = false;
 				
 				try { sleep(500); } catch (Exception e) { break; }
 				
-				synchronized(this) 
+				synchronized(this)
 				{
 					curType = type;
-					currTextValue = (text == null) ? null : new String(text); 
+					currTextValue = (text == null) ? null : new String(text);
 				}
 				
 				switch (curType)
 				{
-				case NONE: continue;
+				case NONE:
+					continue;
+					
 				case FLASH:
 					textToShow = ((counter&1) == 0) ? new String() : currTextValue;
-					if (counter > 30) neetToStop = true;
+					if (counter > FLASH_DURATION) haveToStop = true;
 					break;
 					
 				case RUNNL:
-					if ((counter-5) >= currTextValue.length()) counter = 0;
-					textToShow = currTextValue.substring((counter < 5) ? 0 : counter-5);
+					if ((counter-RL_START) >= currTextValue.length()) counter = 0;
+					textToShow = currTextValue.substring((counter < RL_START) ? 0 : counter-RL_START);
 					break;
-					
 				}
 				
 				Jimm.display.callSerially (new Runnable() {
 					public void run()
 					{
-						if (visObject instanceof VirtualList)
-						{
-							VirtualList tl = (VirtualList)visObject;
-							if (tl.isShown())
-							{
-								// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-								tl.setTitle(textToShow);
-								// #sijapp cond.else#
-								tl.setCaption(textToShow);
-								// #sijapp cond.end#
-							}
-							else neetToStop = true;
-						}
-					
-						// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-						else if (visObject instanceof Displayable)
-						{
-							Displayable box = (Displayable)visObject;
-							if (box.isShown()) box.setTitle(textToShow);
-							else neetToStop = true;
-						}
-						// #sijapp cond.end#						
+						if (visObject.isShown()) setCaption(visObject, textToShow);
+						else haveToStop = true;
 					}}
 				);
-				if (neetToStop) synchronized(this) { type = NONE; }
+				if (haveToStop) setData(NONE, null, null);
 				counter++;
 			}
 		}
-	}
+		
+		static void setCaption(Displayable ctrl, String caption)
+		{
+			if (ctrl instanceof VirtualList)
+			{
+				VirtualList vl = (VirtualList)ctrl;
+				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+				vl.setTitle(caption);
+				// #sijapp cond.else#
+				vl.setCaption(caption);
+				// #sijapp cond.end#
+			}
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			else ctrl.setTitle(caption);
+			// #sijapp cond.end#
+		}
+		
+		static String getCaption(Displayable ctrl)
+		{
+			if (ctrl == null) return null;
+			String result = null;
+			if (ctrl instanceof VirtualList)
+			{
+				VirtualList vl = (VirtualList)ctrl;
+				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+				result = vl.getTitle();
+				// #sijapp cond.else#
+				result = vl.getCaption();
+				// #sijapp cond.end#
+			}
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			else result = ctrl.getTitle();
+			// #sijapp cond.end#
+			
+			return result;
+		}
+		
+	} // end 'class InfoThread'
 	
 	final public static InfoThread infoThread;
 	
 	static private void showTopString(String uin, String text, int type)
 	{
-		Object vis = null;
-		if (messageTextbox.isShown()) 
-			vis = messageTextbox;
-		else if (Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) 
-			vis = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(uin);
+		Displayable vis = null;
+		if (messageTextbox.isShown()) vis = messageTextbox;
+		else if (Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) vis = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(uin);
 		else if (menuList != null) if (menuList.isShown()) vis = menuList; 
 		if (vis == null) return;
-		
 		infoThread.setData(type, text, vis);
+	}
+	
+	static private void disableTopString()
+	{
+		infoThread.setData(InfoThread.NONE, null, null);
 	}
 	
 	static public void statusChanged(String uin, long status)
@@ -1441,6 +1455,18 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	static
 	{
 		// Initialize the textbox for entering messages
+		
+		
+	    //#sijapp cond.if target is "MOTOROLA"#
+		msgCloseCommand = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
+		msgReplyCommand = new Command(ResourceBundle.getString("reply"),Command.OK, 2);
+		renameOkCommand = new Command(ResourceBundle.getString("ok"),Command.OK, 2);
+	    //#sijapp cond.else#
+		msgCloseCommand = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
+		msgReplyCommand = new Command(ResourceBundle.getString("reply"),Command.OK, 1);
+		renameOkCommand = new Command(ResourceBundle.getString("rename"),Command.OK, 2);
+	    //#sijapp cond.end#
+	
 		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#		
 		messageTextbox = new TextBox(ResourceBundle.getString("message"), null, 1000, TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
