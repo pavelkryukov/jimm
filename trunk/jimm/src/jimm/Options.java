@@ -398,7 +398,11 @@ public class Options
 		{
 		case CLRSCHHEME_BOW:
 			if (type == CLRSCHHEME_BLUE) return 0xFF;
+			// #sijapp cond.if target is "SIEMENS" | target is "DEFAULT" #
+			else if (type == CLRSCHHEME_MESS) return 0xC0C0C0;
+			// #sijapp cond.else#
 			else if (type == CLRSCHHEME_MESS) return 0xE0E0E0;
+			// #sijapp cond.end#
 			return (type == CLRSCHHEME_BACK) ? 0xFFFFFF : 0x000000;
 			
 		case CLRSCHHEME_WOB:
