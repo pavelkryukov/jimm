@@ -199,14 +199,16 @@ public class JimmUI implements CommandListener
 	static public void setColorScheme(VirtualList vl)
 	{
 		if (vl == null) return;
-		vl.setBackgroundColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BACK));
-		vl.setTextColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT));
-		vl.setCapTxtColor(Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE));
 		
-		if (vl instanceof TextList)
-		{
-			((TextList)vl).setTextSelColor( Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_MESS) );
-		}
+		Options opt = Jimm.jimm.getOptionsRef();
+		
+		vl.setColors
+		(
+			opt.getSchemeColor(Options.CLRSCHHEME_BLUE),
+			opt.getSchemeColor(Options.CLRSCHHEME_BACK),
+			opt.getSchemeColor(Options.CLRSCHHEME_CURS),
+			opt.getSchemeColor(Options.CLRSCHHEME_TEXT)
+		);
 	}
 	
 	static public void setColorScheme()

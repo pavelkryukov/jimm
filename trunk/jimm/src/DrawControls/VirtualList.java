@@ -94,7 +94,8 @@ public abstract class VirtualList extends Canvas
 		topItem     = 0,            // Index of top visilbe item 
 		fontSize    = MEDIUM_FONT,  // Current font size of VL
 		bkgrndColor = 0xFFFFFF,     // bk color of VL
-		textColor   = 0x000000,     // Default text color. Not used when drawing focus rect.   
+		cursorColor = 0x808080,     // Used when drawing focus rect.
+		textColor   = 0x000000,     // Default text color. 
 		capTxtColor = 0xFFFFFF,     // Color of caprion text
 		cursorMode  = SEL_DOTTED;   // Cursor mode
 	
@@ -188,11 +189,13 @@ public abstract class VirtualList extends Canvas
 		this.vlCommands = vlCommands;
 	}
 	
-	public void setCapTxtColor(int value)
+	public void setColors(int capTxt, int bkgrnd, int cursor, int text)
 	{
-		if (value == capTxtColor) return;
-		capTxtColor = value;
-		invalidate();
+		capTxtColor = capTxt;
+		bkgrndColor = bkgrnd;
+		cursorColor = cursor;
+		textColor   = text;
+		repaint();
 	}
 	
 	private void createSetOfFonts(int size)
@@ -210,13 +213,6 @@ public abstract class VirtualList extends Canvas
 	public int getTextColor()
 	{
 		return textColor;
-	}
-
-	public void setTextColor(int value)
-	{
-		if (textColor == value) return;
-		textColor = value;
-		invalidate();
 	}
 
 	//! Returns number of visibled lines of text which fits in screen 
@@ -263,16 +259,6 @@ public abstract class VirtualList extends Canvas
 	public int getCursorMode()
 	{
 		return cursorMode;
-	}
-
-	//! Set background color of items
-	public void setBackgroundColor
-	(
-		int value //!< New color for background
-	)
-	{
-		bkgrndColor = value;
-		invalidate();
 	}
 
 	//! Returns height of each item in list
@@ -493,10 +479,10 @@ public abstract class VirtualList extends Canvas
 		g.drawLine(0, lineY, width, lineY);
 		return lineY+2;
 	}
-
-	protected int getItemBkColor(int index, int lastColor)
+	
+	protected boolean isItemSelected(int index)
 	{
-		return lastColor;
+		return ((currItem == index) && (cursorMode != SEL_NONE));
 	}
 
 	// private int drawItem(int index, Graphics g, int top_y, int th, ListItem item)
@@ -506,27 +492,9 @@ public abstract class VirtualList extends Canvas
 		int yCrd,
 		int itemWidth,
 		int itemHeight,
-		int fontHeight,
-		int bkColor)
+		int fontHeight)
 	{
-		int w = 0;
-		boolean isSelected = ((currItem == index) && (cursorMode != SEL_NONE));
-		
-		g.setColor(bkColor);
-		
-		g.fillRect(0, yCrd, itemWidth, itemHeight);
-		
-		if (isSelected)
-		{
-			g.setStrokeStyle(Graphics.DOTTED);
-			g.setColor(textColor);
-			g.drawRect(0, yCrd, itemWidth-1, itemHeight-1);
-		}
-
-		g.setStrokeStyle(Graphics.SOLID);
-		drawItemData(g, (currItem == index), index, 2, yCrd, itemWidth-itemHeight/3, 
-				yCrd+itemHeight, fontHeight);
-
+		drawItemData(g, (currItem == index), index, 2, yCrd, itemWidth-itemHeight/3, yCrd+itemHeight, fontHeight);
 		return yCrd + itemHeight;
 	}
 
@@ -564,27 +532,49 @@ public abstract class VirtualList extends Canvas
 	public int getFontHeight()
 	{
 		return getQuickFont(Font.STYLE_PLAIN).getHeight();
-	}
+	}  
 
 	// private int drawItems(Graphics g, int top_y)
 	private int drawItems(Graphics g, int top_y, int fontHeight)
 	{
+		int grCursorY1 = -1, grCursorY2 = -1, lastY; 
 		int height = getHeight();
 		int size = getSize();
 		int y = top_y;
 		int itemWidth = getWidth()-scrollerWidth;
+		
+		// Fill background
+		g.setColor(bkgrndColor);
+		g.fillRect(0, top_y, itemWidth, height-top_y);
+		
+		// Draw items
 		for (int i = topItem; i < size; i++)
 		{
 			int itemHeight = getItemHeight(i);
-			int bkColor = getItemBkColor(i, bkgrndColor);
-			y = drawItem(i, g, y, itemWidth, itemHeight, fontHeight, bkColor);
+			lastY = y;
+			g.setStrokeStyle(Graphics.SOLID);
+			y = drawItem(i, g, y, itemWidth, itemHeight, fontHeight);
+			
+			if (isItemSelected(i))
+			{
+				if (grCursorY1 == -1) grCursorY1 = lastY;
+				grCursorY2 = y-1; 
+			}
+			
 			if (y >= height) break;
 		}
-		
-		if (y < height)
+
+		// Draw cursor
+		if (grCursorY1 != -1)
 		{
-			g.setColor(bkgrndColor);
-			g.fillRect(0, y, itemWidth, height);
+			g.setStrokeStyle(Graphics.DOTTED);
+			g.setColor(cursorColor);
+			
+			boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem-1) : false;  
+			if (!isCursorUpper) g.drawLine(0, grCursorY1, itemWidth-1, grCursorY1);
+			g.drawLine(0, grCursorY1, 0, grCursorY2);
+			g.drawLine(itemWidth-1, grCursorY1, itemWidth-1, grCursorY2);
+			g.drawLine(0, grCursorY2, itemWidth-1, grCursorY2);
 		}
 
 		return y;
