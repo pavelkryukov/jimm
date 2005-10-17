@@ -103,7 +103,6 @@ public class TextList extends VirtualList
 {
 	// Vector of lines. Each line contains cols. Col can be text or image
 	private Vector lines = new Vector();
-	private int textSelColor = 0xE0E0E0;
 
 	// protected int getSize()
 	public int getSize()
@@ -118,21 +117,13 @@ public class TextList extends VirtualList
 		return (TextLine)lines.elementAt(index);
 	}
 
-	public void setTextSelColor(int value)
-	{
-		if (textSelColor == value) return;
-		textSelColor = value;
-		invalidate();
-	}
-
-	protected int getItemBkColor(int index, int lastColor)
+	protected boolean isItemSelected(int index)
 	{
 		int selIndex = getCurrIndex();
 		int textIndex = (selIndex >= lines.size()) ?
 				-1 : getLine(selIndex).bigTextIndex;
-		if (textIndex == -1) return lastColor;
-		int retColor = (getLine(index).bigTextIndex == textIndex) ? textSelColor : lastColor;
-		return retColor;
+		if (textIndex == -1) return false;
+		return (getLine(index).bigTextIndex == textIndex);
 	}
 
 	// protected void get(int index, ListItem item)
@@ -339,15 +330,15 @@ public class TextList extends VirtualList
 	{
 		super(capt, capTextColor, backColor, fontSize, cursorMode);
 	}
-
-	public void setTextColor(int value)
+	
+	public void setColors(int capTxt, int bkgrnd, int cursor, int text)
 	{
 		Enumeration allLines = lines.elements();
 		while (allLines.hasMoreElements())
-			((TextLine) allLines.nextElement()).setItemColor(value);
-		super.setTextColor(value);
+			((TextLine) allLines.nextElement()).setItemColor(text);
+		super.setColors(capTxt, bkgrnd, cursor, text);
 	}
-	
+
 	public TextList doCRLF()
 	{
 		TextLine newLine = new TextLine();
