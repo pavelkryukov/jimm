@@ -576,7 +576,12 @@ public class MainMenu implements CommandListener
             
             if (!((onlineStatus == ContactList.STATUS_CHAT) || (onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_ONLINE)))
             {
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
+                //#sijapp cond.else#
                 statusMessage = new TextBox(ResourceBundle.getString("status_message"),Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY);
+                //#sijapp cond.end#
+                
                 statusMessage.addCommand(selectCommand);
                 statusMessage.setCommandListener(this);
                 Jimm.display.setCurrent(statusMessage);
