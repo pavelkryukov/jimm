@@ -222,3 +222,8 @@ VERSION 0.4.1
   * Added choice of gender to search user function
   * Added visual notification about incoming message or about contact status 
     changing when message is writing
+
+________________________________________________________________________________
+VERSION 0.4.2
+  * BUGFIX: Corrected wrong coding for offline messages
+    
