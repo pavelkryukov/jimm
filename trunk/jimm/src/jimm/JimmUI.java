@@ -23,7 +23,11 @@
 
 package jimm;
 
+import javax.microedition.io.Connector;
+import javax.microedition.io.ContentConnection;
 import javax.microedition.lcdui.*;
+
+import java.io.DataInputStream;
 import java.util.Hashtable;
 import DrawControls.*;
 import jimm.util.ResourceBundle;
@@ -138,10 +142,28 @@ public class JimmUI implements CommandListener
 		aboutTextList.setCaption(ResourceBundle.getString("about"));
 		//#sijapp cond.end#
 		
+        // Try to get current Jimm version from Jimm server
+        ContentConnection ctemp = null;
+        DataInputStream istemp = null;
+        byte[] version = new byte[0];
+        try
+        {
+            String url = "http://www.jimm.org/en/current_ver";
+            ctemp = (ContentConnection) Connector.open(url);
+
+            istemp = ctemp.openDataInputStream();
+            version = new byte[istemp.available()];
+            istemp.readFully(version);
+        } catch (Exception e)
+        {
+            // Do nothing
+        }
+        
 		StringBuffer str = new StringBuffer();
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
-		   .append(Runtime.getRuntime().freeMemory()/1024).append("kb\n");
+		   .append(Runtime.getRuntime().freeMemory()/1024).append("kb\n\n")
+           .append(ResourceBundle.getString("latest_ver")+": "+new String(version));
 		
 		try
 		{
