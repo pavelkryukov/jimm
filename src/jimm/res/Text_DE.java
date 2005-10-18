@@ -341,6 +341,7 @@ public class Text_DE extends ResourceBundle
 		// other errors
 		resources.put("error_170",                   "Möglicherweise nicht genügend Heap-Speicher verfügbar (#170.EXT)");
 		resources.put("error_171",                   "Meta-Informationen nicht verfügbar (#171.EXT)");
+        resources.put("error_172",                   "Fehler beim speichern der Einstellungen (#172.EXT)");
 		
 		// Camera errors
 		resources.put("error_180",                   "Fehler beim Erstellen der VideoControl (#180.EXT)");

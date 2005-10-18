@@ -574,7 +574,7 @@ public class MainMenu implements CommandListener
                 if (e.isCritical()) return;
             }
             
-            if (!((onlineStatus == ContactList.STATUS_CHAT) || (onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_ONLINE)))
+            if (!((onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_ONLINE)))
             {
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 statusMessage = new TextBox(ResourceBundle.getString("status_message"),Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
@@ -601,7 +601,7 @@ public class MainMenu implements CommandListener
             }
             catch (Exception e)
             {
-                JimmException.handleException(new JimmException(72,0,true));
+                JimmException.handleException(new JimmException(172,0,true));
             }
             // Activate main menu
             Jimm.jimm.getContactListRef().activate();

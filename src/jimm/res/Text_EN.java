@@ -340,7 +340,8 @@ public class Text_EN extends ResourceBundle
 
 		// Other errors
 		resources.put("error_170",                   "Possibly not enough heap memory available (#170.EXT)");
-		resources.put("error_171",                   "Could not fetch meta info (#171.EXT)");  
+		resources.put("error_171",                   "Could not fetch meta info (#171.EXT)");
+        resources.put("error_172",                   "Error while saving the options (#172.EXT)");        
 
 		// Camera errors
 		resources.put("error_180",                   "Error creating the VideoControl (#180.EXT)");

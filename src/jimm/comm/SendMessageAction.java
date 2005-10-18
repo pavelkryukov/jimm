@@ -158,7 +158,7 @@ public class SendMessageAction extends Action
         // #sijapp cond.end#
         // #sijapp cond.end#
         
-        if((this.plainMsg != null) && (this.plainMsg.getMessageType() == Message.MESSAGE_TYPE_AWAY))
+        if((this.plainMsg != null) && ((this.plainMsg.getMessageType() >= Message.MESSAGE_TYPE_AWAY) && (this.plainMsg.getMessageType() <= Message.MESSAGE_TYPE_FFC)))
         {
             type = 2;
         }

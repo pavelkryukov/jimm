@@ -91,7 +91,7 @@ public class SetOnlineStatusAction extends Action
 		}
 		catch (Exception e)
 		{
-			// Do nothing
+            JimmException.handleException(new JimmException(172,0,true));
 		}
 
 	}
