@@ -265,6 +265,9 @@ public class SendMessageAction extends Action
                     textRaw = Util.stringToByteArray(this.fileTrans.getDescription());
                     filenameRaw = Util.stringToByteArray(this.fileTrans.getFilename());
                 }
+                // #sijapp cond.else#
+                textRaw = Util.stringToByteArray(this.plainMsg.getText());
+                filenameRaw = new byte[0];                
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 textRaw = Util.stringToByteArray(this.plainMsg.getText());
@@ -288,6 +291,8 @@ public class SendMessageAction extends Action
                 {
                     p_sz = 192 + uinRaw.length + textRaw.length + filenameRaw.length + 1;
                 }
+                // #sijapp cond.else#
+                p_sz = 163 + uinRaw.length + textRaw.length;                
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 p_sz = 163 + uinRaw.length + textRaw.length;
@@ -325,6 +330,8 @@ public class SendMessageAction extends Action
                 {
                     Util.putWord(buf, marker, 173 + textRaw.length + filenameRaw.length + 1);
                 }
+                // #sijapp cond.else#
+                Util.putWord(buf, marker, 144 + textRaw.length, true);
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 Util.putWord(buf, marker, 144 + textRaw.length, true);
@@ -387,6 +394,8 @@ public class SendMessageAction extends Action
                 {
                     Util.putWord(buf, marker, 119 + textRaw.length + filenameRaw.length + 1);
                 }
+                // #sijapp cond.else#
+                Util.putWord(buf, marker, 104 + textRaw.length, true);                
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 Util.putWord(buf, marker, 104 + textRaw.length, true);
@@ -424,6 +433,8 @@ public class SendMessageAction extends Action
                     Util.putDWord(buf, marker, 0x00000000);
                 else
                     Util.putDWord(buf, marker, 0x00000004);
+                // #sijapp cond.else#
+                Util.putDWord(buf, marker, 0x00000000);
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 Util.putDWord(buf, marker, 0x00000000);
@@ -452,6 +463,8 @@ public class SendMessageAction extends Action
                     Util.putWord(buf, marker, this.plainMsg.getMessageType(),false);
                 else
                     Util.putWord(buf, marker, this.fileTrans.getMessageType(),false);
+                // #sijapp cond.else#
+                Util.putWord(buf, marker, this.plainMsg.getMessageType(),false);                
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 Util.putWord(buf, marker, this.plainMsg.getMessageType(),false);
@@ -566,6 +579,26 @@ public class SendMessageAction extends Action
                     Util.putDWord(buf, marker, 0x00008c82, false);
                     marker += 4;
                 }
+                // #sijapp cond.else#
+                // Put message length
+                Util.putWord(buf, marker, textRaw.length + 1, false);
+                marker += 2;
+
+                // Put message
+                System.arraycopy(textRaw, 0, buf, marker, textRaw.length); // TLV.MESSAGE
+                marker += textRaw.length;
+                Util.putByte(buf, marker, 0x00);
+                marker++;
+                // Put foreground, background color and guidlength
+                Util.putDWord(buf, marker, 0x00000000);
+                marker += 4;
+                Util.putDWord(buf, marker, 0x00FFFFFF);
+                marker += 4;
+                Util.putDWord(buf, marker, 0x26000000);
+                marker += 4;
+                System.arraycopy(ActionListener.CAP_UTF8_GUID, 0, buf, marker, 38);
+                // SUB_MSG_TYPE2.CAPABILITY
+                marker += 38;                
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 // Put message length
