@@ -888,7 +888,7 @@ public class Options
 				}
 				catch (Exception e)
 				{
-					JimmException.handleException(new JimmException(72,0,true));
+					JimmException.handleException(new JimmException(172,0,true));
 				}
 
 				// Activate MM/CL
