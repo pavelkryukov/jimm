@@ -639,13 +639,41 @@ public class SplashCanvas extends Canvas
 	/*****************************************************************************/
 	/*****************************************************************************/
 	/*****************************************************************************/
-
-
+	
 	// Waits until meta information is available
-	public static class RequestInfoTimerTask extends TimerTask
+	public static class RequestInfoTimerTask extends TimerTask implements CommandListener
 	{
+		TextList tl = new TextList(null);
+		Command cmdBack = new Command(ResourceBundle.getString("back"), Command.BACK, 0); 
+		
+		public void commandAction(Command c, Displayable d)
+		{
+			if (c == cmdBack) Jimm.jimm.getContactListRef().activate();
+		}
+		
+		int bigTextIndex = 0;
+		
+		private void startInfoSect(String name)
+		{
+			bigTextIndex++;
+			tl.addBigText
+			(
+				ResourceBundle.getString(name),
+				tl.getTextColor(),
+				Font.STYLE_BOLD,
+				bigTextIndex
+			).doCRLF();
+		}
 
-
+		private void addToTextList(int index, String langStr)
+		{
+			String data = requestInfoAct.getStringData(index);
+			if (data.length() == 0) return;
+			tl.addBigText(ResourceBundle.getString(langStr)+": ", tl.getTextColor(), Font.STYLE_PLAIN, bigTextIndex)
+			  .addBigText(data, Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_PLAIN, bigTextIndex)
+			  .doCRLF();
+		}
+		
 		// Reference to RequestInfoAction
 		private RequestInfoAction requestInfoAct;
 
@@ -654,6 +682,10 @@ public class SplashCanvas extends Canvas
 		public RequestInfoTimerTask(RequestInfoAction requestInfoAct)
 		{
 			this.requestInfoAct = requestInfoAct;
+			JimmUI.setColorScheme(tl);
+			tl.addCommand(cmdBack);
+			tl.setCursorMode(TextList.SEL_NONE);
+			tl.setCommandListener(this);
 		}
 
 
@@ -662,17 +694,48 @@ public class SplashCanvas extends Canvas
 		{
 			if (this.requestInfoAct.isCompleted())
 			{
-				String uin = this.requestInfoAct.getUin();
-				String nick = this.requestInfoAct.getNick();
-				String name = (this.requestInfoAct.getFirstName() + " " + this.requestInfoAct.getLastName()).trim();
-				String email = this.requestInfoAct.getEmail();
-				String infoText = ResourceBundle.getString("uin") + ": " + (uin.length() > 0 ? uin : "-") + (char) (0x0D) +
-				                  ResourceBundle.getString("nick") + ": " + (nick.length() > 0 ? nick : "-") + (char) (0x0D) +
-				                  ResourceBundle.getString("name") + ": " + (name.length() > 0 ? name : "-") + (char) (0x0D) +
-				                  ResourceBundle.getString("email") + ": " + (email.length() > 0 ? email : "-");
-				Alert info = new Alert(ResourceBundle.getString("info"), infoText, null, AlertType.INFO);
-				info.setTimeout(Alert.FOREVER);
-				Jimm.jimm.getContactListRef().activate(info);
+				tl.clear();
+				
+				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+				tl.setTitle(requestInfoAct.getStringData(RequestInfoAction.UIN));
+				tl.setFullScreenMode(false);
+				tl.setFontSize(Font.SIZE_MEDIUM);
+				// #sijapp cond.else#
+				tl.setCaption(requestInfoAct.getStringData(RequestInfoAction.UIN));
+				tl.setFontSize(Font.SIZE_SMALL);
+				// #sijapp cond.end#
+				
+				startInfoSect("main_info");
+				addToTextList(RequestInfoAction.NICK,      "nick");
+				addToTextList(RequestInfoAction.NAME,      "name");
+				addToTextList(RequestInfoAction.GENDER,    "gender");
+				addToTextList(RequestInfoAction.AGE,       "age");
+				addToTextList(RequestInfoAction.EMAIL,     "email");
+				addToTextList(RequestInfoAction.BDAY,      "birth_day");
+				addToTextList(RequestInfoAction.CPHONE,    "cell_phone");
+				addToTextList(RequestInfoAction.HOME_PAGE, "home_page");
+				addToTextList(RequestInfoAction.ABOUT,     "notes");
+				addToTextList(RequestInfoAction.INETRESTS, "interests");
+				
+				startInfoSect("home_info");
+				addToTextList(RequestInfoAction.CITY,      "city");
+				addToTextList(RequestInfoAction.STATE,     "state");
+				addToTextList(RequestInfoAction.ADDR,      "addr");
+				addToTextList(RequestInfoAction.PHONE,     "phone");
+				addToTextList(RequestInfoAction.FAX,       "fax");
+				
+				startInfoSect("work_info");
+				addToTextList(RequestInfoAction.W_NAME,    "title");
+				addToTextList(RequestInfoAction.W_DEP,     "depart");
+				addToTextList(RequestInfoAction.W_POS,     "position");
+				addToTextList(RequestInfoAction.W_CITY,    "city");
+				addToTextList(RequestInfoAction.W_STATE,   "state");
+				addToTextList(RequestInfoAction.W_ADDR,    "addr");
+				addToTextList(RequestInfoAction.W_PHONE,   "phone");
+				addToTextList(RequestInfoAction.W_FAX,     "fax");
+				
+				Jimm.display.setCurrent(tl);
+				
 				this.cancel();
 			}
 			else if (this.requestInfoAct.isError())

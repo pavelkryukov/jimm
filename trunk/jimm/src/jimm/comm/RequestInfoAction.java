@@ -29,28 +29,77 @@ import java.util.Date;
 
 import jimm.JimmException;
 
+class BinaryInputStream
+{
+	private byte[] data;
+	private int pointer;
+	
+	public BinaryInputStream(byte[] data, int pointer)
+	{
+		this.data    = data;
+		this.pointer = pointer;
+	}
+	
+	public String readAsciiz()
+	{
+		int len = Util.getWord(data, pointer, false);
+		if (len == 0) return new String();
+		pointer += (2+len);
+		return Util.byteArrayToString(data, pointer-len, len); 
+	}
+	
+	public int readWord()
+	{
+		pointer += 2;
+		return Util.getWord(data, pointer-2, false);
+	}
+	
+	public int readByte()
+	{
+		return data[pointer++];
+	}
+}
 
 public class RequestInfoAction extends Action
 {
 
 
 	// Receive timeout
-	private static final int TIMEOUT = 7 * 1000; // milliseconds
+	private static final int TIMEOUT = 20 * 1000; // milliseconds
 
 
 	/****************************************************************************/
 
 
-	// UIN of the user to request information about
-	private String uin;
-
-
 	// Information about the user
-	private String nick;      // = null;
-	private String firstName; // = null;
-	private String lastName;  // = null;
-	private String email;     // = null;
-
+	final public static int UIN        = 0;
+	final public static int NICK       = 1;
+	final public static int NAME       = 2;
+	final public static int EMAIL      = 3;
+	final public static int CITY       = 4;
+	final public static int STATE      = 5;
+	final public static int PHONE      = 6;
+	final public static int FAX        = 7;
+	final public static int ADDR       = 8;
+	final public static int CPHONE     = 9;
+	final public static int AGE        = 10;
+	final public static int GENDER     = 11;
+	final public static int HOME_PAGE  = 12;
+	final public static int BDAY       = 13;
+	final public static int W_CITY     = 14;
+	final public static int W_STATE    = 15;
+	final public static int W_PHONE    = 16;
+	final public static int W_FAX      = 17;
+	final public static int W_ADDR     = 18;
+	final public static int W_NAME     = 19;
+	final public static int W_DEP      = 20;
+	final public static int W_POS      = 21;
+	final public static int ABOUT      = 22;
+	final public static int INETRESTS  = 23;
+	
+	final public static int LAST_ID    = 24;
+	
+	private String[] strData = new String[LAST_ID];	
 
 	// Date of init
 	private Date init;
@@ -59,42 +108,12 @@ public class RequestInfoAction extends Action
 	// Constructor
 	public RequestInfoAction(String uin)
 	{
-		this.uin = new String(uin);
+		strData[UIN] = uin;
 	}
 
-
-	// Returns the UIN of the user
-	public String getUin()
+	public String getStringData(int id)
 	{
-		return (new String(this.uin));
-	}
-
-
-	// Returns the nick of the user
-	public String getNick()
-	{
-		return (new String(this.nick));
-	}
-
-
-	// Returns the first name of the user
-	public String getFirstName()
-	{
-		return (new String(this.firstName));
-	}
-
-
-	// Returns the last name of the user
-	public String getLastName()
-	{
-		return (new String(this.lastName));
-	}
-
-
-	// Returns the email address of the user
-	public String getEmail()
-	{
-		return (new String(this.email));
+		return strData[id];
 	}
 
 
@@ -119,7 +138,7 @@ public class RequestInfoAction extends Action
 		// Send a CLI_METAREQINFO packet
 		byte[] buf = new byte[6];
 		Util.putWord(buf, 0, ToIcqSrvPacket.CLI_META_REQMOREINFO_TYPE, false);
-		Util.putDWord(buf, 2, Long.parseLong(this.uin), false);
+		Util.putDWord(buf, 2, Long.parseLong(strData[UIN]), false);
 		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, this.icq.getUin(), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
 		this.icq.c.sendPacket(packet);
 
@@ -127,7 +146,7 @@ public class RequestInfoAction extends Action
 		this.init = new Date();
 
 	}
-
+	
 
 	// Forwards received packet, returns true if packet was consumed
 	protected synchronized boolean forward(Packet packet) throws JimmException
@@ -141,34 +160,78 @@ public class RequestInfoAction extends Action
 			// Watch out for SRV_META packet
 			if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_META_SUBCMD)
 			{
-
 				// Get packet data
 				byte[] data = fromIcqSrvPacket.getData();
 
 				// Watch out for SRV_METAGENERAL packet
-				if (Util.getWord(data, 0, false) == FromIcqSrvPacket.SRV_META_GENERAL_TYPE)
+				switch (Util.getWord(data, 0, false))
 				{
-
-					// Get meta information
-					int marker = 3;
-					int len = Util.getWord(data, marker, false);
-					this.nick = Util.byteArrayToString(data, marker + 2, len);
-					marker += 2 + len;
-					len = Util.getWord(data, marker, false);
-					this.firstName = Util.byteArrayToString(data, marker + 2, len);
-					marker += 2 + len;
-					len = Util.getWord(data, marker, false);
-					this.lastName = Util.byteArrayToString(data, marker + 2, len);
-					marker += 2 + len;
-					len = Util.getWord(data, marker, false);
-					this.email = Util.byteArrayToString(data, marker + 2, len);
-					marker += 2 + len;
-
-					// Packet has been consumed
-					return (true);
-
+				case FromIcqSrvPacket.SRV_META_GENERAL_TYPE: //  basic user information
+					{
+						BinaryInputStream stream = new BinaryInputStream(data, 3);
+						strData[NICK]   = stream.readAsciiz();     // nickname
+						strData[NAME]   = stream.readAsciiz()+" "+ // first name + last name
+						                 stream.readAsciiz();
+						strData[EMAIL]  = stream.readAsciiz();     // email 
+						strData[CITY]   = stream.readAsciiz();     // home city
+						strData[STATE]  = stream.readAsciiz();     // home state
+						strData[PHONE]  = stream.readAsciiz();     // home phone
+						strData[FAX]    = stream.readAsciiz();     // home fax
+						strData[ADDR]   = stream.readAsciiz();     // home address
+						strData[CPHONE] = stream.readAsciiz();     // cell phone
+						return (true);
+					}
+				
+				case 0x00DC: // more user information
+					{
+						BinaryInputStream stream = new BinaryInputStream(data, 3);
+						
+						int age = stream.readWord();
+						strData[AGE]       = (age != 0) ? Integer.toString(age) : new String();
+						strData[GENDER]    = Util.genderToString( stream.readByte() );
+						strData[HOME_PAGE] = stream.readAsciiz();
+						int year = stream.readWord();
+						int mon  = stream.readByte();
+						int day  = stream.readByte();
+						strData[BDAY] = (year != 0) ? year+"."+mon+"."+day : new String();
+						return true;
+					}
+					
+				case 0x00D2: // work user information
+					{
+						BinaryInputStream stream = new BinaryInputStream(data, 3);
+						for (int i = W_CITY; i <= W_ADDR; i++) strData[i] = stream.readAsciiz(); // city - address
+						stream.readAsciiz();                   // work zip code
+						stream.readWord();                     // work country code
+						strData[W_NAME] = stream.readAsciiz(); // work company
+						strData[W_DEP]  = stream.readAsciiz(); // work department
+						strData[W_POS]  = stream.readAsciiz(); // work position
+						return (true);
+					}
+					
+				case 0x00E6: // user about information
+					{
+						BinaryInputStream stream = new BinaryInputStream(data, 3);
+						strData[ABOUT] = stream.readAsciiz(); // notes string
+						return true;
+					}
+					
+				case 0x00F0: // user interests information
+					{
+						BinaryInputStream stream = new BinaryInputStream(data, 3);
+						StringBuffer sb = new StringBuffer();
+						int counter = stream.readByte();
+						for (int i = 0; i < counter; i++)
+						{
+							stream.readWord();
+							sb.append(stream.readAsciiz());
+							if (i != (counter-1)) sb.append(", ");
+						}
+						strData[INETRESTS] = sb.toString(); 
+						return true;
+					}
+				
 				}
-
 			}
 
 		}
@@ -182,7 +245,8 @@ public class RequestInfoAction extends Action
 	// Returns true if the action is completed
 	public synchronized boolean isCompleted()
 	{
-		return ((this.nick != null) && (this.firstName != null) && (this.lastName != null) && (this.email != null));
+		for (int i = 0; i < LAST_ID; i++) if (strData[i] == null) return false;
+		return true;
 	}
 
 
