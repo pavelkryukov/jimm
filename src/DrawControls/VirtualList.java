@@ -273,7 +273,7 @@ public abstract class VirtualList extends Canvas
 	// protected void invalidate()  
 	protected void invalidate()
 	{
-		if (dontRepaint || !isShown()) return;
+		if (dontRepaint) return;
 		repaint();
 	}
 
@@ -281,7 +281,7 @@ public abstract class VirtualList extends Canvas
 	public void setImageList(ImageList list)
 	{
 		imageList = list;
-		repaint();
+		invalidate();
 	}
 
 	//! Return current image list, used for tree node icons

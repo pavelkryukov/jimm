@@ -139,6 +139,7 @@ public class TextList extends VirtualList
 	{
 		lines.removeAllElements();
 		setCurrentItem(0);
+		invalidate();
 	}
 
 	//! Add new text item to list
