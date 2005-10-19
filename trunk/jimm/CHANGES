@@ -230,4 +230,4 @@ VERSION 0.4.2
   * BUGFIX: Requesting status message from users in DND and OCC state was not working
   * BUGFIX: Requesting status message with MIDP2, SIEMENS2 and MOTOROLA version without 
             files module was not working
-    
+  * Now you can see full contact information          
