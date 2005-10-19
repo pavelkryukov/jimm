@@ -40,6 +40,7 @@ import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.ContactList;
 import jimm.Options;
+import jimm.util.ResourceBundle;
 
 
 public class Util
@@ -727,5 +728,15 @@ public class Util
 	// #sijapp cond.end#
 
 
+	// Convert gender code to string
+	static public String genderToString(int gender)
+	{
+        switch (gender)
+		{
+        case 1: return ResourceBundle.getString("female");
+        case 2: return ResourceBundle.getString("male");
+        }
+        return new String();
+	}
 }
 

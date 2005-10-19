@@ -77,14 +77,17 @@ public class Text_RU extends ResourceBundle
 		resources.put("add_group",                   "Добавить группу");
 		resources.put("add_user",                    "Добавить контакт");
 		resources.put("add_to_list",                 "Добавить");
+		resources.put("addr",                        "Адрес");
 		resources.put("age",                         "Возраст");
 		resources.put("async",                       "Асинхронная передача");
 		resources.put("attention",                   "Внимание!"); 
 		resources.put("auth",				     	 "Авторизация");
 		resources.put("auto_connect",				 "Подключаться автоматически");
 		resources.put("beep",                        "Гудок");
+		resources.put("birth_day",                   "День рождения");
 		resources.put("black_on_white",              "Чёрная на белом");
 		resources.put("byte",                        "Байт");
+		resources.put("cell_phone",                  "Сотовый");
 		resources.put("chat",                        "Настройки чата");
 		resources.put("chat_small_font",             "Мелкий шрифт");
 		resources.put("city",                        "Город");
@@ -108,6 +111,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("description",                 "Описание");
 		resources.put("name_desc",                   "Имя файла и описание");
 		resources.put("user_menu",                   "Меню контакта");
+		resources.put("depart",                      "Отдел");
 		resources.put("disconnect",                  "Отключиться");
 		resources.put("disconnecting",               "Отключение");
 		resources.put("display_date",                "Дата на заставке");
@@ -115,6 +119,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("emotions",                    "Смайлы");
 		resources.put("error",                       "Ошибка");
 		resources.put("exit",                        "Выход");
+		resources.put("fax",                         "Факс");
 		resources.put("female",                      "Ж");
 		resources.put("filename",                    "Имя файла");
 		resources.put("filetransfer",                "Передача файла");
@@ -131,9 +136,12 @@ public class Text_RU extends ResourceBundle
 		resources.put("group_is_not_empty",          "Выбранная группа не пустая!\nПереместите все контакты в другие группы!");
 		resources.put("have_unread_mess",            "У Вас остались непрочитанные сообщения. Выйти из программы?");
 		resources.put("hide_offline",                "Скрывать отключившихся");
+		resources.put("home_page",                   "Д-я страничка");
+		resources.put("home_info",                   "Дом");
 		resources.put("info",                        "Информация");
 		resources.put("init_ft",                     "Инициализация...");
 		resources.put("insert_emotion",              "Смайлики");
+		resources.put("interests",                   "Интересы");
 		resources.put("kb",                          " КБ");
 		resources.put("kbs",                         "КБ/сек");
 		resources.put("keep_chat",                   "Хранить историю чата?");
@@ -159,7 +167,9 @@ public class Text_RU extends ResourceBundle
 		resources.put("lang_SR",                     "Српски");
 		resources.put("lang_UA", 					 "Украинский");
 		resources.put("lastname",                    "Фамилия");
+		resources.put("latest_ver",                  "Самая последняя доступная версия");
 		resources.put("loading",                     "Загрузка");
+		resources.put("main_info",                   "О пользователе");
 		resources.put("male",                        "M");
 		resources.put("me",                          "Я");
 		resources.put("menu",                        "Меню");
@@ -176,6 +186,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("no_not_empty_gr",             "Удаление не пустых групп не поддерживается");
 		resources.put("not_implemented",             "Функция не поддерживается");
 		resources.put("noreason",             		 "Причина не дана");
+		resources.put("notes",                       "Заметки");
 		resources.put("notice",                      "Уведомление");
 		resources.put("nr",				     		 "Номер");	
 		resources.put("once_a_session",              "Один раз за сессию");
@@ -191,8 +202,10 @@ public class Text_RU extends ResourceBundle
 		resources.put("options_other",               "Разное");
 		resources.put("options_signaling",           "Звук");
 		resources.put("password",                    "Пароль");
+		resources.put("phone",                       "Телефон");
 		resources.put("plength",                     "Длина оплачиваемого пакета в КБ");
 		resources.put("plsauthme",                   "Привет! Пожалуйста, авторизируй меня и разреши добавить тебя в контакт-лист");
+		resources.put("position",                    "Должность");
 		resources.put("prev",						 "Предыдущий");
 		resources.put("quote",                       "Цитировать");
 		resources.put("reason",						 "Причина");
@@ -225,6 +238,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("sort_by_name",                "По имени");
 		resources.put("sort_by_status",              "По статусу");
 		resources.put("speed",                       "Скорость");
+		resources.put("state",                       "Респ-ка/район/округ");
 		resources.put("status",                      "Статус");
 		resources.put("status_message",              "Статусное сообщение");
 		resources.put("status_away",                 "Отсутствую");
@@ -237,11 +251,12 @@ public class Text_RU extends ResourceBundle
 		resources.put("status_online",               "Онлайн");
 		resources.put("successful",                  "успешной");
 		resources.put("sysnotice",					 "Системное уведомление");
+		resources.put("title",                       "Название");
 		resources.put("traffic",                     "Трафик");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
 		resources.put("use_history",                 "Хранить историю");
-		resources.put("use_smiles",                  "Показывать смайлики");
+		resources.put("use_smiles",                  "Смайлики");
 		resources.put("user_add",                    "Добавить контакт");
 		resources.put("user_search",                 "Найти контакт");
 		resources.put("vibration",                   "Вибрация");
@@ -255,6 +270,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("whichgroup",				 	 "В какой группе?");
 		resources.put("white_on_black",              "Белая на чёрном");
 		resources.put("white_on_blue",               "Белая на синем");
+		resources.put("work_info",                   "Работа");
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Вас добавил: ");
 

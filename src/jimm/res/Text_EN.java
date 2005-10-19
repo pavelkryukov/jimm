@@ -77,14 +77,17 @@ public class Text_EN extends ResourceBundle
 		resources.put("add_group",                   "Add group");
 		resources.put("add_user",                    "Add User");
 		resources.put("add_to_list",                 "Add to list");
+		resources.put("addr",                        "Address");
 		resources.put("age",                         "Age");
 		resources.put("async",                       "Async");
 		resources.put("attention",                   "Attention!");
 		resources.put("auth",				     	 "Auth");
 		resources.put("auto_connect",				 "Auto connect on startup");
 		resources.put("beep",                        "Beep");
+		resources.put("birth_day",                   "Birthday");
 		resources.put("black_on_white",              "Black on white");
 		resources.put("byte",                        "Byte");
+		resources.put("cell_phone",                  "Cell Tel."); // ???
 		resources.put("chat",                        "Chat");
 		resources.put("chat_small_font",			 "Small font");
 		resources.put("city",                        "City");
@@ -108,6 +111,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("description",                 "Description");
 		resources.put("name_desc",                   "File name and description");
 		resources.put("user_menu",                   "User Menu");
+		resources.put("depart",                      "Department");
 		resources.put("disconnect",                  "Disconnect");
 		resources.put("disconnecting",               "Disconnecting");
 		resources.put("display_date",                "Display date on splash screen?");
@@ -115,6 +119,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("emotions",                    "Emotions");
 		resources.put("error",                       "Error");
 		resources.put("exit",                        "Exit");
+		resources.put("fax",                         "Fax");
 		resources.put("female",                      "F");
 		resources.put("female_male",                 "F/M");
 		resources.put("filename",                    "File Name");
@@ -132,9 +137,12 @@ public class Text_EN extends ResourceBundle
 		resources.put("group_is_not_empty",          "Selected group is not empty!\nMove all users to other groups!");
 		resources.put("have_unread_mess",            "You have unread messages. Exit anyway?");
 		resources.put("hide_offline",                "Hide offline contacts");
+		resources.put("home_page",                   "Home page");
+		resources.put("home_info",                   "Home");
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initializing");
 		resources.put("insert_emotion",              "Insert emotion");
+		resources.put("interests",                   "Interests");
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Keep chat history?");
@@ -162,6 +170,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("lastname",                    "Last name");
         resources.put("latest_ver",                   "Latest version available");
 		resources.put("loading",                     "Loading");
+		resources.put("main_info",                   "About user");
 		resources.put("male",                        "M");
 		resources.put("me",                          "me");
 		resources.put("menu",                        "Menu");
@@ -178,6 +187,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("no_not_empty_gr",             "Removing of not empty groups not supported yet");
 		resources.put("not_implemented",             "Function not yet implemented.");
 		resources.put("noreason",             		 "No reason was given.");
+		resources.put("notes",                       "Notes");
 		resources.put("notice",                      "Notice");
 		resources.put("nr",				     		 "Nr");
 		resources.put("once_a_session",              "Once a session");
@@ -193,8 +203,10 @@ public class Text_EN extends ResourceBundle
 		resources.put("options_other",               "Other");
 		resources.put("options_signaling",           "Signaling");
 		resources.put("password",                    "Password");
+		resources.put("phone",                       "Tel.");
 		resources.put("plength",                     "Length of charge packet in kB");
 		resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
+		resources.put("position",                    "Position");
 		resources.put("prev",						 "Previous");
 		resources.put("quote",                       "Quote");                        
 		resources.put("reason",						 "Reason");
@@ -229,6 +241,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("sort_by_name",                "By name");
 		resources.put("sort_by_status",              "By status");
 		resources.put("speed",                       "Speed");
+		resources.put("state",                       "State");
 		resources.put("status",                      "Status");
 		resources.put("status_message",              "Status message");
 		resources.put("status_away",                 "Away");
@@ -241,6 +254,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("status_online",               "Online");
 		resources.put("successful",                  "successful");
 		resources.put("sysnotice",					 "System Notice");
+		resources.put("title",                       "Title");
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
@@ -259,6 +273,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("whichgroup",				 	 "Which group?");
 		resources.put("white_on_black",              "White on black");
 		resources.put("white_on_blue",               "White on blue");
+		resources.put("work_info",                   "Work");
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
 

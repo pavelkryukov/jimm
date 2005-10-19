@@ -537,44 +537,49 @@ public abstract class VirtualList extends Canvas
 	// private int drawItems(Graphics g, int top_y)
 	private int drawItems(Graphics g, int top_y, int fontHeight)
 	{
-		int grCursorY1 = -1, grCursorY2 = -1, lastY; 
+		int grCursorY1 = -1, grCursorY2 = -1; 
 		int height = getHeight();
 		int size = getSize();
-		int y = top_y;
+		int i, y;
 		int itemWidth = getWidth()-scrollerWidth;
 		
 		// Fill background
 		g.setColor(bkgrndColor);
 		g.fillRect(0, top_y, itemWidth, height-top_y);
 		
-		// Draw items
-		for (int i = topItem; i < size; i++)
+		// Draw cursor
+		y = top_y;
+		for (i = topItem; i < size; i++)
 		{
 			int itemHeight = getItemHeight(i);
-			lastY = y;
-			g.setStrokeStyle(Graphics.SOLID);
-			y = drawItem(i, g, y, itemWidth, itemHeight, fontHeight);
-			
 			if (isItemSelected(i))
 			{
-				if (grCursorY1 == -1) grCursorY1 = lastY;
-				grCursorY2 = y-1; 
+				if (grCursorY1 == -1) grCursorY1 = y;
+				grCursorY2 = y+itemHeight-1; 
 			}
-			
+			y += itemHeight;
 			if (y >= height) break;
 		}
-
-		// Draw cursor
+		
 		if (grCursorY1 != -1)
 		{
 			g.setStrokeStyle(Graphics.DOTTED);
 			g.setColor(cursorColor);
-			
 			boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem-1) : false;  
-			if (!isCursorUpper) g.drawLine(0, grCursorY1, itemWidth-1, grCursorY1);
-			g.drawLine(0, grCursorY1, 0, grCursorY2);
-			g.drawLine(itemWidth-1, grCursorY1, itemWidth-1, grCursorY2);
-			g.drawLine(0, grCursorY2, itemWidth-1, grCursorY2);
+			if (!isCursorUpper) g.drawLine(1, grCursorY1, itemWidth-2, grCursorY1);
+			g.drawLine(0, grCursorY1+1, 0, grCursorY2-1);
+			g.drawLine(itemWidth-1, grCursorY1+1, itemWidth-1, grCursorY2-1);
+			g.drawLine(1, grCursorY2, itemWidth-2, grCursorY2);
+		}
+		
+		// Draw items
+		y = top_y;
+		for (i = topItem; i < size; i++)
+		{
+			int itemHeight = getItemHeight(i);
+			g.setStrokeStyle(Graphics.SOLID);
+			y = drawItem(i, g, y, itemWidth, itemHeight, fontHeight);
+			if (y >= height) break;
 		}
 
 		return y;

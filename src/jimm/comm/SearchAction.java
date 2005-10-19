@@ -284,13 +284,7 @@ public class SearchAction extends Action
                         marker += 2;
                         
                         // Get gender
-                        String gender;
-                        switch (Util.getByte(data,marker)){
-                        case 0: gender = ""; break;
-                        case 1: gender = ResourceBundle.getString("female"); break;
-                        case 2: gender = ResourceBundle.getString("male"); break;
-                        default: gender = "";
-                        }
+                        String gender = Util.genderToString( Util.getByte(data,marker) );
                         marker += 1;
                         
                         // Get age
