@@ -32,11 +32,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 import java.util.TimeZone;
-import java.lang.*;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
-import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.ContactList;
 import jimm.Options;
@@ -291,7 +289,7 @@ public class Util
 		// CP1251 or default character encoding?
 		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CP1251_HACK))
 		{
-			return (Encoding.byteArray1251ToString(buf, off, len));
+			return (byteArray1251ToString(buf, off, len));
 		}
 		else
 		{
@@ -345,7 +343,7 @@ public class Util
 		// CP1251 or default character encoding?
 		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CP1251_HACK))
 		{
-			return (Encoding.stringToByteArray1251(val));
+			return (stringToByteArray1251(val));
 		}
 		else
 		{
@@ -738,5 +736,65 @@ public class Util
         }
         return new String();
 	}
+	
+	// Converts an Unicode string into CP1251 byte array
+	public static byte[] stringToByteArray1251(String s)
+	{
+		byte abyte0[] = s.getBytes();
+		for(int i = 0; i < s.length(); i++)
+		{
+			char c = s.charAt(i);
+			switch(c)
+			{
+				case 1025:
+					abyte0[i] = -88;
+					break;
+				case 1105:
+					abyte0[i] = -72;
+					break;
+				default:
+					char c1 = c;
+					if(c1 >= '\u0410' && c1 <= '\u044F')
+					{
+						abyte0[i] = (byte)((c1 - 1040) + 192);
+					}
+					break;
+			}
+		}
+		return abyte0;
+	}
+
+
+	// Converts an CP1251 byte array into an Unicode string
+	public static String byteArray1251ToString(byte abyte0[], int i, int j)
+	{
+		String s = new String(abyte0, i, j);
+		StringBuffer stringbuffer = new StringBuffer(j);
+		for(int k = 0; k < j; k++)
+		{
+			int l = abyte0[k + i] & 0xff;
+			switch(l)
+			{
+			case 168:
+				stringbuffer.append('\u0401');
+				break;
+			case 184:
+				stringbuffer.append('\u0451');
+				break;
+			default:
+				if(l >= 192 && l <= 255)
+				{
+					stringbuffer.append((char)((1040 + l) - 192));
+				}
+				else
+				{
+					stringbuffer.append(s.charAt(k));
+				}
+				break;
+			}
+		}
+		return stringbuffer.toString();
+	}
+
 }
 
