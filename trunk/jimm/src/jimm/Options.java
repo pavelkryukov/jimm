@@ -587,14 +587,19 @@ public class Options
                 this.colorScheme.append(ResourceBundle.getString("white_on_blue"), null);
                 this.colorScheme.setSelectedIndex(Options.this.getIntOption(Options.OPTION_COLOR_SCHEME), true);
                 
+                int idx1 = 0;
                 this.chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"), Choice.MULTIPLE);
                 this.chrgChat.append(ResourceBundle.getString("chat_small_font"), null);
-                this.chrgChat.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT));
+                this.chrgChat.setSelectedIndex(idx1++, Options.this.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT));
+                
+                //#sijapp cond.if modules_SMILES is "true" #
                 this.chrgChat.append(ResourceBundle.getString("use_smiles"), null);
-                this.chrgChat.setSelectedIndex(1, Options.this.getBooleanOption(Options.OPTION_USE_SMILES));
+                this.chrgChat.setSelectedIndex(idx1++, Options.this.getBooleanOption(Options.OPTION_USE_SMILES));
+                // #sijapp cond.end#
+                
 				//#sijapp cond.if modules_HISTORY is "true" #                
                 this.chrgChat.append(ResourceBundle.getString("use_history"), null);
-                this.chrgChat.setSelectedIndex(2, Options.this.getBooleanOption(Options.OPTION_HISTORY));
+                this.chrgChat.setSelectedIndex(idx1++, Options.this.getBooleanOption(Options.OPTION_HISTORY));
                 //#sijapp cond.end#
                 
 				// #sijapp cond.if target is "MOTOROLA"#
@@ -825,10 +830,15 @@ public class Options
 						Options.this.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,this.clHideOfflineChoiceGroup.isSelected(0));
 						Options.this.setBooleanOption(Options.OPTION_CP1251_HACK,this.cp1251HackChoiceGroup.isSelected(0));
 						
-						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.chrgChat.isSelected(0));
-						Options.this.setBooleanOption(Options.OPTION_USE_SMILES,      this.chrgChat.isSelected(1));
+						int idx = 0;
+						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.chrgChat.isSelected(idx++));
+						
+						//#sijapp cond.if modules_SMILES is "true" #
+						Options.this.setBooleanOption(Options.OPTION_USE_SMILES,      this.chrgChat.isSelected(idx++));
+						//#sijapp cond.end#
+						
 						//#sijapp cond.if modules_HISTORY is "true" #
-						Options.this.setBooleanOption(Options.OPTION_HISTORY,         this.chrgChat.isSelected(2));
+						Options.this.setBooleanOption(Options.OPTION_HISTORY,         this.chrgChat.isSelected(idx++));
 						//#sijapp cond.end#
 						
 						boolean newUseGroups = this.showUserGroups.isSelected(0);

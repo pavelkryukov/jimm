@@ -47,7 +47,7 @@ import jimm.comm.Util;
 class CachedRecord
 {
 	String shortText, text, date, from;
-	byte type; // 1 - incoming message, 0 - outgoing message
+	byte type; // 0 - incoming message, 1 - outgoing message
 }
 
 // Visual messages history list
@@ -168,7 +168,7 @@ class HistoryStorageList extends    VirtualList
 		else if (c == cmdClear)
 		{
 			Jimm.jimm.getHistory().clearHistory(currUin);
-			repaint();
+			invalidate();
 		}
 		
 		// Copy text from messages list
@@ -290,6 +290,7 @@ class HistoryStorageList extends    VirtualList
 		{
 			Jimm.jimm.getHistory().clear_all();
 			Jimm.display.setCurrent(this);
+			invalidate();
 		}
 		
 		// "Clear all?" -> NO
@@ -324,7 +325,13 @@ class HistoryStorageList extends    VirtualList
 		messText.clear();
 		messText.addBigText(record.date+":", messText.getTextColor(), Font.STYLE_BOLD, -1);
 		messText.doCRLF();
+		
+		//#sijapp cond.if modules_SMILES is "true" #
 		Jimm.jimm.getEmotionsRef().addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN, messText.getTextColor(), -1);
+		//#sijapp cond.else#
+		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
+		//#sijapp cond.end#
+		
 		messText.doCRLF();
 		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#

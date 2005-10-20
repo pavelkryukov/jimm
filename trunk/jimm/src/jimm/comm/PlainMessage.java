@@ -39,10 +39,10 @@ public class PlainMessage extends Message
 	// Constructs an incoming message
 	public PlainMessage(String sndrUin, String rcvrUin, Date date, String text, boolean offline)
 	{
-		this.sndrUin = new String(sndrUin);
-		this.rcvrUin = new String(rcvrUin);
+		this.sndrUin = sndrUin;
+		this.rcvrUin = rcvrUin;
 		this.date = new Date(date.getTime());
-		this.text = new String(text);
+		this.text = text;
 		this.offline = offline;
 	}
 
@@ -50,18 +50,18 @@ public class PlainMessage extends Message
 	// Constructs an outgoing message
 	public PlainMessage(String sndrUin, ContactListContactItem rcvr, int _messageType, Date date, String text)
 	{
-		this.sndrUin = new String(sndrUin);
+		this.sndrUin = sndrUin;
 		this.rcvr = rcvr;
         this.messageType = _messageType;
 		this.date = new Date(date.getTime());
-		this.text = new String(text);
+		this.text = text;
 	}
 
 
 	// Returns the message text
 	public String getText()
 	{
-		return (new String(this.text));
+		return this.text;
 	}
 
 
