@@ -110,12 +110,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="util/jarsizetask" location="${util}/jarsizetask" />
 	<property name="util/jarsizetask/lib" location="${util/jarsizetask}/dist/lib/jarsizetask.jar" />
 	
-	<!--  Internal target: jarsizetask  -->
-	<target name="jarsizetask">
-		<ant dir="${util/jarsizetask}" inheritAll="false" />
-		<taskdef name="jarsize" classname="JarSizeTask" classpath="${util/jarsizetask/lib}" />
-	</target>
-	
 	<!--  Auxiliary property   -->
 	<property name="3ns" value="###" />
 
