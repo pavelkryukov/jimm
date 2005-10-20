@@ -97,7 +97,9 @@ public class Jimm extends MIDlet
 	private HistoryStorage history;
 	// #sijapp cond.end#
 
+	//#sijapp cond.if modules_SMILES is "true" #
 	private Emotions emotions;
+	// #sijapp cond.end#
 	
 	private JimmUI ui;
 
@@ -194,7 +196,9 @@ public class Jimm extends MIDlet
 		this.sc.setProgress(90);
 		
 		// Create and load emotion icons
+		//#sijapp cond.if modules_SMILES is "true" #
 		emotions = new Emotions();
+		// #sijapp cond.end#
 		
 		ui = new JimmUI();
 		
@@ -296,10 +300,12 @@ public class Jimm extends MIDlet
 	}
 	// #sijapp cond.end#
 	
+	//#sijapp cond.if modules_SMILES is "true" #
 	public Emotions getEmotionsRef()
 	{
 		return emotions;
 	}
+	// #sijapp cond.end#
 	
 	public JimmUI getUIRef()
 	{

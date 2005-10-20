@@ -109,7 +109,13 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="util/sijapp/lib" location="${util/sijapp}/dist/lib/sijapp.jar" />
 	<property name="util/jarsizetask" location="${util}/jarsizetask" />
 	<property name="util/jarsizetask/lib" location="${util/jarsizetask}/dist/lib/jarsizetask.jar" />
-
+	
+	<!--  Internal target: jarsizetask  -->
+	<target name="jarsizetask">
+		<ant dir="${util/jarsizetask}" inheritAll="false" />
+		<taskdef name="jarsize" classname="JarSizeTask" classpath="${util/jarsizetask/lib}" />
+	</target>
+	
 	<!--  Auxiliary property   -->
 	<property name="3ns" value="###" />
 
@@ -179,7 +185,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</condition>
 	</target>
 
-
 	<!--  Internal target: sijapp   -->
 	<target name="sijapp">
 		<ant dir="${util/sijapp}" inheritAll="false" />
@@ -200,6 +205,35 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="modules/FILES" value="true">
 			<contains string="${modules}" substring="FILES" />
 		</condition>
+
+		<condition property="modules/SMILES" value="true">
+			<contains string="${modules}" substring="SMILES" />
+		</condition>
+
+		<condition property="modules/SMILES" value="true">
+			<contains string="${modules}" substring="SMILES" />
+		</condition>
+
+		<condition property="smiles_dir" value="res/SMILES_BIG">
+			<and>
+				<contains string="SIEMENS2,MIDP2,MOTOROLA" substring="${target}" />
+				<istrue value="${modules/SMILES}" />
+			</and>
+		</condition>
+		
+		<condition property="smiles_dir" value="res/SMILES_SMALL">
+			<and>
+				<contains string="DEFAULT,SIEMENS,RIM" substring="${target}" />
+				<istrue value="${modules/SMILES}" />
+			</and>
+		</condition>
+
+		<condition property="smiles_dir" value="res/SMILES_NO">
+			<not>
+				<contains string="${modules}" substring="SMILES" />
+			</not>
+		</condition>
+		
 		<condition property="lang/EN" value="true">
 			<contains string="${lang}" substring="EN" />
 		</condition>
@@ -249,6 +283,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="modules_DEBUGLOG" value="${modules/DEBUGLOG}" />
 			<define name="modules_HISTORY" value="${modules/HISTORY}" />
 			<define name="modules_FILES" value="${modules/FILES}" />
+			<define name="modules_SMILES" value="${modules/SMILES}" />
 			<define name="lang_EN" value="${lang/EN}" />
 			<define name="lang_BG" value="${lang/BG}" />
 			<define name="lang_BR" value="${lang/BR}" />
@@ -276,13 +311,13 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Internal target: compile   -->
 	<target name="compile" depends="preprocess-source">
 		<mkdir dir="${build}/compile/classes" />
-		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.2" source="1.2" debug="off" />
+		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" debug="off" />
 	</target>
 	
 	<!--  Internal target: obfuscate -->
 	<target name="obfuscate" depends="compile" unless="skip-obfuscate">
 		<mkdir dir="${build}/obfuscate/classes" />
-		<proguard note="off" defaultpackage="" usemixedcaseclassnames="off" overloadaggressively="off">
+		<proguard note="off" defaultpackage="" usemixedcaseclassnames="off" overloadaggressively="on">
 			<injar name="${build}/compile/classes" />
 			<outjar name="${build}/obfuscate/classes" />
 			<keep access="public" type="class" extends="javax.microedition.midlet.MIDlet" />
@@ -329,10 +364,10 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<fileset dir="${res}" includes="*" excludes="MANIFEST.MF" />
 		</copy>
 		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false">
-			<fileset dir="${res/target}">
-		    	<exclude name="lib/*.jar" />
-			</fileset>
-				
+			<fileset dir="${res/target}" />
+		</copy>
+		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false">
+			<fileset dir="${smiles_dir}" />
 		</copy>
 	</target>
 	

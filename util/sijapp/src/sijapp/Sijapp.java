@@ -38,6 +38,8 @@ public class Sijapp {
 
   // Java source file extension
   public static String JAVASRC_EXT = ".java";
+  
+  public static String LANG_EXT = ".lang";
 
 
   /****************************************************************************/
@@ -72,7 +74,10 @@ public class Sijapp {
     // Get all Java source file in the current directory
     File[] files = (new File(srcDir, srcDirExt)).listFiles();
     for (int i = 0; i < files.length; i++) {
-      if (files[i].isFile() && files[i].getName().endsWith(Sijapp.JAVASRC_EXT)) {
+      if (files[i].isFile() && 
+          (files[i].getName().endsWith(Sijapp.JAVASRC_EXT) || files[i].getName().endsWith(Sijapp.LANG_EXT)) )
+      
+      {
         filenames.add(srcDirExt + File.separator + files[i].getName());
       }
       else if (files[i].isDirectory()) {

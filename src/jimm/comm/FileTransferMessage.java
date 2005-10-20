@@ -43,7 +43,7 @@ public class FileTransferMessage extends Message
     // Constructs an outgoing message
     public FileTransferMessage(String sndrUin, ContactListContactItem _rcvr, int _messageType, String _filename, String _description, byte[] _file)
     {
-        this.sndrUin = new String(sndrUin);
+        this.sndrUin = sndrUin;
         this.rcvr = _rcvr;
         this.messageType = _messageType;
         this.filename = _filename;

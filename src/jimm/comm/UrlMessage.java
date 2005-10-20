@@ -45,37 +45,37 @@ public class UrlMessage extends Message
 	// Constructs an incoming message
 	public UrlMessage(String sndrUin, String rcvrUin, Date date, String url, String text)
 	{
-		this.sndrUin = new String(sndrUin);
-		this.rcvrUin = new String(rcvrUin);
+		this.sndrUin = sndrUin;
+		this.rcvrUin = rcvrUin;
 		this.date = new Date(date.getTime());
-		this.url = new String(url);
-		this.text = new String(text);
+		this.url = url;
+		this.text = text;
 	}
 
 
 	// Constructs an outgoing message
 	public UrlMessage(String sndrUin, ContactListContactItem rcvr, int _messageType, Date date, String url, String text)
 	{
-		this.sndrUin = new String(sndrUin);
+		this.sndrUin = sndrUin;
 		this.rcvr = rcvr;
         this.messageType = _messageType;
 		this.date = new Date(date.getTime());
-		this.url = new String(url);
-		this.text = new String(text);
+		this.url = url;
+		this.text = text;
 	}
 
 
 	// Returns the URL
 	public String getUrl()
 	{
-		return (new String(this.url));
+		return this.url;
 	}
 
 
 	// Returns the message text
   	public String getText()
 	{
-		return (new String(this.text));
+		return this.text;
 	}
 
 

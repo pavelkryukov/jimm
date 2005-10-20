@@ -508,7 +508,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		messageTextbox.removeCommand(renameOkCommand);
 		messageTextbox.removeCommand(textboxOkCommand);
 		messageTextbox.removeCommand(textboxSendCommand);
+		//#sijapp cond.if modules_SMILES is "true" #
 		messageTextbox.removeCommand(insertEmotionCommand);
+		// #sijapp cond.end#
 	}
 
 	/** ************************************************************************* */
@@ -536,7 +538,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Display textbox for entering messages
 			messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
 			clearMessBoxCommands();
+			//#sijapp cond.if modules_SMILES is "true" #
 			messageTextbox.addCommand(insertEmotionCommand);
+			// #sijapp cond.end#
 			messageTextbox.addCommand(textboxSendCommand);
 			messageTextbox.setCommandListener(this);
 			Jimm.display.setCurrent(messageTextbox);
@@ -1050,7 +1054,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				Jimm.display.setCurrent(reasonTextbox);
 			}
 			
-			// User wants to insert emotion in text 
+			// User wants to insert emotion in text
+			//#sijapp cond.if modules_SMILES is "true" # 
 			else if (c == insertEmotionCommand)
 			{
 				Jimm.jimm.getEmotionsRef().selectEmotion(this, messageTextbox);
@@ -1073,6 +1078,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					insertPos
 				);
 			}
+			// #sijapp cond.end#
 			
 			else if (c ==  InfoThread.cmdCancelTopText) disableTopString();
 		}
@@ -1245,7 +1251,10 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	private static Command reqAuthCommand = new Command(ResourceBundle.getString("requauth"), Command.ITEM, 1);
 
 	// Insert imotion (smile) in text
+	
+	//#sijapp cond.if modules_SMILES is "true" #
 	private static Command insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.ITEM, 3);
+	// #sijapp cond.end#
     
     // Rename a contact
     private static Command renameOkCommand;

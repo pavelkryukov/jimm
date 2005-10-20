@@ -23,6 +23,8 @@
 
 package jimm;
 
+//#sijapp cond.if modules_SMILES is "true" #
+
 import java.util.Vector;
 import javax.microedition.lcdui.*;
 
@@ -403,3 +405,5 @@ public class Emotions implements VirtualListCommands, CommandListener
 		}
 	}
 }
+
+//#sijapp cond.end#

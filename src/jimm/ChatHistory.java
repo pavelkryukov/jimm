@@ -230,8 +230,13 @@ public class ChatHistory
 			);
 		}
 		
+		//#sijapp cond.if modules_SMILES is "true" #
 		Jimm.jimm.getEmotionsRef().addTextWithEmotions(msgDisplay, message, Font.STYLE_PLAIN, msgDisplay.getTextColor(), messTotalCounter);
+		//#sijapp cond.else#
+		msgDisplay.addBigText(message, msgDisplay.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
+		//#sijapp cond.end#
 		msgDisplay.doCRLF();
+		
 		
 		msgDisplay.setTopItem(lastSize);		
 		msgDisplay.unlock();
