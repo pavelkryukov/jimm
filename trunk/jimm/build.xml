@@ -72,7 +72,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--      TRAFFIC - module for traffic calculation                          -->
 	<!--      HISTORY - module for storing history of text messages             -->
 	<!--      FILES   - module for transferring files                           -->
-	<property name="modules"           value="TRAFFIC, HISTORY, FILES"           />
+	<!--      SMILES  - module for using emotions int messages text             --> 
+	<property name="modules"           value="SMILES,TRAFFIC,HISTORY,FILES" />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of languages packs which         -->
 	<!--  should be included in the build. Currently, the distribution          -->
