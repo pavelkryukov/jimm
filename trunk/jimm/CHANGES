@@ -225,7 +225,7 @@ VERSION 0.4.1
 
 ________________________________________________________________________________
 VERSION 0.4.2
-
+  * NEW FEATURE: it is possible to check is contact in offline or in invisible status
   * BUGFIX: Corrected wrong coding for offline messages
   * BUGFIX: Requesting status message from users in DND and OCC state was not working
   * BUGFIX: Requesting status message with MIDP2, SIEMENS2 and MOTOROLA version without 
