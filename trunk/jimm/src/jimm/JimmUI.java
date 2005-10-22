@@ -126,13 +126,12 @@ public class JimmUI implements CommandListener
 	private static TextList aboutTextList;
     
     // String for recent version
-    public String version = "";
+    public String version = new String();
     
 	public void about(Displayable lastDisplayable_)
 	{
 		final int 
-			textColor = Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT),
-			blueColor = Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE);
+			textColor = Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT);
 	
 		lastDisplayable = lastDisplayable_;
 		clearAll();
@@ -152,7 +151,7 @@ public class JimmUI implements CommandListener
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
 		   .append(Runtime.getRuntime().freeMemory()/1024).append("kb\n\n")
-           .append(ResourceBundle.getString("latest_ver")+": "+version);
+           .append(ResourceBundle.getString("latest_ver")).append("...");
 		
 		try
 		{
@@ -170,11 +169,7 @@ public class JimmUI implements CommandListener
 		}
 		catch (Exception e) {}
         
-        if (version.length() == 0) 
-        {
-            GetVersionInfoTimerTask gvtt = new GetVersionInfoTimerTask();
-            Jimm.jimm.getTimerRef().schedule(gvtt,2000);
-        }
+        Jimm.jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
 	}
     	
 	public void commandAction(Command c, Displayable d)
@@ -251,15 +246,6 @@ public class JimmUI implements CommandListener
         DataInputStream istemp;
         byte[] version;
 
-        // Constructor
-        public GetVersionInfoTimerTask()
-        {
-            // Try to get current Jimm version from Jimm server
-            ContentConnection ctemp = null;
-            DataInputStream istemp = null;
-            byte[] version = new byte[0];
-        }
-
         // Timer routine
         public void run()
         {
@@ -275,13 +261,17 @@ public class JimmUI implements CommandListener
             {
                 version = new String(ResourceBundle.getString("no_recent_ver")).getBytes();
             }
-            Jimm.jimm.getUIRef().version = new String(this.version);
             
-            if (Jimm.display.getCurrent().equals(JimmUI.aboutTextList))
+            if (aboutTextList != null)
             {
-                Jimm.jimm.getUIRef().about(JimmUI.lastDisplayable);
+            	aboutTextList.addBigText
+            	(
+            		new String(this.version), 
+            		aboutTextList.getTextColor(), 
+            		Font.STYLE_BOLD, 
+            		-1
+            	);
             }
-            Jimm.jimm.getTimerRef().cancel();
         }
 
     }
