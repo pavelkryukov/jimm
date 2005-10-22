@@ -500,6 +500,7 @@ public class TextList extends VirtualList
 	)
 	{
 		addBigTextInternal(text, color, fontStyle, textIndex, getTrueWidth());
+		invalidate();
 		return this;
 	}
 	
