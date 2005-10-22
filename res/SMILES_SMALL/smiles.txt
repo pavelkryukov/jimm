@@ -10,7 +10,7 @@
 8 Stop *STOP*
 9 In_love *IN_LOVE*
 10 Angry >:o >:(
-11 Green :-! :)
+11 Green :-!
 12 Drink *DRINK*
 13 Suspirious :-\
 14 Tired *TIRED*
