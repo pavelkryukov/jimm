@@ -199,7 +199,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 				images.elementAt(minArray[2]),
 				text.substring(minIndex, minIndex+minArray[1]),
 				images.getWidth(),
-				images.getHeight()
+				images.getHeight(),
+				bigTextIndex
 			);
 			
 			startIndex = minIndex+minArray[1];
@@ -299,12 +300,10 @@ public class Emotions implements VirtualListCommands, CommandListener
 			setVLCommands(this);
 			
 			int drawWidth = getWidth()-scrollerWidth-2;
-			int drawHeight = getDrawHeight();
 			
 			setCursorMode(SEL_NONE);
 			
 			int imgHeight = images.getHeight();
-			int imgWidth = images.getWidth();
 			
 			itemHeight = imgHeight+5;
 			
