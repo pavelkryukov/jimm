@@ -169,7 +169,7 @@ public class JimmUI implements CommandListener
 		{
 			Image image = Image.createImage("/icon.png");
 			aboutTextList
-				.addImage(image, null, image.getWidth(), image.getHeight())
+				.addImage(image, null, image.getWidth(), image.getHeight(), -1)
 				.addBigText(str.toString(), textColor, Font.STYLE_PLAIN, -1);
 		
 			aboutTextList.addCommand(cmdBack);

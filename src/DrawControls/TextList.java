@@ -348,10 +348,11 @@ public class TextList extends VirtualList
 		return this;
 	}
 	
-	public TextList addImage(Image image, String altarnateText, int imageWidth, int imageHeight)
+	public TextList addImage(Image image, String altarnateText, int imageWidth, int imageHeight, int blockTextIndex)
 	{
 		if (lines.isEmpty()) lines.addElement(new TextLine());
 		TextLine textLine = (TextLine) lines.lastElement();
+		textLine.bigTextIndex = blockTextIndex; 
 		
 		if ((textLine.getWidth(getFontSize())+imageWidth) > getTrueWidth())
 		{
@@ -401,10 +402,10 @@ public class TextList extends VirtualList
 		{
 			curChar = text.charAt(curPos);
 			wordEnd = (curChar == ' ');
-			lineBreak = (curChar == '\n') || (curChar == '\r'); // ???
+			lineBreak = (curChar == '\n') || (curChar == '\r');
 			textEnd = (curPos == (textLen - 1));
 			divideLineToWords = false;
-			if (textEnd) curPos++;
+			if (textEnd && (!lineBreak)) curPos++;
 			
 			if (lineBreak || textEnd || wordEnd)
 			{

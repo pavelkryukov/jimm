@@ -385,7 +385,8 @@ public class Search
 						ContactList.getImageList().elementAt(imgIndex),
 						null,
 						ContactList.getImageList().getWidth(),
-						ContactList.getImageList().getHeight()
+						ContactList.getImageList().getHeight(),
+						-1
 					)
 					.doCRLF();
                 screen.unlock();
