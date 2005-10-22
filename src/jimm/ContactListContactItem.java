@@ -1098,7 +1098,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Display chat history
 			if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
 			{
-				initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH));
+				initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH), this);
 				Displayable msgDisplay = getCurrDisplay();
                 msgDisplay.removeCommand(addUrsCommand);
 				msgDisplay.removeCommand(grantAuthCommand);
@@ -1139,7 +1139,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Display menu
 			else
 			{
-				initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH));
+				initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH), this);
                 menuList.setTitle(ContactListContactItem.this.name);
 				menuList.setSelectedIndex(0, true);
 				menuList.setCommandListener(this);
@@ -1259,7 +1259,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
     // Rename a contact
     private static Command renameOkCommand;
     
-	static void initList(boolean showAuthItem)
+	static void initList(boolean showAuthItem, ContactListContactItem item)
 	{
         // Size of the event list equals last entry number
         eventList = new int[USER_MENU_LAST_ITEM];
@@ -1280,14 +1280,20 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         if (showAuthItem)
             eventList[menuList.append(ResourceBundle.getString("requauth"), null)] = USER_MENU_REQU_AUTH;
         eventList[menuList.append(ResourceBundle.getString("reqstatmsg"), null)]   = USER_MENU_STATUS_MESSAGE;
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
-        eventList[menuList.append(ResourceBundle.getString("ft_name"), null)]      = USER_MENU_FILE_TRANS;
-        // #sijapp cond.if target isnot "MOTOROLA"#
-        eventList[menuList.append(ResourceBundle.getString("ft_cam"), null)]       = USER_MENU_CAM_TRANS;
+        // #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+        if (item.getICQVersion() >= 8)
+        {
+        	eventList[menuList.append(ResourceBundle.getString("ft_name"), null)]      = USER_MENU_FILE_TRANS;
+        	eventList[menuList.append(ResourceBundle.getString("ft_cam"), null)]       = USER_MENU_CAM_TRANS;
+        }
+        // #sijapp cond.end#
+        // #sijapp cond.if target is "MOTOROLA"#
+        if (item.getICQVersion() >= 8)
+        	eventList[menuList.append(ResourceBundle.getString("ft_name"), null)]      = USER_MENU_FILE_TRANS;
         // #sijapp cond.end#
         // #sijapp cond.end#
-        // #sijapp cond.end#
+        
         eventList[menuList.append(ResourceBundle.getString("remove"), null)]       = USER_MENU_USER_REMOVE;
         eventList[menuList.append(ResourceBundle.getString("remove_me"), null)]    = USER_MENU_REMOVE_ME;
         eventList[menuList.append(ResourceBundle.getString("rename"), null)]       = USER_MENU_RENAME;
