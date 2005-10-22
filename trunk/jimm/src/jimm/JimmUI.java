@@ -29,7 +29,10 @@ import javax.microedition.lcdui.*;
 
 import java.io.DataInputStream;
 import java.util.Hashtable;
+import java.util.TimerTask;
+
 import DrawControls.*;
+import jimm.comm.SearchAction;
 import jimm.util.ResourceBundle;
 
 public class JimmUI implements CommandListener
@@ -121,7 +124,10 @@ public class JimmUI implements CommandListener
 	
 	//////////////////////////////////////////////////////////////////////////////
 	private static TextList aboutTextList;
-	
+    
+    // String for recent version
+    public String version = "";
+    
 	public void about(Displayable lastDisplayable_)
 	{
 		final int 
@@ -141,29 +147,12 @@ public class JimmUI implements CommandListener
 		//#sijapp cond.else#
 		aboutTextList.setCaption(ResourceBundle.getString("about"));
 		//#sijapp cond.end#
-		
-        // Try to get current Jimm version from Jimm server
-        ContentConnection ctemp = null;
-        DataInputStream istemp = null;
-        byte[] version = new byte[0];
-        try
-        {
-            String url = "http://www.jimm.org/en/current_ver";
-            ctemp = (ContentConnection) Connector.open(url);
-
-            istemp = ctemp.openDataInputStream();
-            version = new byte[istemp.available()];
-            istemp.readFully(version);
-        } catch (Exception e)
-        {
-            // Do nothing
-        }
-        
+	    
 		StringBuffer str = new StringBuffer();
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
 		   .append(Runtime.getRuntime().freeMemory()/1024).append("kb\n\n")
-           .append(ResourceBundle.getString("latest_ver")+": "+new String(version));
+           .append(ResourceBundle.getString("latest_ver")+": "+version);
 		
 		try
 		{
@@ -180,9 +169,14 @@ public class JimmUI implements CommandListener
 			Jimm.display.setCurrent(aboutTextList);
 		}
 		catch (Exception e) {}
+        
+        if (version.length() == 0) 
+        {
+            GetVersionInfoTimerTask gvtt = new GetVersionInfoTimerTask();
+            Jimm.jimm.getTimerRef().schedule(gvtt,2000);
+        }
 	}
-	
-	
+    	
 	public void commandAction(Command c, Displayable d)
 	{
 		// "About" -> "Back"
@@ -242,5 +236,55 @@ public class JimmUI implements CommandListener
 		Jimm.jimm.getChatHistoryRef().setColorScheme();
 		setColorScheme((VirtualList)Jimm.jimm.getContactListRef().getVisibleContactListRef());
 	}
+    
+    /*****************************************************************************/
+    /*****************************************************************************/
+    /*****************************************************************************/
+
+
+    // Waits until contact listupdate is completed
+    public static class GetVersionInfoTimerTask extends TimerTask
+    {
+
+        // Try to get current Jimm version from Jimm server
+        ContentConnection ctemp;
+        DataInputStream istemp;
+        byte[] version;
+
+        // Constructor
+        public GetVersionInfoTimerTask()
+        {
+            // Try to get current Jimm version from Jimm server
+            ContentConnection ctemp = null;
+            DataInputStream istemp = null;
+            byte[] version = new byte[0];
+        }
+
+        // Timer routine
+        public void run()
+        {
+            try
+            {
+                String url = "http://www.jimm.org/en/current_ver";
+                ctemp = (ContentConnection) Connector.open(url);
+
+                istemp = ctemp.openDataInputStream();
+                version = new byte[istemp.available()];
+                istemp.readFully(version);
+            } catch (Exception e)
+            {
+                version = new String(ResourceBundle.getString("no_recent_ver")).getBytes();
+            }
+            Jimm.jimm.getUIRef().version = new String(this.version);
+            
+            if (Jimm.display.getCurrent().equals(JimmUI.aboutTextList))
+            {
+                Jimm.jimm.getUIRef().about(JimmUI.lastDisplayable);
+            }
+            Jimm.jimm.getTimerRef().cancel();
+        }
+
+    }
+
 	
 }
