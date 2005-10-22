@@ -143,6 +143,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("init_ft",                     "Initializing");
 		resources.put("insert_emotion",              "Insert emotion");
 		resources.put("interests",                   "Interests");
+		resources.put("invisible_check",             "Invisible?");
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Keep chat history?");

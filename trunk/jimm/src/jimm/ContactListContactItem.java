@@ -749,11 +749,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     StringBuffer buf = new StringBuffer();
                     final String clrf = "\n";
                     
-                    buf.append("DC typ: ")     .append(ContactListContactItem.this.getDCType())                     .append(clrf)
-					   .append("ICQ version: ").append(ContactListContactItem.this.getICQVersion())                 .append(clrf)
-					   .append("Int IP: ")     .append(Util.ipToString(ContactListContactItem.this.getInternalIP())).append(clrf)
-					   .append("Ext IP: ")     .append(Util.ipToString(ContactListContactItem.this.getExternalIP())).append(clrf)
-					   .append("Port: ")       .append(ContactListContactItem.this.getPort())                       .append(clrf);
+                    buf.append("DC typ: ")     .append(getDCType()).append(clrf)
+					   .append("ICQ version: ").append(getICQVersion()).append(clrf)
+					   .append("Int IP: ")     .append(getInternalIP()).append(clrf)
+					   .append("Ext IP: ")     .append(this.getExternalIP()).append(clrf)
+					   .append("Port: ")       .append(this.getPort()).append(clrf);
                     
                     info.setString(buf.toString());
                     info.setTimeout(Alert.FOREVER);
@@ -773,6 +773,19 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     reasonTextbox.setCommandListener(this);
                     Jimm.display.setCurrent(reasonTextbox);
                     break;
+                    
+                case USER_MENU_INVIS_CHECK:
+                	VisibilityCheckerAction act = new VisibilityCheckerAction(getUin(), getName());
+                	try
+                	{
+                		Jimm.jimm.getIcqRef().requestAction(act);
+                	}
+                	catch (JimmException e)
+                	{
+                		JimmException.handleException(e);
+                		if (e.isCritical()) return;
+                	}
+                	break;
                 }
             }
 			
@@ -1181,8 +1194,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
     // #sijapp cond.end#  
     private static final int USER_MENU_USER_INFO        = 12;
     private static final int USER_MENU_QUOTA            = 14;
+    private static final int USER_MENU_INVIS_CHECK      = 15;
     
-    private static final int USER_MENU_LAST_ITEM        = 15; // YOU NEED TO CHANGE IT!
+    private static final int USER_MENU_LAST_ITEM        = 16; // YOU NEED TO CHANGE IT!
 
     
 	// Menu list
@@ -1277,22 +1291,28 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         	eventList[menuList.append(ResourceBundle.getString("quote"), null)] = USER_MENU_QUOTA;
         
         eventList[menuList.append(ResourceBundle.getString("send_url"), null)]     = USER_MENU_URL;
+        
         if (showAuthItem)
             eventList[menuList.append(ResourceBundle.getString("requauth"), null)] = USER_MENU_REQU_AUTH;
-        eventList[menuList.append(ResourceBundle.getString("reqstatmsg"), null)]   = USER_MENU_STATUS_MESSAGE;
-        // #sijapp cond.if modules_FILES is "true"#
-        // #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
-        if (item.getICQVersion() >= 8)
+        
+        if (item.getStatus() == ContactList.STATUS_OFFLINE)
         {
-        	eventList[menuList.append(ResourceBundle.getString("ft_name"), null)]      = USER_MENU_FILE_TRANS;
-        	eventList[menuList.append(ResourceBundle.getString("ft_cam"), null)]       = USER_MENU_CAM_TRANS;
+        	eventList[menuList.append(ResourceBundle.getString("invisible_check"), null)] = USER_MENU_INVIS_CHECK;
         }
-        // #sijapp cond.end#
-        // #sijapp cond.if target is "MOTOROLA"#
-        if (item.getICQVersion() >= 8)
-        	eventList[menuList.append(ResourceBundle.getString("ft_name"), null)]      = USER_MENU_FILE_TRANS;
-        // #sijapp cond.end#
-        // #sijapp cond.end#
+        else
+        {
+       		eventList[menuList.append(ResourceBundle.getString("reqstatmsg"), null)] = USER_MENU_STATUS_MESSAGE;
+        }
+        
+        // #sijapp cond.if modules_FILES is "true"#
+		if (item.getICQVersion() >= 8)
+		{
+			eventList[menuList.append(ResourceBundle.getString("ft_name"), null)] = USER_MENU_FILE_TRANS;
+			// #sijapp cond.if target isnot "MOTOROLA"#
+			eventList[menuList.append(ResourceBundle.getString("ft_cam"), null)] = USER_MENU_CAM_TRANS;
+			// #sijapp cond.end#
+		}
+		// #sijapp cond.end#
         
         eventList[menuList.append(ResourceBundle.getString("remove"), null)]       = USER_MENU_USER_REMOVE;
         eventList[menuList.append(ResourceBundle.getString("remove_me"), null)]    = USER_MENU_REMOVE_ME;

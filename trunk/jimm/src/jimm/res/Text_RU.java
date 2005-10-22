@@ -142,6 +142,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("init_ft",                     "Инициализация...");
 		resources.put("insert_emotion",              "Смайлики");
 		resources.put("interests",                   "Интересы");
+		resources.put("invisible_check",             "Невидимый?");
 		resources.put("kb",                          " КБ");
 		resources.put("kbs",                         "КБ/сек");
 		resources.put("keep_chat",                   "Хранить историю чата?");
