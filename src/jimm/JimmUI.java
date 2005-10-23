@@ -32,7 +32,6 @@ import java.util.Hashtable;
 import java.util.TimerTask;
 
 import DrawControls.*;
-import jimm.comm.SearchAction;
 import jimm.util.ResourceBundle;
 
 public class JimmUI implements CommandListener
@@ -55,6 +54,7 @@ public class JimmUI implements CommandListener
 
 	static private Hashtable commands = new Hashtable();
 	static private Displayable lastDisplayable;
+	static private JimmUI jimmUIobj;
 	
 	// Associate commands and commands codes 
 	static 
@@ -65,6 +65,11 @@ public class JimmUI implements CommandListener
 		commands.put(cmdNo,     new Integer(CMD_NO)    );
 		commands.put(cmdFind,   new Integer(CMD_FIND)  );
 		commands.put(cmdBack,   new Integer(CMD_BACK)  );
+	}
+	
+	JimmUI()
+	{
+		jimmUIobj = this;
 	}
 	
 	// Returns commands index of command
@@ -126,32 +131,38 @@ public class JimmUI implements CommandListener
 	private static TextList aboutTextList;
     
     // String for recent version
-    public String version = new String();
+    static private String version;
+    static private boolean versionLoaded = false;
     
-	public void about(Displayable lastDisplayable_)
+	static public void about(Displayable lastDisplayable_)
 	{
-		final int 
-			textColor = Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT);
+		final int textColor = Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT);
 	
-		lastDisplayable = lastDisplayable_;
-		clearAll();
+		if (lastDisplayable_ != null) lastDisplayable = lastDisplayable_;
+		if (aboutTextList == null) aboutTextList = new TextList(null);
 		
-		aboutTextList = new TextList(null);
+		aboutTextList.lock();
+		aboutTextList.clear();
 		aboutTextList.setCursorMode(TextList.SEL_NONE);
-		aboutTextList.setFontSize(Font.SIZE_SMALL);
+		setColorScheme(aboutTextList);
 		
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		aboutTextList.setTitle(ResourceBundle.getString("about"));
 		aboutTextList.setFullScreenMode(false);
+		aboutTextList.setFontSize(Font.SIZE_MEDIUM);
 		//#sijapp cond.else#
 		aboutTextList.setCaption(ResourceBundle.getString("about"));
+		aboutTextList.setFontSize(Font.SIZE_SMALL);
 		//#sijapp cond.end#
 	    
 		StringBuffer str = new StringBuffer();
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
 		   .append(Runtime.getRuntime().freeMemory()/1024).append("kb\n\n")
-           .append(ResourceBundle.getString("latest_ver")).append("...");
+           .append(ResourceBundle.getString("latest_ver"));
+		
+		if (versionLoaded) str.append(" ").append(version);
+		else str.append("... ");
 		
 		try
 		{
@@ -161,15 +172,16 @@ public class JimmUI implements CommandListener
 				.addBigText(str.toString(), textColor, Font.STYLE_PLAIN, -1);
 		
 			aboutTextList.addCommand(cmdBack);
-			aboutTextList.setCommandListener(this);
+			aboutTextList.setCommandListener(jimmUIobj);
            
             // Set the color sceme (background would not fit otherwise)
-            setColorScheme(aboutTextList);
 			Jimm.display.setCurrent(aboutTextList);
 		}
 		catch (Exception e) {}
+		
+		aboutTextList.unlock();
         
-        Jimm.jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
+		if (!versionLoaded) Jimm.jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
 	}
     	
 	public void commandAction(Command c, Displayable d)
@@ -177,7 +189,11 @@ public class JimmUI implements CommandListener
 		// "About" -> "Back"
 		if ((d == aboutTextList) && (c == cmdBack))
 		{
-			Jimm.display.setCurrent(lastDisplayable);
+			synchronized(jimmUIobj)
+			{
+				Jimm.display.setCurrent(lastDisplayable);
+				aboutTextList = null;
+			}
 		}
 	}
 	
@@ -244,7 +260,7 @@ public class JimmUI implements CommandListener
         // Try to get current Jimm version from Jimm server
         ContentConnection ctemp;
         DataInputStream istemp;
-        byte[] version;
+        byte[] version_;
 
         // Timer routine
         public void run()
@@ -255,22 +271,27 @@ public class JimmUI implements CommandListener
                 ctemp = (ContentConnection) Connector.open(url);
 
                 istemp = ctemp.openDataInputStream();
-                version = new byte[istemp.available()];
-                istemp.readFully(version);
+                version_ = new byte[istemp.available()];
+                istemp.readFully(version_);
+                version = new String(version_);
+                versionLoaded = true;
             } catch (Exception e)
             {
-                version = new String(ResourceBundle.getString("no_recent_ver")).getBytes();
+                version = ResourceBundle.getString("no_recent_ver");
             }
             
-            if (aboutTextList != null)
+            synchronized(jimmUIobj)
             {
-            	aboutTextList.addBigText
-            	(
-            		new String(this.version), 
-            		aboutTextList.getTextColor(), 
-            		Font.STYLE_BOLD, 
-            		-1
-            	);
+            	if ((aboutTextList != null) && aboutTextList.isShown())
+            	{
+            		aboutTextList.addBigText
+            		(
+            			version,
+            			aboutTextList.getTextColor(),
+            			Font.STYLE_PLAIN,
+            			-1
+            		);
+            	}
             }
         }
 
