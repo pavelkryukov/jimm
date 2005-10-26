@@ -82,7 +82,7 @@ public class DebugLog
 		{
     		list.addBigText("[" + Integer.toString(counter+1) + "]: ", 0xFF, Font.STYLE_PLAIN, counter);
     		list.addBigText(text, 0, Font.STYLE_PLAIN, counter);
-    		list.doCRLF();
+    		list.doCRLF(counter);
     		counter++;
 		}
     }

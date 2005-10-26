@@ -324,7 +324,7 @@ class HistoryStorageList extends    VirtualList
 		
 		messText.clear();
 		messText.addBigText(record.date+":", messText.getTextColor(), Font.STYLE_BOLD, -1);
-		messText.doCRLF();
+		messText.doCRLF(-1);
 		
 		//#sijapp cond.if modules_SMILES is "true" #
 		Jimm.jimm.getEmotionsRef().addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN, messText.getTextColor(), -1);
@@ -332,7 +332,7 @@ class HistoryStorageList extends    VirtualList
 		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
 		//#sijapp cond.end#
 		
-		messText.doCRLF();
+		messText.doCRLF(-1);
 		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		messText.setTitle(record.from);
