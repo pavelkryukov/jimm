@@ -312,9 +312,9 @@ public class Search
         	if (text.trim().length() == 0) return;
         	String name = ResourceBundle.getString(resName)+": ";
         	screen.addBigText(name, textColor, Font.STYLE_PLAIN, bigTextIndex);
-        	if (nextLine) screen.doCRLF(); 
+        	if (nextLine) screen.doCRLF(bigTextIndex); 
         	screen.addBigText(text, brightColor, Font.STYLE_BOLD, bigTextIndex);
-        	screen.doCRLF();
+        	screen.doCRLF(bigTextIndex);
         	bigTextIndex++;
         }
 
@@ -379,16 +379,16 @@ public class Search
                 else if (stat == 2) imgIndex = 3;
                 
                 screen
-					.addBigText(ResourceBundle.getString("status") + ": ",textColor,Font.STYLE_PLAIN, bigTextIndex++)
+					.addBigText(ResourceBundle.getString("status") + ": ",textColor,Font.STYLE_PLAIN, bigTextIndex)
 					.addImage
 					(
 						ContactList.getImageList().elementAt(imgIndex),
 						null,
 						ContactList.getImageList().getWidth(),
 						ContactList.getImageList().getHeight(),
-						-1
+						bigTextIndex
 					)
-					.doCRLF();
+					.doCRLF(bigTextIndex);
                 screen.unlock();
             } else
             {

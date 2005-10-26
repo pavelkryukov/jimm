@@ -662,7 +662,7 @@ public class SplashCanvas extends Canvas
 				tl.getTextColor(),
 				Font.STYLE_BOLD,
 				bigTextIndex
-			).doCRLF();
+			).doCRLF(bigTextIndex);
 		}
 
 		private void addToTextList(int index, String langStr)
@@ -671,7 +671,7 @@ public class SplashCanvas extends Canvas
 			if (data.length() == 0) return;
 			tl.addBigText(ResourceBundle.getString(langStr)+": ", tl.getTextColor(), Font.STYLE_PLAIN, bigTextIndex)
 			  .addBigText(data, Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_PLAIN, bigTextIndex)
-			  .doCRLF();
+			  .doCRLF(bigTextIndex);
 		}
 		
 		// Reference to RequestInfoAction

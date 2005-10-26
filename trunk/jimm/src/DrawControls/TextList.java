@@ -184,7 +184,7 @@ public class TextList extends VirtualList
 		TextLine textLine = (TextLine) lines.lastElement();
 		textLine.items.addElement(new_item);
 		textLine.bigTextIndex = textIndex;
-		if (doCRLF) lines.addElement(new TextLine());
+		if (doCRLF) this.doCRLF(textIndex);
 	}
 
 	//! Add new black text item to list
@@ -340,10 +340,10 @@ public class TextList extends VirtualList
 		super.setColors(capTxt, bkgrnd, cursor, text);
 	}
 
-	public TextList doCRLF()
+	public TextList doCRLF(int blockTextIndex)
 	{
 		TextLine newLine = new TextLine();
-		newLine.bigTextIndex = lines.isEmpty() ? -1 : ((TextLine) lines.lastElement()).bigTextIndex; 
+		newLine.bigTextIndex = blockTextIndex; 
 		lines.addElement(newLine);
 		return this;
 	}
@@ -356,7 +356,7 @@ public class TextList extends VirtualList
 		
 		if ((textLine.getWidth(getFontSize())+imageWidth) > getTrueWidth())
 		{
-			doCRLF();
+			doCRLF(blockTextIndex);
 			textLine = (TextLine) lines.lastElement();
 		}
 		
@@ -437,7 +437,7 @@ public class TextList extends VirtualList
 				else if (trueWidth != width)
 				{
 					//System.out.println("*2*");
-					doCRLF();
+					doCRLF(textIndex);
 					curPos = startPos;
 					width = trueWidth;
 					lastWordEnd = -1;

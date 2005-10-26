@@ -218,7 +218,7 @@ public class ChatHistory
 			Font.STYLE_BOLD,
 			messTotalCounter
 		);
-		msgDisplay.doCRLF();
+		msgDisplay.doCRLF(messTotalCounter);
 
 		if (url.length() > 0)
 		{
@@ -235,7 +235,7 @@ public class ChatHistory
 		//#sijapp cond.else#
 		msgDisplay.addBigText(message, msgDisplay.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
 		//#sijapp cond.end#
-		msgDisplay.doCRLF();
+		msgDisplay.doCRLF(messTotalCounter);
 		
 		
 		msgDisplay.setTopItem(lastSize);		
