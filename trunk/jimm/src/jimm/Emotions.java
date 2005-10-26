@@ -325,6 +325,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		{
 			int xa, xb;
 			int startIdx = cols*index;
+			int imagesCount = images.size();
 			xa = x1;
 			for (int i = 0; i < cols; i++, startIdx++)
 			{
@@ -334,7 +335,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 				
 				xb = xa+itemHeight;
 				
-				g.drawImage(images.elementAt(smileIdx), xa+3, y1+3, Graphics.TOP|Graphics.LEFT);
+				if (smileIdx < imagesCount)
+					g.drawImage(images.elementAt(smileIdx), xa+3, y1+3, Graphics.TOP|Graphics.LEFT);
 				
 				if (isSelected && (i == curCol))
 				{
@@ -386,6 +388,10 @@ public class Emotions implements VirtualListCommands, CommandListener
 				if (curCol < (cols-1)) curCol++;
 				break;
 			}
+			
+			int index = curCol+getCurrIndex()*cols;
+			if (index >= selEmotions.size()) curCol = (selEmotions.size()-1)%cols; 
+			
 			if (lastCol != curCol)
 			{
 				repaint();
