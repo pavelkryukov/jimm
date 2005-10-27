@@ -73,7 +73,10 @@ PACKAGE CONTENTS
   |- res
   |   |- MANIFEST.MF
   |   '- [Target]
-  |        '- [Target-specific resources]
+  |   |    '- [Target-specific resources]
+  |   '- [MODULES]
+  |        '- [Modules]
+  |             '- [Module-specific resources]   
   |- src
   |   '- [Source tree]
   '- util
