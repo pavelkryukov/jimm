@@ -1303,7 +1303,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         {
        		eventList[menuList.append(ResourceBundle.getString("reqstatmsg"), null)] = USER_MENU_STATUS_MESSAGE;
         }
-        
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
 		if (item.getICQVersion() >= 8)
 		{
@@ -1312,6 +1312,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			eventList[menuList.append(ResourceBundle.getString("ft_cam"), null)] = USER_MENU_CAM_TRANS;
 			// #sijapp cond.end#
 		}
+		// #sijapp cond.end#
 		// #sijapp cond.end#
         
         eventList[menuList.append(ResourceBundle.getString("remove"), null)]       = USER_MENU_USER_REMOVE;
