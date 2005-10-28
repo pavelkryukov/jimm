@@ -73,6 +73,7 @@ public class ListItem
 		image = null;
 		color = 0;
 		imageIndex = -1;
+		fontStyle = Font.STYLE_PLAIN;
 	}
 
 	//! Copy data of class to another object
