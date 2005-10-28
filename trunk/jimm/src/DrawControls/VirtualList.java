@@ -573,6 +573,7 @@ public abstract class VirtualList extends Canvas
 		}
 		
 		// Draw items
+		paintedItem.clear();
 		y = top_y;
 		for (i = topItem; i < size; i++)
 		{
