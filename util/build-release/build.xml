@@ -50,6 +50,14 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="version/jimm"           value="###VERSION###"             />
 	<property name="version/java"           value="###VERSION-JAVA###"        />
 	<!-- ******************************************************************* -->
+	
+	<!-- ******************************************************************* -->
+	<!-- CVS TAG SECTION - CHOOSE WHICH CVS TAG SHOULD BE CHECKED OUT        -->
+	<!-- ******************************************************************* -->
+	<property name="cvstag"           value="release_0_4_1"                        />
+	<!-- ******************************************************************* -->
+	
+	<!-- ******************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
 	<!-- ******************************************************************* -->
 
@@ -64,10 +72,10 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="cvsdir" location="release-cvs"/>
 	<property name="package" value="jimm"/>
 	<property name="bin" value="bin"/>
-	<property name="midp1-targetlist"  value="DEFAULT;SIEMENS;RIM"/>
+	<property name="midp1-targetlist"  value="DEFAULT;SIEMENS"/>
 	<property name="midp2-targetlist"  value="MIDP2;SIEMENS2;MOTOROLA"/>
-	<property name="midp1-moduleslist" value="TRAFFIC, HISTORY;TRAFFIC;HISTORY;NO_MODULES;TRAFFIC,HISTORY"/>
-	<property name="midp2-moduleslist" value="TRAFFIC, HISTORY, FILES;TRAFFIC;HISTORY;FILES;NO_MODULES;TRAFFIC,HISTORY;TRAFFIC,FILES;HISTORY,FILES"/>
+	<property name="midp1-moduleslist" value="TRAFFIC;HISTORY;SMILES;NO_MODULES;TRAFFIC,HISTORY,SMILES;TRAFFIC,HISTORY;TRAFFIC,SMILES;HISTORY,SMILES"/>
+	<property name="midp2-moduleslist" value="TRAFFIC;HISTORY;FILES;SMILES;NO_MODULES;TRAFFIC,HISTORY,FILES,SMILES;TRAFFIC,HISTORY,FILES;TRAFFIC,HISTORY,SMILES;HISTORY,FILES,SMILES;TRAFFIC,HISTORY;TRAFFIC,FILES;TRAFFIC,SMILES;HISTORY,FILES;HISTORY,SMILES;FILES,SMILES"/>
 	<property name="langlist" value="EN,BR;EN,CZ;EN,DE;EN,ES;EN,HE;EN,IT;EN,LT;EN,RU;EN,SE;EN,SR;EN;BR;CZ;DE;ES;HE;IT;LT;RU;SE;SR"/>
 
 
@@ -101,12 +109,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			cvsRoot="${cvsroot}"
 			dest="${cvsdir}"
 			package="${package}"
-			date="tomorrow"
+			tag="${cvstag}"
 			failonerror="true"/>
 	</target>
 
 
-	<!-- Internal targets: build/build-target/build-target-connection/build-target-connection-lang for both: MIDP1 and MIDP2 lines-->
+	<!-- Internal targets: build/build-target/build-target-connection/build-target-connection-lang -->
 	<target name="build" depends="export">
 		<foreach list="${midp1-targetlist}"
 			target="midp1-build-target"
@@ -175,7 +183,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<property name="target"            value="${target}"/>
 			<property name="modules"           value="${modules}"/>
 			<property name="lang"              value="${lang}"/>
-			<property name="version/jimm"      value="${version}"/>
+			<property name="version/jimm"      value="${version/jimm}"/>
 			<property name="version/java"      value="${version/java}"/>
 		</ant>
 		<mkdir dir="${cvsdir}/${package}/${bin}/${target}/${modules}/${lang}"/>
@@ -198,7 +206,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<property name="proguard/lib"     value="${proguard/lib}"/>
 			<property name="target"           value="${target}"/>
 			<property name="lang"             value="${lang}"/>
-			<property name="version"          value="${version}"/>
+			<property name="version/jimm"     value="${version/jimm}"/>
 			<property name="version/java"     value="${version/java}"/>
 		</ant>
 	</target>
@@ -231,22 +239,23 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	    <move todir="${cvsdir}/${package}-${version/jimm}">
 			<fileset dir="${cvsdir}/${package}"/>
 		</move>
+		<delete dir="${cvsdir}/${package}"/>
 		<touch datetime="${touchdate} 00:00 AM">
 			<fileset dir="${cvsdir}/${package}-${version/jimm}"/>
 		</touch>
 		<zip destfile="${package}-${version/jimm}.zip"
 			basedir="${cvsdir}"/>
-		<tar destfile="${package}-${version/jimm}.tar.gz"
-			basedir="${cvsdir}"
-			compression="gzip"/>
 		<tar destfile="${package}-${version/jimm}.tar.bz2"
 			basedir="${cvsdir}"
 			compression="bzip2"/>
+		<exec dir="." executable="7z.exe">
+		  <arg line="a ${package}-${version/jimm}.7z  ${cvsdir}/* -r"/>
+		</exec>
 		<touch file="${package}-${version/jimm}.zip"
 			datetime="${touchdate} 00:00 AM"/>
-		<touch file="${package}-${version/jimm}.tar.gz"
-			datetime="${touchdate} 00:00 AM"/>
 		<touch file="${package}-${version/jimm}.tar.bz2"
+			datetime="${touchdate} 00:00 AM"/>
+		<touch file="${package}-${version/jimm}.7z"
 			datetime="${touchdate} 00:00 AM"/>
 	</target>
 
@@ -255,8 +264,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<target name="clean" description="Delete the release">
 		<delete dir="${cvsdir}"/>
 		<delete file="${package}-${version/jimm}.zip"/>
-		<delete file="${package}-${version/jimm}.tar.gz"/>
 		<delete file="${package}-${version/jimm}.tar.bz2"/>
+		<delete file="${package}-${version/jimm}.7z"/>
 	</target>
 
 
