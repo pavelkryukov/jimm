@@ -1482,9 +1482,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	
 	static public void messageReceived(String uin, String text)
 	{
+		// #sijapp cond.if target isnot "MOTOROLA"#
 		if ( currentUin.equals(uin) && 
 		     !Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) 
 				showTopString(uin, Util.removeClRfAndTabs(text), InfoThread.RUNNL);
+		// #sijapp cond.end#
 	}
 	
 	// Initializer
