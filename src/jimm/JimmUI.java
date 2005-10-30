@@ -28,10 +28,10 @@ import javax.microedition.io.ContentConnection;
 import javax.microedition.lcdui.*;
 
 import java.io.DataInputStream;
-import java.util.Hashtable;
-import java.util.TimerTask;
+import java.util.*;
 
 import DrawControls.*;
+import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 public class JimmUI implements CommandListener
@@ -136,6 +136,9 @@ public class JimmUI implements CommandListener
     
 	static public void about(Displayable lastDisplayable_)
 	{
+		System.gc();
+		long freeMem = Runtime.getRuntime().freeMemory()/1024;
+		
 		final int textColor = Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT);
 	
 		if (lastDisplayable_ != null) lastDisplayable = lastDisplayable_;
@@ -158,7 +161,7 @@ public class JimmUI implements CommandListener
 		StringBuffer str = new StringBuffer();
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
-		   .append(Runtime.getRuntime().freeMemory()/1024).append("kb\n\n")
+		   .append(freeMem).append("kb\n\n")
            .append(ResourceBundle.getString("latest_ver"));
 		
 		if (versionLoaded) str.append(" ").append(version);
@@ -211,9 +214,17 @@ public class JimmUI implements CommandListener
 		return clipBoardText;
 	}
 	
-	static public void setClipBoardText(String value)
+	static public void setClipBoardText(boolean incoming, String date, String from, String text)
 	{
-		clipBoardText = value;
+		StringBuffer sb = new StringBuffer();
+		sb.append('[').append(from).append(' ').append(date).append(']')
+		  .append(incoming ? " >> " : " << ").append(text);
+		clipBoardText = sb.toString();
+	}
+	
+	static public void clearClipBoardText()
+	{
+		clipBoardText = null;	
 	}
 	
 	

@@ -45,17 +45,20 @@ class MessData
 	private boolean incoming;
 	private Date time;
 	private String from;
+	private int textOffset;
 	
-	public MessData(boolean incoming, Date time, String from)
+	public MessData(boolean incoming, Date time, String from, int textOffset)
 	{
-		this.incoming = incoming;
-		this.time = time;
-		this.from = from;
+		this.incoming   = incoming;
+		this.time       = time;
+		this.from       = from;
+		this.textOffset = textOffset;
 	}
 		
 	public boolean getIncoming() { return incoming; }
 	public String getFrom() { return from; }
 	public Date getTime() { return time; }
+	public int getOffset() { return textOffset; }
 }
 //#sijapp cond.end#
 
@@ -208,6 +211,7 @@ public class ChatHistory
 	synchronized private void addTextToForm(String uin,String from, String message, String url, Date time, boolean red, boolean offline)
 	{
 		TextList msgDisplay = (TextList) historyTable.get(uin);
+		int texOffset;
 
 		msgDisplay.lock();
 		int lastSize = msgDisplay.getSize();
@@ -230,6 +234,8 @@ public class ChatHistory
 			);
 		}
 		
+		texOffset = msgDisplay.getSize()-lastSize;
+		
 		//#sijapp cond.if modules_SMILES is "true" #
 		Jimm.jimm.getEmotionsRef().addTextWithEmotions(msgDisplay, message, Font.STYLE_PLAIN, msgDisplay.getTextColor(), messTotalCounter);
 		//#sijapp cond.else#
@@ -242,10 +248,25 @@ public class ChatHistory
 		msgDisplay.unlock();
 		
 		//#sijapp cond.if modules_HISTORY is "true" #
-		messData.addElement( new MessData(red, time, from) );
+		messData.addElement( new MessData(red, time, from, texOffset) );
 		//#sijapp cond.end#
 		
 		messTotalCounter++;
+	}
+	
+	public void copyText(String uin)
+	{
+		DrawControls.TextList list = getChatHistoryAt(uin);
+		int messIndex = list.getCurrTextIndex();
+		MessData md = (MessData)messData.elementAt(messIndex);
+		
+		JimmUI.setClipBoardText
+		(
+			md.getIncoming(),
+			Util.getDateString(false, md.getTime()),
+			md.getFrom(),
+			list.getCurrText(md.getOffset())
+		);
 	}
 
 	// Returns the chat history form at the given uin

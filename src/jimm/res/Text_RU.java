@@ -252,6 +252,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("status_online",               "Онлайн");
 		resources.put("successful",                  "успешной");
 		resources.put("sysnotice",					 "Системное уведомление");
+		resources.put("text_too_long",               "Текст слишком большой для вставки в редактор");
 		resources.put("title",                       "Название");
 		resources.put("traffic",                     "Трафик");
 		resources.put("uin",                         "UIN");

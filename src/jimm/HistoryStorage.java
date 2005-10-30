@@ -178,7 +178,13 @@ class HistoryStorageList extends    VirtualList
 			if (index == -1) return;
 			CachedRecord record = Jimm.jimm.getHistory().getCachedRecord(currUin, index);
 			if (record == null) return;
-			JimmUI.setClipBoardText(record.text);
+			JimmUI.setClipBoardText
+			(
+				(record.type == 0),
+				record.date,
+				record.from,
+				record.text
+			);
 		}
 		
 		// back to messages list
