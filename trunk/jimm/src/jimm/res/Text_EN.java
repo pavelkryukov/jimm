@@ -279,6 +279,20 @@ public class Text_EN extends ResourceBundle
 		resources.put("yes",                         "Yes");
 		resources.put("youwereadded",				 "You were added by UIN: ");
 
+        resources.put("proxy",                       "Proxy");
+        resources.put("proxy_type",                  "Proxy type");
+		resources.put("proxy_do_not_use",            "Do not use");
+		resources.put("proxy_socks4",                "Socks4");
+		resources.put("proxy_socks5",                "Socks5");
+		resources.put("proxy_guess",                 "Guess");
+		resources.put("proxy_server_host",           "Proxy host:");
+		resources.put("proxy_server_port",           "Port:");
+
+		resources.put("proxy_server_login",          "Proxy login:");
+		resources.put("proxy_server_pass",           "Proxy password:");
+
+		resources.put("auto_retry_count",            "Retry count:");
+
 		//#sijapp cond.if modules_HISTORY is "true" #
 		resources.put("add_to_history",              "Add to history");
 		resources.put("text_to_find",                "Text");

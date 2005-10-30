@@ -654,7 +654,23 @@ public class Icq implements Runnable
 	// Connection
 	public class Connection implements Runnable
 	{
+                // #sijapp cond.if modules_PROXY is "true"#
+		private final byte[] SOCKS4_CMD_CONNECT =
+		{
+			(byte) 0x04, (byte) 0x01, (byte) 0x14, (byte) 0x46, // Port 5190
+			(byte) 0x40, (byte) 0x0C, (byte) 0xA1, (byte) 0xB9, (byte) 0x00 // IP 64.12.161.185 (default login.icq.com)
+		};
+			
+		private final byte[] SOCKS5_HELLO =
+		{
+			(byte) 0x05, (byte) 0x02, (byte) 0x00, (byte) 0x02
+		};
 
+		private final byte[] SOCKS5_CMD_CONNECT =
+		{
+			(byte) 0x05, (byte) 0x01, (byte) 0x00, (byte) 0x03
+		};
+                // #sijapp cond.end #
 
 		// Connection variables
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -665,6 +681,11 @@ public class Icq implements Runnable
 		private InputStream is;
 		private OutputStream os;
 
+                // #sijapp cond.if modules_PROXY is "true"#
+		private boolean is_socks4 = false;
+		private boolean is_socks5 = false;
+		private boolean is_connected = false;
+                // #sijapp cond.end#
 
 		// Disconnect flags
 		private volatile boolean inputCloseFlag;
@@ -685,10 +706,171 @@ public class Icq implements Runnable
 		// ICQ sequence number counter
 		private int nextIcqSequence;
 
+                // #sijapp cond.if modules_PROXY is "true"#
+		// Tries to resolve given host IP
+		private synchronized String ResolveIP( String host, String port )
+		{
+			if ( Util.isIP( host ) ) return host;
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			SocketConnection c;
+			// #sijapp cond.else#
+			StreamConnection c;
+			// #sijapp cond.end#
+			try
+			{
+	    		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	    		c = (SocketConnection) Connector.open("socket://" + host+":"+port, Connector.READ_WRITE);
+	    		// #sijapp cond.else#
+	    		c = (StreamConnection) Connector.open("socket://" + host+":"+port, Connector.READ_WRITE);
+	    		// #sijapp cond.end#
+	    		
+	    		String ip = c.getAddress();
+	    		
+	    		try { c.close(); }
+				catch (Exception e) { /* Do nothing */ }
+				finally { c = null; }
+	    		
+	    		return ip;
+	    	}
+	    	
+			catch (Exception e) 
+			{
+				return "0.0.0.0"; 
+			}
+			
+		}
+
+		// Build socks4 CONNECT request
+		private byte[] socks4_connect_request( String ip, String port )
+		{
+			byte[] buf = new byte[9];
+			
+			System.arraycopy(this.SOCKS4_CMD_CONNECT, 0, buf, 0, 9);
+			Util.putWord(buf, 2, Integer.parseInt(port));
+			byte[] bip = Util.ipToByteArray(ip);
+			System.arraycopy(bip, 0, buf, 4, 4);
+			
+			return buf;
+		}
+		
+		// Build socks5 AUTHORIZE request
+		private byte[] socks5_authorize_request( String login, String pass )
+		{
+			byte[] buf = new byte[ 3 + login.length() + pass.length() ];
+			
+			Util.putByte(buf, 0, 0x01);
+			Util.putByte(buf, 1, login.length());
+			Util.putByte(buf, login.length()+2, pass.length());
+			byte[] blogin = Util.stringToByteArray(login);
+			byte[] bpass  = Util.stringToByteArray(pass);
+			System.arraycopy(blogin, 0, buf, 2, blogin.length);
+			System.arraycopy(bpass, 0, buf, blogin.length+3, bpass.length);
+			
+			return buf;
+		}
+		
+		// Build socks5 CONNECT request
+		private byte[] socks5_connect_request( String host, String port )
+		{
+			byte[] buf = new byte[ 7 + host.length() ];
+			
+			System.arraycopy(this.SOCKS5_CMD_CONNECT, 0, buf, 0, 4);
+			Util.putByte(buf, 4, host.length());
+			byte[] bhost = Util.stringToByteArray(host);
+			System.arraycopy(bhost, 0, buf, 5, bhost.length);
+			Util.putWord(buf, 5+bhost.length, Integer.parseInt(port));
+			return buf;
+		}
+                // #sijapp cond.end #
 
 		// Opens a connection to the specified host and starts the receiver thread
 		public synchronized void connect(String hostAndPort) throws JimmException
 		{
+                // #sijapp cond.if modules_PROXY is "true"#
+			int mode = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_PRX_TYPE);
+			this.is_connected = false;
+			this.is_socks4    = false;
+			this.is_socks5    = false;
+			String host = "";
+			String port = "";
+			
+			if ( mode != 0 )
+			{
+				int sep = 0;
+				for (int i = 0; i < hostAndPort.length(); i++)
+				{
+					if (hostAndPort.charAt(i) == ':')
+					{ 
+						sep = i;
+						break;
+					}
+				}
+				// Get Host and Port
+				host = hostAndPort.substring(0,sep);
+				port = hostAndPort.substring(sep+1);
+			}
+
+			try
+			{
+				switch( mode )
+				{
+					case 0:
+						this.connect_simple( hostAndPort );
+						break;
+					case 1:
+						this.connect_socks4( host, port );
+						break;
+					case 2:
+						this.connect_socks5( host, port );
+						break;
+					case 3:
+						// Try better first
+						try
+						{
+							this.connect_socks5( host, port );
+						}
+						catch ( Exception e )
+						{
+							// Do nothing
+						}
+						// If not succeeded, then try socks4
+						if ( ! this.is_connected )
+						{
+							this.stream_close();
+	                    	try
+	                    	{
+	                        	// Wait the given time
+	                        	Thread.sleep(2000);
+	                    	}
+	                    	catch (InterruptedException e)
+	                    	{
+	                        	// Do nothing
+	                    	}
+							this.connect_socks4( host, port );
+						}
+						break;
+					default:
+						this.connect_simple( hostAndPort );
+						break;
+				}
+				
+				this.inputCloseFlag = false;
+				this.rcvThread = new Thread(this);
+				this.rcvThread.start();
+				this.nextSequence = (new Random()).nextInt() % 0x0FFF;
+				this.nextIcqSequence = 2;
+			
+			}
+			catch (JimmException e)
+			{
+				throw (e);
+			}
+			
+		}
+
+		private synchronized void connect_simple(String hostAndPort) throws JimmException
+		{
+                // #sijapp cond.end#
 			try
 			{
 			    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -698,11 +880,227 @@ public class Icq implements Runnable
 			    // #sijapp cond.end#
 				this.is = this.sc.openInputStream();
 				this.os = this.sc.openOutputStream();
+                // #sijapp cond.if modules_PROXY is "true"#
+				this.is_connected = true;
+			}
+			catch (ConnectionNotFoundException e)
+			{
+				throw (new JimmException(121, 0));
+			}
+			catch (IllegalArgumentException e)
+			{
+				throw (new JimmException(122, 0));
+			}
+			catch (IOException e)
+			{
+				throw (new JimmException(120, 0));
+			}
+		}
+		
+		// Attempts to connect through socks4
+		private synchronized void connect_socks4(String host, String port) throws JimmException
+		{
+            this.is_socks4    = false;
+            String proxy_host = Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_PRX_SERV);
+            String proxy_port = Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_PRX_PORT);
+            int i = 0;
+            byte[] buf;
+			
+			try
+			{
+			    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			    this.sc = (SocketConnection) Connector.open("socket://" + proxy_host+":"+proxy_port, Connector.READ_WRITE);
+			    // #sijapp cond.else#
+			    this.sc = (StreamConnection) Connector.open("socket://" + proxy_host+":"+proxy_port, Connector.READ_WRITE);
+			    // #sijapp cond.end#
+				this.is = this.sc.openInputStream();
+				this.os = this.sc.openOutputStream();
+				
+				String ip   = this.ResolveIP( host, port );
+				
+				this.os.write(this.socks4_connect_request( ip, port ));
+				this.os.flush();
+				
+				// Wait for responce
+				while( this.is.available() == 0 && i < 50 )
+				{
+                    try
+                    {
+                        // Wait the given time
+                        i++;
+                        Thread.sleep(100);
+                    } 
+                    catch (InterruptedException e)
+                    {
+                        // Do nothing
+                    }
+				}
+				// Read packet
+				// If only got proxy responce packet, parse it
+				if ( this.is.available() == 8 )
+				{
+					// Read reply
+					buf = new byte[is.available()];
+					this.is.read(buf);
+					
+					int ver  = Util.getByte( buf, 0 );
+					int meth = Util.getByte( buf, 1 );
+					// All we need
+					if ( ver == 0x00 && meth == 0x5A )
+					{
+						this.is_connected = true;
+						this.is_socks4    = true;
+					}
+					else
+					{
+						this.is_connected = false;
+						throw (new JimmException(118, 2));
+					}
+				}
+				// If we got responce packet bigger than mere proxy responce,
+				// we might got destination server responce in tail of proxy responce
+				else if ( this.is.available() > 8 )
+				{
+					this.is_connected = true;
+					this.is_socks4    = true;
+				}
+				else
+				{
+					throw (new JimmException(118, 2));
+				}
+			}
+			catch (ConnectionNotFoundException e)
+			{
+				throw (new JimmException(121, 0));
+			}
+			catch (IllegalArgumentException e)
+			{
+				throw (new JimmException(122, 0));
+			}
+			catch (IOException e)
+			{
+				throw (new JimmException(120, 0));
+			}
+		}
+
+		// Attempts to connect through socks5
+		private synchronized void connect_socks5(String host, String port) throws JimmException
+		{
+            this.is_socks5     = false;
+            String proxy_host  = Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_PRX_SERV);
+            String proxy_port  = Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_PRX_PORT);
+            String proxy_login = Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_PRX_NAME);
+            String proxy_pass  = Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_PRX_PASS);
+            int i = 0;
+            byte[] buf;
+			
+			try
+			{
+			    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			    this.sc = (SocketConnection) Connector.open("socket://" + proxy_host+":"+proxy_port, Connector.READ_WRITE);
+			    // #sijapp cond.else#
+			    this.sc = (StreamConnection) Connector.open("socket://" + proxy_host+":"+proxy_port, Connector.READ_WRITE);
+			    // #sijapp cond.end#
+				this.is = this.sc.openInputStream();
+				this.os = this.sc.openOutputStream();
+
+				this.os.write( this.SOCKS5_HELLO );
+				this.os.flush();
+				
+				// Wait for responce
+				while( this.is.available() == 0 && i < 50 )
+				{
+                    try
+                    {
+                        // Wait the given time
+                        i++;
+                        Thread.sleep(100);
+                    } 
+                    catch (InterruptedException e)
+                    {
+                        // Do nothing
+                    }
+				}
+				
+				if ( this.is.available() == 0 )
+				{
+					throw (new JimmException(118, 2));
+				}
+				
+				// Read reply
+				buf = new byte[this.is.available()];
+				this.is.read(buf);
+				
+				int ver  = Util.getByte( buf, 0 );
+				int meth = Util.getByte( buf, 1 );
+				
+				// Plain text authorisation
+				if ( ver == 0x05 && meth == 0x02 )
+				{
+					this.os.write( this.socks5_authorize_request( proxy_login, proxy_pass ) );
+					this.os.flush();
+					
+					// Wait for responce
+					while( this.is.available() == 0 && i < 50 )
+					{
+	                    try
+	                    {
+	                        // Wait the given time
+	                        i++;
+	                        Thread.sleep(100);
+	                    } 
+	                    catch (InterruptedException e)
+	                    {
+	                        // Do nothing
+	                    }
+					}
+					
+					if ( this.is.available() == 0 )
+					{
+						throw (new JimmException(118, 2));
+					}
+					
+					// Read reply
+					buf = new byte[this.is.available()];
+					this.is.read(buf);
+					
+					meth = Util.getByte( buf, 1 );
+					
+					if ( meth == 0x00 )
+					{
+						this.is_connected = true;
+						this.is_socks5    = true;
+					}
+					else
+					{
+						// Unknown error (bad login or pass)
+						throw (new JimmException(118, 3));
+					}
+				}
+				// Proxy without authorisation
+				else if ( ver == 0x05 && meth == 0x00 )
+				{
+					this.is_connected = true;
+					this.is_socks5    = true;
+				}
+				// Something bad happened :'(
+				else
+				{
+					throw (new JimmException(118, 2));
+				}
+				// If we got correct responce, send CONNECT
+				if ( this.is_connected == true )
+				{
+					this.os.write( this.socks5_connect_request( host, port ) );
+					this.os.flush();
+				}
+                // #sijapp cond.else#
 				this.inputCloseFlag = false;
 				this.rcvThread = new Thread(this);
 				this.rcvThread.start();
 				this.nextSequence = (new Random()).nextInt() % 0x0FFF;
-				this.nextIcqSequence = 2;			
+				this.nextIcqSequence = 2;
+                // #sijapp cond.end#
 			}
 			catch (ConnectionNotFoundException e)
 			{
@@ -723,6 +1121,14 @@ public class Icq implements Runnable
 		public synchronized void close() {
 			this.inputCloseFlag = true;
 			
+                        this.stream_close();
+			
+			Thread.yield();
+		}
+		
+		// Close input and output streams
+		private synchronized void stream_close()
+		{
 			try { this.is.close(); }
 			catch (Exception e) { /* Do nothing */ }
 			finally { this.is = null; }
@@ -734,8 +1140,6 @@ public class Icq implements Runnable
 			try { this.sc.close(); }
 			catch (Exception e) { /* Do nothing */ }
 			finally { this.sc = null; }
-			
-			Thread.yield();
 		}
 
 
@@ -885,7 +1289,72 @@ public class Icq implements Runnable
 					}
 					while (bReadSum < flapHeader.length);
 					if (bRead == -1) break;
-
+                                        // #sijapp cond.if modules_PROXY is "true"#
+					// Verify and strip out proxy responce
+					// Socks4 first
+					if ( Util.getByte(flapHeader, 0) == 0x00 && this.is_socks4 )
+					{
+						// Strip only on first packet
+						this.is_socks4 = false;
+						int rep = Util.getByte(flapHeader, 1);
+						if ( rep != 0x5A )
+						{
+							//Something went wrong :(
+							throw (new JimmException(118, 1));
+						}
+						
+						this.is.skip(2);
+						
+						bReadSum = 0;
+						do
+						{
+							bRead = this.is.read(flapHeader, bReadSum, flapHeader.length - bReadSum);
+							if (bRead == -1) break;
+							bReadSum += bRead;
+						}
+						while (bReadSum < flapHeader.length);
+					}
+					// Check for socks5
+					else if ( Util.getByte(flapHeader, 0) == 0x05 && this.is_socks5 )
+					{
+						// Strip only on first packet
+						this.is_socks5 = false;
+						
+						int rep = Util.getByte(flapHeader, 1);
+						if ( rep != 0x00 )
+						{
+							//Something went wrong :(
+							throw (new JimmException(118, 1));
+						}
+						// Check ATYP and skip BND.ADDR
+						int atyp = Util.getByte(flapHeader, 3);
+						
+						if ( atyp == 0x01 )
+						{
+							this.is.skip(4);
+						}
+						else if ( atyp == 0x03 )
+						{
+							int size = Util.getByte(flapHeader, 4);
+							this.is.skip(size + 1);
+						}
+						else
+						{
+							//Don't know what was that, but skip like if it was an ip
+							this.is.skip(4);
+						}
+						
+						
+						bReadSum = 0;
+						do
+						{
+							bRead = this.is.read(flapHeader, bReadSum, flapHeader.length - bReadSum);
+							if (bRead == -1) break;
+							bReadSum += bRead;
+						}
+						while (bReadSum < flapHeader.length);
+					}
+                                        // #sijapp cond.end #
 					// Verify flap header
 					if (Util.getByte(flapHeader, 0) != 0x2A)
 					{

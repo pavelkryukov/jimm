@@ -161,7 +161,10 @@ public class ConnectAction extends Action
 
 
 	// Timeout
-	public static final int TIMEOUT = 20 * 1000; // milliseconds
+        // #sijapp cond.if modules_PROXY is "true" #
+	public static final int TIME_OUT = 20 * 1000;
+        // #sijapp cond.end #
+	public int TIMEOUT = 20 * 1000; // milliseconds
 
 
 	/**************************************************************************/
@@ -259,8 +262,22 @@ public class ConnectAction extends Action
 	// Init action
 	protected void init() throws JimmException
 	{
+        // #sijapp cond.if modules_PROXY is "true" #
+		int retry = 1;
+		try
+		{
+			retry = Integer.parseInt(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_AUTORETRY_COUNT));
+			retry = ( retry > 0 ) ? retry : 1;
+		}
+		catch( NumberFormatException e )
+		{
+			retry = 1;
+		}
 
-		// Check parameters
+		this.TIMEOUT = ConnectAction.TIME_OUT * retry;
+        // #sijapp cond.end#
+		
+        // Check parameters
 		if ((this.uin.length() == 0) || (this.password.length() == 0))
 		{
 			this.state = ConnectAction.STATE_ERROR;
@@ -268,15 +285,46 @@ public class ConnectAction extends Action
 		}
 
 		// Open connection
+        // #sijapp cond.if modules_PROXY is "true" #
+
+		for ( int i = 0; i < retry; i++ )
+		{
+        // #sijapp cond.end#
+
 		try
 		{
 			this.icq.c.connect(this.srvHost+":"+this.srvPort);
+			// #sijapp cond.if modules_PROXY is "true" #	
+            break;
+            // #sijapp cond.end #
 		}
 		catch (JimmException e)
 		{
+                // #sijapp cond.if modules_PROXY is "true" #
+				if ( i >= ( retry - 1 ) || ((this.lastActivity.getTime() + this.TIMEOUT) < System.currentTimeMillis()) )
+				{
+                // #sijapp cond.end #
+
 			this.state = ConnectAction.STATE_ERROR;
 			throw (e);
 		}
+                 // #sijapp cond.if modules_PROXY is "true" #
+				else if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
+				{
+					this.icq.c.close();
+					try
+                	{
+                    	// Wait the given time
+                    	Thread.sleep(2000);
+                	}
+                	catch (InterruptedException er)
+                	{
+                    	// Do nothing
+                	}
+				}
+			}
+		}
+                 // #sijapp cond.end #
 
 		// Set STATE_INIT
 		this.state = ConnectAction.STATE_INIT_DONE;
@@ -290,6 +338,19 @@ public class ConnectAction extends Action
 	// Forwards received packet, returns true if packet has been consumed
 	protected boolean forward(Packet packet) throws JimmException
 	{
+                // #sijapp cond.if modules_PROXY is "true" #
+
+		int retry = 1;
+		try
+		{
+			retry = Integer.parseInt(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_AUTORETRY_COUNT));
+			retry = ( retry > 0 ) ? retry : 1;
+		}
+		catch( NumberFormatException e )
+		{
+			retry = 1;
+		}
+                // #sijapp cond.end #
 
 		// Set activity flag
 		this.active = true;
@@ -364,7 +425,42 @@ public class ConnectAction extends Action
                             }
 	                    // #sijapp cond.end#
 						// Open connection
+                                                // #sijapp cond.if modules_PROXY is "true" #
+						for ( int i = 0; i < retry; i++ )
+						{
+							try
+							{
+                                                 // #sijapp cond.end #
 						this.icq.c.connect(disconnectPacket.getServer());
+							
+                                                        // #sijapp cond.if modules_PROXY is "true" #
+                                                 	
+                                                        break;
+							}
+							catch (JimmException e)
+							{
+								if ( i >= ( retry - 1 ) || ((this.lastActivity.getTime() + this.TIMEOUT) < System.currentTimeMillis()) )
+								{
+									this.active = false;
+									this.state = ConnectAction.STATE_ERROR;
+									throw (e);
+								}
+								else if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
+								{
+									this.icq.c.close();
+									try
+				                	{
+				                    	// Wait the given time
+				                    	Thread.sleep(2000);
+				                	}
+				                	catch (InterruptedException er)
+				                	{
+				                    	// Do nothing
+				                	}
+								}
+							}
+						}
+                                                // #sijapp cond.end #
 
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_DISCONNECT_SENT;
@@ -1044,7 +1140,7 @@ public class ConnectAction extends Action
 	public boolean isError()
 	{
 		if ((this.state != ConnectAction.STATE_ERROR) && !this.active &&
-		    (this.lastActivity.getTime() + ConnectAction.TIMEOUT < System.currentTimeMillis()))
+		    (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
 		{
 			JimmException.handleException(new JimmException(118, 0));
 			this.state = ConnectAction.STATE_ERROR;

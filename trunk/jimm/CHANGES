@@ -225,7 +225,9 @@ VERSION 0.4.1
 
 ________________________________________________________________________________
 VERSION 0.4.2
-  * NEW FEATURE: it is possible to check is contact in offline or in invisible status
+
+  * NEW FEATURE: It is possible to check is contact in offline or in invisible status
+  * NEW FEATURE: There is a module allowing you to connect via a SOCKS proxy
   * BUGFIX: Corrected wrong coding for offline messages
   * BUGFIX: Requesting status message from users in DND and OCC state was not working
   * BUGFIX: Requesting status message with MIDP2, SIEMENS2 and MOTOROLA version without 
@@ -234,3 +236,4 @@ VERSION 0.4.2
   * Now you can see full contact information
   * New structure for res files  
   * build-release.xml is now building a .7z archive instead of .tar.gz
+  * Rewrote the code for the Options UI to be more moduar and nicer

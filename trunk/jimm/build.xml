@@ -73,7 +73,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--      HISTORY - module for storing history of text messages             -->
 	<!--      FILES   - module for transferring files                           -->
 	<!--      SMILES  - module for using emotions int messages text             --> 
-	<property name="modules"           value="SMILES,TRAFFIC,HISTORY,FILES" />
+	<!--      PROXY   - module for connecting via a socks proxy                 --> 
+	<property name="modules"           value="SMILES,TRAFFIC,HISTORY,FILES,PROXY" />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of languages packs which         -->
 	<!--  should be included in the build. Currently, the distribution          -->
@@ -198,6 +199,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="modules/HISTORY" value="true">
 			<contains string="${modules}" substring="HISTORY" />
 		</condition>
+		<condition property="modules/PROXY" value="true">
+			<contains string="${modules}" substring="PROXY" />
+		</condition>
 		<condition property="modules/FILES" value="true">
 			<contains string="${modules}" substring="FILES" />
 		</condition>
@@ -288,6 +292,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="modules_TRAFFIC" value="${modules/TRAFFIC}" />
 			<define name="modules_DEBUGLOG" value="${modules/DEBUGLOG}" />
 			<define name="modules_HISTORY" value="${modules/HISTORY}" />
+			<define name="modules_PROXY" value="${modules/PROXY}" />
 			<define name="modules_FILES" value="${modules/FILES}" />
 			<define name="modules_SMILES" value="${modules/SMILES}" />
 			<define name="lang_EN" value="${lang/EN}" />
