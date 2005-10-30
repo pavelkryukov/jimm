@@ -82,9 +82,9 @@ public class Options
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
 	public static final int OPTION_AUTO_CONNECT	  = 138;   /* boolean */
-                     // #sijapp cond.if target isnot  "MOTOROLA"#
+    // #sijapp cond.if target isnot  "MOTOROLA"#
 	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
-                     // #sijapp cond.end#
+    // #sijapp cond.end#
 	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
 	public static final int OPTION_CL_SORT_BY                     =  65;   /* int     */
@@ -115,6 +115,12 @@ public class Options
 	
 	public static final int OPTION_USE_SMILES		              = 141;   /* boolean */
 
+	public static final int OPTION_PRX_TYPE                       =  76;   /* int     */
+	public static final int OPTION_PRX_SERV                       =   8;   /* String  */
+	public static final int OPTION_PRX_PORT                       =   9;   /* String  */
+	public static final int OPTION_AUTORETRY_COUNT                =  10;   /* String  */
+	public static final int OPTION_PRX_NAME                       =  11;   /* String  */
+	public static final int OPTION_PRX_PASS                       =  12;   /* String  */
 
 	/**************************************************************************/
 
@@ -147,9 +153,9 @@ public class Options
 			this.setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 			this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
 			this.setIntOption    (Options.OPTION_CONN_TYPE,                      0);
-                                                                // #sijapp cond.if target isnot "MOTOROLA"#
+            // #sijapp cond.if target isnot "MOTOROLA"#
 			this.setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
-                                                                // #sijapp cond.end#
+            // #sijapp cond.end#
 			this.setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
 			this.setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
 			this.setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
@@ -169,15 +175,15 @@ public class Options
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.wav");
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-            		// #sijapp cond.elseif target is "MOTOROLA"#
-            		this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
+            // #sijapp cond.elseif target is "MOTOROLA"#
+            this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mp3");
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 			this.setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mp3");
 			this.setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-			this.setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		     5);
-			this.setBooleanOption(Options.OPTION_LIGHT_MANUAL,		     false);
+			this.setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		             5);
+			this.setBooleanOption(Options.OPTION_LIGHT_MANUAL,		             false);
 			// #sijapp cond.else#
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "");
@@ -206,6 +212,12 @@ public class Options
             this.setStringOption (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
             this.setBooleanOption(Options.OPTION_USE_SMILES,                     true);
 			 
+			this.setIntOption   (Options.OPTION_PRX_TYPE,                     		0);
+			this.setStringOption(Options.OPTION_PRX_SERV,                     	   "");
+			this.setStringOption(Options.OPTION_PRX_PORT,                      "1080");
+			this.setStringOption(Options.OPTION_AUTORETRY_COUNT,                  "1");
+			this.setStringOption(Options.OPTION_PRX_NAME,                  		   "");
+			this.setStringOption(Options.OPTION_PRX_PASS,                          "");
 			
 			// Construct option form
 			this.optionsForm = new OptionsForm();
@@ -424,11 +436,28 @@ public class Options
 
 		// Options menu
 		private List optionsMenu;
-
+        
+        // Menu event list
+        private int[] eventList;
 
 		// Options form
 		private Form optionsForm;
 
+        // Static constants for menu actios
+        private static final int OPTIONS_ACCOUNT    = 0;
+        private static final int OPTIONS_NETWORK    = 1;
+        // #sijapp cond.if modules_TRAFFIC is "true"#        
+        private static final int OPTIONS_PROXY      = 2;
+        // #sijapp cond.end#        
+        private static final int OPTIONS_INTERFACE  = 3;
+        // #sijapp cond.if target isnot "DEFAULT"#        
+        private static final int OPTIONS_SIGNALING  = 4;
+        // #sijapp cond.end#        
+        // #sijapp cond.if modules_TRAFFIC is "true"#
+        private static final int OPTIONS_TRAFFIC    = 5;
+        // #sijapp cond.end#
+        // Exit has to be biggest element cause it also marks the size
+        private static final int MENU_EXIT          = 6;
 
 		// Options
 		private TextField uinTextField;
@@ -443,20 +472,17 @@ public class Options
 		private ChoiceGroup clSortByChoiceGroup;
 		private ChoiceGroup chrgChat;
 		private ChoiceGroup clHideOfflineChoiceGroup;
-		// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		// #sijapp cond.if target isnot "DEFAULT"#
 		private ChoiceGroup messageNotificationModeChoiceGroup;
+        private ChoiceGroup onlineNotificationModeChoiceGroup;
+        private ChoiceGroup vibratorChoiceGroup;
+        // #sijapp cond.if target isnot "RIM"#
 		private TextField messageNotificationSoundfileTextField;
 		private Gauge messageNotificationSoundVolume;
-		private ChoiceGroup onlineNotificationModeChoiceGroup;
 		private TextField onlineNotificationSoundfileTextField;
 		private Gauge onlineNotificationSoundVolume;
-		// #sijapp cond.elseif target is "RIM"#
-		private ChoiceGroup messageNotificationModeChoiceGroup;
-		private ChoiceGroup onlineNotificationModeChoiceGroup;
-		// #sijapp cond.end#
-		// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		private ChoiceGroup vibratorChoiceGroup;
-		// #sijapp cond.end#
+        // #sijapp cond.end#
+        // #sijapp cond.end#
 		private ChoiceGroup cp1251HackChoiceGroup;
 		// #sijapp cond.if modules_TRAFFIC is "true" #
 		private TextField costPerPacketTextField;
@@ -470,7 +496,15 @@ public class Options
 		private TextField lightTimeout;
 		private ChoiceGroup lightManual;
 		// #sijapp cond.end#
-
+        // #sijapp cond.if modules_PROXY is "true"#
+		private ChoiceGroup srvProxyType;
+		private TextField srvProxyHostTextField;
+		private TextField srvProxyPortTextField;
+		private TextField srvProxyLoginTextField;
+		private TextField srvProxyPassTextField;
+		private TextField connAutoRetryTextField;
+        // #sijapp cond.end#
+		
 		// Constructor
 		public OptionsForm() throws NullPointerException
 		{
@@ -478,60 +512,70 @@ public class Options
 			// Initialize commands
 			this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
 			this.saveCommand = new Command(ResourceBundle.getString("save"), Command.SCREEN, 1);
-                                                                // #sijapp cond.if target is "MOTOROLA"#
-                                                                 this.selectCommand=new Command(ResourceBundle.getString("select"), Command.OK, 1);
-                                                                // #sijapp cond.end#
-			// Initialize options menu
-			this.optionsMenu = new List(ResourceBundle.getString("options"), Choice.IMPLICIT);
-			this.optionsMenu.append(ResourceBundle.getString("options_account"), null);
-			this.optionsMenu.append(ResourceBundle.getString("options_network"), null);
-			this.optionsMenu.append(ResourceBundle.getString("options_interface"), null);
-			// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			this.optionsMenu.append(ResourceBundle.getString("options_signaling"), null);
+            // #sijapp cond.if target is "MOTOROLA"#
+            this.selectCommand=new Command(ResourceBundle.getString("select"), Command.OK, 1);
             // #sijapp cond.end#
-			
-			// #sijapp cond.if modules_TRAFFIC is "true" #
-			this.optionsMenu.append(ResourceBundle.getString("options_cost"), null);
-			// #sijapp cond.end#
-			// #sijapp cond.if target is "MOTOROLA"#
+            
+            this.eventList = new int[MENU_EXIT];
+            this.optionsMenu = new List(ResourceBundle.getString("options"), List.IMPLICIT);
+                 
+            this.eventList[this.optionsMenu.append(ResourceBundle.getString("options_account"), null)]    = OPTIONS_ACCOUNT;
+            this.eventList[this.optionsMenu.append(ResourceBundle.getString("options_network"), null)]    = OPTIONS_NETWORK;
+            // #sijapp cond.if modules_PROXY is "true"#
+            this.eventList[this.optionsMenu.append(ResourceBundle.getString("proxy"), null)]      = OPTIONS_PROXY;
+            // #sijapp cond.end#
+            this.eventList[this.optionsMenu.append(ResourceBundle.getString("options_interface"), null)]  = OPTIONS_INTERFACE;
+            // #sijapp cond.if target isnot "DEFAULT"#
+            this.eventList[this.optionsMenu.append(ResourceBundle.getString("options_signaling"), null)]  = OPTIONS_SIGNALING;
+            // #sijapp cond.end#
+            // #sijapp cond.if modules_TRAFFIC is "true"#
+            this.eventList[this.optionsMenu.append(ResourceBundle.getString("traffic"), null)]      = OPTIONS_TRAFFIC;
+            // #sijapp cond.end#
+
+            // #sijapp cond.if target is "MOTOROLA"#
             this.optionsMenu.addCommand(this.selectCommand);
             // #sijapp cond.end#
             this.optionsMenu.addCommand(this.backCommand);
-			this.optionsMenu.setCommandListener(this);
-
+            this.optionsMenu.setCommandListener(this);            
+                    
 			// Initialize options form
 			this.optionsForm = new Form(ResourceBundle.getString("options"));
 			this.optionsForm.addCommand(this.saveCommand);
 			this.optionsForm.addCommand(this.backCommand);
 			this.optionsForm.setCommandListener(this);
 			
-			this.initSubMenuUI(0);
-			this.initSubMenuUI(1);
-			this.initSubMenuUI(2);
-			this.initSubMenuUI(3);
-			this.initSubMenuUI(4);
-			
+			this.initSubMenuUI(OPTIONS_ACCOUNT);
+			this.initSubMenuUI(OPTIONS_NETWORK);
+            // #sijapp cond.if modules_PROXY is "true"#            
+			this.initSubMenuUI(OPTIONS_PROXY);
+            // #sijapp cond.end#            
+			this.initSubMenuUI(OPTIONS_INTERFACE);
+            // #sijapp cond.if target isnot "DEFAULT"#            
+			this.initSubMenuUI(OPTIONS_SIGNALING);
+            // #sijapp cond.end#            
+            // #sijapp cond.if modules_TRAFFIC is "true"#            
+            this.initSubMenuUI(OPTIONS_TRAFFIC);
+            // #sijapp cond.end#            			
 		}
 
-
-		
+	
 		// Initialize the UI elements depending on the submenu id
         public void initSubMenuUI(int i)
         {
-
             switch (i)
             {
-            case 0:
+            case OPTIONS_ACCOUNT:
 
                 // Initialize elements (account section)
                 this.uinTextField = new TextField(ResourceBundle.getString("uin"), Options.this.getStringOption(Options.OPTION_UIN), 12,TextField.NUMERIC);
                 this.passwordTextField = new TextField(ResourceBundle.getString("password"), Options.this.getStringOption(Options.OPTION_PASSWORD), 32, TextField.PASSWORD);
                 break;
 
-            case 1:
+            case OPTIONS_NETWORK:
                 // Initialize elements (network section)
                 this.srvHostTextField = new TextField(ResourceBundle.getString("server_host"), Options.this.getStringOption(Options.OPTION_SRV_HOST), 32, TextField.ANY);
                 this.srvPortTextField = new TextField(ResourceBundle.getString("server_port"), Options.this.getStringOption(Options.OPTION_SRV_PORT), 5, TextField.NUMERIC);
+                
                 this.keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle.getString("keep_conn_alive"), Choice.MULTIPLE);
                 this.keepConnAliveChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.keepConnAliveChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
@@ -551,8 +595,27 @@ public class Options
                 this.autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.autoConnectChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_AUTO_CONNECT));
                 break;
+                
+            // #sijapp cond.if modules_PROXY is "true"#
+            case OPTIONS_PROXY:              
+                this.srvProxyType = new ChoiceGroup(ResourceBundle.getString("proxy_type"), Choice.EXCLUSIVE);
+                this.srvProxyType.append(ResourceBundle.getString("proxy_do_not_use"), null);
+                this.srvProxyType.append(ResourceBundle.getString("proxy_socks4"), null);
+                this.srvProxyType.append(ResourceBundle.getString("proxy_socks5"), null);
+                this.srvProxyType.append(ResourceBundle.getString("proxy_guess"), null);
+                this.srvProxyType.setSelectedIndex(Options.this.getIntOption(Options.OPTION_PRX_TYPE), true);
+                
+                this.srvProxyHostTextField = new TextField(ResourceBundle.getString("proxy_server_host"), Options.this.getStringOption(Options.OPTION_PRX_SERV), 32, TextField.ANY);
+                this.srvProxyPortTextField = new TextField(ResourceBundle.getString("proxy_server_port"), Options.this.getStringOption(Options.OPTION_PRX_PORT), 5, TextField.NUMERIC);
+                
+                this.srvProxyLoginTextField = new TextField(ResourceBundle.getString("proxy_server_login"), Options.this.getStringOption(Options.OPTION_PRX_NAME), 32, TextField.ANY);
+                this.srvProxyPassTextField  = new TextField(ResourceBundle.getString("proxy_server_pass"), Options.this.getStringOption(Options.OPTION_PRX_PASS), 32, TextField.PASSWORD);
+                
+                this.connAutoRetryTextField = new TextField(ResourceBundle.getString("auto_retry_count"), Options.this.getStringOption(Options.OPTION_AUTORETRY_COUNT), 5, TextField.NUMERIC);
+                break;
+            // #sijapp cond.end#                
 
-            case 2:
+            case OPTIONS_INTERFACE:
                 // Initialize elements (interface section)
                 this.uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle.getString("language"), Choice.EXCLUSIVE);
                 for (int j = 0; j < ResourceBundle.LANG_AVAILABLE.length; j++)
@@ -592,12 +655,12 @@ public class Options
                 this.chrgChat.append(ResourceBundle.getString("chat_small_font"), null);
                 this.chrgChat.setSelectedIndex(idx1++, Options.this.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT));
                 
-                //#sijapp cond.if modules_SMILES is "true" #
+                // #sijapp cond.if modules_SMILES is "true"#
                 this.chrgChat.append(ResourceBundle.getString("use_smiles"), null);
                 this.chrgChat.setSelectedIndex(idx1++, Options.this.getBooleanOption(Options.OPTION_USE_SMILES));
                 // #sijapp cond.end#
                 
-				//#sijapp cond.if modules_HISTORY is "true" #                
+				//#sijapp cond.if modules_HISTORY is "true"#                
                 this.chrgChat.append(ResourceBundle.getString("use_history"), null);
                 this.chrgChat.setSelectedIndex(idx1++, Options.this.getBooleanOption(Options.OPTION_HISTORY));
                 //#sijapp cond.end#
@@ -610,51 +673,43 @@ public class Options
 				// #sijapp cond.end#
 
                 break;
-            case 3:
+                
+            // #sijapp cond.if target isnot "DEFAULT"#                
+            case OPTIONS_SIGNALING:
 
                 // Initialize elements (Signaling section)
-
-                // #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
                 this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
                 this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
                 this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-                this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
+                // #sijapp cond.if target isnot "RIM"#        
+                this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);               
+                // #sijapp cond.end#                  
                 this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE),true);
+                // #sijapp cond.if target isnot "RIM"#                 
                 this.onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("onl_sound_file_name"),Options.this.getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
+                // #sijapp cond.end#                 
                 this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("message_notification"),Choice.EXCLUSIVE);
                 this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
                 this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
+                // #sijapp cond.if target isnot "RIM"#                 
                 this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
+                // #sijapp cond.end#                  
                 this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
+                // #sijapp cond.if target isnot "RIM"#                  
                 this.messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.this.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
                 this.messageNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME) / 10);
                 this.onlineNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME) / 10);
-                // #sijapp cond.elseif target is "RIM"#
-                this.messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
-                this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
-                this.messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-                this.messageNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
-                this.onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("msg_notification"), Choice.EXCLUSIVE);
-                this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
-                this.onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-                this.onlineNotificationModeChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE),true);
-                // #sijapp cond.end#
-                // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                // #sijapp cond.end#    
                 this.vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration") + "?", Choice.EXCLUSIVE);
                 this.vibratorChoiceGroup.append(ResourceBundle.getString("no"), null);
                 this.vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.vibratorChoiceGroup.append(ResourceBundle.getString("when_locked"), null);
                 this.vibratorChoiceGroup.setSelectedIndex(Options.this.getIntOption(Options.OPTION_VIBRATOR), true);
-                // #sijapp cond.end#
-
-                // #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 break;
             // #sijapp cond.end#
 
-            // #sijapp cond.if modules_TRAFFIC is "true" #
-            // #sijapp cond.if target isnot "DEFAULT"#
-            case 4:
-                // #sijapp cond.end#
+            // #sijapp cond.if modules_TRAFFIC is "true"#
+            case OPTIONS_TRAFFIC:
                 // Initialize elements (cost section)
                 this.costPerPacketTextField = new TextField(ResourceBundle.getString("cpp"), Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_PACKET)), 6, TextField.ANY);
                 this.costPerDayTextField = new TextField(ResourceBundle.getString("cpd"), Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_DAY)), 6, TextField.ANY);
@@ -669,8 +724,7 @@ public class Options
 		public void activate()
 		{
 			this.optionsMenu.setSelectedIndex(0, true);   // Reset
-			Jimm.display.setCurrent(this.optionsMenu);
-			
+			Jimm.display.setCurrent(this.optionsMenu);		
 		}
 
 
@@ -686,32 +740,42 @@ public class Options
 			{
 				lastHideOffline = Options.this.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 				lastGroupsUsed = Options.this.getBooleanOption(Options.OPTION_USER_GROUPS);
-				lastSortMethod = Options.this.getIntOption(Options.OPTION_CL_SORT_BY);
+                lastSortMethod = Options.this.getIntOption(Options.OPTION_CL_SORT_BY);
 				lastColorScheme = Options.this.getIntOption(Options.OPTION_COLOR_SCHEME);
 
 				// Delete all items
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 				this.optionsForm.deleteAll();
-				//#sijapp cond.else #
+				//#sijapp cond.else#
 				while (this.optionsForm.size() > 0) { this.optionsForm.delete(0); }
 				//#sijapp cond.end#
 				
 
 				// Add elements, depending on selected option menu item
-				switch (this.optionsMenu.getSelectedIndex())
+				switch (this.eventList[this.optionsMenu.getSelectedIndex()])
 				{
-					case 0:
+					case OPTIONS_ACCOUNT:
 					    this.optionsForm.append(this.uinTextField);
 						this.optionsForm.append(this.passwordTextField);
 						break;
-					case 1:
+					case OPTIONS_NETWORK:
 						this.optionsForm.append(this.srvHostTextField);
 						this.optionsForm.append(this.srvPortTextField);
 						this.optionsForm.append(this.keepConnAliveChoiceGroup);
 						this.optionsForm.append(this.autoConnectChoiceGroup);
 						this.optionsForm.append(this.connTypeChoiceGroup);
 						break;
-					case 2:
+                    // #sijapp cond.if modules_PROXY is "true"#
+                    case OPTIONS_PROXY:
+                        this.optionsForm.append(this.srvProxyType);
+                        this.optionsForm.append(this.srvProxyHostTextField);
+                        this.optionsForm.append(this.srvProxyPortTextField);
+                        this.optionsForm.append(this.srvProxyLoginTextField);
+                        this.optionsForm.append(this.srvProxyPassTextField);
+                        this.optionsForm.append(this.connAutoRetryTextField);
+                        break;
+                    // #sijapp cond.end#                        
+					case OPTIONS_INTERFACE:
 						this.optionsForm.append(this.uiLanguageChoiceGroup);
 						this.optionsForm.append(this.displayDateChoiceGroup);
 						this.optionsForm.append(this.showUserGroups);
@@ -728,29 +792,25 @@ public class Options
 						// #sijapp cond.end #
 						
 						break;
-					case 3:
-						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                    // #sijapp cond.if target isnot "DEFAULT"#                        
+					case OPTIONS_SIGNALING:
+                        
 						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
+                        // #sijapp cond.if target isnot "RIM"#                        
 						this.optionsForm.append(this.messageNotificationSoundVolume);
 						this.optionsForm.append(this.messageNotificationSoundfileTextField);
-						this.optionsForm.append(this.vibratorChoiceGroup);
+                        // #sijapp cond.end#                        
+						this.optionsForm.append(this.vibratorChoiceGroup);                      
 						this.optionsForm.append(this.onlineNotificationModeChoiceGroup);
+                        // #sijapp cond.if target isnot "RIM"#                          
 						this.optionsForm.append(this.onlineNotificationSoundVolume);
 						this.optionsForm.append(this.onlineNotificationSoundfileTextField);
-						// #sijapp cond.elseif target is "RIM"#
-						this.optionsForm.append(this.messageNotificationModeChoiceGroup);
-						this.optionsForm.append(this.vibratorChoiceGroup);
-						this.optionsForm.append(this.onlineNotificationModeChoiceGroup);
-						// #sijapp cond.end#
-						
-						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                        // #sijapp cond.end#                        
 						break;
-						// #sijapp cond.end#
+			        // #sijapp cond.end#
 
-					// #sijapp cond.if modules_TRAFFIC is "true" #
-					// #sijapp cond.if target isnot "DEFAULT"#
-					case 4:
-                    // #sijapp cond.end#
+					// #sijapp cond.if modules_TRAFFIC is "true"#
+					case OPTIONS_TRAFFIC:
 						this.optionsForm.append(this.costPerPacketTextField);
 						this.optionsForm.append(this.costPerDayTextField);
 						this.optionsForm.append(this.costPacketLengthTextField);
@@ -761,7 +821,6 @@ public class Options
 
 				// Activate options form
 				Jimm.display.setCurrent(this.optionsForm);
-
 			}
 
 			// Look for back command
@@ -793,11 +852,11 @@ public class Options
 				// Save values, depending on selected option menu item
 				switch (this.optionsMenu.getSelectedIndex())
 				{
-					case 0:
+					case OPTIONS_ACCOUNT:
 						Options.this.setStringOption(Options.OPTION_UIN,this.uinTextField.getString());
 						Options.this.setStringOption(Options.OPTION_PASSWORD,this.passwordTextField.getString());
 						break;
-					case 1:
+					case OPTIONS_NETWORK:
 					    Options.this.setStringOption(Options.OPTION_SRV_HOST,this.srvHostTextField.getString());
 					    Options.this.setStringOption(Options.OPTION_SRV_PORT,this.srvPortTextField.getString());
 						Options.this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,this.keepConnAliveChoiceGroup.isSelected(0));
@@ -806,11 +865,23 @@ public class Options
 							Options.this.setIntOption(Options.OPTION_CONN_TYPE,1);
 						else
 						    Options.this.setIntOption(Options.OPTION_CONN_TYPE,0);
-                                                                                                                                // #sijapp cond.if target isnot "MOTOROLA"#
+                        // #sijapp cond.if target isnot "MOTOROLA"#
 						Options.this.setBooleanOption(Options.OPTION_SHADOW_CON,this.connTypeChoiceGroup.isSelected(1));
-                                                                                                                                // #sijapp cond.end#
+                        // #sijapp cond.end#
 						break;
-					case 2:
+                    // #sijapp cond.if modules_PROXY is "true"#
+                    case OPTIONS_PROXY:
+                        Options.this.setIntOption(Options.OPTION_PRX_TYPE,this.srvProxyType.getSelectedIndex());
+                        Options.this.setStringOption(Options.OPTION_PRX_SERV,this.srvProxyHostTextField.getString());
+                        Options.this.setStringOption(Options.OPTION_PRX_PORT,this.srvProxyPortTextField.getString());
+                        
+                        Options.this.setStringOption(Options.OPTION_PRX_NAME,this.srvProxyLoginTextField.getString());
+                        Options.this.setStringOption(Options.OPTION_PRX_PASS,this.srvProxyPassTextField.getString());
+                        
+                        Options.this.setStringOption(Options.OPTION_AUTORETRY_COUNT,this.connAutoRetryTextField.getString());
+                        break;
+                    // #sijapp cond.end#                        
+					case OPTIONS_INTERFACE:
 						Options.this.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.LANG_AVAILABLE[this.uiLanguageChoiceGroup.getSelectedIndex()]);
 						Options.this.setBooleanOption(Options.OPTION_DISPLAY_DATE,this.displayDateChoiceGroup.isSelected(0));
 						
@@ -833,13 +904,13 @@ public class Options
 						int idx = 0;
 						Options.this.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, this.chrgChat.isSelected(idx++));
 						
-						//#sijapp cond.if modules_SMILES is "true" #
+						// #sijapp cond.if modules_SMILES is "true"#
 						Options.this.setBooleanOption(Options.OPTION_USE_SMILES,      this.chrgChat.isSelected(idx++));
-						//#sijapp cond.end#
+						// #sijapp cond.end#
 						
-						//#sijapp cond.if modules_HISTORY is "true" #
+						// #sijapp cond.if modules_HISTORY is "true"#
 						Options.this.setBooleanOption(Options.OPTION_HISTORY,         this.chrgChat.isSelected(idx++));
-						//#sijapp cond.end#
+						// #sijapp cond.end#
 						
 						boolean newUseGroups = this.showUserGroups.isSelected(0);
 						Options.this.setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);
@@ -855,32 +926,28 @@ public class Options
 						);
 						
 						if (lastColorScheme != newColorScheme) JimmUI.setColorScheme();
-						// #sijapp cond.if target is "MOTOROLA" #
+						// #sijapp cond.if target is "MOTOROLA"#
 						Options.this.setIntOption(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(this.lightTimeout.getString()));
 						Options.this.setBooleanOption(Options.OPTION_LIGHT_MANUAL, this.lightManual.isSelected(0));
-						// #sijapp cond.end #
+						// #sijapp cond.end#
 						break;
-						
-					case 3:
-						// #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                    // #sijapp cond.if target isnot "DEFAULT"#				
+					case OPTIONS_SIGNALING:
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
+						// #sijapp cond.if target isnot "RIM"#       
 						Options.this.setStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE,this.messageNotificationSoundfileTextField.getString());
 						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,this.messageNotificationSoundVolume.getValue()*10);
+                        // #sijapp cond.end#                        
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());
+                        // #sijapp cond.if target isnot "RIM"#                          
 						Options.this.setStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,this.onlineNotificationSoundfileTextField.getString());
 						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME,this.onlineNotificationSoundVolume.getValue()*10);
-						// #sijapp cond.elseif target is "RIM"#
-						Options.this.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,this.messageNotificationModeChoiceGroup.getSelectedIndex());
-						Options.this.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,this.onlineNotificationModeChoiceGroup.getSelectedIndex());
-						// #sijapp cond.end#
-						// #sijapp cond.if target is "SIEMENS" | target is "RIM" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                        // #sijapp cond.end#
 						Options.this.setIntOption(Options.OPTION_VIBRATOR,this.vibratorChoiceGroup.getSelectedIndex());
 						break;
-						// #sijapp cond.end#
-					// #sijapp cond.if modules_TRAFFIC is "true" #
-				    // #sijapp cond.if target isnot "DEFAULT"#
-					case 4:
-                    // #sijapp cond.end#
+				    // #sijapp cond.end#
+					// #sijapp cond.if modules_TRAFFIC is "true"#
+					case OPTIONS_TRAFFIC:
 						Options.this.setIntOption(Options.OPTION_COST_PER_PACKET,Util.decimalToInt(this.costPerPacketTextField.getString()));
 						this.costPerPacketTextField.setString(Util.intToDecimal(Options.this.getIntOption(Options.OPTION_COST_PER_PACKET)));
 						Options.this.setIntOption(Options.OPTION_COST_PER_DAY,Util.decimalToInt(this.costPerDayTextField.getString()));

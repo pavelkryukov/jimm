@@ -276,6 +276,20 @@ public class Text_RU extends ResourceBundle
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Вас добавил: ");
 
+        resources.put("proxy",                       "прокси");
+		resources.put("proxy_type",                  "Тип прокси");
+		resources.put("proxy_do_not_use",            "Не использовать");
+		resources.put("proxy_socks4",                "Socks4");
+		resources.put("proxy_socks5",                "Socks5");
+		resources.put("proxy_guess",                 "Авто");
+		resources.put("proxy_server_host",           "Прокси сервер:");
+		resources.put("proxy_server_port",           "Порт:");
+
+		resources.put("proxy_server_login",          "Логин прокси:");
+		resources.put("proxy_server_pass",           "Пароль прокси:");
+
+		resources.put("auto_retry_count",            "Попыток подключения:");
+
 		//#sijapp cond.if modules_HISTORY is "true" #
 		resources.put("add_to_history",              "В историю");
 		resources.put("text_to_find",                "Текст");
