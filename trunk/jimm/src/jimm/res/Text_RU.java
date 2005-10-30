@@ -230,7 +230,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("server_port",                 "Порт");
 		resources.put("session",                     "Сессия");
 		resources.put("set_status",                  "Статус");
-		resources.put("shadow_con",                  "Дополнительное подключение");
+		resources.put("shadow_con",                  "Доп. подключение");
 		resources.put("show_user_groups",            "Группировать контакты");
 		resources.put("since",                       "Начиная с");
 		resources.put("size",                        "Размер");
@@ -276,7 +276,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("yes",                         "Да");
 		resources.put("youwereadded",				 "Вас добавил: ");
 
-        resources.put("proxy",                       "прокси");
+        resources.put("proxy",                       "Прокси");
 		resources.put("proxy_type",                  "Тип прокси");
 		resources.put("proxy_do_not_use",            "Не использовать");
 		resources.put("proxy_socks4",                "Socks4");
