@@ -162,10 +162,10 @@ public class JimmUI implements CommandListener
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
 		   .append(freeMem).append("kb\n\n")
-           .append(ResourceBundle.getString("latest_ver"));
+           .append(ResourceBundle.getString("latest_ver")+":");
 		
 		if (versionLoaded) str.append(" ").append(version);
-		else str.append("... ");
+		else str.append(" ...");
 		
 		try
 		{
