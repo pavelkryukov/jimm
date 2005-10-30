@@ -576,7 +576,15 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				menuList.setSelectedIndex(0, true);
 				
 				// Show message form
-				writeMessage(repliedWithQuota ? JimmUI.getClipBoardText() : null);
+				try
+				{
+					writeMessage(repliedWithQuota ? JimmUI.getClipBoardText() : null);
+				}
+				catch (Exception e)
+				{
+					Alert alert = new Alert( ResourceBundle.getString("text_too_long") );
+					Jimm.display.setCurrent(alert, Jimm.display.getCurrent());
+				}
 			}
             
             // Menu item has been selected
@@ -806,8 +814,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// "Copy text" command selected
 			else if (c == copyTextCommand)
 			{
-				DrawControls.TextList list = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(uin);
-				JimmUI.setClipBoardText(list.getCurrText(1));
+				Jimm.jimm.getChatHistoryRef().copyText(uin);
 				getCurrDisplay().addCommand(replWithQuotaCommand);
 			}
 			
@@ -884,7 +891,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 						messageTextbox.setString(null);
 						
 						// Clear clipboard
-						if (repliedWithQuota) JimmUI.setClipBoardText(null);
+						if (repliedWithQuota) JimmUI.clearClipBoardText();
 						getCurrDisplay().removeCommand(replWithQuotaCommand);
 						repliedWithQuota = false;
 					}

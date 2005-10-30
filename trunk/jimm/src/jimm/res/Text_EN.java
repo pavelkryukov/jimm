@@ -255,6 +255,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("status_online",               "Online");
 		resources.put("successful",                  "successful");
 		resources.put("sysnotice",					 "System Notice");
+		resources.put("text_too_long",               "Text too long to be inserted");
 		resources.put("title",                       "Title");
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
