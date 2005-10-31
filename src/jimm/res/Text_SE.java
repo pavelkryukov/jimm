@@ -46,7 +46,7 @@ public class Text_SE extends ResourceBundle
 		resources.put("add_user",                    "Lägg till användare");
 		resources.put("async",                       "Async");
 		resources.put("back",                        "Tillbaka");
-		// #sijapp cond.if target is "SIEMENS" #
+		// #sijapp cond.if target is "SIEMENS1" #
 		resources.put("beep",                        "Pip");
 		// #sijapp cond.end #
 		resources.put("byte",                        "Byte");
@@ -90,7 +90,7 @@ public class Text_SE extends ResourceBundle
 		resources.put("menu",                        "Meny");
 		resources.put("message",                     "Meddelande");
 		resources.put("message_from",                "Meddelande från");
-		// #sijapp cond.if target is "SIEMENS" #
+		// #sijapp cond.if target is "SIEMENS1" #
 		resources.put("message_notification",        "Meddelande-signal");
 		// #sijapp cond.end #
 		resources.put("name",                        "Namn");
@@ -141,7 +141,7 @@ public class Text_SE extends ResourceBundle
 		resources.put("url",                         "URL");
 		resources.put("user_add",                    "Lägg till användare");
 		resources.put("user_search",                 "Sök efter användare");
-		// #sijapp cond.if target is "SIEMENS" #
+		// #sijapp cond.if target is "SIEMENS1" #
 		resources.put("vibration",                   "Vibration");
 		// #sijapp cond.end #
 		resources.put("wait",                        "Vänligen vänta ...");
