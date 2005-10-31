@@ -237,3 +237,4 @@ VERSION 0.4.2
   * New structure for res files  
   * build-release.xml is now building a .7z archive instead of .tar.gz
   * Rewrote the code for the Options UI to be more moduar and nicer
+  * Smiles are inserted at correct possition on Sony Ericsson phones
