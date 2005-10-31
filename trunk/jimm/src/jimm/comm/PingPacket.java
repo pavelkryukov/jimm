@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/PingPacket.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 
@@ -78,7 +78,8 @@ public class PingPacket extends Packet
 		// Validate length of FLAP data
 		if (flapLength != 0)
 		{
-			throw (new JimmException(136, 0));
+			// throw (new JimmException(136, 0));
+            // Ignore invalide PING packet
 		}
 
 		// Instantiate LoginPacket
