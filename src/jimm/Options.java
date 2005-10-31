@@ -496,6 +496,7 @@ public class Options
 		private TextField lightTimeout;
 		private ChoiceGroup lightManual;
 		// #sijapp cond.end#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#        
         // #sijapp cond.if modules_PROXY is "true"#
 		private ChoiceGroup srvProxyType;
 		private TextField srvProxyHostTextField;
@@ -504,6 +505,7 @@ public class Options
 		private TextField srvProxyPassTextField;
 		private TextField connAutoRetryTextField;
         // #sijapp cond.end#
+        // #sijapp cond.end#        
 		
 		// Constructor
 		public OptionsForm() throws NullPointerException
@@ -521,9 +523,11 @@ public class Options
                  
             this.eventList[this.optionsMenu.append(ResourceBundle.getString("options_account"), null)]    = OPTIONS_ACCOUNT;
             this.eventList[this.optionsMenu.append(ResourceBundle.getString("options_network"), null)]    = OPTIONS_NETWORK;
+            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#             
             // #sijapp cond.if modules_PROXY is "true"#
             this.eventList[this.optionsMenu.append(ResourceBundle.getString("proxy"), null)]      = OPTIONS_PROXY;
             // #sijapp cond.end#
+            // #sijapp cond.end#            
             this.eventList[this.optionsMenu.append(ResourceBundle.getString("options_interface"), null)]  = OPTIONS_INTERFACE;
             // #sijapp cond.if target isnot "DEFAULT"#
             this.eventList[this.optionsMenu.append(ResourceBundle.getString("options_signaling"), null)]  = OPTIONS_SIGNALING;
@@ -546,9 +550,11 @@ public class Options
 			
 			this.initSubMenuUI(OPTIONS_ACCOUNT);
 			this.initSubMenuUI(OPTIONS_NETWORK);
+            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#              
             // #sijapp cond.if modules_PROXY is "true"#            
 			this.initSubMenuUI(OPTIONS_PROXY);
-            // #sijapp cond.end#            
+            // #sijapp cond.end#     
+            // #sijapp cond.end#               
 			this.initSubMenuUI(OPTIONS_INTERFACE);
             // #sijapp cond.if target isnot "DEFAULT"#            
 			this.initSubMenuUI(OPTIONS_SIGNALING);
@@ -595,7 +601,7 @@ public class Options
                 this.autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.autoConnectChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_AUTO_CONNECT));
                 break;
-                
+            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#                  
             // #sijapp cond.if modules_PROXY is "true"#
             case OPTIONS_PROXY:              
                 this.srvProxyType = new ChoiceGroup(ResourceBundle.getString("proxy_type"), Choice.EXCLUSIVE);
@@ -613,7 +619,8 @@ public class Options
                 
                 this.connAutoRetryTextField = new TextField(ResourceBundle.getString("auto_retry_count"), Options.this.getStringOption(Options.OPTION_AUTORETRY_COUNT), 5, TextField.NUMERIC);
                 break;
-            // #sijapp cond.end#                
+            // #sijapp cond.end#      
+            // #sijapp cond.end#                 
 
             case OPTIONS_INTERFACE:
                 // Initialize elements (interface section)
@@ -765,6 +772,7 @@ public class Options
 						this.optionsForm.append(this.autoConnectChoiceGroup);
 						this.optionsForm.append(this.connTypeChoiceGroup);
 						break;
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#                         
                     // #sijapp cond.if modules_PROXY is "true"#
                     case OPTIONS_PROXY:
                         this.optionsForm.append(this.srvProxyType);
@@ -774,6 +782,7 @@ public class Options
                         this.optionsForm.append(this.srvProxyPassTextField);
                         this.optionsForm.append(this.connAutoRetryTextField);
                         break;
+                    // #sijapp cond.end# 
                     // #sijapp cond.end#                        
 					case OPTIONS_INTERFACE:
 						this.optionsForm.append(this.uiLanguageChoiceGroup);
@@ -869,6 +878,7 @@ public class Options
 						Options.this.setBooleanOption(Options.OPTION_SHADOW_CON,this.connTypeChoiceGroup.isSelected(1));
                         // #sijapp cond.end#
 						break;
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#                        
                     // #sijapp cond.if modules_PROXY is "true"#
                     case OPTIONS_PROXY:
                         Options.this.setIntOption(Options.OPTION_PRX_TYPE,this.srvProxyType.getSelectedIndex());
@@ -880,7 +890,8 @@ public class Options
                         
                         Options.this.setStringOption(Options.OPTION_AUTORETRY_COUNT,this.connAutoRetryTextField.getString());
                         break;
-                    // #sijapp cond.end#                        
+                    // #sijapp cond.end#      
+                    // #sijapp cond.end#                         
 					case OPTIONS_INTERFACE:
 						Options.this.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.LANG_AVAILABLE[this.uiLanguageChoiceGroup.getSelectedIndex()]);
 						Options.this.setBooleanOption(Options.OPTION_DISPLAY_DATE,this.displayDateChoiceGroup.isSelected(0));
