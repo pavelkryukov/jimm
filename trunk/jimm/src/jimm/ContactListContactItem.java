@@ -759,8 +759,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     
                     buf.append("DC typ: ")     .append(getDCType()).append(clrf)
 					   .append("ICQ version: ").append(getICQVersion()).append(clrf)
-					   .append("Int IP: ")     .append(getInternalIP()).append(clrf)
-					   .append("Ext IP: ")     .append(this.getExternalIP()).append(clrf)
+					   .append("Int IP: ")     .append(Util.ipToString(getInternalIP())).append(clrf)
+					   .append("Ext IP: ")     .append(Util.ipToString(this.getExternalIP())).append(clrf)
 					   .append("Port: ")       .append(this.getPort()).append(clrf);
                     
                     info.setString(buf.toString());
@@ -1086,7 +1086,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			else if ( Jimm.jimm.getEmotionsRef().isMyOkCommand(c) )
 			{
 				// #sijapp cond.if target is "MOTOROLA"#
-				caretPos = messageTextbox.getString().length();
+				//caretPos = messageTextbox.getString().length();
 				// #sijapp cond.end#
 				
 				messageTextbox.insert
