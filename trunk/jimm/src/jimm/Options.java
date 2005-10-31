@@ -161,7 +161,7 @@ public class Options
 			this.setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
 			this.setIntOption    (Options.OPTION_CL_SORT_BY,                     0);
 			this.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,                false);
-			// #sijapp cond.if target is "SIEMENS"#
+			// #sijapp cond.if target is "SIEMENS1"#
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
 			this.setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mmf");
 			this.setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);

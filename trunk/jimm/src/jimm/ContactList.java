@@ -44,7 +44,7 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
-//#sijapp cond.if target is "SIEMENS"#
+//#sijapp cond.if target is "SIEMENS1"#
 import com.siemens.mp.game.Vibrator;
 import com.siemens.mp.game.Light;
 import com.siemens.mp.media.Manager;
@@ -1270,7 +1270,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 	
 	//#sijapp cond.end#
 	
-	//#sijapp cond.if target is"SIEMENS"#
+	//#sijapp cond.if target is"SIEMENS1"#
 	private Player createPlayer(String source)
 	{
 		Player p;
@@ -1288,7 +1288,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 	//#sijapp cond.end#
 	
 	
-	//#sijapp cond.if target is "MIDP2" | target is"SIEMENS" | target is "MOTOROLA" | target is "SIEMENS2"#
+	//#sijapp cond.if target is "MIDP2" | target is"SIEMENS1" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// sets volume for player
 	static private void setVolume(Player p, int value)
 	{
@@ -1314,9 +1314,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands
     {
     	if (!treeBuilt) return;
     	
-        // #sijapp cond.if target is "SIEMENS" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        // #sijapp cond.if target is "SIEMENS1" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         
-        // #sijapp cond.if target is "SIEMENS"#
+        // #sijapp cond.if target is "SIEMENS1"#
         Light.setLightOn();
         // #sijapp cond.end#
         
@@ -1324,7 +1324,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
         if(vibraKind == 2) vibraKind = Jimm.jimm.getSplashCanvasRef().locked()?1:0;
         if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
         {
-            // #sijapp cond.if target is "SIEMENS"#
+            // #sijapp cond.if target is "SIEMENS1"#
             Vibrator.triggerVibrator(500);
             // #sijapp cond.else#
             Jimm.display.vibrate(500);
@@ -1392,7 +1392,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
             break;
 
         }
-        // #sijapp cond.if target is "SIEMENS"#
+        // #sijapp cond.if target is "SIEMENS1"#
         Light.setLightOff();
         // #sijapp cond.end#
         

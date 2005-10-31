@@ -39,7 +39,6 @@ import DrawControls.TextList;
 import DrawControls.VirtualList;
 import DrawControls.VirtualListCommands;
 
-//#sijapp cond.if modules_HISTORY is "true" #
 class MessData
 {
 	private boolean incoming;
@@ -60,11 +59,13 @@ class MessData
 	public Date getTime() { return time; }
 	public int getOffset() { return textOffset; }
 }
-//#sijapp cond.end#
 
 class ChatTextList extends TextList implements VirtualListCommands
 {
 	public String ChatName;
+	private Vector messData = new Vector();
+	private int messTotalCounter = 0;
+	
 	ChatTextList(String name)
 	{
 		super(null);
@@ -80,6 +81,11 @@ class ChatTextList extends TextList implements VirtualListCommands
 		JimmUI.setColorScheme(this);
 		
 		setVLCommands(this);
+	}
+
+	Vector getMessData()
+	{
+		return messData; 
 	}
 	
 	public void onCursorMove(VirtualList sender) {}
@@ -100,26 +106,65 @@ class ChatTextList extends TextList implements VirtualListCommands
 			break;
 		}
 	}
+	
+	void addTextToForm(String from, String message, String url, Date time, boolean red, boolean offline)
+	{
+		int texOffset;
+		
+		lock();
+		int lastSize = getSize();
+		addBigText
+		(
+			from + " (" + Util.getDateString(!offline, time) + "): ",
+			red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
+			Font.STYLE_BOLD,
+			messTotalCounter
+		);
+		doCRLF(messTotalCounter);
+
+		if (url.length() > 0)
+		{
+			addBigText
+			(
+				ResourceBundle.getString("url")+": "+url, 
+				0x00FF00, 
+				Font.STYLE_PLAIN, messTotalCounter
+			);
+		}
+		
+		texOffset = getSize()-lastSize;
+		
+		//#sijapp cond.if modules_SMILES is "true" #
+		Jimm.jimm.getEmotionsRef().addTextWithEmotions(this, message, Font.STYLE_PLAIN, getTextColor(), messTotalCounter);
+		//#sijapp cond.else#
+		addBigText(message, getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
+		//#sijapp cond.end#
+		doCRLF(messTotalCounter);
+		
+		setTopItem(lastSize);		
+		unlock();
+		getMessData().addElement( new MessData(red, time, from, texOffset) );
+		
+		messTotalCounter++;
+
+	}
 }
 
 public class ChatHistory
 {
 	private Hashtable historyTable;
 	private int counter;
-	private static int messTotalCounter = 0;
-	
-	//#sijapp cond.if modules_HISTORY is "true" #
-	private Vector messData = new Vector();
-	
+
 	// Adds selected message to history
+	//#sijapp cond.if modules_HISTORY is "true" #
 	public void addTextToHistory(String uin)
 	{
-		DrawControls.TextList list = getChatHistoryAt(uin);
+		ChatTextList list = getChatHistoryAt(uin);
 		int textIndex = list.getCurrTextIndex();
 		String text = list.getCurrText(1);
 		if (text == null) return;
 		
-		MessData data = (MessData)messData.elementAt(textIndex);
+		MessData data = (MessData)list.getMessData().elementAt(textIndex);
 		Jimm.jimm.getHistory().addText
 		(
 			uin, 
@@ -210,55 +255,16 @@ public class ChatHistory
 	// Add text to message form
 	synchronized private void addTextToForm(String uin,String from, String message, String url, Date time, boolean red, boolean offline)
 	{
-		TextList msgDisplay = (TextList) historyTable.get(uin);
-		int texOffset;
+		ChatTextList msgDisplay = (ChatTextList) historyTable.get(uin);
 
-		msgDisplay.lock();
-		int lastSize = msgDisplay.getSize();
-		msgDisplay.addBigText
-		(
-			from + " (" + Util.getDateString(!offline, time) + "): ",
-			red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
-			Font.STYLE_BOLD,
-			messTotalCounter
-		);
-		msgDisplay.doCRLF(messTotalCounter);
-
-		if (url.length() > 0)
-		{
-			msgDisplay.addBigText
-			(
-				ResourceBundle.getString("url")+": "+url, 
-				0x00FF00, 
-				Font.STYLE_PLAIN, messTotalCounter
-			);
-		}
-		
-		texOffset = msgDisplay.getSize()-lastSize;
-		
-		//#sijapp cond.if modules_SMILES is "true" #
-		Jimm.jimm.getEmotionsRef().addTextWithEmotions(msgDisplay, message, Font.STYLE_PLAIN, msgDisplay.getTextColor(), messTotalCounter);
-		//#sijapp cond.else#
-		msgDisplay.addBigText(message, msgDisplay.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
-		//#sijapp cond.end#
-		msgDisplay.doCRLF(messTotalCounter);
-		
-		
-		msgDisplay.setTopItem(lastSize);		
-		msgDisplay.unlock();
-		
-		//#sijapp cond.if modules_HISTORY is "true" #
-		messData.addElement( new MessData(red, time, from, texOffset) );
-		//#sijapp cond.end#
-		
-		messTotalCounter++;
+		msgDisplay.addTextToForm(from, message, url, time, red, offline);
 	}
 	
 	public void copyText(String uin)
 	{
-		DrawControls.TextList list = getChatHistoryAt(uin);
+		ChatTextList list = getChatHistoryAt(uin);
 		int messIndex = list.getCurrTextIndex();
-		MessData md = (MessData)messData.elementAt(messIndex);
+		MessData md = (MessData)list.getMessData().elementAt(messIndex);
 		
 		JimmUI.setClipBoardText
 		(
@@ -270,12 +276,12 @@ public class ChatHistory
 	}
 
 	// Returns the chat history form at the given uin
-	public TextList getChatHistoryAt(String uin)
+	public ChatTextList getChatHistoryAt(String uin)
 	{
 		if (historyTable.containsKey(uin))
-			return (TextList) historyTable.get(uin);
+			return (ChatTextList) historyTable.get(uin);
 		else
-			return new TextList("Error");
+			return new ChatTextList("Error");
 	}
 
 	// Delete the chat history for uin
