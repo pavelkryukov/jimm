@@ -560,35 +560,37 @@ public class Util
         return arrIP;
     }
     
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_PROXY is "true"#
     // Try to parse string IP
     public static boolean isIP(String ip)
     {
         int digit = 0;
         int i;
-		try
-		{
-        	for (int j = 0; j < 3; j++)
-        	{
-
-            	for (i = 0; i < 3; i++)
-            	{
-                	if (ip.charAt(i) == '.') break;
-            	}
-	
-            	digit = Integer.parseInt(ip.substring(0, i));
-            	ip = ip.substring(i + 1);
-        	}
-        
-        	digit = Integer.parseInt(ip);
-        	
-        	return true;
-        }
-        catch( NumberFormatException e )
+        try
         {
-        	return false;
+            for (int j = 0; j < 3; j++)
+            {
+
+                for (i = 0; i < 3; i++)
+                {
+                    if (ip.charAt(i) == '.') break;
+                }
+
+                digit = Integer.parseInt(ip.substring(0, i));
+                ip = ip.substring(i + 1);
+            }
+
+            digit = Integer.parseInt(ip);
+
+            return true;
+        } catch (NumberFormatException e)
+        {
+            return false;
         }
-    }    
+    }
+
+    // #sijapp cond.end #
     // #sijapp cond.end #
     
     // Create a random id which is not used yet
