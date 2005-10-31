@@ -237,6 +237,8 @@ Core development team:
 Contributors:
   *  Spassky Alexander 
   		(Type-2 Message support)
+  *  Perminov Andrey
+        (Socks Proxy module)
   *  Sergey Chernov 
   		(Cyrillic character support)
   *  David Ethell 
