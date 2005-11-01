@@ -178,11 +178,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
     // #sijapp cond.else #    
         mainMenuCommand    = new Command(ResourceBundle.getString("menu"),         Command.SCREEN, 3),
     // #sijapp cond.end #
-	    selectCommand      = new Command(ResourceBundle.getString("select"),       Command.ITEM, 1),
-	    newUserCommand     = new Command(ResourceBundle.getString("add_user"),     Command.SCREEN, 2),
-	    searchUserCommand  = new Command(ResourceBundle.getString("search_user"),  Command.SCREEN, 2),
-	    newGroupCommand    = new Command(ResourceBundle.getString("add_group"),    Command.SCREEN, 2),
-	    removeUserCommand  = new Command(ResourceBundle.getString("remove_user"),  Command.SCREEN, 2);  
+	    selectCommand      = new Command(ResourceBundle.getString("select"),       Command.ITEM, 1);
     //#sijapp cond.if modules_DEBUGLOG is "true" #
     private static Command debugListCommand = new Command("*Debug list*", Command.ITEM, 2);
     //#sijapp cond.end#
