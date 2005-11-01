@@ -446,7 +446,8 @@ public class Options
         // Static constants for menu actios
         private static final int OPTIONS_ACCOUNT    = 0;
         private static final int OPTIONS_NETWORK    = 1;
-        // #sijapp cond.if modules_TRAFFIC is "true"#        
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#        
+        // #sijapp cond.if modules_PROXY is "true"#       
         private static final int OPTIONS_PROXY      = 2;
         // #sijapp cond.end#        
         private static final int OPTIONS_INTERFACE  = 3;
