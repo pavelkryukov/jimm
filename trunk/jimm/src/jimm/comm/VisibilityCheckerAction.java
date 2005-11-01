@@ -27,6 +27,7 @@ import jimm.Jimm;
 import jimm.JimmException;
 import jimm.ContactList;
 import jimm.ContactListContactItem;
+import jimm.JimmUI;
 import jimm.util.ResourceBundle;
 import javax.microedition.lcdui.*;
 import DrawControls.*;
@@ -137,6 +138,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 			{
 				TextList results = new TextList(null);
 				results.setCursorMode(TextList.SEL_NONE);
+				JimmUI.setColorScheme(results);
 				
 				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 				results.setTitle(ResourceBundle.getString("invisible_check"));
