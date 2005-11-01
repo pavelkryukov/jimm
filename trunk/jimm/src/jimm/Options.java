@@ -833,11 +833,11 @@ public class Options
 			}
 
 			// Look for back command
-			else if (c == this.backCommand)
+		else if (c == this.backCommand)
            {
                if (d == this.optionsForm)
                {
-                   this.initSubMenuUI(this.optionsMenu.getSelectedIndex());
+                   this.initSubMenuUI(this.eventList[this.optionsMenu.getSelectedIndex()]);
                    Jimm.display.setCurrent(this.optionsMenu);
                }
                else
@@ -859,7 +859,7 @@ public class Options
 			{
 
 				// Save values, depending on selected option menu item
-				switch (this.optionsMenu.getSelectedIndex())
+				switch (this.eventList[this.optionsMenu.getSelectedIndex()])
 				{
 					case OPTIONS_ACCOUNT:
 						Options.this.setStringOption(Options.OPTION_UIN,this.uinTextField.getString());
