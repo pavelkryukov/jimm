@@ -80,6 +80,7 @@ public class Options
 	public static final int OPTION_SRV_HOST                       =   1;   /* String  */
 	public static final int OPTION_SRV_PORT                       =   2;   /* String  */
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
+    public static final int OPTION_CONN_ALIVE_INVTERV             =  13;   /* String  */
 	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
 	public static final int OPTION_AUTO_CONNECT	  = 138;   /* boolean */
     // #sijapp cond.if target isnot  "MOTOROLA"#
@@ -152,6 +153,7 @@ public class Options
 			this.setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
 			this.setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 			this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
+            this.setStringOption (Options.OPTION_CONN_ALIVE_INVTERV,             "120");
 			this.setIntOption    (Options.OPTION_CONN_TYPE,                      0);
             // #sijapp cond.if target isnot "MOTOROLA"#
 			this.setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
@@ -467,6 +469,7 @@ public class Options
 		private TextField srvHostTextField;
 		private TextField srvPortTextField;
 		private ChoiceGroup keepConnAliveChoiceGroup;
+        private TextField connAliveIntervTextField;
 		private ChoiceGroup connTypeChoiceGroup;
 		private ChoiceGroup autoConnectChoiceGroup;
 		private ChoiceGroup uiLanguageChoiceGroup;
@@ -587,6 +590,7 @@ public class Options
                 this.keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle.getString("keep_conn_alive"), Choice.MULTIPLE);
                 this.keepConnAliveChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 this.keepConnAliveChoiceGroup.setSelectedIndex(0, Options.this.getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
+                this.connAliveIntervTextField = new TextField(ResourceBundle.getString("timeout_interv"), Options.this.getStringOption(Options.OPTION_CONN_ALIVE_INVTERV), 3, TextField.NUMERIC);
                 this.connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.MULTIPLE);
                 this.connTypeChoiceGroup.append(ResourceBundle.getString("async"), null);
                 // #sijapp cond.if target isnot "MOTOROLA"#
@@ -771,6 +775,7 @@ public class Options
 						this.optionsForm.append(this.srvHostTextField);
 						this.optionsForm.append(this.srvPortTextField);
 						this.optionsForm.append(this.keepConnAliveChoiceGroup);
+                        this.optionsForm.append(this.connAliveIntervTextField);
 						this.optionsForm.append(this.autoConnectChoiceGroup);
 						this.optionsForm.append(this.connTypeChoiceGroup);
 						break;
@@ -871,6 +876,7 @@ public class Options
 					    Options.this.setStringOption(Options.OPTION_SRV_HOST,this.srvHostTextField.getString());
 					    Options.this.setStringOption(Options.OPTION_SRV_PORT,this.srvPortTextField.getString());
 						Options.this.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,this.keepConnAliveChoiceGroup.isSelected(0));
+                        Options.this.setStringOption(Options.OPTION_CONN_ALIVE_INVTERV,this.connAliveIntervTextField.getString());
 						Options.this.setBooleanOption(Options.OPTION_AUTO_CONNECT,this.autoConnectChoiceGroup.isSelected(0));
 						if (this.connTypeChoiceGroup.isSelected(0))
 							Options.this.setIntOption(Options.OPTION_CONN_TYPE,1);
