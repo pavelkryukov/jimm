@@ -449,7 +449,8 @@ public class Options
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#        
         // #sijapp cond.if modules_PROXY is "true"#       
         private static final int OPTIONS_PROXY      = 2;
-        // #sijapp cond.end#        
+        // #sijapp cond.end#
+        // #sijapp cond.end#
         private static final int OPTIONS_INTERFACE  = 3;
         // #sijapp cond.if target isnot "DEFAULT"#        
         private static final int OPTIONS_SIGNALING  = 4;
