@@ -356,7 +356,7 @@ public class Icq implements Runnable
         // Instantiate KeepAliveTimerTask
         this.keepAliveTimerTask = new KeepAliveTimerTask();
         this.keepAliveTimerTask.setIcq(this);
-        Jimm.jimm.getTimerRef().schedule(this.keepAliveTimerTask, KeepAliveTimerTask.ALIVE_INTERVAL, KeepAliveTimerTask.ALIVE_INTERVAL);
+        Jimm.jimm.getTimerRef().schedule(this.keepAliveTimerTask, Integer.parseInt(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CONN_ALIVE_INVTERV))*1000, Integer.parseInt(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CONN_ALIVE_INVTERV))*1000);
 
         // Catch JimmExceptions
         try
