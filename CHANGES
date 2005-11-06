@@ -232,6 +232,7 @@ VERSION 0.4.2
   * BUGFIX: Requesting status message from users in DND and OCC state was not working
   * BUGFIX: Requesting status message with MIDP2, SIEMENS2 and MOTOROLA version without 
             files module was not working
+  * BUGFIX: Number of chat was shown incorrectly when selecting with left/right keys          
   * You can now see on about screen if you have the latest version of Jimm
   * Now you can see full contact information
   * New structure for res files  

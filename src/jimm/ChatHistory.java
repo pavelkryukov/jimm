@@ -348,12 +348,9 @@ public class ChatHistory
 	}
 	
 	// Sets the counter for the ChatHistory
-	public void incCounter(boolean up)
-	{
-	    if (up)
-	        counter =((counter++) % historyTable.size())+1;
-	    else
-	        counter =((counter--) % historyTable.size())+1;
-	}
+    public void incCounter(boolean up)
+    {
+        counter = (counter + (up ? +1 : -1)) % historyTable.size();
+    }
 
 }
