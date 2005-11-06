@@ -1481,10 +1481,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 	}
 	
 	// shows next or previos chat 
-	synchronized protected void showNextPrevChat(boolean next)
+	synchronized protected String showNextPrevChat(boolean next)
 	{
 		int index = cItems.indexOf(lastChatItem);
-		if (index == -1) return;
+		if (index == -1) return null;
 		int di = next ? 1 : -1;
 		int maxSize = cItems.size();
 		
@@ -1499,9 +1499,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 			{
 				lastChatItem = cItem;
 				cItem.activateMenu();
-				break;
+				return cItem.getUin();
 			}
 		}
+		return null;
 	}
 	
 	// Returns number of unread messages 
