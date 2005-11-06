@@ -93,16 +93,17 @@ class ChatTextList extends TextList implements VirtualListCommands
 
 	public void onKeyPress(VirtualList sender, int keyCode)
 	{
+		String currUin;
 		switch (getGameAction(keyCode))
 		{
 		case Canvas.LEFT:
-			Jimm.jimm.getChatHistoryRef().incCounter(false);
-			Jimm.jimm.getContactListRef().showNextPrevChat(false);
+			currUin = Jimm.jimm.getContactListRef().showNextPrevChat(false);
+			Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
 			break;
 			
 		case Canvas.RIGHT:
-			Jimm.jimm.getChatHistoryRef().incCounter(true);
-			Jimm.jimm.getContactListRef().showNextPrevChat(true);
+			currUin = Jimm.jimm.getContactListRef().showNextPrevChat(true);
+			Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
 			break;
 		}
 	}
@@ -288,7 +289,6 @@ public class ChatHistory
 	public void chatHistoryDelete(String uin)
 	{
 		historyTable.remove(uin);
-		if (counter > 1) incCounter(false);
 	}
 
 	// Returns if the chat history at the given number is shown
@@ -328,6 +328,7 @@ public class ChatHistory
 
 	public void UpdateCaption(String uin)
 	{
+		calcCounter(uin);
 		ChatTextList temp = (ChatTextList) this.historyTable.get(uin);
 		// Calculate the title for the chatdisplay.
 		String Title = temp.ChatName+" ("+counter+"/"+historyTable.size()+")";
@@ -348,9 +349,15 @@ public class ChatHistory
 	}
 	
 	// Sets the counter for the ChatHistory
-    public void incCounter(boolean up)
-    {
-        counter = (counter + (up ? +1 : -1)) % historyTable.size();
-    }
-
+	public void calcCounter(String curUin)
+	{
+		Enumeration AllChats = historyTable.elements();
+		Object chat = historyTable.get(curUin);
+		counter = 1;
+		while (AllChats.hasMoreElements())
+		{
+			if (AllChats.nextElement() == chat) break;
+			counter++;
+		}
+	}
 }
