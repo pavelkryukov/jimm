@@ -1059,13 +1059,13 @@ public class Icq implements Runnable
                     this.os.write(this.socks5_connect_request(host, port));
                     this.os.flush();
                 }
+                // #sijapp cond.end#                
                 // #sijapp cond.else#
                 this.inputCloseFlag = false;
                 this.rcvThread = new Thread(this);
                 this.rcvThread.start();
                 this.nextSequence = (new Random()).nextInt() % 0x0FFF;
                 this.nextIcqSequence = 2;
-                // #sijapp cond.end#
                 // #sijapp cond.end#
             } catch (ConnectionNotFoundException e)
             {
