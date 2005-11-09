@@ -92,6 +92,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("chat_small_font",             "Мелкий шрифт");
 		resources.put("city",                        "Город");
 		resources.put("clear",                       "Стереть");
+		resources.put("сancel_ticker",               "Отменить тикер");
 		resources.put("color_scheme",                "Цветовая схема");
 		resources.put("conn_type",                   "Тип подключения");
 		resources.put("connect",                     "Подключиться");
@@ -121,6 +122,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("exit",                        "Выход");
 		resources.put("fax",                         "Факс");
 		resources.put("female",                      "Ж");
+		resources.put("female_male",                 "М/Ж");
 		resources.put("filename",                    "Имя файла");
 		resources.put("filetransfer",                "Передача файла");
 		resources.put("filepath",                    "Путь к файлу");

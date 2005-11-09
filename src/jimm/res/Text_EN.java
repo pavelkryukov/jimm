@@ -92,6 +92,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("chat_small_font",			 "Small font");
 		resources.put("city",                        "City");
 		resources.put("clear",                       "Clear");
+		resources.put("сancel_ticker",               "Cancel ticker");
 		resources.put("color_scheme",                "Color scheme");
 		resources.put("conn_type",                   "Connection type");
 		resources.put("connect",                     "Connect");
