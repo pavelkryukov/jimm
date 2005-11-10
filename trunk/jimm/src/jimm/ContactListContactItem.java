@@ -1353,7 +1353,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		static private int type, counter;
 		static private boolean haveToStop;
 		
-		final static Command cmdCancelTopText = new Command(ResourceBundle.getString("сancel_ticker"), Command.BACK, 0);
+		final static Command cmdCancelTopText = new Command(ResourceBundle.getString("cancel_ticker"), Command.BACK, 0);
 		
 		protected InfoThread()
 		{
