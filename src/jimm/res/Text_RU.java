@@ -92,7 +92,7 @@ public class Text_RU extends ResourceBundle
 		resources.put("chat_small_font",             "Мелкий шрифт");
 		resources.put("city",                        "Город");
 		resources.put("clear",                       "Стереть");
-		resources.put("сancel_ticker",               "Отменить тикер");
+		resources.put("cancel_ticker",               "Отменить тикер");
 		resources.put("color_scheme",                "Цветовая схема");
 		resources.put("conn_type",                   "Тип подключения");
 		resources.put("connect",                     "Подключиться");
