@@ -328,7 +328,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Internal target: obfuscate -->
 	<target name="obfuscate" depends="compile" unless="skip-obfuscate">
 		<mkdir dir="${build}/obfuscate/classes" />
-		<proguard note="off" defaultpackage="" usemixedcaseclassnames="off" overloadaggressively="on">
+		<proguard note="off" defaultpackage="" usemixedcaseclassnames="off" overloadaggressively="on" verbose="true">
 			<injar name="${build}/compile/classes" />
 			<outjar name="${build}/obfuscate/classes" />
 			<keep access="public" type="class" extends="javax.microedition.midlet.MIDlet" />
