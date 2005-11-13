@@ -77,18 +77,22 @@ public class Text_SR extends ResourceBundle
         resources.put("add_group",                   "Додаj групу");
         resources.put("add_user",                    "Додаj корисника");
         resources.put("add_to_list",                 "Додаj на листу");
-        resources.put("age",                         "Године"); 
+	      resources.put("addr",                        "Адреса");
+	      resources.put("age",                         "Године"); 
         resources.put("async",                       "Async");
         resources.put("attention",                   "Упозорење!");
         resources.put("auth",                        "Ауторизациjа"); 
         resources.put("auto_connect",                "Аутоматско конектовање при стартовању");
         resources.put("beep",                        "Бип");
+        resources.put("birth_day",                   "Датум рођењља");
         resources.put("black_on_white",              "Црно-Бело");
         resources.put("byte",                        "Баjт");
+        resources.put("cell_phone",                  "Моб. Тел."); // ???
         resources.put("chat",                        "Chat");
         resources.put("chat_small_font",             "Мала слова");
         resources.put("city",                        "City");
         resources.put("clear",                       "Обриши");
+        resources.put("cancel_ticker",               "Откажи улаз");
         resources.put("color_scheme",                "Колор шема");
         resources.put("conn_type",                   "Тип конекциjе");
         resources.put("connect",                     "Конектуj се");
@@ -108,6 +112,7 @@ public class Text_SR extends ResourceBundle
         resources.put("description",                 "Опис");
         resources.put("name_desc",                   "Име фаjла и опис");
         resources.put("user_menu",                   "Контакти");
+        resources.put("depart",                      "Оделење");
         resources.put("disconnect",                  "Дисконектуj се");
         resources.put("disconnecting",               "Дисконектованjе");
         resources.put("display_date",                "Прикажи датум на екрану?");
@@ -115,6 +120,7 @@ public class Text_SR extends ResourceBundle
         resources.put("emotions",                    "Емоциjе");
         resources.put("error",                       "Грешка");
         resources.put("exit",                        "Излаз");
+        resources.put("fax",                         "Факс");
         resources.put("female",                      "З");
         resources.put("female_male",                 "Ж/М");
         resources.put("filename",                    "Име фаjла");
@@ -132,9 +138,13 @@ public class Text_SR extends ResourceBundle
         resources.put("group_is_not_empty",          "Означена група ниjе празна!\nИспразни jе, премести контакте у остале групе!");
         resources.put("have_unread_mess",            "Имате непрочитаних порука. Сигурни сте да желите изаћи?");
         resources.put("hide_offline",                "Сакриj неактивне контакте");
+        resources.put("home_page",                   "Прва страна");
+        resources.put("home_info",                   "Место");
         resources.put("info",                        "Информациjе");
         resources.put("init_ft",                     "Инциjализациjа");
         resources.put("insert_emotion",              "Убаци Емоциjу");
+        resources.put("interests",                   "Интересовања");
+        resources.put("invisible_check",             "Невидљив?");
         resources.put("kb",                          "kB");
         resources.put("kbs",                         "kb/s");
         resources.put("keep_chat",                   "Задржи разговор?");
@@ -160,7 +170,9 @@ public class Text_SR extends ResourceBundle
         resources.put("lang_SR",                     "Serbian");        
         resources.put("lang_UA",                     "Ukrainian");
         resources.put("lastname",                    "Презиме");
+        resources.put("latest_ver",                  "Нова верзија је доступна");
         resources.put("loading",                     "Учитавам");
+        resources.put("main_info",                   "О кориснику");
         resources.put("male",                        "M");
         resources.put("me",                          "jа");
         resources.put("menu",                        "Мени");
@@ -177,6 +189,7 @@ public class Text_SR extends ResourceBundle
         resources.put("no_not_empty_gr",             "Брисање група коjе нису празне, ниjе подржано");
         resources.put("not_implemented",             "Функциjа ниjе подржана");
         resources.put("noreason",                    "Упит ниjе задан.");
+        resources.put("notes",                       "Забелешка");
         resources.put("notice",                      "Упозорење");
         resources.put("nr",                          "Nr");
         resources.put("once_a_session",              "jедном по сесиjи");
@@ -192,8 +205,10 @@ public class Text_SR extends ResourceBundle
         resources.put("options_other",               "Остало");
         resources.put("options_signaling",           "Сигнализациjа");
         resources.put("password",                    "Лозинка");
+        resources.put("phone",                       "Тел.");
         resources.put("plength",                     "Величина пакета у kB");
         resources.put("plsauthme",                   "Ћао, молио бих да прихватите моj захтев да ме додате на контакт листу.");
+        resources.put("position",                    "Позиција");
         resources.put("prev",                        "Претходни");
         resources.put("quote",                       "Цитат");                        
         resources.put("reason",                      "Разлог");
@@ -228,6 +243,7 @@ public class Text_SR extends ResourceBundle
         resources.put("sort_by_name",                "По имену");
         resources.put("sort_by_status",              "По статусу");
         resources.put("speed",                       "Брзина");
+        resources.put("state",                       "Стање");
         resources.put("status",                      "Статус");
         resources.put("status_message",              "Статусна порука");
         resources.put("status_away",                 "Одсутан");
@@ -239,7 +255,10 @@ public class Text_SR extends ResourceBundle
         resources.put("status_offline",              "Offline");
         resources.put("status_online",               "Online");
         resources.put("successful",                  "Успешно");
-        resources.put("sysnotice",           "Порука Система");
+        resources.put("sysnotice",                   "Порука Система");
+        resources.put("text_too_long",               "Текст је предугачак да буде уметнут");
+        resources.put("timeout_interv",              "Интервал трајања пакета");
+        resources.put("title",                       "Наслов");
         resources.put("traffic",                     "Проток");
         resources.put("uin",                         "UIN");
         resources.put("url",                         "URL");
@@ -258,9 +277,22 @@ public class Text_SR extends ResourceBundle
         resources.put("whichgroup",                  "Коjа група?");
         resources.put("white_on_black",              "Бело-Црно");
         resources.put("white_on_blue",               "Бело-Плаво");
+        resources.put("work_info",                   "Посао");
         resources.put("yes",                         "Да");
         resources.put("youwereadded",                "Додати сте на листу код UIN: ");
         
+        resources.put("proxy",                       "Proxy");
+  	    resources.put("proxy_type",                  "Proxy тип");
+  	    resources.put("proxy_do_not_use",            "Не користи");
+  	    resources.put("proxy_socks4",                "Socks4");
+  	    resources.put("proxy_socks5",                "Socks5");
+  	    resources.put("proxy_guess",                 "Гост");
+  	    resources.put("proxy_server_host",           "Proxy:");
+  	    resources.put("proxy_server_port",           "Port:");
+  	    resources.put("proxy_server_login",          "Proxy логин:");
+  	    resources.put("proxy_server_pass",           "Proxy лоѕинка:");
+  	    resources.put("auto_retry_count",            "Број Покушаја");
+
         //#sijapp cond.if modules_HISTORY is "true" #
         resources.put("add_to_history",              "Додаj у старе поруке");
         resources.put("text_to_find",                "Текст");
@@ -341,7 +373,7 @@ public class Text_SR extends ResourceBundle
         // Other errors
         resources.put("error_170",                   "Изгледа да нема довољно мемориjе (#170.EXT)");
         resources.put("error_171",                   "Не могу да дохватим мета информациjе (#171.EXT)");
-
+        resources.put("error_172",                   "Грешка приликом памћења опција (#172.EXT)");
         // Camera errors
         resources.put("error_180",                   "Грешка приликом креирања VideoControl (#180.EXT)");
         resources.put("error_181",                   "Viewfinder грешка приликом инциjализациjе (#181.EXT)");

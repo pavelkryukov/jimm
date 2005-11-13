@@ -15,7 +15,7 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-********************************************************************************
+ ********************************************************************************
  File: src/jimm/res/Text_BG.java
  Version: ###VERSION###  Date: ###DATE###
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Ivaylo Donchev
@@ -51,9 +51,9 @@ public class Text_BG extends ResourceBundle
         resources.put("ok",                          "OK          ");
         resources.put("reply",                       "Отговори       ");
         resources.put("close",                       "       Затвори");
-        resources.put("search_user",                 "Търси потребител");
+        resources.put("search_user",                       "Търси потребител");
         resources.put("send",                        "Изпрати        ");
-        resources.put("next",                        "       Нататък");
+        resources.put("next",             "       Нататък");
         // #sijapp cond.else#
         resources.put("reply",                       "Отговори");
         resources.put("close",                       "Затвори");
@@ -63,9 +63,9 @@ public class Text_BG extends ResourceBundle
         resources.put("back",                        "Назад");
         resources.put("save",                        "Запази");
         resources.put("ok",                          "OK");
-        resources.put("search_user",                 "Търси потребител");
+        resources.put("search_user",                       "Търси потребител");
         resources.put("send",                        "Изпрати");
-        resources.put("next",                        "Нататък");
+        resources.put("next",             "Нататък");
         // #sijapp cond.end#
      
         resources.put(".",                           ".");
@@ -75,16 +75,19 @@ public class Text_BG extends ResourceBundle
         resources.put("add_group",                   "Добави група");
         resources.put("add_user",                    "Добави Потребител");
         resources.put("add_to_list",                 "Добави в листа");
+         resources.put("addr",                        "Адрес");
         resources.put("age",                         "Год.");
         resources.put("async",                       "Асинхр.");
         resources.put("attention",                   "Внимание!");
         resources.put("auth",                        "Оторизация");
-        resources.put("auto_connect",                "Автоматично свързване при старт");
+        resources.put("auto_connect",                            "Автоматично свързване при старт");
         resources.put("beep",                        "Beep");
+        resources.put("birth_day",                   "Рожден ден");
         resources.put("black_on_white",              "Черно-бяло");
         resources.put("byte",                        "Байт");
-        resources.put("chat",                        "Чат");
-        resources.put("chat_small_font",             "Малки шрифтове за чат");
+        resources.put("cell_phone",                  "Моб. тел."); // ???
+        resources.put("chat",                       "Чат");
+        resources.put("chat_small_font",                         "Малки шрифтове за чат");
         resources.put("city",                        "Град");
         resources.put("clear",                       "Изчисти");
         resources.put("color_scheme",                "Цветова схема");
@@ -92,14 +95,14 @@ public class Text_BG extends ResourceBundle
     
         resources.put("connect",                     "Свържи");
         resources.put("connecting",                  "Свързване");
-        resources.put("copy_text",                   "Копирай текст");
+        resources.put("copy_text",                       "Копирай текст");
         resources.put("cost",                        "Цена");
         resources.put("contact_list",                "Лист");
         resources.put("cp1251",                      "Използвай CP1251 hack?");
         resources.put("cpd",                         "Цена за ден");
         resources.put("cpp",                         "Цена за пакет");
         resources.put("currency",                    "Валута");
-        resources.put("dc_info",                     "DC инфо");
+        resources.put("dc_info",                       "DC инфо");
         resources.put("del_group",                   "Изтрий група");
         resources.put("delete_chat",                 "Остави чат");
         resources.put("deny",                        "Откажи оторизация");
@@ -107,6 +110,7 @@ public class Text_BG extends ResourceBundle
         resources.put("description",                 "Описание");
         resources.put("name_desc",                   "Име на файл и описание");
         resources.put("user_menu",                   "Потр. Меню");
+        resources.put("depart",                      "Департамент");
         resources.put("disconnect",                  "Прекъсни");
         resources.put("disconnecting",               "Прекъсване");
         
@@ -114,7 +118,7 @@ public class Text_BG extends ResourceBundle
         resources.put("email",                       "Email");
         resources.put("emotions",                    "Емоции");
         resources.put("error",                       "Грешка");
-        
+        resources.put("fax",                         "Факс");
         resources.put("exit",                        "Изход");
         resources.put("female",                      "Ж");
         resources.put("female_male",                 "Ж/М");
@@ -133,9 +137,13 @@ public class Text_BG extends ResourceBundle
         resources.put("group_is_not_empty",          "Избраната група не е празна!\nПреместете всички потребители в други групи!");
         resources.put("have_unread_mess",            "Имате непрочетени съобщения. Да изляза ли?");
         resources.put("hide_offline",                "Скрий офлайн контактите");
+        resources.put("home_page",                   "Домашна страница");
+        resources.put("home_info",                   "Местоживеене");
         resources.put("info",                        "Инфо");
         resources.put("init_ft",                     "Инициализиране");
         resources.put("insert_emotion",              "Вмъкни емоция");
+        resources.put("interests",                   "Интереси");
+        resources.put("invisible_check",             "Невидим?");
         resources.put("kb",                          "kB");
         resources.put("kbs",                         "kb/s");
         resources.put("keep_chat",                   "Пази чат историята?");
@@ -159,10 +167,12 @@ public class Text_BG extends ResourceBundle
         resources.put("lang_RU",                     "Руски");
         resources.put("lang_SE",                     "Шведски");
         resources.put("lang_SR",                     "Сръбски");
-        resources.put("lang_UA",                     "Украински");
+        resources.put("lang_UA",                                         "Украински");
 
         resources.put("lastname",                    "Фамилия");
+        resources.put("latest_ver",                   "Последна достъпна версия");
         resources.put("loading",                     "Зареждане");
+         resources.put("main_info",                   "Относно потребител");
         resources.put("male",                        "M");
         resources.put("me",                          "Аз");
         resources.put("menu",                        "Меню");
@@ -181,6 +191,7 @@ public class Text_BG extends ResourceBundle
         resources.put("no_not_empty_gr",             "Премахването на непразни групи все още не се поддържа");
         resources.put("not_implemented",             "Тази функция още не е включена.");
         resources.put("noreason",                    "Не е зададена причина.");
+        resources.put("notes",                       "Бележки");
         resources.put("notice",                      "Нотификация");
         resources.put("nr",                          "Nr");
         
@@ -197,8 +208,10 @@ public class Text_BG extends ResourceBundle
         resources.put("options_other",               "Други");
         resources.put("options_signaling",           "Сигнализиране");
         resources.put("password",                    "Парола");
+         resources.put("phone",                       "Тел.");
         resources.put("plength",                     "Дължина на пакет данни в in kB");
         resources.put("plsauthme",                   "Hi! Please authorise my request to add you to my contact list.");
+        resources.put("position",                    "Позиция");
         resources.put("prev",                        "Предишен");
         resources.put("quote",                       "Цитат");
         resources.put("reason",                      "Причина");
@@ -210,7 +223,7 @@ public class Text_BG extends ResourceBundle
         resources.put("rename",                      "Преименувай");
         
         resources.put("requauth",                    "Поискай отор.");
-         resources.put("reqstatmsg",                 "Виж статус-съобщение");
+         resources.put("reqstatmsg",                  "Виж статус-съобщение");
         resources.put("requ",                        "Изискван(и)");
         resources.put("requno",                      "Неизискван(и)");
         
@@ -238,6 +251,7 @@ public class Text_BG extends ResourceBundle
         resources.put("sort_by_name",                "По имена");
         resources.put("sort_by_status",              "По статус");
         resources.put("speed",                       "Скорост");
+        resources.put("state",                       "Състояние");
         resources.put("status",                      "Статус");
         resources.put("status_message",              "Статус-съобщение");
         resources.put("status_away",                 "Ауей");
@@ -250,6 +264,9 @@ public class Text_BG extends ResourceBundle
         resources.put("status_online",               "Онлайн");
         resources.put("successful",                  "успешен");
         resources.put("sysnotice",                   "Системна нотификация");
+        resources.put("text_too_long",               "Текстът е прекалено дълъг за вмъкванеText too long to be inserted");
+        resources.put("timeout_interv",              "Интервал за keepalive-пакетитеKeepalive packet interval");
+        resources.put("title",                       "Заглавие");
         resources.put("traffic",                     "Трафик");
         resources.put("uin",                         "UIN");
         resources.put("url",                         "URL");
@@ -268,13 +285,22 @@ public class Text_BG extends ResourceBundle
         resources.put("whichgroup",                  "В коя група?");
         resources.put("white_on_black",              "Бяло на черен фон");
         resources.put("white_on_blue",               "Бяло на син фон");
+        resources.put("work_info",                   "Работа");
         resources.put("yes",                         "Да");
         resources.put("youwereadded",                "Бяхте добавен от UIN: ");
-        
-        
-        
-        
-        
+        resources.put("proxy",                       "Прокси");
+        resources.put("proxy_type",                  "Тип прокси");
+        resources.put("proxy_do_not_use",            "Не използвай");
+        resources.put("proxy_socks4",                "Socks4");
+        resources.put("proxy_socks5",                "Socks5");
+        resources.put("proxy_guess",                 "Отгатни");
+        resources.put("proxy_server_host",           "Хост на прокси:");
+        resources.put("proxy_server_port",           "Порт:");
+     
+        resources.put("proxy_server_login",          "Потребител за проксито:");
+        resources.put("proxy_server_pass",           "Парола за проксито:");
+     
+        resources.put("auto_retry_count",            "Брой опити:");
         //#sijapp cond.if modules_HISTORY is "true" #
         resources.put("add_to_history",              "Добави към история");
         resources.put("text_to_find",                "Текст");
@@ -355,7 +381,7 @@ public class Text_BG extends ResourceBundle
         // Other errors
         resources.put("error_170",                   "Вероятна недостатъчност на сумарна памет (#170.EXT)");
         resources.put("error_171",                   "Не мога да заредя мета информацията (#171.EXT)");
-        
+        resources.put("error_172",                   "Грешка при записване на опциите (#172.EXT)");
         // Camera errors
         resources.put("error_180",                   "Грешка при създаването на VideoControl (#180.EXT)");
         resources.put("error_181",                   "Грешка при инизиализирането на Viewfinder (#181.EXT)");
