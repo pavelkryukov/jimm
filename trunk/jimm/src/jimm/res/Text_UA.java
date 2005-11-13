@@ -15,14 +15,14 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-********************************************************************************
+ ********************************************************************************
  File: src/jimm/res/Text_UA.java
  Version: ###VERSION###  Date: ###DATE###
  Author(s): Manuel Linsmayer, Andreas Rossbacher, Nazar Pelenjo
  *******************************************************************************/
 
 
-//#sijapp cond.if lang_UA is "true" #
+// #sijapp cond.if lang_UA is "true" #
 
 
 package jimm.res;
@@ -72,19 +72,22 @@ public class Text_UA extends ResourceBundle
 
         resources.put(".",                           ".");
         resources.put("about",                       "Про...");
-        resources.put("about_info",                  "Jimm - Мобiльний ICQ\n\nICQ Клiєнт для J2ME\nВерсiя 0.3.1\n http://www.jimm.org/");
+        resources.put("about_info",                  "Jimm - Мобiльний ICQ\n\nICQ Клiєнт для J2ME\nВерсiя 0.4.2\n http://www.jimm.org/");
         resources.put("account",                     "Облiковий запис");
         resources.put("add_group",                   "Додати групу");
         resources.put("add_user",                    "Додати користувача");
         resources.put("add_to_list",                 "Додати");
+        resources.put("addr",                        "Адреса");
         resources.put("age",                         "Вiк");
         resources.put("async",                       "Асинхронна передача");
         resources.put("attention",                   "Увага!");
         resources.put("auth",                        "Авторизацiя");
         resources.put("auto_connect",                "Автоз'єднання при стартi");
         resources.put("beep",                        "Гудок");
+        resources.put("birth_day",                   "День народження");
         resources.put("black_on_white",              "Чорне на бiлому");
         resources.put("byte",                        "Байт");
+        resources.put("cell_phone",                  "Моб тел."); // ???
         resources.put("chat",                        "Балачка");
         resources.put("chat_small_font",             "Малий шрифт");
         resources.put("city",                        "Мiсто");
@@ -108,6 +111,7 @@ public class Text_UA extends ResourceBundle
         resources.put("description",                 "Опис");
         resources.put("name_desc",                   "Iм'я файлу та опис");
         resources.put("user_menu",                   "Меню користувача");
+        resources.put("depart",                      "Вiддiл");
         resources.put("disconnect",                  "Вiдхилити");
         resources.put("disconnecting",               "Вiд'єднання");
         resources.put("display_date",                "Вiдображати дату на заставцi?");
@@ -115,6 +119,7 @@ public class Text_UA extends ResourceBundle
         resources.put("emotions",                    "Смайли");
         resources.put("error",                       "Помилка");
         resources.put("exit",                        "Вихiд");
+        resources.put("fax",                         "Факс");
         resources.put("female",                      "Ж");
         resources.put("female_male",                 "Ж/М");
         resources.put("filename",                    "Iм'я файлу");
@@ -132,9 +137,13 @@ public class Text_UA extends ResourceBundle
         resources.put("group_is_not_empty",          "Вибрана група не пуста!\nПеремiстiть всiх користувачiв до iншої групи!");
         resources.put("have_unread_mess",            "Є непрочитанi повiдомлення. Вийти?");
         resources.put("hide_offline",                "Приховати вiд'єднаних");
+        resources.put("home_page",                   "Дом. сторiнка");
+        resources.put("home_info",                   "Дом. iнформацiя");
         resources.put("info",                        "Iнформацiя");
         resources.put("init_ft",                     "Iнiцiалiзацiя...");
         resources.put("insert_emotion",              "Вставити смайл");
+        resources.put("interests",                   "Захоплення");
+        resources.put("invisible_check",             "Невидимий?");
         resources.put("kb",                          "кБ");
         resources.put("kbs",                         "кБ/с");
         resources.put("keep_chat",                   "Зберiгати iсторiю чату?");
@@ -160,7 +169,9 @@ public class Text_UA extends ResourceBundle
         resources.put("lang_SR",                     "Сербська");
         resources.put("lang_UA",                     "Українська");
         resources.put("lastname",                    "Прiзвище");
+        resources.put("latest_ver",                   "Наявнiсть нової версiї");
         resources.put("loading",                     "Завантаження");
+        resources.put("main_info",                   "Про користувача");
         resources.put("male",                        "Ч");
         resources.put("me",                          "Я");
         resources.put("menu",                        "Меню");
@@ -177,6 +188,7 @@ public class Text_UA extends ResourceBundle
         resources.put("no_not_empty_gr",             "Знищення не порожнiх групп не пiдтримується");
         resources.put("not_implemented",             "Функцiя не пiдтримується");
         resources.put("noreason",                    "Причина не дана");
+        resources.put("notes",                       "Примiтки");
         resources.put("notice",                      "Повiдомлення");
         resources.put("nr",                          "Номер");
         resources.put("once_a_session",              "Один раз за сесiю");
@@ -192,8 +204,10 @@ public class Text_UA extends ResourceBundle
         resources.put("options_other",               "Рiзне");
         resources.put("options_signaling",           "Звук");
         resources.put("password",                    "Пароль");
+        resources.put("phone",                       "Тел..");
         resources.put("plength",                     "Довжина оплачуваного пакету в КБ");
         resources.put("plsauthme",                   "Привiт! Будь-ласка, авторизируй мене та дозволь добавити тебе в контакт-лист");
+        resources.put("position",                    "Позицiя");
         resources.put("prev",                        "Попереднiй");
         resources.put("quote",                       "Цитувати");                        
         resources.put("reason",                      "Причина");
@@ -228,6 +242,7 @@ public class Text_UA extends ResourceBundle
         resources.put("sort_by_name",                "По iменi");
         resources.put("sort_by_status",              "По статусу");
         resources.put("speed",                       "Швидкiсть");
+        resources.put("state",                       "Штат");
         resources.put("status",                      "Статус");
         resources.put("status_message",              "Повiдомлення статусу");
         resources.put("status_away",                 "Вiдсутнiй");
@@ -240,6 +255,9 @@ public class Text_UA extends ResourceBundle
         resources.put("status_online",               "На дротi");
         resources.put("successful",                  "успiшно");
         resources.put("sysnotice",                   "Системне повiдомлення");
+        resources.put("text_too_long",               "Текст є задовгий для вставки");
+        resources.put("timeout_interv",              "Таймаут пiнга");
+        resources.put("title",                       "Заголовок");
         resources.put("traffic",                     "Трафiк");
         resources.put("uin",                         "UIN");
         resources.put("url",                         "URL");
@@ -258,8 +276,23 @@ public class Text_UA extends ResourceBundle
         resources.put("whichgroup",                  "В якiй групi?");
         resources.put("white_on_black",              "Бiле на чорному");
         resources.put("white_on_blue",               "Бiле на голубому");
+        resources.put("work_info",                   "Мiсце працi");
         resources.put("yes",                         "Так");
         resources.put("youwereadded",                "Вас добавив: ");
+
+        resources.put("proxy",                       "Проксi");
+        resources.put("proxy_type",                  "Тип проксi");
+        resources.put("proxy_do_not_use",            "Не юзати");
+        resources.put("proxy_socks4",                "Socks4");
+        resources.put("proxy_socks5",                "Socks5");
+        resources.put("proxy_guess",                 "Гiсть");
+        resources.put("proxy_server_host",           "Проксi хост:");
+        resources.put("proxy_server_port",           "Порт:");
+
+        resources.put("proxy_server_login",          "Проксi логiн:");
+        resources.put("proxy_server_pass",           "Проксi пароль:");
+
+        resources.put("auto_retry_count",            "К-сть повторiв:");
 
         //#sijapp cond.if modules_HISTORY is "true" #
         resources.put("add_to_history",              "В iсторiю");
@@ -341,6 +374,7 @@ public class Text_UA extends ResourceBundle
         // Other errors
         resources.put("error_170",                   "Неможливо, недостатньо пам'ятi (#160.EXT)");
         resources.put("error_171",                   "Неможливо отримати мета-iнформацiю (#161.EXT)");
+        resources.put("error_172",                   "Помилка збереження налаштувань (#172.EXT)");        
 
         
         // Camera errors
@@ -356,9 +390,6 @@ public class Text_UA extends ResourceBundle
         resources.put("error_192",                   "Некоректний шлях до файлу. Можливо, дана функцiя не пiдтримуєтся (#192.EXT)");        
         resources.put("error_193",                   "Помилка доступу до файлової системи для перегляду. Помилка захисту (#193.EXT)");
     }
-
 }
 
-
-// #sijapp cond.end #
-
+//#sijapp cond.end #

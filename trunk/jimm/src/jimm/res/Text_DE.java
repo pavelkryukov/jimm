@@ -77,20 +77,23 @@ public class Text_DE extends ResourceBundle
 		resources.put("add_group",                   "Gruppe hinzufügen");
 		resources.put("add_user",                    "Benutzer hinzufügen");
 		resources.put("add_to_list",                 "Zur Liste hinzuf.");
+		resources.put("addr",                        "Adresse");
 		resources.put("age",                         "Alter");
 		resources.put("async",                       "Async");
 		resources.put("attention",                   "Achtung!");
 		resources.put("auth",				     	 "Auth");
 		resources.put("auto_connect",				 "Nach dem Start automatisch verbinden");
 		resources.put("beep",                        "Beep");
+		resources.put("birth_day",                   "Geburtstag");		
 		resources.put("black_on_white",              "schwarz auf weiss");
 		resources.put("byte",                        "Byte");
+        resources.put("cancel_ticker",               "Ticker abbrechen");        
+		resources.put("cell_phone",                  "Handy Nr.");		
 		resources.put("chat",                        "Chat");
 		resources.put("chat_small_font",			 "Kleiner Font im Chat");
 		resources.put("city",                        "Stadt");
 		resources.put("clear",                       "Löschen");                        
 		resources.put("color_scheme",                "Farbschema");
-		resources.put("con_wait",                    "Verzögerung zwischen Verbindungen(sek)");
 		resources.put("conn_type",                   "Verbindungsart");
 		resources.put("connect",                     "Verbinden");
 		resources.put("connecting",                  "Verbinde");
@@ -108,13 +111,16 @@ public class Text_DE extends ResourceBundle
 		resources.put("denyedby",					 "Ihre Authorisierungsanfrage wurde abgelehnt durch: ");
 		resources.put("description",                 "Beschreibung");
 		resources.put("name_desc",                   "Dateiname und Beschreibung");
-		resources.put("user_menu",                   "Benutzer Menü");	
+		resources.put("user_menu",                   "Benutzer Menü");
+		resources.put("depart",                      "Abteilung");		
 		resources.put("disconnect",                  "Trennen");
 		resources.put("disconnecting",               "Trenne");
 		resources.put("display_date",                "Datum auf dem Splash-Screen anzeigen?");
 		resources.put("email",                       "E-Mail");
+		resources.put("emotions",                    "Emoticons");		
 		resources.put("error",                       "Fehler");
 		resources.put("exit",                        "Beenden");
+		resources.put("fax",                         "Fax");		
 		resources.put("female",                      "W");
 		resources.put("female_male",                 "W/M");
 		resources.put("filename",                    "Dateiname");
@@ -131,10 +137,14 @@ public class Text_DE extends ResourceBundle
 		resources.put("group_name",                  "Gruppenname");
 		resources.put("group_is_not_empty",          "Gewählte Gruppe ist leer!\nAlle Kontakte in andere Gruppe verschieben?");
 		resources.put("have_unread_mess",            "Sie haben ungelesene Nachrichten. Trotzdem verlassen?");
-		resources.put("hide_offline",                "Offline-Kontakte verbergen");
+		resources.put("hide_offline",                "Offline-Kontakte verbergen");	
+		resources.put("home_page",                   "Homepage");
+		resources.put("home_info",                   "Zuhause");		
 		resources.put("info",                        "Info");
 		resources.put("init_ft",                     "Initialisierung");
 		resources.put("insert_emotion",              "Emotion einfügen");
+		resources.put("interests",                   "Interessen");
+		resources.put("invisible_check",             "Unsichtbar?");				
 		resources.put("kb",                          "kB");
 		resources.put("kbs",                         "kb/s");
 		resources.put("keep_chat",                   "Chat-History behalten?");
@@ -160,8 +170,9 @@ public class Text_DE extends ResourceBundle
 		resources.put("lang_SR",                     "Serbisch");
 		resources.put("lang_UA", 					 "Ukrainisch");
 		resources.put("lastname",                    "Nachname");
-        resources.put("latest_ver",                   "Neueste version");
+        resources.put("latest_ver",                  "Neueste version");
 		resources.put("loading",                     "Lade");
+        resources.put("main_info",                   "Benutzer Info");        
 		resources.put("male",                        "M");
 		resources.put("me",                          "Ich");
 		resources.put("menu",                        "Menü");
@@ -171,7 +182,6 @@ public class Text_DE extends ResourceBundle
 		resources.put("message_notification",        "Hinweis bei Nachricht-Eingang");
 		resources.put("minimize",                    "Minimieren");
 		resources.put("name",                        "Name");
-		resources.put("next",						 "Nächstes");
 		resources.put("nick",                        "Nick");
 		resources.put("no",                          "Nein");
 		resources.put("not",                         "nicht");
@@ -179,6 +189,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("no_not_empty_gr",             "Löschen von nichtleeren Gruppen wird noch nicht unterstützt");
 		resources.put("not_implemented",             "Funktion noch nicht verfügbar.");
 		resources.put("noreason",             		 "Es wurde kein Grund angegeben.");
+		resources.put("notes",                       "Notizen");		
 		resources.put("notice",                      "Hinweis");
 		resources.put("nr",				     		 "Nr");
 		resources.put("once_a_session",              "Einmal pro Sitzung");
@@ -194,8 +205,10 @@ public class Text_DE extends ResourceBundle
 		resources.put("options_other",               "Sonstiges");
 		resources.put("options_signaling",           "Signalisierung");
 		resources.put("password",                    "Passwort");
+		resources.put("phone",                       "Tel.");		
 		resources.put("plength",                     "Länge des Abrechnungspakets in kB");
 		resources.put("plsauthme",                   "Hallo! Bitte authorisieren sie meine Anfrage sie zu meiner Kontaktliste hinzuzufügen.");
+		resources.put("position",                    "Position");		
 		resources.put("prev",						 "Voheriges");
 		resources.put("quote",                       "Zitat");
 		resources.put("reason",						 "Grund");
@@ -230,6 +243,7 @@ public class Text_DE extends ResourceBundle
 		resources.put("sort_by_name",                "nach Name");
 		resources.put("sort_by_status",              "nach Status");
 		resources.put("speed",                       "Geschwindigkeit");
+		resources.put("state",                       "Bundesland");		
 		resources.put("status",                      "Status");
         resources.put("status_message",              "Status Nachricht");
 		resources.put("status_away",                 "Abwesend");
@@ -242,6 +256,9 @@ public class Text_DE extends ResourceBundle
 		resources.put("status_online",               "Online");
 		resources.put("successful",                  "erfolgreich");
 		resources.put("sysnotice",					 "System Nachricht");
+		resources.put("text_too_long",               "Text zu lang um eingefügt zu werden");
+        resources.put("timeout_interv",              "Verbindung erhalten Packet Interval");
+		resources.put("title",                       "Titel");		
 		resources.put("traffic",                     "Traffic");
 		resources.put("uin",                         "UIN");
 		resources.put("url",                         "URL");
@@ -253,15 +270,31 @@ public class Text_DE extends ResourceBundle
 		resources.put("viewfinder",                  "Sucher");
 		resources.put("volume",                      "Lautstärke");	
 		resources.put("wait",                        "Bitte warten ...");
-		resources.put("was",                         "war");
+		resources.put("when_locked",                 "Wenn Tastensperre");		
 		resources.put("warning",                     "Warnung");
 		resources.put("wantsyourauth",				 " möchte Ihre Authorisierung. Grund: ");
+        resources.put("was",                         "war");        
 		resources.put("whichgroup",				 	 "Welche Gruppe?");
 		resources.put("white_on_black",              "weiss auf schwarz");
 		resources.put("white_on_blue",               "weiss auf blau");
+		resources.put("work_info",                   "Arbeit");		
 		resources.put("yes",                         "Ja");
 		resources.put("youwereadded",				 "Sie wurden hinzugefügt von UIN: ");
 
+        resources.put("proxy",                       "Proxy");
+        resources.put("proxy_type",                  "Proxy Typ");
+		resources.put("proxy_do_not_use",            "Nicht nutzen");
+		resources.put("proxy_socks4",                "Socks4");
+		resources.put("proxy_socks5",                "Socks5");
+		resources.put("proxy_guess",                 "Raten");
+		resources.put("proxy_server_host",           "Proxy adresse:");
+		resources.put("proxy_server_port",           "Port:");
+
+		resources.put("proxy_server_login",          "Proxy Login:");
+		resources.put("proxy_server_pass",           "Proxy Passwort:");
+
+		resources.put("auto_retry_count",            "Anzahl der Verbindungsversuche:");
+		
 		//#sijapp cond.if modules_HISTORY is "true" #
 		resources.put("add_to_history",              "Zur History hinzufügen");
 		resources.put("text_to_find",                "Text");

@@ -170,7 +170,7 @@ public class Text_EN extends ResourceBundle
 		resources.put("lang_SR",                     "Serbian");		
 		resources.put("lang_UA", 					 "Ukrainian");
 		resources.put("lastname",                    "Last name");
-        resources.put("latest_ver",                   "Latest version available");
+        resources.put("latest_ver",                  "Latest version available");
 		resources.put("loading",                     "Loading");
 		resources.put("main_info",                   "About user");
 		resources.put("male",                        "M");
