@@ -585,8 +585,8 @@ public class HistoryStorage
 		else
 			cachedRec.shortText = cachedRec.text;
 		
-        cachedRec.shortText.replace('\n', ' ');
-        cachedRec.shortText.replace('\r', ' ');
+        cachedRec.shortText = cachedRec.shortText.replace('\n', ' ');
+        cachedRec.shortText = cachedRec.shortText.replace('\r', ' ');
         
 		cachedRecords.put(new Integer(recNo), cachedRec);
 		
