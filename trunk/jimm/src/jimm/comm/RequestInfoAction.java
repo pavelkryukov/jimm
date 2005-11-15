@@ -27,7 +27,9 @@ package jimm.comm;
 
 import java.util.Date;
 
+import jimm.Jimm;
 import jimm.JimmException;
+import jimm.Options;
 
 class BinaryInputStream
 {
@@ -139,7 +141,7 @@ public class RequestInfoAction extends Action
 		byte[] buf = new byte[6];
 		Util.putWord(buf, 0, ToIcqSrvPacket.CLI_META_REQMOREINFO_TYPE, false);
 		Util.putDWord(buf, 2, Long.parseLong(strData[UIN]), false);
-		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, this.icq.getUin(), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
+		ToIcqSrvPacket packet = new ToIcqSrvPacket(0,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
 		this.icq.c.sendPacket(packet);
 
 		// Save date

@@ -351,7 +351,7 @@ public class ActionListener
 
                         // Construct object which encapsulates the received
                         // plain message
-                        PlainMessage plainMsg = new PlainMessage(uin, this.icq.getUin(), new Date(), text, false);
+                        PlainMessage plainMsg = new PlainMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), text, false);
                         Jimm.jimm.getContactListRef().addMessage(plainMsg);
 
                     }
@@ -487,7 +487,7 @@ public class ActionListener
                             String text = Util.crlfToCr(Util.byteArrayToString(rawText, isUtf8));
 
                             // Instantiate message object
-                            message = new PlainMessage(uin, this.icq.getUin(),new Date(), text, false);
+                            message = new PlainMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN),new Date(), text, false);
 
                         } else
                         {
@@ -518,7 +518,7 @@ public class ActionListener
                             }
 
                             // Instantiate UrlMessage object
-                            message = new UrlMessage(uin, this.icq.getUin(), new Date(), url, urlText);
+                            message = new UrlMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
 
                         }
 
@@ -675,7 +675,7 @@ public class ActionListener
                             }
 
                             // Forward message message to contact list
-                            UrlMessage message = new UrlMessage(uin, this.icq.getUin(), new Date(), url, urlText);
+                            UrlMessage message = new UrlMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
                             Jimm.jimm.getContactListRef().addMessage(message);
 
                             // Acknowledge message
@@ -784,7 +784,7 @@ public class ActionListener
                     if (msgType == 0x0001)
                     {
                         // Forward message to contact list
-                        PlainMessage plainMsg = new PlainMessage(uin, this.icq.getUin(), new Date(), text, false);
+                        PlainMessage plainMsg = new PlainMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), text, false);
                         Jimm.jimm.getContactListRef().addMessage(plainMsg);
                     }
                     // URL message
@@ -808,7 +808,7 @@ public class ActionListener
                         }
 
                         // Forward message message to contact list
-                        UrlMessage urlMsg = new UrlMessage(uin, this.icq.getUin(), new Date(), url, urlText);
+                        UrlMessage urlMsg = new UrlMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
                         Jimm.jimm.getContactListRef().addMessage(urlMsg);
 
                     }

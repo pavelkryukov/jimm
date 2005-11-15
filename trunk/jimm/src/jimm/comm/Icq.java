@@ -56,9 +56,6 @@ public class Icq implements Runnable
     // Current state
     private int state = Icq.STATE_NOT_CONNECTED;
 
-    // UIN
-    private String uin;
-
     // Requested actions
     private Vector reqAction = new Vector();
 
@@ -84,9 +81,6 @@ public class Icq implements Runnable
         // Connect?
         if (act instanceof ConnectAction)
         {
-
-            // Save UIN
-            this.uin = new String(((ConnectAction) act).getUin());
 
             // Create new thread and start
             this.thread = new Thread(this);
@@ -291,12 +285,6 @@ public class Icq implements Runnable
 
     // #sijapp cond.end#
     // #sijapp cond.end#
-
-    // Returns the current UIN
-    public synchronized String getUin()
-    {
-        return (new String(this.uin));
-    }
 
     /** *********************************************************************** */
     /** *********************************************************************** */

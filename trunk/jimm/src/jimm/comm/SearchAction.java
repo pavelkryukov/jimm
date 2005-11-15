@@ -27,6 +27,7 @@ import java.util.Date;
 
 import jimm.Jimm;
 import jimm.JimmException;
+import jimm.Options;
 import jimm.Search;
 import jimm.util.ResourceBundle;
 
@@ -217,7 +218,7 @@ public class SearchAction extends Action
             Util.putByte(buf,marker,0);
         marker+=1;
 
-        packet = new ToIcqSrvPacket(-1,SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Jimm.jimm.getIcqRef().getUin(),0x07D0,new byte[0], buf);
+        packet = new ToIcqSrvPacket(-1,SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN),0x07D0,new byte[0], buf);
     
         this.icq.c.sendPacket(packet);
         

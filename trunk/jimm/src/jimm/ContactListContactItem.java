@@ -636,7 +636,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                         else
                             msgType = Message.MESSAGE_TYPE_AWAY;
     
-                        PlainMessage awayReq = new PlainMessage(Jimm.jimm.getIcqRef().getUin(), ContactListContactItem.this,msgType, new Date(), "");
+                        PlainMessage awayReq = new PlainMessage(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), ContactListContactItem.this,msgType, new Date(), "");
                         SendMessageAction act = new SendMessageAction(awayReq);
                         try
                         {
@@ -862,29 +862,33 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					if ((eventList[menuList.getSelectedIndex()] == USER_MENU_MESSAGE) 
 							&& !messageTextbox.getString().equals(""))
 					{
-						// Construct plain message object and request new SendMessageAction
+						System.out.println("1");
+                        // Construct plain message object and request new SendMessageAction
 						// Add the new message to the chat history
-						PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getIcqRef().getUin(),
+						PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN),
 					    ContactListContactItem.this,Message.MESSAGE_TYPE_NORM, new Date(), messageTextbox.getString());
-						
-						Jimm.jimm.getChatHistoryRef().addMyMessage(uin,plainMsg.getText(),plainMsg.getDate(),name);
-						
-						// #sijapp cond.if modules_HISTORY is "true" #
-						if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
-							Jimm.jimm.getHistory().addText(getUin(), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
-						// #sijapp cond.end#
-							
+                        System.out.println("2");
 						SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
 						try
 						{
 							Jimm.jimm.getIcqRef().requestAction(sendMsgAct);
+                            System.out.println("3");
 						} catch (JimmException e)
 						{
-							JimmException.handleException(e);
-							if (e.isCritical()) return;
+                            Jimm.jimm.getContactListRef().activate(JimmException.handleException(e));
+                            System.out.println("4");
+                            if (e.isCritical()) return;
 						}
-						
-						// Return to contact list
+                        System.out.println("5");
+                        Jimm.jimm.getChatHistoryRef().addMyMessage(uin,plainMsg.getText(),plainMsg.getDate(),name);
+                        
+                        // #sijapp cond.if modules_HISTORY is "true" #
+                        if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
+                            Jimm.jimm.getHistory().addText(getUin(), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
+                        // #sijapp cond.end#
+                            
+                        
+						// Return to chat or menu
 						this.activate();
 						
 						// Clear text in messageTextbox
@@ -918,7 +922,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 
 					// Construct URL message object and request new
 					// SendMessageAction
-					UrlMessage urlMsg = new UrlMessage(Jimm.jimm.getIcqRef().getUin(), ContactListContactItem.this, Message.MESSAGE_TYPE_NORM,
+					UrlMessage urlMsg = new UrlMessage(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), ContactListContactItem.this, Message.MESSAGE_TYPE_NORM,
 							new Date(), urlTextbox.getString(), messageTextbox.getString());
 					SendMessageAction sendMsgAct = new SendMessageAction(urlMsg);
 					try
