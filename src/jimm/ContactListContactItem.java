@@ -1353,6 +1353,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		static private final int FLASH_DURATION = 30;
 		
 		static Displayable visObject;
+		static Displayable currVisObject;
 		static private String text, textToShow, lastCaption;
 		static private int type, counter;
 		static private boolean haveToStop;
@@ -1399,7 +1400,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				synchronized(this)
 				{
 					curType = type;
+					currVisObject = visObject;
 					currTextValue = (text == null) ? null : new String(text);
+				}
+				
+				if (currVisObject == null)
+				{
+					continue;
 				}
 				
 				switch (curType)
@@ -1421,7 +1428,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				Jimm.display.callSerially (new Runnable() {
 					public void run()
 					{
-						if (visObject.isShown()) setCaption(visObject, textToShow);
+						if (currVisObject.isShown()) setCaption(currVisObject, textToShow);
 						else haveToStop = true;
 					}}
 				);
