@@ -116,6 +116,9 @@ public class Jimm extends MIDlet
 		    Jimm.jimm.getContactListRef().activate();
             return;
         }
+		
+		// Save MIDlet reference
+		Jimm.jimm = this;
 
 		// Get Jimm version
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
@@ -150,9 +153,6 @@ public class Jimm extends MIDlet
 		// Set minimized = false
 		this.setMinimized(false);
 	    // #sijapp cond.end #
-	
-		// Save MIDlet reference
-		Jimm.jimm = this;
 		
 		// Get display object (and update progress indicator)
 		Jimm.display = Display.getDisplay(this);

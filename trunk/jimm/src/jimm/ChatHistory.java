@@ -351,6 +351,7 @@ public class ChatHistory
 	// Sets the counter for the ChatHistory
 	public void calcCounter(String curUin)
 	{
+		if (curUin == null) return;
 		Enumeration AllChats = historyTable.elements();
 		Object chat = historyTable.get(curUin);
 		counter = 1;
