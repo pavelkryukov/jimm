@@ -248,4 +248,5 @@ VERSION 0.4.3
   * BUGFIX: Using nav keys when having onky one "window" open was causing NullPointer
   * BUGFIX: Contact changing status while typing a message to him could lead to NullPointer
   * BUGFIX: Wrting a message to a contact when Jimm is offline was causing a NullPointer
+  * BUGFIX: Connecting was not possible on builds without PROXY module (even if not activated)
  
