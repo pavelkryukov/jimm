@@ -240,3 +240,12 @@ VERSION 0.4.2
   * Rewrote the code for the Options UI to be more moduar and nicer
   * Smiles are inserted at correct possition on Sony Ericsson phones
   * Keepalive packet interval is now configurable
+  
+ _______________________________________________________________________________
+VERSION 0.4.3
+
+  * BUGFIX: NullPointer when staring Jimm was confusing sme S60 devices (emulator)
+  * BUGFIX: Using nav keys when having onky one "window" open was causing NullPointer
+  * BUGFIX: Contact changing status while typing a message to him could lead to NullPointer
+  * BUGFIX: Wrting a message to a contact when Jimm is offline was causing a NullPointer
+ 
