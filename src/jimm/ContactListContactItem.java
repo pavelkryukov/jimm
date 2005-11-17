@@ -723,7 +723,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 case USER_MENU_HISTORY:
                     // Stored history
                     Jimm.jimm.getHistory().showHistoryList(getUin(), getName());
-                    System.out.println("History start: GOOD :)");
                     break;
                 // #sijapp cond.end#
                     
@@ -862,24 +861,19 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					if ((eventList[menuList.getSelectedIndex()] == USER_MENU_MESSAGE) 
 							&& !messageTextbox.getString().equals(""))
 					{
-						System.out.println("1");
                         // Construct plain message object and request new SendMessageAction
 						// Add the new message to the chat history
 						PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN),
 					    ContactListContactItem.this,Message.MESSAGE_TYPE_NORM, new Date(), messageTextbox.getString());
-                        System.out.println("2");
 						SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
 						try
 						{
 							Jimm.jimm.getIcqRef().requestAction(sendMsgAct);
-                            System.out.println("3");
 						} catch (JimmException e)
 						{
                             Jimm.jimm.getContactListRef().activate(JimmException.handleException(e));
-                            System.out.println("4");
                             if (e.isCritical()) return;
 						}
-                        System.out.println("5");
                         Jimm.jimm.getChatHistoryRef().addMyMessage(uin,plainMsg.getText(),plainMsg.getDate(),name);
                         
                         // #sijapp cond.if modules_HISTORY is "true" #
