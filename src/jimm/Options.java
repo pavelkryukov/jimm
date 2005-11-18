@@ -150,79 +150,7 @@ public class Options
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
 		{
-		    setStringOption (Options.OPTION_UIN,                            "");
-			setStringOption (Options.OPTION_PASSWORD,                       "");
-			setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
-			setStringOption (Options.OPTION_SRV_PORT,                       "5190");
-			setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
-            setStringOption (Options.OPTION_CONN_ALIVE_INVTERV,             "120");
-			setIntOption    (Options.OPTION_CONN_TYPE,                      0);
-            // #sijapp cond.if target isnot "MOTOROLA"#
-			setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
-            // #sijapp cond.end#
-			setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
-			setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
-			setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
-			setIntOption    (Options.OPTION_CL_SORT_BY,                     0);
-			setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,                false);
-			// #sijapp cond.if target is "SIEMENS1"#
-			setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
-			setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mmf");
-			setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
-			setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
-			setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mmf");
-			setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-			// #sijapp cond.elseif target is "MIDP2" | target is "SIEMENS2"#
-			setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
-			setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.wav");
-			setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
-			setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
-			setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.wav");
-			setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-            // #sijapp cond.elseif target is "MOTOROLA"#
-            setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
-			setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mp3");
-			setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
-			setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
-			setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mp3");
-			setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-			setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		             5);
-			setBooleanOption(Options.OPTION_LIGHT_MANUAL,		             false);
-			// #sijapp cond.else#
-			setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
-			setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "");
-			setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    0);
-			setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
-			setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "");
-			setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     0);
-			// #sijapp cond.end#
-			
-			// #sijapp cond.if lang_RU is "true" and lang_EN isnot "true"#
-			setBooleanOption(Options.OPTION_CP1251_HACK,                    true);
-			// #sijapp cond.else#
-			setBooleanOption(Options.OPTION_CP1251_HACK,                    false);
-			// #sijapp cond.end#
-			
-			setIntOption    (Options.OPTION_VIBRATOR,                       0);
-			setIntOption    (Options.OPTION_COST_PER_PACKET,                0);
-			setIntOption    (Options.OPTION_COST_PER_DAY,                   0);
-			setIntOption    (Options.OPTION_COST_PACKET_LENGTH,             1024);
-			setStringOption (Options.OPTION_CURRENCY,                       "$");
-			setLongOption   (Options.OPTION_ONLINE_STATUS,                  ContactList.STATUS_ONLINE);
-			setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
-			setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
-			setBooleanOption(Options.OPTION_HISTORY,                        false);
-			setIntOption    (Options.OPTION_COLOR_SCHEME,                   CLRSCHHEME_BOW);
-            setStringOption (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
-            setBooleanOption(Options.OPTION_USE_SMILES,                     true);
-            setBooleanOption(Options.OPTION_SHOW_LAST_MESS,                 false);
-			 
-			setIntOption   (Options.OPTION_PRX_TYPE,                     		0);
-			setStringOption(Options.OPTION_PRX_SERV,                     	   "");
-			setStringOption(Options.OPTION_PRX_PORT,                      "1080");
-			setStringOption(Options.OPTION_AUTORETRY_COUNT,                  "1");
-			setStringOption(Options.OPTION_PRX_NAME,                  		   "");
-			setStringOption(Options.OPTION_PRX_PASS,                          "");
+			Options.setDefaults();
 			
 			// Construct option form
 			optionsForm = new OptionsForm();
@@ -230,6 +158,84 @@ public class Options
 
 	}
 
+	// Set default values
+	// This is done before loading because older saves may not contain all new values
+	static private void setDefaults()
+	{
+	    setStringOption (Options.OPTION_UIN,                            "");
+		setStringOption (Options.OPTION_PASSWORD,                       "");
+		setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
+		setStringOption (Options.OPTION_SRV_PORT,                       "5190");
+		setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
+        setStringOption (Options.OPTION_CONN_ALIVE_INVTERV,             "120");
+		setIntOption    (Options.OPTION_CONN_TYPE,                      0);
+        // #sijapp cond.if target isnot "MOTOROLA"#
+		setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
+        // #sijapp cond.end#
+		setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
+		setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
+		setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
+		setIntOption    (Options.OPTION_CL_SORT_BY,                     0);
+		setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,                false);
+		// #sijapp cond.if target is "SIEMENS1"#
+		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
+		setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mmf");
+		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
+		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
+		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mmf");
+		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
+		// #sijapp cond.elseif target is "MIDP2" | target is "SIEMENS2"#
+		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
+		setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.wav");
+		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
+		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
+		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.wav");
+		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
+        // #sijapp cond.elseif target is "MOTOROLA"#
+        setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
+		setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mp3");
+		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
+		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
+		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mp3");
+		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
+		setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		             5);
+		setBooleanOption(Options.OPTION_LIGHT_MANUAL,		             false);
+		// #sijapp cond.else#
+		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
+		setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "");
+		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    0);
+		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
+		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "");
+		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     0);
+		// #sijapp cond.end#
+		
+		// #sijapp cond.if lang_RU is "true" and lang_EN isnot "true"#
+		setBooleanOption(Options.OPTION_CP1251_HACK,                    true);
+		// #sijapp cond.else#
+		setBooleanOption(Options.OPTION_CP1251_HACK,                    false);
+		// #sijapp cond.end#
+		
+		setIntOption    (Options.OPTION_VIBRATOR,                       0);
+		setIntOption    (Options.OPTION_COST_PER_PACKET,                0);
+		setIntOption    (Options.OPTION_COST_PER_DAY,                   0);
+		setIntOption    (Options.OPTION_COST_PACKET_LENGTH,             1024);
+		setStringOption (Options.OPTION_CURRENCY,                       "$");
+		setLongOption   (Options.OPTION_ONLINE_STATUS,                  ContactList.STATUS_ONLINE);
+		setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
+		setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
+		setBooleanOption(Options.OPTION_HISTORY,                        false);
+		setIntOption    (Options.OPTION_COLOR_SCHEME,                   CLRSCHHEME_BOW);
+        setStringOption (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
+        setBooleanOption(Options.OPTION_USE_SMILES,                     true);
+        setBooleanOption(Options.OPTION_SHOW_LAST_MESS,                 false);
+		 
+		setIntOption   (Options.OPTION_PRX_TYPE,                     	0);
+		setStringOption(Options.OPTION_PRX_SERV,                     	"");
+		setStringOption(Options.OPTION_PRX_PORT,						"1080");
+		setStringOption(Options.OPTION_AUTORETRY_COUNT,                 "1");
+		setStringOption(Options.OPTION_PRX_NAME,                  		"");
+		setStringOption(Options.OPTION_PRX_PASS,                        "");
+	}
 
 	// Load option values from record store
 	static public void load() throws IOException, RecordStoreException
@@ -246,7 +252,8 @@ public class Options
 		buf = account.getRecord(1);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
-		if (!(dis.readUTF().equals(Jimm.VERSION))) throw (new IOException());
+		if (!(dis.readUTF().equals(Jimm.VERSION))) 
+			Options.setDefaults();
 		
 		// Read all option key-value pairs
 		buf = account.getRecord(2);
