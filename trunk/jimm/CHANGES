@@ -241,7 +241,7 @@ VERSION 0.4.2
   * Smiles are inserted at correct possition on Sony Ericsson phones
   * Keepalive packet interval is now configurable
   
- _______________________________________________________________________________
+_______________________________________________________________________________
 VERSION 0.4.3
 
   * BUGFIX: NullPointer when starting Jimm was confusing some S60 devices (emulator at least)
@@ -249,4 +249,14 @@ VERSION 0.4.3
   * BUGFIX: Contact changing status while typing a message to him could lead to NullPointer
   * BUGFIX: Writing a message to a contact when Jimm is offline was causing a NullPointer
   * BUGFIX: Connecting was not possible on builds without PROXY module (even if not activated)
- 
+
+_______________________________________________________________________________
+VERSION 0.5
+
+  * Now Jimm works with touchscreen (only for MIDP2 build).
+  * New language system is done. Language string are stored in *.lng files now.
+  * Status of contact is stored in contact list after checking for invisible
+  * Now chat are filled with 5 last messages from history when opened (optional)
+  * Text from user info can be copied
+  * Removed creeping line as there were too much bugs on some mobile phones
+  * Menu "Minimize" is shown only at sony-ericsoon phones

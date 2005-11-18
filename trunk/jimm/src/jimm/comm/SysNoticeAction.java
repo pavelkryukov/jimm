@@ -45,7 +45,7 @@ public class SysNoticeAction extends Action
   // Returns true if the action can be performed
   public boolean isExecutable()
   {
-	return (this.icq.isConnected());
+	return (Icq.isConnected());
   }
 
 
@@ -100,7 +100,7 @@ protected void init() throws JimmException {
 
 		// Send a CLI_AUTHORIZE packet
 		SnacPacket packet = new SnacPacket(SnacPacket.CLI_AUTHORIZE_FAMILY, SnacPacket.CLI_AUTHORIZE_COMMAND, 0x0000001A, new byte[0], buf);
-		this.icq.c.sendPacket(packet);
+		Icq.Connection.sendPacket(packet);
 	}
 	//	If system notice is a SYS_NOTICE_REQUAUTH
 	else if (this.notice.getSysnotetype() == SystemNotice.SYS_NOTICE_REQUAUTH) {
@@ -121,7 +121,7 @@ protected void init() throws JimmException {
 
 		// Send a CLI_REQUAUTH packet
 		SnacPacket packet = new SnacPacket(SnacPacket.CLI_REQAUTH_FAMILY, SnacPacket.CLI_REQAUTH_COMMAND, 0x00000018, new byte[0], buf);
-		this.icq.c.sendPacket(packet);
+		Icq.Connection.sendPacket(packet);
 
 	}
 

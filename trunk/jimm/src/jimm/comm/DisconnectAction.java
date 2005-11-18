@@ -46,7 +46,7 @@ public class DisconnectAction extends Action
 	// Returns true if STATE_CONNECTED is active
 	public boolean isExecutable()
 	{
-		return (this.icq.isConnected());
+		return (Icq.isConnected());
 	}
 
 
@@ -60,10 +60,10 @@ public class DisconnectAction extends Action
 	// Init action
 	protected void init() throws JimmException
 	{
-		this.icq.resetServerCon();
+		Icq.resetServerCon();
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		// #sijapp cond.if modules_FILES is "true"#
-		this.icq.resetPeerCon();
+		Icq.resetPeerCon();
 		// #sijapp cond.end#
 		// #sijapp cond.end#
 		this.state = DisconnectAction.STATE_INIT_DONE;

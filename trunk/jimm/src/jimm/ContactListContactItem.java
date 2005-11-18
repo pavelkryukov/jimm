@@ -24,7 +24,8 @@
 package jimm;
 
 import java.util.Date;
-
+import java.util.TimerTask;
+import java.util.Timer;
 import javax.microedition.lcdui.*;
 
 import jimm.JimmUI;
@@ -299,8 +300,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		if (temporary) return 0x808080;
 		return 
 			returnBoolValue(VALUE_HAS_CHAT) 
-				? Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE)
-				: Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT); 
+				? Options.getSchemeColor(Options.CLRSCHHEME_BLUE)
+				: Options.getSchemeColor(Options.CLRSCHHEME_TEXT); 
 	}
 	
 	// Returns font style for contact name 
@@ -560,12 +561,12 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			if (c == backCommand)
 			{
 				ContactListContactItem.this.resetUnreadMessages();
-				Jimm.jimm.getContactListRef().activate();
+				ContactList.activate();
 			}
 			// Message has been closed
 			else if (c == msgCloseCommand)
 			{
-				Jimm.jimm.getContactListRef().activate();
+				ContactList.activate();
 			}
 			// User wants to send a reply
 			else if ((c == msgReplyCommand) || (c == replWithQuotaCommand))
@@ -636,11 +637,12 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                         else
                             msgType = Message.MESSAGE_TYPE_AWAY;
     
-                        PlainMessage awayReq = new PlainMessage(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), ContactListContactItem.this,msgType, new Date(), "");
+                        PlainMessage awayReq = new PlainMessage(Options.getStringOption(Options.OPTION_UIN), ContactListContactItem.this,msgType, new Date(), "");
+                        
                         SendMessageAction act = new SendMessageAction(awayReq);
                         try
                         {
-                            Jimm.jimm.getIcqRef().requestAction(act);
+                        	Icq.requestAction(act);
     
                         } catch (JimmException e)
                         {
@@ -722,23 +724,22 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 // #sijapp cond.if modules_HISTORY is "true" #                    
                 case USER_MENU_HISTORY:
                     // Stored history
-                    Jimm.jimm.getHistory().showHistoryList(getUin(), getName());
+					HistoryStorage.showHistoryList(getUin(), getName());
                     break;
                 // #sijapp cond.end#
                     
                 case USER_MENU_USER_INFO:
                     // Reqeust user information
                     // Display splash canvas
-                    SplashCanvas wait1 = Jimm.jimm.getSplashCanvasRef();
-                    wait1.setMessage(ResourceBundle.getString("wait"));
-                    wait1.setProgress(0);
-                    Jimm.display.setCurrent(wait1);
+                    SplashCanvas.setMessage(ResourceBundle.getString("wait"));
+                    SplashCanvas.setProgress(0);
+                    Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
 
                     // Request info from server
                     RequestInfoAction act1 = new RequestInfoAction(ContactListContactItem.this.getUin());
                     try
                     {
-                        Jimm.jimm.getIcqRef().requestAction(act1);
+                        Icq.requestAction(act1);
                     } catch (JimmException e)
                     {
                         JimmException.handleException(e);
@@ -785,7 +786,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 	VisibilityCheckerAction act = new VisibilityCheckerAction(getUin(), getName());
                 	try
                 	{
-                		Jimm.jimm.getIcqRef().requestAction(act);
+                		Icq.requestAction(act);
                 	}
                 	catch (JimmException e)
                 	{
@@ -799,7 +800,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// User wants to add temporary contact
 			else if (c == addUrsCommand)
 			{
-				Jimm.jimm.getMainMenuRef().addUserOrGroupCmd(uin,true);
+				MainMenu.addUserOrGroupCmd(uin,true);
 			}
 			
 			// User adds selected message to history
@@ -824,11 +825,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				try 
 				{
 					// Save ContactList
-					Jimm.jimm.getContactListRef().save();
+					ContactList.save();
 					
 					// Try to save ContactList to server
 					UpdateContactListAction action = new UpdateContactListAction(ContactListContactItem.this,UpdateContactListAction.ACTION_RENAME);
-					Jimm.jimm.getIcqRef().requestAction(action);
+					Icq.requestAction(action);
 				}
 				catch (JimmException je)
 				{
@@ -841,7 +842,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				}
 				
 				Jimm.jimm.getChatHistoryRef().contactRenamed(uin, this.name);
-				Jimm.jimm.getContactListRef().activate();
+				ContactList.activate();
 				messageTextbox.setString(null);
 			}
 			// Textbox has been closed
@@ -863,22 +864,23 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					{
                         // Construct plain message object and request new SendMessageAction
 						// Add the new message to the chat history
-						PlainMessage plainMsg = new PlainMessage(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN),
+						PlainMessage plainMsg = new PlainMessage(Options.getStringOption(Options.OPTION_UIN),
+
 					    ContactListContactItem.this,Message.MESSAGE_TYPE_NORM, new Date(), messageTextbox.getString());
 						SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
 						try
 						{
-							Jimm.jimm.getIcqRef().requestAction(sendMsgAct);
+							Icq.requestAction(sendMsgAct);
 						} catch (JimmException e)
 						{
-                            Jimm.jimm.getContactListRef().activate(JimmException.handleException(e));
+							ContactList.activate(JimmException.handleException(e));
                             if (e.isCritical()) return;
 						}
                         Jimm.jimm.getChatHistoryRef().addMyMessage(uin,plainMsg.getText(),plainMsg.getDate(),name);
                         
                         // #sijapp cond.if modules_HISTORY is "true" #
-                        if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
-                            Jimm.jimm.getHistory().addText(getUin(), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
+                        if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
+                            HistoryStorage.addText(getUin(), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
                         // #sijapp cond.end#
                             
                         
@@ -916,12 +918,12 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 
 					// Construct URL message object and request new
 					// SendMessageAction
-					UrlMessage urlMsg = new UrlMessage(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), ContactListContactItem.this, Message.MESSAGE_TYPE_NORM,
+					UrlMessage urlMsg = new UrlMessage(Options.getStringOption(Options.OPTION_UIN), ContactListContactItem.this, Message.MESSAGE_TYPE_NORM,
 							new Date(), urlTextbox.getString(), messageTextbox.getString());
 					SendMessageAction sendMsgAct = new SendMessageAction(urlMsg);
 					try
 					{
-						Jimm.jimm.getIcqRef().requestAction(sendMsgAct);
+						Icq.requestAction(sendMsgAct);
 					} catch (JimmException e)
 					{
 						JimmException.handleException(e);
@@ -968,24 +970,24 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 
 					try
 					{
-						Jimm.jimm.getIcqRef().requestAction(sysNotAct);
-						if (ContactListContactItem.this.returnBoolValue(VALUE_IS_TEMP)) Jimm.jimm.getIcqRef().requestAction(updateAct);
+						Icq.requestAction(sysNotAct);
+						if (ContactListContactItem.this.returnBoolValue(VALUE_IS_TEMP)) Icq.requestAction(updateAct);
 					} catch (JimmException e)
 					{
 						JimmException.handleException(e);
 						if (e.isCritical()) return;
 					}
 					requReason = false;
-					Jimm.jimm.getContactListRef().activate();
+					ContactList.activate();
 				}
 			}
 			
 			// user select Ok in delete contact message box
 			else if (JimmUI.isMsgBoxCommand(c, MSGBS_DELETECONTACT) == JimmUI.CMD_OK)
 			{
-				Jimm.jimm.getIcqRef().delFromContactList(ContactListContactItem.this);
+				Icq.delFromContactList(ContactListContactItem.this);
 				//#sijapp cond.if modules_HISTORY is "true" #
-				Jimm.jimm.getHistory().clearHistory(uin);
+				HistoryStorage.clearHistory(uin);
 				//#sijapp cond.end# 
 			}
 			
@@ -1002,13 +1004,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 
 				try
 				{
-					Jimm.jimm.getIcqRef().requestAction(remAct);
+					Icq.requestAction(remAct);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
 					if (e.isCritical()) return;
 				}
-				Jimm.jimm.getContactListRef().activate();
+				ContactList.activate();
 			}
 			
 			// user select CANCEL in delete contact message box
@@ -1020,9 +1022,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Textbox has been canceled
 			else if (c == textboxCancelCommand)
 			{
-				if (infoThread.getType() != InfoThread.NONE) disableTopString();
-				else 
-					this.activate();
+				this.activate();
 			}
 			// Menu should be activated
 			else if (c == addMenuCommand)
@@ -1037,7 +1037,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			else if (c == deleteChatCommand)
 			{
 				ContactListContactItem.this.deleteChatHistory();
-				Jimm.jimm.getContactListRef().activate();
+				ContactList.activate();
 			}
 			
 			//Grant authorisation
@@ -1049,7 +1049,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
 				try
 				{
-					Jimm.jimm.getIcqRef().requestAction(sysNotAct);
+					Icq.requestAction(sysNotAct);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
@@ -1077,11 +1077,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			else if (c == insertEmotionCommand)
 			{
 				caretPos = messageTextbox.getCaretPosition();
-				Jimm.jimm.getEmotionsRef().selectEmotion(this, messageTextbox);
+				Emotions.selectEmotion(this, messageTextbox);
 			}
 			
 			// User select a emotion
-			else if ( Jimm.jimm.getEmotionsRef().isMyOkCommand(c) )
+			else if ( Emotions.isMyOkCommand(c) )
 			{
 				// #sijapp cond.if target is "MOTOROLA"#
 				//caretPos = messageTextbox.getString().length();
@@ -1089,13 +1089,12 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				
 				messageTextbox.insert
 				(
-					new String(" ").concat(Jimm.jimm.getEmotionsRef().getSelectedEmotion()).concat(" "),
+					new String(" ").concat(Emotions.getSelectedEmotion()).concat(" "),
 					caretPos
 				);
 			}
 			// #sijapp cond.end#
-			
-			else if (c ==  InfoThread.cmdCancelTopText) disableTopString();
+
 		}
 		
 		static private int caretPos;
@@ -1108,9 +1107,20 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		// Activates the contact item menu
 		public void activate()
 		{
+			// Disable ticker (if exists)
+			if (lastTickerDispl != null)
+			{
+				lastTickerDispl.setTicker(null);
+				lastTickerDispl = null;
+			}
+			
 			// Disable creeping line or status flashing 
-			disableTopString();
 			currentUin = new String(uin);
+			
+			//#sijapp cond.if modules_HISTORY is "true" #
+			Jimm.jimm.getChatHistoryRef().fillFormHistory(uin, name);
+			//#sijapp cond.end#
+
 			
 			// Display chat history
 			if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
@@ -1129,7 +1139,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				msgDisplay.addCommand(addMenuCommand);
 				//#sijapp cond.if modules_HISTORY is "true" #
 				msgDisplay.removeCommand(addToHistoryCommand);
-				if ( !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
+				if ( !Options.getBooleanOption(Options.OPTION_HISTORY) )
 					msgDisplay.addCommand(addToHistoryCommand);
 				//#sijapp cond.end#
 				if (ContactListContactItem.this.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
@@ -1333,171 +1343,41 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         // #sijapp cond.end#
 	}
 	
-	// Thread for notifing user about changing contact status or incoming message 
-	// when chat is unvisible
-	static class InfoThread extends Thread
-	{
-		// Top string modes
-		static public final int NONE  = 0;
-		static public final int FLASH = 1;
-		static public final int RUNNL = 2;
-		
-		// constants for some time lenght opers (in 1/2 seconds)
-		static private final int RL_START       = 5;
-		static private final int FLASH_DURATION = 30;
-		
-		static Displayable visObject;
-		static Displayable currVisObject;
-		static private String text, textToShow, lastCaption;
-		static private int type, counter;
-		static private boolean haveToStop;
-		
-		final static Command cmdCancelTopText = new Command(ResourceBundle.getString("cancel_ticker"), Command.BACK, 0);
-		
-		protected InfoThread()
-		{
-			type = NONE;
-			counter = 0;
-		}
-		
-		synchronized public void setData(int type_, String text_, Displayable object)
-		{
-			if (visObject != null)
-			{
-				setCaption(visObject, lastCaption);
-				visObject.removeCommand(cmdCancelTopText);
-			}
-			visObject = object;
-			type = type_;
-			text = text_;
-			counter = 0;
-			lastCaption = getCaption(visObject);
-			if (visObject != null) visObject.addCommand(cmdCancelTopText); 
-		}
-		
-		synchronized public int getType()
-		{
-			return type; 
-		}
-		
-		public void run()
-		{
-			int curType;
-			String currTextValue;
-			
-			for (;;)
-			{
-				haveToStop = false;
-				
-				try { sleep(500); } catch (Exception e) { break; }
-				
-				synchronized(this)
-				{
-					curType = type;
-					currVisObject = visObject;
-					currTextValue = (text == null) ? null : new String(text);
-				}
-				
-				if (currVisObject == null)
-				{
-					continue;
-				}
-				
-				switch (curType)
-				{
-				case NONE:
-					continue;
-					
-				case FLASH:
-					textToShow = ((counter&1) == 0) ? new String() : currTextValue;
-					if (counter > FLASH_DURATION) haveToStop = true;
-					break;
-					
-				case RUNNL:
-					if ((counter-RL_START) >= currTextValue.length()) counter = 0;
-					textToShow = currTextValue.substring((counter < RL_START) ? 0 : counter-RL_START);
-					break;
-				}
-				
-				Jimm.display.callSerially (new Runnable() {
-					public void run()
-					{
-						if (currVisObject.isShown()) setCaption(currVisObject, textToShow);
-						else haveToStop = true;
-					}}
-				);
-				if (haveToStop) setData(NONE, null, null);
-				counter++;
-			}
-		}
-		
-		static void setCaption(Displayable ctrl, String caption)
-		{
-			if (ctrl instanceof VirtualList)
-			{
-				VirtualList vl = (VirtualList)ctrl;
-				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				vl.setTitle(caption);
-				// #sijapp cond.else#
-				vl.setCaption(caption);
-				// #sijapp cond.end#
-			}
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			else ctrl.setTitle(caption);
-			// #sijapp cond.end#
-		}
-		
-		static String getCaption(Displayable ctrl)
-		{
-			if (ctrl == null) return null;
-			String result = null;
-			if (ctrl instanceof VirtualList)
-			{
-				VirtualList vl = (VirtualList)ctrl;
-				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				result = vl.getTitle();
-				// #sijapp cond.else#
-				result = vl.getCaption();
-				// #sijapp cond.end#
-			}
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			else result = ctrl.getTitle();
-			// #sijapp cond.end#
-			
-			return result;
-		}
-		
-	} // end 'class InfoThread'
-	
-	final public static InfoThread infoThread;
-	
-	static private void showTopString(String uin, String text, int type)
+
+	static private Displayable getCurrDisplayable(String uin)
 	{
 		Displayable vis = null;
 		if (messageTextbox.isShown()) vis = messageTextbox;
 		else if (Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) vis = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(uin);
-		else if (menuList != null) if (menuList.isShown()) vis = menuList; 
-		if (vis == null) return;
-		infoThread.setData(type, text, vis);
+		else if (menuList != null) if (menuList.isShown()) vis = menuList;
+		return vis;
 	}
 	
-	static private void disableTopString()
+	static synchronized public void statusChanged(String uin, long status)
 	{
-		infoThread.setData(InfoThread.NONE, null, null);
+		if (currentUin.equals(uin))
+		{
+			Displayable disp = getCurrDisplayable(uin);
+			if (disp != null) new Timer().scheduleAtFixedRate
+			(
+				new FlashCapClass(disp, getStatusString(status)),
+				0,
+				500
+			);
+		}
+			 
 	}
 	
-	static public void statusChanged(String uin, long status)
-	{
-		if (currentUin.equals(uin)) showTopString(uin, getStatusString(status), InfoThread.FLASH);
-	}
+	static Displayable lastTickerDispl = null;
 	
 	static public void messageReceived(String uin, String text)
 	{
-		// #sijapp cond.if target isnot "MOTOROLA"#
 		if ( currentUin.equals(uin) && 
-		     !Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) 
-				showTopString(uin, Util.removeClRfAndTabs(text), InfoThread.RUNNL);
-		// #sijapp cond.end#
+			     !Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin))
+		{
+			lastTickerDispl = getCurrDisplayable(uin);
+			if (lastTickerDispl != null) lastTickerDispl.setTicker(new Ticker(text));
+		}
 	}
 	
 	// Initializer
@@ -1534,10 +1414,92 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 1000, TextField.ANY);
 		reasonTextbox.addCommand(textboxCancelCommand);
 		reasonTextbox.addCommand(textboxSendCommand);
-		
-		// Create and start thread for info about status changing
-		infoThread = new InfoThread();
-		infoThread.start();
 	}
+	
+	static String getCaption(Displayable ctrl)
+	{
+		if (ctrl == null) return null;
+		String result = null;
+		if (ctrl instanceof VirtualList)
+		{
+			VirtualList vl = (VirtualList)ctrl;
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			result = vl.getTitle();
+			// #sijapp cond.else#
+			result = vl.getCaption();
+			// #sijapp cond.end#
+		}
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		else result = ctrl.getTitle();
+		// #sijapp cond.end#
+		
+		return result;
+	}
+	
 }
 
+class FlashCapClass extends TimerTask
+{
+	private Displayable displ;
+	private String text, oldText;
+	private int counter;
+	
+	public FlashCapClass(Displayable displ, String text)
+	{
+		this.displ   = displ;
+		this.text    = text;
+		this.oldText = getCaption(displ);
+		counter = 0;
+	}
+	
+	public void run()
+	{
+		if ((counter < 6) && displ.isShown())
+		{
+			setCaption(displ, ((counter&1) == 0) ? text : " ");
+			counter++;
+		}
+		else
+		{
+			setCaption(displ, oldText);
+			cancel();
+		}
+	}
+	
+	static public void setCaption(Displayable ctrl, String caption)
+	{
+		if (ctrl instanceof VirtualList)
+		{
+			VirtualList vl = (VirtualList)ctrl;
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			vl.setTitle(caption);
+			// #sijapp cond.else#
+			vl.setCaption(caption);
+			// #sijapp cond.end#
+		}
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		else ctrl.setTitle(caption);
+		// #sijapp cond.end#
+	}
+	
+	static String getCaption(Displayable ctrl)
+	{
+		if (ctrl == null) return null;
+		String result = null;
+		if (ctrl instanceof VirtualList)
+		{
+			VirtualList vl = (VirtualList)ctrl;
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			result = vl.getTitle();
+			// #sijapp cond.else#
+			result = vl.getCaption();
+			// #sijapp cond.end#
+		}
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		else result = ctrl.getTitle();
+		// #sijapp cond.end#
+		
+		return result;
+	}
+	
+}

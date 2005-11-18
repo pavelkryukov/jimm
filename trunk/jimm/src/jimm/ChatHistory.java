@@ -34,7 +34,9 @@ import jimm.comm.SystemNotice;
 import jimm.comm.UrlMessage;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
-
+//#sijapp cond.if modules_HISTORY is "true" #
+import jimm.HistoryStorage;
+//#sijapp cond.end#
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 import DrawControls.VirtualListCommands;
@@ -73,7 +75,7 @@ class ChatTextList extends TextList implements VirtualListCommands
 		this.setCursorMode(TextList.SEL_NONE);
 		this.setFontSize
 		(
-			Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CHAT_SMALL_FONT)
+			Options.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT)
 				   ? TextList.SMALL_FONT : TextList.MEDIUM_FONT
 		);
 		
@@ -82,6 +84,14 @@ class ChatTextList extends TextList implements VirtualListCommands
 		
 		setVLCommands(this);
 	}
+	
+	static int getInOutColor(boolean incoming)
+	{
+		return incoming ? 
+		       0xFF0000 : 
+		       Options.getSchemeColor(Options.CLRSCHHEME_BLUE);
+	}
+	
 
 	Vector getMessData()
 	{
@@ -97,12 +107,12 @@ class ChatTextList extends TextList implements VirtualListCommands
 		switch (getGameAction(keyCode))
 		{
 		case Canvas.LEFT:
-			currUin = Jimm.jimm.getContactListRef().showNextPrevChat(false);
+			currUin = ContactList.showNextPrevChat(false);
 			Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
 			break;
 			
 		case Canvas.RIGHT:
-			currUin = Jimm.jimm.getContactListRef().showNextPrevChat(true);
+			currUin = ContactList.showNextPrevChat(true);
 			Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
 			break;
 		}
@@ -117,7 +127,7 @@ class ChatTextList extends TextList implements VirtualListCommands
 		addBigText
 		(
 			from + " (" + Util.getDateString(!offline, time) + "): ",
-			red ? 0xFF0000 : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), 
+			getInOutColor(red), 
 			Font.STYLE_BOLD,
 			messTotalCounter
 		);
@@ -136,7 +146,7 @@ class ChatTextList extends TextList implements VirtualListCommands
 		texOffset = getSize()-lastSize;
 		
 		//#sijapp cond.if modules_SMILES is "true" #
-		Jimm.jimm.getEmotionsRef().addTextWithEmotions(this, message, Font.STYLE_PLAIN, getTextColor(), messTotalCounter);
+		Emotions.addTextWithEmotions(this, message, Font.STYLE_PLAIN, getTextColor(), messTotalCounter);
 		//#sijapp cond.else#
 		addBigText(message, getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
 		//#sijapp cond.end#
@@ -166,7 +176,7 @@ public class ChatHistory
 		if (text == null) return;
 		
 		MessData data = (MessData)list.getMessData().elementAt(textIndex);
-		Jimm.jimm.getHistory().addText
+		HistoryStorage.addText
 		(
 			uin, 
 			text, 
@@ -200,8 +210,8 @@ public class ChatHistory
 			this.addTextToForm(uin,contact.getName(), plainMsg.getText(), "", plainMsg.getDate(), true, offline);
 
 			// #sijapp cond.if modules_HISTORY is "true" #
-			if ( Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY) )
-				Jimm.jimm.getHistory().addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName(), plainMsg.getDate());
+			if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
+				HistoryStorage.addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName(), plainMsg.getDate());
 			// #sijapp cond.end#	
 			
 			ContactListContactItem.messageReceived(uin, plainMsg.getText());
@@ -311,12 +321,54 @@ public class ChatHistory
 
 	
 	// Creates a new chat form
-	private void newChatForm(String uin,String name)
+	private void newChatForm(String uin, String name)
 	{
 		ChatTextList chatForm = new ChatTextList(name);
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
+		
+		//#sijapp cond.if modules_HISTORY is "true" #
+		fillFormHistory(uin, name);
+		//#sijapp cond.end#
 	}
+	
+	// fill chat with last history lines
+	//#sijapp cond.if modules_HISTORY is "true" #
+	final static private int MAX_HIST_LAST_MESS = 5;
+	public void fillFormHistory(String uin, String name)
+	{
+		if (Options.getBooleanOption(Options.OPTION_SHOW_LAST_MESS))
+		{
+			int recCount = HistoryStorage.getRecordCount(uin);
+			if (recCount == 0) return;
+			 
+			if (!chatHistoryExists(uin)) newChatForm(uin, name);
+			ChatTextList chatForm = (ChatTextList) historyTable.get(uin);
+			if (chatForm.getSize() != 0) return;
+			
+			int insSize = (recCount > MAX_HIST_LAST_MESS) ? MAX_HIST_LAST_MESS : recCount;  
+			for (int i = recCount-insSize; i < recCount; i++)
+			{
+				CachedRecord rec = HistoryStorage.getRecord(uin, i);
+				chatForm.addBigText
+				(
+					"["+rec.from+" "+rec.date+"]", 
+					ChatTextList.getInOutColor(rec.type == 0),
+					Font.STYLE_PLAIN,
+					-1
+				);
+				chatForm.doCRLF(-1);
+				
+				//#sijapp cond.if modules_SMILES is "true" #
+				Emotions.addTextWithEmotions(chatForm, rec.text, Font.STYLE_PLAIN, 0x808080, -1);
+				//#sijapp cond.else#
+				chatForm.addBigText(rec.text, 0x808080, Font.STYLE_PLAIN, -1);
+				//#sijapp cond.end#
+				chatForm.doCRLF(-1);
+			}
+		}
+	}
+	//#sijapp cond.end#
 	
 	public void contactRenamed(String uin, String newName)
 	{
@@ -349,8 +401,8 @@ public class ChatHistory
 	}
 	
 	// Sets the counter for the ChatHistory
-	public void calcCounter(String curUin)
-	{
+    public void calcCounter(String curUin)
+    {
 		if (curUin == null) return;
 		Enumeration AllChats = historyTable.elements();
 		Object chat = historyTable.get(curUin);
@@ -360,5 +412,5 @@ public class ChatHistory
 			if (AllChats.nextElement() == chat) break;
 			counter++;
 		}
-	}
+    }
 }

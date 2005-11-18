@@ -36,6 +36,7 @@ import jimm.Options;
 public class VisibilityCheckerAction extends Action implements CommandListener
 {
 	protected byte[] uin;
+	private String strUin;
 
 	protected String nick;
 
@@ -50,6 +51,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 		String _nick,
 		boolean _showResult)
 	{
+		strUin = _uin;
 		this.uin = Util.stringToByteArray(_uin);
 		this.nick = _nick;
 		this.showResult = _showResult;
@@ -67,7 +69,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 
 	public boolean isExecutable()
 	{
-		return !(this.icq.isNotConnected());
+		return !(Icq.isNotConnected());
 	}
 
 	public boolean isExclusive()
@@ -85,7 +87,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 		marker += 1;
 		System.arraycopy(this.uin, 0, buf, marker, this.uin.length);
 		marker += this.uin.length;
-		this.icq.c.sendPacket(new SnacPacket(0x0002, 0x0015, 0x00000005, new byte[0], buf));
+		Icq.Connection.sendPacket(new SnacPacket(0x0002, 0x0015, 0x00000005, new byte[0], buf));
 	}
 
 	protected boolean forward(Packet packet) throws JimmException
@@ -154,12 +156,14 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 				StringBuffer str_end = new StringBuffer();
 				str_end.append(" (").append(ContactListContactItem.getStatusString(this.status)).append(")");
 				results
-						.addBigText(str_begin.toString(), Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT), Font.STYLE_PLAIN, -1)
+						.addBigText(str_begin.toString(), Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Font.STYLE_PLAIN, -1)
 						.addImage(st_image, null, st_image.getWidth(), st_image.getHeight(), -1)
-						.addBigText(str_end.toString(), Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT), Font.STYLE_PLAIN, -1);
+						.addBigText(str_end.toString(), Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Font.STYLE_PLAIN, -1);
 				results.addCommand(new Command("OK", Command.OK, 1));
 				results.setCommandListener(this);
 				Jimm.display.setCurrent(results);
+				
+				ContactList.update(strUin, this.status);
 			}
 			return true;
 		}
@@ -181,6 +185,6 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 
 	public void commandAction(Command c, Displayable d)
 	{
-		Jimm.jimm.getContactListRef().activate();
+		ContactList.activate();
 	}
 }

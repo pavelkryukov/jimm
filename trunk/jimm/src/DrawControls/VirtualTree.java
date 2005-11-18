@@ -218,6 +218,20 @@ public class VirtualTree extends VirtualList
 		}
 		commands.VTnodeClicked(currItem);
 	}
+	
+	//#sijapp cond.if target is "MIDP2"#
+	protected boolean pointerPressedOnUtem(int index, int x, int y)
+	{
+		TreeNode currItem = getCurrentItem();
+		if (currItem == null) return false;
+		if ((currItem.size() > 0) && (x < (3*getFontHeight()/2+currItem.level*stepSize)))
+		{
+			itemSelected();
+			return true;
+		}
+		return false;
+	}
+	//#sijapp cond.end#
 
 	//! For internal use only
 	protected int getSize()

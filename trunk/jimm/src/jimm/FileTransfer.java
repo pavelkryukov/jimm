@@ -57,6 +57,7 @@ import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.control.VideoControl;
 
+import jimm.comm.Icq;
 import jimm.comm.FileTransferMessage;
 import jimm.comm.Message;
 import jimm.comm.SendMessageAction;
@@ -162,18 +163,18 @@ public class FileTransfer implements CommandListener
         // #sijapp cond.end #
 
         // Set the splash screen
-        Jimm.jimm.getSplashCanvasRef().setProgress(0);
-        Jimm.jimm.getSplashCanvasRef().setMessage(ResourceBundle.getString("init_ft"));
-        Jimm.jimm.getSplashCanvasRef().addCommand(this.cancelCommand);
-        Jimm.jimm.getSplashCanvasRef().setCommandListener(this);
-        Display.getDisplay(Jimm.jimm).setCurrent(Jimm.jimm.getSplashCanvasRef());
+        SplashCanvas.setProgress(0);
+        SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
+        SplashCanvas._this.addCommand(this.cancelCommand);
+        SplashCanvas._this.setCommandListener(this);
+        Display.getDisplay(Jimm.jimm).setCurrent(SplashCanvas._this);
 
         // Send the ft message
-        FileTransferMessage ftm = new FileTransferMessage(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), this.cItem,Message.MESSAGE_TYPE_EXTENDED, filename, description, this.data);
+        FileTransferMessage ftm = new FileTransferMessage(Options.getStringOption(Options.OPTION_UIN), this.cItem,Message.MESSAGE_TYPE_EXTENDED, filename, description, this.data);
         SendMessageAction act = new SendMessageAction(ftm);
         try
         {
-            Jimm.jimm.getIcqRef().requestAction(act);
+            Icq.requestAction(act);
 
         } catch (JimmException e)
         {
@@ -194,8 +195,8 @@ public class FileTransfer implements CommandListener
         name_Desc.append(new StringItem(ResourceBundle.getString("size")+": ", String.valueOf(data.length/1024)+" kb"));
         // #sijapp cond.if modules_TRAFFIC is "true" #
         name_Desc.append(new StringItem(ResourceBundle.getString("cost")+": ", 
-                Jimm.jimm.getTrafficRef().getString(((data.length/Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PACKET_LENGTH))+1)*Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PER_PACKET))
-                +" "+Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CURRENCY)));                       
+                Jimm.jimm.getTrafficRef().getString(((data.length/Options.getIntOption(Options.OPTION_COST_PACKET_LENGTH))+1)*Options.getIntOption(Options.OPTION_COST_PER_PACKET))
+                +" "+Options.getStringOption(Options.OPTION_CURRENCY)));                       
         // #sijapp cond.end #
         
         name_Desc.addCommand(this.backCommand);
@@ -230,7 +231,7 @@ public class FileTransfer implements CommandListener
             else
                 if (c == this.cancelCommand)
                 {
-                    Jimm.jimm.getContactListRef().activate();
+                    ContactList.activate();
                     Jimm.jimm.getSplashCanvasRef().removeCommand(this.cancelCommand);
                 }
     }
@@ -436,7 +437,7 @@ public class FileTransfer implements CommandListener
                 {
                     this.stop();
                     this.reset();
-                    Jimm.jimm.getContactListRef().activate();
+                    ContactList.activate();
                     FileTransfer.this.vf = null;
                 }
             } else if (c == this.resCommand)

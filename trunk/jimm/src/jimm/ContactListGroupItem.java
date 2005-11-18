@@ -75,7 +75,7 @@ public class ContactListGroupItem extends ContactListItem
         String result;
         
         if ((onlineCount != 0) && 
-        	 !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) 
+        	 !Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) 
             result = name+" ("+Integer.toString(onlineCount)+"/"
                          +Integer.toString(totalCount)+")";
         else result = name;
@@ -89,7 +89,7 @@ public class ContactListGroupItem extends ContactListItem
     
     public int getTextColor()
     {
-    	return Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT); 
+    	return Options.getSchemeColor(Options.CLRSCHHEME_TEXT); 
     }
 
 	// Returns the group item id

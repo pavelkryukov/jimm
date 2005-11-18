@@ -36,6 +36,7 @@ import javax.microedition.lcdui.TextBox;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+import jimm.comm.Icq;
 import jimm.comm.SearchAction;
 import jimm.comm.SetOnlineStatusAction;
 import jimm.comm.UpdateContactListAction;
@@ -47,6 +48,7 @@ import DrawControls.LightControl;
 public class MainMenu implements CommandListener
 {
 	private static final int MSGBS_EXIT = 1;
+	private static MainMenu _this;
 	
 	// Static constants for menu actios
 	private static final int MENU_CONNECT		= 1;
@@ -102,113 +104,120 @@ public class MainMenu implements CommandListener
     /** ************************************************************************* */
 
     // Visual list
-    private List list;
+    static private List list;
     
     // Menu event list
-    private int[] eventList;
+    static private int[] eventList;
     
     // Groups list
-    private List groupList;
+    static private List groupList;
 
     // Form for the adding users dialog
-    public Form addUserOrGroup;
+    static public Form addUserOrGroup;
     
     // Flag if we we are adding user or group
-    private boolean addUserFlag;
+    static private boolean addUserFlag;
 
     // Text box for adding users to the contact list
-    private TextField uinTextField;
-    private TextField nameTextField;
+    static private TextField uinTextField;
+    static private TextField nameTextField;
     
     // Textbox for  Status messages
-    private TextBox statusMessage;
+    static private TextBox statusMessage;
 
     // Connected
-    private boolean isConnected;
+    static private boolean isConnected;
     
-    private Image getStatusImage()
+    public MainMenu()
     {
-    	long cursStatus = Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS);
+    	_this = this;
+    }
+    
+    static private Image getStatusImage()
+    {
+    	long cursStatus = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
     	int imageIndex = ContactListContactItem.getStatusImageIndex(cursStatus);
     	return ContactList.getImageList().elementAt(imageIndex);
     }
 
     // Builds the main menu (visual list)
-    private void build()
+    static private void build()
     {
-        if ((Jimm.jimm.getIcqRef().isConnected() != isConnected) || (this.list == null))
+        if ((Icq.isConnected() != isConnected) || (MainMenu.list == null))
         {
-            this.eventList = new int[MENU_EXIT];
-            this.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
+        	MainMenu.eventList = new int[MENU_EXIT];
+        	MainMenu.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
             
-            if (Jimm.jimm.getIcqRef().isNotConnected())
+            if (Icq.isNotConnected())
             {                
-                this.eventList[this.list.append(ResourceBundle.getString("connect"), null)] 		= MENU_CONNECT;
-                this.eventList[this.list.append(ResourceBundle.getString("contact_list"), null)] 	= MENU_LIST;
-                this.eventList[this.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
+            	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("connect"), null)] 		= MENU_CONNECT;
+            	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("contact_list"), null)] 	= MENU_LIST;
+            	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
                 
                 // #sijapp cond.if target is "MOTOROLA" #
-                this.list.addCommand(MainMenu.selectCommand);
-                this.list.addCommand(MainMenu.exitCommand);
+            	MainMenu.list.addCommand(MainMenu.selectCommand);
+            	MainMenu.list.addCommand(MainMenu.exitCommand);
                 // #sijapp cond.end#
             } else
             {           
-                this.eventList[this.list.append(ResourceBundle.getString("keylock_enable"), null)] 	= MENU_KEYLOCK;
-                this.eventList[this.list.append(ResourceBundle.getString("disconnect"), null)] 		= MENU_DISCONNECT;
-                this.eventList[this.list.append(ResourceBundle.getString("set_status"), getStatusImage())] = MENU_STATUS;
-                this.eventList[this.list.append(ResourceBundle.getString("add_user"), null)] 		= MENU_ADD_USER;
-                this.eventList[this.list.append(ResourceBundle.getString("search_user"), null)] 	= MENU_SEARCH;
-                this.eventList[this.list.append(ResourceBundle.getString("add_group"), null)] 		= MENU_ADD_GROUP;
-                this.eventList[this.list.append(ResourceBundle.getString("del_group"), null)] 		= MENU_DEL_GROUP;
-                this.eventList[this.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
-                this.list.addCommand(MainMenu.backCommand);
+            	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("keylock_enable"), null)] 	= MENU_KEYLOCK;
+                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("disconnect"), null)] 		= MENU_DISCONNECT;
+                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("set_status"), getStatusImage())] = MENU_STATUS;
+                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("add_user"), null)] 		= MENU_ADD_USER;
+                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("search_user"), null)] 	= MENU_SEARCH;
+                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("add_group"), null)] 		= MENU_ADD_GROUP;
+                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("del_group"), null)] 		= MENU_DEL_GROUP;
+                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
+                MainMenu.list.addCommand(MainMenu.backCommand);
                 // #sijapp cond.if target is "MOTOROLA" #
-                this.list.addCommand(MainMenu.selectCommand);
+                MainMenu.list.addCommand(MainMenu.selectCommand);
 		        // #sijapp cond.end#
             }
-            this.list.setCommandListener(this);
+            MainMenu.list.setCommandListener(_this);
                 
             // #sijapp cond.if modules_TRAFFIC is "true" #
-            this.eventList[this.list.append(ResourceBundle.getString("traffic"), null)] 	= MENU_TRAFFIC;
+            MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("traffic"), null)] 	= MENU_TRAFFIC;
             // #sijapp cond.end#
-            this.eventList[this.list.append(ResourceBundle.getString("about"), null)] 		= MENU_ABOUT;
+            MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("about"), null)] 		= MENU_ABOUT;
             // #sijapp cond.if target is "MIDP2" #
-	        this.eventList[this.list.append(ResourceBundle.getString("minimize"), null)] 	= MENU_MINIMIZE;
+            String microeditionPlatform = System.getProperty("microedition.platform");
+            if ((microeditionPlatform != null) && (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1))
+            	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("minimize"), null)] 	= MENU_MINIMIZE;
 	        // #sijapp cond.end#
-            this.eventList[this.list.append(ResourceBundle.getString("exit"), null)] 		= MENU_EXIT;
+            MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("exit"), null)] 		= MENU_EXIT;
 
-            this.isConnected = Jimm.jimm.getIcqRef().isConnected();
+            MainMenu.isConnected = Icq.isConnected();
         }
         else
         {
-            if ((this.list != null) && (!Jimm.jimm.getIcqRef().isNotConnected()))
-                this.list.set(2,ResourceBundle.getString("set_status"), getStatusImage());
+            if ((MainMenu.list != null) && (!Icq.isNotConnected()))
+                MainMenu.list.set(2,ResourceBundle.getString("set_status"), getStatusImage());
         }
-        this.list.setSelectedIndex(0, true);
+        MainMenu.list.setSelectedIndex(0, true);
     }
 
     // Displays the given alert and activates the main menu afterwards
-    public void activate(Alert alert)
+    static public void activate(Alert alert)
     {
-        this.build();
-        Jimm.display.setCurrent(alert, this.list);
+        MainMenu.build();
+        Jimm.display.setCurrent(alert, MainMenu.list);
 	//#sijapp cond.if target is "MOTOROLA"#
 	LightControl.flash(true);
 	//#sijapp cond.end#
     }
 
     // Activates the main menu
-    public void activate()
+    static public void activate()
     {
-        this.build();
-        Jimm.display.setCurrent(this.list);
+        MainMenu.build();
+        Jimm.display.setCurrent(MainMenu.list);
 	//#sijapp cond.if target is "MOTOROLA"#
 	LightControl.flash(true);
 	//#sijapp cond.end#
     }
 
     // Show form for adding user
-    public  void addUserOrGroupCmd(String uin,boolean userFlag)
+    static public void addUserOrGroupCmd(String uin, boolean userFlag)
 	{
         addUserFlag = userFlag;
         // Reset and display textbox for entering uin or group name to add
@@ -234,14 +243,14 @@ public class MainMenu implements CommandListener
         }
         addUserOrGroup.addCommand(sendCommand);
         addUserOrGroup.addCommand(backCommand);
-        addUserOrGroup.setCommandListener( Jimm.jimm.getMainMenuRef() );
+        addUserOrGroup.setCommandListener( _this );
         Jimm.display.setCurrent(addUserOrGroup);
 	}
     
-    private void doExit()
+    static private void doExit()
     {
         // Disconnect
-        Jimm.jimm.getIcqRef().disconnect();
+        Icq.disconnect();
         
         // Save traffic
         //#sijapp cond.if modules_TRAFFIC is "true" #
@@ -266,16 +275,16 @@ public class MainMenu implements CommandListener
     }
     
     
-    private void menuExit()
+    static private void menuExit()
     {
-   		if (Jimm.jimm.getContactListRef().getUnreadMessCount() > 0)
+   		if (ContactList.getUnreadMessCount() > 0)
    		{
    	    	JimmUI.messageBox
 			(
 				ResourceBundle.getString("attention"),
 				ResourceBundle.getString("have_unread_mess"),
 				JimmUI.MESBOX_YESNO,
-				this,
+				_this,
 				MSGBS_EXIT
 			);
    		}
@@ -305,11 +314,11 @@ public class MainMenu implements CommandListener
         // Return to contact list
         if (c == MainMenu.backCommand)
         {
-            if ((d == this.addUserOrGroup) || (d == statusList))
-                this.activate();
+            if ((d == MainMenu.addUserOrGroup) || (d == statusList))
+                MainMenu.activate();
             else
                 Jimm.jimm.getContactListRef().activate();
-        } else if ((c == sendCommand) && (d == this.addUserOrGroup))
+        } else if ((c == sendCommand) && (d == MainMenu.addUserOrGroup))
         {
             // Display splash canvas
             SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
@@ -353,14 +362,14 @@ public class MainMenu implements CommandListener
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act1), 1000, 1000);
             else
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
-        } else if ((c == sendCommand) && (d == this.groupList))
+        } else if ((c == sendCommand) && (d == MainMenu.groupList))
         {
             ContactListContactItem cItems[];
             cItems = Jimm.jimm.getContactListRef().getContactItems();
             int count = 0;
             for (int i=0;i<cItems.length;i++)
             {
-                if (cItems[i].getGroup() == Jimm.jimm.getContactListRef().getGroupItems()[this.groupList.getSelectedIndex()].getId())
+                if (cItems[i].getGroup() == Jimm.jimm.getContactListRef().getGroupItems()[MainMenu.groupList.getSelectedIndex()].getId())
                     count++;
             }
             if (count != 0)
@@ -368,7 +377,7 @@ public class MainMenu implements CommandListener
                 Alert errorMsg; 
                 errorMsg = new Alert(ResourceBundle.getString("warning"),ResourceBundle.getString("no_not_empty_gr"), null, AlertType.WARNING);
                 errorMsg.setTimeout(Alert.FOREVER);
-                Jimm.display.setCurrent(errorMsg, this.groupList);
+                Jimm.display.setCurrent(errorMsg, MainMenu.groupList);
             }
             else
             {
@@ -379,7 +388,7 @@ public class MainMenu implements CommandListener
                 Jimm.display.setCurrent(wait2);
                 
                 // Create and request action to delete the group
-                UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[this.groupList.getSelectedIndex()],UpdateContactListAction.ACTION_DEL);
+                UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[MainMenu.groupList.getSelectedIndex()],UpdateContactListAction.ACTION_DEL);
                 try 
                 {
                     Jimm.jimm.getIcqRef().requestAction(act);
@@ -409,13 +418,13 @@ public class MainMenu implements CommandListener
         // Menu item has been selected
 
         //#sijapp cond.if target is "MOTOROLA"#
-        else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand)) && (d == this.list))
+        else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand)) && (d == MainMenu.list))
         // #sijapp cond.else#
-        else if ((c == List.SELECT_COMMAND) && (d == this.list))
+        else if ((c == List.SELECT_COMMAND) && (d == MainMenu.list))
         // #sijapp cond.end#
 
         {
-            switch(this.eventList[this.list.getSelectedIndex()])
+            switch(MainMenu.eventList[MainMenu.list.getSelectedIndex()])
             {
                 case MENU_CONNECT:
                 // Connect
@@ -463,7 +472,7 @@ public class MainMenu implements CommandListener
                     {
                         MainMenu.statusList.setSelectedIndex(0, true);
                     }
-                    MainMenu.statusList.setCommandListener(this);
+                    MainMenu.statusList.setCommandListener(_this);
                     MainMenu.statusList.addCommand(backCommand);
                     //#sijapp cond.if target is "MOTOROLA"#
                     MainMenu.statusList.addCommand(selectCommand);
@@ -497,7 +506,7 @@ public class MainMenu implements CommandListener
                     }
                     groupList.addCommand(backCommand);
                     groupList.addCommand(sendCommand);
-                    groupList.setCommandListener(this);
+                    groupList.setCommandListener(_this);
                     Jimm.display.setCurrent(groupList);
                     break;
                     
@@ -583,7 +592,7 @@ public class MainMenu implements CommandListener
                 //#sijapp cond.end#
                 
                 statusMessage.addCommand(selectCommand);
-                statusMessage.setCommandListener(this);
+                statusMessage.setCommandListener(_this);
                 Jimm.display.setCurrent(statusMessage);
             }
             else

@@ -106,6 +106,7 @@ public class Jimm extends MIDlet
 	// Start Jimm
 	public void startApp() throws MIDletStateChangeException
 	{
+		RunnableImpl.setMidlet(this);
 
 		// Return if MIDlet has already been initialized
 		if (Jimm.jimm != null)
@@ -113,7 +114,7 @@ public class Jimm extends MIDlet
 		    // #sijapp cond.if target is "MIDP2" #
 		    this.setMinimized(false);
 		    // #sijapp cond.end #
-		    Jimm.jimm.getContactListRef().activate();
+		    ContactList.activate();
             return;
         }
 		
@@ -126,7 +127,7 @@ public class Jimm extends MIDlet
 
 		// Create splash canvas object
 		this.sc = new SplashCanvas();
-		this.sc.setMessage(ResourceBundle.getString("loading"));
+		SplashCanvas.setMessage(ResourceBundle.getString("loading"));
 
 		// Check available heap memory, display warning if less then 250 KB
 		if (Runtime.getRuntime().totalMemory() < 256000)
@@ -156,44 +157,44 @@ public class Jimm extends MIDlet
 		
 		// Get display object (and update progress indicator)
 		Jimm.display = Display.getDisplay(this);
-		this.sc.setProgress(10);
+		SplashCanvas.setProgress(10);
 
 		// Create ICQ object (and update progress indicator)
 		this.icq = new Icq();
-		this.sc.setProgress(20);
+		SplashCanvas.setProgress(20);
 		
 		// Create object for text storage (and update progress indicator)
 		// #sijapp cond.if modules_HISTORY is "true" #
 		history = new HistoryStorage();
-		this.sc.setProgress(30);
+		SplashCanvas.setProgress(30);
 		// #sijapp cond.end#
 
 		// Create options container (and update progress indicator)
 		this.o = new Options();
-		this.sc.setProgress(40);
+		SplashCanvas.setProgress(40);
 
 		// Initialize main menu object (and update progress indicator)
 		this.mm = new MainMenu();
-		this.sc.setProgress(50);
+		SplashCanvas.setProgress(50);
 
 		// #sijapp cond.if modules_TRAFFIC is "true" #
 		// Create traffic Object (and update progress indicator)
 		this.traffic = new Traffic();
-		this.sc.setProgress(60);
+		SplashCanvas.setProgress(60);
 		// #sijapp cond.end#
 		
 		// Create contact list object (and update progress indicator)
 		this.cl = new ContactList();
-		this.cl.beforeConnect();
-		this.sc.setProgress(70);
+		ContactList.beforeConnect();
+		SplashCanvas.setProgress(70);
 		
 		// Create chat hisotry object (and update progress indicator)
 		this.ch = new ChatHistory();
-		this.sc.setProgress(80);
+		SplashCanvas.setProgress(80);
 
 		// Create timer object (and update progress indicator)
 		this.t = new Timer();
-		this.sc.setProgress(90);
+		SplashCanvas.setProgress(90);
 		
 		// Create and load emotion icons
 		//#sijapp cond.if modules_SMILES is "true" #
@@ -205,19 +206,19 @@ public class Jimm extends MIDlet
 		// set color scheme for all forms
 		JimmUI.setColorScheme();
 		
-		if (this.getOptionsRef().getBooleanOption(Options.OPTION_AUTO_CONNECT))
+		if (Options.getBooleanOption(Options.OPTION_AUTO_CONNECT))
         {
             // Remove version string from splash screen
-		    Jimm.jimm.getSplashCanvasRef().delVersionString();
+			SplashCanvas.delVersionString();
 		    // Connect
-            Jimm.jimm.getContactListRef().beforeConnect();
-            Jimm.jimm.getIcqRef().connect();
+            ContactList.beforeConnect();
+            Icq.connect();
         } else
         {
             // Remove version string from splash screen
-		    Jimm.jimm.getSplashCanvasRef().delVersionString();
+        	SplashCanvas.delVersionString();
             // Activate main menu
-            this.mm.activate();
+            MainMenu.activate();
         }
 	}
 
@@ -301,10 +302,11 @@ public class Jimm extends MIDlet
 	// #sijapp cond.end#
 	
 	//#sijapp cond.if modules_SMILES is "true" #
+	/*
 	public Emotions getEmotionsRef()
 	{
 		return emotions;
-	}
+	}*/
 	// #sijapp cond.end#
 	
 	public JimmUI getUIRef()

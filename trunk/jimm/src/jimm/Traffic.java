@@ -41,6 +41,7 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 
 import jimm.util.ResourceBundle;
+import jimm.comm.Icq;;
 
 
 public class Traffic
@@ -188,7 +189,7 @@ public class Traffic
 		traffic = ResourceBundle.getString("session") + ":\n" +
 				this.getSessionTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
 				this.getSessionTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
-				this.getString(this.generateCostSum(true)) + " " + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CURRENCY) + "\n" +
+				this.getString(this.generateCostSum(true)) + " " + Options.getStringOption(Options.OPTION_CURRENCY) + "\n" +
 				ResourceBundle.getString("since") + ": " + this.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
 				this.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
 				time.get(Calendar.YEAR) + " " +
@@ -196,7 +197,7 @@ public class Traffic
 				this.makeTwo(time.get(Calendar.MINUTE)) + "\n" +
 				this.getAllTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
 				this.getAllTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
-				this.getString(this.generateCostSum(false))+ " " + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_CURRENCY);
+				this.getString(this.generateCostSum(false))+ " " + Options.getStringOption(Options.OPTION_CURRENCY);
 		return (traffic);
 
 	}
@@ -228,9 +229,9 @@ public class Traffic
 	{
 
 		int cost;
-		int costPerPacket = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PER_PACKET);
-//		int costPerDay = Jimm.jimm.getOptionsRef().getCostPerDay();
-		int costPacketLength = Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PACKET_LENGTH);
+		int costPerPacket = Options.getIntOption(Options.OPTION_COST_PER_PACKET);
+//		int costPerDay = Options.getCostPerDay();
+		int costPacketLength = Options.getIntOption(Options.OPTION_COST_PACKET_LENGTH);
 
 		if (thisSession)
 		{
@@ -410,7 +411,7 @@ public class Traffic
 	// Increases costPerDaySum at one unit
 	public void increaseCostPerDaySum()
 	{
-		costPerDaySum = costPerDaySum + Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_COST_PER_DAY);
+		costPerDaySum = costPerDaySum + Options.getIntOption(Options.OPTION_COST_PER_DAY);
 		setLastTimeUsed(new Date().getTime());
 	}
 
@@ -483,7 +484,7 @@ public class Traffic
 
 		public void update(boolean doIt)
 		{
-			Jimm.jimm.getContactListRef().updateTitle(Traffic.this.getSessionTraffic(true));
+			ContactList.updateTitle(Traffic.this.getSessionTraffic(true));
 			if (((Traffic.this.getSessionTraffic(true) - compareTraffic) >= updateThreshold) | doIt)
 			{
 				this.trafficScreen.append(Traffic.this.generateTrafficString());
@@ -507,13 +508,13 @@ public class Traffic
 			if (c == this.okCommand)
 			{
 				Traffic.this.setIsActive(false);
-				if (Jimm.jimm.getIcqRef().isConnected())
+				if (Icq.isConnected())
 				{
-					Jimm.jimm.getContactListRef().activate();
+					ContactList.activate();
 				}
 				else
 				{
-					Jimm.jimm.getMainMenuRef().activate();
+					MainMenu.activate();
 				}
 			}
 		}

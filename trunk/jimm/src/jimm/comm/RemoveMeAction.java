@@ -43,7 +43,7 @@ public class RemoveMeAction extends Action
 	// Returns true if the action can be performed
 	public boolean isExecutable()
 	{
-		return (this.icq.isConnected());
+		return (Icq.isConnected());
 	}
 
 
@@ -72,7 +72,7 @@ public class RemoveMeAction extends Action
 
 		// Send a CLI_AUTHORIZE packet
 		SnacPacket packet = new SnacPacket(SnacPacket.CLI_REMOVEME_FAMILY, SnacPacket.CLI_REMOVEME_COMMAND, 0x00000003, new byte[0], buf);
-		this.icq.c.sendPacket(packet);
+		Icq.Connection.sendPacket(packet);
 	}
 
 
