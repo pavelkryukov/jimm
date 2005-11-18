@@ -21,21 +21,14 @@ Version: ###VERSION###  Date: ###DATE###
 Author(s): Manuel Linsmayer
 *******************************************************************************/
 
-
 package jimm.util;
 
-
 import java.util.Hashtable;
-
+import java.io.InputStream;
+import java.io.DataInputStream;
 
 public class ResourceBundle
 {
-
-
-	// Common prefix of all resource packages
-	public static final String PREFIX = "jimm.res.Text";
-
-
 	// List of available language packs
 	public static String[] LANG_AVAILABLE =
 	{
@@ -87,11 +80,6 @@ public class ResourceBundle
 	// Current language
 	private static String currUiLanguage = ResourceBundle.LANG_AVAILABLE[0];
 
-
-	// ResourceBundles
-	private static Hashtable groups = new Hashtable();
-
-
 	// Get user interface language/localization for current session
 	public static String getCurrUiLanguage()
 	{
@@ -102,72 +90,35 @@ public class ResourceBundle
 	// Set user interface language/localization for current session
 	public static void setCurrUiLanguage(String currUiLanguage)
 	{
+		if (ResourceBundle.currUiLanguage.equals(currUiLanguage)) return;
 		for (int i = 0; i < ResourceBundle.LANG_AVAILABLE.length; i++)
 		{
 			if (ResourceBundle.LANG_AVAILABLE[i].equals(currUiLanguage))
 			{
 				ResourceBundle.currUiLanguage = new String(currUiLanguage);
+				loadLang();
 				return;
 			}
 		}
 	}
-
+	
+	static private void loadLang()
+	{
+		try
+		{
+			resources = new Hashtable();
+			InputStream istream = resources.getClass().getResourceAsStream("/"+ResourceBundle.currUiLanguage+".lng");
+			DataInputStream dos = new DataInputStream(istream);
+			int size = dos.readShort();
+			for (int j = 0; j < size; j++) resources.put(dos.readUTF(), dos.readUTF());
+		} catch (Exception e)
+		{ }
+	}
 
 	// Get string from active language pack
 	public static synchronized String getString(String key)
 	{
-
-		// Get/load resource bundle
-		ResourceBundle bundle;
-		synchronized (groups)
-		{
-			bundle = (ResourceBundle) groups.get(ResourceBundle.currUiLanguage);
-			if (bundle == null)
-			{
-				bundle = ResourceBundle.loadBundle(ResourceBundle.currUiLanguage);
-			}
-		}
-
-		// Return value from resource bundle
-		return bundle._getString(key);
-
-	}
-
-
-	// Initialize ResourceBundle
-	public static ResourceBundle loadBundle(String name)
-	{
-
-		// Load
-		ResourceBundle bundle = null;
-		try
-		{
-			bundle = (ResourceBundle) Class.forName(ResourceBundle.PREFIX + "_" + name).newInstance();
-		}
-		catch (Exception e)
-		{
-			// Do nothing
-		}
-
-		// Put into hashtable
-		ResourceBundle.groups.put(name, bundle);
-
-		// Return ResourceBundle
-		return (bundle);
-
-	}
-
-
-	/****************************************************************************/
-
-
-	// Resource hashtable
-	protected Hashtable resources = new Hashtable();
-
-
-	// Return value form hashtable
-	protected String _getString(String key)
-	{
+		if (resources == null) loadLang();
 		String value = (String) resources.get(key);
 		if (value != null)
 		{
@@ -179,6 +130,7 @@ public class ResourceBundle
 		}
 	}
 
-
+	// Resource hashtable
+	static private Hashtable resources = null;
 }
 

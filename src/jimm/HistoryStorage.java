@@ -74,7 +74,7 @@ class HistoryStorageList extends    VirtualList
 	private final static int MB_CLEAR_ALL_TAG = 1;
 	
 	// list UIN
-	private static String currUin  = new String(), 
+	private static String currUin  = new String(),
 	                      currName = new String();
 	
 	// Controls for finding text
@@ -106,7 +106,7 @@ class HistoryStorageList extends    VirtualList
 		// user select some history storage line
 		if (sender == this)
 		{
-			CachedRecord record = Jimm.jimm.getHistory().getCachedRecord(currUin, getCurrIndex());
+			CachedRecord record = HistoryStorage.getCachedRecord(currUin, getCurrIndex());
 			
 			if (record == null) return;
 			
@@ -152,10 +152,10 @@ class HistoryStorageList extends    VirtualList
 		// back to contact list
 		if (c == cmdBack)
 		{
-			Jimm.jimm.getHistory().clearCache();
+			HistoryStorage.clearCache();
 			messText = null;
 			System.gc();
-			Jimm.jimm.getContactListRef().activate();
+			ContactList.activate();
 		}
 		
 		// select message
@@ -167,7 +167,7 @@ class HistoryStorageList extends    VirtualList
 		// Clear messages
 		else if (c == cmdClear)
 		{
-			Jimm.jimm.getHistory().clearHistory(currUin);
+			HistoryStorage.clearHistory(currUin);
 			invalidate();
 		}
 		
@@ -176,7 +176,7 @@ class HistoryStorageList extends    VirtualList
 		{
 			int index = getCurrIndex();
 			if (index == -1) return;
-			CachedRecord record = Jimm.jimm.getHistory().getCachedRecord(currUin, index);
+			CachedRecord record = HistoryStorage.getCachedRecord(currUin, index);
 			if (record == null) return;
 			JimmUI.setClipBoardText
 			(
@@ -238,7 +238,7 @@ class HistoryStorageList extends    VirtualList
 		// user select ok command in find screen
 		else if (c == cmdFindOk)
 		{
-			Jimm.jimm.getHistory().find
+			HistoryStorage.find
 			(
 				currUin,
 				tfldFind.getString(),
@@ -255,7 +255,7 @@ class HistoryStorageList extends    VirtualList
 		// commands info
 		else if (c == cmdInfo)
 		{
-			RecordStore rs = Jimm.jimm.getHistory().getRS();
+			RecordStore rs = HistoryStorage.getRS();
 			
 			try
 			{
@@ -294,7 +294,7 @@ class HistoryStorageList extends    VirtualList
 		// "Clear all?" -> YES
 		else if (JimmUI.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == JimmUI.CMD_YES)
 		{
-			Jimm.jimm.getHistory().clear_all();
+			HistoryStorage.clear_all();
 			Jimm.display.setCurrent(this);
 			invalidate();
 		}
@@ -326,14 +326,14 @@ class HistoryStorageList extends    VirtualList
 			JimmUI.setColorScheme(messText);
 		}
 		
-		CachedRecord record = Jimm.jimm.getHistory().getRecord(currUin, this.getCurrIndex()); 
+		CachedRecord record = HistoryStorage.getRecord(currUin, this.getCurrIndex()); 
 		
 		messText.clear();
 		messText.addBigText(record.date+":", messText.getTextColor(), Font.STYLE_BOLD, -1);
 		messText.doCRLF(-1);
 		
 		//#sijapp cond.if modules_SMILES is "true" #
-		Jimm.jimm.getEmotionsRef().addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN, messText.getTextColor(), -1);
+		Emotions.addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN, messText.getTextColor(), -1);
 		//#sijapp cond.else#
 		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
 		//#sijapp cond.end#
@@ -366,16 +366,16 @@ class HistoryStorageList extends    VirtualList
 	// returns size of messages history list
 	protected int getSize()
 	{
-		return Jimm.jimm.getHistory().getRecordCount(currUin);
+		return HistoryStorage.getRecordCount(currUin);
 	}
 	  
 	// returns messages history list item data
 	protected void get(int index, ListItem item)
 	{
-		CachedRecord record = Jimm.jimm.getHistory().getCachedRecord(currUin, index);
+		CachedRecord record = HistoryStorage.getCachedRecord(currUin, index);
 		if (record == null) return;
 		item.text = record.shortText;
-		item.color = (record.type == 0) ? getTextColor() : Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE);
+		item.color = (record.type == 0) ? getTextColor() : Options.getSchemeColor(Options.CLRSCHHEME_BLUE);
 	}
 }
 
@@ -398,8 +398,8 @@ public class HistoryStorage
 	
 	private static RecordStore recordStore;
 	private static HistoryStorageList list;
-	private String currCacheUin = new String();
-	private Hashtable cachedRecords;
+	private static String currCacheUin = new String();
+	private static Hashtable cachedRecords;
 	
 	final static private int TEXT_START_INDEX = 1;
 	
@@ -416,23 +416,9 @@ public class HistoryStorage
 		autoClearAndTestVers();
 	}
 	
-	// Convert String UIN to long value
-	private long uinToLong(String uin)
-	{
-		long result;
-		try
-		{
-			result = Long.parseLong(uin);
-		}
-		catch (Exception e)
-		{
-			result = -1;
-		}
-		return result;
-	}
-	
+
 	// Add message text to contact history
-	synchronized public void addText
+	static synchronized public void addText
 	(
 		String uin,  // uin sended text  
 		String text, // text to save
@@ -492,7 +478,7 @@ public class HistoryStorage
 	}
 	
 	// Returns reference for record store
-	RecordStore getRS()
+	static RecordStore getRS()
 	{
 		return recordStore;
 	}
@@ -504,7 +490,7 @@ public class HistoryStorage
 	}
 	
 	// Opens record store for UIN
-	private void openUINRecords(String uin)
+	static private void openUINRecords(String uin)
 	{
 		if (currCacheUin.equals(uin)) return;
 		
@@ -529,7 +515,7 @@ public class HistoryStorage
 	}
 	
 	// Returns record count for UIN
-	public int getRecordCount(String uin)
+	static public int getRecordCount(String uin)
 	{
 		openUINRecords(uin);
 		int result;
@@ -546,7 +532,7 @@ public class HistoryStorage
 	}
 	
 	// Returns full data of stored message
-	synchronized public CachedRecord getRecord(String uin, int recNo)
+	static synchronized public CachedRecord getRecord(String uin, int recNo)
 	{
 		openUINRecords(uin);
 		byte[] data;
@@ -572,7 +558,7 @@ public class HistoryStorage
 	}
 	
 	// returns cached short text of the message for history list
-	public CachedRecord getCachedRecord(String uin, int recNo)
+	static public CachedRecord getCachedRecord(String uin, int recNo)
 	{
 		int maxLen = 20;
 		CachedRecord cachedRec = (CachedRecord)cachedRecords.get(new Integer(recNo)); 
@@ -594,7 +580,7 @@ public class HistoryStorage
 	}
 	
 	// Shows history list on mobile phone screen
-	public void showHistoryList(String uin, String nick)
+	static public void showHistoryList(String uin, String nick)
 	{
 		if (list == null)
 		{
@@ -618,7 +604,7 @@ public class HistoryStorage
 	}
 	
 	// Clears messages history for UIN
-	synchronized public void clearHistory(String uin)
+	static synchronized public void clearHistory(String uin)
 	{
 		try
 		{
@@ -636,7 +622,7 @@ public class HistoryStorage
 	}
 	
 	// Clears cache before hiding history list
-	public void clearCache()
+	static public void clearCache()
 	{
 		if (cachedRecords != null)
 		{
@@ -650,7 +636,7 @@ public class HistoryStorage
 	}
 	
 	// Sets color scheme for history UI controls
-	public void setColorScheme()
+	static public void setColorScheme()
 	{
 		if (list != null)
 		{
@@ -660,7 +646,7 @@ public class HistoryStorage
 		}
 	}
 	
-	synchronized private boolean find_intern(String uin, String text, boolean case_sens, boolean back)
+	static synchronized private boolean find_intern(String uin, String text, boolean case_sens, boolean back)
 	{
 		int index = list.getCurrIndex();
 		if ((index < 0) || (index >= list.getSize())) return false;
@@ -688,7 +674,7 @@ public class HistoryStorage
 	}
 	
 	// find text
-	void find(String uin, String text, boolean case_sens, boolean back)
+	static void find(String uin, String text, boolean case_sens, boolean back)
 	{
 		if (list == null) return;
 		boolean result = find_intern(uin, text, case_sens, back);
@@ -711,7 +697,7 @@ public class HistoryStorage
 	}
 	
 	// Clears all records for all uins
-	synchronized void clear_all()
+	static synchronized void clear_all()
 	{
 		try
 		{
@@ -740,7 +726,7 @@ public class HistoryStorage
 	private final static String histMainRSName = "hst";  
 	
 	// Checks if clraring needs and clears
-	private void autoClearAndTestVers()
+	static private void autoClearAndTestVers()
 	{/*
 		RecordStore rs = null;
 		boolean needToClear = false;
@@ -801,7 +787,7 @@ public class HistoryStorage
 	}
 
 	// Saves last clearing time
-	private void saveLastClearTime()
+	static private void saveLastClearTime()
 	{
 		/*
 		Calendar calend = Calendar.getInstance();

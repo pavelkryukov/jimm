@@ -27,7 +27,6 @@ package jimm.comm;
 
 import java.util.Date;
 
-import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 
@@ -122,7 +121,7 @@ public class RequestInfoAction extends Action
 	// Returns true if the action can be performed
 	public boolean isExecutable()
 	{
-		return (this.icq.isConnected());
+		return (Icq.isConnected());
 	}
 
 
@@ -141,8 +140,8 @@ public class RequestInfoAction extends Action
 		byte[] buf = new byte[6];
 		Util.putWord(buf, 0, ToIcqSrvPacket.CLI_META_REQMOREINFO_TYPE, false);
 		Util.putDWord(buf, 2, Long.parseLong(strData[UIN]), false);
-		ToIcqSrvPacket packet = new ToIcqSrvPacket(0,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
-		this.icq.c.sendPacket(packet);
+		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options.getStringOption(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
+		Icq.Connection.sendPacket(packet);
 
 		// Save date
 		this.init = new Date();

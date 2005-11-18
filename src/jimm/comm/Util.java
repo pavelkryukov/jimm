@@ -35,7 +35,6 @@ import java.util.TimeZone;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
-import jimm.Jimm;
 import jimm.ContactList;
 import jimm.Options;
 import jimm.util.ResourceBundle;
@@ -72,10 +71,10 @@ public class Util
 	}
 	
 	// Called to get a date String
-    public static String getDateString(boolean onlyTime)
-    {
-        return(getDateString(onlyTime,new Date()));
-    }
+	public static String getDateString(boolean onlyTime)
+	{
+		return (getDateString(onlyTime, new Date()));
+	}
 	
 	// Called to get a date String
     public static String getDateString(boolean onlyTime, Date value)
@@ -287,7 +286,7 @@ public class Util
 		}
 
 		// CP1251 or default character encoding?
-		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CP1251_HACK))
+		if (Options.getBooleanOption(Options.OPTION_CP1251_HACK))
 		{
 			return (byteArray1251ToString(buf, off, len));
 		}
@@ -341,7 +340,7 @@ public class Util
 		}
 
 		// CP1251 or default character encoding?
-		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_CP1251_HACK))
+		if (Options.getBooleanOption(Options.OPTION_CP1251_HACK))
 		{
 			return (stringToByteArray1251(val));
 		}
@@ -602,8 +601,8 @@ public class Util
         
         int range  = 0x6FFF;
         
-        ContactListGroupItem[] gItems = Jimm.jimm.getContactListRef().getGroupItems();
-        ContactListContactItem[] cItems = Jimm.jimm.getContactListRef().getContactItems();
+        ContactListGroupItem[] gItems = ContactList.getGroupItems();
+        ContactListContactItem[] cItems = ContactList.getContactItems();
         int randint;
         boolean found;
 

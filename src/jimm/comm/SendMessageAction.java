@@ -26,7 +26,6 @@ package jimm.comm;
 
 import jimm.ContactList;
 import jimm.ContactListContactItem;
-import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 
@@ -101,7 +100,7 @@ public class SendMessageAction extends Action
   // Returns true if the action can be performed
   public boolean isExecutable()
   {
-    return (this.icq.isConnected());
+    return (Icq.isConnected());
   }
 
 
@@ -231,7 +230,7 @@ public class SendMessageAction extends Action
 
             // Send packet
             SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-            this.icq.c.sendPacket(snacPkt);
+            Icq.Connection.sendPacket(snacPkt);
 
         }
                 
@@ -368,13 +367,13 @@ public class SendMessageAction extends Action
                     // Set TLV 0x03 (IP)
                     Util.putWord(buf, marker, 0x0003);
                     Util.putWord(buf, marker + 2, 0x0004);
-                    System.arraycopy(this.icq.c.getLocalIP(), 0, buf, marker + 4, 4);
+                    System.arraycopy(Icq.Connection.getLocalIP(), 0, buf, marker + 4, 4);
                     marker += 8;
 
                     // Set TLV 0x05 (port)
                     Util.putWord(buf, marker, 0x0005);
                     Util.putWord(buf, marker + 2, 0x0002);
-                    Util.putWord(buf, marker + 4, this.icq.c.getLocalPort());
+                    Util.putWord(buf, marker + 4, Icq.Connection.getLocalPort());
                     marker += 6;
                 }
                 // #sijapp cond.end#
@@ -472,7 +471,7 @@ public class SendMessageAction extends Action
                 marker += 2;
 
                 // Put contact status
-                Util.putWord(buf, marker, Util.translateStatusSend(Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS)), false);
+                Util.putWord(buf, marker, Util.translateStatusSend(Options.getLongOption(Options.OPTION_ONLINE_STATUS)), false);
                 marker += 2;
 
                 // Put priority
@@ -629,7 +628,7 @@ public class SendMessageAction extends Action
                 marker += 2;
                 // Send packet
                 SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-                this.icq.c.sendPacket(snacPkt);
+                Icq.Connection.sendPacket(snacPkt);
                 // System.out.println("SendMessageAction: Sent the packet");
             }
            
@@ -677,7 +676,7 @@ public class SendMessageAction extends Action
 
     // Send packet
     SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-    this.icq.c.sendPacket(snacPkt);
+    Icq.Connection.sendPacket(snacPkt);
 
   }
 

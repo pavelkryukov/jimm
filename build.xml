@@ -188,6 +188,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<taskdef name="sijapp" classname="sijapp.SijappTask" classpath="${util/sijapp/lib}" />
 	</target>
 
+	<taskdef name="langs" classname="langs.LangsTask" classpath="${util}/langs/dist/lib/langs.jar" />
+
 	<!--  Internal target: preprocess-source   -->
 	<target name="preprocess-source" depends="init,sijapp">
 		<condition property="modules/TRAFFIC" value="true">
@@ -317,6 +319,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<replacefilter token="${3ns}TARGET${3ns}" value="${target}" />
 		    <replacefilter token="${3ns}MODULES${3ns}" value="${modules}" />
 		</replace>
+		<mkdir dir="${build}/res" />
+		<langs languages="${lang}" inDir="${build}/init/src/lng" outDir="${build}/res" />
 	</target>
 	
 	<!--  Internal target: compile   -->
@@ -332,8 +336,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<injar name="${build}/compile/classes" />
 			<outjar name="${build}/obfuscate/classes" />
 			<keep access="public" type="class" extends="javax.microedition.midlet.MIDlet" />
-			<keep access="public" type="class" name="jimm.util.ResourceBundle" />
-			<keep access="public" type="class" extends="jimm.util.ResourceBundle" />
 			<libraryjar path="${midp/lib}" />
 		</proguard>
 	</target>

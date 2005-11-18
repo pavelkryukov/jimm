@@ -39,6 +39,7 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.TextField;
 
 import jimm.comm.SearchAction;
+import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 import DrawControls.*;
 
@@ -345,9 +346,8 @@ public class Search
                 
                 JimmUI.setColorScheme(screen);
                 
-                Options opt = Jimm.jimm.getOptionsRef();
-                textColor = opt.getSchemeColor(Options.CLRSCHHEME_TEXT);
-				brightColor = opt.getSchemeColor(Options.CLRSCHHEME_BLUE);
+                textColor = Options.getSchemeColor(Options.CLRSCHHEME_TEXT);
+				brightColor = Options.getSchemeColor(Options.CLRSCHHEME_BLUE);
                 bigTextIndex = 0;
                 
                 // UIN
@@ -451,14 +451,13 @@ public class Search
 
         public void commandAction(Command c, Displayable d)
         {
-            if (c == this.backCommand) Jimm.jimm.getMainMenuRef().activate();
+            if (c == this.backCommand) MainMenu.activate();
             else if (c == this.searchCommand)
             {
                 // Display splash canvas
-                SplashCanvas wait = Jimm.jimm.getSplashCanvasRef();
-                wait.setMessage(ResourceBundle.getString("wait"));
-                wait.setProgress(0);
-                Jimm.display.setCurrent(wait);
+                SplashCanvas.setMessage(ResourceBundle.getString("wait"));
+                SplashCanvas.setProgress(0);
+                Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
                 
                 selectedIndex = 0;
 
@@ -471,7 +470,7 @@ public class Search
                 SearchAction act = new SearchAction(Search.this,SearchAction.CALLED_BY_SEARCHUSER);
                 try
                 {
-                    Jimm.jimm.getIcqRef().requestAction(act);
+                    Icq.requestAction(act);
 
                 } catch (JimmException e)
                 {
@@ -487,19 +486,19 @@ public class Search
             else if (c == this.previousCommand) nextOrPrev(false);
             else if (c == this.addCommand && d == screen)
             {
-                if (Jimm.jimm.getContactListRef().getGroupItems().length == 0)
+                if (ContactList.getGroupItems().length == 0)
                 {
-                    Jimm.jimm.getMainMenuRef().addUserOrGroupCmd(null, false);
+                    MainMenu.addUserOrGroupCmd(null, false);
                     Alert errorMsg = new Alert(ResourceBundle.getString("warning"), JimmException.getErrDesc(161, 0), null, AlertType.WARNING);
                     errorMsg.setTimeout(Alert.FOREVER);
-                    Jimm.display.setCurrent(errorMsg,Jimm.jimm.getMainMenuRef().addUserOrGroup);
+                    Jimm.display.setCurrent(errorMsg,MainMenu.addUserOrGroup);
                 } else
                 {
                     // Show list of groups to select which group to add to
                     groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
-                    for (int i = 0; i < Jimm.jimm.getContactListRef().getGroupItems().length; i++)
+                    for (int i = 0; i < ContactList.getGroupItems().length; i++)
                     {
-                        groupList.append(Jimm.jimm.getContactListRef().getGroupItems()[i].getName(), null);
+                        groupList.append(ContactList.getGroupItems()[i].getName(), null);
                     }
                     groupList.addCommand(backCommand);
                     groupList.addCommand(addCommand);
@@ -508,12 +507,12 @@ public class Search
                 }
             } else if (c == this.addCommand && d == this.groupList)
             {
-                ContactListContactItem cItem = new ContactListContactItem(Jimm.jimm.getContactListRef()
+                ContactListContactItem cItem = new ContactListContactItem(ContactList
                         .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_UIN),
                         Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_NICK), false, false);
                 cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP,true);
                 cItem.setStatus(Search.this.getResult(selectedIndex).getStatus());
-                Jimm.jimm.getIcqRef().addToContactList(cItem);
+                Icq.addToContactList(cItem);
 
             }
         }

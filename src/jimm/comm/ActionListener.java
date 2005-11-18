@@ -31,6 +31,7 @@ import javax.microedition.lcdui.AlertType;
 import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.Jimm;
+import jimm.RunnableImpl;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
@@ -59,16 +60,7 @@ public class ActionListener
 
 
     /** ************************************************************************* */
-
-    // ICQ object
-    protected Icq icq;
-
-    // Set ICQ object
-    protected void setIcq(Icq icq)
-    {
-        this.icq = icq;
-    }
-
+    
     // Forwards received packet
     protected void forward(Packet packet) throws JimmException
     {
@@ -182,13 +174,15 @@ public class ActionListener
 
                 // Update contact list
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                
                 // #sijapp cond.if modules_FILES is "true"#
-                Jimm.jimm.getContactListRef().update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie);
+                ContactList.update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie);
                 // #sijapp cond.else#
-                Jimm.jimm.getContactListRef().update(uin, status, capabilities);
+                ContactList.update(uin, status, capabilities);
                 // #sijapp cond.end#
+                
                 // #sijapp cond.else#
-                Jimm.jimm.getContactListRef().update(uin, status, capabilities);
+                ContactList.update(uin, status, capabilities);
                 // #sijapp cond.end#
                 
                 
@@ -210,8 +204,7 @@ public class ActionListener
                 String uin = Util.byteArrayToString(buf, 1, uinLen);
 
                 // Update contact list
-                Jimm.jimm.getContactListRef().update(uin, ContactList.STATUS_OFFLINE);
-
+                RunnableImpl.callSerially(RunnableImpl.TYPE_USER_OFFLINE, uin);
             }
 
             /** ********************************************************************* */
@@ -232,7 +225,7 @@ public class ActionListener
                 {
                     // Create an message entry
                     int textLen = Util.getWord(buf,64+uinLen,false);
-                    Jimm.jimm.getContactListRef().activate(new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf,66+uinLen,textLen, false),null,AlertType.INFO));
+                    ContactList.activate(new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf,66+uinLen,textLen, false),null,AlertType.INFO));
                 }
             }
 
@@ -351,9 +344,9 @@ public class ActionListener
 
                         // Construct object which encapsulates the received
                         // plain message
-                        PlainMessage plainMsg = new PlainMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), text, false);
-                        Jimm.jimm.getContactListRef().addMessage(plainMsg);
 
+                        PlainMessage plainMsg = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), text, false);
+						RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, plainMsg);
                     }
 
                 }
@@ -487,7 +480,7 @@ public class ActionListener
                             String text = Util.crlfToCr(Util.byteArrayToString(rawText, isUtf8));
 
                             // Instantiate message object
-                            message = new PlainMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN),new Date(), text, false);
+                            message = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN),new Date(), text, false);
 
                         } else
                         {
@@ -518,12 +511,11 @@ public class ActionListener
                             }
 
                             // Instantiate UrlMessage object
-                            message = new UrlMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
-
+                            message = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
                         }
 
                         // Forward message object to contact list
-                        Jimm.jimm.getContactListRef().addMessage(message);
+                        RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
 
                         // Acknowledge message
                         byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 3];
@@ -545,7 +537,7 @@ public class ActionListener
                         ackMarker += 1;
                         SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                         SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
-                        this.icq.c.sendPacket(ackPacket);
+                        Icq.Connection.sendPacket(ackPacket);
 
                     }
                     // Extended message
@@ -629,7 +621,7 @@ public class ActionListener
                                  System.arraycopy(msg2Buf,0,ip,0,4);
                              msgMarker += 4 + msg2Buf.length;
                              
-                             ContactListContactItem sender = Jimm.jimm.getContactListRef().getItembyUIN(uin);
+                             ContactListContactItem sender = ContactList.getItembyUIN(uin);
                              sender.updateIPsandPort(ip,extIP,port);
                                                        
                              //System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
@@ -637,7 +629,7 @@ public class ActionListener
                              DirectConnectionAction dcAct = new DirectConnectionAction(sender.getFTM());
                              try
                              {
-                                 Jimm.jimm.getIcqRef().requestAction(dcAct);
+                                 Icq.requestAction(dcAct);
                                  } catch (JimmException e)
                              {
                                  JimmException.handleException(e);
@@ -676,7 +668,7 @@ public class ActionListener
 
                             // Forward message message to contact list
                             UrlMessage message = new UrlMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
-                            Jimm.jimm.getContactListRef().addMessage(message);
+                            RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
 
                             // Acknowledge message
                             byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 3 + 20 + 4 + (int) pluginLen + 19 + 4
@@ -701,7 +693,7 @@ public class ActionListener
                                     + 4 + textLen);
                             SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                                     SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
-                            this.icq.c.sendPacket(ackPacket);
+                            Icq.Connection.sendPacket(ackPacket);
 
                         }
                         // Other messages
@@ -716,9 +708,9 @@ public class ActionListener
                     {
                     	String statusMess;
                     	
-                    	long currStatus = Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS);
+                    	long currStatus = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
 						if ((currStatus != ContactList.STATUS_ONLINE) && (currStatus != ContactList.STATUS_CHAT))
-							statusMess = Util.removeClRfAndTabs(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE));
+							statusMess = Util.removeClRfAndTabs(Options.getStringOption(Options.OPTION_STATUS_MESSAGE));
 						else
 							statusMess = new String();
                    	
@@ -746,7 +738,7 @@ public class ActionListener
                         SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                                 SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
                         
-                        this.icq.c.sendPacket(ackPacket);
+                        Icq.Connection.sendPacket(ackPacket);
                     }
 
                 }
@@ -784,8 +776,8 @@ public class ActionListener
                     if (msgType == 0x0001)
                     {
                         // Forward message to contact list
-                        PlainMessage plainMsg = new PlainMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), text, false);
-                        Jimm.jimm.getContactListRef().addMessage(plainMsg);
+                        PlainMessage plainMsg = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), text, false);
+                        RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, plainMsg);
                     }
                     // URL message
                     else if (msgType == 0x0004)
@@ -808,9 +800,8 @@ public class ActionListener
                         }
 
                         // Forward message message to contact list
-                        UrlMessage urlMsg = new UrlMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
-                        Jimm.jimm.getContactListRef().addMessage(urlMsg);
-
+                        UrlMessage urlMsg = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
+						RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, urlMsg);
                     }
 
                 }
@@ -832,8 +823,7 @@ public class ActionListener
                 SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_YOUWEREADDED, uin, false, null);
 
                 // Handle the new system notice
-                Jimm.jimm.getContactListRef().addMessage(notice);
-
+                RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, notice);
             }
 
             //	  Watch out for SRV_AUTHREQ
@@ -860,7 +850,7 @@ public class ActionListener
                 SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHREQ, uin, false, reason);
 
                 // Handle the new system notice
-                Jimm.jimm.getContactListRef().addMessage(notice);
+                RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, notice);
             }
 
             //	  Watch out for SRV_AUTHREPLY
@@ -905,7 +895,7 @@ public class ActionListener
                 }
 
                 // Handle the new system notice
-                Jimm.jimm.getContactListRef().addMessage(notice);
+                RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, notice);
             }
 
         }       

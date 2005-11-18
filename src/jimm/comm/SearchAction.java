@@ -29,6 +29,8 @@ import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.Search;
+import jimm.ContactList;
+import jimm.MainMenu;
 import jimm.util.ResourceBundle;
 
 public class SearchAction extends Action
@@ -87,7 +89,7 @@ public class SearchAction extends Action
     // Returns true if the action can be performed
     public boolean isExecutable()
     {
-        return (this.icq.isConnected());
+        return (Icq.isConnected());
     }
 
     // Returns true if this is an exclusive command
@@ -218,9 +220,9 @@ public class SearchAction extends Action
             Util.putByte(buf,marker,0);
         marker+=1;
 
-        packet = new ToIcqSrvPacket(-1,SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN),0x07D0,new byte[0], buf);
+        packet = new ToIcqSrvPacket(-1,SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getStringOption(Options.OPTION_UIN),0x07D0,new byte[0], buf);
     
-        this.icq.c.sendPacket(packet);
+        Icq.Connection.sendPacket(packet);
         
         this.state = STATE_UIN_SEARCH_SENT;
         
@@ -346,16 +348,16 @@ public class SearchAction extends Action
             if (calledBy == CALLED_BY_SEARCHUSER)
             	cont.getSearchForm().activate(false);
             else if (calledBy == CALLED_BY_ADDUSER)
-            	Jimm.display.setCurrent(Jimm.jimm.getMainMenuRef().addUserOrGroup);
+            	Jimm.display.setCurrent(MainMenu.addUserOrGroup);
             Thread.yield();
             if (this.state == STATE_FIRSTRESULT_RECEIVED)
             {
-            	Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(159, 0, true)));
+            	ContactList.activate(JimmException.handleException(new JimmException(159, 0, true)));
             	handeld = true;
             }
             else
             {
-            	Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(159, 1, true)));
+            	ContactList.activate(JimmException.handleException(new JimmException(159, 1, true)));
             	handeld = true;
             }
             this.state = ConnectAction.STATE_ERROR;

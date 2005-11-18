@@ -193,7 +193,7 @@ public class TextList extends VirtualList
 		String text //!< Text of new item
 	)
 	{
-		add(text, 0x0, -1);
+		add(text, this.getTextColor(), -1);
 	}
 
 	//! Construct new text list with default values of colors, font size etc...
@@ -243,11 +243,11 @@ public class TextList extends VirtualList
 		case 1:
 			currTextIndex = getCurrTextIndex();
 			size = lines.size();
-			if (currTextIndex == -1)
+			/*if (currTextIndex == -1)
 			{
 				super.moveCursor(step, true);
 				return;
-			}
+			}*/
 
 			storelastItemIndexes();
 

@@ -357,18 +357,25 @@ public abstract class VirtualList extends Canvas
 	// private keyReaction(int keyCode)
 	private void keyReaction(int keyCode)
 	{
-		switch (getGameAction(keyCode))
+		try
 		{
-		case Canvas.DOWN:
-			moveCursor(1, false);
-			break;
-		case Canvas.UP:
-			moveCursor(-1, false);
-			break;
-		case Canvas.FIRE:
-			itemSelected();
-			if (vlCommands != null) vlCommands.onItemSelected(this);
-			break;
+			switch (getGameAction(keyCode))
+			{
+			case Canvas.DOWN:
+				moveCursor(1, false);
+				break;
+			case Canvas.UP:
+				moveCursor(-1, false);
+				break;
+			case Canvas.FIRE:
+				itemSelected();
+				if (vlCommands != null) vlCommands.onItemSelected(this);
+				break;
+			}
+		}
+		catch (Exception e) // getGameAction throws exception on motorola
+		{                   // when opening flipper
+			return;
 		}
 
 		switch (keyCode)
@@ -420,6 +427,94 @@ public abstract class VirtualList extends Canvas
 	{
 		keyReaction(keyCode);
 	}
+	
+	//#sijapp cond.if target is "MIDP2"#
+	
+	private static long lastPointerTime = 0;
+	private static int lastPointerItem = -1;
+	private static int lastPointerYCrd = -1;
+	private static int lastPointerXCrd = -1;
+	private static int lastPointerTopItem = -1;
+	
+	protected void pointerDragged(int x, int y)
+	{
+		if (lastPointerTopItem == -1) return;
+		int height = getHeight()-getCapHeight();
+		int itemCount = getSize();
+		int visCount = getVisCount();
+		if (itemCount == visCount) return;
+		storelastItemIndexes();
+		topItem = lastPointerTopItem+(itemCount)*(y-lastPointerYCrd)/height;
+		if (topItem < 0) topItem = 0;
+		if (topItem > (itemCount-visCount)) topItem = itemCount-visCount; 
+		repaintIfLastIndexesChanged();
+	}
+	
+	protected boolean pointerPressedOnUtem(int index, int x, int y)
+	{
+		return false;
+	}
+	
+	static int abs(int value)
+	{
+		return (value < 0) ? -value : value;
+	}
+	
+	protected void pointerPressed(int x, int y)
+	{
+		int itemY1 = getCapHeight();
+		
+		// is pointing on scroller
+		if (x >= (getWidth()-3*scrollerWidth))
+		{
+			if ((srcollerY1 <= y) && (y < srcollerY2))
+			{
+				lastPointerYCrd = y;
+				lastPointerTopItem = topItem;
+			}
+			else
+			{
+				// TODO: move scroller to pointer position
+
+			}
+			return;
+		}
+		
+		// is pointing on data area
+		lastPointerTopItem = -1;
+		
+		int size = getSize();
+		for (int i = topItem; i < size; i++)
+		{
+			int height = getItemHeight(i);
+			int itemY2 = itemY1+height;
+			if ((itemY1 <= y) && (y < itemY2))
+			{
+				setCurrentItem(i);
+				
+				if (pointerPressedOnUtem(i, x, y) == false)
+				{
+					long time = System.currentTimeMillis();
+					if (((time-lastPointerTime) < 500) && 
+					     (abs(x-lastPointerXCrd) < 10) &&
+					     (abs(y-lastPointerYCrd) < 10))
+					{
+						itemSelected();
+						if (vlCommands != null) vlCommands.onItemSelected(this);
+						lastPointerItem = -1;
+					}
+					else lastPointerItem = i; 
+					lastPointerTime = time;
+				}
+				break;
+			}
+			itemY1 = itemY2;
+		}
+		
+		lastPointerXCrd = x;
+		lastPointerYCrd = y;
+	}
+	//#sijapp cond.end#
 
 	//! Set caption text for list
 	public void setCaption(String capt)
@@ -497,6 +592,9 @@ public abstract class VirtualList extends Canvas
 		drawItemData(g, (currItem == index), index, 2, yCrd, itemWidth-itemHeight/3, yCrd+itemHeight, fontHeight);
 		return yCrd + itemHeight;
 	}
+	
+	private static int srcollerY1 = -1;
+	private static int srcollerY2 = -1;
 
 	// Draw scroller is items doesn't fit in VL area 
 	private void drawScroller(Graphics g, int topY, int visCount)
@@ -516,15 +614,15 @@ public abstract class VirtualList extends Canvas
 		{
 			int sliderSize = (height-topY)*visCount/itemCount;
 			if (sliderSize < 7) sliderSize = 7;
-		    int y1 = topItem * (height - sliderSize - topY) / (itemCount-visCount) + topY;
-			int y2 = y1 + sliderSize;
+			srcollerY1 = topItem * (height - sliderSize - topY) / (itemCount-visCount) + topY;
+			srcollerY2 = srcollerY1 + sliderSize;
 			g.setColor(color);
-			g.fillRect(width + 2, y1 + 2, scrollerWidth - 3, y2 - y1 - 3);
+			g.fillRect(width + 2, srcollerY1 + 2, scrollerWidth - 3, srcollerY2 - srcollerY1 - 3);
 			g.setColor(transformColorLight(color, -192));
-			g.drawRect(width, y1, scrollerWidth - 1, y2 - y1 - 1);
+			g.drawRect(width, srcollerY1, scrollerWidth - 1, srcollerY2 - srcollerY1 - 1);
 			g.setColor(transformColorLight(color, 96));
-			g.drawLine(width + 1, y1 + 1, width + 1, y2 - 2);
-			g.drawLine(width + 1, y1 + 1, width + scrollerWidth - 2, y1 + 1);
+			g.drawLine(width + 1, srcollerY1 + 1, width + 1, srcollerY2 - 2);
+			g.drawLine(width + 1, srcollerY1 + 1, width + scrollerWidth - 2, srcollerY1 + 1);
 		}
 	}
 

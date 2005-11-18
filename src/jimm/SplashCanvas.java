@@ -64,8 +64,10 @@ import net.rim.device.api.system.LED;
 
 public class SplashCanvas extends Canvas
 {
+	static public SplashCanvas _this;
+	
 	//Timer for repaint
-	private Timer t1,t2;
+	static private Timer t1,t2;
 
 	// Location of the splash image (inside the JAR file)
 	private static final String SPLASH_IMG = "/splash.png";
@@ -120,40 +122,41 @@ public class SplashCanvas extends Canvas
 
 
 	// Message to display beneath the splash image
-	private String message;
+	static private String message;
 
 
 	// Progress in percent
-	private int progress; // = 0
+	static private int progress; // = 0
 
 
 	// True if keylock has been enabled
-	private boolean isLocked;
+	static private boolean isLocked;
 
 
 	// Number of available messages
-	private int availableMessages;
+	static private int availableMessages;
 	
 
 	// Should the keylock message be drawn to the screen?
-	private boolean showKeylock;
+	static private boolean showKeylock;
 
 
 	// Timestamp
-	private Date pressed; // = null
+	static private Date pressed; // = null
 	
 	// Version string
-	private boolean version;
+	static private boolean version;
 	
 	// Constructor
 	public SplashCanvas(String message)
 	{
-	    this.version = true;
+		_this = this;
+	    version = true;
 	    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		this.setFullScreenMode(true);
+		setFullScreenMode(true);
 		//  #sijapp cond.end#
-		this.message = new String(message);
-		this.showKeylock = false;
+		message = new String(message);
+		showKeylock = false;
 		//  #sijapp cond.if target is "MOTOROLA"#
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight()+22);
 		//  #sijapp cond.else#
@@ -182,57 +185,58 @@ public class SplashCanvas extends Canvas
 	public SplashCanvas()
 	{
 		this("");
+		_this = this;
 	}
 
 
 	// Returns the informational message
-	public synchronized String getMessage()
+	static public synchronized String getMessage()
 	{
-		return (this.message);
+		return (message);
 	}
 
 
 	// Sets the informational message
-	public synchronized void setMessage(String message)
+	static public synchronized void setMessage(String message)
 	{
-		this.message = new String(message);
-		this.progress = 0;
+		SplashCanvas.message = new String(message);
+		progress = 0;
 	}
 
 
 	// Returns the current progress in percent
-	public synchronized int getProgress()
+	static public synchronized int getProgress()
 	{
-		return (this.progress);
+		return (progress);
 	}
 
 
 	// Sets the current progress in percent (and request screen refresh)
-	public synchronized void setProgress(int progress)
+	static public synchronized void setProgress(int progress)
 	{
-		this.progress = progress;
-		this.repaint(0, this.getHeight() - SplashCanvas.height - 2, this.getWidth(), SplashCanvas.height + 2);
+		SplashCanvas.progress = progress;
+		_this.repaint(0, _this.getHeight() - SplashCanvas.height - 2, _this.getWidth(), SplashCanvas.height + 2);
 	}
 	
 	
 	
-	public void delVersionString()
+	static public void delVersionString()
 	{
-	    this.version = false;
+	    version = false;
 	}
 	
 
 	// Enable keylock
-	public synchronized void lock()
+	static public synchronized void lock()
 	{
-		this.setMessage(ResourceBundle.getString("keylock_enabled"));
-		this.setProgress(0);
-		this.isLocked = true;
+		setMessage(ResourceBundle.getString("keylock_enabled"));
+		setProgress(0);
+		isLocked = true;
 		//  #sijapp cond.if target is "MOTOROLA"#
 		LightControl.Off();
 		//  #sijapp cond.end#
-		Jimm.display.setCurrent(this);
-		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
+		Jimm.display.setCurrent(_this);
+		if (Options.getBooleanOption(Options.OPTION_DISPLAY_DATE))
         {
             t1 = new Timer();
             t1.schedule(new TimerTask()
@@ -240,7 +244,7 @@ public class SplashCanvas extends Canvas
 
                 public void run()
                 {
-                    SplashCanvas.this.repaint();
+                    _this.repaint();
                 }
             }, 20000, 20000);
         }
@@ -249,49 +253,49 @@ public class SplashCanvas extends Canvas
 
 
 	// Disable keylock
-	private synchronized void unlock()
+	static private synchronized void unlock()
 	{
-		this.isLocked = false;
-		this.availableMessages = 0;
+		isLocked = false;
+		availableMessages = 0;
         // #sijapp cond.if target is "RIM"#
         LED.setState(LED.STATE_OFF);
         //  #sijapp cond.end#
         	//  #sijapp cond.if target is "MOTOROLA"#
-		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_LIGHT_MANUAL))
+		if (Options.getBooleanOption(Options.OPTION_LIGHT_MANUAL))
 		{
 			LightControl.On();
 		}
 		//  #sijapp cond.end#
-		if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
+		if (Options.getBooleanOption(Options.OPTION_DISPLAY_DATE))
 		{
 			
 			t1.cancel();
 		}
-		Jimm.jimm.getContactListRef().activate();
+		ContactList.activate();
 	}
     
     // Is the screen locked?
-    public boolean locked()
+	static public boolean locked()
     {
-        return(this.isLocked);
+        return(isLocked);
     }
 
 
 	// Called when message has been received
-	public synchronized void messageAvailable()
+	static public synchronized void messageAvailable()
 	{
-		if (this.isLocked)
+		if (isLocked)
 		{
-			++this.availableMessages;
+			++availableMessages;
 			// #sijapp cond.if target is "RIM"#
 	        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
 	        LED.setState(LED.STATE_BLINKING);
             // #sijapp cond.end#
 			// #sijapp cond.if target is "MOTOROLA"#
-			if (Jimm.jimm.getOptionsRef().getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE) == 0)
+			if (Options.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE) == 0)
 			Jimm.display.flashBacklight(1000);
 			// #sijapp cond.end#
-			this.repaint();
+			_this.repaint();
 		}
 	}
 
@@ -299,13 +303,13 @@ public class SplashCanvas extends Canvas
 	// Called when a key is pressed
 	protected void keyPressed(int keyCode)
 	{
-		if (this.isLocked)
+		if (isLocked)
 		{
 		    if (keyCode == Canvas.KEY_POUND)
-		        this.pressed = new Date();
+		        pressed = new Date();
 		    else
 		    {
-		        this.showKeylock = true;
+		        showKeylock = true;
                 this.repaint();
 			//  #sijapp cond.if target is "MOTOROLA"#
 		       Jimm.display.flashBacklight(2000);
@@ -318,11 +322,11 @@ public class SplashCanvas extends Canvas
 	// Called when a key is repeated (held down)
 	protected void keyRepeated(int keyCode)
 	{
-		if (this.isLocked && (keyCode == Canvas.KEY_POUND))
+		if (isLocked && (keyCode == Canvas.KEY_POUND))
 		{
-			if ((this.pressed.getTime() + 1000) < System.currentTimeMillis())
+			if ((pressed.getTime() + 1000) < System.currentTimeMillis())
 			{
-				this.unlock();
+				unlock();
 			}
 		}
 	}
@@ -331,11 +335,11 @@ public class SplashCanvas extends Canvas
 	// Called when a key is released
 	protected void keyReleased(int keyCode)
 	{
-		if (this.isLocked && (keyCode == Canvas.KEY_POUND))
+		if (isLocked && (keyCode == Canvas.KEY_POUND))
 		{
-			if ((this.pressed.getTime() + 1000) < System.currentTimeMillis())
+			if ((pressed.getTime() + 1000) < System.currentTimeMillis())
 			{
-				this.unlock();
+				unlock();
 			}
 		}
 	}
@@ -369,16 +373,16 @@ public class SplashCanvas extends Canvas
 			}
 
 			// Display message icon, if keylock is enabled
-			if (this.isLocked && this.availableMessages > 0)
+			if (isLocked && availableMessages > 0)
 			{
 				g.drawImage(ContactList.eventPlainMessageImg, 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
 				g.setColor(255, 255, 255);
 				g.setFont(SplashCanvas.font);
-				g.drawString("# " + this.availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
+				g.drawString("# " + availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
 			}
             
             // Display the keylock message if someone hit the wrong key
-            if (this.showKeylock)
+            if (showKeylock)
             {
                 
                 // Init the dimensions
@@ -401,8 +405,8 @@ public class SplashCanvas extends Canvas
 
                     public void run()
                     {
-                        SplashCanvas.this.showKeylock = false;
-                        SplashCanvas.this.repaint();
+                        showKeylock = false;
+                        repaint();
                     }
                 }, 3000);
             }
@@ -420,19 +424,19 @@ public class SplashCanvas extends Canvas
 			g.setColor(255, 255, 255);
 			g.setFont(SplashCanvas.font);
 			// Draw the date bellow notice if set up to do so
-			if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
+			if (Options.getBooleanOption(Options.OPTION_DISPLAY_DATE))
 			{
 				g.drawString(Util.getDateString(false), this.getWidth() / 2, 12, Graphics.TOP | Graphics.HCENTER);
 			}
 			// Draw the progressbar message
-			if ((this.message != null) && (this.message.length() > 0))
+			if ((message != null) && (message.length() > 0))
 			{
-				g.drawString(this.message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+				g.drawString(message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 			}
 		}
 		
 		// Draw version
-		if (this.version)
+		if (version)
 		{
 		    g.setColor(0,0,0);
 		    g.setFont(versionFont);
@@ -440,7 +444,7 @@ public class SplashCanvas extends Canvas
 		}
 
 		// Draw current progress
-		int progressPx = this.getWidth() * this.progress / 100;
+		int progressPx = this.getWidth() * progress / 100;
 		g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
 		g.setColor(255, 255, 255);
 		g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
@@ -448,13 +452,13 @@ public class SplashCanvas extends Canvas
 		{
 			g.setColor(0, 0, 0);
 			// Draw the date bellow notice if set up to do so
-			if (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_DISPLAY_DATE))
+			if (Options.getBooleanOption(Options.OPTION_DISPLAY_DATE))
 			{
 				g.drawString(Util.getDateString(false), this.getWidth() / 2, 12, Graphics.TOP | Graphics.HCENTER);
 			}
 				
 			// Draw the progressbar message
-			g.drawString(this.message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+			g.drawString(message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 		}
 
 	}
@@ -473,16 +477,16 @@ public class SplashCanvas extends Canvas
 	{
 
 		// Reference to ConnectAction
-		private DirectConnectionAction dcAct;
+		static private DirectConnectionAction dcAct;
 
 		// Cancel Command
-		private Command cancelCommand;
+		static private Command cancelCommand;
 
 		// Constructor
 		public FileTransferTimerTask(DirectConnectionAction _dcAct)
 		{
 		    
-			this.dcAct = _dcAct;
+			FileTransferTimerTask.dcAct = _dcAct;
 
 			// Set the cancel command
 			cancelCommand = new Command(ResourceBundle.getString("cancel"),Command.CANCEL,1);
@@ -490,7 +494,7 @@ public class SplashCanvas extends Canvas
 			Jimm.jimm.getSplashCanvasRef().setCommandListener(this);
 
 			// Activate the splash screen
-			Jimm.jimm.getSplashCanvasRef().setMessage(ResourceBundle.getString("filetransfer"));
+			SplashCanvas.setMessage(ResourceBundle.getString("filetransfer"));
 			Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
 
 		}
@@ -499,12 +503,12 @@ public class SplashCanvas extends Canvas
 		// Command listener
 		public void commandAction(Command c, Displayable d)
 		{
-			if (c == this.cancelCommand)
+			if (c == cancelCommand)
 			{
-			    Jimm.jimm.getContactListRef().activate();
+			    ContactList.activate();
 				Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
-				this.dcAct.setCancel(true);
-				Jimm.jimm.getContactListRef().activate();
+				dcAct.setCancel(true);
+				ContactList.activate();
 				this.cancel();
 			}
 		}
@@ -513,19 +517,19 @@ public class SplashCanvas extends Canvas
 		// Timer routine
 		public void run()
 		{
-		    Jimm.jimm.getSplashCanvasRef().setProgress(this.dcAct.getProgress());
-			if (this.dcAct.isCompleted())
+		    SplashCanvas.setProgress(dcAct.getProgress());
+			if (dcAct.isCompleted())
 			{
-			    Jimm.jimm.getContactListRef().activate();
+			    ContactList.activate();
 			    Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
 				this.cancel();
-				Alert ok = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("successful")+".\n"+ResourceBundle.getString("speed")+": "+this.dcAct.getSpeed()+" "+ResourceBundle.getString("kbs"),null, AlertType.INFO);
+				Alert ok = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("successful")+".\n"+ResourceBundle.getString("speed")+": "+dcAct.getSpeed()+" "+ResourceBundle.getString("kbs"),null, AlertType.INFO);
 				ok.setTimeout(2000);
 				Jimm.display.setCurrent(ok);
 			}
-			else if (this.dcAct.isError())
+			else if (dcAct.isError())
 			{
-			    Jimm.jimm.getContactListRef().activate();
+			    ContactList.activate();
 			    Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
 				this.cancel();
 				Alert err = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("not")+" "+ResourceBundle.getString("successful")+"!",null, AlertType.WARNING);
@@ -546,29 +550,27 @@ public class SplashCanvas extends Canvas
 	// Activates the contact list after connection has been established
 	public static class ConnectTimerTask extends TimerTask
 	{
-
-
 		// Reference to ConnectAction
-		private ConnectAction connectAct;
+		static private ConnectAction connectAct;
 
 
 		// Constructor
 		public ConnectTimerTask(ConnectAction connectAct)
 		{
-			this.connectAct = connectAct;
+			ConnectTimerTask.connectAct = connectAct;
 		}
 
 
 		// Timer routine
 		public void run()
 		{
-		    Jimm.jimm.getSplashCanvasRef().setProgress(this.connectAct.getProgress());
-			if (this.connectAct.isCompleted())
+		    SplashCanvas.setProgress(connectAct.getProgress());
+			if (connectAct.isCompleted())
 			{
-			    Jimm.jimm.getContactListRef().activate();
+			    ContactList.activate();
 				this.cancel();
 			}
-			else if (this.connectAct.isError())
+			else if (connectAct.isError())
 			{
 			    this.cancel();
 			}
@@ -589,28 +591,28 @@ public class SplashCanvas extends Canvas
 
 
 		// Reference to DisconnectAction
-		private DisconnectAction disconnectAct;
+		static private DisconnectAction disconnectAct;
 
 
 		// Exit after disconnecting?
-		private boolean exit;
+		static private boolean exit;
 
 
 		// Constructor
 		public DisconnectTimerTask(DisconnectAction disconnectAct, boolean exit)
 		{
-			this.disconnectAct = disconnectAct;
-			this.exit = exit;
+			DisconnectTimerTask.disconnectAct = disconnectAct;
+			DisconnectTimerTask.exit = exit;
 		}
 
 
 		// Timer routine
 		public void run()
 		{
-			if (this.disconnectAct.isCompleted())
+			if (disconnectAct.isCompleted())
 			{
 				this.cancel();
-				if (this.exit)
+				if (exit)
 				{
 					try
 					{
@@ -623,10 +625,10 @@ public class SplashCanvas extends Canvas
 				}
 				else
 				{
-					Jimm.jimm.getMainMenuRef().activate();
+					MainMenu.activate();
 				}
 			}
-			else if (this.disconnectAct.isError())
+			else if (disconnectAct.isError())
 			{
 				this.cancel();
 			}
@@ -643,47 +645,49 @@ public class SplashCanvas extends Canvas
 	// Waits until meta information is available
 	public static class RequestInfoTimerTask extends TimerTask implements CommandListener
 	{
-		TextList tl = new TextList(null);
-		Command cmdBack = new Command(ResourceBundle.getString("back"), Command.BACK, 0); 
+		static private TextList tl = new TextList(null);
+		static private Command cmdBack = new Command(ResourceBundle.getString("back"), Command.BACK, 0);
+		static private Command cmdCopy = new Command(ResourceBundle.getString("copy_text"), Command.ITEM, 1);
+		
+		// Reference to RequestInfoAction
+		static private RequestInfoAction requestInfoAct;
 		
 		public void commandAction(Command c, Displayable d)
 		{
-			if (c == cmdBack) Jimm.jimm.getContactListRef().activate();
+			if (c == cmdBack) ContactList.activate();
+			else if (c == cmdCopy) JimmUI.setClipBoardText(tl.getCurrText(0));
 		}
 		
-		int bigTextIndex = 0;
+		private static int bigTextIndex;
 		
-		private void startInfoSect(String name)
+		static private void startInfoSect(String name)
 		{
-			bigTextIndex++;
 			tl.addBigText
 			(
 				ResourceBundle.getString(name),
 				tl.getTextColor(),
 				Font.STYLE_BOLD,
-				bigTextIndex
+				-1
 			).doCRLF(bigTextIndex);
 		}
 
-		private void addToTextList(int index, String langStr)
+		static private void addToTextList(int index, String langStr)
 		{
 			String data = requestInfoAct.getStringData(index);
 			if (data.length() == 0) return;
 			tl.addBigText(ResourceBundle.getString(langStr)+": ", tl.getTextColor(), Font.STYLE_PLAIN, bigTextIndex)
-			  .addBigText(data, Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_PLAIN, bigTextIndex)
+			  .addBigText(data, Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_PLAIN, bigTextIndex)
 			  .doCRLF(bigTextIndex);
+			bigTextIndex++;
 		}
 		
-		// Reference to RequestInfoAction
-		private RequestInfoAction requestInfoAct;
-
-
 		// Constructor
 		public RequestInfoTimerTask(RequestInfoAction requestInfoAct)
 		{
-			this.requestInfoAct = requestInfoAct;
+			RequestInfoTimerTask.requestInfoAct = requestInfoAct;
 			JimmUI.setColorScheme(tl);
 			tl.addCommand(cmdBack);
+			tl.addCommand(cmdCopy);
 			tl.setCursorMode(TextList.SEL_NONE);
 			tl.setCommandListener(this);
 		}
@@ -692,8 +696,9 @@ public class SplashCanvas extends Canvas
 		// Timer routine
 		public void run()
 		{
-			if (this.requestInfoAct.isCompleted())
+			if (requestInfoAct.isCompleted())
 			{
+				bigTextIndex = 0;
 				tl.clear();
 				
 				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -738,10 +743,10 @@ public class SplashCanvas extends Canvas
 				
 				this.cancel();
 			}
-			else if (this.requestInfoAct.isError())
+			else if (requestInfoAct.isError())
 			{
 			    
-			    Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(160, 0, true)));
+			    ContactList.activate(JimmException.handleException(new JimmException(160, 0, true)));
 			    this.cancel();
 			}
 		}
@@ -758,36 +763,33 @@ public class SplashCanvas extends Canvas
 	// Waits until contact listupdate is completed
 	public static class UpdateContactListTimerTask extends TimerTask
 	{
-
-
 		// Reference to UpdateContactListAction
-		private UpdateContactListAction updateContactListAct;
-
+		static private UpdateContactListAction updateContactListAct;
 
 		// Constructor
 		public UpdateContactListTimerTask(UpdateContactListAction updateContactListAct)
 		{
-			this.updateContactListAct = updateContactListAct;
+			UpdateContactListTimerTask.updateContactListAct = updateContactListAct;
 		}
 
 
 		// Timer routine
 		public void run()
 		{
-			if (this.updateContactListAct.isCompleted())
+			if (updateContactListAct.isCompleted())
 			{
-				Jimm.jimm.getContactListRef().activate();
+				ContactList.activate();
 				this.cancel();
 			}
-			else if (this.updateContactListAct.isError())
+			else if (updateContactListAct.isError())
 			{
-				if (this.updateContactListAct.getErrorType() == 0 )
+				if (updateContactListAct.getErrorType() == 0 )
 				{
-					Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(154, 2, true)));
+					ContactList.activate(JimmException.handleException(new JimmException(154, 2, true)));
 				}
 				else
 				{
-				Jimm.jimm.getContactListRef().activate();
+				ContactList.activate();
 				}
 				this.cancel();
 			}
@@ -805,28 +807,25 @@ public class SplashCanvas extends Canvas
 	// Waits until contact listupdate is completed
 	public static class SearchTimerTask extends TimerTask
 	{
-
-
 		// Reference to UpdateContactListAction
-		private SearchAction searchAct;
-
+		static private SearchAction searchAct;
 
 		// Constructor
 		public SearchTimerTask(SearchAction _searchAct)
 		{
-			this.searchAct = _searchAct;
+			SearchTimerTask.searchAct = _searchAct;
 		}
 
 
 		// Timer routine
 		public void run()
 		{
-			if (this.searchAct.isCompleted())
+			if (searchAct.isCompleted())
 			{
 				searchAct.activateResult();
 				this.cancel();
-			} else if (this.searchAct.isError()) {
-				if (!searchAct.excepHandled()) Jimm.jimm.getContactListRef().activate(JimmException.handleException(new JimmException(154, 2, true)));
+			} else if (searchAct.isError()) {
+				if (!searchAct.excepHandled()) ContactList.activate(JimmException.handleException(new JimmException(154, 2, true)));
 				{
 					this.cancel();
 				}

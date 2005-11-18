@@ -35,16 +35,18 @@ import DrawControls.*;
 
 public class Emotions implements VirtualListCommands, CommandListener
 {
-	final private ImageList images = new ImageList();
-	final private Vector findedEmotions = new Vector();
-	boolean used;
-	final private Vector textCorr = new Vector();
-	final private Vector selEmotions = new Vector();
+	private static Emotions _this; 
+	final private static ImageList images = new ImageList();
+	final private static Vector findedEmotions = new Vector();
+	private static boolean used;
+	final private static Vector textCorr = new Vector();
+	final private static Vector selEmotions = new Vector();
 	
 	public Emotions()
 	{
 		int iconsSize;
 		used = false;
+		_this = this;
 
 		// Load file "smiles.txt"
 		InputStream stream = this.getClass().getResourceAsStream("/smiles.txt");
@@ -108,7 +110,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 	}
 	
 	// Add smile text and index to textCorr in decreasing order of text length 
-	void insertTextCorr(String word, Integer index)
+	static void insertTextCorr(String word, Integer index)
 	{
 		Object[] data = new Object[] {word, index};
 		int wordLen = word.length();
@@ -143,7 +145,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		return (chr == '\n');
 	}
 	
-	private void findEmotionInText(String text, String emotion, Integer index, int startIndex)
+	static private void findEmotionInText(String text, String emotion, Integer index, int startIndex)
 	{
 		int findedIndex, len = emotion.length();
 		
@@ -152,9 +154,9 @@ public class Emotions implements VirtualListCommands, CommandListener
 		findedEmotions.addElement( new int[] {findedIndex, len, index.intValue()} );
 	}
 	
-	public void addTextWithEmotions(TextList textList, String text, int fontStyle, int textColor, int bigTextIndex)
+	static public void addTextWithEmotions(TextList textList, String text, int fontStyle, int textColor, int bigTextIndex)
 	{
-		if (!used || !Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_USE_SMILES))
+		if (!used || !Options.getBooleanOption(Options.OPTION_USE_SMILES))
 		{
 			textList.addBigText(text, textColor, fontStyle, bigTextIndex);
 			return;
@@ -219,18 +221,18 @@ public class Emotions implements VirtualListCommands, CommandListener
 	//                               //
 	///////////////////////////////////
 	
-	private Displayable lastDisplay;
-	private CommandListener selectionListener;
+	static private Displayable lastDisplay;
+	static private CommandListener selectionListener;
 	static private Command cmdOk = new Command(ResourceBundle.getString("select"), Command.OK, 1); 
 	static private Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Command.BACK, 2); 
-	private String emotionText; 
+	static private String emotionText; 
 	
-	private Selector selector;
+	static private Selector selector;
 
-	public void selectEmotion(CommandListener selectionListener, Displayable lastDisplay)
+	static public void selectEmotion(CommandListener selectionListener_, Displayable lastDisplay_)
 	{
-		this.selectionListener = selectionListener;
-		this.lastDisplay       = lastDisplay;
+		selectionListener = selectionListener_;
+		lastDisplay       = lastDisplay_;
 		//selList = new TextList(null);
 		selector = new Selector();
 		JimmUI.setColorScheme(selector);
@@ -241,7 +243,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		
 		selector.addCommand(cmdOk);
 		selector.addCommand(cmdCancel);
-		selector.setCommandListener(this);
+		selector.setCommandListener(_this);
 		
 		Jimm.display.setCurrent(selector);
 	}
@@ -264,7 +266,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		select();
 	}
 
-	private void select()
+	static private void select()
 	{
 		Jimm.display.setCurrent(lastDisplay);
 		selector = null;
@@ -272,12 +274,12 @@ public class Emotions implements VirtualListCommands, CommandListener
 		selectionListener.commandAction(cmdOk, selector);
 	}
 	
-	public String getSelectedEmotion()
+	static public String getSelectedEmotion()
 	{
 		return emotionText;
 	}
 	
-	public boolean isMyOkCommand(Command command)
+	static public boolean isMyOkCommand(Command command)
 	{
 		return (command == cmdOk);
 	}
@@ -290,13 +292,15 @@ public class Emotions implements VirtualListCommands, CommandListener
 	//                     //
 	/////////////////////////
 		
-	private class Selector extends VirtualList implements VirtualListCommands
+	static class Selector extends VirtualList implements VirtualListCommands
 	{
-		private int cols, rows, itemHeight, curCol; 
+		static private int cols, rows, itemHeight, curCol;
+		static private Selector _this;
 		
 		Selector()
 		{
 			super(null);
+			_this = this;
 			setVLCommands(this);
 			
 			int drawWidth = getWidth()-scrollerWidth-2;
@@ -313,6 +317,23 @@ public class Emotions implements VirtualListCommands, CommandListener
 			
 			showCurrSmileName();
 		}
+		
+		//#sijapp cond.if target is "MIDP2"#
+		protected boolean pointerPressedOnUtem(int index, int x, int y)
+		{
+			int lastCol = curCol; 
+			curCol = x/itemHeight;
+			if (curCol < 0) curCol = 0;
+			if (curCol >= cols) curCol = cols-1;
+			if (lastCol != curCol)
+			{
+				showCurrSmileName();
+				invalidate();
+			}
+				
+			return false;
+		}
+		// #sijapp cond.end#
 		
 		protected void drawItemData
 		(
@@ -348,16 +369,16 @@ public class Emotions implements VirtualListCommands, CommandListener
 			}
 		}
 		
-		private void showCurrSmileName()
+		static private void showCurrSmileName()
 		{
-			int selIdx = getCurrIndex()*cols+curCol;
+			int selIdx = _this.getCurrIndex()*cols+curCol;
 			if (selIdx >= selEmotions.size()) return;
 			Object[] data = (Object[])selEmotions.elementAt(selIdx);
 			emotionText = (String)data[1];			
 			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			setTitle((String)data[2]);
+			_this.setTitle((String)data[2]);
 			// #sijapp cond.else#
-			setCaption((String)data[2]);
+			_this.setCaption((String)data[2]);
 			// #sijapp cond.end#			
 		}
 		
@@ -394,7 +415,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 			
 			if (lastCol != curCol)
 			{
-				repaint();
+				invalidate();
 				showCurrSmileName();
 			}
 		}

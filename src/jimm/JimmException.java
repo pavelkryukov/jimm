@@ -26,6 +26,7 @@ package jimm;
 
 
 import jimm.util.ResourceBundle;
+import jimm.comm.Icq;
 
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
@@ -138,20 +139,20 @@ public class JimmException extends Exception
 			//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	    	//  #sijapp cond.if modules_FILES is "true"#
 			if (e.isPeer())
-			    Jimm.jimm.getIcqRef().resetPeerCon();
+			    Icq.resetPeerCon();
 			else
-			    Jimm.jimm.getIcqRef().resetServerCon();
+			    Icq.resetServerCon();
 			//  #sijapp cond.else#
-			Jimm.jimm.getIcqRef().resetServerCon();
+			Icq.resetServerCon();
 			//  #sijapp cond.end#
 			//  #sijapp cond.else#
-			Jimm.jimm.getIcqRef().resetServerCon();
+			Icq.resetServerCon();
 			//  #sijapp cond.end#
 
 			// Display error message
 			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
 			errorMsg.setTimeout(Alert.FOREVER);
-			Jimm.jimm.getMainMenuRef().activate(errorMsg);
+			MainMenu.activate(errorMsg);
 			return(errorMsg);
 
 		}

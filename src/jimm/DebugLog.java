@@ -35,7 +35,7 @@ class Helper implements CommandListener
 
     public void commandAction(Command c, Displayable d)
     {
-        Jimm.jimm.getContactListRef().activate();
+        ContactList.activate();
     }
 }
 

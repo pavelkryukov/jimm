@@ -24,8 +24,6 @@
 
 package jimm.comm;
 
-
-import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 
@@ -55,7 +53,7 @@ public class SetOnlineStatusAction extends Action
 	// Returns true if the action can be performed
 	public boolean isExecutable()
 	{
-		return (this.icq.isConnected());
+		return (Icq.isConnected());
 	}
 
 
@@ -81,13 +79,13 @@ public class SetOnlineStatusAction extends Action
 										   0x00000000,
 										   new byte[0],
 										   SetOnlineStatusAction.CLI_SETSTATUS_DATA);
-		this.icq.c.sendPacket(packet);
+		Icq.Connection.sendPacket(packet);
 
 		// Save new online status
-		Jimm.jimm.getOptionsRef().setLongOption(Options.OPTION_ONLINE_STATUS, this.onlineStatus);
+		Options.setLongOption(Options.OPTION_ONLINE_STATUS, this.onlineStatus);
 		try
 		{
-			Jimm.jimm.getOptionsRef().save();
+			Options.save();
 		}
 		catch (Exception e)
 		{

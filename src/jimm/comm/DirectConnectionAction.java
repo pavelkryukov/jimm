@@ -28,7 +28,6 @@ package jimm.comm;
 
 import java.util.Date;
 
-import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 
@@ -76,7 +75,7 @@ public class DirectConnectionAction extends Action
     // Returns true if STATE_CONNECTED is active
     public boolean isExecutable()
     {
-        return (this.icq.isConnected());
+        return (Icq.isConnected());
     }
 
     // This is an exclusive command, so this returns true
@@ -90,8 +89,8 @@ public class DirectConnectionAction extends Action
     {
 
         // Make a new peer connection and connec to the adress and port we got from the FileTransferRequest
-        this.icq.peerC = icq.new PeerConnection();
-        this.icq.peerC.connect(Util.ipToString(ft.getRcvr().getInternalIP()) + ":" + ft.getRcvr().getPort());
+        Icq.peerC = icq.new PeerConnection();
+        Icq.peerC.connect(Util.ipToString(ft.getRcvr().getInternalIP()) + ":" + ft.getRcvr().getPort());
 
         // Send a DC init packet
         byte[] dcpacket = new byte[48];
@@ -119,15 +118,15 @@ public class DirectConnectionAction extends Action
         marker += 2;
 
         // port we are listening on
-        Util.putDWord(dcpacket, marker, this.icq.peerC.getLocalPort(), false);
+        Util.putDWord(dcpacket, marker, Icq.peerC.getLocalPort(), false);
         marker += 4;
 
         // UIN of the sender
-        Util.putDWord(dcpacket, marker, Long.parseLong(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN)), false);
+        Util.putDWord(dcpacket, marker, Long.parseLong(Options.getStringOption(Options.OPTION_UIN)), false);
         marker += 4;
 
         // our internal IP
-        System.arraycopy(dcpacket, marker, this.icq.peerC.getLocalIP(), 0, 4);
+        System.arraycopy(dcpacket, marker, Icq.peerC.getLocalIP(), 0, 4);
         marker += 4;
 
         // our external IP 
@@ -139,7 +138,7 @@ public class DirectConnectionAction extends Action
         marker++;
 
         // other (same) port we are listening on
-        Util.putDWord(dcpacket, marker, this.icq.peerC.getLocalPort(), false);
+        Util.putDWord(dcpacket, marker, Icq.peerC.getLocalPort(), false);
         marker += 4;
 
         // connection cookie
@@ -158,7 +157,7 @@ public class DirectConnectionAction extends Action
         Util.putDWord(dcpacket, marker, 0x00000000);
 
         DCPacket initPacket = new DCPacket(dcpacket);
-        this.icq.peerC.sendPacket(initPacket);
+        Icq.peerC.sendPacket(initPacket);
     }
 
     // Forwards received packet, returns true if packet was consumed
@@ -185,13 +184,13 @@ public class DirectConnectionAction extends Action
                 Util.putDWord(buf, 0, 0x01000000);
 
                 DCPacket initPacket = new DCPacket(buf);
-                this.icq.peerC.sendPacket(initPacket);
+                Icq.peerC.sendPacket(initPacket);
 
                 // System.out.println("Sent DC ACK");
                 // System.out.println(Util.toHexString(buf));
 
                 // And now we send out a file transfer init
-                buf = new byte[17 + 2 + Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN).length() + 1];
+                buf = new byte[17 + 2 + Options.getStringOption(Options.OPTION_UIN).length() + 1];
 
                 int marker = 0;
 
@@ -219,12 +218,12 @@ public class DirectConnectionAction extends Action
 
                 // Put nick (or uin in this case)
                 //First the size in one byte
-                Util.putByte(buf, marker, Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN).length() + 1);
+                Util.putByte(buf, marker, Options.getStringOption(Options.OPTION_UIN).length() + 1);
                 // Then one zero byte
                 Util.putByte(buf, marker + 1, 0x00);
                 marker += 2;
                 // Then the string itself
-                byte[] nick = Util.stringToByteArray(Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN));
+                byte[] nick = Util.stringToByteArray(Options.getStringOption(Options.OPTION_UIN));
                 System.arraycopy(nick, 0, buf, marker, nick.length);
                 marker += nick.length;
                 Util.putByte(buf, marker, 0x00);
@@ -234,7 +233,7 @@ public class DirectConnectionAction extends Action
 
                 // Send the packet
                 DCPacket initFTPacket = new DCPacket(buf);
-                this.icq.peerC.sendPacket(initFTPacket);
+                Icq.peerC.sendPacket(initFTPacket);
                 // System.out.println("Sent FT init packet");
 
                 this.state = STATE_CLI_FILE_INIT_DONE;
@@ -288,7 +287,7 @@ public class DirectConnectionAction extends Action
 
                 // Send the packet
                 DCPacket startFTPacket = new DCPacket(buf);
-                this.icq.peerC.sendPacket(startFTPacket);
+                Icq.peerC.sendPacket(startFTPacket);
  
                 this.state = STATE_CLI_FILE_START_DONE;
 
@@ -306,7 +305,7 @@ public class DirectConnectionAction extends Action
                 {
                     // Send the packet
                     dataPacket = new DCPacket(ft.getFileSegmentPacket(packets));
-                    this.icq.peerC.sendPacket(dataPacket);
+                    Icq.peerC.sendPacket(dataPacket);
                     packets++;
                 }
                 date = new Date();
@@ -319,9 +318,9 @@ public class DirectConnectionAction extends Action
                 catch (Exception e) {}
                 
                 // Close the connection
-                this.icq.peerC.close();
+                Icq.peerC.close();
                 Thread.yield();
-                this.icq.peerC = null;
+                Icq.peerC = null;
 
                 ft.getRcvr().setFTM(null);
 

@@ -31,7 +31,6 @@ import java.io.DataInputStream;
 import java.util.*;
 
 import DrawControls.*;
-import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 public class JimmUI implements CommandListener
@@ -139,7 +138,7 @@ public class JimmUI implements CommandListener
 		System.gc();
 		long freeMem = Runtime.getRuntime().freeMemory()/1024;
 		
-		final int textColor = Jimm.jimm.getOptionsRef().getSchemeColor(Options.CLRSCHHEME_TEXT);
+		final int textColor = Options.getSchemeColor(Options.CLRSCHHEME_TEXT);
 	
 		if (lastDisplayable_ != null) lastDisplayable = lastDisplayable_;
 		if (aboutTextList == null) aboutTextList = new TextList(null);
@@ -162,7 +161,7 @@ public class JimmUI implements CommandListener
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
 		   .append(freeMem).append("kb\n\n")
-           .append(ResourceBundle.getString("latest_ver")+":");
+           .append(ResourceBundle.getString("latest_ver")).append(":");
 		
 		if (versionLoaded) str.append(" ").append(version);
 		else str.append(" ...");
@@ -214,6 +213,11 @@ public class JimmUI implements CommandListener
 		return clipBoardText;
 	}
 	
+	static public void setClipBoardText(String text)
+	{
+		clipBoardText = text;
+	}
+	
 	static public void setClipBoardText(boolean incoming, String date, String from, String text)
 	{
 		StringBuffer sb = new StringBuffer();
@@ -238,25 +242,23 @@ public class JimmUI implements CommandListener
 	{
 		if (vl == null) return;
 		
-		Options opt = Jimm.jimm.getOptionsRef();
-		
 		vl.setColors
 		(
-			opt.getSchemeColor(Options.CLRSCHHEME_BLUE),
-			opt.getSchemeColor(Options.CLRSCHHEME_BACK),
-			opt.getSchemeColor(Options.CLRSCHHEME_CURS),
-			opt.getSchemeColor(Options.CLRSCHHEME_TEXT)
+			Options.getSchemeColor(Options.CLRSCHHEME_BLUE),
+			Options.getSchemeColor(Options.CLRSCHHEME_BACK),
+			Options.getSchemeColor(Options.CLRSCHHEME_CURS),
+			Options.getSchemeColor(Options.CLRSCHHEME_TEXT)
 		);
 	}
 	
 	static public void setColorScheme()
 	{
 		// #sijapp cond.if modules_HISTORY is "true" #
-		Jimm.jimm.getHistory().setColorScheme();
+		HistoryStorage.setColorScheme();
 		// #sijapp cond.end#
 		
 		Jimm.jimm.getChatHistoryRef().setColorScheme();
-		setColorScheme((VirtualList)Jimm.jimm.getContactListRef().getVisibleContactListRef());
+		setColorScheme((VirtualList)ContactList.getVisibleContactListRef());
 	}
     
     /*****************************************************************************/
