@@ -247,37 +247,10 @@ public class MainMenu implements CommandListener
         Jimm.display.setCurrent(addUserOrGroup);
 	}
     
-    static private void doExit()
-    {
-        // Disconnect
-        Icq.disconnect();
-        
-        // Save traffic
-        //#sijapp cond.if modules_TRAFFIC is "true" #
-		try 
-		{
-			Jimm.jimm.getTrafficRef().save();
-		} 
-		catch (Exception e) 
-		{ // Do nothing
-		} 
-		//#sijapp cond.end#
-	
-		
-		// Exit app
-		try 
-		{
-			Jimm.jimm.destroyApp(true);
-		} 
-		catch (MIDletStateChangeException e) 
-		{ // Do nothing 
-		} 
-    }
     
-    
-    static private void menuExit()
+    static private void doExit(boolean anyway)
     {
-   		if (ContactList.getUnreadMessCount() > 0)
+   		if (!anyway && ContactList.getUnreadMessCount() > 0)
    		{
    	    	JimmUI.messageBox
 			(
@@ -288,7 +261,17 @@ public class MainMenu implements CommandListener
 				MSGBS_EXIT
 			);
    		}
-   		else doExit();
+   		else 
+   		{
+   			// Exit app
+   			try 
+   			{
+   				Jimm.jimm.destroyApp(true);
+   			} 
+   			catch (MIDletStateChangeException e) 
+   			{ // Do nothing 
+   			} 
+   		}
     }
 
     // Command listener
@@ -406,7 +389,7 @@ public class MainMenu implements CommandListener
         // User select OK in exit questiom message box
         else if (JimmUI.isMsgBoxCommand(c, MSGBS_EXIT) == JimmUI.CMD_YES)
         {
-        	doExit();
+        	doExit(true);
         }
         
         // User select CANCEL in exit questiom message box
@@ -538,7 +521,7 @@ public class MainMenu implements CommandListener
                      
                  case MENU_EXIT:
                      // Exit
-                 	 menuExit();
+                 	 doExit(false);
                      break;     
             }
         }

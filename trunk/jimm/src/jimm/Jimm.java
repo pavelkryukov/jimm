@@ -233,6 +233,20 @@ public class Jimm extends MIDlet
 	// Destroy Jimm
 	public void destroyApp(boolean unconditional) throws MIDletStateChangeException
 	{
+        // Disconnect
+        Icq.disconnect();       
+        
+        // Save traffic
+        //#sijapp cond.if modules_TRAFFIC is "true" #
+		try 
+		{
+			Jimm.jimm.getTrafficRef().save();
+		} 
+		catch (Exception e) 
+		{ // Do nothing
+		} 
+		//#sijapp cond.end#
+		
 		Jimm.display.setCurrent(null);
 		this.notifyDestroyed();
 	}
