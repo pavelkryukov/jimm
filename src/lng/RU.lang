@@ -60,7 +60,7 @@
   "copy_text"                   "Копировать текст"
   "cost"                        "Стоимость"
   "contact_list"                "Список"
-  "cp1251"                      "Исправлять ошибку CP1251?"
+  "cp1251"                      "Win1251 кодировка"
   "cpd"                         "Стоимость в день"
   "cpp"                         "Стоимость пакета"
   "currency"                    "Валюта"
@@ -82,7 +82,7 @@
   "exit"                        "Выход"
   "fax"                         "Факс"
   "female"                      "Ж"
-  "female_male"                 "М/Ж"
+  "female_male"                 "Любой"
   "filename"                    "Имя файла"
   "filetransfer"                "Передача файла"
   "filepath"                    "Путь к файлу"
@@ -272,6 +272,7 @@
   "ch_day"                      "Каждый день"
   "ch_week"                     "Каждую неделю"
   "ch_month"                    "Каждый месяц"
+  "show_prev_mess"              "Заполнять из истории"
   //#sijapp cond.end#
 
   // Generic errors
