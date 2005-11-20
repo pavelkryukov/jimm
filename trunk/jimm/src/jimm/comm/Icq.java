@@ -611,7 +611,6 @@ public class Icq implements Runnable
     {
     	private static Connection _this;
 
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_PROXY is "true"#
     	static private final byte[] SOCKS4_CMD_CONNECT =
         { (byte) 0x04, (byte) 0x01, (byte) 0x14, (byte) 0x46, // Port 5190
@@ -625,7 +624,6 @@ public class Icq implements Runnable
     	static private final byte[] SOCKS5_CMD_CONNECT =
         { (byte) 0x05, (byte) 0x01, (byte) 0x00, (byte) 0x03};
         // #sijapp cond.end #
-        // #sijapp cond.end #
 
         // Connection variables
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -636,12 +634,10 @@ public class Icq implements Runnable
     	static private InputStream is;
     	static private OutputStream os;
 
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_PROXY is "true"#
     	static private boolean is_socks4 = false;
     	static private boolean is_socks5 = false;
     	static private boolean is_connected = false;
-        // #sijapp cond.end#
         // #sijapp cond.end#
 
         // Disconnect flags
@@ -664,25 +660,17 @@ public class Icq implements Runnable
     		_this = this;
     	}
 
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_PROXY is "true"#
         // Tries to resolve given host IP
     	static private synchronized String ResolveIP(String host, String port)
         {
-            if (Util.isIP(host)) return host;
             // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+            if (Util.isIP(host)) return host;
             SocketConnection c;
-            // #sijapp cond.else#
-            StreamConnection c;
-            // #sijapp cond.end#
+            
             try
             {
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 c = (SocketConnection) Connector.open("socket://" + host + ":" + port, Connector.READ_WRITE);
-                // #sijapp cond.else#
-                c = (StreamConnection) Connector.open("socket://" + host + ":" + port, Connector.READ_WRITE);
-                // #sijapp cond.end#
-
                 String ip = c.getAddress();
 
                 try
@@ -697,12 +685,21 @@ public class Icq implements Runnable
 
                 return ip;
             }
-
             catch (Exception e)
             {
                 return "0.0.0.0";
             }
-
+            
+            // #sijapp cond.else#
+            if (Util.isIP(host))
+            { 
+            	return host;
+            }
+            else
+            {
+            	return "0.0.0.0";
+            }
+            // #sijapp cond.end#
         }
 
         // Build socks4 CONNECT request
@@ -748,13 +745,11 @@ public class Icq implements Runnable
         }
 
         // #sijapp cond.end #
-        // #sijapp cond.end#
 
         // Opens a connection to the specified host and starts the receiver
         // thread
     	static public synchronized void connect(String hostAndPort) throws JimmException
         {
-            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
             // #sijapp cond.if modules_PROXY is "true"#
             int mode = Options.getIntOption(Options.OPTION_PRX_TYPE);
             is_connected = false;
@@ -778,9 +773,10 @@ public class Icq implements Runnable
                 host = hostAndPort.substring(0, sep);
                 port = hostAndPort.substring(sep + 1);
             }
-
+        	// #sijapp cond.end#
             try
             {
+			// #sijapp cond.if modules_PROXY is "true"#
                 switch (mode)
                 {
                 case 0:
@@ -820,13 +816,15 @@ public class Icq implements Runnable
                     connect_simple(hostAndPort);
                     break;
                 }
+			// #sijapp cond.else#
+                connect_simple(hostAndPort);
+        	// #sijapp cond.end#
 
                 inputCloseFlag = false;
                 rcvThread = new Thread(_this);
                 rcvThread.start();
                 nextSequence = (new Random()).nextInt() % 0x0FFF;
                 nextIcqSequence = 2;
-
             } catch (JimmException e)
             {
                 throw (e);
@@ -835,8 +833,6 @@ public class Icq implements Runnable
 
         static private synchronized void connect_simple(String hostAndPort) throws JimmException
         {
-        	// #sijapp cond.end#
-        	// #sijapp cond.end#
             try
             {
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -846,9 +842,9 @@ public class Icq implements Runnable
                 // #sijapp cond.end#
                 is = sc.openInputStream();
                 os = sc.openOutputStream();
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_PROXY is "true"#
                 is_connected = true;
+                // #sijapp cond.end#
             } catch (ConnectionNotFoundException e)
             {
                 throw (new JimmException(121, 0));
@@ -860,7 +856,8 @@ public class Icq implements Runnable
                 throw (new JimmException(120, 0));
             }
         }
-
+        
+        // #sijapp cond.if modules_PROXY is "true"#
         // Attempts to connect through socks4
         static private synchronized void connect_socks4(String host, String port) throws JimmException
         {
@@ -1049,20 +1046,6 @@ public class Icq implements Runnable
                     os.write(socks5_connect_request(host, port));
                     os.flush();
                 }
-                // #sijapp cond.else# 
-                inputCloseFlag = false;
-                rcvThread = new Thread(_this);
-                rcvThread.start();
-                nextSequence = (new Random()).nextInt() % 0x0FFF;
-                nextIcqSequence = 2;
-                // #sijapp cond.end#                
-                // #sijapp cond.else#
-                inputCloseFlag = false;
-                rcvThread = new Thread(_this);
-                rcvThread.start();
-                nextSequence = (new Random()).nextInt() % 0x0FFF;
-                nextIcqSequence = 2;
-                // #sijapp cond.end#
             } catch (ConnectionNotFoundException e)
             {
                 throw (new JimmException(121, 0));
@@ -1074,6 +1057,7 @@ public class Icq implements Runnable
                 throw (new JimmException(120, 0));
             }
         }
+        // #sijapp cond.end#
 
         // Sets the reconnect flag and closes the connection
         static public synchronized void close()
@@ -1263,7 +1247,6 @@ public class Icq implements Runnable
                         bReadSum += bRead;
                     } while (bReadSum < flapHeader.length);
                     if (bRead == -1) break;
-                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                     // #sijapp cond.if modules_PROXY is "true"#
                     // Verify and strip out proxy responce
                     // Socks4 first
@@ -1330,7 +1313,6 @@ public class Icq implements Runnable
                             } while (bReadSum < flapHeader.length);
                         }
                     // #sijapp cond.end #
-                    // #sijapp cond.end #                    
 
                     // Verify flap header
                     if (Util.getByte(flapHeader, 0) != 0x2A) { throw (new JimmException(124, 0)); }
