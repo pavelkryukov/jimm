@@ -117,14 +117,14 @@ public class Options
 	// #sijapp cond.end#
 	
 	public static final int OPTION_USE_SMILES		              = 141;   /* boolean */
-
+    // #sijapp cond.if modules_PROXY is "true" #
 	public static final int OPTION_PRX_TYPE                       =  76;   /* int     */
 	public static final int OPTION_PRX_SERV                       =   8;   /* String  */
 	public static final int OPTION_PRX_PORT                       =   9;   /* String  */
 	public static final int OPTION_AUTORETRY_COUNT                =  10;   /* String  */
 	public static final int OPTION_PRX_NAME                       =  11;   /* String  */
 	public static final int OPTION_PRX_PASS                       =  12;   /* String  */
-
+	// #sijapp cond.end#
 	/**************************************************************************/
 
 	// Hashtable containing all option key-value pairs
@@ -164,7 +164,15 @@ public class Options
 	{
 	    setStringOption (Options.OPTION_UIN,                            "");
 		setStringOption (Options.OPTION_PASSWORD,                       "");
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
+		// #sijapp cond.else#
+		// #sijapp cond.if modules_PROXY is "true" #
+		setStringOption (Options.OPTION_SRV_HOST,                       "64.12.161.185"); //Cannot resolve host IP on MIDP1 devices
+		// #sijapp cond.else#
+		setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
+		// #sijapp cond.end#
+		// #sijapp cond.end#
 		setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 		setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
         setStringOption (Options.OPTION_CONN_ALIVE_INVTERV,             "120");
@@ -228,13 +236,14 @@ public class Options
         setStringOption (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
         setBooleanOption(Options.OPTION_USE_SMILES,                     true);
         setBooleanOption(Options.OPTION_SHOW_LAST_MESS,                 false);
-		 
+    	// #sijapp cond.if modules_PROXY is "true" #
 		setIntOption   (Options.OPTION_PRX_TYPE,                     	0);
 		setStringOption(Options.OPTION_PRX_SERV,                     	"");
 		setStringOption(Options.OPTION_PRX_PORT,						"1080");
 		setStringOption(Options.OPTION_AUTORETRY_COUNT,                 "1");
 		setStringOption(Options.OPTION_PRX_NAME,                  		"");
 		setStringOption(Options.OPTION_PRX_PASS,                        "");
+		// #sijapp cond.end#
 	}
 
 	// Load option values from record store
@@ -458,10 +467,8 @@ public class Options
         // Static constants for menu actios
         private static final int OPTIONS_ACCOUNT    = 0;
         private static final int OPTIONS_NETWORK    = 1;
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#        
         // #sijapp cond.if modules_PROXY is "true"#       
         private static final int OPTIONS_PROXY      = 2;
-        // #sijapp cond.end#
         // #sijapp cond.end#
         private static final int OPTIONS_INTERFACE  = 3;
         // #sijapp cond.if target isnot "DEFAULT"#        
@@ -511,7 +518,6 @@ public class Options
         static private TextField lightTimeout;
         static private ChoiceGroup lightManual;
 		// #sijapp cond.end#
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#        
         // #sijapp cond.if modules_PROXY is "true"#
         static private ChoiceGroup srvProxyType;
         static private TextField srvProxyHostTextField;
@@ -520,7 +526,6 @@ public class Options
         static private TextField srvProxyPassTextField;
         static private TextField connAutoRetryTextField;
         // #sijapp cond.end#
-        // #sijapp cond.end#        
 		
 		// Constructor
 		public OptionsForm() throws NullPointerException
@@ -537,11 +542,9 @@ public class Options
                  
             eventList[optionsMenu.append(ResourceBundle.getString("options_account"), null)]    = OPTIONS_ACCOUNT;
             eventList[optionsMenu.append(ResourceBundle.getString("options_network"), null)]    = OPTIONS_NETWORK;
-            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#             
             // #sijapp cond.if modules_PROXY is "true"#
             eventList[optionsMenu.append(ResourceBundle.getString("proxy"), null)]      = OPTIONS_PROXY;
             // #sijapp cond.end#
-            // #sijapp cond.end#            
             eventList[optionsMenu.append(ResourceBundle.getString("options_interface"), null)]  = OPTIONS_INTERFACE;
             // #sijapp cond.if target isnot "DEFAULT"#
             eventList[optionsMenu.append(ResourceBundle.getString("options_signaling"), null)]  = OPTIONS_SIGNALING;
@@ -564,11 +567,9 @@ public class Options
 			
 			initSubMenuUI(OPTIONS_ACCOUNT);
 			initSubMenuUI(OPTIONS_NETWORK);
-            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#              
             // #sijapp cond.if modules_PROXY is "true"#            
 			initSubMenuUI(OPTIONS_PROXY);
             // #sijapp cond.end#     
-            // #sijapp cond.end#               
 			initSubMenuUI(OPTIONS_INTERFACE);
             // #sijapp cond.if target isnot "DEFAULT"#            
 			initSubMenuUI(OPTIONS_SIGNALING);
@@ -616,7 +617,6 @@ public class Options
                 autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 autoConnectChoiceGroup.setSelectedIndex(0, getBooleanOption(Options.OPTION_AUTO_CONNECT));
                 break;
-            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#                  
             // #sijapp cond.if modules_PROXY is "true"#
             case OPTIONS_PROXY:              
                 srvProxyType = new ChoiceGroup(ResourceBundle.getString("proxy_type"), Choice.EXCLUSIVE);
@@ -635,7 +635,6 @@ public class Options
                 connAutoRetryTextField = new TextField(ResourceBundle.getString("auto_retry_count"), getStringOption(Options.OPTION_AUTORETRY_COUNT), 5, TextField.NUMERIC);
                 break;
             // #sijapp cond.end#      
-            // #sijapp cond.end#                 
 
             case OPTIONS_INTERFACE:
                 // Initialize elements (interface section)
@@ -790,7 +789,6 @@ public class Options
 						optionsForm.append(autoConnectChoiceGroup);
 						optionsForm.append(connTypeChoiceGroup);
 						break;
-                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#                         
                     // #sijapp cond.if modules_PROXY is "true"#
                     case OPTIONS_PROXY:
                         optionsForm.append(srvProxyType);
@@ -801,7 +799,6 @@ public class Options
                         optionsForm.append(connAutoRetryTextField);
                         break;
                     // #sijapp cond.end# 
-                    // #sijapp cond.end#                        
 					case OPTIONS_INTERFACE:
 						optionsForm.append(uiLanguageChoiceGroup);
 						optionsForm.append(displayDateChoiceGroup);
@@ -897,7 +894,6 @@ public class Options
 						setBooleanOption(Options.OPTION_SHADOW_CON,connTypeChoiceGroup.isSelected(1));
                         // #sijapp cond.end#
 						break;
-                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#                        
                     // #sijapp cond.if modules_PROXY is "true"#
                     case OPTIONS_PROXY:
                         setIntOption(Options.OPTION_PRX_TYPE,srvProxyType.getSelectedIndex());
@@ -910,7 +906,6 @@ public class Options
                         setStringOption(Options.OPTION_AUTORETRY_COUNT,connAutoRetryTextField.getString());
                         break;
                     // #sijapp cond.end#      
-                    // #sijapp cond.end#                         
 					case OPTIONS_INTERFACE:
 						setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.LANG_AVAILABLE[uiLanguageChoiceGroup.getSelectedIndex()]);
 						setBooleanOption(Options.OPTION_DISPLAY_DATE,displayDateChoiceGroup.isSelected(0));

@@ -136,10 +136,8 @@ public class ConnectAction extends Action
       (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B};
 
     // Timeout
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_PROXY is "true" #
     public static final int TIME_OUT = 20 * 1000;
-    // #sijapp cond.end #
     // #sijapp cond.end #
     public int TIMEOUT = 20 * 1000; // milliseconds
 
@@ -223,7 +221,6 @@ public class ConnectAction extends Action
     // Init action
     protected void init() throws JimmException
     {
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#        
         // #sijapp cond.if modules_PROXY is "true" #
         int retry = 1;
         try
@@ -237,8 +234,7 @@ public class ConnectAction extends Action
 
         this.TIMEOUT = ConnectAction.TIME_OUT * retry;
         // #sijapp cond.end#
-        // #sijapp cond.end#        
-
+ 
         // Check parameters
         if ((this.uin.length() == 0) || (this.password.length() == 0))
         {
@@ -247,35 +243,28 @@ public class ConnectAction extends Action
         }
 
         // Open connection
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_PROXY is "true" #
 
         for (int i = 0; i < retry; i++)
         {
             // #sijapp cond.end#
-            // #sijapp cond.end#
 
             try
             {
                 Icq.Connection.connect(this.srvHost + ":" + this.srvPort);
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_PROXY is "true" #
                 break;
                 // #sijapp cond.end #
-                // #sijapp cond.end #
             } catch (JimmException e)
             {
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_PROXY is "true" #
                 if (i >= (retry - 1) || ((this.lastActivity.getTime() + this.TIMEOUT) < System.currentTimeMillis()))
                 {
-                    // #sijapp cond.end #
                     // #sijapp cond.end #
 
                     this.state = ConnectAction.STATE_ERROR;
                     throw (e);
                 }
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_PROXY is "true" #
                 else
                     if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
@@ -293,7 +282,6 @@ public class ConnectAction extends Action
             }
         }
         // #sijapp cond.end #
-        // #sijapp cond.end #
 
         // Set STATE_INIT
         this.state = ConnectAction.STATE_INIT_DONE;
@@ -306,7 +294,6 @@ public class ConnectAction extends Action
     // Forwards received packet, returns true if packet has been consumed
     protected boolean forward(Packet packet) throws JimmException
     {
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_PROXY is "true" #
 
         int retry = 1;
@@ -318,7 +305,6 @@ public class ConnectAction extends Action
         {
             retry = 1;
         }
-        // #sijapp cond.end #
         // #sijapp cond.end #
 
         // Set activity flag
@@ -394,17 +380,14 @@ public class ConnectAction extends Action
                             }
                             // #sijapp cond.end#
                             // Open connection
-                            // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                             // #sijapp cond.if modules_PROXY is "true" #
                             for (int i = 0; i < retry; i++)
                             {
                                 try
                                 {
                                     // #sijapp cond.end #
-                                    // #sijapp cond.end #
                                     Icq.Connection.connect(disconnectPacket.getServer());
 
-                                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                                     // #sijapp cond.if modules_PROXY is "true" #
                                     break;
 
@@ -431,7 +414,6 @@ public class ConnectAction extends Action
                                         }
                                 }
                             }
-                            // #sijapp cond.end #
                             // #sijapp cond.end #
 
                             // Move to next state

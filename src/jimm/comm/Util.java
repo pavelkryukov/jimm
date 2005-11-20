@@ -559,7 +559,6 @@ public class Util
         return arrIP;
     }
     
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_PROXY is "true"#
     // Try to parse string IP
     public static boolean isIP(String ip)
@@ -589,7 +588,6 @@ public class Util
         }
     }
 
-    // #sijapp cond.end #
     // #sijapp cond.end #
     
     // Create a random id which is not used yet
