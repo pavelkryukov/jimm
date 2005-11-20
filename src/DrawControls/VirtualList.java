@@ -431,7 +431,6 @@ public abstract class VirtualList extends Canvas
 	//#sijapp cond.if target is "MIDP2"#
 	
 	private static long lastPointerTime = 0;
-	private static int lastPointerItem = -1;
 	private static int lastPointerYCrd = -1;
 	private static int lastPointerXCrd = -1;
 	private static int lastPointerTopItem = -1;
@@ -472,11 +471,6 @@ public abstract class VirtualList extends Canvas
 				lastPointerYCrd = y;
 				lastPointerTopItem = topItem;
 			}
-			else
-			{
-				// TODO: move scroller to pointer position
-
-			}
 			return;
 		}
 		
@@ -501,9 +495,7 @@ public abstract class VirtualList extends Canvas
 					{
 						itemSelected();
 						if (vlCommands != null) vlCommands.onItemSelected(this);
-						lastPointerItem = -1;
 					}
-					else lastPointerItem = i; 
 					lastPointerTime = time;
 				}
 				break;
