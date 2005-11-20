@@ -1108,11 +1108,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		public void activate()
 		{
 			// Disable ticker (if exists)
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			if (lastTickerDispl != null)
 			{
 				lastTickerDispl.setTicker(null);
 				lastTickerDispl = null;
 			}
+			// #sijapp cond.end#
 			
 			// Disable creeping line or status flashing 
 			currentUin = new String(uin);
@@ -1364,20 +1366,21 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				0,
 				500
 			);
-		}
-			 
+		}	 
 	}
 	
 	static Displayable lastTickerDispl = null;
 	
 	static public void messageReceived(String uin, String text)
 	{
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if ( currentUin.equals(uin) && 
 			     !Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin))
 		{
 			lastTickerDispl = getCurrDisplayable(uin);
 			if (lastTickerDispl != null) lastTickerDispl.setTicker(new Ticker(text));
 		}
+		// #sijapp cond.end#
 	}
 	
 	// Initializer

@@ -289,8 +289,9 @@ public class MainMenu implements CommandListener
           
         if (c == MainMenu.exitCommand)
         {
-            menuExit();
-         }       
+        	doExit(false);
+        	return;
+        }
 
         // #sijapp cond.end#
         

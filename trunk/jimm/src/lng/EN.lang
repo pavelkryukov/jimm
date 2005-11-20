@@ -60,7 +60,7 @@
   "copy_text"                   "Copy text"
   "cost"                        "Cost"
   "contact_list"                "List"
-  "cp1251"                      "Use CP1251 hack?"
+  "cp1251"                      "Use Win1251 coding"
   "cpd"                         "Cost per day"
   "cpp"                         "Cost per packet"
   "currency"                    "Currency"
@@ -274,6 +274,7 @@
   "ch_day"                      "Every day"
   "ch_week"                     "Every week"
   "ch_month"                    "Every month"
+  "show_prev_mess"              "Fill from history"
   //#sijapp cond.end#
 
   // Generic errors
