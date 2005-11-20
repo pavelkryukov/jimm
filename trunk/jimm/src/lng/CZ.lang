@@ -249,6 +249,20 @@
 
   //#sijapp cond.end#
 
+  //#sijapp cond.if modules_PROXY is "true" #
+  "proxy"                       "Proxy"
+  "proxy_type"                  "Proxy type"
+  "proxy_do_not_use"            "Do not use"
+  "proxy_socks4"                "Socks4"
+  "proxy_socks5"                "Socks5"
+  "proxy_guess"                 "Guess"
+  "proxy_server_host"           "Proxy host:"
+  "proxy_server_port"           "Port:"
+  "proxy_server_login"          "Proxy login:"
+  "proxy_server_pass"           "Proxy password:"
+  "auto_retry_count"            "Retry count:"
+  //#sijapp cond.end#
+
   // Generic errors
   "error_100"                   "Neznámá chyba (#100.EXT)"
 
