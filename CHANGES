@@ -253,6 +253,7 @@ VERSION 0.4.3
 _______________________________________________________________________________
 VERSION 0.5
 
+  * BUGFIX: Jimm sometimes crashed if was restored from flip on Motorola phones
   * Now Jimm works with touchscreen (only for MIDP2 build).
   * New language system is done. Language string are stored in *.lng files now.
   * Status of contact is stored in contact list after checking for invisible
