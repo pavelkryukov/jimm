@@ -46,6 +46,8 @@ import jimm.Options;
 import jimm.SplashCanvas;
 import jimm.util.ResourceBundle;
 import jimm.ContactList;
+import jimm.Traffic;
+
 
 public class Icq implements Runnable
 {
@@ -1159,16 +1161,16 @@ public class Icq implements Runnable
                     os.write(outpack);
                     os.flush();
                     // #sijapp cond.if modules_TRAFFIC is "true" #
-                    Jimm.jimm.getTrafficRef().addTraffic(outpack.length + 40); // 40
+                    Traffic.addTraffic(outpack.length + 40); // 40
                                                                                 // is
                                                                                 // the
                                                                                 // overhead
                                                                                 // for
                                                                                 // each
                                                                                 // packet
-                    if (Jimm.jimm.getTrafficRef().isActive() || ContactList.getVisibleContactListRef().isShown())
+                    if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                        Jimm.jimm.getTrafficRef().trafficScreen.update(false);
+                    	Traffic.trafficScreen.update(false);
                     }
                     // #sijapp cond.end#
                 } catch (IOException e)
@@ -1335,11 +1337,11 @@ public class Icq implements Runnable
                     System.arraycopy(flapHeader, 0, rcvdPacket, 0, flapHeader.length);
                     System.arraycopy(flapData, 0, rcvdPacket, flapHeader.length, flapData.length);
                     // #sijapp cond.if modules_TRAFFIC is "true" #
-                    Jimm.jimm.getTrafficRef().addTraffic(bReadSum + 46);
+                    Traffic.addTraffic(bReadSum + 46);
                     // 46 is the overhead for each packet (6 byte flap header)
-                    if (Jimm.jimm.getTrafficRef().isActive() || ContactList.getVisibleContactListRef().isShown())
+                    if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                        Jimm.jimm.getTrafficRef().trafficScreen.update(false);
+                    	Traffic.trafficScreen.update(false);
                     }
                     // #sijapp cond.end#
 
@@ -1543,10 +1545,10 @@ public class Icq implements Runnable
                     // #sijapp cond.if modules_TRAFFIC is "true" #
 
                     // 40 is the overhead for each packet
-                    Jimm.jimm.getTrafficRef().addTraffic(outpack.length + 40);
-                    if (Jimm.jimm.getTrafficRef().isActive() || ContactList.getVisibleContactListRef().isShown())
+                    Traffic.addTraffic(outpack.length + 40);
+                    if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                        Jimm.jimm.getTrafficRef().trafficScreen.update(false);
+                    	Traffic.trafficScreen.update(false);
                     }
                     // #sijapp cond.end#
                 } catch (IOException e)
@@ -1634,12 +1636,12 @@ public class Icq implements Runnable
                     if (bRead == -1) break;
 
                     // #sijapp cond.if modules_TRAFFIC is "true" #
-                    Jimm.jimm.getTrafficRef().addTraffic(bReadSum + 42);
+                    Traffic.addTraffic(bReadSum + 42);
 
                     // 42 is the overhead for each packet (2 byte packet length)
-                    if (Jimm.jimm.getTrafficRef().isActive() || ContactList.getVisibleContactListRef().isShown())
+                    if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                        Jimm.jimm.getTrafficRef().trafficScreen.update(false);
+                    	Traffic.trafficScreen.update(false);
                     }
                     // #sijapp cond.end#
 

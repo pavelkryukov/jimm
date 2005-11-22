@@ -217,7 +217,7 @@ public class Options
 		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     0);
 		// #sijapp cond.end#
 		
-		// #sijapp cond.if lang_RU is "true" and lang_EN isnot "true"#
+		// #sijapp cond.if lang_RU is "true"#
 		setBooleanOption(Options.OPTION_CP1251_HACK,                    true);
 		// #sijapp cond.else#
 		setBooleanOption(Options.OPTION_CP1251_HACK,                    false);
