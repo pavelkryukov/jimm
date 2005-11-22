@@ -195,7 +195,7 @@ public class FileTransfer implements CommandListener
         name_Desc.append(new StringItem(ResourceBundle.getString("size")+": ", String.valueOf(data.length/1024)+" kb"));
         // #sijapp cond.if modules_TRAFFIC is "true" #
         name_Desc.append(new StringItem(ResourceBundle.getString("cost")+": ", 
-                Jimm.jimm.getTrafficRef().getString(((data.length/Options.getIntOption(Options.OPTION_COST_PACKET_LENGTH))+1)*Options.getIntOption(Options.OPTION_COST_PER_PACKET))
+                Traffic.getString(((data.length/Options.getIntOption(Options.OPTION_COST_PACKET_LENGTH))+1)*Options.getIntOption(Options.OPTION_COST_PER_PACKET))
                 +" "+Options.getStringOption(Options.OPTION_CURRENCY)));                       
         // #sijapp cond.end #
         
@@ -225,7 +225,11 @@ public class FileTransfer implements CommandListener
         else
             if (c == this.backCommand)
             {
-
+            	vf = null;
+            	data = null;
+            	name_Desc = null;
+            	fileNameField = null;
+            	System.gc();
                 this.getCItem().activateMenu();
             }
             else
@@ -280,56 +284,27 @@ public class FileTransfer implements CommandListener
             this.addCommand(okCommand);
             // this.addCommand(resCommand);
             this.setCommandListener(this);
-
-            try
-            {
-                // Create the player
-                p = Manager.createPlayer("capture://video");
-                p.realize();
-
-                // Get the video control
-                vc = (VideoControl) p.getControl("VideoControl");
-
-                if (vc != null)
-                {
-                    vc.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, this);
-
-                    int canvasWidth = this.getWidth();
-                    int canvasHeight = this.getHeight();
-                    int displayWidth = vc.getDisplayWidth();
-                    int displayHeight = vc.getDisplayHeight();
-                    int x = (canvasWidth - displayWidth) / 2;
-                    int y = (canvasHeight - displayHeight) / 2;
-
-                    vc.setDisplayLocation(x, y);
-                } else
-                {
-                    JimmException.handleException(new JimmException(180, 0, true));
-                }
-            } catch (IOException ioe)
-            {
-                JimmException.handleException(new JimmException(181, 0, true));
-                reset();
-            } catch (MediaException me)
-            {
-                JimmException.handleException(new JimmException(181, 1, true));
-                reset();
-            } catch (SecurityException se)
-            {
-                JimmException.handleException(new JimmException(181, 2, true));
-                reset();
-            }
-
         }
 
         private void reset()
         {
             if (p != null)
             {
-                p.close();
-                p = null;
+            	try
+            	{
+            		if (p.getState() == Player.STARTED) p.stop();
+            		p.close();
+            	}
+            	catch (Exception e) {}
+            	p = null;
             }
-            vc = null;
+                
+            if (vc != null)
+            {
+            	vc.setVisible(false);
+            	vc = null;
+            }
+            System.gc();
         }
 
         // paint method, inherid form Canvas
@@ -355,64 +330,109 @@ public class FileTransfer implements CommandListener
         // start the viewfinder
         public synchronized void start()
         {
-            if ((p != null) && !active)
+        	reset();
+            if (!active)
             {
                 try
                 {
-                    p.start();
-                    vc.setVisible(true);
-                    active = true;
-                } catch (MediaException me)
+                    // Create the player
+                    p = Manager.createPlayer("capture://video");
+                    p.realize();
+
+                    // Get the video control
+                    vc = (VideoControl) p.getControl("VideoControl");
+
+                    if (vc != null)
+                    {
+                        vc.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, this);
+
+                        int canvasWidth = this.getWidth();
+                        int canvasHeight = this.getHeight();
+                        int displayWidth = vc.getDisplayWidth();
+                        int displayHeight = vc.getDisplayHeight();
+                        int x = (canvasWidth - displayWidth) / 2;
+                        int y = (canvasHeight - displayHeight) / 2;
+
+                        vc.setDisplayLocation(x, y);
+                        
+                        p.start();
+                        vc.setVisible(true);
+                        active = true;
+                        
+                    } else
+                    {
+                        JimmException.handleException(new JimmException(180, 0, true));
+                    }
+                }
+                catch (IOException ioe)
                 {
-                    JimmException.handleException(new JimmException(182, 0, true));
-                    reset();
-                } catch (SecurityException se)
+                	reset();
+                    JimmException.handleException(new JimmException(181, 0, true));
+                    
+                } 
+                catch (MediaException me)
                 {
-                    JimmException.handleException(new JimmException(183, 0, true));
-                    reset();
+                	reset();
+                    JimmException.handleException(new JimmException(181, 1, true));
+                } 
+                catch (SecurityException se)
+                {
+                	reset();
+                    JimmException.handleException(new JimmException(181, 2, true));
                 }
             }
+        }
+        
+        private byte[] getSnapshot(String type)
+        {
+        	byte[] data;
+            try
+            {
+            	data = vc.getSnapshot(type);
+            }
+            catch (Exception e)
+            {
+            	return null;
+            }
+            return data;
         }
 
         // take a snapshot form the viewfinder
-        public void takeSnapshot()
-        {
-            if (p != null)
-            {
-                try
-                {
-                    //data = vc.getSnapshot("encoding=jpeg&width=" + this.res[0][this.res_marker] + "&height=" + this.res[1][this.res_marker]);
-                    //data_pre = vc.getSnapshot(null);
-                    data = vc.getSnapshot(null);
+		public void takeSnapshot()
+		{
+			if (p != null)
+			{
+				data = getSnapshot("encoding=jpeg");
+				if (data == null) data = getSnapshot("JPEG");
+				else if (data == null) data = getSnapshot(null);
+				if (data == null) JimmException.handleException(new JimmException(183, 0, true));
+				this.stop();
+				img = Image.createImage(data, 0, data.length);
+				viewfinder = false;
+				repaint();
+			}
+		}
 
-                    this.stop();
-                    img = Image.createImage(data, 0, data.length);
-                    viewfinder = false;
-                    repaint();
-
-                } catch (MediaException me)
-                {
-                    JimmException.handleException(new JimmException(183, 0, true));
-                }
-            }
-        }
-
-        // stop the viewfinder
-        public synchronized void stop()
-        {
-            if ((p != null) && active)
-            {
-                try
-                {
-                    vc.setVisible(false);
-                    p.stop();
-                } catch (Exception e)
-                {
-                    reset();
-                }
-                active = false;
-            }
-        }
+		// stop the viewfinder
+		public synchronized void stop()
+		{
+			if (active)
+			{
+				try
+				{
+					vc.setVisible(false);
+					p.stop();
+					
+					// Remove video control at SE phones placing it beyond screen border
+					if (Jimm.jimm.is_phone_SE()) vc.setDisplayLocation(1000, 1000);
+				}
+				catch (Exception e)
+				{
+					reset();
+				}
+				active = false;
+			}
+		}
 
         // action listener
         public void commandAction(Command c, Displayable d)

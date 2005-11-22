@@ -76,7 +76,7 @@ public class Jimm extends MIDlet
 	
     // #sijapp cond.if target is "MIDP2" #
 	// Minimized state variable
-	private boolean minimized;
+	private boolean minimized, is_phone_SE;
     // #sijapp cond.end #
 
 	// Timer object
@@ -107,7 +107,7 @@ public class Jimm extends MIDlet
 	public void startApp() throws MIDletStateChangeException
 	{
 		RunnableImpl.setMidlet(this);
-
+		
 		// Return if MIDlet has already been initialized
 		if (Jimm.jimm != null)
         {
@@ -117,6 +117,12 @@ public class Jimm extends MIDlet
 		    ContactList.activate();
             return;
         }
+		
+		// #sijapp cond.if target is "MIDP2" #
+		String microeditionPlatform = System.getProperty("microedition.platform");
+		if (microeditionPlatform != null)
+			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1);
+		// #sijapp cond.end#
 		
 		// Save MIDlet reference
 		Jimm.jimm = this;
@@ -340,6 +346,12 @@ public class Jimm extends MIDlet
 	{
 	    return(this.minimized);
 	}
+	
+	public boolean is_phone_SE()
+	{
+		return is_phone_SE;
+	}	
+	
     // #sijapp cond.end #
 }
 

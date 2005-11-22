@@ -180,8 +180,7 @@ public class MainMenu implements CommandListener
             // #sijapp cond.end#
             MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("about"), null)] 		= MENU_ABOUT;
             // #sijapp cond.if target is "MIDP2" #
-            String microeditionPlatform = System.getProperty("microedition.platform");
-            if ((microeditionPlatform != null) && (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1))
+            if (Jimm.jimm.is_phone_SE())
             	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("minimize"), null)] 	= MENU_MINIMIZE;
 	        // #sijapp cond.end#
             MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("exit"), null)] 		= MENU_EXIT;

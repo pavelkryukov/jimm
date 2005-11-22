@@ -46,39 +46,37 @@ import jimm.comm.Icq;;
 
 public class Traffic
 {
-
-
 	// Persistent variables
 
 	// Traffic read form file
-	private int all_traffic;
+	static private int all_traffic;
 
 	// Traffic for this session
-	private int session_traffic;
+	static private int session_traffic;
 
 	// Date of last reset of all_traffic
-	private Date savedSince;
+	static private Date savedSince;
 
 	// Date of the last use of the connection
-	private Date lastTimeUsed;
+	static private Date lastTimeUsed;
 
 	// Number of traffic changes since last save
-	private byte savedCounter;
+	static private byte savedCounter;
 
 	// Amount of money for this session
-	private int sessionCost;
+	static private int sessionCost;
 
 	// Amount of money for all
-	private int savedCost;
+	static private int savedCost;
 
 	// Amount of money for the costs per day for this session
-	private int costPerDaySum;
+	static private int costPerDaySum;
 
 	// Indicates if the Traffic Screen ist showing.
-	private boolean active;
+	static private boolean active;
 
 	// Traffic Screen
-	public TrafficScreen trafficScreen;
+	static public TrafficScreen trafficScreen;
 
 
 	// Constructor
@@ -90,25 +88,25 @@ public class Traffic
 		lastTimeUsed = new Date(1);
 		costPerDaySum = 0;
 		savedSince = new Date();
-		this.setIsActive(false);
+		setIsActive(false);
 		try
 		{
-			this.load();
+			load();
 		}
 		catch (Exception e)
 		{
-			this.setSavedSince(new Date().getTime());
-			this.setTraffic(0);
+			setSavedSince(new Date().getTime());
+			setTraffic(0);
 			all_traffic = 0;
 		}
 		// Construct traffic scrren
-		this.trafficScreen = new TrafficScreen();
+		trafficScreen = new TrafficScreen();
 		savedCounter = 0;
 	}
 
 	//Loads traffic from file
 
-	public void load() throws IOException, RecordStoreException
+	static public void load() throws IOException, RecordStoreException
 	{
 
 		// Open record store
@@ -129,10 +127,10 @@ public class Traffic
 		buf = traffic.getRecord(2);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
-		this.setTraffic(dis.readInt());
-		this.setSavedSince(dis.readLong());
-		this.setLastTimeUsed(dis.readLong());
-		this.setSavedCost(dis.readInt());
+		setTraffic(dis.readInt());
+		setSavedSince(dis.readLong());
+		setLastTimeUsed(dis.readLong());
+		setSavedCost(dis.readInt());
 		// Close record store
 		traffic.closeRecordStore();
 
@@ -140,7 +138,7 @@ public class Traffic
 
 	// Saves traffic from file
 
-	public void save() throws IOException, RecordStoreException
+	static public void save() throws IOException, RecordStoreException
 	{
 
 		// Open record store
@@ -168,10 +166,10 @@ public class Traffic
 		baos = new ByteArrayOutputStream();
 
 		dos = new DataOutputStream(baos);
-		dos.writeInt(this.getAllTraffic(false));
-		dos.writeLong(this.getSavedSince());
-		dos.writeLong(this.getLastTimeUsed());
-		dos.writeInt((int) this.generateCostSum(false));
+		dos.writeInt(getAllTraffic(false));
+		dos.writeLong(getSavedSince());
+		dos.writeLong(getLastTimeUsed());
+		dos.writeInt((int) generateCostSum(false));
 		buf = baos.toByteArray();
 		traffic.setRecord(2, buf, 0, buf.length);
 
@@ -181,36 +179,36 @@ public class Traffic
 	}
 
 // Generates String for Traffic Info Screen
-	protected String generateTrafficString()
+	static protected String generateTrafficString()
 	{
 		String traffic = new String();
 		Calendar time = Calendar.getInstance();
-		time.setTime(this.getSavedSinceDate());
+		time.setTime(getSavedSinceDate());
 		traffic = ResourceBundle.getString("session") + ":\n" +
-				this.getSessionTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
-				this.getSessionTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
-				this.getString(this.generateCostSum(true)) + " " + Options.getStringOption(Options.OPTION_CURRENCY) + "\n" +
-				ResourceBundle.getString("since") + ": " + this.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
-				this.makeTwo(time.get(Calendar.MONTH) + 1) + "." +
+				getSessionTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
+				getSessionTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
+				getString(generateCostSum(true)) + " " + Options.getStringOption(Options.OPTION_CURRENCY) + "\n" +
+				ResourceBundle.getString("since") + ": " + makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
+				makeTwo(time.get(Calendar.MONTH) + 1) + "." +
 				time.get(Calendar.YEAR) + " " +
-				this.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" +
-				this.makeTwo(time.get(Calendar.MINUTE)) + "\n" +
-				this.getAllTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
-				this.getAllTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
-				this.getString(this.generateCostSum(false))+ " " + Options.getStringOption(Options.OPTION_CURRENCY);
+				makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" +
+				makeTwo(time.get(Calendar.MINUTE)) + "\n" +
+				getAllTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
+				getAllTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
+				getString(generateCostSum(false))+ " " + Options.getStringOption(Options.OPTION_CURRENCY);
 		return (traffic);
 
 	}
 
 
 // Determins whenever we were already connected today or not
-	private boolean usedToday()
+	static private boolean usedToday()
 	{
 //		Date now = new Date();
 		Calendar time_now = Calendar.getInstance();
 		Calendar time_lastused = Calendar.getInstance();
 		time_now.setTime(new Date());
-		time_lastused.setTime(this.getLastTimeUsedDate());
+		time_lastused.setTime(getLastTimeUsedDate());
 		if ((time_now.get(Calendar.DAY_OF_MONTH) == time_lastused.get(Calendar.DAY_OF_MONTH)) &&
 				(time_now.get(Calendar.MONTH) == time_lastused.get(Calendar.MONTH)) &&
 				(time_now.get(Calendar.YEAR) == time_lastused.get(Calendar.YEAR)))
@@ -225,7 +223,7 @@ public class Traffic
 	}
 
 // Generates int of money amount spent on connection
-	protected int generateCostSum(boolean thisSession)
+	static protected int generateCostSum(boolean thisSession)
 	{
 
 		int cost;
@@ -246,7 +244,7 @@ public class Traffic
 		}
 		else
 		{
-			if (this.session_traffic != 0)
+			if (session_traffic != 0)
 			{
 				cost = ((session_traffic / costPacketLength) + 1) * costPerPacket + getSavedCost();
 			}
@@ -255,15 +253,15 @@ public class Traffic
 				cost = getSavedCost();
 			}
 		}
-		if ((!usedToday()) && (this.getSessionTraffic(false) != 0) && (costPerDaySum == 0))
+		if ((!usedToday()) && (getSessionTraffic(false) != 0) && (costPerDaySum == 0))
 		{
-			this.increaseCostPerDaySum();
+			increaseCostPerDaySum();
 		}
 		return (cost + costPerDaySum);
 	}
 
 //Date print utility
-	protected String makeTwo(int number)
+	static protected String makeTwo(int number)
 	{
 		if (number < 10)
 			return ("0" + String.valueOf(number));
@@ -272,7 +270,7 @@ public class Traffic
 	}
 
 	// Returns String value of cost value
-	public String getString(int value){
+	static public String getString(int value){
 	  String costString = "";
 	  String afterDot = "";
 	  try{
@@ -296,27 +294,27 @@ public class Traffic
 	}
 
 	//Returns value of session traffic
-	protected int getSessionTraffic(boolean kb)
+	static protected int getSessionTraffic(boolean kb)
 	{
 		if (kb) return (session_traffic / 1024);
 		return (session_traffic);
 	}
 
 	//Returns value of all traffic
-	public int getAllTraffic(boolean kb)
+	static public int getAllTraffic(boolean kb)
 	{
 		if (kb) return ((all_traffic + session_traffic) / 1024);
 		return (all_traffic + session_traffic);
 	}
 
 	// Set value of session traffic
-	public void setTraffic(int bytes)
+	static public void setTraffic(int bytes)
 	{
 		all_traffic = bytes;
 	}
 
 	// Adds to session traffic
-	public void addTraffic(int bytes)
+	static public void addTraffic(int bytes)
 	{
 		session_traffic = session_traffic + bytes;
 		if (savedCounter == 10)
@@ -324,7 +322,7 @@ public class Traffic
 			savedCounter = 0;
 			try
 			{
-				this.save();
+				save();
 			}
 			catch (Exception e)
 			{ // Do nothing
@@ -334,14 +332,14 @@ public class Traffic
 	}
 
 	// Reset the saved value
-	public void reset()
+	static public void reset()
 	{
-		this.setTraffic(0);
-		this.setSavedCost(0);
-		this.setSavedSince(new Date().getTime());
+		setTraffic(0);
+		setSavedCost(0);
+		setSavedSince(new Date().getTime());
 		try
 		{
-			this.save();
+			save();
 		}
 		catch (Exception e)
 		{ // Do nothing
@@ -349,80 +347,80 @@ public class Traffic
 	}
 
 	// Sets the value of savedSince
-	public void setSavedSince(long time)
+	static public void setSavedSince(long time)
 	{
 		savedSince.setTime(time);
 	}
 
 	// Get the value of saved Since
-	public long getSavedSince()
+	static public long getSavedSince()
 	{
 		return (savedSince.getTime());
 	}
 
 	// Get the value of saved Since
-	public Date getSavedSinceDate()
+	static public Date getSavedSinceDate()
 	{
 		return (savedSince);
 	}
 
 	// Sets the value of lastTimeUsed
-	public void setLastTimeUsed(long time)
+	static public void setLastTimeUsed(long time)
 	{
 		lastTimeUsed.setTime(time);
 	}
 
 // Get the value of lastTimeUsed
-	public long getLastTimeUsed()
+	static public long getLastTimeUsed()
 	{
 		return (lastTimeUsed.getTime());
 	}
 
 	// Get the value of lastTimeUsed
-	public Date getLastTimeUsedDate()
+	static public Date getLastTimeUsedDate()
 	{
 		return (lastTimeUsed);
 	}
 
 	// Get all cost
-	public int getSavedCost()
+	static public int getSavedCost()
 	{
 		return (savedCost);
 	}
 
 	// Set all cost
-	public void setSavedCost(int cost)
+	static public void setSavedCost(int cost)
 	{
 		savedCost = cost;
 	}
 
 	// Get session cost
-	public int getSessionCost()
+	static public int getSessionCost()
 	{
 		return (sessionCost + costPerDaySum);
 	}
 
 	// Set all cost
-	public void setSessionCost(int cost)
+	static public void setSessionCost(int cost)
 	{
 		sessionCost = cost;
 	}
 
 	// Increases costPerDaySum at one unit
-	public void increaseCostPerDaySum()
+	static public void increaseCostPerDaySum()
 	{
 		costPerDaySum = costPerDaySum + Options.getIntOption(Options.OPTION_COST_PER_DAY);
 		setLastTimeUsed(new Date().getTime());
 	}
 
 	// Is the traffic screen active?
-	public boolean isActive()
+	static public boolean isActive()
 	{
 		return (active);
 	}
 
 	// Sets the value if the Traffic Screen is active
-	public void setIsActive(boolean _active)
+	static public void setIsActive(boolean _active)
 	{
 		active = _active;
 	}
@@ -454,7 +452,7 @@ public class Traffic
 		{
 
 			updateThreshold = 1;
-			compareTraffic = (byte) Traffic.this.getSessionTraffic(true);
+			compareTraffic = (byte) Traffic.getSessionTraffic(true);
 
 			// Initialize command
             // #sijapp cond.if target is "MOTOROLA" # 
@@ -484,15 +482,15 @@ public class Traffic
 
 		public void update(boolean doIt)
 		{
-			ContactList.updateTitle(Traffic.this.getSessionTraffic(true));
-			if (((Traffic.this.getSessionTraffic(true) - compareTraffic) >= updateThreshold) | doIt)
+			ContactList.updateTitle(Traffic.getSessionTraffic(true));
+			if (((Traffic.getSessionTraffic(true) - compareTraffic) >= updateThreshold) | doIt)
 			{
-				this.trafficScreen.append(Traffic.this.generateTrafficString());
+				this.trafficScreen.append(Traffic.generateTrafficString());
 				if (this.trafficScreen.size() > 1)
 				{
 					this.trafficScreen.delete(0);
 				}
-				compareTraffic = (byte) Traffic.this.getSessionTraffic(true);
+				compareTraffic = (byte) Traffic.getSessionTraffic(true);
 			}
 		}
 
@@ -503,11 +501,11 @@ public class Traffic
 			// Look for save command
 			if (c == this.resetCommand)
 			{
-				Traffic.this.reset();
+				Traffic.reset();
 			}
 			if (c == this.okCommand)
 			{
-				Traffic.this.setIsActive(false);
+				Traffic.setIsActive(false);
 				if (Icq.isConnected())
 				{
 					ContactList.activate();
