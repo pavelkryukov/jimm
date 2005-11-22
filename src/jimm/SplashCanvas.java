@@ -96,7 +96,7 @@ public class SplashCanvas extends Canvas
 	private static Font versionFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 
 	// Font (and font height in pixels) used to display informational messages
-	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, Font.SIZE_SMALL);
+	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 	private static int height = font.getHeight();
 	
 
