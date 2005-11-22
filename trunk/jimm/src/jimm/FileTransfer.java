@@ -225,7 +225,9 @@ public class FileTransfer implements CommandListener
         else
             if (c == this.backCommand)
             {
+            	// #sijapp cond.if target isnot "MOTOROLA" #
             	vf = null;
+            	// #sijapp cond.end #
             	data = null;
             	name_Desc = null;
             	fileNameField = null;
@@ -424,7 +426,9 @@ public class FileTransfer implements CommandListener
 					p.stop();
 					
 					// Remove video control at SE phones placing it beyond screen border
+					// #sijapp cond.if target is "MIDP2" #
 					if (Jimm.jimm.is_phone_SE()) vc.setDisplayLocation(1000, 1000);
+					// #sijapp cond.end #
 				}
 				catch (Exception e)
 				{

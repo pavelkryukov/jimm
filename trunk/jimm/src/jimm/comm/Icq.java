@@ -46,8 +46,10 @@ import jimm.Options;
 import jimm.SplashCanvas;
 import jimm.util.ResourceBundle;
 import jimm.ContactList;
-import jimm.Traffic;
 
+//#sijapp cond.if modules_TRAFFIC is "true" #
+import jimm.Traffic;
+//#sijapp cond.end#
 
 public class Icq implements Runnable
 {
