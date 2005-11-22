@@ -91,6 +91,7 @@ public class Options
 	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
 	public static final int OPTION_CL_SORT_BY                     =  65;   /* int     */
 	public static final int OPTION_CL_HIDE_OFFLINE                = 130;   /* boolean */
+    // #sijapp cond.if target isnot  "DEFAULT"#	
 	public static final int OPTION_MESSAGE_NOTIFICATION_MODE      =  66;   /* int     */
 	public static final int OPTION_MESSAGE_NOTIFICATION_SOUNDFILE =   4;   /* String  */
 	public static final int OPTION_MESSAGE_NOTIFICATION_VOLUME    =  67;   /* int     */
@@ -98,11 +99,14 @@ public class Options
 	public static final int OPTION_ONLINE_NOTIFICATION_SOUNDFILE  =   5;   /* String  */
 	public static final int OPTION_ONLINE_NOTIFICATION_VOLUME     =  69;   /* int     */
 	public static final int OPTION_VIBRATOR                       =  75;   /* integer */
+    // #sijapp cond.end #	
 	public static final int OPTION_CP1251_HACK                    = 133;   /* boolean */
+    // #sijapp cond.if modules_TRAFFIC is "true" #
 	public static final int OPTION_COST_PER_PACKET                =  70;   /* int     */
 	public static final int OPTION_COST_PER_DAY                   =  71;   /* int     */
 	public static final int OPTION_COST_PACKET_LENGTH             =  72;   /* int     */
 	public static final int OPTION_CURRENCY                       =   6;   /* String  */
+    // #sijapp cond.end #
 	public static final int OPTION_ONLINE_STATUS                  = 192;   /* long    */
 	public static final int OPTION_CHAT_SMALL_FONT                = 135;   /* boolean */
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
@@ -117,12 +121,14 @@ public class Options
 	// #sijapp cond.end#
 	
 	public static final int OPTION_USE_SMILES		              = 141;   /* boolean */
+    // #sijapp cond.if modules_PROXY is "true" #
 	public static final int OPTION_PRX_TYPE                       =  76;   /* int     */
 	public static final int OPTION_PRX_SERV                       =   8;   /* String  */
 	public static final int OPTION_PRX_PORT                       =   9;   /* String  */
 	public static final int OPTION_AUTORETRY_COUNT                =  10;   /* String  */
 	public static final int OPTION_PRX_NAME                       =  11;   /* String  */
 	public static final int OPTION_PRX_PASS                       =  12;   /* String  */
+	// #sijapp cond.end#
 	/**************************************************************************/
 
 	// Hashtable containing all option key-value pairs
@@ -205,14 +211,7 @@ public class Options
 		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mp3");
 		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
 		setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		             5);
-		setBooleanOption(Options.OPTION_LIGHT_MANUAL,		             false);
-		// #sijapp cond.else#
-		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
-		setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "");
-		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    0);
-		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
-		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "");
-		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     0);
+		setBooleanOption(Options.OPTION_LIGHT_MANUAL,		             false);	
 		// #sijapp cond.end#
 		
 		// #sijapp cond.if lang_RU is "true"#
@@ -220,12 +219,15 @@ public class Options
 		// #sijapp cond.else#
 		setBooleanOption(Options.OPTION_CP1251_HACK,                    false);
 		// #sijapp cond.end#
-		
+        // #sijapp cond.if target isnot "DEFAULT"#
 		setIntOption    (Options.OPTION_VIBRATOR,                       0);
+		// #sijapp cond.end#		
+        // #sijapp cond.if modules_TRAFFIC is "true" #
 		setIntOption    (Options.OPTION_COST_PER_PACKET,                0);
 		setIntOption    (Options.OPTION_COST_PER_DAY,                   0);
 		setIntOption    (Options.OPTION_COST_PACKET_LENGTH,             1024);
 		setStringOption (Options.OPTION_CURRENCY,                       "$");
+	    // #sijapp cond.end #
 		setLongOption   (Options.OPTION_ONLINE_STATUS,                  ContactList.STATUS_ONLINE);
 		setBooleanOption(Options.OPTION_CHAT_SMALL_FONT,                true);
 		setBooleanOption(Options.OPTION_USER_GROUPS,                    false);
@@ -234,12 +236,14 @@ public class Options
         setStringOption (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
         setBooleanOption(Options.OPTION_USE_SMILES,                     true);
         setBooleanOption(Options.OPTION_SHOW_LAST_MESS,                 false);
+        // #sijapp cond.if modules_PROXY is "true" #
 		setIntOption   (Options.OPTION_PRX_TYPE,                     	0);
 		setStringOption(Options.OPTION_PRX_SERV,                     	"");
 		setStringOption(Options.OPTION_PRX_PORT,						"1080");
 		setStringOption(Options.OPTION_AUTORETRY_COUNT,                 "1");
 		setStringOption(Options.OPTION_PRX_NAME,                  		"");
 		setStringOption(Options.OPTION_PRX_PASS,                        "");
+	    // #sijapp cond.end #
 	}
 
 	// Load option values from record store
@@ -257,8 +261,7 @@ public class Options
 		buf = account.getRecord(1);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
-		if (!(dis.readUTF().equals(Jimm.VERSION))) 
-			Options.setDefaults();
+	    Options.setDefaults();
 		
 		// Read all option key-value pairs
 		buf = account.getRecord(2);
