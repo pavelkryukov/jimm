@@ -117,14 +117,12 @@ public class Options
 	// #sijapp cond.end#
 	
 	public static final int OPTION_USE_SMILES		              = 141;   /* boolean */
-    // #sijapp cond.if modules_PROXY is "true" #
 	public static final int OPTION_PRX_TYPE                       =  76;   /* int     */
 	public static final int OPTION_PRX_SERV                       =   8;   /* String  */
 	public static final int OPTION_PRX_PORT                       =   9;   /* String  */
 	public static final int OPTION_AUTORETRY_COUNT                =  10;   /* String  */
 	public static final int OPTION_PRX_NAME                       =  11;   /* String  */
 	public static final int OPTION_PRX_PASS                       =  12;   /* String  */
-	// #sijapp cond.end#
 	/**************************************************************************/
 
 	// Hashtable containing all option key-value pairs
@@ -236,14 +234,12 @@ public class Options
         setStringOption (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
         setBooleanOption(Options.OPTION_USE_SMILES,                     true);
         setBooleanOption(Options.OPTION_SHOW_LAST_MESS,                 false);
-    	// #sijapp cond.if modules_PROXY is "true" #
 		setIntOption   (Options.OPTION_PRX_TYPE,                     	0);
 		setStringOption(Options.OPTION_PRX_SERV,                     	"");
 		setStringOption(Options.OPTION_PRX_PORT,						"1080");
 		setStringOption(Options.OPTION_AUTORETRY_COUNT,                 "1");
 		setStringOption(Options.OPTION_PRX_NAME,                  		"");
 		setStringOption(Options.OPTION_PRX_PASS,                        "");
-		// #sijapp cond.end#
 	}
 
 	// Load option values from record store
