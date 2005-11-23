@@ -118,15 +118,15 @@ public class Jimm extends MIDlet
             return;
         }
 		
+		// Save MIDlet reference
+		Jimm.jimm = this;
+		
 		// #sijapp cond.if target is "MIDP2" #
 		String microeditionPlatform = System.getProperty("microedition.platform");
 		if (microeditionPlatform != null)
 			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1);
 		// #sijapp cond.end#
 		
-		// Save MIDlet reference
-		Jimm.jimm = this;
-
 		// Get Jimm version
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
 		if (Jimm.VERSION == null) Jimm.VERSION = "###VERSION###";

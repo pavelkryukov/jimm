@@ -101,8 +101,9 @@ class ChatTextList extends TextList implements VirtualListCommands
 	public void onCursorMove(VirtualList sender) {}
 	public void onItemSelected(VirtualList sender) {}
 
-	public void onKeyPress(VirtualList sender, int keyCode)
+	public void onKeyPress(VirtualList sender, int keyCode, int type)
 	{
+		if (type != TextList.KEY_PRESSED) return;
 		String currUin;
 		switch (getGameAction(keyCode))
 		{

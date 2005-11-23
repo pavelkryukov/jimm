@@ -31,11 +31,11 @@ import javax.microedition.lcdui.*;
 import jimm.JimmUI;
 import jimm.comm.*;
 import jimm.util.ResourceBundle;
+import jimm.SplashCanvas;
 import DrawControls.*;
 
-public class ContactListContactItem extends ContactListItem implements CommandListener
+public class ContactListContactItem extends ContactListItem implements CommandListener, VirtualListCommands
 {
-
 	// No capability
 	public static final int CAP_NO_INTERNAL = 0x00000000;
 
@@ -514,6 +514,157 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		// #sijapp cond.end#
 	}
 
+	public void onCursorMove(VirtualList sender) {}
+	public void onItemSelected(VirtualList sender) {}
+	public void onKeyPress(VirtualList sender, int keyCode,int type)
+	{
+		if (type == VirtualList.KEY_PRESSED)
+		{
+			String currUin;
+			switch (sender.getGameAction(keyCode))
+			{
+			case Canvas.LEFT:
+				currUin = ContactList.showNextPrevChat(false);
+				Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
+				break;
+				
+			case Canvas.RIGHT:
+				currUin = ContactList.showNextPrevChat(true);
+				Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
+				break;
+			}
+		}
+
+		switch (keyCode)
+		{
+		case Canvas.KEY_NUM0:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY0)+1, type);
+			break;
+			
+		case Canvas.KEY_NUM4:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY4)+1, type);
+			break;
+			
+		case Canvas.KEY_NUM6:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY6)+1, type);
+			break;
+			
+		case Canvas.KEY_STAR:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR)+1, type);
+			break;
+			
+		case Canvas.KEY_POUND:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND)+1, type);
+			break;
+			
+		// #sijapp cond.if target is "SIEMENS2"#
+		case -11:
+			// This means the CALL button was pressed...
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYCALL)+1, type);
+			break;
+		// #sijapp cond.end#
+		}	
+	}
+
+	public void checkForInvis()
+	{
+		VisibilityCheckerAction act = new VisibilityCheckerAction(getUin(), getName());
+		try
+		{
+			Icq.requestAction(act);
+		}
+		catch (JimmException e)
+		{
+			JimmException.handleException(e);
+			if (e.isCritical()) return;
+		}
+	}
+	
+	//#sijapp cond.if modules_HISTORY is "true" #
+	public void showHistory()
+	{
+		HistoryStorage.showHistoryList(getUin(), getName());
+	}
+	//#sijapp cond.end#
+	
+	public void showInfo()
+	{
+		// Reqeust user information
+		// Display splash canvas
+		SplashCanvas.setMessage(ResourceBundle.getString("wait"));
+		SplashCanvas.setProgress(0);
+		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
+
+		// Request info from server
+		RequestInfoAction act1 = new RequestInfoAction(ContactListContactItem.this.getUin());
+		try
+		{
+			Icq.requestAction(act1);
+		}
+		catch (JimmException e)
+		{
+			JimmException.handleException(e);
+			if (e.isCritical()) return;
+		}
+
+		// Start timer
+		Jimm.jimm.getTimerRef().schedule(new SplashCanvas.RequestInfoTimerTask(
+				act1), 1000, 1000);
+	}
+	
+	public void newMessage()
+	{
+		if (menuList == null) this.activate();
+		menuList.setSelectedIndex(0, true);
+		writeMessage(null);
+	} 
+	
+	private static long pressedTime;
+	private void callHotkeyAction(int actionNum, int keyType)
+	{
+		if (keyType == VirtualList.KEY_PRESSED)
+		{
+			pressedTime = System.currentTimeMillis();
+			switch (actionNum)
+			{
+				case VirtualList.HOTKEY_INVIS:
+					this.checkForInvis();
+					break;
+					
+				// #sijapp cond.if modules_HISTORY is "true" #
+				case VirtualList.HOTKEY_HISTORY:
+					this.showHistory();
+					break;
+				// #sijapp cond.end#
+				
+				case VirtualList.HOTKEY_INFO:
+					this.showInfo();
+					break;
+					
+				case VirtualList.HOTKEY_NEWMSG:
+					newMessage();
+					break;
+					
+				case VirtualList.HOTKEY_OPTIONS:
+					Options.optionsForm.activate();
+					break;
+					
+				case VirtualList.HOTKEY_MENU:
+					MainMenu.activate();
+					break;
+					
+				case VirtualList.HOTKEY_LOCK:
+					SplashCanvas.lock();
+					break;
+			}
+		}
+		else if (keyType == VirtualList.KEY_RELEASED)
+		{
+			long diff = System.currentTimeMillis()-pressedTime;
+			if ((actionNum == VirtualList.HOTKEY_LOCK) && (diff > 500)) SplashCanvas.lock();
+		}
+	}
+
 	/** ************************************************************************* */
 	/** ************************************************************************* */
 	/** ************************************************************************* */
@@ -729,25 +880,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 // #sijapp cond.end#
                     
                 case USER_MENU_USER_INFO:
-                    // Reqeust user information
-                    // Display splash canvas
-                    SplashCanvas.setMessage(ResourceBundle.getString("wait"));
-                    SplashCanvas.setProgress(0);
-                    Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
-
-                    // Request info from server
-                    RequestInfoAction act1 = new RequestInfoAction(ContactListContactItem.this.getUin());
-                    try
-                    {
-                        Icq.requestAction(act1);
-                    } catch (JimmException e)
-                    {
-                        JimmException.handleException(e);
-                        if (e.isCritical()) return;
-                    }
-
-                    // Start timer
-                    Jimm.jimm.getTimerRef().schedule(new SplashCanvas.RequestInfoTimerTask(act1), 1000, 1000);
+			showInfo();
                     break;
                     
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -783,16 +916,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     break;
                     
                 case USER_MENU_INVIS_CHECK:
-                	VisibilityCheckerAction act = new VisibilityCheckerAction(getUin(), getName());
-                	try
-                	{
-                		Icq.requestAction(act);
-                	}
-                	catch (JimmException e)
-                	{
-                		JimmException.handleException(e);
-                		if (e.isCritical()) return;
-                	}
+			checkForInvis();
                 	break;
                 }
             }
@@ -1099,7 +1223,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		
 		static private int caretPos;
 		
-		Displayable getCurrDisplay()
+		VirtualList getCurrDisplay()
 		{
 			return Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.uin);
 		}
@@ -1128,7 +1252,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
 			{
 				initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH), this);
-				Displayable msgDisplay = getCurrDisplay();
+				VirtualList msgDisplay = getCurrDisplay();
                 msgDisplay.removeCommand(addUrsCommand);
 				msgDisplay.removeCommand(grantAuthCommand);
 				msgDisplay.removeCommand(denyAuthCommand);
@@ -1154,6 +1278,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				
 				if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
 				msgDisplay.setCommandListener(this);
+				msgDisplay.setVLCommands(this);
 				if (temporary && !noAuth) 
                     msgDisplay.addCommand(addUrsCommand);
 				Jimm.jimm.getChatHistoryRef().UpdateCaption(ContactListContactItem.this.uin);

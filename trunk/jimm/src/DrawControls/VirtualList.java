@@ -60,6 +60,24 @@ public abstract class VirtualList extends Canvas
 	/*! Constant for small sized font of caption and item text */
 	public final static int SMALL_FONT = Font.SIZE_SMALL;
 	
+	// Key event type
+	public final static int KEY_PRESSED = 1;
+	public final static int KEY_REPEATED = 2;
+	public final static int KEY_RELEASED = 3;
+	
+	//Hotkey Actions
+	public static final int HOTKEY_NONE = 1;
+	public static final int HOTKEY_INVIS = 2;
+	public static final int HOTKEY_INFO = 3;
+	public static final int HOTKEY_NEWMSG = 4;
+	public static final int HOTKEY_ONOFF = 5;
+	public static final int HOTKEY_OPTIONS = 6;
+	public static final int HOTKEY_MENU = 7;
+	public static final int HOTKEY_LOCK = 8;
+	// #sijapp cond.if modules_HISTORY is "true" #
+	public static final int HOTKEY_HISTORY = 9;
+	// #sijapp cond.end #
+	
 	// Set of fonts for quick selecting
 	private Font normalFont, boldFont, italicFont;
 	
@@ -419,15 +437,20 @@ public abstract class VirtualList extends Canvas
 		//#sijapp cond.end#
 		
 		keyReaction(keyCode);
-		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode);
+		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode,KEY_PRESSED);
 	}
 
 	// protected void keyRepeated(int keyCode)
 	protected void keyRepeated(int keyCode)
 	{
 		keyReaction(keyCode);
+		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode,KEY_REPEATED);
 	}
 	
+	protected void keyReleased(int keyCode)
+	{
+		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode,KEY_RELEASED);
+	}
 	//#sijapp cond.if target is "MIDP2"#
 	
 	private static long lastPointerTime = 0;
