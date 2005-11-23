@@ -37,6 +37,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.Date;
 
 import javax.microedition.lcdui.*;
 
@@ -132,7 +133,7 @@ class NodeComparer implements TreeNodeComparer
 
 
 //////////////////////////////////////////////////////////////////////////////////
-public class ContactList implements CommandListener, VirtualTreeCommands
+public class ContactList implements CommandListener, VirtualTreeCommands, VirtualListCommands
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                                     , PlayerListener
 //#sijapp cond.end#
@@ -260,6 +261,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
      
 		tree = new VirtualTree(null, false);
 		tree.setVTCommands(this);
+		tree.setVLCommands(this);
 		
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		tree.setFullScreenMode(false);
@@ -270,7 +272,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 		tree.setStepSize( -tree.getFontHeight()/2 );
 		
         // #sijapp cond.if modules_TRAFFIC is "true" #
-		updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
+		updateTitle(Traffic.getSessionTraffic(true));
         // #sijapp cond.else #
         updateTitle(0);
         // #sijapp cond.end#
@@ -346,7 +348,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands
     static public void activate()
 	{
 		//#sijapp cond.if modules_TRAFFIC is "true" #
-		updateTitle(Jimm.jimm.getTrafficRef().getSessionTraffic(true));
+		updateTitle(Traffic.getSessionTraffic(true));
 		//#sijapp cond.else #
 		updateTitle(0);
 		//#sijapp cond.end#
@@ -1426,6 +1428,107 @@ public class ContactList implements CommandListener, VirtualTreeCommands
 		}
 	}
 	
+	public void onCursorMove(VirtualList sender) {}
+	public void onItemSelected(VirtualList sender) {}
+	public void onKeyPress(VirtualList sender, int keyCode,int type)
+	{
+		switch (keyCode)
+		{
+		case Canvas.KEY_NUM0:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY0)+1,tree.getCurrentItem(), type);
+			break;
+			
+		case Canvas.KEY_NUM4:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY4)+1,tree.getCurrentItem(), type);
+			break;
+			
+		case Canvas.KEY_NUM6:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY6)+1,tree.getCurrentItem(), type);
+			break;
+
+		case Canvas.KEY_STAR:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR)+1,tree.getCurrentItem(), type);
+			break;
+			
+		case Canvas.KEY_POUND:
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND)+1,tree.getCurrentItem(), type);
+			break;
+			
+			
+		// #sijapp cond.if target is "SIEMENS2"#
+		case -11:
+			// This means the CALL button was pressed...
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYCALL)+1,tree.getCurrentItem(), type);
+			break;
+		// #sijapp cond.end#
+		}	
+	}
+	
+	private static long pressedTime;
+	
+	private void callHotkeyAction(int actionNum, TreeNode node, int keyType)
+	{
+		ContactListContactItem item = null;
+		if (node != null) item = (ContactListContactItem) node.getData();
+		
+		if (keyType == VirtualList.KEY_PRESSED)
+		{
+			pressedTime = System.currentTimeMillis();
+			
+			switch (actionNum)
+			{
+			case VirtualList.HOTKEY_INVIS:
+				item.checkForInvis();
+				break;
+
+			// #sijapp cond.if modules_HISTORY is "true" #
+			case VirtualList.HOTKEY_HISTORY:
+				item.showHistory();
+				break;
+			// #sijapp cond.end#
+
+			case VirtualList.HOTKEY_INFO:
+				item.showInfo();
+				break;
+
+			case VirtualList.HOTKEY_NEWMSG:
+				item.newMessage();
+				break;
+
+			case VirtualList.HOTKEY_ONOFF:
+				if (Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) 
+					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE, false);
+				else 
+					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE, true);
+				try
+				{
+					Options.save();
+				}
+				catch (Exception e)
+				{
+					JimmException.handleException(new JimmException(172, 0, true));
+				}
+				treeBuilt = false;
+				activate();
+				break;
+
+			case VirtualList.HOTKEY_OPTIONS:
+				Options.optionsForm.activate();
+				break;
+
+			case VirtualList.HOTKEY_MENU:
+				MainMenu.activate();
+				break;
+			}
+		}
+		
+		else if (keyType == VirtualList.KEY_RELEASED)
+		{
+			long diff = System.currentTimeMillis()-pressedTime;
+			if ((actionNum == VirtualList.HOTKEY_LOCK) && (diff > 500)) SplashCanvas.lock();
+		}
+	}
+
 	// shows next or previos chat 
 	static synchronized protected String showNextPrevChat(boolean next)
 	{

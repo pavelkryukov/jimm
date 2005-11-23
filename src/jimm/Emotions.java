@@ -259,7 +259,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		}
 	}
 	
-	public void onKeyPress(VirtualList sender, int keyCode) {}
+	public void onKeyPress(VirtualList sender, int keyCode,int type) {}
 	public void onCursorMove(VirtualList sender) {}
 	public void onItemSelected(VirtualList sender) 
 	{
@@ -397,8 +397,10 @@ public class Emotions implements VirtualListCommands, CommandListener
 			
 		}
 		
-		public void onKeyPress(VirtualList sender, int keyCode) 
+		public void onKeyPress(VirtualList sender, int keyCode, int type) 
 		{
+			if (type == VirtualList.KEY_PRESSED)
+			{
 			int lastCol = curCol;
 			switch (getGameAction(keyCode))
 			{
@@ -418,6 +420,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 				invalidate();
 				showCurrSmileName();
 			}
+		}
 		}
 		
 		public void onCursorMove(VirtualList sender) 

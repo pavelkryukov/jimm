@@ -119,7 +119,7 @@ class HistoryStorageList extends    VirtualList
 	}
 	
 	// VirtualList command impl.
-	public void onKeyPress(VirtualList sender, int keyCode)
+	public void onKeyPress(VirtualList sender, int keyCode, int type)
 	{
 		if (sender == messText)
 		{

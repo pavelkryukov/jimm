@@ -57,6 +57,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
@@ -129,6 +130,14 @@ public class Options
 	public static final int OPTION_PRX_NAME                       =  11;   /* String  */
 	public static final int OPTION_PRX_PASS                       =  12;   /* String  */
 	// #sijapp cond.end#
+	public static final int OPTION_EXT_CLKEY0                     = 77;	/*int*/
+	public static final int OPTION_EXT_CLKEYSTAR                  = 78;	/*int*/
+	public static final int OPTION_EXT_CLKEY4                     = 79;	/*int*/
+	public static final int OPTION_EXT_CLKEY6                     = 80;	/*int*/
+	public static final int OPTION_EXT_CLKEYCALL                  = 81;	/*int*/
+	public static final int OPTION_EXT_CLKEYPOUND                 = 82;	/*int*/
+
+
 	/**************************************************************************/
 
 	// Hashtable containing all option key-value pairs
@@ -136,7 +145,7 @@ public class Options
 
 	// Options form
 	static public OptionsForm optionsForm;
-
+	
 	// Constructor
 	public Options()
 	{
@@ -145,21 +154,19 @@ public class Options
 		try
 		{
 		    options = new Hashtable();
+		    Options.setDefaults();
 			load();
 			ResourceBundle.setCurrUiLanguage(getStringOption(Options.OPTION_UI_LANGUAGE));
 			
-			// Construct option form
-			optionsForm = new OptionsForm();
 		}
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
 		{
 			Options.setDefaults();
-			
-			// Construct option form
-			optionsForm = new OptionsForm();
 		}
-
+		
+		// Construct option form
+		optionsForm = new OptionsForm();
 	}
 
 	// Set default values
@@ -244,6 +251,12 @@ public class Options
 		setStringOption(Options.OPTION_PRX_NAME,                  		"");
 		setStringOption(Options.OPTION_PRX_PASS,                        "");
 	    // #sijapp cond.end #
+		setIntOption(Options.OPTION_EXT_CLKEY0,                         0);
+		setIntOption(Options.OPTION_EXT_CLKEYSTAR,                      0);
+		setIntOption(Options.OPTION_EXT_CLKEY4,                         0);
+		setIntOption(Options.OPTION_EXT_CLKEY6,                         0);
+		setIntOption(Options.OPTION_EXT_CLKEYCALL,                      0);
+		setIntOption(Options.OPTION_EXT_CLKEYPOUND,                     0);
 	}
 
 	// Load option values from record store
@@ -470,14 +483,15 @@ public class Options
         private static final int OPTIONS_PROXY      = 2;
         // #sijapp cond.end#
         private static final int OPTIONS_INTERFACE  = 3;
+		private static final int OPTIONS_HOTKEYS  = 4;
         // #sijapp cond.if target isnot "DEFAULT"#        
-        private static final int OPTIONS_SIGNALING  = 4;
+        private static final int OPTIONS_SIGNALING  = 5;
         // #sijapp cond.end#        
         // #sijapp cond.if modules_TRAFFIC is "true"#
-        private static final int OPTIONS_TRAFFIC    = 5;
+        private static final int OPTIONS_TRAFFIC    = 6;
         // #sijapp cond.end#
         // Exit has to be biggest element cause it also marks the size
-        private static final int MENU_EXIT          = 6;
+        private static final int MENU_EXIT          = 7;
 
 		// Options
         static private TextField uinTextField;
@@ -517,18 +531,55 @@ public class Options
         static private TextField lightTimeout;
         static private ChoiceGroup lightManual;
 		// #sijapp cond.end#
+        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#        
         // #sijapp cond.if modules_PROXY is "true"#
         static private ChoiceGroup srvProxyType;
         static private TextField srvProxyHostTextField;
-        static private TextField srvProxyPortTextField;
-        static private TextField srvProxyLoginTextField;
-        static private TextField srvProxyPassTextField;
-        static private TextField connAutoRetryTextField;
-        // #sijapp cond.end#
+		static private TextField srvProxyPortTextField;
+		static private TextField srvProxyLoginTextField;
+		static private TextField srvProxyPassTextField;
+		static private TextField connAutoRetryTextField;
+		// #sijapp cond.end#
+		// #sijapp cond.end#
+		
+		private List keysMenu;
+		private List actionMenu;
+		
+		
+		private String[] hotkeyActions = 
+		{
+			ResourceBundle.getString("ext_hotkey_action_none"),
+			ResourceBundle.getString("invisible_check"),
+			ResourceBundle.getString("info"),
+			ResourceBundle.getString("send_message"),
+			ResourceBundle.getString("ext_hotkey_action_onoff"),
+			ResourceBundle.getString("options"),
+			ResourceBundle.getString("menu"),
+			ResourceBundle.getString("keylock"),
+			ResourceBundle.getString("history")
+		};
+		
+		int[] hotkeyOpts;
 		
 		// Constructor
 		public OptionsForm() throws NullPointerException
 		{
+			// Initialize hotkeys
+			hotkeyOpts = new int[10];
+			
+			int optIdx = 0;
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY0;
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY4;
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY6;
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYSTAR;
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYPOUND;
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYCALL;
+			
+			keysMenu = new List(ResourceBundle.getString("ext_listhotkeys"), List.IMPLICIT);
+			keysMenu.setCommandListener(this);
+			actionMenu = new List(ResourceBundle.getString("ext_actionhotkeys"), List.EXCLUSIVE);
+			actionMenu.setCommandListener(this);
+			
 			// Initialize commands
 			backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
 			saveCommand = new Command(ResourceBundle.getString("save"), Command.SCREEN, 1);
@@ -545,6 +596,7 @@ public class Options
             eventList[optionsMenu.append(ResourceBundle.getString("proxy"), null)]      = OPTIONS_PROXY;
             // #sijapp cond.end#
             eventList[optionsMenu.append(ResourceBundle.getString("options_interface"), null)]  = OPTIONS_INTERFACE;
+		    eventList[optionsMenu.append(ResourceBundle.getString("options_hotkeys"), null)]  = OPTIONS_HOTKEYS;
             // #sijapp cond.if target isnot "DEFAULT"#
             eventList[optionsMenu.append(ResourceBundle.getString("options_signaling"), null)]  = OPTIONS_SIGNALING;
             // #sijapp cond.end#
@@ -741,23 +793,74 @@ public class Options
             // #sijapp cond.end#
             }
         }
+		private void InitHotkeyMenuUI()
+		{
+			int lastItemIndex = keysMenu.getSelectedIndex(); 
+			System.out.println("InitHotkeyMenuUI");
+			keysMenu.deleteAll();
+			keysMenu.append(ResourceBundle.getString("ext_clhotkey0")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY0)],null);
+			keysMenu.append(ResourceBundle.getString("ext_clhotkey4")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY4)],null);
+			keysMenu.append(ResourceBundle.getString("ext_clhotkey6")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY6)],null);
+			keysMenu.append(ResourceBundle.getString("ext_clhotkeystar")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR)],null);
+			keysMenu.append(ResourceBundle.getString("ext_clhotkeypound")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND)],null);
+			keysMenu.append(ResourceBundle.getString("ext_clhotkeycall")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEYCALL)],null);
+			keysMenu.setSelectedIndex(lastItemIndex == -1 ? 0 : lastItemIndex, true);
+			keysMenu.addCommand(saveCommand);
+			Jimm.display.setCurrent(keysMenu);			
+		} 
 		
 		// Activate options menu
         static public void activate()
 		{
 			optionsMenu.setSelectedIndex(0, true);   // Reset
-			Jimm.display.setCurrent(optionsMenu);		
+			optionsMenu.addCommand(backCommand);
+			Jimm.display.setCurrent(optionsMenu);
 		}
-
-
+        
 		// Command listener
 		public void commandAction(Command c, Displayable d)
 		{
+			//Command handler for hotkeys list in Options...
+			if (d == keysMenu)
+			{
+				if (c == List.SELECT_COMMAND)
+				{
+					actionMenu.deleteAll();
+					for (int i=0; i < hotkeyActions.length; i++) actionMenu.append(hotkeyActions[i],null);
+					actionMenu.addCommand(saveCommand);
+					actionMenu.addCommand(backCommand);
+
+					int index = hotkeyOpts[keysMenu.getSelectedIndex()];
+					actionMenu.setSelectedIndex(Options.getIntOption(index), true);
+					Jimm.display.setCurrent(actionMenu);
+					return;
+				}
+			}
+			
+			if (d == actionMenu)
+			{
+				if (c == saveCommand)
+				{
+					Options.setIntOption(hotkeyOpts[keysMenu.getSelectedIndex()], actionMenu.getSelectedIndex());
+					InitHotkeyMenuUI();
+					return;
+				}
+				
+				if (c == backCommand)
+				{
+					InitHotkeyMenuUI();
+					return;
+				}
+			}
+			
+			//Command handler for actions list in Hotkeys...
+			
+			
 			// Look for select command
 			// #sijapp cond.if target is "MOTOROLA"#
-            if ((c == List.SELECT_COMMAND) || (c == selectCommand))
+			if ((c == List.SELECT_COMMAND) || (c == selectCommand))
             // #sijapp cond.else#
-            if (c == List.SELECT_COMMAND)
+			if (c == List.SELECT_COMMAND)
             // #sijapp cond.end#
 			{
 				lastHideOffline = getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
@@ -772,7 +875,6 @@ public class Options
 				while (optionsForm.size() > 0) { optionsForm.delete(0); }
 				//#sijapp cond.end#
 				
-
 				// Add elements, depending on selected option menu item
 				switch (eventList[optionsMenu.getSelectedIndex()])
 				{
@@ -815,6 +917,11 @@ public class Options
 						// #sijapp cond.end #
 						
 						break;
+						
+					case OPTIONS_HOTKEYS:
+						InitHotkeyMenuUI();
+						return;
+						
                     // #sijapp cond.if target isnot "DEFAULT"#                        
 					case OPTIONS_SIGNALING:
                         
@@ -847,11 +954,12 @@ public class Options
 			}
 
 			// Look for back command
-		else if (c == backCommand)
-           {
-               if (d == optionsForm)
-               {
+			else if (c == backCommand)
+			{
+				if (d == optionsForm)
+				{
                    initSubMenuUI(eventList[optionsMenu.getSelectedIndex()]);
+                   optionsMenu.addCommand(backCommand);
                    Jimm.display.setCurrent(optionsMenu);
                }
                else
@@ -981,6 +1089,7 @@ public class Options
 						setStringOption(Options.OPTION_CURRENCY,currencyTextField.getString());
 						break;
 					// #sijapp cond.end#
+						
 				}
 
 				// Save options

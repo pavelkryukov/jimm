@@ -431,7 +431,9 @@ public class Search
       	
         }
         
-    	public void onKeyPress(VirtualList sender, int keyCode) 
+    	public void onKeyPress(VirtualList sender, int keyCode,int type) 
+    	{
+		if (type == VirtualList.KEY_PRESSED)
     	{
     		switch (sender.getGameAction(keyCode))
 			{
@@ -443,6 +445,7 @@ public class Search
     			nextOrPrev(true);
     			break;
 			}
+    	}
     	}
     	
     	public void onCursorMove(VirtualList sender) {}
