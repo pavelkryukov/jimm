@@ -246,48 +246,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			</not>
 		</condition>
 		
-		<condition property="lang/EN" value="true">
-			<contains string="${lang}" substring="EN" />
-		</condition>
-		<condition property="lang/BG" value="true">
-			<contains string="${lang}" substring="BG" />
-		</condition>
-		<condition property="lang/BR" value="true">
-			<contains string="${lang}" substring="BR" />
-		</condition>
-		<condition property="lang/CZ" value="true">
-			<contains string="${lang}" substring="CZ" />
-		</condition>
-		<condition property="lang/DE" value="true">
-			<contains string="${lang}" substring="DE" />
-		</condition>
-		<condition property="lang/ES" value="true">
-			<contains string="${lang}" substring="ES" />
-		</condition>
-		<condition property="lang/HE" value="true">
-			<contains string="${lang}" substring="HE" />
-		</condition>
-		<condition property="lang/IT" value="true">
-			<contains string="${lang}" substring="IT" />
-		</condition>
-		<condition property="lang/LT" value="true">
-			<contains string="${lang}" substring="LT" />
-		</condition>
-		<condition property="lang/PL" value="true">
-			<contains string="${lang}" substring="PL" />
-		</condition>
-		<condition property="lang/RU" value="true">
-			<contains string="${lang}" substring="RU" />
-		</condition>
-		<condition property="lang/SE" value="true">
-			<contains string="${lang}" substring="SE" />
-		</condition>
-		<condition property="lang/SR" value="true">
-			<contains string="${lang}" substring="SR" />
-		</condition>
-		<condition property="lang/UA" value="true">
-			<contains string="${lang}" substring="UA" />
-		</condition>
 		<mkdir dir="${build}/init/src" />
 		<sijapp srcdir="${src}" destdir="${build}/init/src">
 			<define name="target" value="${target}" />
@@ -297,20 +255,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="modules_PROXY" value="${modules/PROXY}" />
 			<define name="modules_FILES" value="${modules/FILES}" />
 			<define name="modules_SMILES" value="${modules/SMILES}" />
-			<define name="lang_EN" value="${lang/EN}" />
-			<define name="lang_BG" value="${lang/BG}" />
-			<define name="lang_BR" value="${lang/BR}" />
-			<define name="lang_CZ" value="${lang/CZ}" />
-			<define name="lang_DE" value="${lang/DE}" />
-			<define name="lang_ES" value="${lang/ES}" />
-			<define name="lang_HE" value="${lang/HE}" />
-			<define name="lang_IT" value="${lang/IT}" />
-			<define name="lang_LT" value="${lang/LT}" />
-			<define name="lang_PL" value="${lang/PL}" />
-			<define name="lang_RU" value="${lang/RU}" />
-			<define name="lang_SE" value="${lang/SE}" />
-			<define name="lang_SR" value="${lang/SR}" />
-			<define name="lang_UA" value="${lang/UA}" />
 		</sijapp>
 		<replace dir="${build}/init/src" encoding="UTF-8">
 			<replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" />

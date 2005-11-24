@@ -30,55 +30,23 @@ import java.io.DataInputStream;
 public class ResourceBundle
 {
 	// List of available language packs
-	public static String[] LANG_AVAILABLE =
+	public static String[] langAvailable;
+	
+	static
 	{
-		// #sijapp cond.if lang_EN is "true" #
-		"EN",
-		// #sijapp cond.end #
-	    // #sijapp cond.if lang_BR is "true" #
-		"BR",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_BG is "true" #
-		"BG",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_CZ is "true" #
-		"CZ",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_DE is "true" #
-		"DE",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_ES is "true" #
-		"ES",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_HE is "true" #
-		"HE",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_IT is "true" #
-		"IT",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_LT is "true" #
-		"LT",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_PL is "true" #
-		"PL",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_RU is "true" #
-		"RU",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_SE is "true" #
-		"SE",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_SR is "true" #
-		"SR",
-		// #sijapp cond.end #
-		// #sijapp cond.if lang_UA is "true" #
-		"UA",
-		// #sijapp cond.end #
-	};
-
+		try
+		{
+			InputStream istream = new Object().getClass().getResourceAsStream("/langlist.lng");
+			DataInputStream dos = new DataInputStream(istream);
+			int size = dos.readShort();
+			langAvailable = new String[size];
+			for (int i = 0; i < size; i++) langAvailable[i] = dos.readUTF();
+		} catch (Exception e)
+		{ }
+	}
 
 	// Current language
-	private static String currUiLanguage = ResourceBundle.LANG_AVAILABLE[0];
+	private static String currUiLanguage = ResourceBundle.langAvailable[0];
 
 	// Get user interface language/localization for current session
 	public static String getCurrUiLanguage()
@@ -91,9 +59,9 @@ public class ResourceBundle
 	public static void setCurrUiLanguage(String currUiLanguage)
 	{
 		if (ResourceBundle.currUiLanguage.equals(currUiLanguage)) return;
-		for (int i = 0; i < ResourceBundle.LANG_AVAILABLE.length; i++)
+		for (int i = 0; i < ResourceBundle.langAvailable.length; i++)
 		{
-			if (ResourceBundle.LANG_AVAILABLE[i].equals(currUiLanguage))
+			if (ResourceBundle.langAvailable[i].equals(currUiLanguage))
 			{
 				ResourceBundle.currUiLanguage = new String(currUiLanguage);
 				loadLang();
