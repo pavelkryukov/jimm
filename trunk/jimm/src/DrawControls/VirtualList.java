@@ -65,19 +65,6 @@ public abstract class VirtualList extends Canvas
 	public final static int KEY_REPEATED = 2;
 	public final static int KEY_RELEASED = 3;
 	
-	//Hotkey Actions
-	public static final int HOTKEY_NONE = 1;
-	public static final int HOTKEY_INVIS = 2;
-	public static final int HOTKEY_INFO = 3;
-	public static final int HOTKEY_NEWMSG = 4;
-	public static final int HOTKEY_ONOFF = 5;
-	public static final int HOTKEY_OPTIONS = 6;
-	public static final int HOTKEY_MENU = 7;
-	public static final int HOTKEY_LOCK = 8;
-	// #sijapp cond.if modules_HISTORY is "true" #
-	public static final int HOTKEY_HISTORY = 9;
-	// #sijapp cond.end #
-	
 	// Set of fonts for quick selecting
 	private Font normalFont, boldFont, italicFont;
 	

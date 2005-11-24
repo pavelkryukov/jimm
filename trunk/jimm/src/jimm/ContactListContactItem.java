@@ -627,33 +627,33 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			pressedTime = System.currentTimeMillis();
 			switch (actionNum)
 			{
-				case VirtualList.HOTKEY_INVIS:
+				case Options.HOTKEY_INVIS:
 					this.checkForInvis();
 					break;
 					
 				// #sijapp cond.if modules_HISTORY is "true" #
-				case VirtualList.HOTKEY_HISTORY:
+				case Options.HOTKEY_HISTORY:
 					this.showHistory();
 					break;
 				// #sijapp cond.end#
 				
-				case VirtualList.HOTKEY_INFO:
+				case Options.HOTKEY_INFO:
 					this.showInfo();
 					break;
 					
-				case VirtualList.HOTKEY_NEWMSG:
+				case Options.HOTKEY_NEWMSG:
 					newMessage();
 					break;
 					
-				case VirtualList.HOTKEY_OPTIONS:
+				case Options.HOTKEY_OPTIONS:
 					Options.optionsForm.activate();
 					break;
 					
-				case VirtualList.HOTKEY_MENU:
+				case Options.HOTKEY_MENU:
 					MainMenu.activate();
 					break;
 					
-				case VirtualList.HOTKEY_LOCK:
+				case Options.HOTKEY_LOCK:
 					SplashCanvas.lock();
 					break;
 			}
@@ -661,7 +661,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		else if (keyType == VirtualList.KEY_RELEASED)
 		{
 			long diff = System.currentTimeMillis()-pressedTime;
-			if ((actionNum == VirtualList.HOTKEY_LOCK) && (diff > 500)) SplashCanvas.lock();
+			if ((actionNum == Options.HOTKEY_LOCK) && (diff > 500)) SplashCanvas.lock();
 		}
 	}
 

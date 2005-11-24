@@ -57,7 +57,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.ChoiceGroup;
@@ -136,6 +135,21 @@ public class Options
 	public static final int OPTION_EXT_CLKEY6                     = 80;	/*int*/
 	public static final int OPTION_EXT_CLKEYCALL                  = 81;	/*int*/
 	public static final int OPTION_EXT_CLKEYPOUND                 = 82;	/*int*/
+	
+	
+	//Hotkey Actions
+	public static final int HOTKEY_NONE    = 1;
+	public static final int HOTKEY_INVIS   = 2;
+	public static final int HOTKEY_INFO    = 3;
+	public static final int HOTKEY_NEWMSG  = 4;
+	public static final int HOTKEY_ONOFF   = 5;
+	public static final int HOTKEY_OPTIONS = 6;
+	public static final int HOTKEY_MENU    = 7;
+	public static final int HOTKEY_LOCK    = 8;
+	// #sijapp cond.if modules_HISTORY is "true" #
+	public static final int HOTKEY_HISTORY = 9;
+	// #sijapp cond.end #
+	
 
 
 	/**************************************************************************/
@@ -256,7 +270,7 @@ public class Options
 		setIntOption(Options.OPTION_EXT_CLKEY4,                         0);
 		setIntOption(Options.OPTION_EXT_CLKEY6,                         0);
 		setIntOption(Options.OPTION_EXT_CLKEYCALL,                      0);
-		setIntOption(Options.OPTION_EXT_CLKEYPOUND,                     0);
+		setIntOption(Options.OPTION_EXT_CLKEYPOUND,                     HOTKEY_LOCK);
 	}
 
 	// Load option values from record store
@@ -797,7 +811,7 @@ public class Options
 		{
 			int lastItemIndex = keysMenu.getSelectedIndex(); 
 			System.out.println("InitHotkeyMenuUI");
-			keysMenu.deleteAll();
+			while (keysMenu.size() != 0) keysMenu.delete(0);
 			keysMenu.append(ResourceBundle.getString("ext_clhotkey0")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY0)],null);
 			keysMenu.append(ResourceBundle.getString("ext_clhotkey4")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY4)],null);
 			keysMenu.append(ResourceBundle.getString("ext_clhotkey6")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY6)],null);
@@ -825,7 +839,7 @@ public class Options
 			{
 				if (c == List.SELECT_COMMAND)
 				{
-					actionMenu.deleteAll();
+					while (actionMenu.size() != 0) actionMenu.delete(0);
 					for (int i=0; i < hotkeyActions.length; i++) actionMenu.append(hotkeyActions[i],null);
 					actionMenu.addCommand(saveCommand);
 					actionMenu.addCommand(backCommand);
@@ -839,18 +853,9 @@ public class Options
 			
 			if (d == actionMenu)
 			{
-				if (c == saveCommand)
-				{
-					Options.setIntOption(hotkeyOpts[keysMenu.getSelectedIndex()], actionMenu.getSelectedIndex());
-					InitHotkeyMenuUI();
-					return;
-				}
-				
-				if (c == backCommand)
-				{
-					InitHotkeyMenuUI();
-					return;
-				}
+				if (c == saveCommand) Options.setIntOption(hotkeyOpts[keysMenu.getSelectedIndex()], actionMenu.getSelectedIndex());
+				InitHotkeyMenuUI();
+				return;
 			}
 			
 			//Command handler for actions list in Hotkeys...
