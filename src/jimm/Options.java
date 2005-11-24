@@ -206,7 +206,7 @@ public class Options
 		setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
         // #sijapp cond.end#
 		setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
-		setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.LANG_AVAILABLE[0]);
+		setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.langAvailable[0]);
 		setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
 		setIntOption    (Options.OPTION_CL_SORT_BY,                     0);
 		setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,                false);
@@ -704,10 +704,10 @@ public class Options
             case OPTIONS_INTERFACE:
                 // Initialize elements (interface section)
                 uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle.getString("language"), Choice.EXCLUSIVE);
-                for (int j = 0; j < ResourceBundle.LANG_AVAILABLE.length; j++)
+                for (int j = 0; j < ResourceBundle.langAvailable.length; j++)
                 {
-                    uiLanguageChoiceGroup.append(ResourceBundle.getString("lang_" + ResourceBundle.LANG_AVAILABLE[j]), null);
-                    if (ResourceBundle.LANG_AVAILABLE[j].equals(getStringOption(Options.OPTION_UI_LANGUAGE)))
+                    uiLanguageChoiceGroup.append(ResourceBundle.getString("lang_" + ResourceBundle.langAvailable[j]), null);
+                    if (ResourceBundle.langAvailable[j].equals(getStringOption(Options.OPTION_UI_LANGUAGE)))
                     {
                         uiLanguageChoiceGroup.setSelectedIndex(j, true);
                     }
@@ -1019,7 +1019,7 @@ public class Options
                         break;
                     // #sijapp cond.end#      
 					case OPTIONS_INTERFACE:
-						setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.LANG_AVAILABLE[uiLanguageChoiceGroup.getSelectedIndex()]);
+						setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.langAvailable[uiLanguageChoiceGroup.getSelectedIndex()]);
 						setBooleanOption(Options.OPTION_DISPLAY_DATE,displayDateChoiceGroup.isSelected(0));
 						
 						int newSortMethod = 0;

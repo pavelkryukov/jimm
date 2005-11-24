@@ -105,7 +105,8 @@ public class LangsTask extends Task
 				dos.writeUTF(pair[0]);
 				dos.writeUTF(pair[1]);
 			}
-			
+			dos.flush();
+			ostream.close();
 		}
 		catch (Exception e)
 		{
@@ -115,12 +116,34 @@ public class LangsTask extends Task
 
 	public void execute() throws BuildException
 	{
+		Vector langs = new Vector(); 
 		StringTokenizer strTok = new StringTokenizer(languages, ",");
 		while (strTok.hasMoreTokens())
 		{
 			String langName = strTok.nextToken();
+			langs.add(langName);
 			process_lang_file(inDir+"/"+langName+".lang", outDir+"/"+langName+".lng");
 		}
+		
+		try
+		{
+			FileOutputStream ostream = new FileOutputStream(outDir+"/langlist.lng");
+			DataOutputStream dos = new DataOutputStream(ostream);
+			
+			dos.writeShort(langs.size());
+			for (int i = 0; i < langs.size(); i++)
+			{
+				dos.writeUTF((String)langs.elementAt(i));
+			}
+			
+			dos.flush();
+			ostream.close();
+		}
+		catch (Exception e)
+		{
+			throw new BuildException(e);
+		}
+		
 	}
 
 	public void setLanguages(String value)
