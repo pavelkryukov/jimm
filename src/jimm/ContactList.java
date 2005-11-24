@@ -1477,25 +1477,25 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			
 			switch (actionNum)
 			{
-			case VirtualList.HOTKEY_INVIS:
+			case Options.HOTKEY_INVIS:
 				item.checkForInvis();
 				break;
 
 			// #sijapp cond.if modules_HISTORY is "true" #
-			case VirtualList.HOTKEY_HISTORY:
+			case Options.HOTKEY_HISTORY:
 				item.showHistory();
 				break;
 			// #sijapp cond.end#
 
-			case VirtualList.HOTKEY_INFO:
+			case Options.HOTKEY_INFO:
 				item.showInfo();
 				break;
 
-			case VirtualList.HOTKEY_NEWMSG:
+			case Options.HOTKEY_NEWMSG:
 				item.newMessage();
 				break;
 
-			case VirtualList.HOTKEY_ONOFF:
+			case Options.HOTKEY_ONOFF:
 				if (Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) 
 					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE, false);
 				else 
@@ -1512,11 +1512,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 				activate();
 				break;
 
-			case VirtualList.HOTKEY_OPTIONS:
+			case Options.HOTKEY_OPTIONS:
 				Options.optionsForm.activate();
 				break;
 
-			case VirtualList.HOTKEY_MENU:
+			case Options.HOTKEY_MENU:
 				MainMenu.activate();
 				break;
 			}
@@ -1525,7 +1525,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		else if (keyType == VirtualList.KEY_RELEASED)
 		{
 			long diff = System.currentTimeMillis()-pressedTime;
-			if ((actionNum == VirtualList.HOTKEY_LOCK) && (diff > 500)) SplashCanvas.lock();
+			if ((actionNum == Options.HOTKEY_LOCK) && (diff > 500)) SplashCanvas.lock();
 		}
 	}
 
