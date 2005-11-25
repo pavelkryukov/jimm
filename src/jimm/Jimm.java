@@ -76,7 +76,7 @@ public class Jimm extends MIDlet
 	
     // #sijapp cond.if target is "MIDP2" #
 	// Minimized state variable
-	private boolean minimized, is_phone_SE;
+	static private boolean minimized, is_phone_SE;
     // #sijapp cond.end #
 
 	// Timer object
@@ -112,7 +112,7 @@ public class Jimm extends MIDlet
 		if (Jimm.jimm != null)
         {
 		    // #sijapp cond.if target is "MIDP2" #
-		    this.setMinimized(false);
+		    setMinimized(false);
 		    // #sijapp cond.end #
 		    ContactList.activate();
             return;
@@ -246,7 +246,7 @@ public class Jimm extends MIDlet
         //#sijapp cond.if modules_TRAFFIC is "true" #
 		try 
 		{
-			Jimm.jimm.getTrafficRef().save();
+			Traffic.save();
 		} 
 		catch (Exception e) 
 		{ // Do nothing
@@ -321,33 +321,37 @@ public class Jimm extends MIDlet
 	}
 	// #sijapp cond.end#
 	
-	//#sijapp cond.if modules_SMILES is "true" #
-	/*
-	public Emotions getEmotionsRef()
-	{
-		return emotions;
-	}*/
-	// #sijapp cond.end#
-	
 	public JimmUI getUIRef()
 	{
 		return ui;
 	}
 	
-    // #sijapp cond.if target is "MIDP2" #
-	// Set the minimize variable
-	public void setMinimized(boolean mini)
+	// #sijapp cond.if target is "MIDP2" #
+	// Set the minimize state of midlet
+	static public void setMinimized(boolean mini)
 	{
-	    this.minimized = mini;
+		if (mini && !minimized)
+		{
+			Jimm.display.setCurrent(null);
+		}
+		
+		if (!mini && minimized)
+		{
+			long status = Options.getLongOption(Options.OPTION_ONLINE_STATUS); 
+			if ((status == ContactList.STATUS_ONLINE) || 
+			    (status == ContactList.STATUS_CHAT)) ContactList.activate();
+		}
+		
+	    minimized = mini;
 	}
 	
 	// Return if the app is in minimized state
-	public boolean minimized()
+	static public boolean minimized()
 	{
-	    return(this.minimized);
+	    return(minimized);
 	}
 	
-	public boolean is_phone_SE()
+	static public boolean is_phone_SE()
 	{
 		return is_phone_SE;
 	}	

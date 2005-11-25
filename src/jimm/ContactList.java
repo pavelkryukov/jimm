@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/ContactList.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis, Igor Palkin
  *******************************************************************************/
 
 package jimm;
@@ -1153,14 +1153,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         
         // Update tree
         contactChanged(cItem, true, false, false);
-        //#sijapp cond.if target is "MIDP2" #  
-        // Bring Jimm to front if it was in background
-        if (Jimm.jimm.minimized() && ((Options.getLongOption(Options.OPTION_ONLINE_STATUS) == ContactList.STATUS_ONLINE) || (Options.getLongOption(Options.OPTION_ONLINE_STATUS) == ContactList.STATUS_CHAT)))
-        {
-            Jimm.jimm.setMinimized(false);
-            activate();
-        }
-        //#sijapp cond.end #
     }
 
     //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#    
@@ -1432,33 +1424,34 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	public void onItemSelected(VirtualList sender) {}
 	public void onKeyPress(VirtualList sender, int keyCode,int type)
 	{
+		TreeNode currItem = tree.getCurrentItem();
 		switch (keyCode)
 		{
 		case Canvas.KEY_NUM0:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY0)+1,tree.getCurrentItem(), type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY0), currItem, type);
 			break;
 			
 		case Canvas.KEY_NUM4:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY4)+1,tree.getCurrentItem(), type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY4), currItem, type);
 			break;
 			
 		case Canvas.KEY_NUM6:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY6)+1,tree.getCurrentItem(), type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY6), currItem, type);
 			break;
 
 		case Canvas.KEY_STAR:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR)+1,tree.getCurrentItem(), type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR), currItem, type);
 			break;
 			
 		case Canvas.KEY_POUND:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND)+1,tree.getCurrentItem(), type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND), currItem, type);
 			break;
 			
 			
 		// #sijapp cond.if target is "SIEMENS2"#
 		case -11:
 			// This means the CALL button was pressed...
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYCALL)+1,tree.getCurrentItem(), type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYCALL), currItem, type);
 			break;
 		// #sijapp cond.end#
 		}	
@@ -1468,8 +1461,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	
 	private void callHotkeyAction(int actionNum, TreeNode node, int keyType)
 	{
-		ContactListContactItem item = null;
-		if (node != null) item = (ContactListContactItem) node.getData();
+		ContactListContactItem item = 
+			((node != null) && (node.getData() instanceof ContactListContactItem))
+				?
+			(ContactListContactItem) node.getData()
+				:
+			null;
 		
 		if (keyType == VirtualList.KEY_PRESSED)
 		{
@@ -1478,21 +1475,21 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			switch (actionNum)
 			{
 			case Options.HOTKEY_INVIS:
-				item.checkForInvis();
+				if (item != null) item.checkForInvis();
 				break;
 
 			// #sijapp cond.if modules_HISTORY is "true" #
 			case Options.HOTKEY_HISTORY:
-				item.showHistory();
+				if (item != null) item.showHistory();
 				break;
 			// #sijapp cond.end#
 
 			case Options.HOTKEY_INFO:
-				item.showInfo();
+				if (item != null) item.showInfo();
 				break;
 
 			case Options.HOTKEY_NEWMSG:
-				item.newMessage();
+				if (item != null) item.newMessage();
 				break;
 
 			case Options.HOTKEY_ONOFF:
@@ -1522,10 +1519,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			}
 		}
 		
-		else if (keyType == VirtualList.KEY_RELEASED)
+		else if ((keyType == VirtualList.KEY_REPEATED) || (keyType == VirtualList.KEY_RELEASED))
 		{
+			if (pressedTime == -1) return;
 			long diff = System.currentTimeMillis()-pressedTime;
-			if ((actionNum == Options.HOTKEY_LOCK) && (diff > 500)) SplashCanvas.lock();
+			if ((actionNum == Options.HOTKEY_LOCK) && (diff > 900))
+			{
+				pressedTime = -1;
+				SplashCanvas.lock();
+			}
 		}
 	}
 

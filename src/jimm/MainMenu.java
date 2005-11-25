@@ -514,7 +514,6 @@ public class MainMenu implements CommandListener
                  //#sijapp cond.if target is "MIDP2"#
                  case MENU_MINIMIZE:
                      // Minimize Jimm (if supported)                 
-                     Jimm.display.setCurrent(null);
                      Jimm.jimm.setMinimized(true);
                      break;                    
                  //#sijapp cond.end#

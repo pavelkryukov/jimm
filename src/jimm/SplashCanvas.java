@@ -153,8 +153,9 @@ public class SplashCanvas extends Canvas
 		_this = this;
 	    version = true;
 	    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		setFullScreenMode(true);
+		setFullScreenMode(!Jimm.is_phone_SE());
 		//  #sijapp cond.end#
+		
 		message = new String(message);
 		showKeylock = false;
 		//  #sijapp cond.if target is "MOTOROLA"#
@@ -655,7 +656,14 @@ public class SplashCanvas extends Canvas
 		public void commandAction(Command c, Displayable d)
 		{
 			if (c == cmdBack) ContactList.activate();
-			else if (c == cmdCopy) JimmUI.setClipBoardText(tl.getCurrText(0));
+			else if (c == cmdCopy)
+			{
+				JimmUI.setClipBoardText
+				(
+					"["+requestInfoAct.getStringData(RequestInfoAction.UIN)+
+					"]\n"+tl.getCurrText(0)
+				);
+			}
 		}
 		
 		private static int bigTextIndex;

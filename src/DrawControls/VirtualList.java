@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/DrawControls/VirtualList.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Artyomov Denis
+ Author(s): Artyomov Denis, Igor Palkin
  *******************************************************************************/
 
 package DrawControls;

@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *******************************************************************************
 File: src/jimm/Options.java
 Version: ###VERSION###  Date: ###DATE###
-Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis
+Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis, Igor Palkin
 ******************************************************************************/
 
 
@@ -58,15 +58,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import javax.microedition.lcdui.Choice;
-import javax.microedition.lcdui.ChoiceGroup;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.Gauge;
-import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.TextField;
+import javax.microedition.lcdui.*;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 
@@ -112,6 +104,7 @@ public class Options
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
 	public static final int OPTION_HISTORY                        = 137;   /* boolean */
 	public static final int OPTION_SHOW_LAST_MESS                 = 142;   /* boolean */
+	public static final int OPTION_POPUP_WIN                      = 143;   /* boolean */
 	public static final int OPTION_COLOR_SCHEME                   =  73;   /* int     */
 	//public static final int OPTION_HISTORY_CLEAR                  =  75;   /* int     */
 	public static final int OPTION_STATUS_MESSAGE                 =   7;   /* String  */
@@ -138,16 +131,16 @@ public class Options
 	
 	
 	//Hotkey Actions
-	public static final int HOTKEY_NONE    = 1;
-	public static final int HOTKEY_INVIS   = 2;
-	public static final int HOTKEY_INFO    = 3;
-	public static final int HOTKEY_NEWMSG  = 4;
-	public static final int HOTKEY_ONOFF   = 5;
-	public static final int HOTKEY_OPTIONS = 6;
-	public static final int HOTKEY_MENU    = 7;
-	public static final int HOTKEY_LOCK    = 8;
+	public static final int HOTKEY_NONE    = 0;
+	public static final int HOTKEY_INVIS   = 1;
+	public static final int HOTKEY_INFO    = 2;
+	public static final int HOTKEY_NEWMSG  = 3;
+	public static final int HOTKEY_ONOFF   = 4;
+	public static final int HOTKEY_OPTIONS = 5;
+	public static final int HOTKEY_MENU    = 6;
+	public static final int HOTKEY_LOCK    = 7;
 	// #sijapp cond.if modules_HISTORY is "true" #
-	public static final int HOTKEY_HISTORY = 9;
+	public static final int HOTKEY_HISTORY = 8;
 	// #sijapp cond.end #
 	
 
@@ -189,15 +182,15 @@ public class Options
 	{
 	    setStringOption (Options.OPTION_UIN,                            "");
 		setStringOption (Options.OPTION_PASSWORD,                       "");
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"# ===>
 		setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
-		// #sijapp cond.else#
+		// #sijapp cond.else# ===
 		// #sijapp cond.if modules_PROXY is "true" #
 		setStringOption (Options.OPTION_SRV_HOST,                       "64.12.161.185"); //Cannot resolve host IP on MIDP1 devices
 		// #sijapp cond.else#
 		setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
 		// #sijapp cond.end#
-		// #sijapp cond.end#
+		// #sijapp cond.end# <===
 		setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 		setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
         setStringOption (Options.OPTION_CONN_ALIVE_INVTERV,             "120");
@@ -258,19 +251,20 @@ public class Options
         setBooleanOption(Options.OPTION_USE_SMILES,                     true);
         setBooleanOption(Options.OPTION_SHOW_LAST_MESS,                 false);
         // #sijapp cond.if modules_PROXY is "true" #
-		setIntOption   (Options.OPTION_PRX_TYPE,                     	0);
-		setStringOption(Options.OPTION_PRX_SERV,                     	"");
-		setStringOption(Options.OPTION_PRX_PORT,						"1080");
-		setStringOption(Options.OPTION_AUTORETRY_COUNT,                 "1");
-		setStringOption(Options.OPTION_PRX_NAME,                  		"");
-		setStringOption(Options.OPTION_PRX_PASS,                        "");
+		setIntOption    (Options.OPTION_PRX_TYPE,                     	0);
+		setStringOption (Options.OPTION_PRX_SERV,                     	"");
+		setStringOption (Options.OPTION_PRX_PORT,						"1080");
+		setStringOption (Options.OPTION_AUTORETRY_COUNT,                "1");
+		setStringOption (Options.OPTION_PRX_NAME,                  		"");
+		setStringOption (Options.OPTION_PRX_PASS,                       "");
 	    // #sijapp cond.end #
-		setIntOption(Options.OPTION_EXT_CLKEY0,                         0);
-		setIntOption(Options.OPTION_EXT_CLKEYSTAR,                      0);
-		setIntOption(Options.OPTION_EXT_CLKEY4,                         0);
-		setIntOption(Options.OPTION_EXT_CLKEY6,                         0);
-		setIntOption(Options.OPTION_EXT_CLKEYCALL,                      0);
-		setIntOption(Options.OPTION_EXT_CLKEYPOUND,                     HOTKEY_LOCK);
+		setIntOption    (Options.OPTION_EXT_CLKEY0,                     0);
+		setIntOption    (Options.OPTION_EXT_CLKEYSTAR,                  0);
+		setIntOption    (Options.OPTION_EXT_CLKEY4,                     0);
+		setIntOption    (Options.OPTION_EXT_CLKEY6,                     0);
+		setIntOption    (Options.OPTION_EXT_CLKEYCALL,                  0);
+		setIntOption    (Options.OPTION_EXT_CLKEYPOUND,                 HOTKEY_LOCK);
+		setBooleanOption(Options.OPTION_POPUP_WIN,                      true);
 	}
 
 	// Load option values from record store
@@ -469,7 +463,7 @@ public class Options
 
 
 	// Form for editing option values
-	static public class OptionsForm implements CommandListener
+	static public class OptionsForm implements CommandListener, ItemStateListener
 	{
 		private static boolean lastGroupsUsed, lastHideOffline;
 		private static int lastSortMethod, lastColorScheme;
@@ -498,9 +492,7 @@ public class Options
         // #sijapp cond.end#
         private static final int OPTIONS_INTERFACE  = 3;
 		private static final int OPTIONS_HOTKEYS  = 4;
-        // #sijapp cond.if target isnot "DEFAULT"#        
         private static final int OPTIONS_SIGNALING  = 5;
-        // #sijapp cond.end#        
         // #sijapp cond.if modules_TRAFFIC is "true"#
         private static final int OPTIONS_TRAFFIC    = 6;
         // #sijapp cond.end#
@@ -521,10 +513,10 @@ public class Options
         static private ChoiceGroup clSortByChoiceGroup;
         static private ChoiceGroup chrgChat;
         static private ChoiceGroup clHideOfflineChoiceGroup;
+        static private ChoiceGroup chrgSignalMisc;
 		// #sijapp cond.if target isnot "DEFAULT"#
         static private ChoiceGroup messageNotificationModeChoiceGroup;
         static private ChoiceGroup onlineNotificationModeChoiceGroup;
-        static private ChoiceGroup vibratorChoiceGroup;
         // #sijapp cond.if target isnot "RIM"#
         static private TextField messageNotificationSoundfileTextField;
         static private Gauge messageNotificationSoundVolume;
@@ -611,9 +603,7 @@ public class Options
             // #sijapp cond.end#
             eventList[optionsMenu.append(ResourceBundle.getString("options_interface"), null)]  = OPTIONS_INTERFACE;
 		    eventList[optionsMenu.append(ResourceBundle.getString("options_hotkeys"), null)]  = OPTIONS_HOTKEYS;
-            // #sijapp cond.if target isnot "DEFAULT"#
             eventList[optionsMenu.append(ResourceBundle.getString("options_signaling"), null)]  = OPTIONS_SIGNALING;
-            // #sijapp cond.end#
             // #sijapp cond.if modules_TRAFFIC is "true"#
             eventList[optionsMenu.append(ResourceBundle.getString("traffic"), null)]      = OPTIONS_TRAFFIC;
             // #sijapp cond.end#
@@ -629,6 +619,7 @@ public class Options
 			optionsForm.addCommand(saveCommand);
 			optionsForm.addCommand(backCommand);
 			optionsForm.setCommandListener(this);
+			optionsForm.setItemStateListener(this);
 			
 			initSubMenuUI(OPTIONS_ACCOUNT);
 			initSubMenuUI(OPTIONS_NETWORK);
@@ -636,9 +627,7 @@ public class Options
 			initSubMenuUI(OPTIONS_PROXY);
             // #sijapp cond.end#     
 			initSubMenuUI(OPTIONS_INTERFACE);
-            // #sijapp cond.if target isnot "DEFAULT"#            
 			initSubMenuUI(OPTIONS_SIGNALING);
-            // #sijapp cond.end#            
             // #sijapp cond.if modules_TRAFFIC is "true"#            
             initSubMenuUI(OPTIONS_TRAFFIC);
             // #sijapp cond.end#            			
@@ -762,10 +751,11 @@ public class Options
 
                 break;
                 
-            // #sijapp cond.if target isnot "DEFAULT"#                
+                            
             case OPTIONS_SIGNALING:
+            	// Initialize elements (Signaling section)
 
-                // Initialize elements (Signaling section)
+            	// #sijapp cond.if target isnot "DEFAULT"# ====>
                 onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
                 onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
                 onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
@@ -787,14 +777,23 @@ public class Options
                 messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
                 messageNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME) / 10);
                 onlineNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME) / 10);
-                // #sijapp cond.end#    
-                vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration") + "?", Choice.EXCLUSIVE);
-                vibratorChoiceGroup.append(ResourceBundle.getString("no"), null);
-                vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
-                vibratorChoiceGroup.append(ResourceBundle.getString("when_locked"), null);
-                vibratorChoiceGroup.setSelectedIndex(getIntOption(Options.OPTION_VIBRATOR), true);
+                // #sijapp cond.end#
+                // #sijapp cond.end# <====
+                
+                chrgSignalMisc = new ChoiceGroup(ResourceBundle.getString("message_notification"), Choice.MULTIPLE);
+                chrgSignalMisc.append(ResourceBundle.getString("popup_win"),   null);
+                chrgSignalMisc.setSelectedIndex(0, getBooleanOption(Options.OPTION_POPUP_WIN));
+                
+                // #sijapp cond.if target isnot "DEFAULT"#
+                chrgSignalMisc.append(ResourceBundle.getString("vibration"),   null);
+                chrgSignalMisc.append(ResourceBundle.getString("when_locked"), null);
+                int vibrOpt = getIntOption(Options.OPTION_VIBRATOR); 
+                if (vibrOpt != 0) chrgSignalMisc.setSelectedIndex(vibrOpt, true);
+                // #sijapp cond.end#
+                
+                chrgSignalMisc.getSelectedFlags(lastMessSignItems); 
                 break;
-            // #sijapp cond.end#
+            
 
             // #sijapp cond.if modules_TRAFFIC is "true"#
             case OPTIONS_TRAFFIC:
@@ -926,23 +925,27 @@ public class Options
 					case OPTIONS_HOTKEYS:
 						InitHotkeyMenuUI();
 						return;
-						
-                    // #sijapp cond.if target isnot "DEFAULT"#                        
+                                           
 					case OPTIONS_SIGNALING:
-                        
+						// #sijapp cond.if target isnot "DEFAULT"#     
 						optionsForm.append(messageNotificationModeChoiceGroup);
                         // #sijapp cond.if target isnot "RIM"#                        
 						optionsForm.append(messageNotificationSoundVolume);
 						optionsForm.append(messageNotificationSoundfileTextField);
-                        // #sijapp cond.end#                        
-						optionsForm.append(vibratorChoiceGroup);                      
+                        // #sijapp cond.end#
+                        // #sijapp cond.end#
+                                                
+						optionsForm.append(chrgSignalMisc);
+						
+						// #sijapp cond.if target isnot "DEFAULT"#
 						optionsForm.append(onlineNotificationModeChoiceGroup);
                         // #sijapp cond.if target isnot "RIM"#                          
 						optionsForm.append(onlineNotificationSoundVolume);
 						optionsForm.append(onlineNotificationSoundfileTextField);
+                        // #sijapp cond.end#
                         // #sijapp cond.end#                        
 						break;
-			        // #sijapp cond.end#
+			        
 
 					// #sijapp cond.if modules_TRAFFIC is "true"#
 					case OPTIONS_TRAFFIC:
@@ -1069,8 +1072,9 @@ public class Options
 						setBooleanOption(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
 						// #sijapp cond.end#
 						break;
-                    // #sijapp cond.if target isnot "DEFAULT"#				
+                    				
 					case OPTIONS_SIGNALING:
+						// #sijapp cond.if target isnot "DEFAULT"# ===>
 						setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,messageNotificationModeChoiceGroup.getSelectedIndex());
 						// #sijapp cond.if target isnot "RIM"#       
 						setStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE,messageNotificationSoundfileTextField.getString());
@@ -1081,9 +1085,19 @@ public class Options
 						setStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,onlineNotificationSoundfileTextField.getString());
 						setIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME,onlineNotificationSoundVolume.getValue()*10);
                         // #sijapp cond.end#
-						setIntOption(Options.OPTION_VIBRATOR,vibratorChoiceGroup.getSelectedIndex());
+                        // #sijapp cond.end# <===
+						
+						chrgSignalMisc.getSelectedFlags(lastMessSignItems);
+						setBooleanOption(Options.OPTION_POPUP_WIN, lastMessSignItems[0]);
+						
+						// #sijapp cond.if target isnot "DEFAULT"#
+						int vibrOpt = 0;
+						if (lastMessSignItems[1]) vibrOpt = 1; 
+						if (lastMessSignItems[2]) vibrOpt = 2;
+						setIntOption(Options.OPTION_VIBRATOR, vibrOpt);
+						// #sijapp cond.end#
 						break;
-				    // #sijapp cond.end#
+				    
 					// #sijapp cond.if modules_TRAFFIC is "true"#
 					case OPTIONS_TRAFFIC:
 						setIntOption(Options.OPTION_COST_PER_PACKET,Util.decimalToInt(costPerPacketTextField.getString()));
@@ -1118,6 +1132,23 @@ public class Options
 				}
 			}
 		}
-	}
+		
+		static boolean[] lastMessSignItems = new boolean[3];
+		
+		public void itemStateChanged(Item item)
+		{
+			// #sijapp cond.if target isnot "DEFAULT"#
+			if (item == chrgSignalMisc)
+			{
+				boolean[] curr = new boolean[3];
+				chrgSignalMisc.getSelectedFlags(curr);
+				if (curr[1] != lastMessSignItems[1]) chrgSignalMisc.setSelectedIndex(2, false);
+				if (curr[2] != lastMessSignItems[2]) chrgSignalMisc.setSelectedIndex(1, false);
+				chrgSignalMisc.getSelectedFlags(lastMessSignItems);
+			}
+			// #sijapp cond.end#
+		}
+	} // end of 'class OptionsForm'
 }
+
 

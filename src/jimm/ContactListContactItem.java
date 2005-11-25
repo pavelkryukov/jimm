@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/ContactListContactItem.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis, Igor Palkin
  *******************************************************************************/
 
 package jimm;
@@ -538,29 +538,29 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		switch (keyCode)
 		{
 		case Canvas.KEY_NUM0:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY0)+1, type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY0), type);
 			break;
 			
 		case Canvas.KEY_NUM4:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY4)+1, type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY4), type);
 			break;
 			
 		case Canvas.KEY_NUM6:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY6)+1, type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY6), type);
 			break;
 			
 		case Canvas.KEY_STAR:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR)+1, type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR), type);
 			break;
 			
 		case Canvas.KEY_POUND:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND)+1, type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND), type);
 			break;
 			
 		// #sijapp cond.if target is "SIEMENS2"#
 		case -11:
 			// This means the CALL button was pressed...
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYCALL)+1, type);
+			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYCALL), type);
 			break;
 		// #sijapp cond.end#
 		}	
@@ -658,10 +658,15 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					break;
 			}
 		}
-		else if (keyType == VirtualList.KEY_RELEASED)
+		else if ((keyType == VirtualList.KEY_REPEATED) || (keyType == VirtualList.KEY_RELEASED))
 		{
+			if (pressedTime == -1) return;
 			long diff = System.currentTimeMillis()-pressedTime;
-			if ((actionNum == Options.HOTKEY_LOCK) && (diff > 500)) SplashCanvas.lock();
+			if ((actionNum == Options.HOTKEY_LOCK) && (diff > 900))
+			{
+				pressedTime = -1;
+				SplashCanvas.lock();
+			}
 		}
 	}
 
@@ -880,8 +885,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 // #sijapp cond.end#
                     
                 case USER_MENU_USER_INFO:
-			showInfo();
-                    break;
+                	showInfo();
+                	break;
                     
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_FILES is "true"#                     
@@ -1231,16 +1236,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		// Activates the contact item menu
 		public void activate()
 		{
-			// Disable ticker (if exists)
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			if (lastTickerDispl != null)
-			{
-				lastTickerDispl.setTicker(null);
-				lastTickerDispl = null;
-			}
-			// #sijapp cond.end#
-			
-			// Disable creeping line or status flashing 
 			currentUin = new String(uin);
 			
 			//#sijapp cond.if modules_HISTORY is "true" #
@@ -1469,8 +1464,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         // #sijapp cond.end#
         // #sijapp cond.end#
 	}
-	
-
+	 
 	static private Displayable getCurrDisplayable(String uin)
 	{
 		Displayable vis = null;
@@ -1480,33 +1474,41 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		return vis;
 	}
 	
+	// Shows popup window with text of received message
+	static public void showPopupWindow(String uin, String name, String text)
+	{
+		if (Options.getBooleanOption(Options.OPTION_POPUP_WIN) == false) return;
+		if (Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) return;
+		
+		// #sijapp cond.if target is "MIDP2"#
+		String oldText = messageTextbox.isShown() ? messageTextbox.getString() : null;
+		// #sijapp cond.end#
+		
+		Alert alert = new Alert(name, text, null, AlertType.INFO);
+		alert.setTimeout(Alert.FOREVER);
+		Jimm.display.setCurrent(alert, Jimm.display.getCurrent());
+		
+		// #sijapp cond.if target is "MIDP2"#
+		if (Jimm.is_phone_SE() && (oldText != null)) messageTextbox.setString(oldText); 
+		// #sijapp cond.end#
+	}
+
+	// flashs form caption when current contact have changed status
 	static synchronized public void statusChanged(String uin, long status)
 	{
 		if (currentUin.equals(uin))
 		{
 			Displayable disp = getCurrDisplayable(uin);
-			if (disp != null) new Timer().scheduleAtFixedRate
-			(
-				new FlashCapClass(disp, getStatusString(status)),
-				0,
-				500
-			);
+			if (disp != null)
+			{
+				creepLineTimer.cancel();
+				creepLineTimer.scheduleAtFixedRate(new FlashCapClass(disp, getStatusString(status)), 0, 500);
+			}
 		}	 
 	}
 	
-	static Displayable lastTickerDispl = null;
-	
-	static public void messageReceived(String uin, String text)
-	{
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if ( currentUin.equals(uin) && 
-			     !Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin))
-		{
-			lastTickerDispl = getCurrDisplayable(uin);
-			if (lastTickerDispl != null) lastTickerDispl.setTicker(new Ticker(text));
-		}
-		// #sijapp cond.end#
-	}
+	// Tirer used to flash form caption
+	static Timer creepLineTimer = new Timer();
 	
 	// Initializer
 	static
@@ -1577,15 +1579,15 @@ class FlashCapClass extends TimerTask
 		this.displ   = displ;
 		this.text    = text;
 		this.oldText = getCaption(displ);
-		counter = 0;
+		this.counter = 8;
 	}
 	
 	public void run()
 	{
-		if ((counter < 6) && displ.isShown())
+		if ((counter != 0) && displ.isShown())
 		{
 			setCaption(displ, ((counter&1) == 0) ? text : " ");
-			counter++;
+			counter--;
 		}
 		else
 		{

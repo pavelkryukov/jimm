@@ -197,7 +197,7 @@ public class Icq implements Runnable
         // #sijapp cond.if modules_TRAFFIC is "true" #
         try
         {
-            Jimm.jimm.getTrafficRef().save();
+            Traffic.save();
         } catch (Exception e)
         { // Do nothing
         }
