@@ -27,6 +27,10 @@ import java.util.Enumeration;
 import java.util.*;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
+import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Displayable;
 
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
@@ -215,7 +219,7 @@ public class ChatHistory
 				HistoryStorage.addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName(), plainMsg.getDate());
 			// #sijapp cond.end#	
 			
-			ContactListContactItem.messageReceived(uin, plainMsg.getText());
+			ContactListContactItem.showPopupWindow(uin, contact.getName(), plainMsg.getText());
 		}
 		if (message instanceof UrlMessage)
 		{

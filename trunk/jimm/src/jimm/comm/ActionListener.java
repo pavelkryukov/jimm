@@ -347,6 +347,9 @@ public class ActionListener
 
                         PlainMessage plainMsg = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), text, false);
 						RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, plainMsg);
+						// #sijapp cond.if target is "MIDP2" #
+						Jimm.setMinimized(false);
+						// #sijapp cond.end #
                     }
 
                 }
@@ -516,6 +519,9 @@ public class ActionListener
 
                         // Forward message object to contact list
                         RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
+						// #sijapp cond.if target is "MIDP2" #
+						Jimm.setMinimized(false);
+						// #sijapp cond.end #
 
                         // Acknowledge message
                         byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 3];
@@ -667,8 +673,12 @@ public class ActionListener
                             }
 
                             // Forward message message to contact list
-                            UrlMessage message = new UrlMessage(uin,Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
+                            UrlMessage message = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
                             RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
+							// #sijapp cond.if target is "MIDP2" #
+							Jimm.setMinimized(false);
+							// #sijapp cond.end #
+                            
 
                             // Acknowledge message
                             byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 3 + 20 + 4 + (int) pluginLen + 19 + 4
@@ -778,6 +788,9 @@ public class ActionListener
                         // Forward message to contact list
                         PlainMessage plainMsg = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), text, false);
                         RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, plainMsg);
+						// #sijapp cond.if target is "MIDP2" #
+						Jimm.setMinimized(false);
+						// #sijapp cond.end #
                     }
                     // URL message
                     else if (msgType == 0x0004)
@@ -802,6 +815,9 @@ public class ActionListener
                         // Forward message message to contact list
                         UrlMessage urlMsg = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
 						RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, urlMsg);
+						// #sijapp cond.if target is "MIDP2" #
+						Jimm.setMinimized(false);
+						// #sijapp cond.end #
                     }
 
                 }
@@ -823,7 +839,7 @@ public class ActionListener
                 SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_YOUWEREADDED, uin, false, null);
 
                 // Handle the new system notice
-                RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, notice);
+                RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, notice);                
             }
 
             //	  Watch out for SRV_AUTHREQ

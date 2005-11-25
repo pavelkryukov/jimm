@@ -253,6 +253,8 @@ VERSION 0.4.3
 _______________________________________________________________________________
 VERSION 0.5
 
+  * NEW FEATURE: Popup window when message arrived (optional)
+  * NEW FEATURE: Configurable hotkeys
   * BUGFIX: Jimm sometimes crashed if was restored from flip on Motorola phones
   * Now Jimm works with touchscreen (only for MIDP2 build).
   * New language system is done. Language string are stored in *.lng files now.

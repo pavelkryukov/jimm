@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ********************************************************************************
 File: src/jimm/util/ResourceBundle.java
 Version: ###VERSION###  Date: ###DATE###
-Author(s): Manuel Linsmayer
+Author(s): Manuel Linsmayer, Artyomov Denis
 *******************************************************************************/
 
 package jimm.util;
