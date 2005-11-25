@@ -1486,12 +1486,19 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		
 		Alert alert = new Alert(name, text, null, AlertType.INFO);
 		alert.setTimeout(Alert.FOREVER);
-		Jimm.display.setCurrent(alert, Jimm.display.getCurrent());
+		
+		Jimm.display.setCurrent(alert);
 		
 		// #sijapp cond.if target is "MIDP2"#
 		if (Jimm.is_phone_SE() && (oldText != null)) messageTextbox.setString(oldText); 
 		// #sijapp cond.end#
 	}
+	
+	// Timer used to flash form caption
+	private static Timer creepLineTimer = new Timer();
+	
+	// Timer task for flashing form caption
+	private static FlashCapClass lastFlashTask = null;
 
 	// flashs form caption when current contact have changed status
 	static synchronized public void statusChanged(String uin, long status)
@@ -1501,15 +1508,18 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			Displayable disp = getCurrDisplayable(uin);
 			if (disp != null)
 			{
-				creepLineTimer.cancel();
-				creepLineTimer.scheduleAtFixedRate(new FlashCapClass(disp, getStatusString(status)), 0, 500);
+				if (lastFlashTask != null)
+				{
+					lastFlashTask.restoreCaption();
+					lastFlashTask.cancel();
+				}
+				lastFlashTask = new FlashCapClass(disp, getStatusString(status));;
+				creepLineTimer.scheduleAtFixedRate(lastFlashTask, 0, 500);
 			}
 		}	 
 	}
 	
-	// Tirer used to flash form caption
-	static Timer creepLineTimer = new Timer();
-	
+
 	// Initializer
 	static
 	{
@@ -1594,6 +1604,11 @@ class FlashCapClass extends TimerTask
 			setCaption(displ, oldText);
 			cancel();
 		}
+	}
+	
+	public void restoreCaption()
+	{
+		setCaption(displ, oldText);
 	}
 	
 	static public void setCaption(Displayable ctrl, String caption)
