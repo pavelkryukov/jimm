@@ -1480,11 +1480,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		if (Options.getBooleanOption(Options.OPTION_POPUP_WIN) == false) return;
 		if (Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) return;
 		
+		if (Jimm.display.getCurrent() instanceof Alert) return;
+		
 		// #sijapp cond.if target is "MIDP2"#
 		String oldText = messageTextbox.isShown() ? messageTextbox.getString() : null;
 		// #sijapp cond.end#
-		
-		Alert alert = new Alert(name, text, null, AlertType.INFO);
+	
+		Alert alert = new Alert(uin, "["+name+"]\n\n"+text, null, null);
 		alert.setTimeout(Alert.FOREVER);
 		
 		Jimm.display.setCurrent(alert);
@@ -1518,7 +1520,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			}
 		}	 
 	}
-	
 
 	// Initializer
 	static

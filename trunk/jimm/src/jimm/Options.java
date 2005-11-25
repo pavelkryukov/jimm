@@ -264,7 +264,7 @@ public class Options
 		setIntOption    (Options.OPTION_EXT_CLKEY6,                     0);
 		setIntOption    (Options.OPTION_EXT_CLKEYCALL,                  0);
 		setIntOption    (Options.OPTION_EXT_CLKEYPOUND,                 HOTKEY_LOCK);
-		setBooleanOption(Options.OPTION_POPUP_WIN,                      true);
+		setBooleanOption(Options.OPTION_POPUP_WIN,                      false);
 	}
 
 	// Load option values from record store
