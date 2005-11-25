@@ -251,7 +251,7 @@ VERSION 0.4.3
   * BUGFIX: Connecting was not possible on builds without PROXY module (even if not activated)
 
 _______________________________________________________________________________
-VERSION 0.5
+VERSION 0.5.0
 
   * NEW FEATURE: Popup window when message arrived (optional)
   * NEW FEATURE: Configurable hotkeys
@@ -263,3 +263,5 @@ VERSION 0.5
   * Text from user info can be copied
   * Removed creeping line as there were too much bugs on some mobile phones
   * Menu "Minimize" is shown only at sony-ericsoon phones
+  * Options are now compartible between versions
+  * Pressing red button on Nokia phones will now end Jimm in a cleaner way
