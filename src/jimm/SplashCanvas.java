@@ -152,9 +152,14 @@ public class SplashCanvas extends Canvas
 	{
 		_this = this;
 	    version = true;
-	    //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	    //  #sijapp cond.if target is "MIDP2"#
 		setFullScreenMode(!Jimm.is_phone_SE());
 		//  #sijapp cond.end#
+		
+	    //  #sijapp cond.if target is "MOTOROLA" | target is "SIEMENS2"#
+		setFullScreenMode(true);
+		//  #sijapp cond.end#
+		
 		
 		message = new String(message);
 		showKeylock = false;
