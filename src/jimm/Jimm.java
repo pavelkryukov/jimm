@@ -158,7 +158,7 @@ public class Jimm extends MIDlet
 		
 	    // #sijapp cond.if target is "MIDP2" #
 		// Set minimized = false
-		this.setMinimized(false);
+		setMinimized(false);
 	    // #sijapp cond.end #
 		
 		// Get display object (and update progress indicator)

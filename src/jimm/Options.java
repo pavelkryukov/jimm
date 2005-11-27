@@ -131,17 +131,18 @@ public class Options
 	
 	
 	//Hotkey Actions
-	public static final int HOTKEY_NONE    = 0;
-	public static final int HOTKEY_INVIS   = 1;
-	public static final int HOTKEY_INFO    = 2;
-	public static final int HOTKEY_NEWMSG  = 3;
-	public static final int HOTKEY_ONOFF   = 4;
-	public static final int HOTKEY_OPTIONS = 5;
-	public static final int HOTKEY_MENU    = 6;
-	public static final int HOTKEY_LOCK    = 7;
+	public static final int HOTKEY_NONE     = 0;
+	public static final int HOTKEY_INVIS    = 1;
+	public static final int HOTKEY_INFO     = 2;
+	public static final int HOTKEY_NEWMSG   = 3;
+	public static final int HOTKEY_ONOFF    = 4;
+	public static final int HOTKEY_OPTIONS  = 5;
+	public static final int HOTKEY_MENU     = 6;
+	public static final int HOTKEY_LOCK     = 7;
 	// #sijapp cond.if modules_HISTORY is "true" #
-	public static final int HOTKEY_HISTORY = 8;
+	public static final int HOTKEY_HISTORY  = 8;
 	// #sijapp cond.end #
+	public static final int HOTKEY_MINIMIZE = 9;
 	
 
 
@@ -553,17 +554,20 @@ public class Options
 		
 		final static private String[] hotkeyActionNames = 
 		{
-			ResourceBundle.getString("ext_hotkey_action_none"),
-			ResourceBundle.getString("invisible_check"),
-			ResourceBundle.getString("info"),
-			ResourceBundle.getString("send_message"),
+			"ext_hotkey_action_none",
+			"invisible_check",
+			"info",
+			"send_message",
 			//#sijapp cond.if modules_HISTORY is "true"#
-			ResourceBundle.getString("history"),
+			"history",
 			// #sijapp cond.end#
-			ResourceBundle.getString("ext_hotkey_action_onoff"),
-			ResourceBundle.getString("options"),
-			ResourceBundle.getString("menu"),
-			ResourceBundle.getString("keylock"),
+			"ext_hotkey_action_onoff",
+			"options",
+			"menu",
+			"keylock",
+			// #sijapp cond.if target is "MIDP2"#
+			"minimize",
+			// #sijapp cond.end#
 		};
 		
 		static private int[] hotkeyOpts, hotkeyActions;
@@ -588,6 +592,9 @@ public class Options
 			hotkeyActions[optIdx++] = Options.HOTKEY_OPTIONS;
 			hotkeyActions[optIdx++] = Options.HOTKEY_MENU;
 			hotkeyActions[optIdx++] = Options.HOTKEY_LOCK;
+			// #sijapp cond.if target is "MIDP2"#
+			hotkeyActions[optIdx++] = Options.HOTKEY_MINIMIZE;
+			// #sijapp cond.end#
 			
 			keysMenu = new List(ResourceBundle.getString("ext_listhotkeys"), List.IMPLICIT);
 			keysMenu.setCommandListener(this);
@@ -821,7 +828,7 @@ public class Options
         	for (int i = 0; i < hotkeyActionNames.length; i++)
         	{
         		if (hotkeyActions[i] == optionValue) 
-        			return ResourceBundle.getString(langStr)+": "+hotkeyActionNames[i];  
+        			return ResourceBundle.getString(langStr)+": "+ResourceBundle.getString(hotkeyActionNames[i]);  
         	}
         	return ResourceBundle.getString("ext_clhotkey0")+": <???>";
         }
@@ -878,7 +885,8 @@ public class Options
 				if (c == List.SELECT_COMMAND)
 				{
 					while (actionMenu.size() != 0) actionMenu.delete(0);
-					for (int i=0; i < hotkeyActionNames.length; i++) actionMenu.append(hotkeyActionNames[i],null);
+					for (int i=0; i < hotkeyActionNames.length; i++)
+						actionMenu.append(ResourceBundle.getString(hotkeyActionNames[i]),null);
 					actionMenu.addCommand(saveCommand);
 					actionMenu.addCommand(backCommand);
 
