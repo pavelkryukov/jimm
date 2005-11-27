@@ -548,24 +548,26 @@ public class Options
 		// #sijapp cond.end#
 		// #sijapp cond.end#
 		
-		private List keysMenu;
-		private List actionMenu;
+		static private List keysMenu;
+		static private List actionMenu;
 		
-		
-		private String[] hotkeyActions = 
+		final static private String[] hotkeyActionNames = 
 		{
 			ResourceBundle.getString("ext_hotkey_action_none"),
 			ResourceBundle.getString("invisible_check"),
 			ResourceBundle.getString("info"),
 			ResourceBundle.getString("send_message"),
+			//#sijapp cond.if modules_HISTORY is "true"#
+			ResourceBundle.getString("history"),
+			// #sijapp cond.end#
 			ResourceBundle.getString("ext_hotkey_action_onoff"),
 			ResourceBundle.getString("options"),
 			ResourceBundle.getString("menu"),
 			ResourceBundle.getString("keylock"),
-			ResourceBundle.getString("history")
 		};
 		
-		int[] hotkeyOpts;
+		static private int[] hotkeyOpts, hotkeyActions;
+		
 		
 		// Constructor
 		public OptionsForm() throws NullPointerException
@@ -573,13 +575,19 @@ public class Options
 			// Initialize hotkeys
 			hotkeyOpts = new int[10];
 			
+			hotkeyActions = new int[20];
 			int optIdx = 0;
-			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY0;
-			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY4;
-			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY6;
-			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYSTAR;
-			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYPOUND;
-			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYCALL;
+			hotkeyActions[optIdx++] = Options.HOTKEY_NONE;
+			hotkeyActions[optIdx++] = Options.HOTKEY_INVIS;
+			hotkeyActions[optIdx++] = Options.HOTKEY_INFO;
+			hotkeyActions[optIdx++] = Options.HOTKEY_NEWMSG;
+			//#sijapp cond.if modules_HISTORY is "true"#
+			hotkeyActions[optIdx++] = Options.HOTKEY_HISTORY;
+			// #sijapp cond.end#
+			hotkeyActions[optIdx++] = Options.HOTKEY_ONOFF;
+			hotkeyActions[optIdx++] = Options.HOTKEY_OPTIONS;
+			hotkeyActions[optIdx++] = Options.HOTKEY_MENU;
+			hotkeyActions[optIdx++] = Options.HOTKEY_LOCK;
 			
 			keysMenu = new List(ResourceBundle.getString("ext_listhotkeys"), List.IMPLICIT);
 			keysMenu.setCommandListener(this);
@@ -735,7 +743,7 @@ public class Options
                 chrgChat.setSelectedIndex(idx1++, getBooleanOption(Options.OPTION_USE_SMILES));
                 // #sijapp cond.end#
                 
-				//#sijapp cond.if modules_HISTORY is "true"#                
+				//#sijapp cond.if modules_HISTORY is "true"#
                 chrgChat.append(ResourceBundle.getString("use_history"), null);
                 chrgChat.setSelectedIndex(idx1++, getBooleanOption(Options.OPTION_HISTORY));
                 chrgChat.append(ResourceBundle.getString("show_prev_mess"), null);
@@ -806,18 +814,49 @@ public class Options
             // #sijapp cond.end#
             }
         }
+        
+        private String getHotKeyActName(String langStr, int option)
+        {
+        	int optionValue = Options.getIntOption(option);
+        	for (int i = 0; i < hotkeyActionNames.length; i++)
+        	{
+        		if (hotkeyActions[i] == optionValue) 
+        			return ResourceBundle.getString(langStr)+": "+hotkeyActionNames[i];  
+        	}
+        	return ResourceBundle.getString("ext_clhotkey0")+": <???>";
+        }
+        
 		private void InitHotkeyMenuUI()
 		{
-			int lastItemIndex = keysMenu.getSelectedIndex(); 
-			System.out.println("InitHotkeyMenuUI");
+			int optIdx = 0;
+			
+			int lastItemIndex = keysMenu.getSelectedIndex();
 			while (keysMenu.size() != 0) keysMenu.delete(0);
-			keysMenu.append(ResourceBundle.getString("ext_clhotkey0")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY0)],null);
-			keysMenu.append(ResourceBundle.getString("ext_clhotkey4")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY4)],null);
-			keysMenu.append(ResourceBundle.getString("ext_clhotkey6")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEY6)],null);
-			keysMenu.append(ResourceBundle.getString("ext_clhotkeystar")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR)],null);
-			keysMenu.append(ResourceBundle.getString("ext_clhotkeypound")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND)],null);
-			keysMenu.append(ResourceBundle.getString("ext_clhotkeycall")+": "+hotkeyActions[Options.getIntOption(Options.OPTION_EXT_CLKEYCALL)],null);
+			
+			keysMenu.append(getHotKeyActName("ext_clhotkey0", Options.OPTION_EXT_CLKEY0), null);
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY0;
+			
+			keysMenu.append(getHotKeyActName("ext_clhotkey4", Options.OPTION_EXT_CLKEY4), null);
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY4;
+			
+			keysMenu.append(getHotKeyActName("ext_clhotkey6", Options.OPTION_EXT_CLKEY6), null);
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY6;
+			
+			// #sijapp cond.if target is "MOTOROLA"#
+			keysMenu.append(getHotKeyActName("ext_clhotkeystar", Options.OPTION_EXT_CLKEYSTAR), null);
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYSTAR;
+			// #sijapp cond.end#
+			
+			keysMenu.append(getHotKeyActName("ext_clhotkeypound", Options.OPTION_EXT_CLKEYPOUND), null);
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYPOUND;
+			
+			// #sijapp cond.if target is "SIEMENS2"#
+			keysMenu.append(getHotKeyActName("ext_clhotkeycall", Options.OPTION_EXT_CLKEYCALL), null);
+			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYCALL;
+			// #sijapp cond.end#
+			
 			keysMenu.setSelectedIndex(lastItemIndex == -1 ? 0 : lastItemIndex, true);
+			
 			keysMenu.addCommand(saveCommand);
 			Jimm.display.setCurrent(keysMenu);			
 		} 
@@ -839,26 +878,39 @@ public class Options
 				if (c == List.SELECT_COMMAND)
 				{
 					while (actionMenu.size() != 0) actionMenu.delete(0);
-					for (int i=0; i < hotkeyActions.length; i++) actionMenu.append(hotkeyActions[i],null);
+					for (int i=0; i < hotkeyActionNames.length; i++) actionMenu.append(hotkeyActionNames[i],null);
 					actionMenu.addCommand(saveCommand);
 					actionMenu.addCommand(backCommand);
 
-					int index = hotkeyOpts[keysMenu.getSelectedIndex()];
-					actionMenu.setSelectedIndex(Options.getIntOption(index), true);
+					int optValue = Options.getIntOption(hotkeyOpts[keysMenu.getSelectedIndex()]);
+					for (int selIndex = 0; selIndex < hotkeyActions.length; selIndex++)
+					{
+						if (hotkeyActions[selIndex] == optValue)
+						{
+							actionMenu.setSelectedIndex(selIndex, true);
+							break;
+						}
+					}
+					
 					Jimm.display.setCurrent(actionMenu);
 					return;
 				}
 			}
 			
+			//Command handler for actions list in Hotkeys...
 			if (d == actionMenu)
 			{
-				if (c == saveCommand) Options.setIntOption(hotkeyOpts[keysMenu.getSelectedIndex()], actionMenu.getSelectedIndex());
+				if (c == saveCommand)
+				{ 
+					Options.setIntOption
+					(
+						hotkeyOpts[keysMenu.getSelectedIndex()],
+						hotkeyActions[actionMenu.getSelectedIndex()]
+					);
+				}
 				InitHotkeyMenuUI();
 				return;
 			}
-			
-			//Command handler for actions list in Hotkeys...
-			
 			
 			// Look for select command
 			// #sijapp cond.if target is "MOTOROLA"#

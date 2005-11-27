@@ -188,7 +188,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		{
 		case VALUE_ADDED: this.added = bool_value; break;
 		case VALUE_NO_AUTH: this.noAuth = bool_value; break;
-		case VALUE_IS_TEMP: this.temporary = bool_value;
+		case VALUE_IS_TEMP: this.temporary = bool_value; break;
 		}
 	}
 	
@@ -1496,9 +1496,6 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		// #sijapp cond.end#
 	}
 	
-	// Timer used to flash form caption
-	private static Timer creepLineTimer = new Timer();
-	
 	// Timer task for flashing form caption
 	private static FlashCapClass lastFlashTask = null;
 
@@ -1516,7 +1513,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					lastFlashTask.cancel();
 				}
 				lastFlashTask = new FlashCapClass(disp, getStatusString(status));;
-				creepLineTimer.scheduleAtFixedRate(lastFlashTask, 0, 500);
+				Jimm.jimm.getTimerRef().scheduleAtFixedRate(lastFlashTask, 0, 500);
 			}
 		}	 
 	}
