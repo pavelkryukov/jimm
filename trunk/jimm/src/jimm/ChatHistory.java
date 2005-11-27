@@ -219,7 +219,8 @@ public class ChatHistory
 				HistoryStorage.addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName(), plainMsg.getDate());
 			// #sijapp cond.end#	
 			
-			ContactListContactItem.showPopupWindow(uin, contact.getName(), plainMsg.getText());
+			if ( !message.getOffline() )
+				ContactListContactItem.showPopupWindow(uin, contact.getName(), plainMsg.getText());
 		}
 		if (message instanceof UrlMessage)
 		{
