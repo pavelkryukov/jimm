@@ -1516,6 +1516,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			case Options.HOTKEY_MENU:
 				MainMenu.activate();
 				break;
+				
+			// #sijapp cond.if target is "MIDP2"#
+			case Options.HOTKEY_MINIMIZE:
+				Jimm.setMinimized(true);
+				break;
+			// #sijapp cond.end#
 			}
 		}
 		
