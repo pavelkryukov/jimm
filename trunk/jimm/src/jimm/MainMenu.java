@@ -352,7 +352,7 @@ public class MainMenu implements CommandListener
             int count = 0;
             for (int i=0;i<cItems.length;i++)
             {
-                if (cItems[i].getGroup() == Jimm.jimm.getContactListRef().getGroupItems()[MainMenu.groupList.getSelectedIndex()].getId())
+                if (cItems[i].getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == Jimm.jimm.getContactListRef().getGroupItems()[MainMenu.groupList.getSelectedIndex()].getId())
                     count++;
             }
             if (count != 0)

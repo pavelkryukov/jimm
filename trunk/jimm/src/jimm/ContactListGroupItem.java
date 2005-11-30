@@ -70,7 +70,7 @@ public class ContactListGroupItem extends ContactListItem
 	    return totalCount;
 	}
 	
-    public String getText()
+    public String getStringValue(int id)
     {
         String result;
         

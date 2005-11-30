@@ -643,7 +643,7 @@ public class Util
             if (!found) 
                 for (int j = 0; j < cItems.length; j++)
                 {
-                    if (cItems[j].getId() == randint)
+                    if (cItems[j].getIntValue(ContactListContactItem.CONTACTITEM_ID) == randint)
 	                {
                         randint = rand.nextInt() % range + 4096;
 	                    found = true;

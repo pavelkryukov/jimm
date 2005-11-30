@@ -33,7 +33,7 @@ public abstract class ContactListItem
 	public abstract boolean equals(Object obj);
 
 	// returns text of list item. Is used for visual tree
-	public abstract String getText();
+	public abstract String getStringValue(int id);
 	
 	// returns image index of tree node. Is used for visual tree
 	public abstract int getImageIndex();

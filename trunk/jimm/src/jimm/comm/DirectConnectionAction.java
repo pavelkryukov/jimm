@@ -28,6 +28,7 @@ package jimm.comm;
 
 import java.util.Date;
 
+import jimm.ContactListContactItem;
 import jimm.JimmException;
 import jimm.Options;
 
@@ -90,7 +91,7 @@ public class DirectConnectionAction extends Action
 
         // Make a new peer connection and connect to the adress and port we got from the FileTransferRequest
         Icq.peerC = icq.new PeerConnection();
-        Icq.peerC.connect(Util.ipToString(ft.getRcvr().getInternalIP()) + ":" + ft.getRcvr().getPort());
+        Icq.peerC.connect(Util.ipToString(ft.getRcvr().getByteArrayValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)) + ":" + ft.getRcvr().getStringValue(ContactListContactItem.CONTACTITEM_DC_PORT));
 
         // Send a DC init packet
         byte[] dcpacket = new byte[48];
@@ -142,7 +143,7 @@ public class DirectConnectionAction extends Action
         marker += 4;
 
         // connection cookie
-        Util.putDWord(dcpacket, marker, ft.getRcvr().getDCAuthCookie(), false);
+        Util.putDWord(dcpacket, marker, ft.getRcvr().getLongValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE), false);
         marker += 4;
 
         // some unknown stuff
@@ -370,7 +371,6 @@ public class DirectConnectionAction extends Action
     {        
         if ((this.state == STATE_ERROR) || this.cancel)
         {
-            System.out.println("ERROR == true");
             return (true);
         }
         else
