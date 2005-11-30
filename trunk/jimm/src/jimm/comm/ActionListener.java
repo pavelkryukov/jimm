@@ -104,6 +104,12 @@ public class ActionListener
                 // #sijapp cond.end#
                 // #sijapp cond.end#
                 
+                // Time variables
+                int idle = -1;
+                long online = -1;
+                long signon = -1;
+      
+                
                 // Get data
                 byte[] buf = snacPacket.getData();
 
@@ -169,6 +175,19 @@ public class ActionListener
                     }
                     // #sijapp cond.end#
                     // #sijapp cond.end#
+                    
+                    else if (tlvType == 0x0003) // Signon time
+                    {
+                    	signon = Util.byteArrayToLong(tlvData);
+                    }
+                    else if (tlvType == 0x0004) // Idle time
+                    {
+                    	idle = (int)Util.byteArrayToLong(tlvData)/256;
+                    }
+                    else if (tlvType == 0x000F) // Online time
+                    {
+                    	online = Util.byteArrayToLong(tlvData);
+                    }                    
                     marker += 2 + 2 + tlvData.length;
                 }
 
@@ -176,13 +195,13 @@ public class ActionListener
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 
                 // #sijapp cond.if modules_FILES is "true"#
-                ContactList.update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie);
+                ContactList.update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
                 // #sijapp cond.else#
-                ContactList.update(uin, status, capabilities);
+                ContactList.update(uin, status, capabilities,signon,online,idle);
                 // #sijapp cond.end#
                 
                 // #sijapp cond.else#
-                ContactList.update(uin, status, capabilities);
+                ContactList.update(uin, status, capabilities,signon,online,idle);
                 // #sijapp cond.end#
                 
                 

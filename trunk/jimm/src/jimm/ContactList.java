@@ -882,7 +882,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // 	#sijapp cond.if modules_FILES is "true"#
     static public synchronized void update(String uin, long status, int capabilities,
             byte[] internalIP, long dcPort, int dcType, int icqProt,
-            long authCookie)
+            long authCookie,long signon,long online,int idle)
     {
         ContactListContactItem cItem = getItembyUIN(uin);
         if (cItem == null) return; // error ???
@@ -904,6 +904,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             cItem.setDCValues(internalIP, Long.toString(dcPort), dcType,
                     icqProt, authCookie);
         }
+        
+        // Update time values
+        cItem.setTimers(signon,online,idle);
 
         // Play sound notice if selected
         if ((trueStatus == STATUS_ONLINE) && statusChanged)
@@ -929,7 +932,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	);
     }
     // #sijapp cond.else#
-    static public synchronized void update(String uin, long status, int capabilities)
+    static public synchronized void update(String uin, long status, int capabilities,long signon,long online,int idle)
     {
         //System.out.println("update: status change");
 
@@ -945,6 +948,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // Set Status
         cItem.setStatus(status);
         cItem.setCapabilities(capabilities);
+        
+        // Update time values
+        cItem.setTimers(signon,online,idle);
         
         if (treeBuilt && statusChanged) ContactListContactItem.statusChanged(uin, trueStatus);
 
@@ -976,7 +982,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     
     // #sijapp cond.end#
     // #sijapp cond.else#
-    static public synchronized void update(String uin, long status, int capabilities)
+    static public synchronized void update(String uin, long status, int capabilities,long signon,long online,int idle)
     {
         //System.out.println("update: status change");
 
@@ -991,6 +997,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // Set Status
         cItem.setStatus(status);
         cItem.setCapabilities(capabilities);
+        // Update time values
+        cItem.setTimers(signon,online,idle);
         
         if (treeBuilt && statusChanged) ContactListContactItem.statusChanged(uin, trueStatus);
 
@@ -1026,12 +1034,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         //System.out.println("update(String uin, long status)");
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
-        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,new byte[0],0,0,-1,0);
+        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,new byte[0],0,0,-1,0,-1,-1,-1);
         // #sijapp cond.else#
-        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL);
+        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,-1,-1,-1);
         // #sijapp cond.end#
         // #sijapp cond.else#
-        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL);
+        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL,-1,-1,-1);
         // #sijapp cond.end#
     }
     

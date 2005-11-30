@@ -318,7 +318,23 @@ public class Util
 		return (Util.byteArrayToString(buf, 0, buf.length, false));
 	}
 
-
+	// Converts the specific 4 byte max buffer to an unsigned long
+	public static long byteArrayToLong(byte[] b) 
+	{
+		long l = 0;
+	    l |= b[0] & 0xFF;
+	    l <<= 8;
+	    l |= b[1] & 0xFF;
+	    l <<= 8;
+	    if (b.length > 3)
+		{
+			l |= b[2] & 0xFF;
+			l <<= 8;
+			l |= b[3] & 0xFF;
+		}
+	    return l;
+	}
+	
 	// Converts the specified string (val) to a byte array
 	public static byte[] stringToByteArray(String val, boolean utf8)
 	{

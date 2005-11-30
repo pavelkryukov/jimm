@@ -88,7 +88,7 @@ public class DirectConnectionAction extends Action
     protected void init() throws JimmException
     {
 
-        // Make a new peer connection and connec to the adress and port we got from the FileTransferRequest
+        // Make a new peer connection and connect to the adress and port we got from the FileTransferRequest
         Icq.peerC = icq.new PeerConnection();
         Icq.peerC.connect(Util.ipToString(ft.getRcvr().getInternalIP()) + ":" + ft.getRcvr().getPort());
 
