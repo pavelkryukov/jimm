@@ -208,7 +208,7 @@ public class Icq implements Runnable
     static public synchronized void delFromContactList(ContactListContactItem cItem)
     {
         // Check whether contact item is temporary
-        if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP))
+        if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP))
         {
             // Remove this temporary contact item
             ContactList.removeContactItem(cItem);

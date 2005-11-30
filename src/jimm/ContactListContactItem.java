@@ -24,6 +24,7 @@
 package jimm;
 
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.TimerTask;
 import java.util.Timer;
 import javax.microedition.lcdui.*;
@@ -46,264 +47,174 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	public static final int CAP_UTF8_INTERNAL = 0x00000002;
 	
 	// Message types
-	public static final int MESSAGE_PLAIN		= 1;
-	public static final int MESSAGE_URL		  = 2;
+	public static final int MESSAGE_PLAIN		 = 1;
+	public static final int MESSAGE_URL		     = 2;
 	public static final int MESSAGE_SYS_NOTICE   = 3;
 	public static final int MESSAGE_AUTH_REQUEST = 4;
 	
-	// Value types
-	public static final int VALUE_ADDED 		 = 5;
-	public static final int VALUE_NO_AUTH		 = 6;
-	public static final int VALUE_CHAT_SHOWN	 = 7;
-	public static final int VALUE_IS_TEMP 		 = 8;
-	public static final int VALUE_HAS_CHAT		 = 9;
-
-	/** ************************************************************************* */
-
-	// Persistent variables
-	private int id;
-	private int group;
-	private String uin;
-	private String name;
-	private boolean noAuth;
-
-	// Transient variables
-	private boolean temporary;
-	private boolean requReason;
-	private boolean added;
-	private long status;
-	private int capabilities;
+	/*******************************************************************************
+	Persistant variables accessible with keys
+	Variable key          Value
+	  0 -  63 (00XXXXXX)  String
+	 64 - 127 (01XXXXXX)  INTEGER
+	128 - 191 (10XXXXXX)  BOOLEAN
+	192 - 224 (110XXXXX)  LONG
+	225 - 255 (111XXXXX)  BYTE-ARRAY
+	******************************************************************************/
 	
+	// Variable keys
+	public static final int CONTACTITEM_UIN						= 0;   /* String */
+	public static final int CONTACTITEM_NAME					= 1;   /* String */
+	public static final int CONTACTITEM_TEXT					= 2;   /* String */
+	public static final int CONTACTITEM_ID						= 64;  /* Integer */
+	public static final int CONTACTITEM_GROUP					= 65;  /* Integer */
+	public static final int CONTACTITEM_CAPABILITIES			= 66;  /* Integer */
+	public static final int CONTACTITEM_PLAINMESSAGES			= 67;  /* Integer */
+	public static final int CONTACTITEM_URLMESSAGES				= 68;  /* Integer */
+	public static final int CONTACTITEM_SYSNOTICES				= 69;  /* Integer */
+	public static final int CONTACTITEM_AUTREQUESTS				= 70;  /* Integer */
+	public static final int CONTACTITEM_IDLE					= 71;  /* Integer */
+	public static final int CONTACTITEM_VALUE_ADDED				= 128; /* Boolean */
+	public static final int CONTACTITEM_VALUE_NO_AUTH			= 129; /* Boolean */
+	public static final int CONTACTITEM_VALUE_CHAT_SHOWN		= 130; /* Boolean */
+	public static final int CONTACTITEM_VALUE_IS_TEMP			= 131; /* Boolean */
+	public static final int CONTACTITEM_VALUE_HAS_CHAT			= 132; /* Boolean */
+	public static final int CONTACTITEM_VALUE_REQU_REASON		= 133; /* Boolean */
+	public static final int CONTACTITEM_STATUS					= 192; /* Long */
+	public static final int CONTACTITEM_SIGNON					= 194; /* Long */
+	public static final int CONTACTITEM_ONLINE					= 195; /* Long */
+
+	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	// #sijapp cond.if modules_FILES is "true"#
+	public static final int CONTACTITEM_INTERNAL_IP				= 225; /* Byte array */
+	public static final int CONTACTITEM_EXTERNAL_IP				= 226; /* Byte array */
+    public static final int CONTACTITEM_AUTH_COOKIE				= 193; /* Long */
+	public static final int CONTACTITEM_DC_TYPE					= 72;  /* Integer */
+	public static final int CONTACTITEM_ICQ_PROT				= 73;  /* Integer */
+	public static final int CONTACTITEM_DC_PORT					= 3;   /* String */
+	//  #sijapp cond.end#
+	//  #sijapp cond.end#
 	
-	// Message count
-	private int plainMessages;
-	private int urlMessages;
-	private int sysNotices;
-	private int authRequest;
-	
+	// Hashtable for the standard variables
+	private Hashtable values;
+
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// #sijapp cond.if modules_FILES is "true"#
 	// DC values
-	private byte[] internalIP;
-	private byte[] externalIP;
-	private String dcPort;
-	private int dcType;
-	private int icqProt;
-	private long authCookie;
-
 	private FileTransferMessage ftm;
 	private FileTransfer ft;
 	//  #sijapp cond.end#
 	//  #sijapp cond.end#
 	
-	// Timing values
-	private long signon;
-	private long online;
-	private int idle;
-	
 	public static String currentUin = new String();
 
+	public void init(int id, int group, String uin, String name, boolean noAuth, boolean added)
+	{
+		if (id == -1)
+			setIntValue (ContactListContactItem.CONTACTITEM_ID,Util.createRandomId());
+		else
+			setIntValue (ContactListContactItem.CONTACTITEM_ID,id);
+		setIntValue (ContactListContactItem.CONTACTITEM_GROUP,group);
+		setStringValue (ContactListContactItem.CONTACTITEM_UIN,uin);
+		setStringValue (ContactListContactItem.CONTACTITEM_NAME,name);
+		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH,noAuth);
+		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP,false);
+		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT,false);
+		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_ADDED,added);
+		setLongValue (ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
+		setIntValue (ContactListContactItem.CONTACTITEM_CAPABILITIES,ContactListContactItem.CAP_NO_INTERNAL);
+		setIntValue (ContactListContactItem.CONTACTITEM_PLAINMESSAGES,0);
+		setIntValue (ContactListContactItem.CONTACTITEM_URLMESSAGES,0);
+		setIntValue (ContactListContactItem.CONTACTITEM_SYSNOTICES,0);
+		setIntValue (ContactListContactItem.CONTACTITEM_AUTREQUESTS,0);
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		// #sijapp cond.if modules_FILES is "true"#
+		setByteArrayValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,new byte[4]);
+		setByteArrayValue (ContactListContactItem.CONTACTITEM_EXTERNAL_IP,new byte[4]);
+		setStringValue (ContactListContactItem.CONTACTITEM_DC_PORT,"");
+		setIntValue (ContactListContactItem.CONTACTITEM_DC_TYPE,-1);
+		setIntValue (ContactListContactItem.CONTACTITEM_ICQ_PROT,0);
+		setLongValue (ContactListContactItem.CONTACTITEM_AUTH_COOKIE,0);
+		this.ft = null;
+		//  #sijapp cond.end# 
+		//  #sijapp cond.end# 
+		setLongValue (ContactListContactItem.CONTACTITEM_SIGNON,-1);
+		setLongValue (ContactListContactItem.CONTACTITEM_ONLINE,-1);
+		setIntValue (ContactListContactItem.CONTACTITEM_IDLE,-1);
+		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON,false);
+	}
+	
 	// Constructor for an existing contact item
 	public ContactListContactItem(int id, int group, String uin, String name, boolean noAuth, boolean added)
 	{
-		this.id = id;
-		this.group = group;
-		this.uin = new String(uin);
-		this.name = new String(name);
-		this.noAuth = noAuth;
-		this.temporary = false;
-		this.added = added;
-		this.status = ContactList.STATUS_OFFLINE;
-		this.capabilities = ContactListContactItem.CAP_NO_INTERNAL;
-		this.plainMessages = 0;
-		this.urlMessages = 0;
-		this.sysNotices = 0;
-		this.authRequest = 0;
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		// #sijapp cond.if modules_FILES is "true"#
-		this.internalIP = new byte[4];
-		this.externalIP = new byte[4];
-		this.dcPort = "";
-		this.dcType = -1;
-		this.icqProt = 0;
-		this.authCookie = 0;
-		this.ft = null;
-		//  #sijapp cond.end# 
-		//  #sijapp cond.end# 
-		this.signon = -1;
-		this.online = -1;
-		this.idle = -1;
-		this.requReason = false;
+	    values = new Hashtable();
+	    this.init(id,group,uin,name,noAuth,added);
 	}
 	
-	// Constructor for a new contact item
-	public ContactListContactItem(int group, String uin, String name, boolean noAuth, boolean added)
+	// Value retrieval methods (no type checking!)
+	public synchronized String getStringValue(int key)
 	{
-		this.id = Util.createRandomId();
-		this.group = group;
-		this.uin = new String(uin);
-		this.name = new String(name);
-		this.noAuth = noAuth;
-		this.temporary = false;
-		this.added = added;
-		this.status = ContactList.STATUS_OFFLINE;
-		this.capabilities = ContactListContactItem.CAP_NO_INTERNAL;
-		this.plainMessages = 0;
-		this.urlMessages = 0;
-		this.sysNotices = 0;
-		this.authRequest = 0;
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		// #sijapp cond.if modules_FILES is "true"#
-		this.internalIP = new byte[4];
-		this.externalIP = new byte[4];
-		this.dcPort = "";
-		this.dcType = -1;
-		this.icqProt = 0;
-		this.authCookie = 0;
-		this.ft = null;
-		// #sijapp cond.end#
-		// #sijapp cond.end#
-		this.signon = -1;
-		this.online = -1;
-		this.idle = -1;
-		this.requReason = false;
+		return ((String) values.get(new Integer(key)));
+	}
+	public synchronized int getIntValue(int key)
+	{
+	    return (((Integer) values.get(new Integer(key))).intValue());
+	}
+	public synchronized boolean getBooleanValue(int key)
+	{
+	    return (((Boolean) values.get(new Integer(key))).booleanValue());
+	}
+	public synchronized long getLongValue(int key)
+	{
+	    return (((Long) values.get(new Integer(key))).longValue());
+	}
+	public synchronized byte[] getByteArrayValue(int key)
+	{
+	    return (((byte[]) values.get(new Integer(key))));
+	}
+
+	// Value setting methods (no type checking!)
+	public synchronized void setStringValue(int key, String value)
+	{
+		values.put(new Integer(key), value);
+	}
+	public synchronized void setIntValue(int key, int value)
+	{
+		values.put(new Integer(key), new Integer(value));
+	}
+	public synchronized void setBooleanValue(int key, boolean value)
+	{
+		values.put(new Integer(key), new Boolean(value));
+	}
+	public synchronized void setLongValue(int key, long value)
+	{
+		values.put(new Integer(key), new Long(value));
+	}
+	public synchronized void setByteArrayValue(int key, byte[] value)
+	{
+		values.put(new Integer(key), value);
 	}
 	
-
-
-	// Retruns boolean value by property
-	public boolean returnBoolValue(int value)
-	{
-		switch (value)
-		{
-		case VALUE_ADDED: return (this.added);
-		case VALUE_NO_AUTH: return (noAuth);
-		case VALUE_CHAT_SHOWN: return Jimm.jimm.getChatHistoryRef().chatHistoryShown(this.uin);
-		case VALUE_IS_TEMP: return (this.temporary);
-		case VALUE_HAS_CHAT:  return Jimm.jimm.getChatHistoryRef().chatHistoryExists(this.uin); 
-		default: return false;
-		}
-	}
-	
-	// Sets boolean value by property
-	public void setBoolValue(int value,boolean bool_value)
-	{
-		switch (value)
-		{
-		case VALUE_ADDED: this.added = bool_value; break;
-		case VALUE_NO_AUTH: this.noAuth = bool_value; break;
-		case VALUE_IS_TEMP: this.temporary = bool_value; break;
-		}
-	}
-	
-	// Returns the contact item id
-	public int getId()
-	{
-		return (this.id);
-	}
-
-	// Sets the contact item id
-	public void setId(int id)
-	{
-		this.id = id;
-	}
-
-	// Returns the group item id to which this contact item belongs
-	public int getGroup()
-	{
-		return (this.group);
-	}
-
-	// Sets the group item id to which this contact item belongs
-	public void setGroup(int group)
-	{
-		this.group = group;
-	}
-
-	// Returns the uin of this contact item
-	public String getUin()
-	{
-		return (new String(this.uin));
-	}
-
-	// Sets the uin of this contact item
-	public void setUin(String uin)
-	{
-		this.uin = new String(uin);
-	}
-
-	// Returns the name of this contact item
-	public String getName()
-	{
-		return (new String(this.name));
-	}
-
-	// Sets the name of this contact item
-	public void setName(String name)
-	{
-		this.name = new String(name);
-	}
-	
-	// Returns the status of this contact item
-	public long getStatus()
-	{
-		return (this.status);
-	}
-
-	// Sets the status of this contact item
-	public void setStatus(long status)
-	{
-		this.status = Util.translateStatusReceived(status);
-	}
-
 	// Returns true if client supports given capability
 	public boolean hasCapability(int capability)
 	{
-		return ((capability & this.capabilities) != 0x00000000);
-	}
-
-	// Sets client capabilities
-	public void setCapabilities(int capabilities)
-	{
-		this.capabilities = capabilities;
-	}
-	
-	public String getText()
-	{
-		return name;
+		return ((capability & this.getIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES)) != 0x00000000);
 	}
 	
 	private String lowerText = null;
 	
 	public String getLowerText()
 	{
-		if (lowerText == null) lowerText = name.toLowerCase();
+		if (lowerText == null) lowerText = getStringValue(ContactListContactItem.CONTACTITEM_NAME).toLowerCase();
 		return lowerText;
-	}
-	
-	// Returns true if contact must be shown even user offline
-	// and "hide offline" is on
-	protected boolean mustBeShownAnyWay()
-	{
-		return (plainMessages > 0) ||
-			   (urlMessages > 0)   || 
-			   (sysNotices > 0)	||
-			   (authRequest > 0)   || 
-			   temporary; 
-	}
-	
-	// Returns total count of all unread messages (messages, sys notices, urls, auths)
-	protected int getUnreadMessCount()
-	{
-		return plainMessages+urlMessages+sysNotices+authRequest;
 	}
 	
 	// Returns color for contact name
 	public int getTextColor()
 	{
-		if (temporary) return 0x808080;
+		if (getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)) return 0x808080;
 		return 
-			returnBoolValue(VALUE_HAS_CHAT) 
+		getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT) 
 				? Options.getSchemeColor(Options.CLRSCHHEME_BLUE)
 				: Options.getSchemeColor(Options.CLRSCHHEME_TEXT); 
 	}
@@ -311,7 +222,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	// Returns font style for contact name 
 	public int getFontStyle()
 	{
-		return returnBoolValue(VALUE_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
+		return getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
 	}
 
 	// Returns imaghe index for contact
@@ -322,8 +233,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		if (isMessageAvailable(MESSAGE_PLAIN)) tempIndex = 8;
 		else if (isMessageAvailable(MESSAGE_URL)) tempIndex = 9;
 		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
-		else if (isMessageAvailable(MESSAGE_SYS_NOTICE) || returnBoolValue(VALUE_NO_AUTH)) tempIndex = 10;
-		else tempIndex = getStatusImageIndex(status);
+		else if (isMessageAvailable(MESSAGE_SYS_NOTICE) || getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH)) tempIndex = 10;
+		else tempIndex = getStatusImageIndex(getLongValue(ContactListContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
 
@@ -371,61 +282,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		return (index == -1) ? null : ResourceBundle.getString(statusStrings[index]);
 	}
 	
-	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-	// #sijapp cond.if modules_FILES is "true"#
-	// Sets the DC values
-	public void setDCValues(byte[] _internalIP,String _dcPort,int _dcType,int _icqProt,long _authCookie)
-	{
-		this.internalIP = _internalIP;
-		this.dcPort = _dcPort;
-		this.dcType = _dcType;
-		this.icqProt = _icqProt;
-		this.authCookie = _authCookie;
-	}
-	
-	// Update ip and port values
-	public void updateIPsandPort(byte[] _ip,byte[] _extIP,String _port)
-	{
-		this.internalIP = _ip;
-		this.externalIP = _extIP;
-		this.dcPort = _port;
-	}
-	
-	// Return the DC auth cookie
-	public long getDCAuthCookie()
-	{
-		return this.authCookie;
-	}
-	
-	// Return ICQ version of this ContactListContactITem
-	public int getICQVersion()
-	{
-		return this.icqProt;
-	}
-	
-	// Return IP
-	public byte[] getInternalIP()
-	{
-		return (this.internalIP);
-	}
-	
-	// Return IP
-	public byte[] getExternalIP()
-	{
-		return (this.externalIP);
-	}
-	
-	// Return IP
-	public int getDCType()
-	{
-		return (this.dcType);
-	}
-	
-	// Return port
-	public String getPort()
-	{
-		return (this.dcPort);
-	}
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+    // #sijapp cond.if modules_FILES is "true"#  
 	
 	// Returns the fileTransfer Object of this contact
 	public FileTransfer getFT()
@@ -433,45 +291,40 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		return this.ft;
 	}
 	
+	// Set the FileTransferMessage of this contact
+	public void setFTM(FileTransferMessage _ftm)
+	{
+		this.ftm = _ftm;
+	}
+
 	// Returns the FileTransferMessage of this contact
 	public FileTransferMessage getFTM()
 	{
 		return this.ftm;
 	}
+	//  #sijapp cond.end# 
+	//  #sijapp cond.end# 
 	
-	// Set the FileTransferMessage of this contact
-	public void setFTM(FileTransferMessage _ftm)
+	// Returns true if contact must be shown even user offline
+	// and "hide offline" is on
+	protected boolean mustBeShownAnyWay()
 	{
-		this.ftm = _ftm;
-	}	
-	// #sijapp cond.end#
-	// #sijapp cond.end#
-	
-	// Set time values
-	public void setTimers(long signon, long online, int idle)
-	{
-		this.signon = signon;
-		this.online = online;
-		this.idle = idle;
-	}
-	
-	// Return the time values
-	public long getSignonTime()
-	{
-		return this.signon;
-	}
-	
-	public long getOnlineTime()
-	{
-		return (this.online);
-	}
-	
-	public int getIdleTime()
-	{
-		return this.idle;
+		return (getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0) ||
+			   (getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES) > 0)   || 
+			   (getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES) > 0)	||
+			   (getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) > 0)   || 
+			   getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP); 
 	}
 
-	
+	// Returns total count of all unread messages (messages, sys notices, urls, auths)
+	protected int getUnreadMessCount()
+	{
+		return getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES)+
+			getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES)+
+			getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES)+
+			getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS);
+	}
+
 	// Returns true if the next available message is a message of given type
 	// Returns false if no message at all is available, or if the next available
 	// message is of another type
@@ -479,49 +332,44 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	{
 		switch (type)
 		{
-			case MESSAGE_PLAIN:		return (this.plainMessages > 0);
-			case MESSAGE_URL:		  return (this.urlMessages > 0); 
-			case MESSAGE_SYS_NOTICE:   return (this.sysNotices > 0);
-			case MESSAGE_AUTH_REQUEST: return (this.authRequest > 0); 
+			case MESSAGE_PLAIN:		return (this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
+			case MESSAGE_URL:		  return (this.getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES) > 0); 
+			case MESSAGE_SYS_NOTICE:   return (this.getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES) > 0);
+			case MESSAGE_AUTH_REQUEST: return (this.getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) > 0); 
 		}
-		return (this.plainMessages > 0);
+		return (this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
 	}
 	
 	// Increases the mesage count
 	protected synchronized void increaseMessageCount(int type)
 	{ 
+		System.out.println("msg++");
 		switch (type)
 		{
-			case MESSAGE_PLAIN:		this.plainMessages++; break;
-			case MESSAGE_URL:		  this.urlMessages++; break;
-			case MESSAGE_SYS_NOTICE:   this.sysNotices++; break;
-			case MESSAGE_AUTH_REQUEST: this.authRequest++;
+			case MESSAGE_PLAIN:		this.setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES,this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES)+1); break;
+			case MESSAGE_URL:		  this.setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES,this.getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES)+1); break;
+			case MESSAGE_SYS_NOTICE:   this.setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES,this.getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES)+1); break;
+			case MESSAGE_AUTH_REQUEST: this.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS,this.getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS)+1);
 		}
 	}
 
 	// Adds a message to the message display
 	protected synchronized void addMessage(Message message)
 	{
-		Jimm.jimm.getChatHistoryRef().addMessage(uin,message,this);
+		Jimm.jimm.getChatHistoryRef().addMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN),message,this);
 	}
 
 	public synchronized void resetUnreadMessages()
 	{
-		plainMessages = 0;
-		urlMessages = 0;
-		sysNotices = 0;
+		this.setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES,0);
+		this.setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES,0);
+		this.setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES,0);
 	}
 
 	// Delete the chat history
 	public void deleteChatHistory()
 	{
-		Jimm.jimm.getChatHistoryRef().chatHistoryDelete(uin);
-	}
-
-	// Activates the contact item menu
-	public void activateMenu()
-	{
-		this.activate();
+		Jimm.jimm.getChatHistoryRef().chatHistoryDelete(this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 	}
 
 	// Checks whether some other object is equal to this one
@@ -529,7 +377,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	{
 		if (!(obj instanceof ContactListContactItem)) return (false);
 		ContactListContactItem ci = (ContactListContactItem) obj;
-		return (this.uin.equals(ci.getUin()) && (this.temporary == ci.returnBoolValue(VALUE_IS_TEMP)));
+		return (this.getStringValue(ContactListContactItem.CONTACTITEM_UIN).equals(ci.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) && (this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP) == ci.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)));
 	}
 	
 	private void clearMessBoxCommands()
@@ -596,7 +444,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 
 	public void checkForInvis()
 	{
-		VisibilityCheckerAction act = new VisibilityCheckerAction(getUin(), getName());
+		VisibilityCheckerAction act = new VisibilityCheckerAction(getStringValue(ContactListContactItem.CONTACTITEM_UIN), getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 		try
 		{
 			Icq.requestAction(act);
@@ -611,7 +459,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	//#sijapp cond.if modules_HISTORY is "true" #
 	public void showHistory()
 	{
-		HistoryStorage.showHistoryList(getUin(), getName());
+		HistoryStorage.showHistoryList(getStringValue(ContactListContactItem.CONTACTITEM_UIN), getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 	}
 	//#sijapp cond.end#
 	
@@ -624,7 +472,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
 
 		// Request info from server
-		RequestInfoAction act1 = new RequestInfoAction(ContactListContactItem.this.getUin());
+		RequestInfoAction act1 = new RequestInfoAction(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 		try
 		{
 			Icq.requestAction(act1);
@@ -724,10 +572,10 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			if (initText != null) messageTextbox.setString(initText);
 			
 			// Keep old text if press "cancel" while last edit 
-			else if ( !lastAnsUIN.equals(getUin()) ) messageTextbox.setString(null);
+			else if ( !lastAnsUIN.equals(getStringValue(ContactListContactItem.CONTACTITEM_UIN)) ) messageTextbox.setString(null);
 			
 			// Display textbox for entering messages
-			messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getName());
+			messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 			clearMessBoxCommands();
 			//#sijapp cond.if modules_SMILES is "true" #
 			messageTextbox.addCommand(insertEmotionCommand);
@@ -735,7 +583,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			messageTextbox.addCommand(textboxSendCommand);
 			messageTextbox.setCommandListener(this);
 			Jimm.display.setCurrent(messageTextbox);
-			lastAnsUIN = getUin();
+			lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		}
 
 		// Command listener
@@ -812,17 +660,17 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     
                 case USER_MENU_STATUS_MESSAGE:
                     // Send a status message request message
-                    if (!((ContactListContactItem.this.getStatus() == ContactList.STATUS_ONLINE) || (ContactListContactItem.this.getStatus() == ContactList.STATUS_OFFLINE) || (ContactListContactItem.this.getStatus() == ContactList.STATUS_INVISIBLE)))
+                    if (!((ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_ONLINE) || (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE) || (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_INVISIBLE)))
                     {
                             int msgType;
                         // Send a status message request message
-                        if (ContactListContactItem.this.getStatus() == ContactList.STATUS_AWAY)
+                        if (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_AWAY)
                             msgType = Message.MESSAGE_TYPE_AWAY;
-                        else if (ContactListContactItem.this.getStatus() ==  ContactList.STATUS_OCCUPIED)
+                        else if (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) ==  ContactList.STATUS_OCCUPIED)
                             msgType = Message.MESSAGE_TYPE_OCC;
-                        else if (ContactListContactItem.this.getStatus() == ContactList.STATUS_DND)
+                        else if (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_DND)
                             msgType = Message.MESSAGE_TYPE_DND;
-                        else if (ContactListContactItem.this.getStatus() == ContactList.STATUS_CHAT)
+                        else if (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_CHAT)
                             msgType = Message.MESSAGE_TYPE_FFC;
                         else
                             msgType = Message.MESSAGE_TYPE_AWAY;
@@ -847,7 +695,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 case USER_MENU_FILE_TRANS:
                     // Send a filetransfer with a file given by path
                     // We can only make file transfers with ICQ clients prot V8 and up
-                    if (ContactListContactItem.this.getICQVersion() < 8)
+                    if (ContactListContactItem.this.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
                     {
                         JimmException.handleException(new JimmException(190, 0, true));
                     }
@@ -862,7 +710,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 case USER_MENU_CAM_TRANS:
                     // Send a filetransfer with a camera image
                     // We can only make file transfers with ICQ clients prot V8 and up
-                    if (ContactListContactItem.this.getICQVersion() < 8)
+                    if (ContactListContactItem.this.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
                     {
                         JimmException.handleException(new JimmException(190, 0, true));
                     }
@@ -880,7 +728,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 	JimmUI.messageBox
                     (
                         ResourceBundle.getString("remove")+"?",
-                        ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getName()+"?",
+                        ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+"?",
                         JimmUI.MESBOX_OKCANCEL,
                         this,
                         MSGBS_DELETECONTACT
@@ -893,7 +741,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 	JimmUI.messageBox
                     (
                     	ResourceBundle.getString("remove_me")+"?",
-						ResourceBundle.getString("remove_me_from")+ContactListContactItem.this.getName()+"?",
+						ResourceBundle.getString("remove_me_from")+ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+"?",
 						JimmUI.MESBOX_OKCANCEL,
 						this,
 						MSGBS_REMOVEME
@@ -904,7 +752,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     // Rename the contact local and on the server
                     // Reset and display textbox for entering name
                     messageTextbox.setTitle(ResourceBundle.getString("rename"));
-                    messageTextbox.setString(ContactListContactItem.this.getName());
+                    messageTextbox.setString(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
                     clearMessBoxCommands();
                     messageTextbox.addCommand(renameOkCommand);
                     messageTextbox.setCommandListener(this);
@@ -914,7 +762,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 // #sijapp cond.if modules_HISTORY is "true" #                    
                 case USER_MENU_HISTORY:
                     // Stored history
-					HistoryStorage.showHistoryList(getUin(), getName());
+					HistoryStorage.showHistoryList(getStringValue(ContactListContactItem.CONTACTITEM_UIN),getStringValue(ContactListContactItem.CONTACTITEM_NAME));
                     break;
                 // #sijapp cond.end#
                     
@@ -927,13 +775,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     Alert info = new Alert(ResourceBundle.getString("local_info"));
                     StringBuffer buf = new StringBuffer();
                     final String clrf = "\n";
-                    if (getSignonTime() > 0) {
-                    	Date signon = new Date(getSignonTime());
+                    if (getLongValue(ContactListContactItem.CONTACTITEM_SIGNON) > 0) {
+                    	Date signon = new Date(this.getLongValue(ContactListContactItem.CONTACTITEM_SIGNON));
                     	buf.append(ResourceBundle.getString("li_signon_time")+": "+Util.getDateString(false,signon)+"\n");
                     }
-                    if (getOnlineTime() > 0)
+                    if (getLongValue(ContactListContactItem.CONTACTITEM_ONLINE) > 0)
 					{
-						long online = getOnlineTime();
+						long online = this.getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
 						buf.append(ResourceBundle.getString("li_online_time") + ": ");
 						if ((online / 86400) != 0)
 						{
@@ -947,9 +795,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 						}
 						buf.append(online / 60 +  ResourceBundle.getString("minutes") +"\n");
 					}
-                    if (getIdleTime() > 0)
+                    if (getIntValue(ContactListContactItem.CONTACTITEM_IDLE) > 0)
                     {
-                    	int idleTime = getIdleTime();
+                    	int idleTime = this.getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
                     	buf.append(ResourceBundle.getString("li_idle_time")+": ");
 						if ((idleTime / 60) != 0)
 							buf.append(idleTime/60+"h ");
@@ -957,11 +805,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                     }
                     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                     // #sijapp cond.if modules_FILES is "true"#    
-                    buf.append("DC typ: ")     .append(getDCType()).append(clrf)
-					   .append("ICQ version: ").append(getICQVersion()).append(clrf)
-					   .append("Int IP: ")     .append(Util.ipToString(getInternalIP())).append(clrf)
-					   .append("Ext IP: ")     .append(Util.ipToString(this.getExternalIP())).append(clrf)
-					   .append("Port: ")       .append(this.getPort()).append(clrf);
+                    buf.append("DC typ: ")     .append(this.getIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE)).append(clrf)
+					   .append("ICQ version: ").append(this.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT)).append(clrf)
+					   .append("Int IP: ")     .append(Util.ipToString(this.getByteArrayValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP))).append(clrf)
+					   .append("Ext IP: ")     .append(Util.ipToString(this.getByteArrayValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP))).append(clrf)
+					   .append("Port: ")       .append(this.getStringValue(ContactListContactItem.CONTACTITEM_DC_PORT)).append(clrf);
                     // #sijapp cond.end#
                     // #sijapp cond.end# 
                     
@@ -974,7 +822,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 case USER_MENU_REQU_AUTH:
                     // Request auth
                 	
-                    requReason = true;
+                	this.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON,true);
                     reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
                     reasonTextbox.removeCommand(textboxOkCommand);
                     reasonTextbox.addCommand(textboxSendCommand);
@@ -991,28 +839,28 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// User wants to add temporary contact
 			else if (c == addUrsCommand)
 			{
-				MainMenu.addUserOrGroupCmd(uin,true);
+				MainMenu.addUserOrGroupCmd(this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
 			}
 			
 			// User adds selected message to history
 			//#sijapp cond.if modules_HISTORY is "true" #
 			else if (c == addToHistoryCommand)
 			{
-				Jimm.jimm.getChatHistoryRef().addTextToHistory(uin);
+				Jimm.jimm.getChatHistoryRef().addTextToHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			}
 			//#sijapp cond.end#
 			
 			// "Copy text" command selected
 			else if (c == copyTextCommand)
 			{
-				Jimm.jimm.getChatHistoryRef().copyText(uin);
+				Jimm.jimm.getChatHistoryRef().copyText(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 				getCurrDisplay().addCommand(replWithQuotaCommand);
 			}
 			
 			// User wants to rename Contact
 			else if (c == renameOkCommand)
 			{
-				ContactListContactItem.this.setName(messageTextbox.getString());
+				ContactListContactItem.this.setStringValue(ContactListContactItem.CONTACTITEM_NAME,messageTextbox.getString());
 				try 
 				{
 					// Save ContactList
@@ -1032,7 +880,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					// Do nothing
 				}
 				
-				Jimm.jimm.getChatHistoryRef().contactRenamed(uin, this.name);
+				Jimm.jimm.getChatHistoryRef().contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN),getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 				ContactList.activate();
 				messageTextbox.setString(null);
 			}
@@ -1067,11 +915,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 							ContactList.activate(JimmException.handleException(e));
                             if (e.isCritical()) return;
 						}
-                        Jimm.jimm.getChatHistoryRef().addMyMessage(uin,plainMsg.getText(),plainMsg.getDate(),name);
+                        Jimm.jimm.getChatHistoryRef().addMyMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN),plainMsg.getText(),plainMsg.getDate(),getStringValue(ContactListContactItem.CONTACTITEM_NAME));
                         
                         // #sijapp cond.if modules_HISTORY is "true" #
                         if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
-                            HistoryStorage.addText(getUin(), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
+                            HistoryStorage.addText(getStringValue(ContactListContactItem.CONTACTITEM_UIN), plainMsg.getText(), (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
                         // #sijapp cond.end#
                             
                         
@@ -1132,27 +980,28 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					SystemNotice notice;
 
 					// Decrease the number of handled auth requests by one
-					if (!requReason) ContactListContactItem.this.authRequest -= 1;
+					if (!getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON)) 
+						setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS,getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS)-1);
 
 					// If or if not a reason was entered
 					// Though this box is used twice (reason for auth request and auth repley)
 					// we have to distinguish what we wanna do requReason is used for that
 					if (reasonTextbox.getString().length() < 1)
 					{
-						if (requReason)
+						if (getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON))
 							notice = new SystemNotice(SystemNotice.SYS_NOTICE_REQUAUTH, ContactListContactItem.this
-									.getUin(), false, "");
+									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, "");
 						else
 							notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this
-									.getUin(), false, "");
+									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, "");
 					} else
 					{
-						if (requReason)
+						if (getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON))
 							notice = new SystemNotice(SystemNotice.SYS_NOTICE_REQUAUTH, ContactListContactItem.this
-									.getUin(), false, reasonTextbox.getString());
+									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, reasonTextbox.getString());
 						else
 							notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this
-									.getUin(), false, reasonTextbox.getString());
+									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, reasonTextbox.getString());
 					}
 
 					// Assemble the sysNotAction and request it
@@ -1162,13 +1011,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					try
 					{
 						Icq.requestAction(sysNotAct);
-						if (ContactListContactItem.this.returnBoolValue(VALUE_IS_TEMP)) Icq.requestAction(updateAct);
+						if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)) Icq.requestAction(updateAct);
 					} catch (JimmException e)
 					{
 						JimmException.handleException(e);
 						if (e.isCritical()) return;
 					}
-					requReason = false;
+					setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON,false);
 					ContactList.activate();
 				}
 			}
@@ -1178,7 +1027,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			{
 				Icq.delFromContactList(ContactListContactItem.this);
 				//#sijapp cond.if modules_HISTORY is "true" #
-				HistoryStorage.clearHistory(uin);
+				HistoryStorage.clearHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 				//#sijapp cond.end# 
 			}
 			
@@ -1191,7 +1040,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// user select Ok in delete me message box
 			else if (JimmUI.isMsgBoxCommand(c, MSGBS_REMOVEME) == JimmUI.CMD_OK)
 			{
-				RemoveMeAction remAct = new RemoveMeAction(ContactListContactItem.this.getUin());
+				RemoveMeAction remAct = new RemoveMeAction(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 
 				try
 				{
@@ -1218,7 +1067,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Menu should be activated
 			else if (c == addMenuCommand)
 			{
-				menuList.setTitle(ContactListContactItem.this.name);
+				menuList.setTitle(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 				menuList.setSelectedIndex(0, true);
 				menuList.setCommandListener(this);
 				Jimm.display.setCurrent(menuList);
@@ -1228,15 +1077,16 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			else if (c == deleteChatCommand)
 			{
 				ContactListContactItem.this.deleteChatHistory();
+				ContactListContactItem.this.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT,false);
 				ContactList.activate();
 			}
 			
 			//Grant authorisation
 			else if (c == grantAuthCommand)
 			{
-				ContactListContactItem.this.authRequest -= 1;
+				setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS,getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS)-1);
 				SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this
-						.getUin(), true, "");
+						.getStringValue(ContactListContactItem.CONTACTITEM_UIN), true, "");
 				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
 				try
 				{
@@ -1252,7 +1102,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			else if (c == denyAuthCommand || c == reqAuthCommand)
 			{
 				// Reset and display textbox for entering deney reason
-				if (c == reqAuthCommand) requReason = true;
+				if (c == reqAuthCommand) setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON,true);
 				if (c == reqAuthCommand)
 					reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
 				else
@@ -1292,23 +1142,23 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		
 		VirtualList getCurrDisplay()
 		{
-			return Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.uin);
+			return Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 		}
 		
 		// Activates the contact item menu
 		public void activate()
 		{
-			currentUin = new String(uin);
+			currentUin = new String(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			
 			//#sijapp cond.if modules_HISTORY is "true" #
-			Jimm.jimm.getChatHistoryRef().fillFormHistory(uin, name);
+			Jimm.jimm.getChatHistoryRef().fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 			//#sijapp cond.end#
 
 			
 			// Display chat history
-			if (ContactListContactItem.this.returnBoolValue(VALUE_HAS_CHAT))
+			if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT))
 			{
-				initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH), this);
+				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH), this);
 				VirtualList msgDisplay = getCurrDisplay();
                 msgDisplay.removeCommand(addUrsCommand);
 				msgDisplay.removeCommand(grantAuthCommand);
@@ -1333,12 +1183,12 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				
 				if (JimmUI.getClipBoardText() != null) msgDisplay.addCommand(replWithQuotaCommand);
 				
-				if (ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
+				if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
 				msgDisplay.setCommandListener(this);
 				msgDisplay.setVLCommands(this);
-				if (temporary && !noAuth) 
+				if (getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP) && !getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH)) 
                     msgDisplay.addCommand(addUrsCommand);
-				Jimm.jimm.getChatHistoryRef().UpdateCaption(ContactListContactItem.this.uin);
+				Jimm.jimm.getChatHistoryRef().UpdateCaption(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 				// Display history
 				ContactListContactItem.this.resetUnreadMessages();
 				Jimm.display.setCurrent(msgDisplay);
@@ -1350,8 +1200,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Display menu
 			else
 			{
-				initList(ContactListContactItem.this.returnBoolValue(VALUE_NO_AUTH), this);
-                menuList.setTitle(ContactListContactItem.this.name);
+				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH), this);
+                menuList.setTitle(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 				menuList.setSelectedIndex(0, true);
 				menuList.setCommandListener(this);
 				Jimm.display.setCurrent(menuList);
@@ -1489,7 +1339,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         if (showAuthItem)
             eventList[menuList.append(ResourceBundle.getString("requauth"), null)] = USER_MENU_REQU_AUTH;
         
-        if (item.getStatus() == ContactList.STATUS_OFFLINE)
+        if (item.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE)
         {
         	eventList[menuList.append(ResourceBundle.getString("invisible_check"), null)] = USER_MENU_INVIS_CHECK;
         }
@@ -1499,7 +1349,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         }
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
-		if (item.getICQVersion() >= 8)
+		if (item.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8)
 		{
 			eventList[menuList.append(ResourceBundle.getString("ft_name"), null)] = USER_MENU_FILE_TRANS;
 			// #sijapp cond.if target isnot "MOTOROLA"#

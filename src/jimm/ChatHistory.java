@@ -202,7 +202,7 @@ public class ChatHistory
 	protected synchronized void addMessage(String uin,Message message,ContactListContactItem contact)
 	{
 		if (!historyTable.containsKey(uin))
-			newChatForm(uin,contact.getName());
+			newChatForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 
 		TextList msgDisplay = (TextList) historyTable.get(uin);
 		
@@ -212,21 +212,21 @@ public class ChatHistory
 		{
 			PlainMessage plainMsg = (PlainMessage) message;
 			if (!msgDisplay.isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
-			this.addTextToForm(uin,contact.getName(), plainMsg.getText(), "", plainMsg.getDate(), true, offline);
+			this.addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText(), "", plainMsg.getDate(), true, offline);
 
 			// #sijapp cond.if modules_HISTORY is "true" #
 			if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
-				HistoryStorage.addText(contact.getUin(), plainMsg.getText(), (byte)0, contact.getName(), plainMsg.getDate());
+				HistoryStorage.addText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), plainMsg.getText(), (byte)0, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getDate());
 			// #sijapp cond.end#	
 			
 			if ( !message.getOffline() )
-				ContactListContactItem.showPopupWindow(uin, contact.getName(), plainMsg.getText());
+				ContactListContactItem.showPopupWindow(uin, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText());
 		}
 		if (message instanceof UrlMessage)
 		{
 			UrlMessage urlMsg = (UrlMessage) message;
 			if (!msgDisplay.isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_URL);
-			this.addTextToForm(uin,contact.getName(), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false, offline);
+			this.addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false, offline);
 		}
 		if (message instanceof SystemNotice)
 		{
@@ -246,7 +246,7 @@ public class ChatHistory
 			{
 				if (notice.isAUTH_granted())
 				{
-					contact.setBoolValue(ContactListContactItem.VALUE_NO_AUTH,false);
+					contact.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH,false);
 					this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
 							+ notice.getSndrUin() + ".", "", notice.getDate(), false, offline);
 				} else if (notice.getReason() != null)
@@ -332,7 +332,7 @@ public class ChatHistory
 		ChatTextList chatForm = new ChatTextList(name);
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
-		
+		ContactList.getItembyUIN(uin).setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT,true);
 		//#sijapp cond.if modules_HISTORY is "true" #
 		fillFormHistory(uin, name);
 		//#sijapp cond.end#

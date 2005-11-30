@@ -150,7 +150,7 @@ public class SendMessageAction extends Action
         utf8 = rcvr.hasCapability(ContactListContactItem.CAP_UTF8_INTERNAL);
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
-        if ((this.fileTrans != null) && (rcvr.getStatus() != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL))
+        if ((this.fileTrans != null) && (rcvr.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL))
         {
             type = 2;
         }
@@ -169,7 +169,7 @@ public class SendMessageAction extends Action
         {
             
             // Get UIN
-            byte[] uinRaw = Util.stringToByteArray(rcvr.getUin());
+            byte[] uinRaw = Util.stringToByteArray(rcvr.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 
             // Get text
             byte[] textRaw;
@@ -243,7 +243,7 @@ public class SendMessageAction extends Action
             {
                 // System.out.println("Send TYPE 2");
                 // Get UIN
-                byte[] uinRaw = Util.stringToByteArray(rcvr.getUin());
+                byte[] uinRaw = Util.stringToByteArray(rcvr.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 
                 // Get text
                 byte[] textRaw;

@@ -84,8 +84,8 @@ public class UpdateContactListAction extends Action
         {
             this.cItem = (ContactListContactItem) cItem;
             this.gItem = null;
-            this.idRaw = Util.stringToByteArray(this.cItem.getUin());
-            this.nameRaw = Util.stringToByteArray(this.cItem.getName());
+            this.idRaw = Util.stringToByteArray(this.cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+            this.nameRaw = Util.stringToByteArray(this.cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
         }
         else
         {
@@ -150,7 +150,6 @@ public class UpdateContactListAction extends Action
             else
             {
                 // Send a CLI_ROSTERDELETE packet
-                System.out.println("delte");
                 packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY, SnacPacket.CLI_ROSTERDELETE_COMMAND, SnacPacket.CLI_ROSTERDELETE_COMMAND, new byte[0], this.packRoosterItem(null, null, null));
             }
 
@@ -197,10 +196,9 @@ public class UpdateContactListAction extends Action
                             error = 13;
                             throw (new JimmException(158, 0, true));
                         case 0x00E:
-                            cItem.setBoolValue(ContactListContactItem.VALUE_NO_AUTH, true);
+                            cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH,true);
                             ContactList.addContactItem(this.cItem);
                             this.state = UpdateContactListAction.STATE_SRV_REPLYED_AUTH;
-                            System.out.println("auth");
                             break;
                         default:
                             
@@ -215,7 +213,7 @@ public class UpdateContactListAction extends Action
 
                                 if (this.cItem != null)
                                 {
-                                    cItem.setBoolValue(ContactListContactItem.VALUE_IS_TEMP, false);
+                                    cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP, false);
 
                                     // Get all contact items as aray
                                     ContactListContactItem[] cItems = ContactList.getContactItems();
@@ -223,7 +221,7 @@ public class UpdateContactListAction extends Action
                                     // Get group of contact item to be removed or added to
                                     for (int i = 0; i < gItems.length; i++)
                                     {
-                                        if (gItems[i].getId() == this.cItem.getGroup())
+                                        if (gItems[i].getId() == this.cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP))
                                         {
                                             gItem = gItems[i];
                                             break;
@@ -238,12 +236,12 @@ public class UpdateContactListAction extends Action
 
                                     for (int i = 0; i < cItems.length; i++)
                                     {
-                                        if ((gItem.getId() == cItems[i].getGroup()) && ((this.cItem != cItems[i]) || cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP)))
+                                        if ((gItem.getId() == cItems[i].getIntValue(ContactListContactItem.CONTACTITEM_GROUP)) && ((this.cItem != cItems[i]) || cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)))
                                         {
                                             cItemsRemaining.addElement(cItems[i]);
                                         }
                                     }
-                                    if (cItem.returnBoolValue(ContactListContactItem.VALUE_IS_TEMP))
+                                    if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP))
                                     {
                                         cItemsRemaining.addElement(cItem);
                                     }
@@ -370,7 +368,7 @@ public class UpdateContactListAction extends Action
                     else
                         length = 2 + idRaw.length + 8; // Delete gItem
                 else if (cItem != null)
-                    	if (cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
+                    	if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH))
                     	    length = 2 + idRaw.length + 6 + 6 + 4 + nameRaw.length; // Add cItem(noAuth)
                     	else
                     	    length = 2 + idRaw.length + 6 + 2 + 4 + nameRaw.length; // Add cItem(auth)
@@ -402,9 +400,9 @@ public class UpdateContactListAction extends Action
         {
             if (cItem != null)
             {
-                Util.putWord(buf, marker, this.cItem.getGroup());
+                Util.putWord(buf, marker, this.cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
                 marker += 2;
-                Util.putWord(buf, marker, this.cItem.getId());
+                Util.putWord(buf, marker, this.cItem.getIntValue(ContactListContactItem.CONTACTITEM_ID));
             } else
             {
                 Util.putWord(buf, marker, this.gItem.getId());
@@ -434,7 +432,7 @@ public class UpdateContactListAction extends Action
         {
             if (cItem != null)
             {
-                if ((this.action == ACTION_ADD) && cItem.returnBoolValue(ContactListContactItem.VALUE_NO_AUTH))
+                if ((this.action == ACTION_ADD) && cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH))
                 {
 
                     // Add length of TLVs and 0x066 packet
@@ -475,7 +473,7 @@ public class UpdateContactListAction extends Action
             if (cItem != null)
                 for (int i = 0; i < cItemsRemaining.size(); i++)
                 {
-                    Util.putWord(buf, marker, ((ContactListContactItem) cItemsRemaining.elementAt(i)).getId());
+                    Util.putWord(buf, marker, ((ContactListContactItem) cItemsRemaining.elementAt(i)).getIntValue(ContactListContactItem.CONTACTITEM_ID));
                     marker += 2;
                 }
             else

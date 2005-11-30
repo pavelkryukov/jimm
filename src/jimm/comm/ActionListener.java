@@ -188,6 +188,10 @@ public class ActionListener
                     {
                     	online = Util.byteArrayToLong(tlvData);
                     }                    
+                    else if (tlvType == 0x001D) // Avatar
+                    {
+                    	System.out.println("User has avatar");
+                    }
                     marker += 2 + 2 + tlvData.length;
                 }
 
@@ -647,8 +651,11 @@ public class ActionListener
                              msgMarker += 4 + msg2Buf.length;
                              
                              ContactListContactItem sender = ContactList.getItembyUIN(uin);
-                             sender.updateIPsandPort(ip,extIP,port);
                                                        
+                     		sender.setByteArrayValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,ip);
+                    		sender.setByteArrayValue (ContactListContactItem.CONTACTITEM_EXTERNAL_IP,extIP);
+                    		sender.setStringValue (ContactListContactItem.CONTACTITEM_DC_PORT,port);
+
                              //System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
                              
                              DirectConnectionAction dcAct = new DirectConnectionAction(sender.getFTM());

@@ -232,7 +232,7 @@ public class FileTransfer implements CommandListener
             	name_Desc = null;
             	fileNameField = null;
             	System.gc();
-                this.getCItem().activateMenu();
+                this.getCItem().activate();
             }
             else
                 if (c == this.cancelCommand)
@@ -585,7 +585,7 @@ public class FileTransfer implements CommandListener
                 }
                 else
                     if (c == exit) 
-                        FileTransfer.this.getCItem().activateMenu();
+                        FileTransfer.this.getCItem().activate();
         }
 
         /**

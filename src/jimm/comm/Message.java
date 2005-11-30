@@ -74,7 +74,7 @@ public abstract class Message
         }
         else
         {
-            return (this.rcvr.getUin());
+            return (this.rcvr.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
         }
     }
     
