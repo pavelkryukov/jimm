@@ -265,3 +265,5 @@ VERSION 0.5.0
   * Menu "Minimize" is shown only at sony-ericsoon phones
   * Options are now compartible between versions
   * Pressing red button on Nokia phones will now end Jimm in a cleaner way
+  * Internal data handling for ContactItems rewritten (should consume less heap)
+  * Login time, online time and idle time can be seen on Information page
