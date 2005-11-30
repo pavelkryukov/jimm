@@ -537,8 +537,7 @@ public class Options
 		// #sijapp cond.if target is "MOTOROLA"#
         static private TextField lightTimeout;
         static private ChoiceGroup lightManual;
-		// #sijapp cond.end#
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#        
+		// #sijapp cond.end#       
         // #sijapp cond.if modules_PROXY is "true"#
         static private ChoiceGroup srvProxyType;
         static private TextField srvProxyHostTextField;
@@ -546,7 +545,6 @@ public class Options
 		static private TextField srvProxyLoginTextField;
 		static private TextField srvProxyPassTextField;
 		static private TextField connAutoRetryTextField;
-		// #sijapp cond.end#
 		// #sijapp cond.end#
 		
 		static private List keysMenu;
