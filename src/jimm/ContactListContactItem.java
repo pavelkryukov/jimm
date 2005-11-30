@@ -90,14 +90,16 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	private int dcType;
 	private int icqProt;
 	private long authCookie;
-	// #sijapp cond.end#
-	// #sijapp cond.end#
-	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-	// #sijapp cond.if modules_FILES is "true"#
+
 	private FileTransferMessage ftm;
 	private FileTransfer ft;
 	//  #sijapp cond.end#
 	//  #sijapp cond.end#
+	
+	// Timing values
+	private long signon;
+	private long online;
+	private int idle;
 	
 	public static String currentUin = new String();
 
@@ -125,13 +127,12 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		this.dcType = -1;
 		this.icqProt = 0;
 		this.authCookie = 0;
-		// #sijapp cond.end#
-		// #sijapp cond.end#
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		// #sijapp cond.if modules_FILES is "true"#
 		this.ft = null;
 		//  #sijapp cond.end# 
 		//  #sijapp cond.end# 
+		this.signon = -1;
+		this.online = -1;
+		this.idle = -1;
 		this.requReason = false;
 	}
 	
@@ -162,6 +163,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		this.ft = null;
 		// #sijapp cond.end#
 		// #sijapp cond.end#
+		this.signon = -1;
+		this.online = -1;
+		this.idle = -1;
 		this.requReason = false;
 	}
 	
@@ -442,6 +446,30 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	}	
 	// #sijapp cond.end#
 	// #sijapp cond.end#
+	
+	// Set time values
+	public void setTimers(long signon, long online, int idle)
+	{
+		this.signon = signon;
+		this.online = online;
+		this.idle = idle;
+	}
+	
+	// Return the time values
+	public long getSignonTime()
+	{
+		return this.signon;
+	}
+	
+	public long getOnlineTime()
+	{
+		return (this.online);
+	}
+	
+	public int getIdleTime()
+	{
+		return this.idle;
+	}
 
 	
 	// Returns true if the next available message is a message of given type
@@ -894,26 +922,54 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 	showInfo();
                 	break;
                     
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                // #sijapp cond.if modules_FILES is "true"#                     
-                case USER_MENU_DC_INFO:
-                    Alert info = new Alert("DC Infos");
+                // Show Timeing info and DC info 
+                case USER_MENU_LOCAL_INFO:
+                    Alert info = new Alert(ResourceBundle.getString("local_info"));
                     StringBuffer buf = new StringBuffer();
                     final String clrf = "\n";
-                    
+                    if (getSignonTime() > 0) {
+                    	Date signon = new Date(getSignonTime());
+                    	buf.append(ResourceBundle.getString("li_signon_time")+": "+Util.getDateString(false,signon)+"\n");
+                    }
+                    if (getOnlineTime() > 0)
+					{
+						long online = getOnlineTime();
+						buf.append(ResourceBundle.getString("li_online_time") + ": ");
+						if ((online / 86400) != 0)
+						{
+							buf.append(online / 86400 + ResourceBundle.getString("days") +" ");
+							online = online % 86400;
+						}
+						if ((online / 3600)  != 0)
+						{
+							buf.append(online / 3600 + ResourceBundle.getString("hours") +" ");
+							online = online % 3600;
+						}
+						buf.append(online / 60 +  ResourceBundle.getString("minutes") +"\n");
+					}
+                    if (getIdleTime() > 0)
+                    {
+                    	int idleTime = getIdleTime();
+                    	buf.append(ResourceBundle.getString("li_idle_time")+": ");
+						if ((idleTime / 60) != 0)
+							buf.append(idleTime/60+"h ");
+                    	buf.append(idleTime%60+ResourceBundle.getString("minutes") +"\n");
+                    }
+                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                    // #sijapp cond.if modules_FILES is "true"#    
                     buf.append("DC typ: ")     .append(getDCType()).append(clrf)
 					   .append("ICQ version: ").append(getICQVersion()).append(clrf)
 					   .append("Int IP: ")     .append(Util.ipToString(getInternalIP())).append(clrf)
 					   .append("Ext IP: ")     .append(Util.ipToString(this.getExternalIP())).append(clrf)
 					   .append("Port: ")       .append(this.getPort()).append(clrf);
+                    // #sijapp cond.end#
+                    // #sijapp cond.end# 
                     
                     info.setString(buf.toString());
                     info.setTimeout(Alert.FOREVER);
                     
                     Jimm.display.setCurrent(info);
-                    break;
-                // #sijapp cond.end#
-                // #sijapp cond.end#    
+                    break;   
                     
                 case USER_MENU_REQU_AUTH:
                     // Request auth
@@ -1328,12 +1384,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
     private static final int USER_MENU_RENAME           = 9;
     // #sijapp cond.if modules_HISTORY is "true"#         
     private static final int USER_MENU_HISTORY          = 10;
-    // #sijapp cond.end#        
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-    // #sijapp cond.if modules_FILES is "true"#        
-    private static final int USER_MENU_DC_INFO          = 11;
-    // #sijapp cond.end#
-    // #sijapp cond.end#  
+    // #sijapp cond.end#             
+    private static final int USER_MENU_LOCAL_INFO       = 11;
     private static final int USER_MENU_USER_INFO        = 12;
     private static final int USER_MENU_QUOTA            = 14;
     private static final int USER_MENU_INVIS_CHECK      = 15;
@@ -1464,11 +1516,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
         eventList[menuList.append(ResourceBundle.getString("history"), null)]      = USER_MENU_HISTORY;
         // #sijapp cond.end#
         eventList[menuList.append(ResourceBundle.getString("info"), null)]         = USER_MENU_USER_INFO;
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-        // #sijapp cond.if modules_FILES is "true"#
-        eventList[menuList.append(ResourceBundle.getString("dc_info"), null)]      = USER_MENU_DC_INFO;
-        // #sijapp cond.end#
-        // #sijapp cond.end#
+        eventList[menuList.append(ResourceBundle.getString("local_info"), null)]   = USER_MENU_LOCAL_INFO;
 	}
 	 
 	static private Displayable getCurrDisplayable(String uin)
