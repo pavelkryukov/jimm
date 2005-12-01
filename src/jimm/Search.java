@@ -513,7 +513,7 @@ public class Search
                 ContactListContactItem cItem = new ContactListContactItem(-1,ContactList
                         .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_UIN),
                         Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_NICK), false, false);
-                cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP,true);
+                cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
                 cItem.setLongValue(ContactListContactItem.CONTACTITEM_STATUS,Search.this.getResult(selectedIndex).getStatus());
                 Icq.addToContactList(cItem);
 
