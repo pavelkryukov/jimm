@@ -97,7 +97,7 @@ class NodeComparer implements TreeNodeComparer
 		if ( !(obj instanceof ContactListContactItem) ) return 10;
 		cItem = (ContactListContactItem)obj;
 		if (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) return 0;
-		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)) return 20;
+		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) return 20;
 	
 		return 10;
 	}
@@ -830,7 +830,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	if (haveToAdd)
     	{
     		cItemNode = tree.addNode(groupNode, item);
-    	    fullyChanged = !item.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP);
+    	    fullyChanged = !item.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP);
     	}
     	
     	// if have to delete contact
@@ -1093,7 +1093,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // Adds a contact list item
     static public synchronized void addContactItem(ContactListContactItem cItem)
     {
-        if (!cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_ADDED))
+        if (!cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_ADDED))
         {
         	// does contact already exists or temporary ?
         	ContactListContactItem oldItem = getItembyUIN(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
@@ -1101,7 +1101,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         	
             // Add given contact item
         	ContactList.cItems.addElement(cItem);
-            cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_ADDED,true);
+            cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED,true);
             // Update visual list
             RunnableImpl.callSerially
         	(
@@ -1154,7 +1154,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         else
         {
             cItem = new ContactListContactItem(0, 0, message.getSndrUin(), message.getSndrUin(), false, true);
-            cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP,true);
+            cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
             cItem.addMessage(message);
             ContactList.cItems.addElement(cItem);
             temp = true;
@@ -1167,7 +1167,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         if ( !treeBuilt ) needPlayMessNotif |= true;
         else playSoundNotification(SOUND_TYPE_MESSAGE);
         
-        cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT,true);
+        cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true);
         
         // Update tree
         contactChanged(cItem, true, false, false);
@@ -1542,7 +1542,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			if (i == index) break;
 			
 			ContactListContactItem cItem = (ContactListContactItem)cItems.elementAt(i); 
-			if ( cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT) )
+			if ( cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) )
 			{
 				lastChatItem = cItem;
 				cItem.activate();

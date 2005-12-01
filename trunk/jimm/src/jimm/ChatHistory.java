@@ -246,7 +246,7 @@ public class ChatHistory
 			{
 				if (notice.isAUTH_granted())
 				{
-					contact.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH,false);
+					contact.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH,false);
 					this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
 							+ notice.getSndrUin() + ".", "", notice.getDate(), false, offline);
 				} else if (notice.getReason() != null)
@@ -332,7 +332,7 @@ public class ChatHistory
 		ChatTextList chatForm = new ChatTextList(name);
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
-		ContactList.getItembyUIN(uin).setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT,true);
+		ContactList.getItembyUIN(uin).setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true);
 		//#sijapp cond.if modules_HISTORY is "true" #
 		fillFormHistory(uin, name);
 		//#sijapp cond.end#

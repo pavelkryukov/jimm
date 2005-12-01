@@ -196,7 +196,7 @@ public class UpdateContactListAction extends Action
                             error = 13;
                             throw (new JimmException(158, 0, true));
                         case 0x00E:
-                            cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH,true);
+                            cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH,true);
                             ContactList.addContactItem(this.cItem);
                             this.state = UpdateContactListAction.STATE_SRV_REPLYED_AUTH;
                             break;
@@ -213,7 +213,7 @@ public class UpdateContactListAction extends Action
 
                                 if (this.cItem != null)
                                 {
-                                    cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP, false);
+                                    cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
 
                                     // Get all contact items as aray
                                     ContactListContactItem[] cItems = ContactList.getContactItems();
@@ -236,12 +236,12 @@ public class UpdateContactListAction extends Action
 
                                     for (int i = 0; i < cItems.length; i++)
                                     {
-                                        if ((gItem.getId() == cItems[i].getIntValue(ContactListContactItem.CONTACTITEM_GROUP)) && ((this.cItem != cItems[i]) || cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)))
+                                        if ((gItem.getId() == cItems[i].getIntValue(ContactListContactItem.CONTACTITEM_GROUP)) && ((this.cItem != cItems[i]) || cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)))
                                         {
                                             cItemsRemaining.addElement(cItems[i]);
                                         }
                                     }
-                                    if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP))
+                                    if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
                                     {
                                         cItemsRemaining.addElement(cItem);
                                     }
@@ -368,7 +368,7 @@ public class UpdateContactListAction extends Action
                     else
                         length = 2 + idRaw.length + 8; // Delete gItem
                 else if (cItem != null)
-                    	if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH))
+                    	if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
                     	    length = 2 + idRaw.length + 6 + 6 + 4 + nameRaw.length; // Add cItem(noAuth)
                     	else
                     	    length = 2 + idRaw.length + 6 + 2 + 4 + nameRaw.length; // Add cItem(auth)
@@ -432,7 +432,7 @@ public class UpdateContactListAction extends Action
         {
             if (cItem != null)
             {
-                if ((this.action == ACTION_ADD) && cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH))
+                if ((this.action == ACTION_ADD) && cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
                 {
 
                     // Add length of TLVs and 0x066 packet

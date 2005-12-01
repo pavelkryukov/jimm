@@ -26,7 +26,6 @@ package jimm;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.TimerTask;
-import java.util.Timer;
 import javax.microedition.lcdui.*;
 
 import jimm.JimmUI;
@@ -74,12 +73,12 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	public static final int CONTACTITEM_SYSNOTICES				= 69;  /* Integer */
 	public static final int CONTACTITEM_AUTREQUESTS				= 70;  /* Integer */
 	public static final int CONTACTITEM_IDLE					= 71;  /* Integer */
-	public static final int CONTACTITEM_VALUE_ADDED				= 128; /* Boolean */
-	public static final int CONTACTITEM_VALUE_NO_AUTH			= 129; /* Boolean */
-	public static final int CONTACTITEM_VALUE_CHAT_SHOWN		= 130; /* Boolean */
-	public static final int CONTACTITEM_VALUE_IS_TEMP			= 131; /* Boolean */
-	public static final int CONTACTITEM_VALUE_HAS_CHAT			= 132; /* Boolean */
-	public static final int CONTACTITEM_VALUE_REQU_REASON		= 133; /* Boolean */
+	public static final int CONTACTITEM_ADDED					= 128; /* Boolean */
+	public static final int CONTACTITEM_NO_AUTH					= 129; /* Boolean */
+	public static final int CONTACTITEM_CHAT_SHOWN				= 130; /* Boolean */
+	public static final int CONTACTITEM_IS_TEMP					= 131; /* Boolean */
+	public static final int CONTACTITEM_HAS_CHAT				= 132; /* Boolean */
+	public static final int CONTACTITEM_REQU_REASON				= 133; /* Boolean */
 	public static final int CONTACTITEM_STATUS					= 192; /* Long */
 	public static final int CONTACTITEM_SIGNON					= 194; /* Long */
 	public static final int CONTACTITEM_ONLINE					= 195; /* Long */
@@ -111,37 +110,37 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	public void init(int id, int group, String uin, String name, boolean noAuth, boolean added)
 	{
 		if (id == -1)
-			setIntValue (ContactListContactItem.CONTACTITEM_ID,Util.createRandomId());
+			setIntValue(ContactListContactItem.CONTACTITEM_ID, Util.createRandomId());
 		else
-			setIntValue (ContactListContactItem.CONTACTITEM_ID,id);
-		setIntValue (ContactListContactItem.CONTACTITEM_GROUP,group);
-		setStringValue (ContactListContactItem.CONTACTITEM_UIN,uin);
-		setStringValue (ContactListContactItem.CONTACTITEM_NAME,name);
-		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH,noAuth);
-		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP,false);
-		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT,false);
-		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_ADDED,added);
-		setLongValue (ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
-		setIntValue (ContactListContactItem.CONTACTITEM_CAPABILITIES,ContactListContactItem.CAP_NO_INTERNAL);
-		setIntValue (ContactListContactItem.CONTACTITEM_PLAINMESSAGES,0);
-		setIntValue (ContactListContactItem.CONTACTITEM_URLMESSAGES,0);
-		setIntValue (ContactListContactItem.CONTACTITEM_SYSNOTICES,0);
-		setIntValue (ContactListContactItem.CONTACTITEM_AUTREQUESTS,0);
+			setIntValue(ContactListContactItem.CONTACTITEM_ID, id);
+		setIntValue(ContactListContactItem.CONTACTITEM_GROUP, group);
+		setStringValue(ContactListContactItem.CONTACTITEM_UIN, uin);
+		setStringValue(ContactListContactItem.CONTACTITEM_NAME, name);
+		setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH, noAuth);
+		setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
+		setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, false);
+		setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED, added);
+		setLongValue(ContactListContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
+		setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, ContactListContactItem.CAP_NO_INTERNAL);
+		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
+		setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
+		setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES, 0);
+		setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		// #sijapp cond.if modules_FILES is "true"#
-		setByteArrayValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,new byte[4]);
-		setByteArrayValue (ContactListContactItem.CONTACTITEM_EXTERNAL_IP,new byte[4]);
-		setStringValue (ContactListContactItem.CONTACTITEM_DC_PORT,"");
-		setIntValue (ContactListContactItem.CONTACTITEM_DC_TYPE,-1);
-		setIntValue (ContactListContactItem.CONTACTITEM_ICQ_PROT,0);
-		setLongValue (ContactListContactItem.CONTACTITEM_AUTH_COOKIE,0);
+		setByteArrayValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
+		setByteArrayValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
+		setStringValue(ContactListContactItem.CONTACTITEM_DC_PORT, "");
+		setIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE, -1);
+		setIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT, 0);
+		setLongValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE, 0);
 		this.ft = null;
-		//  #sijapp cond.end# 
-		//  #sijapp cond.end# 
-		setLongValue (ContactListContactItem.CONTACTITEM_SIGNON,-1);
-		setLongValue (ContactListContactItem.CONTACTITEM_ONLINE,-1);
-		setIntValue (ContactListContactItem.CONTACTITEM_IDLE,-1);
-		setBooleanValue (ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON,false);
+		// #sijapp cond.end#
+		// #sijapp cond.end#
+		setLongValue(ContactListContactItem.CONTACTITEM_SIGNON, -1);
+		setLongValue(ContactListContactItem.CONTACTITEM_ONLINE, -1);
+		setIntValue(ContactListContactItem.CONTACTITEM_IDLE, -1);
+		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
 	}
 	
 	// Constructor for an existing contact item
@@ -158,19 +157,19 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	}
 	public synchronized int getIntValue(int key)
 	{
-	    return (((Integer) values.get(new Integer(key))).intValue());
+		return (((Integer) values.get(new Integer(key))).intValue());
 	}
 	public synchronized boolean getBooleanValue(int key)
 	{
-	    return (((Boolean) values.get(new Integer(key))).booleanValue());
+		return (((Boolean) values.get(new Integer(key))).booleanValue());
 	}
 	public synchronized long getLongValue(int key)
 	{
-	    return (((Long) values.get(new Integer(key))).longValue());
+		return (((Long) values.get(new Integer(key))).longValue());
 	}
 	public synchronized byte[] getByteArrayValue(int key)
 	{
-	    return (((byte[]) values.get(new Integer(key))));
+		return (((byte[]) values.get(new Integer(key))));
 	}
 
 	// Value setting methods (no type checking!)
@@ -212,9 +211,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	// Returns color for contact name
 	public int getTextColor()
 	{
-		if (getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)) return 0x808080;
+		if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) return 0x808080;
 		return 
-		getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT) 
+		getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) 
 				? Options.getSchemeColor(Options.CLRSCHHEME_BLUE)
 				: Options.getSchemeColor(Options.CLRSCHHEME_TEXT); 
 	}
@@ -222,7 +221,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	// Returns font style for contact name 
 	public int getFontStyle()
 	{
-		return getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
+		return getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
 	}
 
 	// Returns imaghe index for contact
@@ -233,7 +232,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		if (isMessageAvailable(MESSAGE_PLAIN)) tempIndex = 8;
 		else if (isMessageAvailable(MESSAGE_URL)) tempIndex = 9;
 		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
-		else if (isMessageAvailable(MESSAGE_SYS_NOTICE) || getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH)) tempIndex = 10;
+		else if (isMessageAvailable(MESSAGE_SYS_NOTICE) || getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) tempIndex = 10;
 		else tempIndex = getStatusImageIndex(getLongValue(ContactListContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
@@ -313,7 +312,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			   (getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES) > 0)   || 
 			   (getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES) > 0)	||
 			   (getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) > 0)   || 
-			   getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP); 
+			   getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP); 
 	}
 
 	// Returns total count of all unread messages (messages, sys notices, urls, auths)
@@ -377,7 +376,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 	{
 		if (!(obj instanceof ContactListContactItem)) return (false);
 		ContactListContactItem ci = (ContactListContactItem) obj;
-		return (this.getStringValue(ContactListContactItem.CONTACTITEM_UIN).equals(ci.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) && (this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP) == ci.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)));
+		return (this.getStringValue(ContactListContactItem.CONTACTITEM_UIN).equals(ci.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) && (this.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) == ci.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)));
 	}
 	
 	private void clearMessBoxCommands()
@@ -522,7 +521,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					break;
 					
 				case Options.HOTKEY_OPTIONS:
-					Options.optionsForm.activate();
+					Options.OptionsForm.activate();
 					break;
 					
 				case Options.HOTKEY_MENU:
@@ -822,7 +821,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
                 case USER_MENU_REQU_AUTH:
                     // Request auth
                 	
-                	this.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON,true);
+                	this.setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON,true);
                     reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
                     reasonTextbox.removeCommand(textboxOkCommand);
                     reasonTextbox.addCommand(textboxSendCommand);
@@ -980,7 +979,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					SystemNotice notice;
 
 					// Decrease the number of handled auth requests by one
-					if (!getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON)) 
+					if (!getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON)) 
 						setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS,getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS)-1);
 
 					// If or if not a reason was entered
@@ -988,7 +987,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					// we have to distinguish what we wanna do requReason is used for that
 					if (reasonTextbox.getString().length() < 1)
 					{
-						if (getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON))
+						if (getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON))
 							notice = new SystemNotice(SystemNotice.SYS_NOTICE_REQUAUTH, ContactListContactItem.this
 									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, "");
 						else
@@ -996,7 +995,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, "");
 					} else
 					{
-						if (getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON))
+						if (getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON))
 							notice = new SystemNotice(SystemNotice.SYS_NOTICE_REQUAUTH, ContactListContactItem.this
 									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, reasonTextbox.getString());
 						else
@@ -1011,13 +1010,13 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 					try
 					{
 						Icq.requestAction(sysNotAct);
-						if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP)) Icq.requestAction(updateAct);
+						if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) Icq.requestAction(updateAct);
 					} catch (JimmException e)
 					{
 						JimmException.handleException(e);
 						if (e.isCritical()) return;
 					}
-					setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON,false);
+					setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON,false);
 					ContactList.activate();
 				}
 			}
@@ -1077,7 +1076,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			else if (c == deleteChatCommand)
 			{
 				ContactListContactItem.this.deleteChatHistory();
-				ContactListContactItem.this.setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT,false);
+				ContactListContactItem.this.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,false);
 				ContactList.activate();
 			}
 			
@@ -1102,7 +1101,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			else if (c == denyAuthCommand || c == reqAuthCommand)
 			{
 				// Reset and display textbox for entering deney reason
-				if (c == reqAuthCommand) setBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_REQU_REASON,true);
+				if (c == reqAuthCommand) setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON,true);
 				if (c == reqAuthCommand)
 					reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
 				else
@@ -1156,9 +1155,9 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 
 			
 			// Display chat history
-			if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_HAS_CHAT))
+			if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
 			{
-				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH), this);
+				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
 				VirtualList msgDisplay = getCurrDisplay();
                 msgDisplay.removeCommand(addUrsCommand);
 				msgDisplay.removeCommand(grantAuthCommand);
@@ -1183,10 +1182,10 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 				
 				if (JimmUI.getClipBoardText() != null) msgDisplay.addCommand(replWithQuotaCommand);
 				
-				if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
+				if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
 				msgDisplay.setCommandListener(this);
 				msgDisplay.setVLCommands(this);
-				if (getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_IS_TEMP) && !getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH)) 
+				if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) && !getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) 
                     msgDisplay.addCommand(addUrsCommand);
 				Jimm.jimm.getChatHistoryRef().UpdateCaption(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 				// Display history
@@ -1200,7 +1199,7 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 			// Display menu
 			else
 			{
-				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_VALUE_NO_AUTH), this);
+				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
                 menuList.setTitle(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 				menuList.setSelectedIndex(0, true);
 				menuList.setCommandListener(this);
