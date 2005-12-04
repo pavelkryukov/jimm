@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/HistoryStorage.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Artyomov Denis
+ Author(s): Artyomov Denis, Igor Palkin
  *******************************************************************************/
 
 //#sijapp cond.if modules_HISTORY is "true" #
@@ -34,6 +34,7 @@ import javax.microedition.rms.RecordStore;
 import jimm.util.ResourceBundle;
 import java.io.*;
 import javax.microedition.lcdui.*;
+import java.lang.Thread;
 
 import DrawControls.ListItem;
 import DrawControls.VirtualList;
@@ -41,7 +42,15 @@ import DrawControls.TextList;
 import DrawControls.VirtualListCommands;
 
 import jimm.comm.Util;
-
+//#sijapp cond.if target is "SIEMENS2"#
+import javax.microedition.io.Connector;
+import com.siemens.mp.io.file.FileConnection;
+import com.siemens.mp.io.file.FileSystemRegistry;
+import jimm.ContactListContactItem;
+//#sijapp cond.end#
+//#sijapp cond.if target is "SIEMENS1"#
+import com.siemens.mp.io.File;
+//#sijapp cond.end#
 // Class to cache one line in messages list
 // All fields are public to easy and fast access
 class CachedRecord
@@ -51,8 +60,11 @@ class CachedRecord
 }
 
 // Visual messages history list
-class HistoryStorageList extends    VirtualList
-                               implements CommandListener, VirtualListCommands
+class HistoryStorageList extends VirtualList
+                         implements CommandListener, VirtualListCommands
+			       //#sijapp cond.if target is "SIEMENS2"# 
+			       , Runnable
+			       //#sijapp cond.end#
 {
 	// commands for message text
 	private static Command cmdMsgBack     = new Command(ResourceBundle.getString("back"),      Command.BACK,   1);
@@ -68,6 +80,8 @@ class HistoryStorageList extends    VirtualList
 	private static Command cmdFind     = new Command(ResourceBundle.getString("find"),         Command.ITEM,   3);
 	private static Command cmdInfo     = new Command(ResourceBundle.getString("history_info"), Command.ITEM,   6);
 	private static Command cmdCopytext = new Command(ResourceBundle.getString("copy_text"),    Command.ITEM,   5);
+	private static Command cmdExport   = new Command(ResourceBundle.getString("export"),    Command.ITEM,   7);
+	private static Command cmdExportAll   = new Command(ResourceBundle.getString("exportall"),    Command.ITEM,   8);
 	
 	static TextList messText;
 	
@@ -95,6 +109,8 @@ class HistoryStorageList extends    VirtualList
 		addCommand(cmdInfo);
 		addCommand(cmdClrAll);
 		addCommand(cmdCopytext);
+		addCommand(cmdExport);
+		addCommand(cmdExportAll);
 		setCommandListener(this);
 		setVLCommands(this);
 		JimmUI.setColorScheme(this);
@@ -121,7 +137,7 @@ class HistoryStorageList extends    VirtualList
 	// VirtualList command impl.
 	public void onKeyPress(VirtualList sender, int keyCode, int type)
 	{
-		if (sender == messText)
+		if ((sender == messText) && (type == VirtualList.KEY_PRESSED))
 		{
 			switch ( getGameAction(keyCode) )
 			{
@@ -147,8 +163,97 @@ class HistoryStorageList extends    VirtualList
 		}
 	}
 	
+	// #sijapp cond.if target is "SIEMENS2"#
+	private void exportUIN(String uin, DataOutputStream dos) throws IOException
+	{
+			CachedRecord record;
+			int max = HistoryStorage.getRecordCount(uin);
+			for (int i = 0; i < max; i++)
+			{
+				record = HistoryStorage.getRecord(uin, i);
+				byte[] fdt = Util.stringToByteArray1251("["+record.from + " " + record.date+"]\r\n");
+				dos.write(fdt,0,fdt.length);
+				byte[] txt = Util.stringToByteArray1251(record.text+"\r\n");
+				dos.write(txt,0,txt.length);
+			}
+			if (max > 0) dos.write("\r\n".getBytes(),0,2);
+	}
+	
+	private String file, uin;
+	private void export(String uin, String file)
+	{
+		this.file = file;
+		this.uin = uin;
+		Thread t = new Thread(this);
+		t.start();
+		Jimm.jimm.getSplashCanvasRef().setProgress(0);
+		Jimm.jimm.getSplashCanvasRef().setMessage("Exporting..");
+		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
+	}
+
+	public void run()
+	{
+		FileConnection fconn = null;
+		try
+		{
+			if (file == null)
+				fconn = (FileConnection)Connector.open("file:///0:/Misc/history.txt");
+			else
+				fconn = (FileConnection)Connector.open("file:///"+file);
+			
+			 if (!fconn.exists())
+				 fconn.create();
+			 else
+				 fconn.truncate(0);
+			 
+			DataOutputStream dos = fconn.openDataOutputStream();
+			
+			if (file == null)
+			{
+				ContactListContactItem[] cItems = ContactList.getContactItems();
+				int num = ContactList.getSize();
+				for(int i = 0;i < cItems.length;i++)
+				{
+					exportUIN(cItems[i].getUin(),dos);
+					SplashCanvas.setProgress((i*100)/num);
+				}
+			}
+			else
+				exportUIN(uin, dos);
+			
+			dos.flush();
+			dos.close();
+			fconn.close();
+			dos = null;
+			fconn = null;
+			Jimm.jimm.getContactListRef().activate();
+		}
+		catch (Exception e)
+		{
+			try
+			{
+				if ((fconn != null) && (fconn.exists())) fconn.delete();// If disk is full..
+			}
+			catch (IOException ioe){}
+			
+			Alert alert = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
+			alert.setTimeout(Alert.FOREVER);
+			Jimm.display.setCurrent(alert);
+		}
+	}
+	// #sijapp cond.end#
+	
 	public void commandAction(Command c, Displayable d)
 	{
+		// #sijapp cond.if target is "SIEMENS2"#
+		// Export history to txt file
+		if (c == cmdExport)
+			export(currUin,"0:/Misc/" + currName + ".txt");
+		
+		if (c == cmdExportAll)
+			export(null,null);
+		// #sijapp cond.end#
+		
 		// back to contact list
 		if (c == cmdBack)
 		{
