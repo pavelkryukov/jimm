@@ -219,6 +219,7 @@
   "status_chat"                 "Свободен для беседы"
   "status_dnd"                  "Не беспокоить"
   "status_invisible"            "Невидимый"
+  "status_invis_all"            "Невидим для всех"
   "status_na"                   "Недоступен"
   "status_occupied"             "Занят"
   "status_offline"              "Оффлайн"

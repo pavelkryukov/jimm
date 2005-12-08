@@ -143,6 +143,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     public static final long STATUS_CHAT      = 0x00000020;
     public static final long STATUS_DND       = 0x00000002;
     public static final long STATUS_INVISIBLE = 0x00000100;
+	public static final long STATUS_INVIS_ALL = 0x00000200;
     public static final long STATUS_NA        = 0x00000004;
     public static final long STATUS_OCCUPIED  = 0x00000010;
     public static final long STATUS_OFFLINE   = 0xFFFFFFFF;

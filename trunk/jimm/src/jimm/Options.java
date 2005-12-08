@@ -122,13 +122,13 @@ public class Options
 	public static final int OPTION_PRX_NAME                       =  11;   /* String  */
 	public static final int OPTION_PRX_PASS                       =  12;   /* String  */
 	// #sijapp cond.end#
-	public static final int OPTION_EXT_CLKEY0                     = 77;	/*int*/
-	public static final int OPTION_EXT_CLKEYSTAR                  = 78;	/*int*/
-	public static final int OPTION_EXT_CLKEY4                     = 79;	/*int*/
-	public static final int OPTION_EXT_CLKEY6                     = 80;	/*int*/
-	public static final int OPTION_EXT_CLKEYCALL                  = 81;	/*int*/
-	public static final int OPTION_EXT_CLKEYPOUND                 = 82;	/*int*/
-	
+	public static final int OPTION_EXT_CLKEY0                     =  77;   /*int*/
+	public static final int OPTION_EXT_CLKEYSTAR                  =  78;   /*int*/
+	public static final int OPTION_EXT_CLKEY4                     =  79;   /*int*/
+	public static final int OPTION_EXT_CLKEY6                     =  80;   /*int*/
+	public static final int OPTION_EXT_CLKEYCALL                  =  81;   /*int*/
+	public static final int OPTION_EXT_CLKEYPOUND                 =  82;   /*int*/
+	public static final int OPTION_VISIBILITY_ID                  =  83;   /* int     */
 	
 	//Hotkey Actions
 	public static final int HOTKEY_NONE     = 0;
@@ -259,6 +259,7 @@ public class Options
 		setStringOption (Options.OPTION_PRX_NAME,                  		"");
 		setStringOption (Options.OPTION_PRX_PASS,                       "");
 	    // #sijapp cond.end #
+		setIntOption    (Options.OPTION_VISIBILITY_ID,                  0);
 		setIntOption    (Options.OPTION_EXT_CLKEY0,                     0);
 		setIntOption    (Options.OPTION_EXT_CLKEYSTAR,                  0);
 		setIntOption    (Options.OPTION_EXT_CLKEY4,                     0);
