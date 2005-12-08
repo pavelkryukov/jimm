@@ -515,6 +515,7 @@ public class Util
 		if (status == ContactList.STATUS_CHAT) return (Util.SET_STATUS_CHAT);
 		if (status == ContactList.STATUS_DND) return (Util.SET_STATUS_DND);
 		if (status == ContactList.STATUS_INVISIBLE) return (Util.SET_STATUS_INVISIBLE);
+		if (status == ContactList.STATUS_INVIS_ALL) return (Util.SET_STATUS_INVISIBLE);
 		if (status == ContactList.STATUS_NA) return (Util.SET_STATUS_NA);
 		if (status == ContactList.STATUS_OCCUPIED) return (Util.SET_STATUS_OCCUPIED);
 		return (Util.SET_STATUS_ONLINE);

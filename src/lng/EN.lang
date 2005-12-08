@@ -227,6 +227,7 @@
   "status_chat"                 "Free for Chat"
   "status_dnd"                  "Do Not Disturb"
   "status_invisible"            "Invisible"
+  "status_invis_all"            "Invis. 2 all"
   "status_na"                   "Not Available"
   "status_occupied"             "Occupied"
   "status_offline"              "Offline"

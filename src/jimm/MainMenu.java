@@ -99,6 +99,7 @@ public class MainMenu implements CommandListener
    		MainMenu.statusList.append(ResourceBundle.getString("status_occupied"), ContactList.statusOccupiedImg);
    		MainMenu.statusList.append(ResourceBundle.getString("status_dnd"), ContactList.statusDndImg);
    		MainMenu.statusList.append(ResourceBundle.getString("status_invisible"), ContactList.statusInvisibleImg);
+		MainMenu.statusList.append(ResourceBundle.getString("status_invis_all"), ContactList.statusInvisibleImg);
     }
 
     /** ************************************************************************* */
@@ -151,6 +152,7 @@ public class MainMenu implements CommandListener
             if (Icq.isNotConnected())
             {                
             	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("connect"), null)] 		= MENU_CONNECT;
+            	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("set_status"), getStatusImage())] = MENU_STATUS;
             	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("contact_list"), null)] 	= MENU_LIST;
             	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
                 
@@ -454,6 +456,9 @@ public class MainMenu implements CommandListener
                     } else if (onlineStatus == ContactList.STATUS_ONLINE)
                     {
                         MainMenu.statusList.setSelectedIndex(0, true);
+                    } else if (onlineStatus == ContactList.STATUS_INVIS_ALL)
+                    {
+                    	MainMenu.statusList.setSelectedIndex(7, true);
                     }
                     MainMenu.statusList.setCommandListener(_this);
                     MainMenu.statusList.addCommand(backCommand);
@@ -554,19 +559,38 @@ public class MainMenu implements CommandListener
             case 6:
                 onlineStatus = ContactList.STATUS_INVISIBLE;
                 break;
-            }
-            try
-            {
-                SetOnlineStatusAction act = new SetOnlineStatusAction(onlineStatus);
-                Jimm.jimm.getIcqRef().requestAction(act);
-            } catch (JimmException e)
-            {
-                JimmException.handleException(e);
-                if (e.isCritical()) return;
-            }
-            
-            if (!((onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_ONLINE)))
-            {
+			case 7:
+				onlineStatus = ContactList.STATUS_INVIS_ALL;
+				break;
+			}
+			if (Icq.isConnected())
+			{
+				try
+				{
+					SetOnlineStatusAction act = new SetOnlineStatusAction(onlineStatus);
+					Jimm.jimm.getIcqRef().requestAction(act);
+				} catch (JimmException e)
+				{
+					JimmException.handleException(e);
+					if (e.isCritical()) return;
+				}
+			}
+			else
+			{
+				this.isConnected = !Icq.isConnected();
+				// Save new online status
+				Options.setLongOption(Options.OPTION_ONLINE_STATUS, onlineStatus);
+				try
+				{
+					Options.save();
+				}
+				catch (Exception e)
+				{
+					JimmException.handleException(new JimmException(172,0,true));
+				}
+			}
+			if (!((onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_INVIS_ALL) || (onlineStatus == ContactList.STATUS_ONLINE)))
+			{
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 statusMessage = new TextBox(ResourceBundle.getString("status_message"),Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
                 //#sijapp cond.else#
@@ -576,12 +600,18 @@ public class MainMenu implements CommandListener
                 statusMessage.addCommand(selectCommand);
                 statusMessage.setCommandListener(_this);
                 Jimm.display.setCurrent(statusMessage);
-            }
-            else
-            {
-                // Activate main menu
-                Jimm.jimm.getContactListRef().activate();
-            }
+			}
+			else
+			{
+				// Active MM/CL
+				if (Icq.isConnected())
+				{
+					ContactList.activate();
+				} else
+				{
+					MainMenu.activate();
+				}
+			}
         }
         else if ((c == selectCommand) && (d == statusMessage))
         {
@@ -594,8 +624,14 @@ public class MainMenu implements CommandListener
             {
                 JimmException.handleException(new JimmException(172,0,true));
             }
-            // Activate main menu
-            Jimm.jimm.getContactListRef().activate();
+			// Active MM/CL
+			if (Icq.isConnected())
+			{
+				ContactList.activate();
+			} else
+			{
+				MainMenu.activate();
+			}
         }
     }
 }

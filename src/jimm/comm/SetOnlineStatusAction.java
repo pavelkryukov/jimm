@@ -26,6 +26,7 @@ package jimm.comm;
 
 import jimm.JimmException;
 import jimm.Options;
+import jimm.ContactList;
 
 
 public class SetOnlineStatusAction extends Action
@@ -71,9 +72,42 @@ public class SetOnlineStatusAction extends Action
 		// Convert online status
 		int onlineStatus = Util.translateStatusSend(this.onlineStatus);
 
+		int visibilityItemId = Options.getIntOption(Options.OPTION_VISIBILITY_ID);
+		byte[] buf = new byte[15];
+		byte bCode = 0;
+		if(visibilityItemId != 0)
+		{
+			// Build packet for privacy setting changing
+			int marker = 0;
+
+			if(onlineStatus == Util.SET_STATUS_INVISIBLE)
+				bCode = (this.onlineStatus == ContactList.STATUS_INVIS_ALL)?(byte)2:(byte)3;
+			else
+				bCode = (byte)4;
+
+			Util.putWord(buf, marker,    0); marker += 2; // name (null)
+			Util.putWord(buf, marker,    0); marker += 2; // GroupID
+			Util.putWord(buf, marker,  visibilityItemId); marker += 2; // EntryID
+			Util.putWord(buf, marker,    4); marker += 2; // EntryType
+			Util.putWord(buf, marker,    5); marker += 2; // Length in bytes of following TLV
+			Util.putWord(buf, marker, 0xCA); marker += 2; // TLV Type
+			Util.putWord(buf, marker,    1); marker += 2; // TLV Length
+			Util.putByte(buf, marker,bCode);              // TLV Value
+
+			// Change privacy setting according to new status
+			if(onlineStatus == Util.SET_STATUS_INVISIBLE)
+			{
+				SnacPacket reply2pre = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+										   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+										   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+										   new byte[0],
+										   buf);
+				Icq.Connection.sendPacket(reply2pre);
+			}
+		}
+
 		// Send a CLI_SETSTATUS packet
-		Util.putWord(SetOnlineStatusAction.CLI_SETSTATUS_DATA, 4, 0x0000);
-		Util.putWord(SetOnlineStatusAction.CLI_SETSTATUS_DATA, 6, onlineStatus);
+		Util.putDWord(SetOnlineStatusAction.CLI_SETSTATUS_DATA, 4, 0x10000000+onlineStatus);
 		SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY,
 										   SnacPacket.CLI_SETSTATUS_COMMAND,
 										   0x00000000,
@@ -81,6 +115,17 @@ public class SetOnlineStatusAction extends Action
 										   SetOnlineStatusAction.CLI_SETSTATUS_DATA);
 		Icq.Connection.sendPacket(packet);
 
+		// Change privacy setting according to new status
+		if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
+		{
+			SnacPacket reply2post = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+										SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+										SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+										new byte[0],
+										buf);
+			this.icq.c.sendPacket(reply2post);
+		}
+		
 		// Save new online status
 		Options.setLongOption(Options.OPTION_ONLINE_STATUS, this.onlineStatus);
 		try
@@ -89,7 +134,7 @@ public class SetOnlineStatusAction extends Action
 		}
 		catch (Exception e)
 		{
-            JimmException.handleException(new JimmException(172,0,true));
+			JimmException.handleException(new JimmException(172,0,true));
 		}
 
 	}

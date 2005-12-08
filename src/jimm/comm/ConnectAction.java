@@ -96,7 +96,7 @@ public class ConnectAction extends Action
     // CLI_SETSTATUS packet data
     public static final byte[] CLI_SETSTATUS_DATA =
     { (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x04, 
-      (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, // Online status
+	  (byte) 0x10, (byte) 0x00, (byte) 0x00, (byte) 0x00, // Online status
       (byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x02, 
       (byte) 0x00, (byte) 0x00, // No error
       (byte) 0x00, (byte) 0x0C, (byte) 0x00, (byte) 0x25, // TLV(C)
@@ -845,6 +845,27 @@ public class ConnectAction extends Action
                                                                     }
 
                                                                 }
+															// My visibility settings
+															else
+															if (type == 0x0004)
+															{
+																while (len > 0)
+																{
+																	byte[] tlvData = Util.getTlv(buf, marker);
+																	if (tlvData == null) { throw (new JimmException(115, 110)); }
+																	int tlvType = Util.getWord(buf, marker);
+
+																	if (tlvType == 0x00CA)
+																	{
+																		Options.setIntOption(Options.OPTION_VISIBILITY_ID, (int)id);
+																	}
+
+																	len -= 4;
+																	len -= tlvData.length;
+																	marker += 4 + tlvData.length;
+																}
+																if (len != 0) { throw (new JimmException(115, 111)); }
+															}
                                                                 // All other item types
                                                                 else
                                                                 {
@@ -880,12 +901,57 @@ public class ConnectAction extends Action
                                                     SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]);
                                                     Icq.Connection.sendPacket(reply1);
 
-                                                    // Send a CLI_SETSTATUS packet
-                                                    long onlineStatus = Util.translateStatusSend(Options.getLongOption(Options.OPTION_ONLINE_STATUS));
-                                                    Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, onlineStatus);
-                                                    SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
-                                                    Icq.Connection.sendPacket(reply2);
+													long onlineStatusOpt = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
+													long onlineStatus = Util.translateStatusSend(onlineStatusOpt);
+													int visibilityItemId = Options.getIntOption(Options.OPTION_VISIBILITY_ID);
+													byte[] buf = new byte[15];
+													byte bCode = 0;
+													if(visibilityItemId != 0)
+													{
+														// Build packet for privacy setting changing
+														int marker = 0;
 
+														if(onlineStatus == Util.SET_STATUS_INVISIBLE)
+															bCode = (onlineStatusOpt == ContactList.STATUS_INVIS_ALL)?(byte)2:(byte)3;
+														else
+															bCode = (byte)4;
+
+														Util.putWord(buf, marker,    0); marker += 2; // name (null)
+														Util.putWord(buf, marker,    0); marker += 2; // GroupID
+														Util.putWord(buf, marker,  visibilityItemId); marker += 2; // EntryID
+														Util.putWord(buf, marker,    4); marker += 2; // EntryType
+														Util.putWord(buf, marker,    5); marker += 2; // Length in bytes of following TLV
+														Util.putWord(buf, marker, 0xCA); marker += 2; // TLV Type
+														Util.putWord(buf, marker,    1); marker += 2; // TLV Length
+														Util.putByte(buf, marker,bCode);              // TLV Value
+
+														// Change privacy setting according to new status
+														if(onlineStatus == Util.SET_STATUS_INVISIBLE)
+														{
+															SnacPacket reply2pre = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+																					   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+																					   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+																					   new byte[0],
+																					   buf);
+															Icq.Connection.sendPacket(reply2pre);
+														}
+													}
+
+													// Send a CLI_SETSTATUS packet
+													Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, 0x10000000+onlineStatus);
+													SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
+													Icq.Connection.sendPacket(reply2);
+
+													// Change privacy setting according to new status
+													if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
+													{
+														SnacPacket reply2post = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+																					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+																					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+																					new byte[0],
+																					buf);
+														Icq.Connection.sendPacket(reply2post);
+													}
                                                     // Send a CLI_READY packet
                                                     SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
                                                     Icq.Connection.sendPacket(reply3);
