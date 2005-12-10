@@ -246,10 +246,11 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		ContactList.STATUS_NA,
 		ContactList.STATUS_OCCUPIED,
 		ContactList.STATUS_OFFLINE,
-		ContactList.STATUS_ONLINE
+		ContactList.STATUS_ONLINE,
+		ContactList.STATUS_INVIS_ALL,
 	};
 	
-	private final static int[] imageIndexes = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	private final static int[] imageIndexes = { 0, 1, 2, 3, 4, 5, 6, 7, 3 };
 	
 	private final static String[] statusStrings = 
 	{
@@ -260,7 +261,8 @@ public class ContactListContactItem extends ContactListItem implements CommandLi
 		"status_na",
 		"status_occupied",
 		"status_offline",
-		"status_online"
+		"status_online",
+		"status_invis_all"
 	};
 	
 	private static int getStatusIndex(long status)
