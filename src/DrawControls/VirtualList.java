@@ -176,7 +176,7 @@ public abstract class VirtualList extends Canvas
 	// returns height of draw area in pixels  
 	protected int getDrawHeight()
 	{
-		return getHeight()-getCapHeight();
+		return getHeightInternal()-getCapHeight();
 	}
 
 	//! Sets new font size and invalidates items
@@ -415,31 +415,42 @@ public abstract class VirtualList extends Canvas
 		}
 
 	}
-
-	// protected void keyPressed(int keyCode) 
-	protected void keyPressed(int keyCode)
+	
+	public void doKeyreaction(int keyCode, int type)
 	{
-		//#sijapp cond.if target is "MOTOROLA"#
-		LightControl.flash(false);
-		//#sijapp cond.end#
+		switch (type)
+		{
+		case KEY_PRESSED:
+			//#sijapp cond.if target is "MOTOROLA"#
+			LightControl.flash(false);
+			//#sijapp cond.end#
+			keyReaction(keyCode);
+			break;
+			
+		case KEY_REPEATED:
+			keyReaction(keyCode);
+			break;
+		}
 		
-		keyReaction(keyCode);
-		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode,KEY_PRESSED);
+		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode, type);
 	}
 
-	// protected void keyRepeated(int keyCode)
+	protected void keyPressed(int keyCode)
+	{
+		doKeyreaction(keyCode, KEY_PRESSED);
+	}
+
 	protected void keyRepeated(int keyCode)
 	{
-		keyReaction(keyCode);
-		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode,KEY_REPEATED);
+		doKeyreaction(keyCode, KEY_REPEATED);
 	}
 	
 	protected void keyReleased(int keyCode)
 	{
-		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode,KEY_RELEASED);
+		doKeyreaction(keyCode, KEY_RELEASED);
 	}
-	//#sijapp cond.if target is "MIDP2"#
 	
+	//#sijapp cond.if target is "MIDP2"#
 	private static long lastPointerTime = 0;
 	private static int lastPointerYCrd = -1;
 	private static int lastPointerXCrd = -1;
@@ -448,7 +459,7 @@ public abstract class VirtualList extends Canvas
 	protected void pointerDragged(int x, int y)
 	{
 		if (lastPointerTopItem == -1) return;
-		int height = getHeight()-getCapHeight();
+		int height = getHeightInternal()-getCapHeight();
 		int itemCount = getSize();
 		int visCount = getVisCount();
 		if (itemCount == visCount) return;
@@ -474,7 +485,7 @@ public abstract class VirtualList extends Canvas
 		int itemY1 = getCapHeight();
 		
 		// is pointing on scroller
-		if (x >= (getWidth()-3*scrollerWidth))
+		if (x >= (getWidthInternal()-3*scrollerWidth))
 		{
 			if ((srcollerY1 <= y) && (y < srcollerY2))
 			{
@@ -565,7 +576,7 @@ public abstract class VirtualList extends Canvas
 	private int drawCaption(Graphics g)
 	{
 		if (this.caption == null) return 0;
-		int width = getWidth();
+		int width = getWidthInternal();
 		g.setFont(capFont);
 		int th = capFont.getHeight();
 		g.setColor(bkgrndColor);
@@ -601,8 +612,8 @@ public abstract class VirtualList extends Canvas
 	// Draw scroller is items doesn't fit in VL area 
 	private void drawScroller(Graphics g, int topY, int visCount)
 	{
-		int width = getWidth()-scrollerWidth;
-		int height = getHeight();
+		int width = getWidthInternal()-scrollerWidth;
+		int height = getHeightInternal();
 		int itemCount = getSize();
 		boolean haveToShowScroller = ((itemCount > visCount) && (itemCount > 0));
 		int color = transformColorLight(transformColorLight(bkgrndColor, 32), -32);
@@ -638,10 +649,10 @@ public abstract class VirtualList extends Canvas
 	private int drawItems(Graphics g, int top_y, int fontHeight)
 	{
 		int grCursorY1 = -1, grCursorY2 = -1; 
-		int height = getHeight();
+		int height = getHeightInternal();
 		int size = getSize();
 		int i, y;
-		int itemWidth = getWidth()-scrollerWidth;
+		int itemWidth = getWidthInternal()-scrollerWidth;
 		
 		// Fill background
 		g.setColor(bkgrndColor);
@@ -709,8 +720,7 @@ public abstract class VirtualList extends Canvas
 		return r | (g << 8) | (b << 16);
 	}
 
-	// private void paintAllOnGraphics(Graphics graphics)
-	private void paintAllOnGraphics(Graphics graphics)
+	public void paintAllOnGraphics(Graphics graphics)
 	{
 		int visCount = getVisCount();
 		int y = drawCaption(graphics);
@@ -733,7 +743,7 @@ public abstract class VirtualList extends Canvas
 		{
 			try
 			{
-				if (bDIimage == null) bDIimage = Image.createImage(getWidth(), getHeight());
+				if (bDIimage == null) bDIimage = Image.createImage(getWidthInternal(), getHeightInternal());
 				paintAllOnGraphics(bDIimage.getGraphics());
 				g.drawImage(bDIimage, 0, 0, Graphics.TOP | Graphics.LEFT);
 			}
@@ -808,5 +818,26 @@ public abstract class VirtualList extends Canvas
 	{
 		return dontRepaint;
 	}
+	
+	private int forcedWidth = -1;
+	private int forcedHeight = -1;
+	
+	public void setForcedSize(int width, int height)
+	{
+		forcedWidth = width;
+		forcedHeight = height;
+	}
+	
+	protected int getHeightInternal()
+	{
+		return (forcedHeight == -1) ? getHeight() : forcedHeight;
+	}
+	
+	protected int getWidthInternal()
+	{
+		return (forcedWidth == -1) ? getWidth() : forcedWidth;
+	}
+	
 
+	
 }

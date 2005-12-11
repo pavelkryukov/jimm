@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/ContactList.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis, Igor Palkin
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis
  *******************************************************************************/
 
 package jimm;
@@ -901,7 +901,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // Update DC values
         if (dcType != -1)
         {
-            cItem.setByteArrayValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,internalIP);
+            cItem.setObjectValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,internalIP);
             cItem.setStringValue (ContactListContactItem.CONTACTITEM_DC_PORT,Long.toString(dcPort));
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_TYPE,dcType);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_ICQ_PROT,icqProt);
@@ -1384,8 +1384,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     public void VTGetItemDrawData(TreeNode src, ListItem dst)
 	{
 		ContactListItem item = (ContactListItem)src.getData();
-		item.getStringValue(ContactListContactItem.CONTACTITEM_NAME);
-		dst.text       = item.getStringValue(ContactListContactItem.CONTACTITEM_NAME);
+		dst.text       = item.getText();
 		dst.imageIndex = item.getImageIndex();
 		dst.color      = item.getTextColor();
 		dst.fontStyle  = item.getFontStyle(); 
@@ -1403,7 +1402,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			//#sijapp cond.end#
 			
 			lastChatItem = (ContactListContactItem)item; 
-			lastChatItem.activate();
+			lastChatItem.activate(true);
 		}
 		else if (item instanceof ContactListGroupItem)
 		{
@@ -1415,117 +1414,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	public void onItemSelected(VirtualList sender) {}
 	public void onKeyPress(VirtualList sender, int keyCode,int type)
 	{
-		TreeNode currItem = tree.getCurrentItem();
-		switch (keyCode)
-		{
-		case Canvas.KEY_NUM0:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY0), currItem, type);
-			break;
-			
-		case Canvas.KEY_NUM4:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY4), currItem, type);
-			break;
-			
-		case Canvas.KEY_NUM6:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY6), currItem, type);
-			break;
-
-		case Canvas.KEY_STAR:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR), currItem, type);
-			break;
-			
-		case Canvas.KEY_POUND:
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND), currItem, type);
-			break;
-			
-			
-		// #sijapp cond.if target is "SIEMENS2"#
-		case -11:
-			// This means the CALL button was pressed...
-			callHotkeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYCALL), currItem, type);
-			break;
-		// #sijapp cond.end#
-		}	
-	}
-	
-	private static long pressedTime;
-	
-	private void callHotkeyAction(int actionNum, TreeNode node, int keyType)
-	{
+		TreeNode node = tree.getCurrentItem();
 		ContactListContactItem item = 
 			((node != null) && (node.getData() instanceof ContactListContactItem))
 				?
 			(ContactListContactItem) node.getData()
 				:
 			null;
-		
-		if (keyType == VirtualList.KEY_PRESSED)
-		{
-			pressedTime = System.currentTimeMillis();
-			
-			switch (actionNum)
-			{
-			case Options.HOTKEY_INVIS:
-				if (item != null) item.checkForInvis();
-				break;
-
-			// #sijapp cond.if modules_HISTORY is "true" #
-			case Options.HOTKEY_HISTORY:
-				if (item != null) item.showHistory();
-				break;
-			// #sijapp cond.end#
-
-			case Options.HOTKEY_INFO:
-				if (item != null) item.showInfo();
-				break;
-
-			case Options.HOTKEY_NEWMSG:
-				if (item != null) item.newMessage();
-				break;
-
-			case Options.HOTKEY_ONOFF:
-				if (Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) 
-					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE, false);
-				else 
-					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE, true);
-				try
-				{
-					Options.save();
-				}
-				catch (Exception e)
-				{
-					JimmException.handleException(new JimmException(172, 0, true));
-				}
-				treeBuilt = false;
-				activate();
-				break;
-
-			case Options.HOTKEY_OPTIONS:
-				Options.optionsForm.activate();
-				break;
-
-			case Options.HOTKEY_MENU:
-				MainMenu.activate();
-				break;
-				
-			// #sijapp cond.if target is "MIDP2"#
-			case Options.HOTKEY_MINIMIZE:
-				Jimm.setMinimized(true);
-				break;
-			// #sijapp cond.end#
-			}
-		}
-		
-		else if ((keyType == VirtualList.KEY_REPEATED) || (keyType == VirtualList.KEY_RELEASED))
-		{
-			if (pressedTime == -1) return;
-			long diff = System.currentTimeMillis()-pressedTime;
-			if ((actionNum == Options.HOTKEY_LOCK) && (diff > 900))
-			{
-				pressedTime = -1;
-				SplashCanvas.lock();
-			}
-		}
+		JimmUI.execHotKey(item, keyCode, type);
 	}
 
 	// shows next or previos chat 
@@ -1546,7 +1442,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			if ( cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) )
 			{
 				lastChatItem = cItem;
-				cItem.activate();
+				cItem.activate(false);
 				return cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 			}
 		}
