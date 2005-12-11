@@ -264,6 +264,7 @@ public class MainMenu implements CommandListener
    		}
    		else 
    		{
+   			Icq.disconnect();
    			// Exit app
    			try 
    			{
@@ -420,6 +421,9 @@ public class MainMenu implements CommandListener
                 case MENU_DISCONNECT:
                     // Disconnect
                     Jimm.jimm.getIcqRef().disconnect();
+                    Thread.yield();
+                    // Show the main menu
+                    MainMenu.activate();
                     break;
                     
                 case MENU_LIST:

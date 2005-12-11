@@ -27,6 +27,7 @@ package jimm.comm;
 
 import java.util.Date;
 
+import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 
@@ -141,7 +142,7 @@ public class RequestInfoAction extends Action
 		Util.putWord(buf, 0, ToIcqSrvPacket.CLI_META_REQMOREINFO_TYPE, false);
 		Util.putDWord(buf, 2, Long.parseLong(strData[UIN]), false);
 		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options.getStringOption(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
-		Icq.Connection.sendPacket(packet);
+		Jimm.jimm.getIcqRef().c.sendPacket(packet);
 
 		// Save date
 		this.init = new Date();

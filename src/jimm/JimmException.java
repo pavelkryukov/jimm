@@ -30,6 +30,7 @@ import jimm.comm.Icq;
 
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
+import javax.microedition.lcdui.Displayable;
 
 
 public class JimmException extends Exception
@@ -40,9 +41,14 @@ public class JimmException extends Exception
 	public static String getErrDesc(int errCode, int extErrCode)
 	{
 		String errDesc = ResourceBundle.getString("error_" + errCode);
-		if (errDesc == null) errDesc = ResourceBundle.getString("error_100");
-		int ext = errDesc.indexOf("EXT");
-		return (errDesc.substring(0, ext) + extErrCode + errDesc.substring(ext + 3));
+		//if (errDesc.endsWith("EXT"))
+		//{
+			if (errDesc == null) errDesc = ResourceBundle.getString("error_100");
+			int ext = errDesc.indexOf("EXT");
+			return (errDesc.substring(0, ext) + extErrCode + errDesc.substring(ext + 3));
+		//}
+		//else
+		//	return errDesc;
 	}
 
 
@@ -165,7 +171,10 @@ public class JimmException extends Exception
 			{
 				Alert errorMsg = new Alert(ResourceBundle.getString("warning"), e.getMessage(), null, AlertType.WARNING);
 				errorMsg.setTimeout(Alert.FOREVER);
-				Jimm.display.setCurrent(errorMsg, Jimm.display.getCurrent());
+				if (Jimm.display.getCurrent() instanceof Alert)		
+					Jimm.display.setCurrent(errorMsg);
+				else
+					Jimm.display.setCurrent(errorMsg, Jimm.display.getCurrent());
 				return(errorMsg);
 			}
 		return(null);

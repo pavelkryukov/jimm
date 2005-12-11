@@ -24,6 +24,7 @@
 package jimm.comm;
 
 
+import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 
@@ -55,7 +56,7 @@ public class KeepAliveTimerTask extends TimerTask
 			// Instantiate and send an alive packet
 			try
 			{
-				Icq.Connection.sendPacket(new PingPacket());
+				Jimm.jimm.getIcqRef().c.sendPacket(new PingPacket());
 			}
 			catch (JimmException e)
 			{

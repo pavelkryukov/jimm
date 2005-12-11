@@ -26,6 +26,7 @@ package jimm.comm;
 
 import jimm.ContactList;
 import jimm.ContactListContactItem;
+import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 
@@ -230,7 +231,7 @@ public class SendMessageAction extends Action
 
             // Send packet
             SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-            Icq.Connection.sendPacket(snacPkt);
+            Jimm.jimm.getIcqRef().c.sendPacket(snacPkt);
 
         }
                 
@@ -367,13 +368,13 @@ public class SendMessageAction extends Action
                     // Set TLV 0x03 (IP)
                     Util.putWord(buf, marker, 0x0003);
                     Util.putWord(buf, marker + 2, 0x0004);
-                    System.arraycopy(Icq.Connection.getLocalIP(), 0, buf, marker + 4, 4);
+                    System.arraycopy(Jimm.jimm.getIcqRef().c.getLocalIP(), 0, buf, marker + 4, 4);
                     marker += 8;
 
                     // Set TLV 0x05 (port)
                     Util.putWord(buf, marker, 0x0005);
                     Util.putWord(buf, marker + 2, 0x0002);
-                    Util.putWord(buf, marker + 4, Icq.Connection.getLocalPort());
+                    Util.putWord(buf, marker + 4, Jimm.jimm.getIcqRef().c.getLocalPort());
                     marker += 6;
                 }
                 // #sijapp cond.end#
@@ -628,7 +629,7 @@ public class SendMessageAction extends Action
                 marker += 2;
                 // Send packet
                 SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-                Icq.Connection.sendPacket(snacPkt);
+                Jimm.jimm.getIcqRef().c.sendPacket(snacPkt);
                 // System.out.println("SendMessageAction: Sent the packet");
             }
            
@@ -676,7 +677,7 @@ public class SendMessageAction extends Action
 
     // Send packet
     SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-    Icq.Connection.sendPacket(snacPkt);
+    Jimm.jimm.getIcqRef().c.sendPacket(snacPkt);
 
   }
 

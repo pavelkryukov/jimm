@@ -28,10 +28,14 @@ import java.util.Date;
 import java.util.Vector;
 import java.util.TimeZone;
 
+import javax.microedition.io.Connector;
+import javax.microedition.io.HttpConnection;
+
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
+import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.util.ResourceBundle;
@@ -53,8 +57,8 @@ public class ConnectAction extends Action
 
     // CLI_FAMILIES packet data
     public static final byte[] CLI_FAMILIES_DATA =
-    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x03, 
-      (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x02, 
+    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x04, 
+      (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x04, 
       (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x01, 
       (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, 
       (byte) 0x00, (byte) 0x15, (byte) 0x00, (byte) 0x01, 
@@ -251,7 +255,7 @@ public class ConnectAction extends Action
 
             try
             {
-                Icq.Connection.connect(this.srvHost + ":" + this.srvPort);
+            	Jimm.jimm.getIcqRef().c.connect(this.srvHost + ":" + this.srvPort);
                 // #sijapp cond.if modules_PROXY is "true" #
                 break;
                 // #sijapp cond.end #
@@ -269,7 +273,7 @@ public class ConnectAction extends Action
                 else
                     if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
                     {
-                        Icq.Connection.close();
+                    	Jimm.jimm.getIcqRef().c.close();
                         try
                         {
                             // Wait the given time
@@ -320,17 +324,15 @@ public class ConnectAction extends Action
             // Watch out for STATE_INIT_DONE
             if (this.state == ConnectAction.STATE_INIT_DONE)
             {
-
                 // Watch out for SRV_CLI_HELLO packet
                 if (packet instanceof ConnectPacket)
                 {
                     ConnectPacket connectPacket = (ConnectPacket) packet;
                     if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
                     {
-
                         // Send a CLI_IDENT packet as reply
                         ConnectPacket reply = new ConnectPacket(this.uin, this.password, ResourceBundle.getCurrUiLanguage().toLowerCase(), ResourceBundle.getCurrUiLanguage().toLowerCase());
-                        Icq.Connection.sendPacket(reply);
+                        Jimm.jimm.getIcqRef().c.sendPacket(reply);
 
                         // Move to next state
                         this.state = ConnectAction.STATE_CLI_IDENT_SENT;
@@ -360,11 +362,11 @@ public class ConnectAction extends Action
                             this.cookie = disconnectPacket.getCookie();
 
                             // Send a CLI_GOODBYE packet as reply
-                            DisconnectPacket reply = new DisconnectPacket();
-                            Icq.Connection.sendPacket(reply);
+                            // DisconnectPacket reply = new DisconnectPacket();
+                            // Jimm.jimm.getIcqRef().c.sendPacket(reply);
 
                             // Close connection
-                            Icq.Connection.close();
+                            Jimm.jimm.getIcqRef().c.close();
                             // #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
                             if (Options.getBooleanOption(Options.OPTION_SHADOW_CON))
                             {
@@ -386,8 +388,7 @@ public class ConnectAction extends Action
                                 try
                                 {
                                     // #sijapp cond.end #
-                                    Icq.Connection.connect(disconnectPacket.getServer());
-
+                                	Jimm.jimm.getIcqRef().c.connect(disconnectPacket.getServer());
                                     // #sijapp cond.if modules_PROXY is "true" #
                                     break;
 
@@ -402,7 +403,7 @@ public class ConnectAction extends Action
                                     else
                                         if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
                                         {
-                                            Icq.Connection.close();
+                                        	Jimm.jimm.getIcqRef().c.close();
                                             try
                                             {
                                                 // Wait the given time
@@ -482,7 +483,7 @@ public class ConnectAction extends Action
 
                                 // Send a CLI_COOKIE packet as reply
                                 ConnectPacket reply = new ConnectPacket(this.cookie);
-                                Icq.Connection.sendPacket(reply);
+                                Jimm.jimm.getIcqRef().c.sendPacket(reply);
 
                                 // Move to next state
                                 this.state = ConnectAction.STATE_CLI_COOKIE_SENT;
@@ -507,8 +508,8 @@ public class ConnectAction extends Action
                                 {
 
                                     // Send a CLI_FAMILIES packet as reply
-                                    SnacPacket reply = new SnacPacket(SnacPacket.CLI_FAMILIES_FAMILY, SnacPacket.CLI_FAMILIES_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_FAMILIES_DATA);
-                                    Icq.Connection.sendPacket(reply);
+                                    SnacPacket reply = new SnacPacket(SnacPacket.CLI_FAMILIES_FAMILY, SnacPacket.CLI_FAMILIES_COMMAND, SnacPacket.CLI_FAMILIES_COMMAND, new byte[0], ConnectAction.CLI_FAMILIES_DATA);
+                                    Jimm.jimm.getIcqRef().c.sendPacket(reply);
 
                                     // Move to next state
                                     this.state = ConnectAction.STATE_CLI_FAMILIES_SENT;
@@ -558,7 +559,7 @@ public class ConnectAction extends Action
                                         // Send a CLI_RATESREQUEST packet as
                                         // reply
                                         SnacPacket reply = new SnacPacket(SnacPacket.CLI_RATESREQUEST_FAMILY, SnacPacket.CLI_RATESREQUEST_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                        Icq.Connection.sendPacket(reply);
+                                        Jimm.jimm.getIcqRef().c.sendPacket(reply);
 
                                         // Move to next state
                                         this.state = ConnectAction.STATE_CLI_RATESREQUEST_SENT;
@@ -582,31 +583,31 @@ public class ConnectAction extends Action
 
                                             // Send a CLI_ACKRATES packet
                                             SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ACKRATES_FAMILY, SnacPacket.CLI_ACKRATES_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_ACKRATES_DATA);
-                                            Icq.Connection.sendPacket(reply1);
+                                            Jimm.jimm.getIcqRef().c.sendPacket(reply1);
 
                                             // Send a CLI_REQLOCATION packet
                                             SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQLOCATION_FAMILY, SnacPacket.CLI_REQLOCATION_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Icq.Connection.sendPacket(reply2);
+                                            Jimm.jimm.getIcqRef().c.sendPacket(reply2);
 
                                             // Send a CLI_SETUSERINFO packet
                                             SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETUSERINFO_DATA);
-                                            Icq.Connection.sendPacket(reply3);
+                                            Jimm.jimm.getIcqRef().c.sendPacket(reply3);
 
                                             // Send a CLI_REQBUDDY packet
                                             SnacPacket reply4 = new SnacPacket(SnacPacket.CLI_REQBUDDY_FAMILY, SnacPacket.CLI_REQBUDDY_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Icq.Connection.sendPacket(reply4);
+                                            Jimm.jimm.getIcqRef().c.sendPacket(reply4);
 
                                             // Send a CLI_REQICBM packet
                                             SnacPacket reply5 = new SnacPacket(SnacPacket.CLI_REQICBM_FAMILY, SnacPacket.CLI_REQICBM_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Icq.Connection.sendPacket(reply5);
+                                            Jimm.jimm.getIcqRef().c.sendPacket(reply5);
 
                                             // Send a CLI_REQBOS packet
                                             SnacPacket reply6 = new SnacPacket(SnacPacket.CLI_REQBOS_FAMILY, SnacPacket.CLI_REQBOS_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Icq.Connection.sendPacket(reply6);
+                                            Jimm.jimm.getIcqRef().c.sendPacket(reply6);
 
                                             // Send a CLI_REQLISTS packet
                                             SnacPacket reply7 = new SnacPacket(SnacPacket.CLI_REQLISTS_FAMILY, SnacPacket.CLI_REQLISTS_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Icq.Connection.sendPacket(reply7);
+                                            Jimm.jimm.getIcqRef().c.sendPacket(reply7);
 
                                             // Move to next state
                                             this.state = ConnectAction.STATE_CLI_REQLISTS_SENT;
@@ -689,7 +690,7 @@ public class ConnectAction extends Action
 
                                                 // Send a CLI_SETICBM packet
                                                 SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
-                                                Icq.Connection.sendPacket(reply1);
+                                                Jimm.jimm.getIcqRef().c.sendPacket(reply1);
 
                                                 // Send a CLI_REQROSTER or
                                                 // CLI_CHECKROSTER packet
@@ -698,7 +699,7 @@ public class ConnectAction extends Action
                                                 if (((versionId1 == -1) && (versionId2 == -1)) || (ContactList.getSize() == 0))
                                                 {
                                                     SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                                    Icq.Connection.sendPacket(reply2);
+                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply2);
                                                 }
                                                 else
                                                 {
@@ -706,7 +707,7 @@ public class ConnectAction extends Action
                                                     Util.putDWord(data, 0, versionId1);
                                                     Util.putWord(data, 4, versionId2);
                                                     SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_CHECKROSTER_FAMILY, SnacPacket.CLI_CHECKROSTER_COMMAND, 0x00000000, new byte[0], data);
-                                                    Icq.Connection.sendPacket(reply2);
+                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply2);
                                                 }
 
                                                 // Move to next state
@@ -899,7 +900,7 @@ public class ConnectAction extends Action
 
                                                     // Send a CLI_ROSTERACK packet
                                                     SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                                    Icq.Connection.sendPacket(reply1);
+                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply1);
 
 													long onlineStatusOpt = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
 													long onlineStatus = Util.translateStatusSend(onlineStatusOpt);
@@ -933,14 +934,14 @@ public class ConnectAction extends Action
 																					   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 																					   new byte[0],
 																					   buf);
-															Icq.Connection.sendPacket(reply2pre);
+															Jimm.jimm.getIcqRef().c.sendPacket(reply2pre);
 														}
 													}
 
 													// Send a CLI_SETSTATUS packet
 													Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, 0x10000000+onlineStatus);
 													SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
-													Icq.Connection.sendPacket(reply2);
+													Jimm.jimm.getIcqRef().c.sendPacket(reply2);
 
 													// Change privacy setting according to new status
 													if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
@@ -950,15 +951,16 @@ public class ConnectAction extends Action
 																					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 																					new byte[0],
 																					buf);
-														Icq.Connection.sendPacket(reply2post);
+														Jimm.jimm.getIcqRef().c.sendPacket(reply2post);
 													}
+
                                                     // Send a CLI_READY packet
                                                     SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
-                                                    Icq.Connection.sendPacket(reply3);
+                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply3);
 
                                                     // Send a CLI_TOICQSRV/CLI_REQOFFLINEMSGS packet
                                                     ToIcqSrvPacket reply4 = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_REQOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
-                                                    Icq.Connection.sendPacket(reply4);
+                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply4);
 
                                                     // Move to next state
                                                     this.state = ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT;
@@ -1107,7 +1109,7 @@ public class ConnectAction extends Action
 
                                                             // Send a CLI_TOICQSRV/CLI_ACKOFFLINEMSGS packet
                                                             ToIcqSrvPacket reply = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_ACKOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
-                                                            Icq.Connection.sendPacket(reply);
+                                                            Jimm.jimm.getIcqRef().c.sendPacket(reply);
 
                                                             // Move to next state
                                                             this.state = ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT;
@@ -1159,7 +1161,7 @@ public class ConnectAction extends Action
     // Returns true if an error has occured
     public boolean isError()
     {
-        if ((this.state != ConnectAction.STATE_ERROR) && !this.active && (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
+    	if ((this.state != ConnectAction.STATE_ERROR) && !this.active && (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
         {
             JimmException.handleException(new JimmException(118, 0));
             this.state = ConnectAction.STATE_ERROR;

@@ -42,14 +42,12 @@ abstract class Packet
 
 	// FLAP sequence number
 	protected int sequence;
-
-
+	
 	// Returns the FLAP sequence number
 	public int getSequence()
 	{
 		return (this.sequence);
 	}
-
 
 	// Sets the FLAP sequence number
 	void setSequence(int sequence)

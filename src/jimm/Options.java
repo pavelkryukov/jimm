@@ -74,7 +74,8 @@ public class Options
 	public static final int OPTION_SRV_PORT                       =   2;   /* String  */
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
     public static final int OPTION_CONN_ALIVE_INVTERV             =  13;   /* String  */
-	public static final int OPTION_CONN_TYPE                      =  64;   /* int     */
+	public static final int OPTION_CONN_PROP                      =  64;   /* int     */
+	public static final int OPTION_CONN_TYPE                      =  83;   /* int     */
 	public static final int OPTION_AUTO_CONNECT	  = 138;   /* boolean */
     // #sijapp cond.if target isnot  "MOTOROLA"#
 	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
@@ -195,6 +196,7 @@ public class Options
 		setStringOption (Options.OPTION_SRV_PORT,                       "5190");
 		setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,                true);
         setStringOption (Options.OPTION_CONN_ALIVE_INVTERV,             "120");
+		setIntOption    (Options.OPTION_CONN_PROP,                      0);
 		setIntOption    (Options.OPTION_CONN_TYPE,                      0);
         // #sijapp cond.if target isnot "MOTOROLA"#
 		setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
@@ -445,6 +447,10 @@ public class Options
 	public static final int  CLRSCHHEME_TEXT = 2; // retrieving text color
 	public static final int  CLRSCHHEME_BLUE = 3; // retrieving highlight color
 	public static final int  CLRSCHHEME_CURS = 4; // retrieving curr mess highlight color
+	
+	// Constants for connection type
+	public static final int  CONN_TYPE_SOCKET = 0;
+	public static final int  CONN_TYPE_HTTP   = 1; 
 
 	final static private int[] colors = 
 	{
@@ -508,6 +514,7 @@ public class Options
         static private TextField srvPortTextField;
         static private ChoiceGroup keepConnAliveChoiceGroup;
         static private TextField connAliveIntervTextField;
+        static private ChoiceGroup connPropChoiceGroup;
         static private ChoiceGroup connTypeChoiceGroup;
         static private ChoiceGroup autoConnectChoiceGroup;
         static private ChoiceGroup uiLanguageChoiceGroup;
@@ -665,21 +672,25 @@ public class Options
                 srvHostTextField = new TextField(ResourceBundle.getString("server_host"), getStringOption(Options.OPTION_SRV_HOST), 32, TextField.ANY);
                 srvPortTextField = new TextField(ResourceBundle.getString("server_port"), getStringOption(Options.OPTION_SRV_PORT), 5, TextField.NUMERIC);
                 
+                connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.EXCLUSIVE);
+                connTypeChoiceGroup.append(ResourceBundle.getString("socket"), null);
+                connTypeChoiceGroup.append(ResourceBundle.getString("http"), null);
+                connTypeChoiceGroup.setSelectedIndex(Options.getIntOption(Options.OPTION_CONN_TYPE),true);
                 keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle.getString("keep_conn_alive"), Choice.MULTIPLE);
                 keepConnAliveChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 keepConnAliveChoiceGroup.setSelectedIndex(0, getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
                 connAliveIntervTextField = new TextField(ResourceBundle.getString("timeout_interv"), getStringOption(Options.OPTION_CONN_ALIVE_INVTERV), 3, TextField.NUMERIC);
-                connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.MULTIPLE);
-                connTypeChoiceGroup.append(ResourceBundle.getString("async"), null);
+                connPropChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_prop"), Choice.MULTIPLE);
+                connPropChoiceGroup.append(ResourceBundle.getString("async"), null);
                 // #sijapp cond.if target isnot "MOTOROLA"#
-                connTypeChoiceGroup.append(ResourceBundle.getString("shadow_con"), null);
+                connPropChoiceGroup.append(ResourceBundle.getString("shadow_con"), null);
                 // #sijapp cond.end#
-                if (getIntOption(Options.OPTION_CONN_TYPE) == 0)
-                    connTypeChoiceGroup.setSelectedIndex(0, false);
+                if (getIntOption(Options.OPTION_CONN_PROP) == 0)
+                	connPropChoiceGroup.setSelectedIndex(0, false);
                 else
-                    connTypeChoiceGroup.setSelectedIndex(0, true);
+                	connPropChoiceGroup.setSelectedIndex(0, true);
                 // #sijapp cond.if target isnot "MOTOROLA"#
-                connTypeChoiceGroup.setSelectedIndex(1, getBooleanOption(Options.OPTION_SHADOW_CON));
+                connPropChoiceGroup.setSelectedIndex(1, getBooleanOption(Options.OPTION_SHADOW_CON));
                 // #sijapp cond.end#
                 autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
                 autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
@@ -948,10 +959,11 @@ public class Options
 					case OPTIONS_NETWORK:
 						optionsForm.append(srvHostTextField);
 						optionsForm.append(srvPortTextField);
+						optionsForm.append(connTypeChoiceGroup);
 						optionsForm.append(keepConnAliveChoiceGroup);
                         optionsForm.append(connAliveIntervTextField);
 						optionsForm.append(autoConnectChoiceGroup);
-						optionsForm.append(connTypeChoiceGroup);
+						optionsForm.append(connPropChoiceGroup);
 						break;
                     // #sijapp cond.if modules_PROXY is "true"#
                     case OPTIONS_PROXY:
@@ -1057,15 +1069,16 @@ public class Options
 					case OPTIONS_NETWORK:
 					    setStringOption(Options.OPTION_SRV_HOST,srvHostTextField.getString());
 					    setStringOption(Options.OPTION_SRV_PORT,srvPortTextField.getString());
+					    setIntOption(Options.OPTION_CONN_TYPE,connTypeChoiceGroup.getSelectedIndex());
 						setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,keepConnAliveChoiceGroup.isSelected(0));
                         setStringOption(Options.OPTION_CONN_ALIVE_INVTERV,connAliveIntervTextField.getString());
 						setBooleanOption(Options.OPTION_AUTO_CONNECT,autoConnectChoiceGroup.isSelected(0));
-						if (connTypeChoiceGroup.isSelected(0))
-							setIntOption(Options.OPTION_CONN_TYPE,1);
+						if (connPropChoiceGroup.isSelected(0))
+							setIntOption(Options.OPTION_CONN_PROP,1);
 						else
-						    setIntOption(Options.OPTION_CONN_TYPE,0);
+						    setIntOption(Options.OPTION_CONN_PROP,0);
                         // #sijapp cond.if target isnot "MOTOROLA"#
-						setBooleanOption(Options.OPTION_SHADOW_CON,connTypeChoiceGroup.isSelected(1));
+						setBooleanOption(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(1));
                         // #sijapp cond.end#
 						break;
                     // #sijapp cond.if modules_PROXY is "true"#

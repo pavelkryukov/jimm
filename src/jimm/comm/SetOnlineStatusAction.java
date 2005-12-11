@@ -24,6 +24,7 @@
 
 package jimm.comm;
 
+import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.ContactList;
@@ -102,7 +103,7 @@ public class SetOnlineStatusAction extends Action
 										   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 										   new byte[0],
 										   buf);
-				Icq.Connection.sendPacket(reply2pre);
+				Jimm.jimm.getIcqRef().c.sendPacket(reply2pre);
 			}
 		}
 
@@ -113,7 +114,7 @@ public class SetOnlineStatusAction extends Action
 										   0x00000000,
 										   new byte[0],
 										   SetOnlineStatusAction.CLI_SETSTATUS_DATA);
-		Icq.Connection.sendPacket(packet);
+		Jimm.jimm.getIcqRef().c.sendPacket(packet);
 
 		// Change privacy setting according to new status
 		if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)

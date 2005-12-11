@@ -25,6 +25,7 @@
 package jimm.comm;
 
 
+import jimm.Jimm;
 import jimm.JimmException;
 
 
@@ -72,7 +73,7 @@ public class RemoveMeAction extends Action
 
 		// Send a CLI_AUTHORIZE packet
 		SnacPacket packet = new SnacPacket(SnacPacket.CLI_REMOVEME_FAMILY, SnacPacket.CLI_REMOVEME_COMMAND, 0x00000003, new byte[0], buf);
-		Icq.Connection.sendPacket(packet);
+		Jimm.jimm.getIcqRef().c.sendPacket(packet);
 	}
 
 

@@ -54,6 +54,7 @@
   "clear"                       "Clear"
   "color_scheme"                "Color scheme"
   "conn_type"                   "Connection type"
+  "conn_prop"					"Connection properties"
   "connect"                     "Connect"
   "connecting"                  "Connecting"
   "copy_text"                   "Copy text"
@@ -110,6 +111,7 @@
   "home_page"                   "Home page"
   "home_info"                   "Home"
   "hours"						"h"
+  "http"						"HTTP"
   "info"                        "Info"
   "init_ft"                     "Initializing"
   "insert_emotion"              "Insert emotion"
@@ -214,6 +216,7 @@
   "show_user_groups"            "Show user groups"
   "since"                       "Since"
   "size"                        "Size"
+  "socket"						"Socket"
   "sound"                       "Sound file"
   "sound_file_name"             "Sound file name"
   "sort_by"                     "Sort contact list"
@@ -368,3 +371,7 @@
   "error_191"                   "Error reading the file. Possibly not supported (#191.EXT)"
   "error_192"                   "Error reading the file. File not found, or not supported (#192.EXT)"
   "error_193"                   "Error accessing file system for browsing. Security error (#193.EXT)"
+  
+  // HTTP Connection erros
+  "error_220"					"Server did not accept HTTP request (#220.EXT)"
+  "error_221"					"ICQ Server returned error code during connection (#221.EXT)"
