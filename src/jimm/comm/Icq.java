@@ -1483,7 +1483,6 @@ public class Icq implements Runnable
                 	JimmException f = new JimmException(120, 1);
                     JimmException.handleException(f);
                 }
-                e.printStackTrace();
                 // Reset input close flag
             }
         }
