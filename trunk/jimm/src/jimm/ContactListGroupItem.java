@@ -26,12 +26,11 @@ package jimm;
 
 
 import jimm.comm.Util;
+import javax.microedition.lcdui.Font;
 
 
-public class ContactListGroupItem extends ContactListItem
+public class ContactListGroupItem implements ContactListItem
 {
-
-
 	// Persistent variables
 	private int id;
 	private String name;
@@ -70,7 +69,7 @@ public class ContactListGroupItem extends ContactListItem
 	    return totalCount;
 	}
 	
-    public String getStringValue(int id)
+	public String getText()
     {
         String result;
         
@@ -127,6 +126,12 @@ public class ContactListGroupItem extends ContactListItem
 		ContactListGroupItem gi = (ContactListGroupItem) obj;
 		return (this.id == gi.getId());
 	}
+	
+	public int getFontStyle()
+	{
+		return Font.STYLE_PLAIN;
+	}
+	
 
 
 }

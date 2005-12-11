@@ -25,12 +25,7 @@ package jimm;
 
 import java.util.Enumeration;
 import java.util.*;
-import javax.microedition.lcdui.Font;
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
-import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.*;
 
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
@@ -44,6 +39,86 @@ import jimm.HistoryStorage;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 import DrawControls.VirtualListCommands;
+
+// #sijapp cond.if target is "SIEMENS2"#
+class ChatItem extends CustomItem
+{
+	private int height, width;
+	private TextList textList;
+	
+	public ChatItem(int width, int height)
+	{
+		super(new String());
+		this.height   = height;
+		this.width    = width;
+	}
+	
+	void setTextList(TextList textList)
+	{
+		this.textList = textList;
+	}
+	
+	protected int getMinContentHeight()
+	{
+		return height;
+	}
+	
+	protected int getMinContentWidth()
+	{
+		return width;
+	}
+	
+	protected int getPrefContentHeight(int width)
+	{
+		return height;
+	}
+	
+	protected int getPrefContentWidth(int height)
+	{
+		return width;
+	}
+	
+	protected void paint(Graphics g, int w, int h)
+	{
+		textList.setForcedSize(w, h);
+		textList.paintAllOnGraphics(g);
+	}
+	
+	protected void keyPressed(int keyCode)
+	{
+		textList.doKeyreaction(keyCode, VirtualList.KEY_PRESSED);
+		repaint();
+	}
+	
+	protected void keyRepeated(int keyCode)
+	{
+		textList.doKeyreaction(keyCode, VirtualList.KEY_REPEATED);
+		repaint();
+	}
+	
+	protected void keyReleased(int keyCode)
+	{
+		textList.doKeyreaction(keyCode, VirtualList.KEY_RELEASED);
+		repaint();
+	}
+	
+	protected void showNotify()
+	{
+		ChatTextList.updateChatHeight(true);
+	}
+	
+	void setHeight(int value)
+	{
+		height = value;
+		invalidate();
+	}
+	
+	void updateContents()
+	{
+		repaint();
+	}
+}
+// #sijapp cond.end#
 
 class MessData
 {
@@ -66,27 +141,61 @@ class MessData
 	public int getOffset() { return textOffset; }
 }
 
-class ChatTextList extends TextList implements VirtualListCommands
+class ChatTextList implements VirtualListCommands
+                             // #sijapp cond.if target is "SIEMENS2"#
+                             ,ItemStateListener
+                             ,ItemCommandListener
+                             // #sijapp cond.end#
 {
-	public String ChatName;
+	// #sijapp cond.if target is "SIEMENS2"#
+	static public Form form;
+	static public TextField textLine;
+	static public ChatItem chatItem;
+	static private Command cmdSend; 
+	
+	static
+	{
+		form = new Form(null);
+		textLine = new TextField(null, null, 1000, TextField.ANY);
+		chatItem = new ChatItem(form.getWidth()-4, 10);
+		cmdSend = new Command(ResourceBundle.getString("send"), Command.OK, 0);
+		form.append(chatItem);
+		form.append(textLine);
+		
+		textLine.addCommand(cmdSend);
+	}
+	// #sijapp cond.end#
+	
+	TextList textList;
+	public String ChatName, uin;
 	private Vector messData = new Vector();
 	private int messTotalCounter = 0;
 	
-	ChatTextList(String name)
+	ChatTextList(String name, String uin)
 	{
-		super(null);
+		textList = new TextList(null);
 		
-		this.setCursorMode(TextList.SEL_NONE);
-		this.setFontSize
+		textList.setCursorMode(TextList.SEL_NONE);
+		textList.setFontSize
 		(
 			Options.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT)
 				   ? TextList.SMALL_FONT : TextList.MEDIUM_FONT
 		);
 		
+		this.uin = uin;
 		ChatName = name;
-		JimmUI.setColorScheme(this);
+		JimmUI.setColorScheme(textList);
 		
-		setVLCommands(this);
+		textList.setVLCommands(this);
+	}
+	
+	public Displayable getDisplayable()
+	{
+		// #sijapp cond.if target is "SIEMENS2"#
+		return Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT) ? (Displayable)form : (Displayable)textList;
+		// #sijapp cond.else#
+		return textList;
+		// #sijapp cond.end#
 	}
 	
 	static int getInOutColor(boolean incoming)
@@ -101,46 +210,50 @@ class ChatTextList extends TextList implements VirtualListCommands
 	{
 		return messData; 
 	}
-	
+
 	public void onCursorMove(VirtualList sender) {}
 	public void onItemSelected(VirtualList sender) {}
-
-	public void onKeyPress(VirtualList sender, int keyCode, int type)
+	public void onKeyPress(VirtualList sender, int keyCode,int type)
 	{
-		if (type != TextList.KEY_PRESSED) return;
-		String currUin;
-		switch (getGameAction(keyCode))
+		if (type == VirtualList.KEY_PRESSED)
 		{
-		case Canvas.LEFT:
-			currUin = ContactList.showNextPrevChat(false);
-			Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
-			break;
-			
-		case Canvas.RIGHT:
-			currUin = ContactList.showNextPrevChat(true);
-			Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
-			break;
+			String currUin;
+			switch (sender.getGameAction(keyCode))
+			{
+			case Canvas.LEFT:
+				currUin = ContactList.showNextPrevChat(false);
+				Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
+				return;
+				
+			case Canvas.RIGHT:
+				currUin = ContactList.showNextPrevChat(true);
+				Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
+				return;
+			}
 		}
+
+		JimmUI.execHotKey(ContactList.getItembyUIN(uin), keyCode, type);
 	}
+	
 	
 	void addTextToForm(String from, String message, String url, Date time, boolean red, boolean offline)
 	{
 		int texOffset;
 		
-		lock();
-		int lastSize = getSize();
-		addBigText
+		textList.lock();
+		int lastSize = textList.getSize();
+		textList.addBigText
 		(
 			from + " (" + Util.getDateString(!offline, time) + "): ",
 			getInOutColor(red), 
 			Font.STYLE_BOLD,
 			messTotalCounter
 		);
-		doCRLF(messTotalCounter);
+		textList.doCRLF(messTotalCounter);
 
 		if (url.length() > 0)
 		{
-			addBigText
+			textList.addBigText
 			(
 				ResourceBundle.getString("url")+": "+url, 
 				0x00FF00, 
@@ -148,22 +261,75 @@ class ChatTextList extends TextList implements VirtualListCommands
 			);
 		}
 		
-		texOffset = getSize()-lastSize;
+		texOffset = textList.getSize()-lastSize;
 		
 		//#sijapp cond.if modules_SMILES is "true" #
-		Emotions.addTextWithEmotions(this, message, Font.STYLE_PLAIN, getTextColor(), messTotalCounter);
+		Emotions.addTextWithEmotions(textList, message, Font.STYLE_PLAIN, textList.getTextColor(), messTotalCounter);
 		//#sijapp cond.else#
-		addBigText(message, getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
+		textList.addBigText(message, textList.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
 		//#sijapp cond.end#
-		doCRLF(messTotalCounter);
+		textList.doCRLF(messTotalCounter);
 		
-		setTopItem(lastSize);		
-		unlock();
+		textList.setTopItem(lastSize);		
+		textList.unlock();
+		
+		// #sijapp cond.if target is "SIEMENS2"#
+		chatItem.updateContents();
+		//#sijapp cond.end#
+		
 		getMessData().addElement( new MessData(red, time, from, texOffset) );
 		
 		messTotalCounter++;
-
 	}
+	
+	public void activate(boolean initChat)
+	{
+		//#sijapp cond.if target is "SIEMENS2"#
+		if ( Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT) )
+		{
+			form.setItemStateListener(this);
+			textLine.setItemCommandListener(this);
+			chatItem.setTextList(textList);
+			chatItem.updateContents();
+			Jimm.display.setCurrent(form);
+			System.out.println("activate "+initChat);
+			if (initChat) Jimm.display.setCurrentItem(textLine);
+		}
+		else Jimm.display.setCurrent(textList); 
+		//#sijapp cond.else#
+		Jimm.display.setCurrent(textList);
+		//#sijapp cond.end#
+	}
+	
+	//#sijapp cond.if target is "SIEMENS2"#
+	private static int lastHeight = -1;
+	public void itemStateChanged(Item item)
+	{
+		if (item == textLine) updateChatHeight(false);
+	}
+	
+	static void updateChatHeight(boolean force)
+	{
+		int height = form.getHeight()-textLine.getPreferredHeight()-4;
+		if (lastHeight != height)
+		{
+			chatItem.setHeight(height);
+			lastHeight = height; 
+		}
+	}
+	
+	public void commandAction(Command c, Item item)
+	{
+		if (c == cmdSend)
+		{
+			ContactListContactItem cItem = ContactList.getItembyUIN(uin);
+			cItem.sendMessage(textLine.getString());
+			textLine.setString(new String());
+			updateChatHeight(true);
+		}
+	}
+	
+	//#sijapp cond.end#
 }
 
 public class ChatHistory
@@ -176,8 +342,8 @@ public class ChatHistory
 	public void addTextToHistory(String uin)
 	{
 		ChatTextList list = getChatHistoryAt(uin);
-		int textIndex = list.getCurrTextIndex();
-		String text = list.getCurrText(1);
+		int textIndex = list.textList.getCurrTextIndex();
+		String text = list.textList.getCurrText(1);
 		if (text == null) return;
 		
 		MessData data = (MessData)list.getMessData().elementAt(textIndex);
@@ -201,17 +367,18 @@ public class ChatHistory
 	// Adds a message to the message display
 	protected synchronized void addMessage(String uin,Message message,ContactListContactItem contact)
 	{
+		ChatTextList chat = (ChatTextList)historyTable.get(uin);
+
 		if (!historyTable.containsKey(uin))
 			newChatForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 
-		TextList msgDisplay = (TextList) historyTable.get(uin);
 		
 		boolean offline = message.getOffline();
 
 		if (message instanceof PlainMessage)
 		{
 			PlainMessage plainMsg = (PlainMessage) message;
-			if (!msgDisplay.isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
+			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
 			this.addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText(), "", plainMsg.getDate(), true, offline);
 
 			// #sijapp cond.if modules_HISTORY is "true" #
@@ -225,13 +392,13 @@ public class ChatHistory
 		if (message instanceof UrlMessage)
 		{
 			UrlMessage urlMsg = (UrlMessage) message;
-			if (!msgDisplay.isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_URL);
+			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_URL);
 			this.addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false, offline);
 		}
 		if (message instanceof SystemNotice)
 		{
 			SystemNotice notice = (SystemNotice) message;
-			if (!msgDisplay.isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_SYS_NOTICE);
+			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_SYS_NOTICE);
 
 			if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
 			{
@@ -280,7 +447,7 @@ public class ChatHistory
 	public void copyText(String uin)
 	{
 		ChatTextList list = getChatHistoryAt(uin);
-		int messIndex = list.getCurrTextIndex();
+		int messIndex = list.textList.getCurrTextIndex();
 		MessData md = (MessData)list.getMessData().elementAt(messIndex);
 		
 		JimmUI.setClipBoardText
@@ -288,7 +455,7 @@ public class ChatHistory
 			md.getIncoming(),
 			Util.getDateString(false, md.getTime()),
 			md.getFrom(),
-			list.getCurrText(md.getOffset())
+			list.textList.getCurrText(md.getOffset())
 		);
 	}
 
@@ -298,7 +465,7 @@ public class ChatHistory
 		if (historyTable.containsKey(uin))
 			return (ChatTextList) historyTable.get(uin);
 		else
-			return new ChatTextList("Error");
+			return new ChatTextList("Error", null);
 	}
 
 	// Delete the chat history for uin
@@ -312,8 +479,8 @@ public class ChatHistory
 	{
 		if (historyTable.containsKey(uin))
 		{
-			TextList temp = (TextList)historyTable.get(uin);
-			return temp.isShown();
+			ChatTextList temp = (ChatTextList)historyTable.get(uin);
+			return temp.getDisplayable().isShown();
 		}
 		else
 			return false;
@@ -329,7 +496,7 @@ public class ChatHistory
 	// Creates a new chat form
 	private void newChatForm(String uin, String name)
 	{
-		ChatTextList chatForm = new ChatTextList(name);
+		ChatTextList chatForm = new ChatTextList(name, uin);
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
 		ContactList.getItembyUIN(uin).setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true);
@@ -350,27 +517,27 @@ public class ChatHistory
 			 
 			if (!chatHistoryExists(uin)) newChatForm(uin, name);
 			ChatTextList chatForm = (ChatTextList) historyTable.get(uin);
-			if (chatForm.getSize() != 0) return;
+			if (chatForm.textList.getSize() != 0) return;
 			
 			int insSize = (recCount > MAX_HIST_LAST_MESS) ? MAX_HIST_LAST_MESS : recCount;  
 			for (int i = recCount-insSize; i < recCount; i++)
 			{
 				CachedRecord rec = HistoryStorage.getRecord(uin, i);
-				chatForm.addBigText
+				chatForm.textList.addBigText
 				(
 					"["+rec.from+" "+rec.date+"]", 
 					ChatTextList.getInOutColor(rec.type == 0),
 					Font.STYLE_PLAIN,
 					-1
 				);
-				chatForm.doCRLF(-1);
+				chatForm.textList.doCRLF(-1);
 				
 				//#sijapp cond.if modules_SMILES is "true" #
-				Emotions.addTextWithEmotions(chatForm, rec.text, Font.STYLE_PLAIN, 0x808080, -1);
+				Emotions.addTextWithEmotions(chatForm.textList, rec.text, Font.STYLE_PLAIN, 0x808080, -1);
 				//#sijapp cond.else#
-				chatForm.addBigText(rec.text, 0x808080, Font.STYLE_PLAIN, -1);
+				chatForm.textList.addBigText(rec.text, 0x808080, Font.STYLE_PLAIN, -1);
 				//#sijapp cond.end#
-				chatForm.doCRLF(-1);
+				chatForm.textList.doCRLF(-1);
 			}
 		}
 	}
@@ -391,10 +558,10 @@ public class ChatHistory
 		// Calculate the title for the chatdisplay.
 		String Title = temp.ChatName+" ("+counter+"/"+historyTable.size()+")";
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		temp.setFullScreenMode(false);
-		temp.setTitle(Title);
+		temp.textList.setFullScreenMode(false);
+		temp.getDisplayable().setTitle(Title);
 		// #sijapp cond.else#
-		temp.setCaption(Title);
+		temp.textList.setCaption(Title);
 		// #sijapp cond.end#
 		
 	}
@@ -403,7 +570,7 @@ public class ChatHistory
 	{
 		Enumeration AllChats = historyTable.elements();
 		while (AllChats.hasMoreElements())
-			JimmUI.setColorScheme((ChatTextList)AllChats.nextElement());
+			JimmUI.setColorScheme(((ChatTextList)AllChats.nextElement()).textList);
 	}
 	
 	// Sets the counter for the ChatHistory

@@ -186,8 +186,8 @@ class HistoryStorageList extends VirtualList
 		this.uin = uin;
 		Thread t = new Thread(this);
 		t.start();
-		Jimm.jimm.getSplashCanvasRef().setProgress(0);
-		Jimm.jimm.getSplashCanvasRef().setMessage("Exporting..");
+		SplashCanvas.setProgress(0);
+		SplashCanvas.setMessage("Exporting..");
 		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
 	}
 
@@ -214,7 +214,7 @@ class HistoryStorageList extends VirtualList
 				int num = ContactList.getSize();
 				for(int i = 0;i < cItems.length;i++)
 				{
-					exportUIN(cItems[i].getUin(),dos);
+					exportUIN(cItems[i].getStringValue(ContactListContactItem.CONTACTITEM_UIN),dos);
 					SplashCanvas.setProgress((i*100)/num);
 				}
 			}
@@ -226,7 +226,7 @@ class HistoryStorageList extends VirtualList
 			fconn.close();
 			dos = null;
 			fconn = null;
-			Jimm.jimm.getContactListRef().activate();
+			ContactList.activate();
 		}
 		catch (Exception e)
 		{

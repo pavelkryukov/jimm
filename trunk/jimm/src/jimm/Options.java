@@ -105,9 +105,8 @@ public class Options
 	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
 	public static final int OPTION_HISTORY                        = 137;   /* boolean */
 	public static final int OPTION_SHOW_LAST_MESS                 = 142;   /* boolean */
-	public static final int OPTION_POPUP_WIN                      = 143;   /* boolean */
+	public static final int OPTION_CLASSIC_CHAT                   = 143;   /* boolean */
 	public static final int OPTION_COLOR_SCHEME                   =  73;   /* int     */
-	//public static final int OPTION_HISTORY_CLEAR                  =  75;   /* int     */
 	public static final int OPTION_STATUS_MESSAGE                 =   7;   /* String  */
 	// #sijapp cond.if target is "MOTOROLA"#
 	public static final int OPTION_LIGHT_TIMEOUT		          =  74;   /* int     */
@@ -123,6 +122,8 @@ public class Options
 	public static final int OPTION_PRX_NAME                       =  11;   /* String  */
 	public static final int OPTION_PRX_PASS                       =  12;   /* String  */
 	// #sijapp cond.end#
+	
+	public static final int OPTION_POPUP_WIN2                     =  84;   /*int*/
 	public static final int OPTION_EXT_CLKEY0                     =  77;   /*int*/
 	public static final int OPTION_EXT_CLKEYSTAR                  =  78;   /*int*/
 	public static final int OPTION_EXT_CLKEY4                     =  79;   /*int*/
@@ -158,11 +159,10 @@ public class Options
 	// Constructor
 	public Options()
 	{
-
 		// Try to load option values from record store and construct options form
 		try
 		{
-		    options = new Hashtable();
+			options = new Hashtable();
 		    Options.setDefaults();
 			load();
 			ResourceBundle.setCurrUiLanguage(getStringOption(Options.OPTION_UI_LANGUAGE));
@@ -173,6 +173,8 @@ public class Options
 		{
 			Options.setDefaults();
 		}
+		
+		
 		
 		// Construct option form
 		optionsForm = new OptionsForm();
@@ -268,7 +270,8 @@ public class Options
 		setIntOption    (Options.OPTION_EXT_CLKEY6,                     0);
 		setIntOption    (Options.OPTION_EXT_CLKEYCALL,                  0);
 		setIntOption    (Options.OPTION_EXT_CLKEYPOUND,                 HOTKEY_LOCK);
-		setBooleanOption(Options.OPTION_POPUP_WIN,                      false);
+		setIntOption    (Options.OPTION_POPUP_WIN2,                     0);
+		setBooleanOption(Options.OPTION_CLASSIC_CHAT,                   false);
 	}
 
 	// Load option values from record store
@@ -471,7 +474,7 @@ public class Options
 
 
 	// Form for editing option values
-	static public class OptionsForm implements CommandListener, ItemStateListener
+	static public class OptionsForm implements CommandListener
 	{
 		private static boolean lastGroupsUsed, lastHideOffline;
 		private static int lastSortMethod, lastColorScheme;
@@ -521,8 +524,9 @@ public class Options
         static private ChoiceGroup displayDateChoiceGroup;
         static private ChoiceGroup clSortByChoiceGroup;
         static private ChoiceGroup chrgChat;
+        static private ChoiceGroup chrgPopupWin;
         static private ChoiceGroup clHideOfflineChoiceGroup;
-        static private ChoiceGroup chrgSignalMisc;
+        static private ChoiceGroup vibratorChoiceGroup;
 		// #sijapp cond.if target isnot "DEFAULT"#
         static private ChoiceGroup messageNotificationModeChoiceGroup;
         static private ChoiceGroup onlineNotificationModeChoiceGroup;
@@ -582,6 +586,7 @@ public class Options
 		// Constructor
 		public OptionsForm() throws NullPointerException
 		{
+			/*************************************************************************/
 			// Initialize hotkeys
 			hotkeyOpts = new int[10];
 			
@@ -607,6 +612,7 @@ public class Options
 			actionMenu = new List(ResourceBundle.getString("ext_actionhotkeys"), List.EXCLUSIVE);
 			actionMenu.setCommandListener(this);
 			
+			/*************************************************************************/
 			// Initialize commands
 			backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
 			saveCommand = new Command(ResourceBundle.getString("save"), Command.SCREEN, 1);
@@ -640,7 +646,6 @@ public class Options
 			optionsForm.addCommand(saveCommand);
 			optionsForm.addCommand(backCommand);
 			optionsForm.setCommandListener(this);
-			optionsForm.setItemStateListener(this);
 			
 			initSubMenuUI(OPTIONS_ACCOUNT);
 			initSubMenuUI(OPTIONS_NETWORK);
@@ -767,6 +772,11 @@ public class Options
                 chrgChat.setSelectedIndex(idx1++, getBooleanOption(OPTION_SHOW_LAST_MESS));
                 //#sijapp cond.end#
                 
+                // #sijapp cond.if target is "SIEMENS2"#
+                chrgChat.append(ResourceBundle.getString("cl_chat"), null);
+                chrgChat.setSelectedIndex(idx1++, getBooleanOption(OPTION_CLASSIC_CHAT));
+                // #sijapp cond.end#
+               
 				// #sijapp cond.if target is "MOTOROLA"#
 				lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(getIntOption(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
 				lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
@@ -780,7 +790,7 @@ public class Options
             case OPTIONS_SIGNALING:
             	// Initialize elements (Signaling section)
 
-            	// #sijapp cond.if target isnot "DEFAULT"# ====>
+            	// #sijapp cond.if target isnot "DEFAULT"#
                 onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
                 onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
                 onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
@@ -803,20 +813,19 @@ public class Options
                 messageNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME) / 10);
                 onlineNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME) / 10);
                 // #sijapp cond.end#
-                // #sijapp cond.end# <====
                 
-                chrgSignalMisc = new ChoiceGroup(ResourceBundle.getString("message_notification"), Choice.MULTIPLE);
-                chrgSignalMisc.append(ResourceBundle.getString("popup_win"),   null);
-                chrgSignalMisc.setSelectedIndex(0, getBooleanOption(Options.OPTION_POPUP_WIN));
-                
-                // #sijapp cond.if target isnot "DEFAULT"#
-                chrgSignalMisc.append(ResourceBundle.getString("vibration"),   null);
-                chrgSignalMisc.append(ResourceBundle.getString("when_locked"), null);
-                int vibrOpt = getIntOption(Options.OPTION_VIBRATOR); 
-                if (vibrOpt != 0) chrgSignalMisc.setSelectedIndex(vibrOpt, true);
+                vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration"), Choice.EXCLUSIVE);
+                vibratorChoiceGroup.append(ResourceBundle.getString("no"), null);
+                vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
+                vibratorChoiceGroup.append(ResourceBundle.getString("when_locked"), null);
+                vibratorChoiceGroup.setSelectedIndex(getIntOption(Options.OPTION_VIBRATOR), true);
                 // #sijapp cond.end#
-                
-                chrgSignalMisc.getSelectedFlags(lastMessSignItems); 
+
+                chrgPopupWin = new ChoiceGroup(ResourceBundle.getString("popup_win"), Choice.EXCLUSIVE);
+                chrgPopupWin.append(ResourceBundle.getString("no"),       null);
+                chrgPopupWin.append(ResourceBundle.getString("pw_forme"), null);
+                chrgPopupWin.append(ResourceBundle.getString("pw_all"),   null);
+                chrgPopupWin.setSelectedIndex(getIntOption(Options.OPTION_POPUP_WIN2), true);
                 break;
             
 
@@ -859,7 +868,7 @@ public class Options
 			keysMenu.append(getHotKeyActName("ext_clhotkey6", Options.OPTION_EXT_CLKEY6), null);
 			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEY6;
 			
-			// #sijapp cond.if target is "MOTOROLA"#
+			// #sijapp cond.if target isnot "MOTOROLA"#
 			keysMenu.append(getHotKeyActName("ext_clhotkeystar", Options.OPTION_EXT_CLKEYSTAR), null);
 			hotkeyOpts[optIdx++] = Options.OPTION_EXT_CLKEYSTAR;
 			// #sijapp cond.end#
@@ -1000,21 +1009,22 @@ public class Options
 					case OPTIONS_SIGNALING:
 						// #sijapp cond.if target isnot "DEFAULT"#     
 						optionsForm.append(messageNotificationModeChoiceGroup);
+						
                         // #sijapp cond.if target isnot "RIM"#                        
 						optionsForm.append(messageNotificationSoundVolume);
 						optionsForm.append(messageNotificationSoundfileTextField);
                         // #sijapp cond.end#
-                        // #sijapp cond.end#
                                                 
-						optionsForm.append(chrgSignalMisc);
-						
-						// #sijapp cond.if target isnot "DEFAULT"#
+						optionsForm.append(vibratorChoiceGroup);
 						optionsForm.append(onlineNotificationModeChoiceGroup);
+						
                         // #sijapp cond.if target isnot "RIM"#                          
 						optionsForm.append(onlineNotificationSoundVolume);
 						optionsForm.append(onlineNotificationSoundfileTextField);
                         // #sijapp cond.end#
-                        // #sijapp cond.end#                        
+						
+                        // #sijapp cond.end#
+						optionsForm.append(chrgPopupWin);
 						break;
 			        
 
@@ -1125,6 +1135,10 @@ public class Options
 						setBooleanOption(Options.OPTION_SHOW_LAST_MESS,  chrgChat.isSelected(idx++));
 						// #sijapp cond.end#
 						
+						// #sijapp cond.if target is "SIEMENS2"#
+						setBooleanOption(Options.OPTION_CLASSIC_CHAT, chrgChat.isSelected(idx++));
+						// #sijapp cond.end#
+						
 						boolean newUseGroups = showUserGroups.isSelected(0);
 						setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);
 						
@@ -1148,26 +1162,17 @@ public class Options
 					case OPTIONS_SIGNALING:
 						// #sijapp cond.if target isnot "DEFAULT"# ===>
 						setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,messageNotificationModeChoiceGroup.getSelectedIndex());
+						setIntOption(Options.OPTION_VIBRATOR, vibratorChoiceGroup.getSelectedIndex());
+						setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,onlineNotificationModeChoiceGroup.getSelectedIndex());
+						
 						// #sijapp cond.if target isnot "RIM"#       
 						setStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE,messageNotificationSoundfileTextField.getString());
 						setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,messageNotificationSoundVolume.getValue()*10);
-                        // #sijapp cond.end#                        
-						setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,onlineNotificationModeChoiceGroup.getSelectedIndex());
-                        // #sijapp cond.if target isnot "RIM"#                          
 						setStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,onlineNotificationSoundfileTextField.getString());
 						setIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME,onlineNotificationSoundVolume.getValue()*10);
                         // #sijapp cond.end#
-                        // #sijapp cond.end# <===
-						
-						chrgSignalMisc.getSelectedFlags(lastMessSignItems);
-						setBooleanOption(Options.OPTION_POPUP_WIN, lastMessSignItems[0]);
-						
-						// #sijapp cond.if target isnot "DEFAULT"#
-						int vibrOpt = 0;
-						if (lastMessSignItems[1]) vibrOpt = 1; 
-						if (lastMessSignItems[2]) vibrOpt = 2;
-						setIntOption(Options.OPTION_VIBRATOR, vibrOpt);
-						// #sijapp cond.end#
+						// #sijapp cond.end# <===
+						setIntOption(Options.OPTION_POPUP_WIN2, chrgPopupWin.getSelectedIndex()); 
 						break;
 				    
 					// #sijapp cond.if modules_TRAFFIC is "true"#
@@ -1205,21 +1210,6 @@ public class Options
 			}
 		}
 		
-		static boolean[] lastMessSignItems = new boolean[3];
-		
-		public void itemStateChanged(Item item)
-		{
-			// #sijapp cond.if target isnot "DEFAULT"#
-			if (item == chrgSignalMisc)
-			{
-				boolean[] curr = new boolean[3];
-				chrgSignalMisc.getSelectedFlags(curr);
-				if (curr[1] != lastMessSignItems[1]) chrgSignalMisc.setSelectedIndex(2, false);
-				if (curr[2] != lastMessSignItems[2]) chrgSignalMisc.setSelectedIndex(1, false);
-				chrgSignalMisc.getSelectedFlags(lastMessSignItems);
-			}
-			// #sijapp cond.end#
-		}
 	} // end of 'class OptionsForm'
 }
 

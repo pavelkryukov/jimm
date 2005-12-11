@@ -366,7 +366,7 @@ public class TextList extends VirtualList
 
 	private int getTrueWidth()
 	{
-		return getWidth()-scrollerWidth-3;
+		return getWidthInternal()-scrollerWidth-3;
 	}
 	
 	private void addBigTextInternal

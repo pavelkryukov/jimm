@@ -652,8 +652,8 @@ public class ActionListener
                              
                              ContactListContactItem sender = ContactList.getItembyUIN(uin);
                                                        
-                     		sender.setByteArrayValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,ip);
-                    		sender.setByteArrayValue (ContactListContactItem.CONTACTITEM_EXTERNAL_IP,extIP);
+                     		sender.setObjectValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,ip);
+                    		sender.setObjectValue (ContactListContactItem.CONTACTITEM_EXTERNAL_IP,extIP);
                     		sender.setStringValue (ContactListContactItem.CONTACTITEM_DC_PORT,port);
 
                              //System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
