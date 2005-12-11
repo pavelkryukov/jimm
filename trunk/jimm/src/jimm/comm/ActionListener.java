@@ -566,7 +566,7 @@ public class ActionListener
                         ackMarker += 1;
                         SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                         SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
-                        Icq.Connection.sendPacket(ackPacket);
+                        Jimm.jimm.getIcqRef().c.sendPacket(ackPacket);
 
                     }
                     // Extended message
@@ -729,7 +729,7 @@ public class ActionListener
                                     + 4 + textLen);
                             SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                                     SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
-                            Icq.Connection.sendPacket(ackPacket);
+                            Jimm.jimm.getIcqRef().c.sendPacket(ackPacket);
 
                         }
                         // Other messages
@@ -774,7 +774,7 @@ public class ActionListener
                         SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                                 SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
                         
-                        Icq.Connection.sendPacket(ackPacket);
+                        Jimm.jimm.getIcqRef().c.sendPacket(ackPacket);
                     }
 
                 }

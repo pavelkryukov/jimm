@@ -30,6 +30,7 @@ import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
+import jimm.Jimm;
 import jimm.JimmException;
 
 public class UpdateContactListAction extends Action
@@ -132,12 +133,12 @@ public class UpdateContactListAction extends Action
             else
                 packet = new SnacPacket(SnacPacket.CLI_BUDDYLIST_ADD_FAMILY, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, SnacPacket.CLI_BUDDYLIST_ADD_COMMAND, new byte[0], buf);
 
-            Icq.Connection.sendPacket(packet);
+            Jimm.jimm.getIcqRef().c.sendPacket(packet);
         }
 
         // Send a CLI_ADDSTART packet
         packet = new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY, SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND, new byte[0], new byte[0]);
-        Icq.Connection.sendPacket(packet);
+        Jimm.jimm.getIcqRef().c.sendPacket(packet);
 
         if ((this.action == ACTION_MODIFY) || (this.action == ACTION_RENAME))
             packet = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY, SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(), new byte[0], this.packRoosterItem(null, null, null));
@@ -153,7 +154,7 @@ public class UpdateContactListAction extends Action
                 packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY, SnacPacket.CLI_ROSTERDELETE_COMMAND, SnacPacket.CLI_ROSTERDELETE_COMMAND, new byte[0], this.packRoosterItem(null, null, null));
             }
 
-        Icq.Connection.sendPacket(packet);
+        Jimm.jimm.getIcqRef().c.sendPacket(packet);
 
         // Set state
         this.state = UpdateContactListAction.STATE_CLI_ROSTERMODIFY_SENT;
@@ -248,12 +249,12 @@ public class UpdateContactListAction extends Action
                                 }
                                 // Send CLI_ROSTERUPDATE packet
                                 packet = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY, SnacPacket.CLI_ROSTERUPDATE_COMMAND,SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], this.packRoosterItem(cItemsRemaining, gItem,gItems));
-                                Icq.Connection.sendPacket(packet);
+                                Jimm.jimm.getIcqRef().c.sendPacket(packet);
                             }
                         }
                         // Send a CLI_ADDEND packet
                         packet = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY, SnacPacket.CLI_ADDEND_COMMAND, SnacPacket.CLI_ADDEND_COMMAND,new byte[0], new byte[0]);
-                        Icq.Connection.sendPacket(packet);
+                        Jimm.jimm.getIcqRef().c.sendPacket(packet);
 
                         // Move to next state
                         if (((action == ACTION_ADD) || (action == ACTION_DEL)) && (state != STATE_SRV_REPLYED_AUTH))
@@ -311,7 +312,7 @@ public class UpdateContactListAction extends Action
         {
             // Send a CLI_ADDEND packet
             packet = new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,SnacPacket.CLI_ADDEND_COMMAND,SnacPacket.CLI_ADDEND_COMMAND, new byte[0], new byte[0]);
-            Icq.Connection.sendPacket(packet);
+            Jimm.jimm.getIcqRef().c.sendPacket(packet);
             
             // Update activity timestamp
             this.lastActivity = new Date();

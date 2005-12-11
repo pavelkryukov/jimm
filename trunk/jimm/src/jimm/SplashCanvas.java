@@ -585,65 +585,6 @@ public class SplashCanvas extends Canvas
 
 	}
 
-
-	/*****************************************************************************/
-	/*****************************************************************************/
-	/*****************************************************************************/
-
-
-	// Activates the main menu after connection has been terminated
-	public static class DisconnectTimerTask extends TimerTask
-	{
-
-
-		// Reference to DisconnectAction
-		static private DisconnectAction disconnectAct;
-
-
-		// Exit after disconnecting?
-		static private boolean exit;
-
-
-		// Constructor
-		public DisconnectTimerTask(DisconnectAction disconnectAct, boolean exit)
-		{
-			DisconnectTimerTask.disconnectAct = disconnectAct;
-			DisconnectTimerTask.exit = exit;
-		}
-
-
-		// Timer routine
-		public void run()
-		{
-			if (disconnectAct.isCompleted())
-			{
-				this.cancel();
-				if (exit)
-				{
-					try
-					{
-						Jimm.jimm.destroyApp(true);
-					}
-					catch (MIDletStateChangeException e)
-					{
-						/* Do nothing */
-					}
-				}
-				else
-				{
-					MainMenu.activate();
-				}
-			}
-			else if (disconnectAct.isError())
-			{
-				this.cancel();
-			}
-		}
-
-
-	}
-
-
 	/*****************************************************************************/
 	/*****************************************************************************/
 	/*****************************************************************************/

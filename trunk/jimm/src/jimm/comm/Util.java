@@ -335,6 +335,17 @@ public class Util
 	    return l;
 	}
 	
+	// Converts a byte array to a hex string
+    public static String byteArrayToHexString(byte[] buf) {
+        StringBuffer hexString = new StringBuffer(buf.length);
+        String hex;
+        for (int i = 0; i < buf.length; i++) {
+            hex = Integer.toHexString(0x0100 + (buf[i] & 0x00FF)).substring(1);
+            hexString.append((hex.length() < 2 ? "0" : "") + hex);
+        }
+        return hexString.toString();
+    }
+	
 	// Converts the specified string (val) to a byte array
 	public static byte[] stringToByteArray(String val, boolean utf8)
 	{

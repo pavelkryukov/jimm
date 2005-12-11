@@ -304,6 +304,13 @@ public class Jimm extends MIDlet
 	{
 		return (this.t);
 	}
+	
+	// Cancels the timer and makes a new one
+	public void cancelTimer()
+	{
+		this.t.cancel();
+		this.t = new Timer();
+	}
 
 
 	// Returns a reference to splash canvas object

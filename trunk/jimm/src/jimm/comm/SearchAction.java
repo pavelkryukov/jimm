@@ -222,7 +222,7 @@ public class SearchAction extends Action
 
         packet = new ToIcqSrvPacket(-1,SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getStringOption(Options.OPTION_UIN),0x07D0,new byte[0], buf);
     
-        Icq.Connection.sendPacket(packet);
+        Jimm.jimm.getIcqRef().c.sendPacket(packet);
         
         this.state = STATE_UIN_SEARCH_SENT;
         

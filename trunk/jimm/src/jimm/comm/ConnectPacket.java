@@ -42,9 +42,9 @@ public class ConnectPacket extends Packet
 	public static final String FIXED_VERSION = "ICQ Inc. - Product of ICQ (TM).2003a.5.47.1.3800.85";
 	public static final byte[] FIXED_UNKNOWN = {(byte) 0x01, (byte) 0x0A};
 	public static final byte[] FIXED_VER_MAJOR = {(byte) 0x00, (byte) 0x05};
-	public static final byte[] FIXED_VER_MINOR = {(byte) 0x00, (byte) 0x2F};
+	public static final byte[] FIXED_VER_MINOR = {(byte) 0x00, (byte) 0x25};
 	public static final byte[] FIXED_VER_LESSER = {(byte) 0x00, (byte) 0x01};
-	public static final byte[] FIXED_VER_BUILD = {(byte) 0x0E, (byte) 0xD8};
+	public static final byte[] FIXED_VER_BUILD = {(byte) 0x0E, (byte) 0x90};
 	public static final byte[] FIXED_VER_SUBBUILD = {(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x55};
 
 
