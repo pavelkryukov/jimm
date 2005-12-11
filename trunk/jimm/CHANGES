@@ -259,7 +259,6 @@ VERSION 0.5.0
   * BUGFIX: Jimm sometimes crashed if was restored from flip on Motorola phones
   * BUGFIX: There are no more echo error after errorous connections
   * Added possibility to save stored history to file (at siemens only)
-  * History can be exported to file at siemens phones
   * Rewrote Connection handler to be more modular and better readable
   * Now Jimm works with touchscreen (only for MIDP2 build).
   * New language system is done. Language strings are stored in *.lng files now.
