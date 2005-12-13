@@ -130,7 +130,7 @@ public class Options
 	public static final int OPTION_EXT_CLKEY6                     =  80;   /*int*/
 	public static final int OPTION_EXT_CLKEYCALL                  =  81;   /*int*/
 	public static final int OPTION_EXT_CLKEYPOUND                 =  82;   /*int*/
-	public static final int OPTION_VISIBILITY_ID                  =  83;   /* int     */
+	public static final int OPTION_VISIBILITY_ID                  =  84;   /* int     */
 	
 	//Hotkey Actions
 	public static final int HOTKEY_NONE     = 0;
