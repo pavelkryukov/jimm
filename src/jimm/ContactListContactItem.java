@@ -44,6 +44,71 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 
 	// Client unterstands UTF-8 messages
 	public static final int CAP_UTF8_INTERNAL = 0x00000002;
+	// Client capabilities for detection
+	public static final int CAP_MIRANDAIM = 0x00000004;
+ 	public static final int CAP_TRILLIAN =0x00000008;
+	public static final int CAP_TRILCRYPT = 0x00000010;
+	public static final int CAP_SIM = 0x00000020;
+	public static final int CAP_SIMOLD = 0x00000040;
+	public static final int CAP_LICQ = 0x00000080;
+	public static final int CAP_KOPETE = 0x00000100;
+	public static final int CAP_MICQ = 0x00000200;
+	public static final int CAP_ANDRQ = 0x00000400;
+	public static final int CAP_QIP = 0x000000800;
+	public static final int CAP_IM2 = 0x00001000;
+	public static final int CAP_MACICQ = 0x00002000;
+	public static final int CAP_RICHTEXT = 0x00004000;
+	public static final int CAP_IS2001 = 0x00008000;
+	public static final int CAP_IS2002 = 0x00010000;
+	public static final int CAP_STR20012 = 0x00020000;
+	public static final int CAP_AIMICON = 0x00040000;
+	public static final int CAP_AIMCHAT = 0x00080000;
+	public static final int CAP_UIM = 0x00100000;
+	public static final int CAP_RAMBLER = 0x00200000;
+	public static final int CAP_ABV = 0x00400000;
+	public static final int CAP_NETVIGATOR = 0x00800000;
+	public static final int CAP_XTRAZ = 0x01000000;
+	public static final int CAP_AIMFILE = 0x02000000;
+	public static final int CAP_JIMM = 0x04000000;
+
+	// Client IDs
+	public static final String CLI_NONE = ResourceBundle.getString("cli_none");;
+	public static final String CLI_QIP = "QIP";
+	public static final String CLI_MIRANDA = "Miranda";
+	public static final String CLI_LICQ = "Licq";
+	public static final String CLI_TRILLIAN = "Trillian";
+	public static final String CLI_SIM = "SIM";
+	public static final String CLI_KOPETE = "Kopete";
+	public static final String CLI_MICQ = "mICQ";
+	public static final String CLI_ANDRQ = "&RQ";
+	public static final String CLI_IM2 = "im2";
+	public static final String CLI_MACICQ = "MacICQ";
+	public static final String CLI_AIM = "AIM";
+	public static final String CLI_UIM = "Uim";
+	public static final String CLI_RAMBLER = "Rambler";
+	public static final String CLI_WEBICQ = "WebICQ";
+	public static final String CLI_GAIM = "Gaim";
+	public static final String CLI_ALICQ = "Alicq";
+	public static final String CLI_STRICQ = "StrICQ";
+	public static final String CLI_YSM = "YSM";
+	public static final String CLI_VICQ = "vICQ";
+	public static final String CLI_LIBICQ2K = "LibICQ2K";
+	public static final String CLI_JIMM = "Jimm";
+	public static final String CLI_SMARTICQ = "SmartICQ";
+	public static final String CLI_IMPLUS = "im+";
+	public static final String CLI_KXICQ2 = "KXicq2";
+	public static final String CLI_ICQLITEV4 = "ICQ Lite v4";
+	public static final String CLI_ICQ5 = "ICQ5";
+	public static final String CLI_ICQ1 = "ICQ 1.x";
+	public static final String CLI_ICQ2 = "ICQ 2.x";
+	public static final String CLI_ICQ98 = "ICQ 98";
+	public static final String CLI_ICQ99 = "ICQ 99";
+	public static final String CLI_ICQ2001 = "ICQ 2001";
+	public static final String CLI_ICQ200123 = "ICQ2001-2003a";
+	public static final String CLI_ICQ2000 = "ICQ2000";
+	public static final String CLI_ICQ2003B = "ICQ 2003b";
+	public static final String CLI_ICQLITE = "ICQ Lite";
+	public static final String CLI_GNOMEICQ = "Gnome ICQ";
 	
 	// Message types
 	public static final int MESSAGE_PLAIN		 = 1;
@@ -180,7 +245,6 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	public static final int CONTACTITEM_TEXT					= 2;   /* String */
 	public static final int CONTACTITEM_ID						= 64;  /* Integer */
 	public static final int CONTACTITEM_GROUP					= 65;  /* Integer */
-	public static final int CONTACTITEM_CAPABILITIES			= 66;  /* Integer */
 	public static final int CONTACTITEM_PLAINMESSAGES			= 67;  /* Integer */
 	public static final int CONTACTITEM_URLMESSAGES				= 68;  /* Integer */
 	public static final int CONTACTITEM_SYSNOTICES				= 69;  /* Integer */
@@ -195,17 +259,21 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	public static final int CONTACTITEM_STATUS					= 192; /* Long */
 	public static final int CONTACTITEM_SIGNON					= 194; /* Long */
 	public static final int CONTACTITEM_ONLINE					= 195; /* Long */
-
+	
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// #sijapp cond.if modules_FILES is "true"#
 	public static final int CONTACTITEM_INTERNAL_IP				= 225; /* Byte array */
 	public static final int CONTACTITEM_EXTERNAL_IP				= 226; /* Byte array */
-    public static final int CONTACTITEM_AUTH_COOKIE				= 193; /* Long */
+	public static final int CONTACTITEM_AUTH_COOKIE				= 193; /* Long */
 	public static final int CONTACTITEM_DC_TYPE					= 72;  /* Integer */
 	public static final int CONTACTITEM_ICQ_PROT				= 73;  /* Integer */
 	public static final int CONTACTITEM_DC_PORT					= 3;   /* String */
-	//  #sijapp cond.end#
-	//  #sijapp cond.end#
+	// #sijapp cond.end#
+	// #sijapp cond.end#
+	public static final int CONTACTITEM_CAPABILITIES			= 74;  /* Integer */
+	public static final int CONTACTITEM_CLIENT					= 4;	/* Integer */
+	public static final int CONTACTITEM_CLIVERSION					= 5;	/* String */	
+
 
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// #sijapp cond.if modules_FILES is "true"#
@@ -216,7 +284,195 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	//  #sijapp cond.end#
 	
 	public static String currentUin = new String();
-
+	
+	// Miranda IcqOscarJ plugin code refactoring...
+	public void detectUserClient(int dwFT1, int dwFT2, int dwFT3, int wVersion, int caps, String cliVersion)
+	{
+		String szClient = CLI_NONE;
+		String szVersion="";
+		
+		// Timestamps based detection
+		  if (dwFT1 == 0xffffffff)
+		  {
+			  if (dwFT2 == 0xffffffff)
+			  { // This is Gaim not Miranda
+				  szClient = CLI_GAIM;
+			  }
+			  else if ((dwFT2 == 0) && (wVersion == 7))
+			  { // This is WebICQ not Miranda
+				  szClient = CLI_WEBICQ;
+			  }
+			  else 
+			  { // Yes this is most probably Miranda, get the version info
+				  szClient = CLI_MIRANDA;
+				  if (dwFT2 == 1)
+					  szVersion = "0.1.2.0";
+				  else
+					  szVersion = ((dwFT2>>24)&0x7F)+"."+((dwFT2>>16)&0xFF)+"."+((dwFT2>>8)&0xFF)+"."+(dwFT2&0xFF);
+			  }
+		  }
+		  else if ((dwFT1 & 0xFF7F0000) == 0x7D000000)
+		  { // This is probably an Licq client
+			  int ver = dwFT1 & 0xFFFF;
+			  if (ver % 10 !=0)
+			  {
+				  szVersion += ver / 1000 + "."+(ver / 10) % 100+"."+ ver % 10;
+			  }
+			  else
+			  {
+				  szVersion += ver / 1000 + "."+(ver / 10) % 100;
+			  }
+			  if ((dwFT1 & 0x00800000)!=0)
+				  szVersion+= "/SSL";
+			  
+		  }
+		  else if (dwFT1 == 0xffffff8f)
+		  {
+			  szClient = CLI_STRICQ;
+		  }
+		  else if (dwFT1 == 0xffffff42)
+		  {
+			  szClient = CLI_MICQ;
+		  }
+		  else if (dwFT1 == 0xffffffbe)
+		  {
+			  szClient = CLI_ALICQ;
+			  szVersion = ((dwFT2>>24)&0xFF) +"."+ ((dwFT2>>16)&0xFF) +"."+ ((dwFT2>>8)&0xFF);
+		  }
+		  else if (dwFT1 == 0xFFFFFF7F)
+		  {
+			  szClient = CLI_ANDRQ;
+			  szVersion = ((dwFT2>>24)&0xFF)+"."+((dwFT2>>16)&0xFF)+"."+((dwFT2>>8)&0xFF)+"."+(dwFT2&0xFF);
+		  }
+		  else if (dwFT1 == 0xFFFFFFAB)
+		  {
+			  szClient = CLI_YSM;
+		  }
+		  else if (dwFT1 == 0x04031980)
+		  {
+			  szClient = CLI_VICQ;
+		  }
+		  else if ((dwFT1 == 0x3AA773EE) && (dwFT2 == 0x3AA66380))
+		  {
+			  szClient = CLI_LIBICQ2K;
+		  }
+		  else if (dwFT1 == 0x3B75AC09)
+		  {
+			  szClient = CLI_TRILLIAN;
+		  }
+		  else if (dwFT1 == 0xFFFFFFFE && dwFT3 == 0xFFFFFFFE)
+		  {
+			  szClient = CLI_JIMM;
+			  if ((caps & CAP_JIMM) !=0 )
+				  szVersion = cliVersion;
+		  }
+		  else if (dwFT1 == 0x3FF19BEB && dwFT3 == 0x3FF19BEB)
+		  {
+			  szClient = CLI_IM2;
+		  }
+		  else if ((dwFT1 == 0xDDDDEEFF) && (dwFT2 == 0) && (dwFT3 == 0))
+		  {
+			  szClient = CLI_SMARTICQ;
+		  }
+		  else if (((dwFT1 & 0xFFFFFFF0) == 0x494D2B00) && (dwFT2 == 0) && (dwFT3 == 0))
+		  { // last byte of FT1: (5 = Win32, 3 = SmartPhone, Pocket PC)
+			  szClient = CLI_IMPLUS;
+		  }
+		  else if ((dwFT1 == 0x3B4C4C0C) && (dwFT2 == 0) && (dwFT3 == 0x3B7248ed))
+		  {
+			  szClient = CLI_KXICQ2;
+		  }
+		  else if ((dwFT1 > 0x35000000) && (dwFT1 < 0x40000000)) 
+		  {
+			  switch(wVersion) 
+			  {
+				  case 6:  szClient = CLI_ICQ99;break;
+				  case 7:  szClient = CLI_ICQ2000;break;
+				  case 8:  szClient = CLI_ICQ2001;break;
+				  case 9:  szClient = CLI_ICQLITE;break;
+				  case 10: szClient = CLI_ICQ2003B;break;
+			  }
+		  }
+		  
+		  // Capabilities based detection
+		  else if (caps != 0)
+		  {
+			  if ((caps & CAP_MIRANDAIM) !=0 )
+			  {
+				  szClient = CLI_MIRANDA;
+				  szVersion = cliVersion;
+			  }
+			  else if ( ((caps & CAP_TRILLIAN) !=0 ) || ((caps & CAP_TRILCRYPT) !=0 ) )
+			  {
+				  szClient = CLI_TRILLIAN;				  
+			  }
+			  else if ( (caps & CAP_SIM) !=0 )
+			  {
+				  szClient = CLI_SIM;
+			  }
+			  else if ( (caps & CAP_LICQ) !=0 )
+			  {
+				  szClient = CLI_LICQ;
+				  szVersion = cliVersion;
+			  }
+			  else if ( (caps & CAP_ANDRQ) !=0 )
+			  {
+				  szClient = CLI_ANDRQ;
+				  szVersion = cliVersion;				  
+			  }
+			  else if ( (caps & CAP_KOPETE) !=0 )
+			  {
+				  szClient = CLI_KOPETE;
+				  szVersion = cliVersion;
+			  }
+			  else if ( (caps & CAP_QIP) !=0 )
+			  {
+				  szClient = CLI_QIP;
+				  szVersion = cliVersion;
+			  }
+			  else if ( (wVersion == 9)&&((caps & CAP_XTRAZ) !=0) )
+			  {
+				  if ((caps & CAP_AIMFILE) !=0)
+				  {
+					  szClient = CLI_ICQ5;
+					  if ( (caps & CAP_RAMBLER) !=0 )
+						  szClient = CLI_RAMBLER;
+				  }
+				  else
+					  szClient = CLI_ICQLITEV4;
+			  }
+			  else if ( szClient.equals(CLI_NONE) )
+				  switch (wVersion)
+			 	 {  // client detection failed, provide default clients
+				  case 1: 
+				  szClient = CLI_ICQ1;
+				  break;
+				  case 2: 
+				  szClient = CLI_ICQ2;
+				  break;
+				  case 4:
+				  szClient = CLI_ICQ98;
+				  break;
+				  case 6:
+				  szClient = CLI_ICQ99;
+				  break;
+				  case 7:
+				  szClient = CLI_ICQ2000;
+				  break;
+				  case 8: 
+				  szClient = CLI_ICQ200123;
+				  break;
+				  case 9: 
+				  szClient = CLI_ICQLITE;
+				  break;
+				  case 0xA:
+				  szClient = CLI_ICQ2003B;
+				 }
+		  }
+		  setStringValue(ContactListContactItem.CONTACTITEM_CLIENT,szClient);
+		  setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION,szVersion);
+	}
+	
 	public void init(int id, int group, String uin, String name, boolean noAuth, boolean added)
 	{
 		if (id == -1)
@@ -251,6 +507,8 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		setLongValue(ContactListContactItem.CONTACTITEM_ONLINE, -1);
 		setIntValue(ContactListContactItem.CONTACTITEM_IDLE, -1);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
+		setStringValue(ContactListContactItem.CONTACTITEM_CLIENT, CLI_NONE);
+		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, "");
 	}
 	
 	// Constructor for an existing contact item
@@ -775,6 +1033,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
                     // #sijapp cond.if modules_FILES is "true"#    
                     buf.append("DC typ: ")     .append(this.getIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE)).append(clrf)
 					   .append("ICQ version: ").append(this.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT)).append(clrf)
+					   .append("ICQ client: ").append(this.getStringValue(ContactListContactItem.CONTACTITEM_CLIENT)).append(" ").append(this.getStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION)).append(clrf)
 					   .append("Int IP: ")     .append(Util.ipToString((byte[])this.getObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP))).append(clrf)
 					   .append("Ext IP: ")     .append(Util.ipToString((byte[])this.getObjectValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP))).append(clrf)
 					   .append("Port: ")       .append(this.getStringValue(ContactListContactItem.CONTACTITEM_DC_PORT)).append(clrf);
@@ -785,7 +1044,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
                     info.setTimeout(Alert.FOREVER);
                     
                     Jimm.display.setCurrent(info);
-                    break;   
+                    break;
                     
                 case USER_MENU_REQU_AUTH:
                     // Request auth
@@ -1345,14 +1604,14 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		// #sijapp cond.end#
 		// #sijapp cond.end#
         
-        eventList[menuList.append(ResourceBundle.getString("remove"), null)]       = USER_MENU_USER_REMOVE;
-        eventList[menuList.append(ResourceBundle.getString("remove_me"), null)]    = USER_MENU_REMOVE_ME;
-        eventList[menuList.append(ResourceBundle.getString("rename"), null)]       = USER_MENU_RENAME;
+        eventList[menuList.append(ResourceBundle.getString("remove"), null)]    = USER_MENU_USER_REMOVE;
+        eventList[menuList.append(ResourceBundle.getString("remove_me"), null)] = USER_MENU_REMOVE_ME;
+        eventList[menuList.append(ResourceBundle.getString("rename"), null)]    = USER_MENU_RENAME;
         // #sijapp cond.if modules_HISTORY is "true" #
-        eventList[menuList.append(ResourceBundle.getString("history"), null)]      = USER_MENU_HISTORY;
+        eventList[menuList.append(ResourceBundle.getString("history"), null)]   = USER_MENU_HISTORY;
         // #sijapp cond.end#
-        eventList[menuList.append(ResourceBundle.getString("info"), null)]         = USER_MENU_USER_INFO;
-        eventList[menuList.append(ResourceBundle.getString("local_info"), null)]   = USER_MENU_LOCAL_INFO;
+        eventList[menuList.append(ResourceBundle.getString("info"), null)]      = USER_MENU_USER_INFO;
+        eventList[menuList.append(ResourceBundle.getString("dc_info"), null)]   = USER_MENU_LOCAL_INFO;
 	}
 	 
 	static private Displayable getCurrDisplayable(String uin)

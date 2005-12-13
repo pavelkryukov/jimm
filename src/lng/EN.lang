@@ -53,6 +53,7 @@
   "city"                        "City"
   "cl_chat"                     "Classical mode"
   "clear"                       "Clear"
+  "cli_none"                    "Not detected"
   "color_scheme"                "Color scheme"
   "conn_type"                   "Connection type"
   "conn_prop"					"Connection properties"

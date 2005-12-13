@@ -53,6 +53,7 @@
   "city"                        "Город"
   "cl_chat"                     "Классический вид"
   "clear"                       "Стереть"
+  "cli_none"                    "Не определён"
   "color_scheme"                "Цветовая схема"
   "conn_type"                   "Тип подключения"
   "conn_prop"					"Настройки подключения"
@@ -364,4 +365,4 @@
   
   // HTTP Connection erros
   "error_220"					"Сервер не прининял HTTP-запрос (#220.EXT)"
-  "error_221"					"Произошла ошибка во время подключения к ICQ серверу (#221.EXT)"  
+  "error_221"					"Connection via HTTP proxy closed unrequested (#221.EXT)"
