@@ -79,7 +79,7 @@ public class Icq implements Runnable
     	_this = this;
     	// Set starting point for seq numbers (not bigger then 0x8000)
         Random rand = new Random(System.currentTimeMillis());
-        flapSEQ = rand.nextInt(0x8000);
+        flapSEQ = rand.nextInt()%0x8000;
     }
 
     // Request an action
