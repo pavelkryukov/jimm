@@ -220,7 +220,7 @@ public class SearchAction extends Action
             Util.putByte(buf,marker,0);
         marker+=1;
 
-        packet = new ToIcqSrvPacket(-1,SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getStringOption(Options.OPTION_UIN),0x07D0,new byte[0], buf);
+        packet = new ToIcqSrvPacket(SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getStringOption(Options.OPTION_UIN),0x07D0,new byte[0], buf);
     
         Jimm.jimm.getIcqRef().c.sendPacket(packet);
         

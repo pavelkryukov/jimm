@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/Packet.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 

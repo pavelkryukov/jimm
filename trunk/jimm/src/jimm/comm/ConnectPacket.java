@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/ConnectPacket.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 
@@ -250,7 +250,7 @@ public class ConnectPacket extends Packet
 		// Assemble FLAP header
 		Util.putByte(buf, marker, 0x2A);   // FLAP.ID
 		Util.putByte(buf, marker + 1, 0x01);   // FLAP.CHANNEL
-		Util.putWord(buf, marker + 2, this.sequence);   // FLAP.SEQUENCE
+		Util.putWord(buf, marker + 2, Icq.getFlapSequence());   // FLAP.SEQUENCE
 		Util.putWord(buf, marker + 4, length - 6);   // FLAP.LENGTH
 		marker += 6;
 

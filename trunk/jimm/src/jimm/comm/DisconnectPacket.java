@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/DisconnectPacket.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer
+ Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
 
@@ -68,13 +68,6 @@ public class DisconnectPacket extends Packet
 		System.arraycopy(cookie, 0, this.cookie, 0, cookie.length);
 		this.error = -1;
 		this.description = null;
-	}
-
-
-	// Constructs a SRV_COOKIE packet
-	public DisconnectPacket(String uin, String server, byte[] cookie)
-	{
-		this(-1, uin, server, cookie);
 	}
 
 
@@ -230,7 +223,7 @@ public class DisconnectPacket extends Packet
 		// Assemble FLAP header
 		Util.putByte(buf, 0, 0x2A);   // FLAP.ID
 		Util.putByte(buf, 1, 0x04);   // FLAP.CHANNEL
-		Util.putWord(buf, 2, this.sequence);   // FLAP.SEQUENCE
+		Util.putWord(buf, 2, Icq.getFlapSequence());   // FLAP.SEQUENCE
 		Util.putWord(buf, 4, length - 6);   // FLAP.LENGTH
 
 		// Marker

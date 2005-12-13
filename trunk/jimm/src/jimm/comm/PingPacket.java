@@ -56,7 +56,7 @@ public class PingPacket extends Packet
 		// Assemble FLAP header
 		Util.putByte(buf, 0, 0x2A);   // FLAP.ID
 		Util.putByte(buf, 1, 0x05);   // FLAP.CHANNEL
-		Util.putWord(buf, 2, this.sequence);   // FLAP.SEQUENCE
+		Util.putWord(buf, 2, Icq.getFlapSequence());   // FLAP.SEQUENCE
 		Util.putWord(buf, 4, 0x0000);   // FLAP.LENGTH
 
 		// Return
