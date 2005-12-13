@@ -380,4 +380,4 @@
   
   // HTTP Connection erros
   "error_220"					"Server did not accept HTTP request (#220.EXT)"
-  "error_221"					"ICQ Server returned error code during connection (#221.EXT)"
+  "error_221"					"Connection via HTTP proxy closed unrequested (#221.EXT)"

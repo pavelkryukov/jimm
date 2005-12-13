@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-05  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -73,9 +73,9 @@ public class ToIcqSrvPacket extends SnacPacket
 	}
 
 	// Constructor
-	public ToIcqSrvPacket(int sequence, long reference, int icqSequence, String uin, int subcommand, byte[] extData, byte[] data)
+	public ToIcqSrvPacket(long reference, int icqSequence, String uin, int subcommand, byte[] extData, byte[] data)
 	{
-		this(sequence,reference,0,icqSequence,uin,subcommand,extData,data);
+		this(-1,reference,0,icqSequence,uin,subcommand,extData,data);
 	}
 
 	// Constructor
@@ -123,7 +123,7 @@ public class ToIcqSrvPacket extends SnacPacket
 		// Assemble FLAP header
 		Util.putByte(buf, 0, 0x2A);   // FLAP.ID
 		Util.putByte(buf, 1, 0x02);   // FLAP.CHANNEL
-		Util.putWord(buf, 2, this.sequence);   // FLAP.SEQUENCE
+		Util.putWord(buf, 2, Icq.getFlapSequence());   // FLAP.SEQUENCE
 		Util.putWord(buf, 4, 10 + 14 + this.data.length + (this.extData.length > 0 ? 2 + this.extData.length : 0));   // FLAP.LENGTH
 
 		// Assemble SNAC header
@@ -131,7 +131,6 @@ public class ToIcqSrvPacket extends SnacPacket
 		Util.putWord(buf, 8, this.command);   // SNAC.COMMAND
 		Util.putWord(buf, 10, (this.extData.length > 0 ? 0x8000 : 0x0000));   // SNAC.FLAGS
 		Util.putDWord(buf, 12, this.reference);   // SNAC.REFERENCE;
-		Util.putWord(buf, 12, this.icqSequence - 1);
 
 		// Assemlbe SNAC.DATA
 		if (this.extData.length > 0)

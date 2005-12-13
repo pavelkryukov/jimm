@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Random;
 import java.util.Vector;
 
@@ -70,9 +71,15 @@ public class Icq implements Runnable
     // Thread
     static volatile Thread thread;
     
+    // FLAP sequence number
+    static int flapSEQ;
+    
     public Icq()
     {
     	_this = this;
+    	// Set starting point for seq numbers (not bigger then 0x8000)
+        Random rand = new Random(System.currentTimeMillis());
+        flapSEQ = rand.nextInt(0x8000);
     }
 
     // Request an action
@@ -261,6 +268,13 @@ public class Icq implements Runnable
     {
         state = Icq.STATE_CONNECTED;
     }
+    
+    // Returns and updates sequence nr
+    static public int getFlapSequence()
+    {
+    	flapSEQ = ++flapSEQ%0x8000;
+    	return flapSEQ;
+    }
 
     // Resets the comm. subsystem
     static public synchronized void resetServerCon()
@@ -279,7 +293,7 @@ public class Icq implements Runnable
         reqAction.removeAllElements();
        
     }
-
+    
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_FILES is "true"#
     // Resets the comm. subsystem
@@ -714,127 +728,55 @@ public class Icq implements Runnable
 
     public class HTTPConnection extends Connection implements Runnable
     {
-        // Connection variables
-        private HttpConnection hcm; // Connection for monitor URLs (receiving)
-        private HttpConnection hcd; // Connection for data URLSs (sending)
-        private InputStream ism;
-        private OutputStream osd;
-        
-        // HTTP Connection sequence
-        private int seq;
-        
-        // HTTP Connection session ID
-        private byte[] sid = new byte[16];
-        
-        // IP and port of HTTP Proxy Server to connect to
-        private String proxy_host;
-        private int proxy_port;
-        
-        // Counter for the connections to the http proxy server
-        private int connCount;
+
+		// Connection variables
+		private HttpConnection hcm; // Connection for monitor URLs (receiving)
+		private HttpConnection hcd; // Connection for data URLSs (sending)
+		private InputStream ism;
+		private OutputStream osd;
+
+		// URL for the monitor thread
+		private String monitorURL;
 		
-        public HTTPConnection()
-        {
-        	seq = 0;
-        	connCount = 0;
-        }
+		// HTTP Connection sequence
+		private int seq;
 
-        // Initialize the connection with the proxy (get sid and ip of proxy to connecto to)
-        protected void initHTTP() throws IOException, JimmException
-        {
-			// Set the connection parameters
-        	String url = "http://" + "http.proxy.icq.com" + "/hello";
-        	// System.out.println("Url: "+url);
-			this.hcm = (HttpConnection) Connector.open(url,Connector.READ_WRITE);
-			this.hcm.setRequestProperty("User-Agent","Mozilla/4.08 [en] (WinNT; U ;Nav)");
-			this.hcm.setRequestProperty("Cache-Control","no-store no-cache");
-			this.hcm.setRequestProperty("Pragma","no-cache");
-			this.hcm.setRequestMethod(HttpConnection.GET);
-			this.ism = this.hcm.openInputStream();
-			// Reqeust respons code and thereby opening the http connection
-			if (this.hcm.getResponseCode() != HttpConnection.HTTP_OK)
-				throw (new JimmException(220, 0));
-			else
-			{
-				// As we got an respons we have to check it an extract data from it
-				byte[] length = new byte[2];
-				byte[] packetData;
-				int bRead;
-				int bReadSum = 0;
-				seq++;
+		// HTTP Connection session ID
+		private byte[] sid = new byte[16];
 
-				// Type of packet
-				int pType;
+		// IP and port of HTTP Proxy Server to connect to
+		private String proxy_host;
+		private int proxy_port;
 
-				// Read packet length information
-				do
-				{
-					bRead = ism.read(length, bReadSum, length.length - bReadSum);
-					if (bRead == -1) break;
-					bReadSum += bRead;
-				} while (bReadSum < length.length);
+		// Counter for the connections to the http proxy server
+		private int connSeq;
 
-				packetData = new byte[Util.getWord(length, 0)];
+		public HTTPConnection()
+		{
+			seq = 0;
+			connSeq = 0;
+			monitorURL = "http://http.proxy.icq.com/hello";
+		}
 
-				bReadSum = 0;
-
-				// Read packet data
-				do
-				{
-					bRead = ism.read(packetData, bReadSum, packetData.length - bReadSum);
-					if (bRead == -1) break;
-					bReadSum += bRead;
-				} while (bReadSum < packetData.length);
-
-				try {
-				this.ism.close();
-				this.hcm.close();
-				} catch (Exception e)
-				{
-					// Do nothing
-				} finally
-				{
-					this.ism = null;
-					this.hcm = null;
-				}
-				// Extract info from packet
-				int offset = 2; // Skip version word
-				pType = Util.getWord(packetData, offset);
-				System.out.println("Message Type: " + pType);
-				offset += 2;
-				if (pType != 2)
-					throw (new JimmException(220, 1));
-				else
-				{
-					// Copy si
-					offset += 6; // Skip unknown stuff
-					System.arraycopy(packetData, offset, this.sid, 0, 16);
-					offset += 16;
-					// Get IP of proxy
-					byte[] ip = new byte[Util.getWord(packetData, offset)];
-					System.arraycopy(packetData, offset + 2, ip, 0, ip.length);
-					this.proxy_host = Util.byteArrayToString(ip);
-					offset += 2 + ip.length;
-
-					// Get port for proxy
-					this.proxy_port = Util.getWord(packetData, offset);
-				}
-			}
-        }
-        
-        // Opens a connection to the specified host and starts the receiver thread
-        public synchronized void connect(String hostAndPort) throws JimmException
+		// Opens a connection to the specified host and starts the receiver thread
+		public synchronized void connect(String hostAndPort) throws JimmException
 		{
 			try
-		{
-				connCount++;
+			{
+				connSeq++;
 				// If this is the first connection initialize the connection with the proxy
-				if (connCount == 1)
-					initHTTP();
-					
+				if (connSeq == 1)
+				{
+					this.inputCloseFlag = false;
+					this.rcvThread = new Thread(this);
+					this.rcvThread.start();
+					// Wait the the finished init will notify us
+					this.wait();
+				}
+				
 				// Extract host and port from combined String (we need port as int value)
-				String icqserver_host = hostAndPort.substring(0,hostAndPort.indexOf(":"));
-				int icqserver_port = Integer.parseInt(hostAndPort.substring(hostAndPort.indexOf(":")+1));
+				String icqserver_host = hostAndPort.substring(0, hostAndPort.indexOf(":"));
+				int icqserver_port = Integer.parseInt(hostAndPort.substring(hostAndPort.indexOf(":") + 1));
 				// System.out.println("Connect via "+proxy_host+":"+proxy_port+" to: "+icqserver_host+" "+icqserver_port);
 				// Send anser packet with connect to real server (via proxy)
 				byte[] packet = new byte[icqserver_host.length() + 4];
@@ -842,33 +784,25 @@ public class Icq implements Runnable
 				System.arraycopy(Util.stringToByteArray(icqserver_host), 0, packet, 2, icqserver_host.length());
 				Util.putWord(packet, 2 + icqserver_host.length(), icqserver_port);
 
-				this.sendPacket(null, packet, 0x003, connCount);
-                
+				this.sendPacket(null, packet, 0x003, connSeq);
+
 				// If this was not the first connection to the ICQ server close the previous
-				if (connCount != 1)
+				if (connSeq != 1)
 				{
 					DisconnectPacket reply = new DisconnectPacket();
-					this.sendPacket(reply,null,0x0005,connCount-1);
-					this.sendPacket(null,new byte[0],0x0006,connCount-1);
-					System.out.println("Close con: "+(connCount-1));
+					this.sendPacket(reply, null, 0x0005, connSeq - 1);
+					this.sendPacket(null, new byte[0], 0x0006, connSeq - 1);
 				}
 
-				this.inputCloseFlag = false;
-				this.rcvThread = new Thread(this);
-				this.rcvThread.start();
-				
-
-			} catch (ConnectionNotFoundException e)
-			{
-				throw (new JimmException(126, 0));
 			} catch (IllegalArgumentException e)
 			{
 				throw (new JimmException(127, 0));
-			} catch (IOException e)
+			} catch (InterruptedException e)
 			{
-				throw (new JimmException(125, 0));
+				// Do nothing
 			}
 		}
+
 		// Sets the reconnect flag and closes the connection
 		public synchronized void close()
 		{
@@ -908,7 +842,7 @@ public class Icq implements Runnable
 
 			Thread.yield();
 		}
-		
+
 		/***************************************************************************** 
 		 ***************************************************************************** 
 		 * 
@@ -931,20 +865,17 @@ public class Icq implements Runnable
 		 * 
 		 ***************************************************************************** 
 		 *****************************************************************************/
-		
+
 		// Sends the specific packet (with the possibility of setting the packet type
-		public void sendPacket(Packet packet, byte[] rawData, int type,int connCount) throws JimmException
+		public void sendPacket(Packet packet, byte[] rawData, int type, int connCount) throws JimmException
 		{
-			System.out.println("Send con: "+connCount+" Message type: "+type);
 			// Set the connection parameters
 			try
 			{
-				String url = "http://" + proxy_host +":"+ proxy_port + "/data?sid=" + Util.byteArrayToHexString(sid) + "&seq=" + seq;
-				// System.out.println("Url: "+url);
-				this.hcd = (HttpConnection) Connector.open(url,Connector.READ_WRITE);
-				this.hcd.setRequestProperty("User-Agent","Mozilla/4.08 [en] (WinNT; U ;Nav)");
-				this.hcd.setRequestProperty("Cache-Control","no-store no-cache");
-				this.hcd.setRequestProperty("Pragma","no-cache");
+				this.hcd = (HttpConnection) Connector.open("http://" + proxy_host + ":" + proxy_port + "/data?sid=" + Util.byteArrayToHexString(sid) + "&seq=" + seq, Connector.READ_WRITE);
+				//this.hcd.setRequestProperty("User-Agent","Mozilla/4.08 [en] (WinNT; U ;Nav)");
+				this.hcd.setRequestProperty("Cache-Control", "no-store no-cache");
+				this.hcd.setRequestProperty("Pragma", "no-cache");
 				this.hcd.setRequestMethod(HttpConnection.POST);
 				this.osd = this.hcd.openOutputStream();
 			} catch (IOException e)
@@ -963,36 +894,32 @@ public class Icq implements Runnable
 				try
 				{
 					byte[] outpack;
+
 					// Add http header (it has 14 bytes)
 					if (rawData == null)
 					{
-						outpack = new byte[14 + packet.toByteArray().length];
-						Util.putWord(outpack, 0, packet.toByteArray().length + 12);
-					}
-					else
-					{
+						rawData = packet.toByteArray();
 						outpack = new byte[14 + rawData.length];
-						Util.putWord(outpack, 0, rawData.length + 12);
 					}
-					Util.putWord(outpack, 2, 0x0443); 		// Version
+
+					outpack = new byte[14 + rawData.length];
+					Util.putWord(outpack, 0, rawData.length + 12); // Length
+					Util.putWord(outpack, 2, 0x0443); // Version
 					Util.putWord(outpack, 4, type);
-					Util.putDWord(outpack, 6, 0x00000000); 	// Unknown
+					Util.putDWord(outpack, 6, 0x00000000); // Unknown
 					Util.putDWord(outpack, 10, connCount);
 					// The "real" data
-					if (rawData == null)
-						System.arraycopy(packet.toByteArray(), 0, outpack, 14, packet.toByteArray().length);
-					else
-						System.arraycopy(rawData, 0, outpack, 14, rawData.length);
+					System.arraycopy(rawData, 0, outpack, 14, rawData.length);
 					// System.out.println("Sent: "+outpack.length+" b");
 					this.osd.write(outpack);
-					this.osd.flush();
-						
+					// this.osd.flush();
+
 					// Send the data
 					if (hcd.getResponseCode() != HttpConnection.HTTP_OK)
 						this.close();
 					else
 						seq++;
-					
+
 					try
 					{
 						this.osd.close();
@@ -1006,12 +933,13 @@ public class Icq implements Runnable
 						this.hcd = null;
 					}
 
-					// System.out.println("Peer packet sent length: "+outpack.length);
 					// #sijapp cond.if modules_TRAFFIC is "true" #
 
-					// 40 is the overhead for each packet
-					// This is not accurate for http connection
-					Traffic.addTraffic(outpack.length + 40);
+					// 40 is the overhead for each packet (TCP/IP)
+					// 190 is the ca. overhead for the HTTP header
+					// 14 bytes is the overhead for ICQ HTTP data header
+					// 170 bytes is the ca. overhead of the HTTP/1.1 200 OK
+					Traffic.addTraffic(outpack.length + 40 + 190 + 14 + 170);
 					if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
 					{
 						Traffic.trafficScreen.update(false);
@@ -1030,7 +958,7 @@ public class Icq implements Runnable
 		// Sends the specified packet always type 5 (FLAP packet)
 		public void sendPacket(Packet packet) throws JimmException
 		{
-			this.sendPacket(packet, null, 0x0005, connCount);
+			this.sendPacket(packet, null, 0x0005, connSeq);
 		}
 
 		// Main loop
@@ -1041,7 +969,7 @@ public class Icq implements Runnable
 			byte[] length = new byte[2];
 			byte[] httpPacket, packet;
 
-			int bRead, bReadSum; 
+			int bRead, bReadSum;
 			int bReadSumRequest = 0;
 
 			// Reset packet buffer
@@ -1053,28 +981,23 @@ public class Icq implements Runnable
 			// Try
 			try
 			{
-
-				// Set connection parameters
-				String url = "http://" + proxy_host + ":" + proxy_port + "/monitor?sid=" + Util.byteArrayToHexString(sid);
 				// Check abort condition
 				while (!this.inputCloseFlag)
 				{
-
-					// Start the connection try
-					// System.out.println("Url: " + url);
-					this.hcm = (HttpConnection) Connector.open(url,Connector.READ_WRITE);
-					this.hcm.setRequestProperty("User-Agent","Mozilla/4.08 [en] (WinNT; U ;Nav)");
-					this.hcm.setRequestProperty("Cache-Control","no-store no-cache");
-					this.hcm.setRequestProperty("Pragma","no-cache");
+					// Set connection parameters
+					this.hcm = (HttpConnection) Connector.open(monitorURL, Connector.READ_WRITE);
+					this.hcm.setRequestProperty("Cache-Control", "no-store no-cache");
+					this.hcm.setRequestProperty("Pragma", "no-cache");
 					this.hcm.setRequestMethod(HttpConnection.GET);
 					this.ism = this.hcm.openInputStream();
 					if (hcm.getResponseCode() != HttpConnection.HTTP_OK) throw new IOException();
 					// Read flap header
 					bReadSumRequest = 0;
-					// Read packet length information
+
 					do
 					{
 						bReadSum = 0;
+						// Read HTTP packet length information
 						do
 						{
 							bRead = ism.read(length, bReadSum, length.length - bReadSum);
@@ -1087,7 +1010,7 @@ public class Icq implements Runnable
 						httpPacket = new byte[Util.getWord(length, 0)];
 						bReadSum = 0;
 
-						// Read packet data
+						// Read HTTP packet data
 						do
 						{
 							bRead = ism.read(httpPacket, bReadSum, httpPacket.length - bReadSum);
@@ -1096,69 +1019,89 @@ public class Icq implements Runnable
 							bReadSumRequest += bRead;
 						} while (bReadSum < httpPacket.length);
 						if (bRead == -1) break;
-						// Verify flap header
-						System.out.println("Rcv con: "+Util.getWord(httpPacket, 10)+" Message type:" + Util.getWord(httpPacket, 2));
 						// Only process type 5 (flap) packets
 						if (Util.getWord(httpPacket, 2) == 0x0005)
 						{
-							// Verify flap header
-							if (Util.getByte(httpPacket, 12) != 0x2A) { throw (new JimmException(124, 0)); }
+							// Packet has 12 bytes header and could contain more than one FLAP
+							int contBytes = 12;
+							while (contBytes < httpPacket.length)
+							{
+								// Verify flap header
+								if (Util.getByte(httpPacket, contBytes) != 0x2A) { throw (new JimmException(124, 0)); }
+								// Copy flap packet data from http packet
+								packet = new byte[Util.getWord(httpPacket, contBytes + 4) + 6];
+								System.arraycopy(httpPacket, contBytes, packet, 0, packet.length);
 
-							// Copy flap packet data from http packet
-							packet = new byte[httpPacket.length - 12];
-							System.arraycopy(httpPacket, 12, packet, 0, packet.length);
+								// Lock object and add rcvd packet to vector
+								synchronized (this.rcvdPackets)
+								{
+									this.rcvdPackets.addElement(packet);
+								}
+								contBytes += packet.length;
+							}
+
 							// #sijapp cond.if modules_TRAFFIC is "true" #
 							// This is not accurate for http connection
-							Traffic.addTraffic(bReadSum + 42);
+							// 42 is the overhead for each packet (2 byte packet length) (TCP IP)
+							// 185 is the overhead for each monitor packet HTTP HEADER
+							// 175 is the overhead for each HTTP/1.1 200 OK answer header
+							// ICQ HTTP data header is counted in bReadSum
+							Traffic.addTraffic(bReadSum + 42 + 185 + 175);
 
-							// 42 is the overhead for each packet (2 byte packet length)
 							if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
 							{
 								Traffic.trafficScreen.update(false);
 							}
 							// #sijapp cond.end#
-
-							// Lock object and add rcvd packet to vector
-							synchronized (this.rcvdPackets)
-							{
-								this.rcvdPackets.addElement(packet);
-							}
-
 							// Notify main loop
 							synchronized (Icq.wait)
 							{
 								Icq.wait.notify();
 							}
-						} 
-						else if (Util.getWord(httpPacket, 2) == 0x0004)
-						{
-						    System.out.println("Login rep for: "+Util.getWord(httpPacket, 10));
 						}
-						else if (Util.getWord(httpPacket, 2) == 0x0006)
-						{
-							System.out.println("Close con: "+Util.getWord(httpPacket, 10));
-						}
-						else if (Util.getWord(httpPacket, 2) == 0x0007)
-						{
-							// Construct and handle exception
-							System.out.println("Close rep for: "+Util.getWord(httpPacket, 10)+" current is: "+connCount);
-						    if(Util.getWord(httpPacket, 10) == connCount)
-						    	throw new JimmException(221, 0);
-						}
+						else
+							if (Util.getWord(httpPacket, 2) == 0x0007)
+							{
+								// Construct and handle exception if we get a close rep for the connection we are
+								// currently using
+								if (Util.getWord(httpPacket, 10) == connSeq) throw new JimmException(221, 0);
+							}
+							else
+								if (Util.getWord(httpPacket, 2) == 0x0002)
+								{
+									synchronized (this)
+									{
+									// Init answer from proxy set sid and proxy_host and proxy_port
+									System.arraycopy(httpPacket, 10, this.sid, 0, 16);
+									// Get IP of proxy
+									byte[] ip = new byte[Util.getWord(httpPacket, 26)];
+									System.arraycopy(httpPacket, 28, ip, 0, ip.length);
+									this.proxy_host = Util.byteArrayToString(ip);
+
+									// Get port for proxy
+									this.proxy_port = Util.getWord(httpPacket, 28 + ip.length);
+
+									// Set monitor URL to non init value
+									monitorURL = "http://" + proxy_host + ":" + proxy_port + "/monitor?sid=" + Util.byteArrayToHexString(sid);
+									
+									this.notify();
+									}
+
+								}
 					} while (bReadSumRequest < hcm.getLength());
-					try {
+					try
+					{
 						this.ism.close();
 						this.hcm.close();
-						} catch (Exception e)
-						{
-							// Do nothing
-						} finally
-						{
-							this.ism = null;
-							this.hcm = null;
-						}
+					} catch (Exception e)
+					{
+						// Do nothing
+					} finally
+					{
+						this.ism = null;
+						this.hcm = null;
+					}
 				}
-
 			}
 			// Catch communication exception
 			catch (NullPointerException e)

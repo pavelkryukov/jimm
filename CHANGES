@@ -255,9 +255,9 @@ VERSION 0.5.0
 
   * NEW FEATURE: Popup window when message arrived (optional)
   * NEW FEATURE: Configurable hotkeys
-  * NEW FEATURE: Connection via HTTP possilble (not working yet)
+  * NEW FEATURE: Connection via HTTP possilble
   * BUGFIX: Jimm sometimes crashed if was restored from flip on Motorola phones
-  * BUGFIX: There are no more echo error after errorous connections
+  * BUGFIX: There are no more echo errors after errorous connections
   * Added possibility to save stored history to file (at siemens only)
   * Rewrote Connection handler to be more modular and better readable
   * Now Jimm works with touchscreen (only for MIDP2 build).

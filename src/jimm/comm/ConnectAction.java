@@ -38,6 +38,7 @@ import jimm.ContactList;
 import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
+import jimm.comm.Icq.HTTPConnection;
 import jimm.util.ResourceBundle;
 
 public class ConnectAction extends Action
@@ -361,12 +362,26 @@ public class ConnectAction extends Action
                             // Save cookie
                             this.cookie = disconnectPacket.getCookie();
 
-                            // Send a CLI_GOODBYE packet as reply
-                            // DisconnectPacket reply = new DisconnectPacket();
-                            // Jimm.jimm.getIcqRef().c.sendPacket(reply);
-
-                            // Close connection
-                            Jimm.jimm.getIcqRef().c.close();
+                            // Send a CLI_GOODBYE packet as reply (only if not HTTP Connection)
+							if (Jimm.jimm.getIcqRef().c instanceof HTTPConnection)
+							{
+								// Do nothing
+							}
+							else
+							{
+								DisconnectPacket reply = new DisconnectPacket();
+								Jimm.jimm.getIcqRef().c.sendPacket(reply);
+							}
+							
+                            // Close connection (only if not HTTP Connection)
+							if (Jimm.jimm.getIcqRef().c instanceof HTTPConnection)
+							{
+								// Do nothing
+							}
+							else
+							{
+	                            Jimm.jimm.getIcqRef().c.close();
+							}
                             // #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
                             if (Options.getBooleanOption(Options.OPTION_SHADOW_CON))
                             {
