@@ -454,6 +454,7 @@ public class Options
 	// Constants for connection type
 	public static final int  CONN_TYPE_SOCKET = 0;
 	public static final int  CONN_TYPE_HTTP   = 1; 
+	public static final int  CONN_TYPE_PROXY  = 2; 
 
 	final static private int[] colors = 
 	{
@@ -620,20 +621,7 @@ public class Options
             selectCommand=new Command(ResourceBundle.getString("select"), Command.OK, 1);
             // #sijapp cond.end#
             
-            eventList = new int[MENU_EXIT];
             optionsMenu = new List(ResourceBundle.getString("options"), List.IMPLICIT);
-                 
-            eventList[optionsMenu.append(ResourceBundle.getString("options_account"), null)]    = OPTIONS_ACCOUNT;
-            eventList[optionsMenu.append(ResourceBundle.getString("options_network"), null)]    = OPTIONS_NETWORK;
-            // #sijapp cond.if modules_PROXY is "true"#
-            eventList[optionsMenu.append(ResourceBundle.getString("proxy"), null)]      = OPTIONS_PROXY;
-            // #sijapp cond.end#
-            eventList[optionsMenu.append(ResourceBundle.getString("options_interface"), null)]  = OPTIONS_INTERFACE;
-		    eventList[optionsMenu.append(ResourceBundle.getString("options_hotkeys"), null)]  = OPTIONS_HOTKEYS;
-            eventList[optionsMenu.append(ResourceBundle.getString("options_signaling"), null)]  = OPTIONS_SIGNALING;
-            // #sijapp cond.if modules_TRAFFIC is "true"#
-            eventList[optionsMenu.append(ResourceBundle.getString("traffic"), null)]      = OPTIONS_TRAFFIC;
-            // #sijapp cond.end#
 
             // #sijapp cond.if target is "MOTOROLA"#
             optionsMenu.addCommand(selectCommand);
@@ -659,6 +647,26 @@ public class Options
             // #sijapp cond.end#            			
 		}
 
+		
+		// Initialize the kist for the Options menu
+		static public void initOptionsList()
+		{
+            eventList = new int[MENU_EXIT];
+            optionsMenu.deleteAll();
+            
+			eventList[optionsMenu.append(ResourceBundle.getString("options_account"), null)]    = OPTIONS_ACCOUNT;
+            eventList[optionsMenu.append(ResourceBundle.getString("options_network"), null)]    = OPTIONS_NETWORK;
+            // #sijapp cond.if modules_PROXY is "true"#
+            if (Options.getIntOption(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
+            	eventList[optionsMenu.append(ResourceBundle.getString("proxy"), null)]      = OPTIONS_PROXY;
+            // #sijapp cond.end#
+            eventList[optionsMenu.append(ResourceBundle.getString("options_interface"), null)]  = OPTIONS_INTERFACE;
+		    eventList[optionsMenu.append(ResourceBundle.getString("options_hotkeys"), null)]  = OPTIONS_HOTKEYS;
+            eventList[optionsMenu.append(ResourceBundle.getString("options_signaling"), null)]  = OPTIONS_SIGNALING;
+            // #sijapp cond.if modules_TRAFFIC is "true"#
+            eventList[optionsMenu.append(ResourceBundle.getString("traffic"), null)]      = OPTIONS_TRAFFIC;
+            // #sijapp cond.end#
+		}
 	
 		// Initialize the UI elements depending on the submenu id
         static public void initSubMenuUI(int i)
@@ -680,7 +688,12 @@ public class Options
                 connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.EXCLUSIVE);
                 connTypeChoiceGroup.append(ResourceBundle.getString("socket"), null);
                 connTypeChoiceGroup.append(ResourceBundle.getString("http"), null);
+                // #sijapp cond.if modules_PROXY is "true"#
+                connTypeChoiceGroup.append(ResourceBundle.getString("proxy"), null);
                 connTypeChoiceGroup.setSelectedIndex(Options.getIntOption(Options.OPTION_CONN_TYPE),true);
+                // #sijapp cond.else#
+                connTypeChoiceGroup.setSelectedIndex(Options.getIntOption(Options.OPTION_CONN_TYPE)%2,true);
+                // #sijapp cond.end#
                 keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle.getString("keep_conn_alive"), Choice.MULTIPLE);
                 keepConnAliveChoiceGroup.append(ResourceBundle.getString("yes"), null);
                 keepConnAliveChoiceGroup.setSelectedIndex(0, getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
@@ -704,10 +717,10 @@ public class Options
             // #sijapp cond.if modules_PROXY is "true"#
             case OPTIONS_PROXY:              
                 srvProxyType = new ChoiceGroup(ResourceBundle.getString("proxy_type"), Choice.EXCLUSIVE);
-                srvProxyType.append(ResourceBundle.getString("proxy_do_not_use"), null);
                 srvProxyType.append(ResourceBundle.getString("proxy_socks4"), null);
                 srvProxyType.append(ResourceBundle.getString("proxy_socks5"), null);
                 srvProxyType.append(ResourceBundle.getString("proxy_guess"), null);
+                // srvProxyType.append(ResourceBundle.getString("http"), null);
                 srvProxyType.setSelectedIndex(getIntOption(Options.OPTION_PRX_TYPE), true);
                 
                 srvProxyHostTextField = new TextField(ResourceBundle.getString("proxy_server_host"), getStringOption(Options.OPTION_PRX_SERV), 32, TextField.ANY);
@@ -890,7 +903,8 @@ public class Options
 		// Activate options menu
         static public void activate()
 		{
-			optionsMenu.setSelectedIndex(0, true);   // Reset
+			initOptionsList();
+        	optionsMenu.setSelectedIndex(0, true);   // Reset
 			optionsMenu.addCommand(backCommand);
 			Jimm.display.setCurrent(optionsMenu);
 		}

@@ -351,13 +351,12 @@ public class Icq implements Runnable
         Action newAction;
 
         // Instantiate connections
-        switch (Options.getIntOption(Options.OPTION_CONN_TYPE))
-        {
-        	case Options.CONN_TYPE_SOCKET: c = new SOCKETConnection(); break;
-        	case Options.CONN_TYPE_HTTP:   c = new HTTPConnection(); break;
-        }
+        if (Options.getIntOption(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_SOCKET)
+        	c = new SOCKETConnection();
+        else if (Options.getIntOption(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_HTTP)
+        	c = new HTTPConnection();
         // #sijapp cond.if modules_PROXY is "true"#
-        if (Options.getIntOption(Options.OPTION_PRX_TYPE) != 0)
+        else if (Options.getIntOption(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
         	c = new SOCKSConnection();
         // #sijapp cond.end#
 
@@ -1588,15 +1587,12 @@ public class Icq implements Runnable
                 switch (mode)
                 {
                 case 0:
-                    connect_simple(hostAndPort);
-                    break;
-                case 1:
                     connect_socks4(host, port);
                     break;
-                case 2:
+                case 1:
                     connect_socks5(host, port);
                     break;
-                case 3:
+                case 2:
                     // Try better first
                     try
                     {
@@ -1620,9 +1616,6 @@ public class Icq implements Runnable
                         connect_socks4(host, port);
                     }
                     break;
-                default:
-                    connect_simple(hostAndPort);
-                    break;
                 }
 
                 inputCloseFlag = false;
@@ -1633,32 +1626,6 @@ public class Icq implements Runnable
             } catch (JimmException e)
             {
                 throw (e);
-            }
-        }
-
-         private synchronized void connect_simple(String hostAndPort) throws JimmException
-        {
-            try
-            {
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                sc = (SocketConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
-                // #sijapp cond.else#
-                sc = (StreamConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
-                // #sijapp cond.end#
-                is = sc.openInputStream();
-                os = sc.openOutputStream();
-
-                is_connected = true;
-                
-            } catch (ConnectionNotFoundException e)
-            {
-                throw (new JimmException(121, 0));
-            } catch (IllegalArgumentException e)
-            {
-                throw (new JimmException(122, 0));
-            } catch (IOException e)
-            {
-                throw (new JimmException(120, 0));
             }
         }
         
