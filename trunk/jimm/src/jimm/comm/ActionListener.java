@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/comm/ActionListener.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher, Spassky Alexander
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Spassky Alexander, Igor Palkin
  *******************************************************************************/
 
 package jimm.comm;
@@ -57,14 +57,78 @@ public class ActionListener
             (byte) 0x35, (byte) 0x35, (byte) 0x33, (byte) 0x35, (byte) 0x34, (byte) 0x30, (byte) 0x30, (byte) 0x30, (byte) 0x30,
             (byte) 0x7D};
 
+	    // Client CAPS
+	private static final byte[] CAP_MIRANDAIM = {(byte)0x4D, (byte)0x69, (byte)0x72, (byte)0x61,(byte)0x6E,(byte) 0x64, (byte)0x61,(byte) 0x4D, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+	private static final byte[] CAP_TRILLIAN  = { (byte) 0x97, (byte) 0xb1, (byte) 0x27, (byte) 0x51, (byte) 0x24, (byte) 0x3c, (byte) 0x43, (byte) 0x34, (byte) 0xad, (byte) 0x22, (byte) 0xd6, (byte) 0xab, (byte) 0xf7, (byte) 0x3f, (byte) 0x14, (byte) 0x09};
+	private static final byte[] CAP_TRILCRYPT = { (byte) 0xf2, (byte) 0xe7, (byte) 0xc7, (byte) 0xf4, (byte) 0xfe, (byte) 0xad, (byte) 0x4d, (byte) 0xfb, (byte) 0xb2, (byte) 0x35, (byte) 0x36, (byte) 0x79, (byte) 0x8b, (byte) 0xdf, (byte) 0x00, (byte) 0x00};
+	private static final byte[] CAP_SIM       = {'S', 'I', 'M', ' ', 'c', 'l', 'i', 'e', 'n', 't', ' ', ' ', (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+	private static final byte[] CAP_SIMOLD    = { (byte) 0x97, (byte) 0xb1, (byte) 0x27, (byte) 0x51, (byte) 0x24, (byte) 0x3c, (byte) 0x43, (byte) 0x34, (byte) 0xad, (byte) 0x22, (byte) 0xd6, (byte) 0xab, (byte) 0xf7, (byte) 0x3f, (byte) 0x14, (byte) 0x00};
+	private static final byte[] CAP_LICQ      = {'L', 'i', 'c', 'q', ' ', 'c', 'l', 'i', 'e', 'n', 't', ' ', (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+	private static final byte[] CAP_KOPETE    = {'K', 'o', 'p', 'e', 't', 'e', ' ', 'I', 'C', 'Q', ' ', ' ', (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+	private static final byte[] CAP_MICQ      = {'m', 'I', 'C', 'Q', ' ', (byte) 0xA9, ' ', 'R', '.', 'K', '.', ' ', (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+	private static final byte[] CAP_ANDRQ     = {'&', 'R', 'Q', 'i', 'n', 's', 'i', 'd', 'e', (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+	private static final byte[] CAP_QIP       = { (byte) 0x56, (byte) 0x3F, (byte) 0xC8, (byte) 0x09, (byte) 0x0B, (byte) 0x6F, (byte) 0x41, 'Q', 'I', 'P', ' ', '2', '0', '0', '5', 'a'};
+	private static final byte[] CAP_IM2       = { (byte) 0x74, (byte)  0xED, (byte)  0xC3, (byte)  0x36, (byte)  0x44, (byte)  0xDF, (byte)  0x48, (byte)  0x5B, (byte)  0x8B, (byte)  0x1C, (byte)  0x67, (byte)  0x1A, (byte)  0x1F, (byte)  0x86, (byte)  0x09, (byte)  0x9F}; // IM2 Ext Msg
+	private static final byte[] CAP_MACICQ    = { (byte) 0xdd, (byte)  0x16, (byte)  0xf2, (byte)  0x02, (byte)  0x84, (byte)  0xe6, (byte)  0x11, (byte)  0xd4, (byte)  0x90, (byte)  0xdb, (byte)  0x00, (byte)  0x10, (byte)  0x4b, (byte)  0x9b, (byte)  0x4b, (byte)  0x7d};
+	private static final byte[] CAP_RICHTEXT  = { (byte) 0x97, (byte)  0xb1, (byte)  0x27, (byte)  0x51, (byte)  0x24, (byte)  0x3c, (byte)  0x43, (byte)  0x34, (byte)  0xad, (byte)  0x22, (byte)  0xd6, (byte)  0xab, (byte)  0xf7, (byte)  0x3f, (byte)  0x14, (byte)  0x92};
+	private static final byte[] CAP_IS2001    = { (byte) 0x2e, (byte)  0x7a, (byte)  0x64, (byte)  0x75, (byte)  0xfa, (byte)  0xdf, (byte)  0x4d, (byte)  0xc8, (byte)  0x88, (byte)  0x6f, (byte)  0xea, (byte)  0x35, (byte)  0x95, (byte)  0xfd, (byte)  0xb6, (byte)  0xdf};
+	private static final byte[] CAP_IS2002    = { (byte) 0x10, (byte)  0xcf, (byte)  0x40, (byte)  0xd1, (byte)  0x4c, (byte)  0x7f, (byte)  0x11, (byte)  0xd1, (byte)  0x82, (byte)  0x22, (byte)  0x44, (byte)  0x45, (byte)  0x53, (byte)  0x54, (byte)  0x00, (byte)  0x00};
+	private static final byte[] CAP_STR20012  = { (byte) 0xa0, (byte)  0xe9, (byte)  0x3f, (byte)  0x37, (byte)  0x4f, (byte)  0xe9, (byte)  0xd3, (byte)  0x11, (byte)  0xbc, (byte)  0xd2, (byte)  0x00, (byte)  0x04, (byte)  0xac, (byte)  0x96, (byte)  0xdd, (byte)  0x96};
+	private static final byte[] CAP_AIMICON   = { (byte) 0x09, (byte)  0x46, (byte)  0x13, (byte)  0x46, (byte)  0x4c, (byte)  0x7f, (byte)  0x11, (byte)  0xd1, (byte)  0x82, (byte)  0x22, (byte)  0x44, (byte)  0x45, (byte)  0x53, (byte)  0x54, (byte)  0x00, (byte)  0x00}; // CAP_AIM_BUDDYICON
+	private static final byte[] CAP_AIMCHAT   = { (byte) 0x74, (byte)  0x8F, (byte)  0x24, (byte)  0x20, (byte)  0x62, (byte)  0x87, (byte)  0x11, (byte)  0xD1, (byte)  0x82, (byte)  0x22, (byte)  0x44, (byte)  0x45, (byte)  0x53, (byte)  0x54, (byte)  0x00, (byte)  0x00};
+	private static final byte[] CAP_UIM       = { (byte) 0xA7, (byte)  0xE4, (byte)  0x0A, (byte)  0x96, (byte)  0xB3, (byte)  0xA0, (byte)  0x47, (byte)  0x9A, (byte)  0xB8, (byte)  0x45, (byte)  0xC9, (byte)  0xE4, (byte)  0x67, (byte)  0xC5, (byte)  0x6B, (byte)  0x1F};
+	private static final byte[] CAP_RAMBLER   = { (byte) 0x7E, (byte)  0x11, (byte)  0xB7, (byte)  0x78, (byte)  0xA3, (byte)  0x53, (byte)  0x49, (byte)  0x26, (byte)  0xA8, (byte)  0x02, (byte)  0x44, (byte)  0x73, (byte)  0x52, (byte)  0x08, (byte)  0xC4, (byte)  0x2A};
+	private static final byte[] CAP_ABV       = { (byte) 0x00, (byte)  0xE7, (byte)  0xE0, (byte)  0xDF, (byte)  0xA9, (byte)  0xD0, (byte)  0x4F, (byte)  0xe1, (byte)  0x91, (byte)  0x62, (byte)  0xC8, (byte)  0x90, (byte)  0x9A, (byte)  0x13, (byte)  0x2A, (byte)  0x1B};
+	private static final byte[] CAP_NETVIGATOR= { (byte) 0x4C, (byte)  0x6B, (byte)  0x90, (byte)  0xA3, (byte)  0x3D, (byte)  0x2D, (byte)  0x48, (byte)  0x0E, (byte)  0x89, (byte)  0xD6, (byte)  0x2E, (byte)  0x4B, (byte)  0x2C, (byte)  0x10, (byte)  0xD9, (byte)  0x9F};
+	private static final byte[] CAP_XTRAZ	  = { (byte) 0x1A,  (byte) 0x09,  (byte) 0x3C,  (byte) 0x6C,  (byte) 0xD7,  (byte) 0xFD,  (byte) 0x4E,  (byte) 0xC5,  (byte) 0x9D,  (byte) 0x51,  (byte) 0xA6,  (byte) 0x47,  (byte) 0x4E,  (byte) 0x34,  (byte) 0xF5,  (byte) 0xA0};
+	private static final byte[] CAP_AIMFILE	  = { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x43, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
+	private static final byte[] CAP_JIMM	  = {'J', 'i','m','m',' '};
 
 
     /** ************************************************************************* */
     
+    private String detectClientVersion(byte[] buf1, int cli, int tlvNum)
+    {
+	    byte[] buf = new byte[16];
+	    System.arraycopy(buf1,tlvNum*16,buf,0,16);
+	    String ver = "";
+	    if (cli == ContactListContactItem.CAP_MIRANDAIM)
+	    {
+		    if ( (buf[0xC]==0)&&(buf[0xD]==0)&&(buf[0xE]==0)&&(buf[0xF]==1) )
+		    {
+			    ver = "0.1.2.0";
+		    }
+		    else if ( (buf[0xC]==0)&&(buf[0xD]<=3)&&(buf[0xE]<=3)&&(buf[0xF]<=1) )
+		    {
+			    ver = "0." + buf[0xD] + "." +buf[0xE] +"." + buf[0xF];
+		    }
+		    else
+		    {
+			    ver = buf[0x8]+ "." + buf[0x9] + "." + buf[0xA] +"." + buf[0xB];
+		    }
+	    }
+	    else if (cli == ContactListContactItem.CAP_LICQ)
+	    {
+		    ver = buf[0xC] + "." + (buf[0xD]%100) +"." + buf[0xE];
+	    }
+	    else if (cli == ContactListContactItem.CAP_KOPETE)
+	    {
+		    ver = buf[0xC] + "." +buf[0xD] + "." +buf[0xE] + "." +buf[0xF];
+	    }
+	    else if (cli == ContactListContactItem.CAP_ANDRQ)
+	    {
+		    ver = (char)buf[0xC] + "." + (char)buf[0xB];// + "." +buf[0xA] + "." +buf[9];
+	    }
+	    else if (cli == ContactListContactItem.CAP_JIMM)
+		    ver = Util.byteArrayToString(buf,5,11);
+	    else if (cli == ContactListContactItem.CAP_QIP)
+		    ver = Util.byteArrayToString(buf,11,5);
+	    return ver;
+    }
+    
     // Forwards received packet
     protected void forward(Packet packet) throws JimmException
     {
-
         // Watch out for channel 4 (Disconnect) packets
         if (packet instanceof DisconnectPacket)
         {
@@ -104,7 +168,12 @@ public class ActionListener
                 // #sijapp cond.end#
                 // #sijapp cond.end#
                 
-                // Time variables
+		int dwFT1=0, dwFT2=0, dwFT3=0;
+		int wVersion=0;
+		int capabilities = 0;
+		String cliVer="";
+                
+		// Time variables
                 int idle = -1;
                 long online = -1;
                 long signon = -1;
@@ -119,7 +188,6 @@ public class ActionListener
 
                 // Get new status and client capabilities
                 long status = ContactList.STATUS_ONLINE;
-                int capabilities = 0x00000000;
                 int marker = 1 + uinLen + 2;
                 int tlvNum = Util.getWord(buf, marker);
                 marker += 2;
@@ -140,6 +208,87 @@ public class ActionListener
                             } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_UTF8, 0, 16))
                             {
                                 capabilities |= ContactListContactItem.CAP_UTF8_INTERNAL;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_MIRANDAIM, 0, 8))
+                            {
+                                capabilities |= ContactListContactItem.CAP_MIRANDAIM;
+				cliVer = detectClientVersion(tlvData,ContactListContactItem.CAP_MIRANDAIM,j);
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_TRILLIAN, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_TRILLIAN;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_TRILCRYPT, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_TRILCRYPT;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_SIM, 0, 0xC))
+                            {
+                                capabilities |= ContactListContactItem.CAP_SIM;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_SIMOLD, 0, 15))
+                            {
+                                capabilities |= ContactListContactItem.CAP_SIMOLD;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_LICQ, 0, 0xC))
+                            {
+                                capabilities |= ContactListContactItem.CAP_LICQ;
+				cliVer = detectClientVersion(tlvData, ContactListContactItem.CAP_LICQ,j);
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_KOPETE, 0, 0xC))
+                            {
+                                capabilities |= ContactListContactItem.CAP_KOPETE;
+				cliVer = detectClientVersion(tlvData, ContactListContactItem.CAP_KOPETE,j);
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_MICQ, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_MICQ;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_ANDRQ, 0, 9))
+                            {
+                                capabilities |= ContactListContactItem.CAP_ANDRQ;
+				cliVer = detectClientVersion(tlvData,ContactListContactItem.CAP_ANDRQ,j);
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_QIP, 0, 11))
+                            {
+                                capabilities |= ContactListContactItem.CAP_QIP;
+				cliVer = detectClientVersion(tlvData,ContactListContactItem.CAP_QIP,j);
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_IM2, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_IM2;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_MACICQ, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_MACICQ;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_RICHTEXT, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_RICHTEXT;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_IS2001, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_IS2001;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_IS2002, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_IS2002;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_STR20012, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_STR20012;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_AIMICON, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_AIMICON;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_AIMCHAT, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_AIMCHAT;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_UIM, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_UIM;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_RAMBLER, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_RAMBLER;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_ABV, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_ABV;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_NETVIGATOR, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_NETVIGATOR;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_XTRAZ, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_XTRAZ;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_AIMFILE, 0, 16))
+                            {
+                                capabilities |= ContactListContactItem.CAP_AIMFILE;
+                            } else if (Util.byteArrayEquals(tlvData, j * 16, ActionListener.CAP_JIMM, 0, 5))
+                            {
+                                capabilities |= ContactListContactItem.CAP_JIMM;
+				cliVer = detectClientVersion(tlvData,ContactListContactItem.CAP_JIMM,j);
                             }
                         }
 
@@ -169,7 +318,16 @@ public class ActionListener
                         
                         // Get auth cookie
                         authCookie = Util.getDWord(tlvData,dcMarker);
-
+			dcMarker +=12;
+			
+			// Get data for client detection
+ 			dwFT1 = (int) Util.getDWord(tlvData,dcMarker);
+			dcMarker += 4;
+			dwFT2 = (int) Util.getDWord(tlvData,dcMarker);
+			dcMarker += 4;
+			dwFT3 = (int) Util.getDWord(tlvData,dcMarker);
+			dcMarker += 4;
+			wVersion = (int) Util.getWord(tlvData,dcMarker);
                         // System.out.println("length: "+tlvData.length+"IP: "+Util.ipToString(internalIP)+" Port: "+dcPort+" Type: "+dcType+" Version: "+icqProt+" Cookie: "+authCookie);
 
                     }
@@ -195,6 +353,7 @@ public class ActionListener
                     marker += 2 + 2 + tlvData.length;
                 }
 
+		ContactList.getItembyUIN(uin).detectUserClient(dwFT1, dwFT2, dwFT3,icqProt,capabilities,cliVer);
                 // Update contact list
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 
@@ -655,7 +814,7 @@ public class ActionListener
                      		sender.setObjectValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,ip);
                     		sender.setObjectValue (ContactListContactItem.CONTACTITEM_EXTERNAL_IP,extIP);
                     		sender.setStringValue (ContactListContactItem.CONTACTITEM_DC_PORT,port);
-
+                                                       
                              //System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
                              
                              DirectConnectionAction dcAct = new DirectConnectionAction(sender.getFTM());
