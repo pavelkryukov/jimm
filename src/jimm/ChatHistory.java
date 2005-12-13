@@ -367,12 +367,11 @@ public class ChatHistory
 	// Adds a message to the message display
 	protected synchronized void addMessage(String uin,Message message,ContactListContactItem contact)
 	{
-		ChatTextList chat = (ChatTextList)historyTable.get(uin);
-
 		if (!historyTable.containsKey(uin))
 			newChatForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
-
 		
+		ChatTextList chat = (ChatTextList)historyTable.get(uin);
+
 		boolean offline = message.getOffline();
 
 		if (message instanceof PlainMessage)
@@ -384,7 +383,7 @@ public class ChatHistory
 			// #sijapp cond.if modules_HISTORY is "true" #
 			if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
 				HistoryStorage.addText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), plainMsg.getText(), (byte)0, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getDate());
-			// #sijapp cond.end#	
+			// #sijapp cond.end#
 			
 			if ( !message.getOffline() )
 				ContactListContactItem.showPopupWindow(uin, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText());

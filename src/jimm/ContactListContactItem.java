@@ -740,7 +740,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
                     
                 // Show Timeing info and DC info 
                 case USER_MENU_LOCAL_INFO:
-                    Alert info = new Alert(ResourceBundle.getString("local_info"));
+                    Alert info = new Alert(ResourceBundle.getString("dc_info"));
                     StringBuffer buf = new StringBuffer();
                     final String clrf = "\n";
                     if (getLongValue(ContactListContactItem.CONTACTITEM_SIGNON) > 0) {
