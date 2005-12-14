@@ -741,7 +741,7 @@ public class Icq implements Runnable
 		private int seq;
 
 		// HTTP Connection session ID
-		private byte[] sid = new byte[16];
+		private String sid;
 
 		// IP and port of HTTP Proxy Server to connect to
 		private String proxy_host;
@@ -871,7 +871,7 @@ public class Icq implements Runnable
 			// Set the connection parameters
 			try
 			{
-				this.hcd = (HttpConnection) Connector.open("http://" + proxy_host + ":" + proxy_port + "/data?sid=" + Util.byteArrayToHexString(sid) + "&seq=" + seq, Connector.READ_WRITE);
+				this.hcd = (HttpConnection) Connector.open("http://" + proxy_host + ":" + proxy_port + "/data?sid=" + sid + "&seq=" + seq, Connector.READ_WRITE);
 				//this.hcd.setRequestProperty("User-Agent","Mozilla/4.08 [en] (WinNT; U ;Nav)");
 				this.hcd.setRequestProperty("Cache-Control", "no-store no-cache");
 				this.hcd.setRequestProperty("Pragma", "no-cache");
@@ -1070,20 +1070,22 @@ public class Icq implements Runnable
 								{
 									synchronized (this)
 									{
-									// Init answer from proxy set sid and proxy_host and proxy_port
-									System.arraycopy(httpPacket, 10, this.sid, 0, 16);
-									// Get IP of proxy
-									byte[] ip = new byte[Util.getWord(httpPacket, 26)];
-									System.arraycopy(httpPacket, 28, ip, 0, ip.length);
-									this.proxy_host = Util.byteArrayToString(ip);
+										// Init answer from proxy set sid and proxy_host and proxy_port
+										byte[] temp = new byte[16];
+										System.arraycopy(httpPacket, 10, temp, 0, 16);
+										sid = Util.byteArrayToHexString(temp);
+										// Get IP of proxy
+										byte[] ip = new byte[Util.getWord(httpPacket, 26)];
+										System.arraycopy(httpPacket, 28, ip, 0, ip.length);
+										this.proxy_host = Util.byteArrayToString(ip);
 
-									// Get port for proxy
-									this.proxy_port = Util.getWord(httpPacket, 28 + ip.length);
+										// Get port for proxy
+										this.proxy_port = Util.getWord(httpPacket, 28 + ip.length);
 
-									// Set monitor URL to non init value
-									monitorURL = "http://" + proxy_host + ":" + proxy_port + "/monitor?sid=" + Util.byteArrayToHexString(sid);
-									
-									this.notify();
+										// Set monitor URL to non init value
+										monitorURL = "http://" + proxy_host + ":" + proxy_port + "/monitor?sid=" + sid;
+
+										this.notify();
 									}
 
 								}
