@@ -353,11 +353,11 @@ public class ActionListener
                     marker += 2 + 2 + tlvData.length;
                 }
 
-		ContactList.getItembyUIN(uin).detectUserClient(dwFT1, dwFT2, dwFT3,icqProt,capabilities,cliVer);
                 // Update contact list
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 
                 // #sijapp cond.if modules_FILES is "true"#
+                ContactList.getItembyUIN(uin).detectUserClient(dwFT1, dwFT2, dwFT3,icqProt,capabilities,cliVer);
                 ContactList.update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
                 // #sijapp cond.else#
                 ContactList.update(uin, status, capabilities,signon,online,idle);
@@ -813,7 +813,7 @@ public class ActionListener
                                                        
                      		sender.setObjectValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,ip);
                     		sender.setObjectValue (ContactListContactItem.CONTACTITEM_EXTERNAL_IP,extIP);
-                    		sender.setStringValue (ContactListContactItem.CONTACTITEM_DC_PORT,port);
+                    		sender.setIntValue (ContactListContactItem.CONTACTITEM_DC_PORT, Integer.parseInt(port));
                                                        
                              //System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
                              

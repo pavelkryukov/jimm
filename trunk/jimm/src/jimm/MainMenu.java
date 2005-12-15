@@ -182,7 +182,7 @@ public class MainMenu implements CommandListener
             // #sijapp cond.end#
             MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("about"), null)] 		= MENU_ABOUT;
             // #sijapp cond.if target is "MIDP2" #
-            if (Jimm.jimm.is_phone_SE())
+            if (Jimm.is_phone_SE())
             	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("minimize"), null)] 	= MENU_MINIMIZE;
 	        // #sijapp cond.end#
             MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("exit"), null)] 		= MENU_EXIT;
@@ -398,7 +398,7 @@ public class MainMenu implements CommandListener
         // User select CANCEL in exit questiom message box
         else if (JimmUI.isMsgBoxCommand(c, MSGBS_EXIT) == JimmUI.CMD_NO)
         {
-        	Jimm.jimm.getContactListRef().activate();
+        	ContactList.activate();
         }
         
         // Menu item has been selected
@@ -428,12 +428,12 @@ public class MainMenu implements CommandListener
                     
                 case MENU_LIST:
                     // ContactList
-                    Jimm.jimm.getContactListRef().activate();
+                    ContactList.activate();
                     break;
                 
                 case MENU_KEYLOCK :
                     // Enable keylock
-                    Jimm.jimm.getSplashCanvasRef().lock();
+                    SplashCanvas.lock();
                     break;
                     
                 case MENU_STATUS:
@@ -504,7 +504,7 @@ public class MainMenu implements CommandListener
                     
                  case MENU_OPTIONS:
                      // Options
-                     Jimm.jimm.getOptionsRef().optionsForm.activate();
+                     Options.editOptions();
                      break; 
                      
                  // #sijapp cond.if modules_TRAFFIC is "true" #
