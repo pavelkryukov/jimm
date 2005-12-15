@@ -91,7 +91,7 @@ public class DirectConnectionAction extends Action
 
         // Make a new peer connection and connect to the adress and port we got from the FileTransferRequest
         Icq.peerC = icq.new PeerConnection();
-        Icq.peerC.connect(Util.ipToString((byte[])ft.getRcvr().getObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)) + ":" + ft.getRcvr().getStringValue(ContactListContactItem.CONTACTITEM_DC_PORT));
+        Icq.peerC.connect(Util.ipToString((byte[])ft.getRcvr().getObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)) + ":" + ft.getRcvr().getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT));
 
         // Send a DC init packet
         byte[] dcpacket = new byte[48];

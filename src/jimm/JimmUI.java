@@ -402,7 +402,7 @@ public class JimmUI implements CommandListener
 				break;
 
 			case Options.HOTKEY_OPTIONS:
-				Options.optionsForm.activate();
+				Options.editOptions();
 				break;
 
 			case Options.HOTKEY_MENU:

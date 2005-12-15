@@ -72,7 +72,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	public static final int CAP_JIMM = 0x04000000;
 
 	// Client IDs
-	public static final String CLI_NONE = ResourceBundle.getString("cli_none");;
+	public static final String CLI_NONE = ResourceBundle.getString("cli_none");
 	public static final String CLI_QIP = "QIP";
 	public static final String CLI_MIRANDA = "Miranda";
 	public static final String CLI_LICQ = "Licq";
@@ -126,56 +126,105 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	225 - 255 (111XXXXX)  OBJECT
 	******************************************************************************/
 	
-	final private static int STR_START  =   0;
-	final private static int INT_START  =  64;
 	final private static int BOOL_START = 128;
-	final private static int LONG_START = 192;
 	final private static int OBJ_START  = 225;
 	
-	private int[] intValues = null;
-	private String[] stringValues = null;
 	private boolean[] boolValues = null;
-	private long[] longValues = null;
 	private Object[] objectValues = null;
+	
+	private int    id,
+	               group,
+	               idle,
+	               plainMessages, 
+	               urlMessages, 
+	               sysNotices, 
+	               authRequests;
+	//#sijapp cond.if modules_FILES is "true"#
+	private int    dcType,
+	               dcPort, 
+	               icqProt;
+	private long   authCookie;
+	// #sijapp cond.end #
+	
+	private long   uinLong,
+	               online,
+	               signOn,
+	               status;
+	               
+	private String name, 
+	               clientId,
+	               clientVersion,
+	               lowerText;
 	
 ///////////////////////////////////////////////////////////////////////////
 	
 	synchronized public void setStringValue(int key, String value)
 	{
-		int index = key-STR_START;
-		if (stringValues == null) stringValues = new String[index+1];
-		else if (stringValues.length <= index)
+		switch(key)
 		{
-			String[] newStringValues = new String[index+1];
-			System.arraycopy(stringValues, 0, newStringValues, 0, stringValues.length);
-			stringValues = newStringValues;
+		case CONTACTITEM_UIN:        uinLong = Long.parseLong(value); return;
+		case CONTACTITEM_NAME:       name = value; lowerText = null; return;
+		case CONTACTITEM_CLIVERSION: clientVersion = value; return;
+		case CONTACTITEM_CLIENT:     clientId = value; return;
+		
+		default: System.out.println("setStringValue: Wrong key!"); // <= DEBUG
 		}
-		stringValues[index] = value;
 	}
 	
 	synchronized public String getStringValue(int key)
 	{
-		return stringValues[key-STR_START];
+		switch(key)
+		{
+		case CONTACTITEM_UIN:        return Long.toString(uinLong);
+		case CONTACTITEM_NAME:       return name;
+		case CONTACTITEM_CLIVERSION: return clientVersion;
+		case CONTACTITEM_CLIENT:     return clientId;
+		default: System.out.println("getStringValue: Wrong key!"); // <= DEBUG
+		}
+		return null;
 	}
 	
 ///////////////////////////////////////////////////////////////////////////
 	
 	synchronized public void setIntValue(int key, int value)
 	{
-		int index = key-INT_START;
-		if (intValues == null) intValues = new int[index+1];
-		else if (intValues.length <= index)
+		switch (key)
 		{
-			int[] newIntValues = new int[index+1];
-			System.arraycopy(intValues, 0, newIntValues, 0, intValues.length);
-			intValues = newIntValues;
+		case CONTACTITEM_ID:            id = value;            return;
+		case CONTACTITEM_GROUP:         group = value;         return;
+		case CONTACTITEM_PLAINMESSAGES: plainMessages = value; return;
+		case CONTACTITEM_URLMESSAGES:   urlMessages = value;   return;
+		case CONTACTITEM_SYSNOTICES:    sysNotices = value;    return;
+		case CONTACTITEM_AUTREQUESTS:   authRequests = value;  return;
+		case CONTACTITEM_IDLE:          idle = value;          return;
+		//#sijapp cond.if modules_FILES is "true"#
+		case CONTACTITEM_DC_TYPE:       dcType = value;        return;
+		case CONTACTITEM_ICQ_PROT:      icqProt = value;       return;
+		case CONTACTITEM_DC_PORT:       dcPort = value;        return;
+		// #sijapp cond.end #
+		default: System.out.println("setIntValue: Wrong key! "+key); // <= DEBUG
 		}
-		intValues[index] = value;
 	}
 	
 	synchronized public int getIntValue(int key)
 	{
-		return intValues[key-INT_START];
+		switch (key)
+		{
+		case CONTACTITEM_ID:            return id;
+		case CONTACTITEM_GROUP:         return group;
+		case CONTACTITEM_PLAINMESSAGES: return plainMessages;
+		case CONTACTITEM_URLMESSAGES:   return urlMessages;
+		case CONTACTITEM_SYSNOTICES:    return sysNotices;
+		case CONTACTITEM_AUTREQUESTS:   return authRequests;
+		case CONTACTITEM_IDLE:          return idle;
+		//#sijapp cond.if modules_FILES is "true"#
+		case CONTACTITEM_DC_TYPE:       return dcType;
+		case CONTACTITEM_ICQ_PROT:      return icqProt;
+		case CONTACTITEM_DC_PORT:       return dcPort;
+		// #sijapp cond.end #
+		default: System.out.println("getIntValue: Wrong key! "+key); // <= DEBUG
+		}
+		return 0;
 	}
 	
 ///////////////////////////////////////////////////////////////////////////
@@ -202,20 +251,31 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	
 	synchronized public void setLongValue(int key, long value)
 	{
-		int index = key-LONG_START;
-		if (longValues == null) longValues = new long[index+1];
-		else if (longValues.length <= index)
+		switch (key)
 		{
-			long[] longNewValues = new long[index+1];
-			System.arraycopy(longValues, 0, longNewValues, 0, longValues.length);
-			longValues = longNewValues;
+		case CONTACTITEM_ONLINE:      online = value;     return;
+		case CONTACTITEM_SIGNON:      signOn = value;     return;
+		case CONTACTITEM_STATUS:      status = value;     return;
+		//#sijapp cond.if modules_FILES is "true"#
+		case CONTACTITEM_AUTH_COOKIE: authCookie = value; return;
+		// #sijapp cond.end #
+		default: System.out.println("setLongValue: Wrong key!"); // <= DEBUG
 		}
-		longValues[index] = value;
 	}
 	
-	synchronized public long getLongValue(int key)
+	synchronized public long getLongValue(int key) 
 	{
-		return longValues[key-LONG_START];
+		switch (key)
+		{
+		case CONTACTITEM_ONLINE:      return online;
+		case CONTACTITEM_SIGNON:      return signOn;
+		case CONTACTITEM_STATUS:      return status;
+		//#sijapp cond.if modules_FILES is "true"#
+		case CONTACTITEM_AUTH_COOKIE: return authCookie;
+		// #sijapp cond.end #
+		default: System.out.println("getLongValue: Wrong key!"); // <= DEBUG
+		}
+		return 0;
 	}
 	
 ///////////////////////////////////////////////////////////////////////////
@@ -242,8 +302,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	// Variable keys
 	public static final int CONTACTITEM_UIN						= 0;   /* String */
 	public static final int CONTACTITEM_NAME					= 1;   /* String */
-	public static final int CONTACTITEM_TEXT					= 2;   /* String */
-	public static final int CONTACTITEM_ID						= 64;  /* Integer */
+	public static final int CONTACTITEM_ID						= 64;  /* Integer */ //
 	public static final int CONTACTITEM_GROUP					= 65;  /* Integer */
 	public static final int CONTACTITEM_PLAINMESSAGES			= 67;  /* Integer */
 	public static final int CONTACTITEM_URLMESSAGES				= 68;  /* Integer */
@@ -267,12 +326,12 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	public static final int CONTACTITEM_AUTH_COOKIE				= 193; /* Long */
 	public static final int CONTACTITEM_DC_TYPE					= 72;  /* Integer */
 	public static final int CONTACTITEM_ICQ_PROT				= 73;  /* Integer */
-	public static final int CONTACTITEM_DC_PORT					= 3;   /* String */
+	public static final int CONTACTITEM_DC_PORT					= 74;  /* Integer */
 	// #sijapp cond.end#
 	// #sijapp cond.end#
 	public static final int CONTACTITEM_CAPABILITIES			= 74;  /* Integer */
-	public static final int CONTACTITEM_CLIENT					= 4;	/* Integer */
-	public static final int CONTACTITEM_CLIVERSION					= 5;	/* String */	
+	public static final int CONTACTITEM_CLIENT					= 4;	/* String */
+	public static final int CONTACTITEM_CLIVERSION			    = 5;	/* String */	
 
 
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -496,7 +555,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		// #sijapp cond.if modules_FILES is "true"#
 		setObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
 		setObjectValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
-		setStringValue(ContactListContactItem.CONTACTITEM_DC_PORT, "");
+		setIntValue(ContactListContactItem.CONTACTITEM_DC_PORT, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE, -1);
 		setIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT, 0);
 		setLongValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE, 0);
@@ -504,11 +563,11 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		// #sijapp cond.end#
 		// #sijapp cond.end#
 		setLongValue(ContactListContactItem.CONTACTITEM_SIGNON, -1);
-		setLongValue(ContactListContactItem.CONTACTITEM_ONLINE, -1);
+		online = -1;
 		setIntValue(ContactListContactItem.CONTACTITEM_IDLE, -1);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
 		setStringValue(ContactListContactItem.CONTACTITEM_CLIENT, CLI_NONE);
-		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, "");
+		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, null);
 	}
 	
 	// Constructor for an existing contact item
@@ -528,11 +587,13 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		return ((capability & this.getIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES)) != 0x00000000);
 	}
 	
-	private String lowerText = null;
-	
 	public String getLowerText()
 	{
-		if (lowerText == null) lowerText = getStringValue(ContactListContactItem.CONTACTITEM_NAME).toLowerCase();
+		if (lowerText == null)
+		{
+			lowerText = name.toLowerCase();
+			if (lowerText.equals(name)) lowerText = name; // to decrease memory usage 
+		}
 		return lowerText;
 	}
 	
@@ -567,7 +628,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	
 	public String getText()
 	{
-		return getStringValue(CONTACTITEM_NAME);
+		return name;
 	}
 
 	private final static long[] statuses = 
@@ -727,7 +788,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 
 	public void checkForInvis()
 	{
-		VisibilityCheckerAction act = new VisibilityCheckerAction(getStringValue(ContactListContactItem.CONTACTITEM_UIN), getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+		VisibilityCheckerAction act = new VisibilityCheckerAction(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 		try
 		{
 			Icq.requestAction(act);
@@ -742,7 +803,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	//#sijapp cond.if modules_HISTORY is "true" #
 	public void showHistory()
 	{
-		HistoryStorage.showHistoryList(getStringValue(ContactListContactItem.CONTACTITEM_UIN), getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+		HistoryStorage.showHistoryList(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 	}
 	//#sijapp cond.end#
 	
@@ -801,7 +862,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 			else if ( !lastAnsUIN.equals(getStringValue(ContactListContactItem.CONTACTITEM_UIN)) ) messageTextbox.setString(null);
 			
 			// Display textbox for entering messages
-			messageTextbox.setTitle(ResourceBundle.getString("message")+" "+ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+			messageTextbox.setTitle(ResourceBundle.getString("message")+" "+name);
 			clearMessBoxCommands();
 			//#sijapp cond.if modules_SMILES is "true" #
 			messageTextbox.addCommand(insertEmotionCommand);
@@ -954,7 +1015,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
                 	JimmUI.messageBox
                     (
                         ResourceBundle.getString("remove")+"?",
-                        ResourceBundle.getString("remove")+" "+ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+"?",
+                        ResourceBundle.getString("remove")+" "+name+"?",
                         JimmUI.MESBOX_OKCANCEL,
                         this,
                         MSGBS_DELETECONTACT
@@ -967,7 +1028,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
                 	JimmUI.messageBox
                     (
                     	ResourceBundle.getString("remove_me")+"?",
-						ResourceBundle.getString("remove_me_from")+ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+"?",
+						ResourceBundle.getString("remove_me_from")+name+"?",
 						JimmUI.MESBOX_OKCANCEL,
 						this,
 						MSGBS_REMOVEME
@@ -978,7 +1039,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
                     // Rename the contact local and on the server
                     // Reset and display textbox for entering name
                     messageTextbox.setTitle(ResourceBundle.getString("rename"));
-                    messageTextbox.setString(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+                    messageTextbox.setString(name);
                     clearMessBoxCommands();
                     messageTextbox.addCommand(renameOkCommand);
                     messageTextbox.setCommandListener(this);
@@ -988,7 +1049,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
                 // #sijapp cond.if modules_HISTORY is "true" #                    
                 case USER_MENU_HISTORY:
                     // Stored history
-					HistoryStorage.showHistoryList(getStringValue(ContactListContactItem.CONTACTITEM_UIN),getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+					HistoryStorage.showHistoryList(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
                     break;
                 // #sijapp cond.end#
                     
@@ -1036,7 +1097,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 					   .append("ICQ client: ").append(this.getStringValue(ContactListContactItem.CONTACTITEM_CLIENT)).append(" ").append(this.getStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION)).append(clrf)
 					   .append("Int IP: ")     .append(Util.ipToString((byte[])this.getObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP))).append(clrf)
 					   .append("Ext IP: ")     .append(Util.ipToString((byte[])this.getObjectValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP))).append(clrf)
-					   .append("Port: ")       .append(this.getStringValue(ContactListContactItem.CONTACTITEM_DC_PORT)).append(clrf);
+					   .append("Port: ")       .append(this.getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT)).append(clrf);
                     // #sijapp cond.end#
                     // #sijapp cond.end# 
                     
@@ -1087,7 +1148,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 			// User wants to rename Contact
 			else if (c == renameOkCommand)
 			{
-				ContactListContactItem.this.setStringValue(ContactListContactItem.CONTACTITEM_NAME,messageTextbox.getString());
+				name = messageTextbox.getString();
 				try 
 				{
 					// Save ContactList
@@ -1107,7 +1168,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 					// Do nothing
 				}
 				
-				Jimm.jimm.getChatHistoryRef().contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN),getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+				Jimm.jimm.getChatHistoryRef().contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 				ContactList.activate();
 				messageTextbox.setString(null);
 			}
@@ -1275,7 +1336,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 			// Menu should be activated
 			else if (c == addMenuCommand)
 			{
-				menuList.setTitle(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+				menuList.setTitle(name);
 				menuList.setSelectedIndex(0, true);
 				menuList.setCommandListener(this);
 				Jimm.display.setCurrent(menuList);
@@ -1372,7 +1433,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 				ContactList.activate(JimmException.handleException(e));
                 if (e.isCritical()) return;
 			}
-            Jimm.jimm.getChatHistoryRef().addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getDate(), ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+            Jimm.jimm.getChatHistoryRef().addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getDate(), name);
             
             // #sijapp cond.if modules_HISTORY is "true" #
             if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
@@ -1393,7 +1454,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 			currentUin = new String(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			
 			//#sijapp cond.if modules_HISTORY is "true" #
-			Jimm.jimm.getChatHistoryRef().fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+			Jimm.jimm.getChatHistoryRef().fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 			//#sijapp cond.end#
 
 			
@@ -1446,7 +1507,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 			else
 			{
 				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
-                menuList.setTitle(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+                menuList.setTitle(name);
 				menuList.setSelectedIndex(0, true);
 				menuList.setCommandListener(this);
 				Jimm.display.setCurrent(menuList);

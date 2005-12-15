@@ -902,7 +902,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         if (dcType != -1)
         {
             cItem.setObjectValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,internalIP);
-            cItem.setStringValue (ContactListContactItem.CONTACTITEM_DC_PORT,Long.toString(dcPort));
+            cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_PORT, (int)dcPort);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_TYPE,dcType);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_ICQ_PROT,icqProt);
             cItem.setLongValue (ContactListContactItem.CONTACTITEM_AUTH_COOKIE,authCookie);
