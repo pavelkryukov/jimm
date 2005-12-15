@@ -652,7 +652,7 @@ public class Options
 		static public void initOptionsList()
 		{
             eventList = new int[MENU_EXIT];
-            optionsMenu.deleteAll();
+            while (optionsMenu.size() != 0) optionsMenu.delete(0);
             
 			eventList[optionsMenu.append(ResourceBundle.getString("options_account"), null)]    = OPTIONS_ACCOUNT;
             eventList[optionsMenu.append(ResourceBundle.getString("options_network"), null)]    = OPTIONS_NETWORK;
