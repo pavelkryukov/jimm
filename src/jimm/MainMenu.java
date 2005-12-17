@@ -414,7 +414,7 @@ public class MainMenu implements CommandListener
             {
                 case MENU_CONNECT:
                 // Connect
-            	Jimm.jimm.getContactListRef().beforeConnect();
+            	ContactList.beforeConnect();
                 Jimm.jimm.getIcqRef().connect();
                 break;
                 

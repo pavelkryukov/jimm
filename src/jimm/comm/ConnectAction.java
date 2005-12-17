@@ -76,25 +76,34 @@ public class ConnectAction extends Action
 
     // CLI_SETUSERINFO packet data
     public static final byte[] CLI_SETUSERINFO_DATA =
-    { (byte) 0x00, (byte) 0x05, (byte) 0x00, (byte) 0x30, // 3 capabilities
-                                                          // (48 bytes) follow
-      (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x49, // CAP_AIM_SERVERRELAY
-      (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
-      (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
-      (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00, 
-      (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x44, // CAP_AIM_ISICQ
-      (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
-      (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
-      (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00, 
-      (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x4E, // CAP_UTF8
-      (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
-      (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
-      (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
+	{
+		(byte) 0x00, (byte) 0x05, (byte) 0x00, (byte) 0x50,   // 4 capabilities follow
+		(byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x49, // CAP_AIM_SERVERRELAY
+		(byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
+		(byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
+		(byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00,
+		(byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x44,   // CAP_AIM_ISICQ
+		(byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
+		(byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
+		(byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00,		
+		(byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x4E,   //CAP_UTF8
+		(byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
+		(byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
+		(byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00,
+		(byte) 0x56, (byte) 0x3f, (byte) 0xc8, (byte) 0x09,      // CAP_MTN
+		(byte) 0x0b, (byte) 0x6f, (byte) 0x41, (byte) 0xbd,
+		(byte) 0x9f, (byte) 0x79, (byte) 0x42, (byte) 0x26,
+		(byte) 0x09, (byte) 0xdf, (byte) 0xa2, (byte) 0xf3,
+		/* Jimm */ 'J', 'i', 'm', 'm', //Jimm version
+		(byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00,	//Place for string & raw version
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
+	};
 
     // CLI_SETICBM packet data
     public static final byte[] CLI_SETICBM_DATA =
-    { (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 
-      (byte) 0x00, (byte) 0x03, (byte) 0x1F, (byte) 0x40, 
+    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, 
+      (byte) 0x00, (byte) 0x0B, (byte) 0x1F, (byte) 0x40, 
       (byte) 0x03, (byte) 0xE7, (byte) 0x03, (byte) 0xE7, 
       (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
 
@@ -119,26 +128,26 @@ public class ConnectAction extends Action
 
     // CLI_READY packet data
     public static final byte[] CLI_READY_DATA =
-    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x03, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B, 
-      (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x02, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B, 
+    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x04, 
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
+      (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x04, 
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
       (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x01, (byte) 0x04, (byte) 0x7B, 
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
       (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B, 
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
       (byte) 0x00, (byte) 0x15, (byte) 0x00, (byte) 0x01,
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B, 
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
       (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B, 
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
       (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B, 
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
       (byte) 0x00, (byte) 0x09, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B, 
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
       (byte) 0x00, (byte) 0x0A, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4,
       (byte) 0x00, (byte) 0x0B, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B};
+      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4};
 
     // Timeout
     // #sijapp cond.if modules_PROXY is "true" #
@@ -605,7 +614,13 @@ public class ConnectAction extends Action
                                             Jimm.jimm.getIcqRef().c.sendPacket(reply2);
 
                                             // Send a CLI_SETUSERINFO packet
-                                            SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETUSERINFO_DATA);
+                                            // Set version information to this packet in our capability
+                                            byte[] tmp = ConnectAction.CLI_SETUSERINFO_DATA;
+                                            byte[] ver = Util.stringToByteArray(Jimm.VERSION);
+                                            if ( ver.length<12 )
+                                            	System.arraycopy(ver,0,tmp,tmp.length-11,ver.length);
+					    
+                                            SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 0x00000000, new byte[0], tmp);
                                             Jimm.jimm.getIcqRef().c.sendPacket(reply3);
 
                                             // Send a CLI_REQBUDDY packet
