@@ -70,45 +70,87 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	public static final int CAP_XTRAZ = 0x01000000;
 	public static final int CAP_AIMFILE = 0x02000000;
 	public static final int CAP_JIMM = 0x04000000;
+	public static final int CAP_AIMIMIMAGE = 0x08000000;
+	public static final int CAP_AVATAR = 0x10000000;
+	public static final int CAP_DIRECT = 0x20000000;
+	public static final int CAP_TYPING = 0x40000000;
 
 	// Client IDs
-	public static final String CLI_NONE = ResourceBundle.getString("cli_none");
-	public static final String CLI_QIP = "QIP";
-	public static final String CLI_MIRANDA = "Miranda";
-	public static final String CLI_LICQ = "Licq";
-	public static final String CLI_TRILLIAN = "Trillian";
-	public static final String CLI_SIM = "SIM";
-	public static final String CLI_KOPETE = "Kopete";
-	public static final String CLI_MICQ = "mICQ";
-	public static final String CLI_ANDRQ = "&RQ";
-	public static final String CLI_IM2 = "im2";
-	public static final String CLI_MACICQ = "MacICQ";
-	public static final String CLI_AIM = "AIM";
-	public static final String CLI_UIM = "Uim";
-	public static final String CLI_RAMBLER = "Rambler";
-	public static final String CLI_WEBICQ = "WebICQ";
-	public static final String CLI_GAIM = "Gaim";
-	public static final String CLI_ALICQ = "Alicq";
-	public static final String CLI_STRICQ = "StrICQ";
-	public static final String CLI_YSM = "YSM";
-	public static final String CLI_VICQ = "vICQ";
-	public static final String CLI_LIBICQ2K = "LibICQ2K";
-	public static final String CLI_JIMM = "Jimm";
-	public static final String CLI_SMARTICQ = "SmartICQ";
-	public static final String CLI_IMPLUS = "im+";
-	public static final String CLI_KXICQ2 = "KXicq2";
-	public static final String CLI_ICQLITEV4 = "ICQ Lite v4";
-	public static final String CLI_ICQ5 = "ICQ5";
-	public static final String CLI_ICQ1 = "ICQ 1.x";
-	public static final String CLI_ICQ2 = "ICQ 2.x";
-	public static final String CLI_ICQ98 = "ICQ 98";
-	public static final String CLI_ICQ99 = "ICQ 99";
-	public static final String CLI_ICQ2001 = "ICQ 2001";
-	public static final String CLI_ICQ200123 = "ICQ2001-2003a";
-	public static final String CLI_ICQ2000 = "ICQ2000";
-	public static final String CLI_ICQ2003B = "ICQ 2003b";
-	public static final String CLI_ICQLITE = "ICQ Lite";
-	public static final String CLI_GNOMEICQ = "Gnome ICQ";
+	public static final byte CLI_NONE = 0;
+	public static final byte CLI_QIP = 1;
+	public static final byte CLI_MIRANDA = 2;
+	public static final byte CLI_LICQ = 3;
+	public static final byte CLI_TRILLIAN = 4;
+	public static final byte CLI_SIM = 5;
+	public static final byte CLI_KOPETE = 6;
+	public static final byte CLI_MICQ = 7;
+	public static final byte CLI_ANDRQ = 8;
+	public static final byte CLI_IM2 = 9;
+	public static final byte CLI_MACICQ = 10;
+	public static final byte CLI_AIM = 11;
+	public static final byte CLI_UIM = 12;
+	public static final byte CLI_WEBICQ = 13;
+	public static final byte CLI_GAIM = 14;
+	public static final byte CLI_ALICQ = 15;
+	public static final byte CLI_STRICQ = 16;
+	public static final byte CLI_YSM = 17;
+	public static final byte CLI_VICQ = 18;
+	public static final byte CLI_LIBICQ2000 = 19;
+	public static final byte CLI_JIMM = 20;
+	public static final byte CLI_SMARTICQ = 21;
+	public static final byte CLI_ICQLITE4 = 22;
+	public static final byte CLI_ICQLITE5 = 23;
+	public static final byte CLI_ICQ98 = 24;
+	public static final byte CLI_ICQ99 = 25;
+	public static final byte CLI_ICQ2001B = 26;
+	public static final byte CLI_ICQ2002A2003A = 27;
+	public static final byte CLI_ICQ2000 = 28;
+	public static final byte CLI_ICQ2003B = 29;
+	public static final byte CLI_ICQLITE = 30;
+	public static final byte CLI_GNOMEICQ = 31;	
+	public static final byte CLI_AGILE = 32;
+	public static final byte CLI_SPAM = 33;
+	public static final byte CLI_CENTERICQ = 34;
+	public static final byte CLI_LIBICQJABBER = 35;
+	
+	public static final String[] clientNames = {
+		"Not detected",
+		"QIP",
+		"Miranda",
+		"LIcq",
+		"Trillian",
+		"SIM",
+		"Kopete",
+		"MICQ",
+		"&RQ",
+		"IM2",
+		"ICQ for MAC",
+		"AIM",
+		"UIM",
+		"WebICQ",
+		"Gaim",
+		"Alicq",
+		"StrICQ",
+		"YSM",
+		"vICQ",
+		"Libicq2000",
+		"Jimm",
+		"SmartICQ",
+		"ICQ Lite v4",
+		"ICQ Lite v5",
+		"ICQ 98",
+		"ICQ 99",
+		"ICQ 2001b",
+		"ICQ 2002a/2003a",
+		"ICQ 2000",
+		"ICQ 2003b",
+		"ICQ Lite",
+		"Gnome ICQ",
+		"Agile Messenger",
+		"SPAM:)",
+		"CenterICQ",
+		"Libicq2000 from Jabber"
+	};
 	
 	// Message types
 	public static final int MESSAGE_PLAIN		 = 1;
@@ -133,6 +175,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	private Object[] objectValues = null;
 	
 	private int    id,
+	               caps,
 	               group,
 	               idle,
 	               plainMessages, 
@@ -142,7 +185,8 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	//#sijapp cond.if modules_FILES is "true"#
 	private int    dcType,
 	               dcPort, 
-	               icqProt;
+	               icqProt,
+	               clientId;
 	private long   authCookie;
 	// #sijapp cond.end #
 	
@@ -151,8 +195,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	               signOn,
 	               status;
 	               
-	private String name, 
-	               clientId,
+	private String name,
 	               clientVersion,
 	               lowerText;
 	
@@ -165,8 +208,6 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		case CONTACTITEM_UIN:        uinLong = Long.parseLong(value); return;
 		case CONTACTITEM_NAME:       name = value; lowerText = null; return;
 		case CONTACTITEM_CLIVERSION: clientVersion = value; return;
-		case CONTACTITEM_CLIENT:     clientId = value; return;
-		
 		default: System.out.println("setStringValue: Wrong key!"); // <= DEBUG
 		}
 	}
@@ -178,7 +219,6 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		case CONTACTITEM_UIN:        return Long.toString(uinLong);
 		case CONTACTITEM_NAME:       return name;
 		case CONTACTITEM_CLIVERSION: return clientVersion;
-		case CONTACTITEM_CLIENT:     return clientId;
 		default: System.out.println("getStringValue: Wrong key!"); // <= DEBUG
 		}
 		return null;
@@ -197,10 +237,12 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		case CONTACTITEM_SYSNOTICES:    sysNotices = value;    return;
 		case CONTACTITEM_AUTREQUESTS:   authRequests = value;  return;
 		case CONTACTITEM_IDLE:          idle = value;          return;
+		case CONTACTITEM_CAPABILITIES:  caps = value;          return;
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_DC_TYPE:       dcType = value;        return;
 		case CONTACTITEM_ICQ_PROT:      icqProt = value;       return;
 		case CONTACTITEM_DC_PORT:       dcPort = value;        return;
+		case CONTACTITEM_CLIENT:     	clientId = value;      return;
 		// #sijapp cond.end #
 		default: System.out.println("setIntValue: Wrong key! "+key); // <= DEBUG
 		}
@@ -217,10 +259,12 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		case CONTACTITEM_SYSNOTICES:    return sysNotices;
 		case CONTACTITEM_AUTREQUESTS:   return authRequests;
 		case CONTACTITEM_IDLE:          return idle;
+		case CONTACTITEM_CAPABILITIES:  return caps;
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_DC_TYPE:       return dcType;
 		case CONTACTITEM_ICQ_PROT:      return icqProt;
 		case CONTACTITEM_DC_PORT:       return dcPort;
+		case CONTACTITEM_CLIENT:        return clientId;
 		// #sijapp cond.end #
 		default: System.out.println("getIntValue: Wrong key! "+key); // <= DEBUG
 		}
@@ -263,7 +307,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		}
 	}
 	
-	synchronized public long getLongValue(int key) 
+	synchronized public long getLongValue(int key)
 	{
 		switch (key)
 		{
@@ -329,7 +373,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	public static final int CONTACTITEM_DC_PORT					= 74;  /* Integer */
 	// #sijapp cond.end#
 	// #sijapp cond.end#
-	public static final int CONTACTITEM_CAPABILITIES			= 74;  /* Integer */
+	public static final int CONTACTITEM_CAPABILITIES			= 75;  /* Integer */
 	public static final int CONTACTITEM_CLIENT					= 4;	/* String */
 	public static final int CONTACTITEM_CLIVERSION			    = 5;	/* String */	
 
@@ -344,35 +388,73 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	
 	public static String currentUin = new String();
 	
-	// Miranda IcqOscarJ plugin code refactoring...
-	public void detectUserClient(int dwFT1, int dwFT2, int dwFT3, int wVersion, int caps, String cliVersion)
+	// Miranda ISee plugin code refactoring...
+	public void detectUserClient(int dwFP1, int dwFP2, int dwFP3, int wVersion, int caps, String cliVersion)
 	{
-		String szClient = CLI_NONE;
+		int client = CLI_NONE;
 		String szVersion="";
 		
-		// Timestamps based detection
-		  if (dwFT1 == 0xffffffff)
-		  {
-			  if (dwFT2 == 0xffffffff)
-			  { // This is Gaim not Miranda
-				  szClient = CLI_GAIM;
-			  }
-			  else if ((dwFT2 == 0) && (wVersion == 7))
-			  { // This is WebICQ not Miranda
-				  szClient = CLI_WEBICQ;
-			  }
-			  else 
-			  { // Yes this is most probably Miranda, get the version info
-				  szClient = CLI_MIRANDA;
-				  if (dwFT2 == 1)
-					  szVersion = "0.1.2.0";
-				  else
-					  szVersion = ((dwFT2>>24)&0x7F)+"."+((dwFT2>>16)&0xFF)+"."+((dwFT2>>8)&0xFF)+"."+(dwFT2&0xFF);
-			  }
-		  }
-		  else if ((dwFT1 & 0xFF7F0000) == 0x7D000000)
-		  { // This is probably an Licq client
-			  int ver = dwFT1 & 0xFFFF;
+		if ( (caps&CAP_QIP) !=0)
+		{
+			client = CLI_QIP;
+			szVersion = cliVersion;
+		}
+		
+		else if ( (((caps&CAP_TRILLIAN)!=0) || ((caps&CAP_TRILCRYPT)!=0)) && dwFP1 == 0x3b75ac09 )
+		{
+			client = CLI_TRILLIAN;
+			szVersion = cliVersion;
+		}
+		
+		else if ( ((caps&CAP_IM2)!=0) && (dwFP1 == 0x3FF19BEB) )
+			client = CLI_IM2;
+		
+		else if ( ((caps&CAP_SIM)!=0 ) && ((caps&CAP_SIMOLD)!=0) )
+		{
+			client = CLI_SIM;
+			szVersion = cliVersion; 
+		}
+		
+		else if ( (caps&CAP_KOPETE)!=0 )
+		{
+			client = CLI_KOPETE;
+			szVersion = cliVersion; 
+		}
+		
+		else if ( (caps&CAP_LICQ)!=0 )
+		{
+			client = CLI_LICQ;
+			szVersion = cliVersion;
+		}
+		
+		else if ((caps&(CAP_AIMICON+CAP_AIMFILE+CAP_AIMIMIMAGE))!=0)
+			client = CLI_GAIM;
+
+		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(wVersion==10)&&((caps&(CAP_RICHTEXT+CAP_TYPING))!=0) )
+			client = CLI_ICQ2003B;
+		
+		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(dwFP1==0)&&(dwFP2==0)&&(dwFP3==0)&&((caps&CAP_RICHTEXT)!=0)&&((caps&(CAP_XTRAZ+CAP_AVATAR+CAP_AIMFILE))!=0) )
+			client = CLI_ICQLITE4;
+		
+		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(dwFP1==0)&&(dwFP2==0)&&(dwFP3==0)&&((caps&CAP_RICHTEXT)!=0)&&((caps&(CAP_XTRAZ+CAP_AVATAR+CAP_AIMFILE))==0) )
+			client = CLI_ICQLITE4;
+		
+		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(dwFP1==0)&&(dwFP2==0)&&(dwFP3==0)&&((caps&CAP_RICHTEXT)==0)&&((caps&CAP_UIM)!=0))
+			client = CLI_UIM;
+		
+		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(dwFP1==0)&&(dwFP2==0)&&(dwFP3==0)&&((caps&CAP_RICHTEXT)==0)&&((caps&CAP_UIM)==0))
+			client = CLI_AGILE;
+		
+		else if ( (caps&CAP_MACICQ)!=0 )
+			client = CLI_MACICQ;
+		
+		else if ( (caps&CAP_AIMCHAT)!=0 )
+			client = CLI_AIM;
+		
+		else if (  (dwFP1 & 0xFF7F0000) == 0x7D000000 )
+		{
+			client = CLI_LICQ;
+			int ver = dwFP1 & 0xFFFF;
 			  if (ver % 10 !=0)
 			  {
 				  szVersion += ver / 1000 + "."+(ver / 10) % 100+"."+ ver % 10;
@@ -381,155 +463,119 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 			  {
 				  szVersion += ver / 1000 + "."+(ver / 10) % 100;
 			  }
-			  if ((dwFT1 & 0x00800000)!=0)
-				  szVersion+= "/SSL";
-			  
-		  }
-		  else if (dwFT1 == 0xffffff8f)
-		  {
-			  szClient = CLI_STRICQ;
-		  }
-		  else if (dwFT1 == 0xffffff42)
-		  {
-			  szClient = CLI_MICQ;
-		  }
-		  else if (dwFT1 == 0xffffffbe)
-		  {
-			  szClient = CLI_ALICQ;
-			  szVersion = ((dwFT2>>24)&0xFF) +"."+ ((dwFT2>>16)&0xFF) +"."+ ((dwFT2>>8)&0xFF);
-		  }
-		  else if (dwFT1 == 0xFFFFFF7F)
-		  {
-			  szClient = CLI_ANDRQ;
-			  szVersion = ((dwFT2>>24)&0xFF)+"."+((dwFT2>>16)&0xFF)+"."+((dwFT2>>8)&0xFF)+"."+(dwFT2&0xFF);
-		  }
-		  else if (dwFT1 == 0xFFFFFFAB)
-		  {
-			  szClient = CLI_YSM;
-		  }
-		  else if (dwFT1 == 0x04031980)
-		  {
-			  szClient = CLI_VICQ;
-		  }
-		  else if ((dwFT1 == 0x3AA773EE) && (dwFT2 == 0x3AA66380))
-		  {
-			  szClient = CLI_LIBICQ2K;
-		  }
-		  else if (dwFT1 == 0x3B75AC09)
-		  {
-			  szClient = CLI_TRILLIAN;
-		  }
-		  else if (dwFT1 == 0xFFFFFFFE && dwFT3 == 0xFFFFFFFE)
-		  {
-			  szClient = CLI_JIMM;
-			  if ((caps & CAP_JIMM) !=0 )
-				  szVersion = cliVersion;
-		  }
-		  else if (dwFT1 == 0x3FF19BEB && dwFT3 == 0x3FF19BEB)
-		  {
-			  szClient = CLI_IM2;
-		  }
-		  else if ((dwFT1 == 0xDDDDEEFF) && (dwFT2 == 0) && (dwFT3 == 0))
-		  {
-			  szClient = CLI_SMARTICQ;
-		  }
-		  else if (((dwFT1 & 0xFFFFFFF0) == 0x494D2B00) && (dwFT2 == 0) && (dwFT3 == 0))
-		  { // last byte of FT1: (5 = Win32, 3 = SmartPhone, Pocket PC)
-			  szClient = CLI_IMPLUS;
-		  }
-		  else if ((dwFT1 == 0x3B4C4C0C) && (dwFT2 == 0) && (dwFT3 == 0x3B7248ed))
-		  {
-			  szClient = CLI_KXICQ2;
-		  }
-		  else if ((dwFT1 > 0x35000000) && (dwFT1 < 0x40000000)) 
-		  {
-			  switch(wVersion) 
+
+		}
+		
+		else if ( dwFP1==0xFFFFFFFF )
+		{
+			if ( (dwFP2==0xFFFFFFFF)&&(dwFP3==0xFFFFFFFF) )
+				client = CLI_GAIM;
+			else
+			{
+				if ( (dwFP2==0)&&(dwFP3!=0xFFFFFFFF) )
+				{
+					if (wVersion==7)
+						client = CLI_WEBICQ;
+					else if ( (dwFP3==0x3B7248ED)&&((caps&CAP_UTF8_INTERNAL)==0)&&((caps&CAP_RICHTEXT)==0) )
+						client = CLI_SPAM;
+				}
+				else
+				{
+					client = CLI_MIRANDA;
+					szVersion = ((dwFP2>>24)&0x7F)+"."+((dwFP2>>16)&0xFF)+"."+((dwFP2>>8)&0xFF)+"."+(dwFP2&0xFF);
+				}
+			}
+		}
+		
+		else if ( (dwFP1==0xFFFFFFFE)&&(dwFP3==0xFFFFFFFE) )
+		{
+			client = CLI_JIMM;
+			szVersion = cliVersion;
+		}
+		
+		else if ( dwFP1==0xFFFFFF8F )
+			client = CLI_STRICQ;
+		
+		else if ( dwFP1==0xFFFFFF42 )
+			client = CLI_MICQ;
+		
+		else if ( dwFP1==0xFFFFFFBE )
+			client = CLI_ALICQ;
+		
+		else if ( dwFP1==0xFFFFFF7F )
+		{
+			client = CLI_ANDRQ;
+			szVersion = ((dwFP2>>24)&0xFF)+"."+((dwFP2>>16)&0xFF)+"."+((dwFP2>>8)&0xFF)+"."+(dwFP2&0xFF);
+		}
+		
+		else if ( dwFP1==0xFFFFFFAB )
+			client = CLI_YSM;
+		
+		else if ( dwFP1==0x04031980 )
+			client = CLI_VICQ;
+		
+		else if ( (dwFP1==0x3AA773EE)&&(dwFP2 == 0x3AA66380) && (dwFP3 == 0x3A877A42))
+			{
+				if (wVersion==7)
+				{
+					if ( (caps&(CAP_AIM_SERVERRELAY_INTERNAL+CAP_DIRECT))!=0 )
+					{
+						if ((caps&CAP_RICHTEXT)!=0)
+							client = CLI_CENTERICQ;
+						else
+							client = CLI_LIBICQJABBER;
+					}
+				}
+				else
+					client = CLI_LIBICQ2000;
+			}
+
+		else if ( dwFP1==0x3b75ac09 )
+			client = CLI_TRILLIAN;
+		
+		else if ( (dwFP1==0x3FF19BEB)&&(wVersion==8)&&(dwFP1==dwFP3) )
+			client = CLI_IM2;
+		
+		else if ( (dwFP1==0x4201F414)&&((dwFP2&dwFP3)==dwFP1)&&(wVersion==8) )
+			client = CLI_SPAM;
+		
+		else if ( (dwFP1!=0) && ((dwFP1 == dwFP3) && (dwFP3 == dwFP2) && (caps==0)) )
+			client = CLI_VICQ;
+
+		else if ( ((caps&(CAP_AIM_SERVERRELAY_INTERNAL+CAP_DIRECT+CAP_UTF8_INTERNAL+CAP_RICHTEXT))!=0)&&((dwFP1|dwFP2|dwFP3)!=0) )
+			client = CLI_ICQ2002A2003A;
+		
+		else if ( ((caps&(CAP_STR20012+CAP_AIM_SERVERRELAY_INTERNAL+CAP_IS2001))!=0)&&((dwFP1|dwFP2|dwFP3|wVersion)!=0) )
+			client = CLI_ICQ2001B;
+		
+		else if ( (wVersion==7)&&((caps&(CAP_AIM_SERVERRELAY_INTERNAL+CAP_DIRECT))!=0)&&((dwFP1|dwFP2|dwFP3)==0) )
+			client = CLI_ANDRQ;
+		
+		else if ( (wVersion==7)&&((caps&(CAP_AIM_SERVERRELAY_INTERNAL+CAP_DIRECT))!=0)&&((dwFP1|dwFP2|dwFP3)!=0) )
+			client = CLI_ICQ2000;
+		
+		else if ( (wVersion==7)&&(((caps&CAP_UTF8_INTERNAL)!=0)) )
+			client = CLI_GNOMEICQ;
+		
+		else if (dwFP1 > 0x35000000 && dwFP1 < 0x40000000) 
+		{
+		  switch(wVersion) 
 			  {
-				  case 6:  szClient = CLI_ICQ99;break;
-				  case 7:  szClient = CLI_ICQ2000;break;
-				  case 8:  szClient = CLI_ICQ2001;break;
-				  case 9:  szClient = CLI_ICQLITE;break;
-				  case 10: szClient = CLI_ICQ2003B;break;
+				  case 6:  client = CLI_ICQ99;break;
+				  case 7:  client = CLI_ICQ2000;break;
+				  case 8:  client = CLI_ICQ2001B;break;
+				  case 9:  client = CLI_ICQLITE;break;
+				  case 10: client = CLI_ICQ2003B;break;
 			  }
-		  }
-		  
-		  // Capabilities based detection
-		  else if (caps != 0)
-		  {
-			  if ((caps & CAP_MIRANDAIM) !=0 )
-			  {
-				  szClient = CLI_MIRANDA;
-				  szVersion = cliVersion;
-			  }
-			  else if ( ((caps & CAP_TRILLIAN) !=0 ) || ((caps & CAP_TRILCRYPT) !=0 ) )
-			  {
-				  szClient = CLI_TRILLIAN;				  
-			  }
-			  else if ( (caps & CAP_SIM) !=0 )
-			  {
-				  szClient = CLI_SIM;
-			  }
-			  else if ( (caps & CAP_LICQ) !=0 )
-			  {
-				  szClient = CLI_LICQ;
-				  szVersion = cliVersion;
-			  }
-			  else if ( (caps & CAP_ANDRQ) !=0 )
-			  {
-				  szClient = CLI_ANDRQ;
-				  szVersion = cliVersion;				  
-			  }
-			  else if ( (caps & CAP_KOPETE) !=0 )
-			  {
-				  szClient = CLI_KOPETE;
-				  szVersion = cliVersion;
-			  }
-			  else if ( (caps & CAP_QIP) !=0 )
-			  {
-				  szClient = CLI_QIP;
-				  szVersion = cliVersion;
-			  }
-			  else if ( (wVersion == 9)&&((caps & CAP_XTRAZ) !=0) )
-			  {
-				  if ((caps & CAP_AIMFILE) !=0)
-				  {
-					  szClient = CLI_ICQ5;
-					  if ( (caps & CAP_RAMBLER) !=0 )
-						  szClient = CLI_RAMBLER;
-				  }
-				  else
-					  szClient = CLI_ICQLITEV4;
-			  }
-			  else if ( szClient.equals(CLI_NONE) )
-				  switch (wVersion)
-			 	 {  // client detection failed, provide default clients
-				  case 1: 
-				  szClient = CLI_ICQ1;
-				  break;
-				  case 2: 
-				  szClient = CLI_ICQ2;
-				  break;
-				  case 4:
-				  szClient = CLI_ICQ98;
-				  break;
-				  case 6:
-				  szClient = CLI_ICQ99;
-				  break;
-				  case 7:
-				  szClient = CLI_ICQ2000;
-				  break;
-				  case 8: 
-				  szClient = CLI_ICQ200123;
-				  break;
-				  case 9: 
-				  szClient = CLI_ICQLITE;
-				  break;
-				  case 0xA:
-				  szClient = CLI_ICQ2003B;
-				 }
-		  }
-		  setStringValue(ContactListContactItem.CONTACTITEM_CLIENT,szClient);
-		  setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION,szVersion);
+		} 
+		
+		setIntValue(ContactListContactItem.CONTACTITEM_CLIENT,client);
+		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION,szVersion);
+	}
+	
+	public static String getClientString(byte cli)
+	{
+		return ( clientNames[cli] );
 	}
 	
 	public void init(int id, int group, String uin, String name, boolean noAuth, boolean added)
@@ -546,7 +592,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, false);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED, added);
 		setLongValue(ContactListContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
-		setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, ContactListContactItem.CAP_NO_INTERNAL);
+		caps = ContactListContactItem.CAP_NO_INTERNAL;
 		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES, 0);
@@ -566,8 +612,8 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		online = -1;
 		setIntValue(ContactListContactItem.CONTACTITEM_IDLE, -1);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
-		setStringValue(ContactListContactItem.CONTACTITEM_CLIENT, CLI_NONE);
-		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, null);
+		setIntValue(ContactListContactItem.CONTACTITEM_CLIENT, CLI_NONE);
+		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, "");
 	}
 	
 	// Constructor for an existing contact item
@@ -584,7 +630,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	// Returns true if client supports given capability
 	public boolean hasCapability(int capability)
 	{
-		return ((capability & this.getIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES)) != 0x00000000);
+		return ((capability & caps) != 0x00000000);
 	}
 	
 	public String getLowerText()
@@ -756,9 +802,9 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 
 	public synchronized void resetUnreadMessages()
 	{
-		this.setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES,0);
-		this.setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES,0);
-		this.setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES,0);
+		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES,0);
+		setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES,0);
+		setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES,0);
 	}
 
 	// Activates the contact item menu
@@ -828,8 +874,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		}
 
 		// Start timer
-		Jimm.jimm.getTimerRef().schedule(new SplashCanvas.RequestInfoTimerTask(
-				act1), 1000, 1000);
+		Jimm.jimm.getTimerRef().schedule(new SplashCanvas.RequestInfoTimerTask(act1), 1000, 1000);
 	}
 	
 	public void newMessage()
@@ -843,680 +888,696 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	/** ************************************************************************* */
 	/** ************************************************************************* */
 
-	static String lastAnsUIN = new String();
-	static boolean repliedWithQuota = false;
+	private static String lastAnsUIN = new String();
+	private static boolean repliedWithQuota = false;
+	private static TextList clientInfo = null;
+	private static Command cmdClientInfoBack = null;
+	private static int bigTextIndex;
 
+	static private void addToTextList(String langStr, String data)
+	{
+		if (data.length() == 0) return;
+		clientInfo
+			.addBigText(ResourceBundle.getString(langStr)+": ", clientInfo.getTextColor(), Font.STYLE_BOLD, bigTextIndex)
+			.addBigText(data, Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_BOLD, bigTextIndex)
+			.doCRLF(bigTextIndex);
+		bigTextIndex++;
+	}
 	
-	//private class Menu implements CommandListener
-	//{
-		final public static int MSGBS_DELETECONTACT = 1; 
-		final public static int MSGBS_REMOVEME = 2;
-		
-		// Shows new message form 
-		private void writeMessage(String initText)
-		{
-			// If user want reply with quotation 
-			if (initText != null) messageTextbox.setString(initText);
-			
-			// Keep old text if press "cancel" while last edit 
-			else if ( !lastAnsUIN.equals(getStringValue(ContactListContactItem.CONTACTITEM_UIN)) ) messageTextbox.setString(null);
-			
-			// Display textbox for entering messages
-			messageTextbox.setTitle(ResourceBundle.getString("message")+" "+name);
-			clearMessBoxCommands();
-			//#sijapp cond.if modules_SMILES is "true" #
-			messageTextbox.addCommand(insertEmotionCommand);
-			// #sijapp cond.end#
-			messageTextbox.addCommand(textboxSendCommand);
-			messageTextbox.setCommandListener(this);
-			Jimm.display.setCurrent(messageTextbox);
-			lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
-		}
+	final public static int MSGBS_DELETECONTACT = 1;
+
+	final public static int MSGBS_REMOVEME = 2;
+
+	// Shows new message form 
+	private void writeMessage(String initText)
+	{
+		// If user want reply with quotation 
+		if (initText != null) messageTextbox.setString(initText);
+
+		// Keep old text if press "cancel" while last edit 
+		else if (!lastAnsUIN
+				.equals(getStringValue(ContactListContactItem.CONTACTITEM_UIN))) messageTextbox
+				.setString(null);
+
+		// Display textbox for entering messages
+		messageTextbox.setTitle(ResourceBundle.getString("message") + " "
+				+ name);
+		clearMessBoxCommands();
+		//#sijapp cond.if modules_SMILES is "true" #
+		messageTextbox.addCommand(insertEmotionCommand);
+		// #sijapp cond.end#
+		messageTextbox.addCommand(textboxSendCommand);
+		messageTextbox.setCommandListener(this);
+		Jimm.display.setCurrent(messageTextbox);
+		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+	}
 
 		// Command listener
-		public void commandAction(Command c, Displayable d)
-		{
-		
+	public void commandAction(Command c, Displayable d)
+	{
+
 		// #sijapp cond.if target is "MOTOROLA"#
 		//Constantly turn on backlight
 		LightControl.flash(true);
 		// #sijapp cond.end#
-		
-			// Return to contact list
-			if (c == backCommand)
+
+		if (c == cmdClientInfoBack)
+		{
+			this.activate(true);
+		}
+		// Return to contact list
+		if (c == backCommand)
+		{
+			ContactListContactItem.this.resetUnreadMessages();
+			ContactList.activate();
+		}
+		// Message has been closed
+		else if (c == msgCloseCommand)
+		{
+			ContactList.activate();
+		}
+		// User wants to send a reply
+		else if ((c == msgReplyCommand) || (c == replWithQuotaCommand))
+		{
+			repliedWithQuota = (c == replWithQuotaCommand);
+
+			// Select first list element (new message)
+			menuList.setSelectedIndex(0, true);
+
+			// Show message form
+			try
 			{
-				ContactListContactItem.this.resetUnreadMessages();
-				ContactList.activate();
+				writeMessage(repliedWithQuota ? JimmUI.getClipBoardText() : null);
 			}
-			// Message has been closed
-			else if (c == msgCloseCommand)
+			catch (Exception e)
 			{
-				ContactList.activate();
+				Alert alert = new Alert(ResourceBundle
+						.getString("text_too_long"));
+				Jimm.display.setCurrent(alert, Jimm.display.getCurrent());
 			}
-			// User wants to send a reply
-			else if ((c == msgReplyCommand) || (c == replWithQuotaCommand))
+		}
+
+		// Menu item has been selected
+		else if ((c == List.SELECT_COMMAND)
+		//#sijapp cond.if target is "MOTOROLA"#
+				|| (c == selectCommand)
+		// #sijapp cond.end#
+		)
+		{
+			switch (eventList[menuList.getSelectedIndex()])
 			{
-				repliedWithQuota = (c == replWithQuotaCommand); 
-				
-				// Select first list element (new message)
+			case USER_MENU_MESSAGE:
+				// Send plain message
+				writeMessage(null);
+				break;
+
+			case USER_MENU_QUOTA:
+				// Send plain message with quotation
 				menuList.setSelectedIndex(0, true);
-				
-				// Show message form
-				try
-				{
-					writeMessage(repliedWithQuota ? JimmUI.getClipBoardText() : null);
-				}
-				catch (Exception e)
-				{
-					Alert alert = new Alert( ResourceBundle.getString("text_too_long") );
-					Jimm.display.setCurrent(alert, Jimm.display.getCurrent());
-				}
-			}
-            
-            // Menu item has been selected
-            else if ((c == List.SELECT_COMMAND) 
-            //#sijapp cond.if target is "MOTOROLA"#
-            || (c == selectCommand)
-            // #sijapp cond.end#
-            )
-            {
-                switch(eventList[menuList.getSelectedIndex()])
-                {
-                case USER_MENU_MESSAGE: 
-                    // Send plain message
-                	writeMessage(null);
-                    break;
-                    
-                case USER_MENU_QUOTA:
-                    // Send plain message with quotation
-                	menuList.setSelectedIndex(0, true);
-                	repliedWithQuota = true;
-                	writeMessage(JimmUI.getClipBoardText());
-                    break;
-                    
-                case USER_MENU_URL:
-                    // Send URL message
-                    // Reset and display textbox for entering messages
-                    messageTextbox.setString(null);
-                    messageTextbox.setTitle(ResourceBundle.getString("send_url"));
-                    clearMessBoxCommands();
-                    messageTextbox.addCommand(textboxOkCommand);
-                    messageTextbox.setCommandListener(this);
-                    Jimm.display.setCurrent(messageTextbox);
-                    break;
-                    
-                case USER_MENU_STATUS_MESSAGE:
-                    // Send a status message request message
-                    if (!((ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_ONLINE) || (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE) || (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_INVISIBLE)))
-                    {
-                            int msgType;
-                        // Send a status message request message
-                        if (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_AWAY)
-                            msgType = Message.MESSAGE_TYPE_AWAY;
-                        else if (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) ==  ContactList.STATUS_OCCUPIED)
-                            msgType = Message.MESSAGE_TYPE_OCC;
-                        else if (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_DND)
-                            msgType = Message.MESSAGE_TYPE_DND;
-                        else if (ContactListContactItem.this.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_CHAT)
-                            msgType = Message.MESSAGE_TYPE_FFC;
-                        else
-                            msgType = Message.MESSAGE_TYPE_AWAY;
-    
-                        PlainMessage awayReq = new PlainMessage(Options.getStringOption(Options.OPTION_UIN), ContactListContactItem.this,msgType, new Date(), "");
-                        
-                        SendMessageAction act = new SendMessageAction(awayReq);
-                        try
-                        {
-                        	Icq.requestAction(act);
-    
-                        } catch (JimmException e)
-                        {
-                            JimmException.handleException(e);
-                            if (e.isCritical()) return;
-                        }
-                    }
-                    break;
-                  
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                // #sijapp cond.if modules_FILES is "true"#                    
-                case USER_MENU_FILE_TRANS:
-                    // Send a filetransfer with a file given by path
-                    // We can only make file transfers with ICQ clients prot V8 and up
-                    if (ContactListContactItem.this.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
-                    {
-                        JimmException.handleException(new JimmException(190, 0, true));
-                    }
-                    else
-                    {
-                        ft = new FileTransfer(FileTransfer.FT_TYPE_FILE_BY_NAME,ContactListContactItem.this);
-                        ft.startFT(); 
-                    }
-                    break;
-                    
-                 // #sijapp cond.if target isnot "MOTOROLA" #
-                case USER_MENU_CAM_TRANS:
-                    // Send a filetransfer with a camera image
-                    // We can only make file transfers with ICQ clients prot V8 and up
-                    if (ContactListContactItem.this.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
-                    {
-                        JimmException.handleException(new JimmException(190, 0, true));
-                    }
-                    else
-                    {
-                        ft = new FileTransfer(FileTransfer.FT_TYPE_CAMERA_SNAPSHOT,ContactListContactItem.this);
-                        ft.startFT(); 
-                    }
-                    break;
-                // #sijapp cond.end#
-                // #sijapp cond.end#
-                // #sijapp cond.end#
-                    
-                case USER_MENU_USER_REMOVE:
-                	JimmUI.messageBox
-                    (
-                        ResourceBundle.getString("remove")+"?",
-                        ResourceBundle.getString("remove")+" "+name+"?",
-                        JimmUI.MESBOX_OKCANCEL,
-                        this,
-                        MSGBS_DELETECONTACT
-                    );
-                    break;
-                    
-                case USER_MENU_REMOVE_ME:
-                    // Remove me from other users contact list
-                	
-                	JimmUI.messageBox
-                    (
-                    	ResourceBundle.getString("remove_me")+"?",
-						ResourceBundle.getString("remove_me_from")+name+"?",
-						JimmUI.MESBOX_OKCANCEL,
-						this,
-						MSGBS_REMOVEME
-                    );
-                    break;
-                    
-                case USER_MENU_RENAME:
-                    // Rename the contact local and on the server
-                    // Reset and display textbox for entering name
-                    messageTextbox.setTitle(ResourceBundle.getString("rename"));
-                    messageTextbox.setString(name);
-                    clearMessBoxCommands();
-                    messageTextbox.addCommand(renameOkCommand);
-                    messageTextbox.setCommandListener(this);
-                    Jimm.display.setCurrent(messageTextbox);
-                    break;
-                    
-                // #sijapp cond.if modules_HISTORY is "true" #                    
-                case USER_MENU_HISTORY:
-                    // Stored history
-					HistoryStorage.showHistoryList(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
-                    break;
-                // #sijapp cond.end#
-                    
-                case USER_MENU_USER_INFO:
-                	showInfo();
-                	break;
-                    
-                // Show Timeing info and DC info 
-                case USER_MENU_LOCAL_INFO:
-                    Alert info = new Alert(ResourceBundle.getString("dc_info"));
-                    StringBuffer buf = new StringBuffer();
-                    final String clrf = "\n";
-                    if (getLongValue(ContactListContactItem.CONTACTITEM_SIGNON) > 0) {
-                    	Date signon = new Date(this.getLongValue(ContactListContactItem.CONTACTITEM_SIGNON));
-                    	buf.append(ResourceBundle.getString("li_signon_time")+": "+Util.getDateString(false,signon)+"\n");
-                    }
-                    if (getLongValue(ContactListContactItem.CONTACTITEM_ONLINE) > 0)
-					{
-						long online = this.getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
-						buf.append(ResourceBundle.getString("li_online_time") + ": ");
-						if ((online / 86400) != 0)
-						{
-							buf.append(online / 86400 + ResourceBundle.getString("days") +" ");
-							online = online % 86400;
-						}
-						if ((online / 3600)  != 0)
-						{
-							buf.append(online / 3600 + ResourceBundle.getString("hours") +" ");
-							online = online % 3600;
-						}
-						buf.append(online / 60 +  ResourceBundle.getString("minutes") +"\n");
-					}
-                    if (getIntValue(ContactListContactItem.CONTACTITEM_IDLE) > 0)
-                    {
-                    	int idleTime = this.getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
-                    	buf.append(ResourceBundle.getString("li_idle_time")+": ");
-						if ((idleTime / 60) != 0)
-							buf.append(idleTime/60+"h ");
-                    	buf.append(idleTime%60+ResourceBundle.getString("minutes") +"\n");
-                    }
-                    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                    // #sijapp cond.if modules_FILES is "true"#    
-                    buf.append("DC typ: ")     .append(this.getIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE)).append(clrf)
-					   .append("ICQ version: ").append(this.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT)).append(clrf)
-					   .append("ICQ client: ").append(this.getStringValue(ContactListContactItem.CONTACTITEM_CLIENT)).append(" ").append(this.getStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION)).append(clrf)
-					   .append("Int IP: ")     .append(Util.ipToString((byte[])this.getObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP))).append(clrf)
-					   .append("Ext IP: ")     .append(Util.ipToString((byte[])this.getObjectValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP))).append(clrf)
-					   .append("Port: ")       .append(this.getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT)).append(clrf);
-                    // #sijapp cond.end#
-                    // #sijapp cond.end# 
-                    
-                    info.setString(buf.toString());
-                    info.setTimeout(Alert.FOREVER);
-                    
-                    Jimm.display.setCurrent(info);
-                    break;
-                    
-                case USER_MENU_REQU_AUTH:
-                    // Request auth
-                	
-                	this.setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON,true);
-                    reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
-                    reasonTextbox.removeCommand(textboxOkCommand);
-                    reasonTextbox.addCommand(textboxSendCommand);
-                    reasonTextbox.setCommandListener(this);
-                    Jimm.display.setCurrent(reasonTextbox);
-                    break;
-                    
-                case USER_MENU_INVIS_CHECK:
-			checkForInvis();
-                	break;
-                }
-            }
-			
-			// User wants to add temporary contact
-			else if (c == addUrsCommand)
-			{
-				MainMenu.addUserOrGroupCmd(this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
-			}
-			
-			// User adds selected message to history
-			//#sijapp cond.if modules_HISTORY is "true" #
-			else if (c == addToHistoryCommand)
-			{
-				Jimm.jimm.getChatHistoryRef().addTextToHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-			}
-			//#sijapp cond.end#
-			
-			// "Copy text" command selected
-			else if (c == copyTextCommand)
-			{
-				Jimm.jimm.getChatHistoryRef().copyText(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-				getCurrDisplay().addCommand(replWithQuotaCommand);
-			}
-			
-			// User wants to rename Contact
-			else if (c == renameOkCommand)
-			{
-				name = messageTextbox.getString();
-				try 
-				{
-					// Save ContactList
-					ContactList.save();
-					
-					// Try to save ContactList to server
-					UpdateContactListAction action = new UpdateContactListAction(ContactListContactItem.this,UpdateContactListAction.ACTION_RENAME);
-					Icq.requestAction(action);
-				}
-				catch (JimmException je)
-				{
-					messageTextbox.setString(null);
-					if (je.isCritical()) return;
-				}
-				catch (Exception e)
-				{
-					// Do nothing
-				}
-				
-				Jimm.jimm.getChatHistoryRef().contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
-				ContactList.activate();
+				repliedWithQuota = true;
+				writeMessage(JimmUI.getClipBoardText());
+				break;
+
+			case USER_MENU_URL:
+				// Send URL message
+				// Reset and display textbox for entering messages
 				messageTextbox.setString(null);
-			}
-			// Textbox has been closed
-			else if ((c == textboxOkCommand) || (c == textboxSendCommand))
-			{
-				// Message has been entered
-				if (d == messageTextbox)
+				messageTextbox.setTitle(ResourceBundle.getString("send_url"));
+				clearMessBoxCommands();
+				messageTextbox.addCommand(textboxOkCommand);
+				messageTextbox.setCommandListener(this);
+				Jimm.display.setCurrent(messageTextbox);
+				break;
+
+			case USER_MENU_STATUS_MESSAGE:
+				// Send a status message request message
+				if (!((getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_ONLINE)
+						|| (getLongValue(ContactListContactItem.CONTACTITEM_STATUS)== ContactList.STATUS_OFFLINE) 
+						|| (getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_INVISIBLE)))
 				{
-					// Abort if nothing has been entered
-					if (messageTextbox.getString().length() < 1)
-					{
-						this.activate(true);
-					}
+					int msgType;
+					// Send a status message request message
+					if (getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_AWAY) msgType = Message.MESSAGE_TYPE_AWAY;
+					else if (getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OCCUPIED) msgType = Message.MESSAGE_TYPE_OCC;
+					else if (getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_DND) msgType = Message.MESSAGE_TYPE_DND;
+					else if (getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_CHAT) msgType = Message.MESSAGE_TYPE_FFC;
+					else msgType = Message.MESSAGE_TYPE_AWAY;
 
+					PlainMessage awayReq = new PlainMessage(Options.getStringOption(Options.OPTION_UIN), ContactListContactItem.this, msgType, new Date(), "");
 
-					// Send plain message
-					if ((eventList[menuList.getSelectedIndex()] == USER_MENU_MESSAGE) 
-							&& !messageTextbox.getString().equals(""))
-					{
-						// Send message via icq
-						sendMessage(messageTextbox.getString());
-                        
-						// Return to chat or menu
-						this.activate(true);
-						
-						// Clear text in messageTextbox
-						messageTextbox.setString(null);
-						
-						// Clear clipboard
-						if (repliedWithQuota) JimmUI.clearClipBoardText();
-						getCurrDisplay().removeCommand(replWithQuotaCommand);
-						repliedWithQuota = false;
-					}
-					
-					// Send URL message (continue creation)
-					else if (eventList[menuList.getSelectedIndex()] == USER_MENU_URL)
-					{
-						// Reset and display textbox for entering URLs
-						urlTextbox.setString(null);
-						urlTextbox.setCommandListener(this);
-						Jimm.display.setCurrent(urlTextbox);
-					}
-
-				}
-				// URL has been entered
-				else if (d == urlTextbox)
-				{
-
-					// Abort if nothing has been entered
-					if (urlTextbox.getString().length() < 1)
-					{
-						this.activate(true);
-					}
-
-					// Construct URL message object and request new
-					// SendMessageAction
-					UrlMessage urlMsg = new UrlMessage(Options.getStringOption(Options.OPTION_UIN), ContactListContactItem.this, Message.MESSAGE_TYPE_NORM,
-							new Date(), urlTextbox.getString(), messageTextbox.getString());
-					SendMessageAction sendMsgAct = new SendMessageAction(urlMsg);
+					SendMessageAction act = new SendMessageAction(awayReq);
 					try
 					{
-						Icq.requestAction(sendMsgAct);
-					} catch (JimmException e)
+						Icq.requestAction(act);
+
+					}
+					catch (JimmException e)
 					{
 						JimmException.handleException(e);
 						if (e.isCritical()) return;
 					}
-
-					// Return to contact list
-					this.activate(true);
-
 				}
-				// Reason has been entered
-				else if (d == reasonTextbox)
+				break;
+
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			// #sijapp cond.if modules_FILES is "true"#                    
+			case USER_MENU_FILE_TRANS:
+				// Send a filetransfer with a file given by path
+				// We can only make file transfers with ICQ clients prot V8 and up
+				if (getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
 				{
-					
-					SystemNotice notice;
-
-					// Decrease the number of handled auth requests by one
-					if (!getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON)) 
-						setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS,getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS)-1);
-
-					// If or if not a reason was entered
-					// Though this box is used twice (reason for auth request and auth repley)
-					// we have to distinguish what we wanna do requReason is used for that
-					if (reasonTextbox.getString().length() < 1)
-					{
-						if (getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON))
-							notice = new SystemNotice(SystemNotice.SYS_NOTICE_REQUAUTH, ContactListContactItem.this
-									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, "");
-						else
-							notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this
-									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, "");
-					} else
-					{
-						if (getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON))
-							notice = new SystemNotice(SystemNotice.SYS_NOTICE_REQUAUTH, ContactListContactItem.this
-									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, reasonTextbox.getString());
-						else
-							notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this
-									.getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, reasonTextbox.getString());
-					}
-
-					// Assemble the sysNotAction and request it
-					SysNoticeAction sysNotAct = new SysNoticeAction(notice);
-					UpdateContactListAction updateAct = new UpdateContactListAction(ContactListContactItem.this, UpdateContactListAction.ACTION_ADD);
-
-					try
-					{
-						Icq.requestAction(sysNotAct);
-						if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) Icq.requestAction(updateAct);
-					} catch (JimmException e)
-					{
-						JimmException.handleException(e);
-						if (e.isCritical()) return;
-					}
-					setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON,false);
-					ContactList.activate();
+					JimmException.handleException(new JimmException(190, 0, true));
 				}
-			}
-			
-			// user select Ok in delete contact message box
-			else if (JimmUI.isMsgBoxCommand(c, MSGBS_DELETECONTACT) == JimmUI.CMD_OK)
-			{
-				Icq.delFromContactList(ContactListContactItem.this);
-				//#sijapp cond.if modules_HISTORY is "true" #
-				HistoryStorage.clearHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-				//#sijapp cond.end# 
-			}
-			
-			// user select CANCEL in delete contact message box
-			else if (JimmUI.isMsgBoxCommand(c, MSGBS_DELETECONTACT) == JimmUI.CMD_CANCEL)
-			{
-				this.activate(true);
-			}
-
-			// user select Ok in delete me message box
-			else if (JimmUI.isMsgBoxCommand(c, MSGBS_REMOVEME) == JimmUI.CMD_OK)
-			{
-				RemoveMeAction remAct = new RemoveMeAction(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-
-				try
-				{
-					Icq.requestAction(remAct);
-				} catch (JimmException e)
-				{
-					JimmException.handleException(e);
-					if (e.isCritical()) return;
-				}
-				ContactList.activate();
-			}
-			
-			// user select CANCEL in delete contact message box
-			else if (JimmUI.isMsgBoxCommand(c, MSGBS_REMOVEME) == JimmUI.CMD_CANCEL)
-			{
-				this.activate(true);
-			}
-
-			// Textbox has been canceled
-			else if (c == textboxCancelCommand)
-			{
-				this.activate(true);
-			}
-			// Menu should be activated
-			else if (c == addMenuCommand)
-			{
-				menuList.setTitle(name);
-				menuList.setSelectedIndex(0, true);
-				menuList.setCommandListener(this);
-				Jimm.display.setCurrent(menuList);
-			}
-			
-			// Delete chat history
-			else if (c == deleteChatCommand)
-			{
-				Jimm.jimm.getChatHistoryRef().chatHistoryDelete(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-				ContactListContactItem.this.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,false);
-				ContactList.activate();
-			}
-			
-			//Grant authorisation
-			else if (c == grantAuthCommand)
-			{
-				setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS,getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS)-1);
-				SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, ContactListContactItem.this
-						.getStringValue(ContactListContactItem.CONTACTITEM_UIN), true, "");
-				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
-				try
-				{
-					Icq.requestAction(sysNotAct);
-				} catch (JimmException e)
-				{
-					JimmException.handleException(e);
-					if (e.isCritical()) return;
-				}
-				this.activate(true);
-			}
-			//Deny authorisation OR request authorisation
-			else if (c == denyAuthCommand || c == reqAuthCommand)
-			{
-				// Reset and display textbox for entering deney reason
-				if (c == reqAuthCommand) setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON,true);
-				if (c == reqAuthCommand)
-					reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
 				else
-					reasonTextbox.setString(null);
+				{
+					ft = new FileTransfer(FileTransfer.FT_TYPE_FILE_BY_NAME, this);
+					ft.startFT();
+				}
+				break;
+
+			// #sijapp cond.if target isnot "MOTOROLA" #
+			case USER_MENU_CAM_TRANS:
+				// Send a filetransfer with a camera image
+				// We can only make file transfers with ICQ clients prot V8 and up
+				if (getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
+				{
+					JimmException.handleException(new JimmException(190, 0, true));
+				}
+				else
+				{
+					ft = new FileTransfer(FileTransfer.FT_TYPE_CAMERA_SNAPSHOT, ContactListContactItem.this);
+					ft.startFT();
+				}
+				break;
+			// #sijapp cond.end#
+			// #sijapp cond.end#
+			// #sijapp cond.end#
+
+			case USER_MENU_USER_REMOVE:
+				JimmUI.messageBox
+				(
+					ResourceBundle.getString("remove") + "?",
+					ResourceBundle.getString("remove") + " " + name + "?",
+					JimmUI.MESBOX_OKCANCEL, 
+					this,
+					MSGBS_DELETECONTACT
+				);
+				break;
+
+			case USER_MENU_REMOVE_ME:
+				// Remove me from other users contact list
+				JimmUI.messageBox
+				(
+					ResourceBundle.getString("remove_me") + "?",
+					ResourceBundle.getString("remove_me_from") + name + "?",
+					JimmUI.MESBOX_OKCANCEL,
+					this,
+					MSGBS_REMOVEME
+				);
+				break;
+
+			case USER_MENU_RENAME:
+				// Rename the contact local and on the server
+				// Reset and display textbox for entering name
+				messageTextbox.setTitle(ResourceBundle.getString("rename"));
+				messageTextbox.setString(name);
+				clearMessBoxCommands();
+				messageTextbox.addCommand(renameOkCommand);
+				messageTextbox.setCommandListener(this);
+				Jimm.display.setCurrent(messageTextbox);
+				break;
+
+			// #sijapp cond.if modules_HISTORY is "true" #                    
+			case USER_MENU_HISTORY:
+				// Stored history
+				HistoryStorage.showHistoryList(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+				break;
+			// #sijapp cond.end#
+
+			case USER_MENU_USER_INFO:
+				showInfo();
+				break;
+
+			// Show Timeing info and DC info 
+			case USER_MENU_LOCAL_INFO:
+				cmdClientInfoBack = new Command(ResourceBundle.getString("back"), Command.BACK, 0);
+				clientInfo = new TextList(null);
+				clientInfo.addCommand(cmdClientInfoBack);
+				clientInfo.setCommandListener(this);
+				JimmUI.setColorScheme(clientInfo);
+				clientInfo.setCursorMode(TextList.SEL_NONE);
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+				clientInfo.setTitle(ResourceBundle.getString("dc_info"));
+				clientInfo.setFontSize(Font.SIZE_MEDIUM);
+				// #sijapp cond.else#
+				clientInfo.setFontSize(Font.SIZE_SMALL);
+				clientInfo.setCaption(ResourceBundle.getString("dc_info"));
+				// #sijapp cond.end#
+				clientInfo.clear();
+				bigTextIndex = 0;
+
+				if (getLongValue(ContactListContactItem.CONTACTITEM_SIGNON) > 0)
+				{
+					Date signon = new Date(getLongValue(ContactListContactItem.CONTACTITEM_SIGNON));
+					addToTextList(ResourceBundle.getString("li_signon_time"), Util.getDateString(false, signon));
+				}
+				if (getLongValue(ContactListContactItem.CONTACTITEM_ONLINE) > 0)
+				{
+					StringBuffer buf = new StringBuffer();
+					long online = getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
+					if ((online / 86400) != 0)
+					{
+						buf.append(online / 86400 + ResourceBundle.getString("days") + " ");
+						online = online % 86400;
+					}
+					if ((online / 3600) != 0)
+					{
+						buf.append(online / 3600 + ResourceBundle.getString("hours") + " ");
+						online = online % 3600;
+					}
+					buf.append(online / 60 + ResourceBundle.getString("minutes"));
+					addToTextList(ResourceBundle.getString("li_online_time"), buf.toString());
+				}
+				if (getIntValue(ContactListContactItem.CONTACTITEM_IDLE) > 0)
+				{
+					StringBuffer buf = new StringBuffer();
+					int idleTime = getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
+					if ((idleTime / 60) != 0) buf.append(idleTime / 60 + "h ");
+					buf.append(idleTime % 60 + ResourceBundle.getString("minutes"));
+					addToTextList(ResourceBundle.getString("li_idle_time"), buf.toString());
+				}
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+				//#sijapp cond.if modules_FILES is "true"#                     
+				addToTextList("DC typ", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE)));
+				addToTextList("ICQ version", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT)));
+				addToTextList("ICQ client", getClientString((byte)getIntValue(ContactListContactItem.CONTACTITEM_CLIENT))+ " " + getStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION));
+				addToTextList("Int IP", Util.ipToString((byte[])getObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)));
+				addToTextList("Ext IP", Util.ipToString((byte[])getObjectValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP)));
+				addToTextList("Port", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT)));
+				// #sijapp cond.end#
+				// #sijapp cond.end# 
+
+				Jimm.display.setCurrent(clientInfo);
+				break;
+
+			case USER_MENU_REQU_AUTH:
+				// Request auth
+				setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, true);
+				reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
 				reasonTextbox.removeCommand(textboxOkCommand);
 				reasonTextbox.addCommand(textboxSendCommand);
 				reasonTextbox.setCommandListener(this);
 				Jimm.display.setCurrent(reasonTextbox);
+				break;
+
+			case USER_MENU_INVIS_CHECK:
+				checkForInvis();
+				break;
 			}
-			
-			// User wants to insert emotion in text
-			//#sijapp cond.if modules_SMILES is "true" # 
-			else if (c == insertEmotionCommand)
-			{
-				caretPos = messageTextbox.getCaretPosition();
-				Emotions.selectEmotion(this, messageTextbox);
-			}
-			
-			// User select a emotion
-			else if ( Emotions.isMyOkCommand(c) )
-			{
-				// #sijapp cond.if target is "MOTOROLA"#
-				//caretPos = messageTextbox.getString().length();
-				// #sijapp cond.end#
-				
-				messageTextbox.insert
-				(
-					" "+Emotions.getSelectedEmotion()+" ",
-					caretPos
-				);
-			}
-			// #sijapp cond.end#
 		}
-		
-		public void sendMessage(String text)
+
+		// User wants to add temporary contact
+		else if (c == addUrsCommand)
 		{
-            // Construct plain message object and request new SendMessageAction
-			// Add the new message to the chat history
-			
-			if (text == null) return;
-			if (text.length() == 0) return;
-		
-			PlainMessage plainMsg = 
-				new PlainMessage
-				    (
-				    	Options.getStringOption(Options.OPTION_UIN),
-				    	this,
-				    	Message.MESSAGE_TYPE_NORM,
-				    	new Date(),
-				    	text
-				    );
-			
-			SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
+			MainMenu.addUserOrGroupCmd(getStringValue(ContactListContactItem.CONTACTITEM_UIN), true);
+		}
+
+		// User adds selected message to history
+		//#sijapp cond.if modules_HISTORY is "true" #
+		else if (c == addToHistoryCommand)
+		{
+			Jimm.jimm.getChatHistoryRef().addTextToHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+		}
+		//#sijapp cond.end#
+
+		// "Copy text" command selected
+		else if (c == copyTextCommand)
+		{
+			Jimm.jimm.getChatHistoryRef().copyText(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			getCurrDisplay().addCommand(replWithQuotaCommand);
+		}
+
+		// User wants to rename Contact
+		else if (c == renameOkCommand)
+		{
+			name = messageTextbox.getString();
 			try
 			{
-				Icq.requestAction(sendMsgAct);
-			} catch (JimmException e)
-			{
-				ContactList.activate(JimmException.handleException(e));
-                if (e.isCritical()) return;
+				// Save ContactList
+				ContactList.save();
+
+				// Try to save ContactList to server
+				UpdateContactListAction action = new UpdateContactListAction(this, UpdateContactListAction.ACTION_RENAME);
+				Icq.requestAction(action);
 			}
-            Jimm.jimm.getChatHistoryRef().addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getDate(), name);
-            
-            // #sijapp cond.if modules_HISTORY is "true" #
-            if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
-                HistoryStorage.addText(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
-            // #sijapp cond.end#
-		}
-		
-		static private int caretPos;
-		
-		Displayable getCurrDisplay()
-		{
-			return Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN)).getDisplayable();
-		}
-		
-		// Activates the contact item menu
-		public void activate(boolean initChat)
-		{
-			currentUin = new String(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-			
-			//#sijapp cond.if modules_HISTORY is "true" #
-			Jimm.jimm.getChatHistoryRef().fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
-			//#sijapp cond.end#
-
-			
-			// Display chat history
-			if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
+			catch (JimmException je)
 			{
-				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
-				Displayable msgDisplay = getCurrDisplay();
+				messageTextbox.setString(null);
+				if (je.isCritical()) return;
+			}
+			catch (Exception e)
+			{
+				// Do nothing
+			}
 
-                msgDisplay.removeCommand(addUrsCommand);
-				msgDisplay.removeCommand(grantAuthCommand);
-				msgDisplay.removeCommand(denyAuthCommand);
-				msgDisplay.removeCommand(reqAuthCommand);
-				msgDisplay.removeCommand(replWithQuotaCommand);
-				msgDisplay.addCommand(copyTextCommand);
-				msgDisplay.addCommand(msgCloseCommand);
-				msgDisplay.addCommand(msgReplyCommand);
-				msgDisplay.addCommand(deleteChatCommand);
-				msgDisplay.addCommand(addMenuCommand);
-				//#sijapp cond.if modules_HISTORY is "true" #
-				msgDisplay.removeCommand(addToHistoryCommand);
-				if ( !Options.getBooleanOption(Options.OPTION_HISTORY) )
-					msgDisplay.addCommand(addToHistoryCommand);
-				//#sijapp cond.end#
-				if (ContactListContactItem.this.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
+			Jimm.jimm.getChatHistoryRef().contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+			ContactList.activate();
+			messageTextbox.setString(null);
+		}
+		// Textbox has been closed
+		else if ((c == textboxOkCommand) || (c == textboxSendCommand))
+		{
+			// Message has been entered
+			if (d == messageTextbox)
+			{
+				// Abort if nothing has been entered
+				if (messageTextbox.getString().length() < 1)
 				{
-					msgDisplay.addCommand(grantAuthCommand);
-					msgDisplay.addCommand(denyAuthCommand);
+					this.activate(true);
 				}
-				
-				if (JimmUI.getClipBoardText() != null) msgDisplay.addCommand(replWithQuotaCommand);
-				
-				if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
 
-				msgDisplay.setCommandListener(this);
-				if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) && !getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) 
-                    msgDisplay.addCommand(addUrsCommand);
-				Jimm.jimm.getChatHistoryRef().UpdateCaption(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-				// Display history
-				ContactListContactItem.this.resetUnreadMessages();
+				// Send plain message
+				if ((eventList[menuList.getSelectedIndex()] == USER_MENU_MESSAGE)
+						&& !messageTextbox.getString().equals(""))
+				{
+					// Send message via icq
+					sendMessage(messageTextbox.getString());
 
-				Jimm.jimm.getChatHistoryRef().getChatHistoryAt( ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat);
-				
-				// #sijapp cond.if target is "MOTOROLA"#
-				LightControl.flash(false);
-				// #sijapp cond.end#
+					// Return to chat or menu
+					this.activate(true);
+
+					// Clear text in messageTextbox
+					messageTextbox.setString(null);
+
+					// Clear clipboard
+					if (repliedWithQuota) JimmUI.clearClipBoardText();
+					getCurrDisplay().removeCommand(replWithQuotaCommand);
+					repliedWithQuota = false;
+				}
+
+				// Send URL message (continue creation)
+				else if (eventList[menuList.getSelectedIndex()] == USER_MENU_URL)
+				{
+					// Reset and display textbox for entering URLs
+					urlTextbox.setString(null);
+					urlTextbox.setCommandListener(this);
+					Jimm.display.setCurrent(urlTextbox);
+				}
 
 			}
-			// Display menu
-			else
+			// URL has been entered
+			else if (d == urlTextbox)
 			{
-				initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
-                menuList.setTitle(name);
-				menuList.setSelectedIndex(0, true);
-				menuList.setCommandListener(this);
-				Jimm.display.setCurrent(menuList);
-				// #sijapp cond.if target is "MOTOROLA"#
-				LightControl.flash(true);
-				// #sijapp cond.end#
+
+				// Abort if nothing has been entered
+				if (urlTextbox.getString().length() < 1)
+				{
+					this.activate(true);
+				}
+
+				// Construct URL message object and request new
+				// SendMessageAction
+				UrlMessage urlMsg = new UrlMessage(Options.getStringOption(Options.OPTION_UIN), this, Message.MESSAGE_TYPE_NORM, new Date(), urlTextbox.getString(), messageTextbox.getString());
+				SendMessageAction sendMsgAct = new SendMessageAction(urlMsg);
+				try
+				{
+					Icq.requestAction(sendMsgAct);
+				}
+				catch (JimmException e)
+				{
+					JimmException.handleException(e);
+					if (e.isCritical()) return;
+				}
+
+				// Return to contact list
+				this.activate(true);
+
+			}
+			// Reason has been entered
+			else if (d == reasonTextbox)
+			{
+
+				SystemNotice notice;
+
+				// Decrease the number of handled auth requests by one
+				if (!getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON)) setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) - 1);
+
+				// If or if not a reason was entered
+				// Though this box is used twice (reason for auth request and auth repley)
+				// we have to distinguish what we wanna do requReason is used for that
+				if (reasonTextbox.getString().length() < 1)
+				{
+					if (getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON)) 
+						notice = new SystemNotice(SystemNotice.SYS_NOTICE_REQUAUTH, getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, "");
+					else
+						notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE,getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, "");
+				}
+				else
+				{
+					if (getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON))
+						notice = new SystemNotice(SystemNotice.SYS_NOTICE_REQUAUTH, getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, reasonTextbox.getString());
+					else
+						notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, reasonTextbox.getString());
+				}
+
+				// Assemble the sysNotAction and request it
+				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
+				UpdateContactListAction updateAct = new UpdateContactListAction(this, UpdateContactListAction.ACTION_ADD);
+
+				try
+				{
+					Icq.requestAction(sysNotAct);
+					if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) Icq.requestAction(updateAct);
+				}
+				catch (JimmException e)
+				{
+					JimmException.handleException(e);
+					if (e.isCritical()) return;
+				}
+				setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
+				ContactList.activate();
 			}
 		}
-	//}
+
+		// user select Ok in delete contact message box
+		else if (JimmUI.isMsgBoxCommand(c, MSGBS_DELETECONTACT) == JimmUI.CMD_OK)
+		{
+			Icq.delFromContactList(ContactListContactItem.this);
+			//#sijapp cond.if modules_HISTORY is "true" #
+			HistoryStorage.clearHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			//#sijapp cond.end# 
+		}
+
+		// user select CANCEL in delete contact message box
+		else if (JimmUI.isMsgBoxCommand(c, MSGBS_DELETECONTACT) == JimmUI.CMD_CANCEL)
+		{
+			this.activate(true);
+		}
+
+		// user select Ok in delete me message box
+		else if (JimmUI.isMsgBoxCommand(c, MSGBS_REMOVEME) == JimmUI.CMD_OK)
+		{
+			RemoveMeAction remAct = new RemoveMeAction(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+
+			try
+			{
+				Icq.requestAction(remAct);
+			}
+			catch (JimmException e)
+			{
+				JimmException.handleException(e);
+				if (e.isCritical()) return;
+			}
+			ContactList.activate();
+		}
+
+		// user select CANCEL in delete contact message box
+		else if (JimmUI.isMsgBoxCommand(c, MSGBS_REMOVEME) == JimmUI.CMD_CANCEL)
+		{
+			this.activate(true);
+		}
+
+		// Textbox has been canceled
+		else if (c == textboxCancelCommand)
+		{
+			this.activate(true);
+		}
+		// Menu should be activated
+		else if (c == addMenuCommand)
+		{
+			menuList.setTitle(name);
+			menuList.setSelectedIndex(0, true);
+			menuList.setCommandListener(this);
+			Jimm.display.setCurrent(menuList);
+		}
+
+		// Delete chat history
+		else if (c == deleteChatCommand)
+		{
+			Jimm.jimm.getChatHistoryRef().chatHistoryDelete(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, false);
+			ContactList.activate();
+		}
+
+		//Grant authorisation
+		else if (c == grantAuthCommand)
+		{
+			setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) - 1);
+			SystemNotice notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, getStringValue(ContactListContactItem.CONTACTITEM_UIN), true, "");
+			SysNoticeAction sysNotAct = new SysNoticeAction(notice);
+			try
+			{
+				Icq.requestAction(sysNotAct);
+			}
+			catch (JimmException e)
+			{
+				JimmException.handleException(e);
+				if (e.isCritical()) return;
+			}
+			this.activate(true);
+		}
+		//Deny authorisation OR request authorisation
+		else if (c == denyAuthCommand || c == reqAuthCommand)
+		{
+			// Reset and display textbox for entering deney reason
+			if (c == reqAuthCommand) setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, true);
+			if (c == reqAuthCommand) reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
+			else reasonTextbox.setString(null);
+			reasonTextbox.removeCommand(textboxOkCommand);
+			reasonTextbox.addCommand(textboxSendCommand);
+			reasonTextbox.setCommandListener(this);
+			Jimm.display.setCurrent(reasonTextbox);
+		}
+
+		// User wants to insert emotion in text
+		//#sijapp cond.if modules_SMILES is "true" # 
+		else if (c == insertEmotionCommand)
+		{
+			caretPos = messageTextbox.getCaretPosition();
+			Emotions.selectEmotion(this, messageTextbox);
+		}
+
+		// User select a emotion
+		else if (Emotions.isMyOkCommand(c))
+		{
+			// #sijapp cond.if target is "MOTOROLA"#
+			//caretPos = messageTextbox.getString().length();
+			// #sijapp cond.end#
+
+			messageTextbox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
+		}
+		// #sijapp cond.end#
+	}
+		
+	public void sendMessage(String text)
+	{
+		// Construct plain message object and request new SendMessageAction
+		// Add the new message to the chat history
+
+		if (text == null) return;
+		if (text.length() == 0) return;
+		
+		PlainMessage plainMsg = 
+			new PlainMessage
+			    (
+			    	Options.getStringOption(Options.OPTION_UIN),
+			    	this,
+			    	Message.MESSAGE_TYPE_NORM,
+			    	new Date(),
+			    	text
+			    );
+			
+		SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
+		try
+		{
+			Icq.requestAction(sendMsgAct);
+		} catch (JimmException e)
+		{
+			ContactList.activate(JimmException.handleException(e));
+               if (e.isCritical()) return;
+		}
+		Jimm.jimm.getChatHistoryRef().addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getDate(), name);
+
+		// #sijapp cond.if modules_HISTORY is "true" #
+		if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
+			HistoryStorage.addText(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
+		// #sijapp cond.end#
+	}
+		
+	static private int caretPos;
+		
+	Displayable getCurrDisplay()
+	{
+		return Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN)).getDisplayable();
+	}
+		
+	// Activates the contact item menu
+	public void activate(boolean initChat)
+	{
+		currentUin = new String(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+		
+		//#sijapp cond.if modules_HISTORY is "true" #
+		Jimm.jimm.getChatHistoryRef().fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+		//#sijapp cond.end#
+			
+		// Display chat history
+		if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
+		{
+			initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
+			Displayable msgDisplay = getCurrDisplay();
+
+			msgDisplay.removeCommand(addUrsCommand);
+			msgDisplay.removeCommand(grantAuthCommand);
+			msgDisplay.removeCommand(denyAuthCommand);
+			msgDisplay.removeCommand(reqAuthCommand);
+			msgDisplay.removeCommand(replWithQuotaCommand);
+			msgDisplay.addCommand(copyTextCommand);
+			msgDisplay.addCommand(msgCloseCommand);
+			msgDisplay.addCommand(msgReplyCommand);
+			msgDisplay.addCommand(deleteChatCommand);
+			msgDisplay.addCommand(addMenuCommand);
+			//#sijapp cond.if modules_HISTORY is "true" #
+			msgDisplay.removeCommand(addToHistoryCommand);
+			if ( !Options.getBooleanOption(Options.OPTION_HISTORY) )
+				msgDisplay.addCommand(addToHistoryCommand);
+			//#sijapp cond.end#
+			if (ContactListContactItem.this.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
+			{
+				msgDisplay.addCommand(grantAuthCommand);
+				msgDisplay.addCommand(denyAuthCommand);
+			}
+			
+			if (JimmUI.getClipBoardText() != null) msgDisplay.addCommand(replWithQuotaCommand);
+			
+			if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
+				msgDisplay.setCommandListener(this);
+				
+			if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) && !getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) 
+                   msgDisplay.addCommand(addUrsCommand);
+			
+			Jimm.jimm.getChatHistoryRef().UpdateCaption(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			
+			// Display history
+			ContactListContactItem.this.resetUnreadMessages();
+			Jimm.jimm.getChatHistoryRef().getChatHistoryAt( ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat);
+				
+			// #sijapp cond.if target is "MOTOROLA"#
+			LightControl.flash(false);
+			// #sijapp cond.end#
+		}
+		// Display menu
+		else
+		{
+			initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
+			menuList.setTitle(name);
+			menuList.setSelectedIndex(0, true);
+			menuList.setCommandListener(this);
+			Jimm.display.setCurrent(menuList);
+			// #sijapp cond.if target is "MOTOROLA"#
+			LightControl.flash(true);
+			// #sijapp cond.end#
+		}
+	}
 
 	/****************************************************************************/
 	/****************************************************************************/
@@ -1540,7 +1601,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
     private static final int USER_MENU_RENAME           = 9;
     // #sijapp cond.if modules_HISTORY is "true"#         
     private static final int USER_MENU_HISTORY          = 10;
-    // #sijapp cond.end#             
+    // #sijapp cond.end#
     private static final int USER_MENU_LOCAL_INFO       = 11;
     private static final int USER_MENU_USER_INFO        = 12;
     private static final int USER_MENU_QUOTA            = 14;
