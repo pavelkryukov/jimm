@@ -34,7 +34,7 @@ import jimm.SplashCanvas;
 import DrawControls.*;
 
 
-public class ContactListContactItem /*extends ValuesStorage*/ implements CommandListener, ContactListItem
+public class ContactListContactItem implements CommandListener, ContactListItem
 {
 	// No capability
 	public static final int CAP_NO_INTERNAL = 0x00000000;
@@ -163,25 +163,21 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	Variable key          Value
 	  0 -  63 (00XXXXXX)  String
 	 64 - 127 (01XXXXXX)  INTEGER
-	128 - 191 (10XXXXXX)  BOOLEAN
 	192 - 224 (110XXXXX)  LONG
 	225 - 255 (111XXXXX)  OBJECT
 	******************************************************************************/
 	
-	final private static int BOOL_START = 128;
 	final private static int OBJ_START  = 225;
 	
-	private boolean[] boolValues = null;
 	private Object[] objectValues = null;
 	
 	private int    id,
 	               caps,
 	               group,
 	               idle,
-	               plainMessages, 
-	               urlMessages, 
-	               sysNotices, 
-	               authRequests;
+	               booleanValues,
+	               plainAndUrlMessages, 
+	               sysNoticesAndAuthRequests;
 	//#sijapp cond.if modules_FILES is "true"#
 	private int    dcType,
 	               dcPort, 
@@ -232,10 +228,22 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		{
 		case CONTACTITEM_ID:            id = value;            return;
 		case CONTACTITEM_GROUP:         group = value;         return;
-		case CONTACTITEM_PLAINMESSAGES: plainMessages = value; return;
-		case CONTACTITEM_URLMESSAGES:   urlMessages = value;   return;
-		case CONTACTITEM_SYSNOTICES:    sysNotices = value;    return;
-		case CONTACTITEM_AUTREQUESTS:   authRequests = value;  return;
+		case CONTACTITEM_PLAINMESSAGES:
+			plainAndUrlMessages = (plainAndUrlMessages & 0x0000FFFF) | (value << 16);
+			return;
+			
+		case CONTACTITEM_URLMESSAGES:
+			plainAndUrlMessages = (plainAndUrlMessages & 0xFFFF0000) | value;
+			return;
+			
+		case CONTACTITEM_SYSNOTICES:
+			sysNoticesAndAuthRequests = (sysNoticesAndAuthRequests & 0x0000FFFF) | (value << 16);
+			return;
+			
+		case CONTACTITEM_AUTREQUESTS:
+			sysNoticesAndAuthRequests = (sysNoticesAndAuthRequests & 0xFFFF0000) | value;
+			return;
+		
 		case CONTACTITEM_IDLE:          idle = value;          return;
 		case CONTACTITEM_CAPABILITIES:  caps = value;          return;
 		//#sijapp cond.if modules_FILES is "true"#
@@ -254,10 +262,10 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		{
 		case CONTACTITEM_ID:            return id;
 		case CONTACTITEM_GROUP:         return group;
-		case CONTACTITEM_PLAINMESSAGES: return plainMessages;
-		case CONTACTITEM_URLMESSAGES:   return urlMessages;
-		case CONTACTITEM_SYSNOTICES:    return sysNotices;
-		case CONTACTITEM_AUTREQUESTS:   return authRequests;
+		case CONTACTITEM_PLAINMESSAGES: return (plainAndUrlMessages & 0xFFFF0000) >> 16;
+		case CONTACTITEM_URLMESSAGES:   return (plainAndUrlMessages & 0x0000FFFF);
+		case CONTACTITEM_SYSNOTICES:    return (sysNoticesAndAuthRequests & 0xFFFF0000) >> 16;
+		case CONTACTITEM_AUTREQUESTS:   return (sysNoticesAndAuthRequests & 0x0000FFFF);
 		case CONTACTITEM_IDLE:          return idle;
 		case CONTACTITEM_CAPABILITIES:  return caps;
 		//#sijapp cond.if modules_FILES is "true"#
@@ -275,20 +283,12 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	
 	synchronized public void setBooleanValue(int key, boolean value)
 	{
-		int index = key-BOOL_START;
-		if (boolValues == null) boolValues = new boolean[index+1];
-		else if (boolValues.length <= index)
-		{
-			boolean[] boolNewValues = new boolean[index+1];
-			System.arraycopy(boolValues, 0, boolNewValues, 0, boolValues.length);
-			boolValues = boolNewValues;
-		}
-		boolValues[index] = value;
+		booleanValues = (booleanValues & (~key)) | (value ? key : 0x00000000);
 	}
 	
 	synchronized public boolean getBooleanValue(int key)
 	{
-		return boolValues[key-BOOL_START];
+		return (booleanValues&key) != 0;
 	}
 	
 ///////////////////////////////////////////////////////////////////////////
@@ -353,12 +353,12 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	public static final int CONTACTITEM_SYSNOTICES				= 69;  /* Integer */
 	public static final int CONTACTITEM_AUTREQUESTS				= 70;  /* Integer */
 	public static final int CONTACTITEM_IDLE					= 71;  /* Integer */
-	public static final int CONTACTITEM_ADDED					= 128; /* Boolean */
-	public static final int CONTACTITEM_NO_AUTH					= 129; /* Boolean */
-	public static final int CONTACTITEM_CHAT_SHOWN				= 130; /* Boolean */
-	public static final int CONTACTITEM_IS_TEMP					= 131; /* Boolean */
-	public static final int CONTACTITEM_HAS_CHAT				= 132; /* Boolean */
-	public static final int CONTACTITEM_REQU_REASON				= 133; /* Boolean */
+	public static final int CONTACTITEM_ADDED					= 1 << 0; /* Boolean */
+	public static final int CONTACTITEM_NO_AUTH					= 1 << 1; /* Boolean */
+	public static final int CONTACTITEM_CHAT_SHOWN				= 1 << 2; /* Boolean */
+	public static final int CONTACTITEM_IS_TEMP					= 1 << 3; /* Boolean */
+	public static final int CONTACTITEM_HAS_CHAT				= 1 << 4; /* Boolean */
+	public static final int CONTACTITEM_REQU_REASON				= 1 << 5; /* Boolean */
 	public static final int CONTACTITEM_STATUS					= 192; /* Long */
 	public static final int CONTACTITEM_SIGNON					= 194; /* Long */
 	public static final int CONTACTITEM_ONLINE					= 195; /* Long */
@@ -898,8 +898,8 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 	{
 		if (data.length() == 0) return;
 		clientInfo
-			.addBigText(ResourceBundle.getString(langStr)+": ", clientInfo.getTextColor(), Font.STYLE_BOLD, bigTextIndex)
-			.addBigText(data, Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_BOLD, bigTextIndex)
+			.addBigText(ResourceBundle.getString(langStr)+": ", clientInfo.getTextColor(), Font.STYLE_PLAIN, bigTextIndex)
+			.addBigText(data, Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_PLAIN, bigTextIndex)
 			.doCRLF(bigTextIndex);
 		bigTextIndex++;
 	}
@@ -932,7 +932,7 @@ public class ContactListContactItem /*extends ValuesStorage*/ implements Command
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 	}
 
-		// Command listener
+	// Command listener
 	public void commandAction(Command c, Displayable d)
 	{
 
