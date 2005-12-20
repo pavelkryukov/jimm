@@ -705,6 +705,7 @@ class OptionsForm implements CommandListener
 		keysMenu.setSelectedIndex(lastItemIndex == -1 ? 0 : lastItemIndex, true);
 		
 		keysMenu.addCommand(saveCommand);
+		keysMenu.addCommand(backCommand);
 		Jimm.display.setCurrent(keysMenu);			
 	} 
 	
@@ -1027,7 +1028,7 @@ class OptionsForm implements CommandListener
 		// Look for back command
 		else if (c == backCommand)
 		{
-			if (d == optionsForm)
+			if (d == optionsForm || d == keysMenu)
 			{
                optionsMenu.addCommand(backCommand);
                Jimm.display.setCurrent(optionsMenu);
