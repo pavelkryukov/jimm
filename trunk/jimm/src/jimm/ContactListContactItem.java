@@ -167,10 +167,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	225 - 255 (111XXXXX)  OBJECT
 	******************************************************************************/
 	
-	final private static int OBJ_START  = 225;
-	
-	private Object[] objectValues = null;
-	
 	private int    id,
 	               caps,
 	               group,
@@ -182,8 +178,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	private int    dcType,
 	               dcPort, 
 	               icqProt,
-	               clientId;
+	               clientId,
+	               intIP,
+	               extIP;
+	
 	private long   authCookie;
+	
 	// #sijapp cond.end #
 	
 	private long   uinLong,
@@ -204,7 +204,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_UIN:        uinLong = Long.parseLong(value); return;
 		case CONTACTITEM_NAME:       name = value; lowerText = null; return;
 		case CONTACTITEM_CLIVERSION: clientVersion = value; return;
-		default: System.out.println("setStringValue: Wrong key!"); // <= DEBUG
 		}
 	}
 	
@@ -215,7 +214,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_UIN:        return Long.toString(uinLong);
 		case CONTACTITEM_NAME:       return name;
 		case CONTACTITEM_CLIVERSION: return clientVersion;
-		default: System.out.println("getStringValue: Wrong key!"); // <= DEBUG
 		}
 		return null;
 	}
@@ -252,7 +250,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_DC_PORT:       dcPort = value;        return;
 		case CONTACTITEM_CLIENT:     	clientId = value;      return;
 		// #sijapp cond.end #
-		default: System.out.println("setIntValue: Wrong key! "+key); // <= DEBUG
 		}
 	}
 	
@@ -274,7 +271,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_DC_PORT:       return dcPort;
 		case CONTACTITEM_CLIENT:        return clientId;
 		// #sijapp cond.end #
-		default: System.out.println("getIntValue: Wrong key! "+key); // <= DEBUG
 		}
 		return 0;
 	}
@@ -303,7 +299,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_AUTH_COOKIE: authCookie = value; return;
 		// #sijapp cond.end #
-		default: System.out.println("setLongValue: Wrong key!"); // <= DEBUG
 		}
 	}
 	
@@ -317,31 +312,52 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_AUTH_COOKIE: return authCookie;
 		// #sijapp cond.end #
-		default: System.out.println("getLongValue: Wrong key!"); // <= DEBUG
 		}
 		return 0;
 	}
 	
 ///////////////////////////////////////////////////////////////////////////
 	
-	synchronized public void setObjectValue(int key, Object value)
+	//#sijapp cond.if modules_FILES is "true"#
+	public static byte[] longIPToByteAray(int value)
 	{
-		int index = key-OBJ_START;
-		if (objectValues == null) objectValues = new Object[index+1];
-		else if (objectValues.length <= index)
+		return new byte[] 
+		                { 
+							(byte)( value&0x000000FF),
+							(byte)((value&0x0000FF00) >> 8),
+							(byte)((value&0x00FF0000) >> 16),
+							(byte)((value&0xFF000000) >> 24)
+						}; 
+	}
+	
+	public static int arrayToLongIP(byte[] array)
+	{
+		return   (int)array[0] & 0xFF       | 
+		       (((int)array[1] & 0xFF)<< 8) | 
+		       (((int)array[2] & 0xFF)<<16) |
+		       (((int)array[3] & 0xFF)<<24);
+	}
+
+	synchronized public void setIPValue(int key, byte[] value)
+	{
+		switch (key)
 		{
-			Object[] objectNewValues = new Object[index+1];
-			System.arraycopy(objectValues, 0, objectNewValues, 0, objectValues.length);
-			objectValues = objectNewValues;
+		case CONTACTITEM_INTERNAL_IP: intIP = arrayToLongIP(value); break;
+		case CONTACTITEM_EXTERNAL_IP: extIP = arrayToLongIP(value); break;
 		}
-		objectValues[index] = value;
 	}
 	
-	synchronized public Object getObjectValue(int key)
+	synchronized public byte[] getIPValue(int key)
 	{
-		return objectValues[key-OBJ_START];
+		switch (key)
+		{
+		case CONTACTITEM_INTERNAL_IP: return longIPToByteAray(intIP);
+		case CONTACTITEM_EXTERNAL_IP: return longIPToByteAray(extIP);
+		}
+		return null;
 	}
 	
+	// #sijapp cond.end #
 	
 	// Variable keys
 	public static final int CONTACTITEM_UIN						= 0;   /* String */
@@ -599,8 +615,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		// #sijapp cond.if modules_FILES is "true"#
-		setObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
-		setObjectValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
+		setIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
+		setIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
 		setIntValue(ContactListContactItem.CONTACTITEM_DC_PORT, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE, -1);
 		setIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT, 0);
@@ -1171,8 +1187,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				addToTextList("DC typ", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE)));
 				addToTextList("ICQ version", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT)));
 				addToTextList("ICQ client", getClientString((byte)getIntValue(ContactListContactItem.CONTACTITEM_CLIENT))+ " " + getStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION));
-				addToTextList("Int IP", Util.ipToString((byte[])getObjectValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)));
-				addToTextList("Ext IP", Util.ipToString((byte[])getObjectValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP)));
+				addToTextList("Int IP", Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)));
+				addToTextList("Ext IP", Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP)));
 				addToTextList("Port", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT)));
 				// #sijapp cond.end#
 				// #sijapp cond.end# 

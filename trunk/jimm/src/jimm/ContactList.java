@@ -901,7 +901,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // Update DC values
         if (dcType != -1)
         {
-            cItem.setObjectValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,internalIP);
+            cItem.setIPValue (ContactListContactItem.CONTACTITEM_INTERNAL_IP,internalIP);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_PORT, (int)dcPort);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_TYPE,dcType);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_ICQ_PROT,icqProt);
