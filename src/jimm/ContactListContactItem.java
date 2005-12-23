@@ -797,7 +797,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Adds a message to the message display
 	protected synchronized void addMessage(Message message)
 	{
-		Jimm.jimm.getChatHistoryRef().addMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN),message,this);
+		ChatHistory.addMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN), message,this);
 	}
 
 	public synchronized void resetUnreadMessages()
@@ -1206,14 +1206,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		//#sijapp cond.if modules_HISTORY is "true" #
 		else if (c == addToHistoryCommand)
 		{
-			Jimm.jimm.getChatHistoryRef().addTextToHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			ChatHistory.addTextToHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 		}
 		//#sijapp cond.end#
 
 		// "Copy text" command selected
 		else if (c == copyTextCommand)
 		{
-			Jimm.jimm.getChatHistoryRef().copyText(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			ChatHistory.copyText(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			getCurrDisplay().addCommand(replWithQuotaCommand);
 		}
 
@@ -1240,7 +1240,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				// Do nothing
 			}
 
-			Jimm.jimm.getChatHistoryRef().contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+			ChatHistory.contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 			ContactList.activate();
 			messageTextbox.setString(null);
 		}
@@ -1414,7 +1414,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// Delete chat history
 		else if (c == deleteChatCommand)
 		{
-			Jimm.jimm.getChatHistoryRef().chatHistoryDelete(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			ChatHistory.chatHistoryDelete(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, false);
 			ContactList.activate();
 		}
@@ -1496,7 +1496,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ContactList.activate(JimmException.handleException(e));
                if (e.isCritical()) return;
 		}
-		Jimm.jimm.getChatHistoryRef().addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getDate(), name);
+		ChatHistory.addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getDate(), name);
 
 		// #sijapp cond.if modules_HISTORY is "true" #
 		if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
@@ -1508,7 +1508,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		
 	Displayable getCurrDisplay()
 	{
-		return Jimm.jimm.getChatHistoryRef().getChatHistoryAt(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN)).getDisplayable();
+		return ChatHistory.getChatHistoryAt(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN)).getDisplayable();
 	}
 		
 	// Activates the contact item menu
@@ -1517,7 +1517,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		currentUin = new String(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 		
 		//#sijapp cond.if modules_HISTORY is "true" #
-		Jimm.jimm.getChatHistoryRef().fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+		ChatHistory.fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 		//#sijapp cond.end#
 			
 		// Display chat history
@@ -1555,11 +1555,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) && !getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) 
                    msgDisplay.addCommand(addUrsCommand);
 			
-			Jimm.jimm.getChatHistoryRef().UpdateCaption(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			ChatHistory.UpdateCaption(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			
 			// Display history
 			ContactListContactItem.this.resetUnreadMessages();
-			Jimm.jimm.getChatHistoryRef().getChatHistoryAt( ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat);
+			ChatHistory.getChatHistoryAt( ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat);
 				
 			// #sijapp cond.if target is "MOTOROLA"#
 			LightControl.flash(false);
@@ -1740,7 +1740,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		Displayable vis = null;
 		if (messageTextbox.isShown()) vis = messageTextbox;
-		else if (Jimm.jimm.getChatHistoryRef().chatHistoryShown(uin)) vis = Jimm.jimm.getChatHistoryRef().getChatHistoryAt(uin).getDisplayable();
+		else if (ChatHistory.chatHistoryShown(uin)) vis = ChatHistory.getChatHistoryAt(uin).getDisplayable();
 		else if (menuList != null) if (menuList.isShown()) vis = menuList;
 		return vis;
 	}

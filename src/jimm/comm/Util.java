@@ -84,8 +84,10 @@ public class Util
 
         // Get time an apply time zone correction
         Date date = new Date();
-    	// #sijapp cond.if target is "SIEMENS2" #
-        date.setTime(value.getTime() + TimeZone.getDefault().getRawOffset() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 )); 
+     	// #sijapp cond.if target is "SIEMENS2" #
+        date.setTime(value.getTime() + TimeZone.getDefault().getRawOffset() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 ));
+        // #sijapp cond.else#
+        date.setTime(value.getTime() + TimeZone.getDefault().getRawOffset()); 
         // #sijapp cond.end #
         time.setTime(date);
 
@@ -853,6 +855,6 @@ public class Util
 		}
 		return stringbuffer.toString();
 	}
-
+	
 }
 
