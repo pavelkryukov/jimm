@@ -1144,20 +1144,29 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // identified by the given UIN
     static public synchronized void addMessage(Message message)
     {
+    	System.out.println("AM 1");
         ContactListContactItem cItem = getItembyUIN(message.getSndrUin());
+        
+        System.out.println("AM 2");
         boolean temp = false;
         
         // Add message to contact
-        if (cItem != null) cItem.addMessage(message);
+        if (cItem != null)
+        {
+        	cItem.addMessage(message);
+        	System.out.println("AM 3");
+        }
+        
+        
         
         // Create a temporary contact entry if no contact entry could be found
         // do we have a new temp contact
         else
         {
             cItem = new ContactListContactItem(0, 0, message.getSndrUin(), message.getSndrUin(), false, true);
+            ContactList.cItems.addElement(cItem);
             cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
             cItem.addMessage(message);
-            ContactList.cItems.addElement(cItem);
             temp = true;
         }
 

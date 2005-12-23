@@ -222,12 +222,12 @@ class ChatTextList implements VirtualListCommands
 			{
 			case Canvas.LEFT:
 				currUin = ContactList.showNextPrevChat(false);
-				Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
+				ChatHistory.calcCounter(currUin);
 				return;
 				
 			case Canvas.RIGHT:
 				currUin = ContactList.showNextPrevChat(true);
-				Jimm.jimm.getChatHistoryRef().calcCounter(currUin);
+				ChatHistory.calcCounter(currUin);
 				return;
 			}
 		}
@@ -334,12 +334,12 @@ class ChatTextList implements VirtualListCommands
 
 public class ChatHistory
 {
-	private Hashtable historyTable;
-	private int counter;
+	static private Hashtable historyTable;
+	static private int counter;
 
 	// Adds selected message to history
 	//#sijapp cond.if modules_HISTORY is "true" #
-	public void addTextToHistory(String uin)
+	static public void addTextToHistory(String uin)
 	{
 		ChatTextList list = getChatHistoryAt(uin);
 		int textIndex = list.textList.getCurrTextIndex();
@@ -358,14 +358,14 @@ public class ChatHistory
 	}
 	//#sijapp cond.end#
 
-	public ChatHistory()
+	static
 	{
 		historyTable = new Hashtable();
 		counter = 1;
 	}
 
 	// Adds a message to the message display
-	protected synchronized void addMessage(String uin,Message message,ContactListContactItem contact)
+	static protected synchronized void addMessage(String uin,Message message,ContactListContactItem contact)
 	{
 		if (!historyTable.containsKey(uin))
 			newChatForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
@@ -377,9 +377,11 @@ public class ChatHistory
 		if (message instanceof PlainMessage)
 		{
 			PlainMessage plainMsg = (PlainMessage) message;
+			
 			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
-			this.addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText(), "", plainMsg.getDate(), true, offline);
-
+			
+			addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText(), "", plainMsg.getDate(), true, offline);
+			
 			// #sijapp cond.if modules_HISTORY is "true" #
 			if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
 				HistoryStorage.addText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), plainMsg.getText(), (byte)0, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getDate());
@@ -392,7 +394,7 @@ public class ChatHistory
 		{
 			UrlMessage urlMsg = (UrlMessage) message;
 			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_URL);
-			this.addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false, offline);
+			addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false, offline);
 		}
 		if (message instanceof SystemNotice)
 		{
@@ -401,33 +403,33 @@ public class ChatHistory
 
 			if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
 			{
-				this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("youwereadded")
+				addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("youwereadded")
 						+ notice.getSndrUin(), "", notice.getDate(), false, offline);
 			} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
 			{
 				contact.increaseMessageCount(ContactListContactItem.MESSAGE_AUTH_REQUEST);
-				this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), notice.getSndrUin()
+				addTextToForm(uin,ResourceBundle.getString("sysnotice"), notice.getSndrUin()
 						+ ResourceBundle.getString("wantsyourauth") + notice.getReason(), "", notice.getDate(), false, offline);
 			} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
 			{
 				if (notice.isAUTH_granted())
 				{
 					contact.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH,false);
-					this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
+					addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
 							+ notice.getSndrUin() + ".", "", notice.getDate(), false, offline);
 				} else if (notice.getReason() != null)
-					this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
+					addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
 							+ notice.getSndrUin() + ". " + ResourceBundle.getString("reason") + ": " + notice.getReason(),
 							"", notice.getDate(), false, offline);
 				else
-					this.addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
+					addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
 							+ notice.getSndrUin() + ". " + ResourceBundle.getString("noreason"), "", notice.getDate(),
 							false, offline);
 			}
 		}
 	}
 	
-	protected synchronized void addMyMessage(String uin, String message, Date time, String ChatName)
+	static protected synchronized void addMyMessage(String uin, String message, Date time, String ChatName)
 	{
 		if (!historyTable.containsKey(uin))
 			newChatForm(uin,ChatName);
@@ -436,14 +438,14 @@ public class ChatHistory
 	}
 	
 	// Add text to message form
-	synchronized private void addTextToForm(String uin,String from, String message, String url, Date time, boolean red, boolean offline)
+	static synchronized private void addTextToForm(String uin,String from, String message, String url, Date time, boolean red, boolean offline)
 	{
 		ChatTextList msgDisplay = (ChatTextList) historyTable.get(uin);
 
 		msgDisplay.addTextToForm(from, message, url, time, red, offline);
 	}
 	
-	public void copyText(String uin)
+	static public void copyText(String uin)
 	{
 		ChatTextList list = getChatHistoryAt(uin);
 		int messIndex = list.textList.getCurrTextIndex();
@@ -459,7 +461,7 @@ public class ChatHistory
 	}
 
 	// Returns the chat history form at the given uin
-	public ChatTextList getChatHistoryAt(String uin)
+	static public ChatTextList getChatHistoryAt(String uin)
 	{
 		if (historyTable.containsKey(uin))
 			return (ChatTextList) historyTable.get(uin);
@@ -468,13 +470,13 @@ public class ChatHistory
 	}
 
 	// Delete the chat history for uin
-	public void chatHistoryDelete(String uin)
+	static public void chatHistoryDelete(String uin)
 	{
 		historyTable.remove(uin);
 	}
 
 	// Returns if the chat history at the given number is shown
-	public boolean chatHistoryShown(String uin)
+	static public boolean chatHistoryShown(String uin)
 	{
 		if (historyTable.containsKey(uin))
 		{
@@ -486,19 +488,19 @@ public class ChatHistory
 	}
 
 	// Returns true if chat history exists for this uin
-	public boolean chatHistoryExists(String uin)
+	static public boolean chatHistoryExists(String uin)
 	{
 		return historyTable.containsKey(uin);
 	}
 
 	
 	// Creates a new chat form
-	private void newChatForm(String uin, String name)
+	static private void newChatForm(String uin, String name)
 	{
 		ChatTextList chatForm = new ChatTextList(name, uin);
 		historyTable.put(uin,chatForm);
 		UpdateCaption(uin);
-		ContactList.getItembyUIN(uin).setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true);
+		ContactList.getItembyUIN(uin).setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true); ///
 		//#sijapp cond.if modules_HISTORY is "true" #
 		fillFormHistory(uin, name);
 		//#sijapp cond.end#
@@ -507,7 +509,7 @@ public class ChatHistory
 	// fill chat with last history lines
 	//#sijapp cond.if modules_HISTORY is "true" #
 	final static private int MAX_HIST_LAST_MESS = 5;
-	public void fillFormHistory(String uin, String name)
+	static public void fillFormHistory(String uin, String name)
 	{
 		if (Options.getBooleanOption(Options.OPTION_SHOW_LAST_MESS))
 		{
@@ -542,18 +544,18 @@ public class ChatHistory
 	}
 	//#sijapp cond.end#
 	
-	public void contactRenamed(String uin, String newName)
+	static public void contactRenamed(String uin, String newName)
 	{
-		ChatTextList temp = (ChatTextList) this.historyTable.get(uin);
+		ChatTextList temp = (ChatTextList) historyTable.get(uin);
 		if (temp == null) return;
 		temp.ChatName = newName;
 		UpdateCaption(uin);
 	}
 
-	public void UpdateCaption(String uin)
+	static public void UpdateCaption(String uin)
 	{
 		calcCounter(uin);
-		ChatTextList temp = (ChatTextList) this.historyTable.get(uin);
+		ChatTextList temp = (ChatTextList) historyTable.get(uin);
 		// Calculate the title for the chatdisplay.
 		String Title = temp.ChatName+" ("+counter+"/"+historyTable.size()+")";
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -565,7 +567,7 @@ public class ChatHistory
 		
 	}
 
-	public void setColorScheme()
+	static public void setColorScheme()
 	{
 		Enumeration AllChats = historyTable.elements();
 		while (AllChats.hasMoreElements())
@@ -573,7 +575,7 @@ public class ChatHistory
 	}
 	
 	// Sets the counter for the ChatHistory
-    public void calcCounter(String curUin)
+	static public void calcCounter(String curUin)
     {
 		if (curUin == null) return;
 		Enumeration AllChats = historyTable.elements();
