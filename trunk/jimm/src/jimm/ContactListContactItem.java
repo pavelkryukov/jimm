@@ -332,6 +332,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	
 	public static int arrayToLongIP(byte[] array)
 	{
+		if (array.length < 4) return 0;
 		return   (int)array[0] & 0xFF       | 
 		       (((int)array[1] & 0xFF)<< 8) | 
 		       (((int)array[2] & 0xFF)<<16) |
