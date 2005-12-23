@@ -87,7 +87,7 @@ public class Util
      	// #sijapp cond.if target is "SIEMENS2" #
         date.setTime(value.getTime() + TimeZone.getDefault().getRawOffset() + (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0 ));
         // #sijapp cond.else#
-        date.setTime(value.getTime() + TimeZone.getDefault().getRawOffset()); 
+        date.setTime(value.getTime() + TimeZone.getDefault().getRawOffset());
         // #sijapp cond.end #
         time.setTime(date);
 
