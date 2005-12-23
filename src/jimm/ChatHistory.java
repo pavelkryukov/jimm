@@ -194,6 +194,7 @@ class ChatTextList implements VirtualListCommands
 		// #sijapp cond.if target is "SIEMENS2"#
 		return Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT) ? (Displayable)form : (Displayable)textList;
 		// #sijapp cond.else#
+		textList.setForcedSize(textList.getWidth(), textList.getHeight());
 		return textList;
 		// #sijapp cond.end#
 	}
