@@ -674,6 +674,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		return getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
 	}
+	
+	long getUIN()
+	{
+		return uinLong;
+	}
 
 	// Returns imaghe index for contact
 	public int getImageIndex()
