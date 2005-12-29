@@ -30,8 +30,8 @@ public class JimmLangFileTool
 {
 
 	// Variables
-	public static String baseLANGFile = "DE.lang";
-	public static String compareLANGFile = "CZ.LANG";
+	public static String baseLANGFile = "src/lng/EN.lang";
+	public static String compareLANGFile = "src/lng/DE.LANG";
 	
 	// The both files we wound like to compare
 	private LGFile base, compare;
