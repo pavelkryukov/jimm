@@ -112,6 +112,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="util/sijapp/lib" location="${util/sijapp}/dist/lib/sijapp.jar" />
 	<property name="util/jarsizetask" location="${util}/jarsizetask" />
 	<property name="util/jarsizetask/lib" location="${util/jarsizetask}/dist/lib/jarsizetask.jar" />
+	<property name="util/jlft" location="${util}/jlft" />
 	
 	<!--  Auxiliary property   -->
 	<property name="3ns" value="###" />
@@ -269,6 +270,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	
 	<!--  Internal target: compile   -->
 	<target name="compile" depends="preprocess-source">
+		<ant dir="${util/jlft}" inheritAll="false" />
 		<mkdir dir="${build}/compile/classes" />
 		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" debug="off" />
 	</target>
@@ -276,7 +278,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  Internal target: obfuscate -->
 	<target name="obfuscate" depends="compile" unless="skip-obfuscate">
 		<mkdir dir="${build}/obfuscate/classes" />
-		<proguard note="off" defaultpackage="" usemixedcaseclassnames="off" overloadaggressively="on" verbose="true">
+		<proguard note="off" defaultpackage="" usemixedcaseclassnames="off" overloadaggressively="on">
 			<injar name="${build}/compile/classes" />
 			<outjar name="${build}/obfuscate/classes" />
 			<keep access="public" type="class" extends="javax.microedition.midlet.MIDlet" />
@@ -371,6 +373,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<target name="del_utils" description="Delete the utils dist and build dirs">
 		<ant dir="${util/sijapp}" inheritAll="false" target="clean" />
 		<ant dir="${util/jarsizetask}" inheritAll="false" target="clean" />
+		<ant dir="${util/jlft}" inheritAll="false" target="clean" />
 	</target>
 	
 	<!--  Target: clean without cleaning  utils -->
