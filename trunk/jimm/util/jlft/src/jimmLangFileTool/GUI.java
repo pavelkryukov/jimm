@@ -87,7 +87,7 @@ public class GUI extends JFrame implements ActionListener
 		renderer = new JlftTableRenderer();
 		this.setContentPane(getJContentPane(false));
 		this.setTitle("Jimm Lang File Tool");
-		this.setBounds(new java.awt.Rectangle(20,20,600,500));
+		this.setBounds(new java.awt.Rectangle(20,20,800,500));
 		fillInValues();
 		this.pack();
 		this.setVisible(true);
@@ -146,6 +146,7 @@ public class GUI extends JFrame implements ActionListener
 	    		if (((LGString)((LGFileSubset)jlft.getCompare().get(i)).get(j)).getTranslated() != LGString.REMOVED)
 	    		{
 	    			compareTable.setValueAt(((LGFileSubset)jlft.getCompare().get(i)).get(j),i+k+j+1+l,2);
+	    			compareTable.setValueAt(((LGFileSubset)jlft.getCompare().get(i)).get(j),i+k+j+1+l,3);
 	    		}
 	    		else
 	    			l--;
@@ -176,7 +177,7 @@ public class GUI extends JFrame implements ActionListener
 			gridBagConstraints.gridx = 0;
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.setPreferredSize(new java.awt.Dimension(600,500));
+			jContentPane.setPreferredSize(new java.awt.Dimension(800,500));
 			jContentPane.add(getCompareToolBar(), gridBagConstraints);
 			jContentPane.add(getCompareScrollPane(), gridBagConstraints1);
 		}
@@ -228,6 +229,10 @@ public class GUI extends JFrame implements ActionListener
 		colum.setMinWidth(220);
 		colum.setPreferredWidth(220);
 		colum = compareTable.getColumnModel().getColumn(2);
+		colum.setMinWidth(170);
+		colum.setMaxWidth(170);
+		colum.setPreferredWidth(170);
+		colum = compareTable.getColumnModel().getColumn(3);
 		colum.setMinWidth(220);
 		colum.setPreferredWidth(220);
 		JTextField field = new JTextField();
@@ -255,11 +260,12 @@ public class GUI extends JFrame implements ActionListener
 		{
 			jlftTableModel = new JlftTableModel();
 			Vector columIdent = new Vector();
-			columIdent.add("Base "+jlft.getBase().getName());
-			columIdent.add("Base "+jlft.getBase().getName());
-			columIdent.add("Compare "+jlft.getCompare().getName());
+			columIdent.add("Base key "+jlft.getBase().getName());
+			columIdent.add("Base value "+jlft.getBase().getName());
+			columIdent.add("Compare key "+jlft.getCompare().getName());
+			columIdent.add("Compare value "+jlft.getCompare().getName());
 			jlftTableModel.setColumnIdentifiers(columIdent);
-			jlftTableModel.setColumnCount(3);
+			jlftTableModel.setColumnCount(4);
 			jlftTableModel.setRowCount(this.getSizeForTable());
 		}
 		return jlftTableModel;
@@ -382,7 +388,7 @@ public class GUI extends JFrame implements ActionListener
 				File file = chooser.getSelectedFile();
 				try
 				{
-					jlft.loadBase(file.getCanonicalPath());
+					jlft.setBase(LGFile.load(file.getCanonicalPath()));
 				} catch (Exception e)
 				{
 					System.out.println("Error loading file");
@@ -401,7 +407,7 @@ public class GUI extends JFrame implements ActionListener
 				File file = chooser.getSelectedFile();
 				try
 				{
-					jlft.loadCompare(file.getCanonicalPath());
+					jlft.setCompare(LGFile.load(file.getCanonicalPath()));
 				} catch (Exception e)
 				{
 					JOptionPane.showMessageDialog(this, "Error loading the file", "Error", JOptionPane.ERROR_MESSAGE);
@@ -420,7 +426,7 @@ public class GUI extends JFrame implements ActionListener
 				File file = chooser.getSelectedFile();
 				try
 				{
-					jlft.save(file.getCanonicalPath());
+					jlft.getBase().save(file.getCanonicalPath());
 				} catch (Exception e)
 				{
 					JOptionPane.showMessageDialog(this, "Error saving the file", "Error", JOptionPane.ERROR_MESSAGE);
@@ -517,7 +523,7 @@ public class GUI extends JFrame implements ActionListener
 			if(super.getValueAt(row,colum) instanceof LGString)
 			{
 				lgs = (LGString)super.getValueAt(row,colum);
-				if(colum == 0)
+				if(colum %2 == 0)
 					lgs.setReturnKey(true);
 				else
 					lgs.setReturnKey(false);
