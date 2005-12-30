@@ -29,7 +29,6 @@ import javax.microedition.lcdui.Graphics;
 import DrawControls.VirtualTreeCommands;
 import DrawControls.VirtualList;
 import DrawControls.TreeNode;
-import DrawControls.TreeNodeComparer;
 
 //! Tree implementation, which allows programmers to store node data themself
 /*!
@@ -412,11 +411,11 @@ public class VirtualTree extends VirtualList
 		return 0;
 	}
 
-	public void sortNode(TreeNode node, TreeNodeComparer comparer)
+	public void sortNode(TreeNode node)
 	{
 		storeLastNode();
 		if (node == null) node = getRoot();
-		node.sort(comparer);
+		node.sort(commands);
 		if (node.getExpanded())
 		{
 			wasChanged();

@@ -30,7 +30,7 @@
   "next"                        "Next"
   // #sijapp cond.end#
         
-  "."                           ""
+  "point"                       ""
   "about"                       "Über"
   "about_info"                  "Jimm - Mobile Messaging\n\nICQ Client für J2ME\n\nVersion: ###VERSION###\nZiel: ###TARGET###\nModule: ###MODULES###\n\nSiehe http://www.jimm.org/"
   "account"                     "Account"
@@ -175,7 +175,7 @@
   "onl_notification"            "Hinweis bei Onlinewechsel"
   "onl_sound_file_name"         "Online Sound Datei"
   "only_online"                 "Nur Online Kontakte zeigen"
-  "options"                     "Einstellungen"
+  "options_lng"                 "Einstellungen"
   "options_account"             "Benutzer"
   "options_cost"                "Kosten"
   "options_effect"              "Möglicherweise werden einige Änderungen erst nach einem erneuten Verbindungsaufbau wirksam!"
@@ -244,7 +244,7 @@
   "text_too_long"               "Text zu lang um eingefügt zu werden"
   "timeout_interv"              "Verbindung erhalten Packet Interval"
   "title"                       "Titel"  
-  "traffic"                     "Traffic"
+  "traffic_lng"                 "traffic_lng"
   "uin"                         "UIN"
   "url"                         "URL"
   "use_history"                 "Speichere History"

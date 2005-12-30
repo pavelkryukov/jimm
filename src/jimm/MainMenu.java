@@ -154,7 +154,7 @@ public class MainMenu implements CommandListener
             	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("connect"), null)] 		= MENU_CONNECT;
             	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("set_status"), getStatusImage())] = MENU_STATUS;
             	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("contact_list"), null)] 	= MENU_LIST;
-            	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
+            	MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options_lng"), null)] 		= MENU_OPTIONS;
                 
                 // #sijapp cond.if target is "MOTOROLA" #
             	MainMenu.list.addCommand(MainMenu.selectCommand);
@@ -169,7 +169,7 @@ public class MainMenu implements CommandListener
                 MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("search_user"), null)] 	= MENU_SEARCH;
                 MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("add_group"), null)] 		= MENU_ADD_GROUP;
                 MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("del_group"), null)] 		= MENU_DEL_GROUP;
-                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options"), null)] 		= MENU_OPTIONS;
+                MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options_lng"), null)] 		= MENU_OPTIONS;
                 MainMenu.list.addCommand(MainMenu.backCommand);
                 // #sijapp cond.if target is "MOTOROLA" #
                 MainMenu.list.addCommand(MainMenu.selectCommand);
@@ -178,7 +178,7 @@ public class MainMenu implements CommandListener
             MainMenu.list.setCommandListener(_this);
                 
             // #sijapp cond.if modules_TRAFFIC is "true" #
-            MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("traffic"), null)] 	= MENU_TRAFFIC;
+            MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("traffic_lng"), null)] 	= MENU_TRAFFIC;
             // #sijapp cond.end#
             MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("about"), null)] 		= MENU_ABOUT;
             // #sijapp cond.if target is "MIDP2" #
@@ -438,7 +438,7 @@ public class MainMenu implements CommandListener
                     
                 case MENU_STATUS:
                     // Set status
-                    long onlineStatus = Jimm.jimm.getOptionsRef().getLongOption(Options.OPTION_ONLINE_STATUS);
+                    long onlineStatus = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
                     if (onlineStatus == ContactList.STATUS_AWAY)
                     {
                         MainMenu.statusList.setSelectedIndex(2, true);
@@ -596,9 +596,9 @@ public class MainMenu implements CommandListener
 			if (!((onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_INVIS_ALL) || (onlineStatus == ContactList.STATUS_ONLINE)))
 			{
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
+                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Options.getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
                 //#sijapp cond.else#
-                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Jimm.jimm.getOptionsRef().getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY);
+                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Options.getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY);
                 //#sijapp cond.end#
                 
                 statusMessage.addCommand(selectCommand);
@@ -619,10 +619,10 @@ public class MainMenu implements CommandListener
         }
         else if ((c == selectCommand) && (d == statusMessage))
         {
-            Jimm.jimm.getOptionsRef().setStringOption(Options.OPTION_STATUS_MESSAGE,statusMessage.getString());
+            Options.setStringOption(Options.OPTION_STATUS_MESSAGE,statusMessage.getString());
             try
             {
-                Jimm.jimm.getOptionsRef().save();
+                Options.save();
             }
             catch (Exception e)
             {

@@ -465,7 +465,7 @@ public class Traffic
 
 			// Initialize traffic screen
 
-			this.trafficScreen = new Form(ResourceBundle.getString("traffic"));
+			this.trafficScreen = new Form(ResourceBundle.getString("traffic_lng"));
 			this.trafficScreen.addCommand(this.resetCommand);
 			this.trafficScreen.addCommand(this.okCommand);
 			this.trafficScreen.setCommandListener(this);

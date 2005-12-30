@@ -30,7 +30,7 @@
         "next"                        "Даље"
         // #sijapp cond.end#
 
-        "."                           "."
+        "point"                       "."
         "about"                       "О програму"
         "about_info"                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModules: ###MODULES###\n\nSee http://www.jimm.org/"
         "account"                     "Налог"
@@ -156,7 +156,7 @@
         "onl_notification"            "Информациjа о долазећом контакту"
         "onl_sound_file_name"         "Фаjл са Online звуком"
         "only_online"                 "Покажи само online контакте"
-        "options"                     "Опциjе"
+        "options_lng"                 "Опциjе"
         "options_account"             "Налог"
         "options_cost"                "Цена"
         "options_effect"              "Морате да се реконектуjете да би измене биле примљене!"
@@ -219,7 +219,7 @@
         "text_too_long"               "Текст је предугачак да буде уметнут"
         "timeout_interv"              "Интервал трајања пакета"
         "title"                       "Наслов"
-        "traffic"                     "Проток"
+        "traffic_lng"                     "Проток"
         "uin"                         "UIN"
         "url"                         "URL"
         "use_history"                 "Сачуваj старе поруке"

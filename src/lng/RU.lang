@@ -30,7 +30,7 @@
   "next"       "Следующий"
   // #sijapp cond.end#
 
-  "."                           "."
+  "point"                       "."
   "about"                       "О программе"
   "about_info"                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\nУстройство: ###TARGET###\nМодули: ###MODULES###\n\nhttp://www.jimm.org/"
   "account"                     "Учетная запись"
@@ -172,7 +172,7 @@
   "onl_notification"            "Информировать о подключившемся контакте"
   "onl_sound_file_name"         "Файл звука подключения"
   "only_online"                 "Показывать только онлайн контакты"
-  "options"                     "Настройки"
+  "options_lng"                 "Настройки"
   "options_account"             "Учетная запись"
   "options_cost"                "Стоимость"
   "options_effect"              "Вам необходимо переподключиться для применения изменений"
@@ -239,7 +239,7 @@
   "text_too_long"               "Текст слишком большой для вставки в редактор"
   "timeout_interv"              "Таймаут пинга"
   "title"                       "Название"
-  "traffic"                     "Трафик"
+  "traffic_lng"                 "Трафик"
   "uin"                         "UIN"
   "url"                         "URL"
   "use_history"                 "Хранить историю"

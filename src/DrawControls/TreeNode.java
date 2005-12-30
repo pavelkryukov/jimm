@@ -26,7 +26,7 @@ package DrawControls;
 
 import java.util.Vector;
 
-import DrawControls.TreeNodeComparer;
+import DrawControls.VirtualTreeCommands;
 
 
 //! Tree node
@@ -110,10 +110,10 @@ public class TreeNode
     return -1;
   }
   
-	private static int getInsertionPos(Vector vect, TreeNode node, TreeNodeComparer comparer)
+	private static int getInsertionPos(Vector vect, TreeNode node, VirtualTreeCommands comparer)
 	{
 	    int size = vect.size();
-	    int i, begin, end, middle, begRes, midRes, endRes;
+	    int begin, end, middle, begRes, midRes, endRes;
 	    
 	    if (size == 0) return 0;
 	    
@@ -149,7 +149,7 @@ public class TreeNode
 	    }
 	}
  
-	protected void sort(TreeNodeComparer comparer)
+	protected void sort(VirtualTreeCommands comparer)
 	{
 		int i, count;
 		TreeNode currNode;

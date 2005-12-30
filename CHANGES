@@ -260,7 +260,7 @@ VERSION 0.5.0
                  Also Jimm is specified as JIMM client for other ones.
   * BUGFIX: Jimm sometimes crashed if was restored from flip on Motorola phones
   * BUGFIX: There are no more echo errors after errorous connections
-  * BUGFIX: Jimm stoped when received offline message from unknown contact
+  * BUGFIX: Jimm stoped login when received offline message from unknown contact
   * Added possibility to save stored history to file (at siemens only)
   * Rewrote Connection handler to be more modular and better readable
   * Now Jimm works with touchscreen (only for MIDP2 build)
@@ -274,4 +274,5 @@ VERSION 0.5.0
   * Pressing red button on Nokia phones will now end Jimm in a cleaner way
   * Internal data handling for ContactItems rewritten (should consume less heap)
   * Login time, online time and idle time can be seen on Information page
+  * Code optimized for lower memory usage
   * New util JLFT - "Jimm Lang File Tool" for easy comparing and changing Jimm .lang files
