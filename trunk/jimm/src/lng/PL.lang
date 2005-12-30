@@ -28,7 +28,7 @@
   "next"                        "Dalej"
   // #sijapp cond.end#
 
-  "."                           "."
+  "point"                       "."
   "about"                       "O programie"
   "about_info"                  "Jimm - Mobile Messaging\n\nKlient ICQ na platform� J2ME\n\nWersja: ###VERSION###\nObiekt: ###TARGET###\nModu�: ###MODULES###\n\nZobacz: http://www.jimm.org/"
   "account"                     "Konto"
@@ -135,7 +135,7 @@
   "onl_notification"            "Powiadom o dostępności użytkownika"
   "onl_sound_file_name"         "Dźwięśk dostępności użytkownika"
   "only_online"                 "Pokaż tylko zalogowanych użytkowników"
-  "options"                     "Opcje"
+  "options_lng"                     "Opcje"
   "options_account"             "Konto"
   "options_cost"                "Koszt"
   "options_effect"              "Aby zmiany zostały uwzględnione musisz ponownie się zalogować!"
@@ -187,7 +187,7 @@
   "status_online"               "Zalogowany"
   "successful"                  "Powodzenie"
   "sysnotice"                   "Wiadomosś systemowa"
-  "traffic"                     "Ruch"
+  "traffic_lng"                     "Ruch"
   "uin"                         "Numer"
   "url"                         "URL"
   "use_history"                 "Zapisana historia"

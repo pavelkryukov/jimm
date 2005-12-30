@@ -1,25 +1,25 @@
 /*******************************************************************************
-Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-05  Jimm Project
+ Jimm - Mobile Messaging - J2ME ICQ clone
+ Copyright (C) 2003-05  Jimm Project
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-********************************************************************************
-File: src/jimm/util/ResourceBundle.java
-Version: ###VERSION###  Date: ###DATE###
-Author(s): Manuel Linsmayer, Artyomov Denis
-*******************************************************************************/
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ ********************************************************************************
+ File: src/jimm/util/ResourceBundle.java
+ Version: ###VERSION###  Date: ###DATE###
+ Author(s): Manuel Linsmayer, Artyomov Denis
+ *******************************************************************************/
 
 package jimm.util;
 
@@ -41,6 +41,7 @@ public class ResourceBundle
 			int size = dos.readShort();
 			langAvailable = new String[size];
 			for (int i = 0; i < size; i++) langAvailable[i] = dos.readUTF();
+			istream.close();
 		} catch (Exception e)
 		{ }
 	}
@@ -72,15 +73,18 @@ public class ResourceBundle
 	
 	static private void loadLang()
 	{
+		InputStream istream;
+		
 		try
 		{
 			resources = new Hashtable();
-			InputStream istream = resources.getClass().getResourceAsStream("/"+ResourceBundle.currUiLanguage+".lng");
+			istream = resources.getClass().getResourceAsStream("/"+ResourceBundle.currUiLanguage+".lng");
 			DataInputStream dos = new DataInputStream(istream);
 			int size = dos.readShort();
 			for (int j = 0; j < size; j++) resources.put(dos.readUTF(), dos.readUTF());
-		} catch (Exception e)
-		{ }
+			istream.close();
+		} 
+		catch (Exception e) { }
 	}
 
 	// Get string from active language pack

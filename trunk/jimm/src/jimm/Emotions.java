@@ -98,6 +98,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 				if (eof) break;
 			}
 			
+			stream.close();
+			
 			// Read images
 			images.load("/smiles.png", iconsSize, iconsSize, -1);
 		}

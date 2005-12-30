@@ -97,9 +97,6 @@ public class Jimm extends MIDlet
 	private HistoryStorage history;
 	// #sijapp cond.end#
 
-	//#sijapp cond.if modules_SMILES is "true" #
-	private Emotions emotions;
-	// #sijapp cond.end#
 	
 	private JimmUI ui;
 
@@ -204,7 +201,7 @@ public class Jimm extends MIDlet
 		
 		// Create and load emotion icons
 		//#sijapp cond.if modules_SMILES is "true" #
-		emotions = new Emotions();
+		new Emotions();
 		// #sijapp cond.end#
 		
 		ui = new JimmUI();

@@ -39,119 +39,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// No capability
 	public static final int CAP_NO_INTERNAL = 0x00000000;
 
-	// Client unterstands type-2 messages
-	public static final int CAP_AIM_SERVERRELAY_INTERNAL = 0x00000001;
-
-	// Client unterstands UTF-8 messages
-	public static final int CAP_UTF8_INTERNAL = 0x00000002;
-	// Client capabilities for detection
-	public static final int CAP_MIRANDAIM = 0x00000004;
- 	public static final int CAP_TRILLIAN =0x00000008;
-	public static final int CAP_TRILCRYPT = 0x00000010;
-	public static final int CAP_SIM = 0x00000020;
-	public static final int CAP_SIMOLD = 0x00000040;
-	public static final int CAP_LICQ = 0x00000080;
-	public static final int CAP_KOPETE = 0x00000100;
-	public static final int CAP_MICQ = 0x00000200;
-	public static final int CAP_ANDRQ = 0x00000400;
-	public static final int CAP_QIP = 0x000000800;
-	public static final int CAP_IM2 = 0x00001000;
-	public static final int CAP_MACICQ = 0x00002000;
-	public static final int CAP_RICHTEXT = 0x00004000;
-	public static final int CAP_IS2001 = 0x00008000;
-	public static final int CAP_IS2002 = 0x00010000;
-	public static final int CAP_STR20012 = 0x00020000;
-	public static final int CAP_AIMICON = 0x00040000;
-	public static final int CAP_AIMCHAT = 0x00080000;
-	public static final int CAP_UIM = 0x00100000;
-	public static final int CAP_RAMBLER = 0x00200000;
-	public static final int CAP_ABV = 0x00400000;
-	public static final int CAP_NETVIGATOR = 0x00800000;
-	public static final int CAP_XTRAZ = 0x01000000;
-	public static final int CAP_AIMFILE = 0x02000000;
-	public static final int CAP_JIMM = 0x04000000;
-	public static final int CAP_AIMIMIMAGE = 0x08000000;
-	public static final int CAP_AVATAR = 0x10000000;
-	public static final int CAP_DIRECT = 0x20000000;
-	public static final int CAP_TYPING = 0x40000000;
-
-	// Client IDs
-	public static final byte CLI_NONE = 0;
-	public static final byte CLI_QIP = 1;
-	public static final byte CLI_MIRANDA = 2;
-	public static final byte CLI_LICQ = 3;
-	public static final byte CLI_TRILLIAN = 4;
-	public static final byte CLI_SIM = 5;
-	public static final byte CLI_KOPETE = 6;
-	public static final byte CLI_MICQ = 7;
-	public static final byte CLI_ANDRQ = 8;
-	public static final byte CLI_IM2 = 9;
-	public static final byte CLI_MACICQ = 10;
-	public static final byte CLI_AIM = 11;
-	public static final byte CLI_UIM = 12;
-	public static final byte CLI_WEBICQ = 13;
-	public static final byte CLI_GAIM = 14;
-	public static final byte CLI_ALICQ = 15;
-	public static final byte CLI_STRICQ = 16;
-	public static final byte CLI_YSM = 17;
-	public static final byte CLI_VICQ = 18;
-	public static final byte CLI_LIBICQ2000 = 19;
-	public static final byte CLI_JIMM = 20;
-	public static final byte CLI_SMARTICQ = 21;
-	public static final byte CLI_ICQLITE4 = 22;
-	public static final byte CLI_ICQLITE5 = 23;
-	public static final byte CLI_ICQ98 = 24;
-	public static final byte CLI_ICQ99 = 25;
-	public static final byte CLI_ICQ2001B = 26;
-	public static final byte CLI_ICQ2002A2003A = 27;
-	public static final byte CLI_ICQ2000 = 28;
-	public static final byte CLI_ICQ2003B = 29;
-	public static final byte CLI_ICQLITE = 30;
-	public static final byte CLI_GNOMEICQ = 31;	
-	public static final byte CLI_AGILE = 32;
-	public static final byte CLI_SPAM = 33;
-	public static final byte CLI_CENTERICQ = 34;
-	public static final byte CLI_LIBICQJABBER = 35;
-	
-	public static final String[] clientNames = {
-		"Not detected",
-		"QIP",
-		"Miranda",
-		"LIcq",
-		"Trillian",
-		"SIM",
-		"Kopete",
-		"MICQ",
-		"&RQ",
-		"IM2",
-		"ICQ for MAC",
-		"AIM",
-		"UIM",
-		"WebICQ",
-		"Gaim",
-		"Alicq",
-		"StrICQ",
-		"YSM",
-		"vICQ",
-		"Libicq2000",
-		"Jimm",
-		"SmartICQ",
-		"ICQ Lite v4",
-		"ICQ Lite v5",
-		"ICQ 98",
-		"ICQ 99",
-		"ICQ 2001b",
-		"ICQ 2002a/2003a",
-		"ICQ 2000",
-		"ICQ 2003b",
-		"ICQ Lite",
-		"Gnome ICQ",
-		"Agile Messenger",
-		"SPAM:)",
-		"CenterICQ",
-		"Libicq2000 from Jabber"
-	};
-	
 	// Message types
 	public static final int MESSAGE_PLAIN		 = 1;
 	public static final int MESSAGE_URL		     = 2;
@@ -415,196 +302,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	
 	public static String currentUin = new String();
 	
-	// Miranda ISee plugin code refactoring...
-	public void detectUserClient(int dwFP1, int dwFP2, int dwFP3, int wVersion, int caps, String cliVersion)
-	{
-		int client = CLI_NONE;
-		String szVersion="";
-		
-		if ( (caps&CAP_QIP) !=0)
-		{
-			client = CLI_QIP;
-			szVersion = cliVersion;
-		}
-		
-		else if ( (((caps&CAP_TRILLIAN)!=0) || ((caps&CAP_TRILCRYPT)!=0)) && dwFP1 == 0x3b75ac09 )
-		{
-			client = CLI_TRILLIAN;
-			szVersion = cliVersion;
-		}
-		
-		else if ( ((caps&CAP_IM2)!=0) && (dwFP1 == 0x3FF19BEB) )
-			client = CLI_IM2;
-		
-		else if ( ((caps&CAP_SIM)!=0 ) && ((caps&CAP_SIMOLD)!=0) )
-		{
-			client = CLI_SIM;
-			szVersion = cliVersion; 
-		}
-		
-		else if ( (caps&CAP_KOPETE)!=0 )
-		{
-			client = CLI_KOPETE;
-			szVersion = cliVersion; 
-		}
-		
-		else if ( (caps&CAP_LICQ)!=0 )
-		{
-			client = CLI_LICQ;
-			szVersion = cliVersion;
-		}
-		
-		else if ((caps&(CAP_AIMICON+CAP_AIMFILE+CAP_AIMIMIMAGE))!=0)
-			client = CLI_GAIM;
-
-		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(wVersion==10)&&((caps&(CAP_RICHTEXT+CAP_TYPING))!=0) )
-			client = CLI_ICQ2003B;
-		
-		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(dwFP1==0)&&(dwFP2==0)&&(dwFP3==0)&&((caps&CAP_RICHTEXT)!=0)&&((caps&(CAP_XTRAZ+CAP_AVATAR+CAP_AIMFILE))!=0) )
-			client = CLI_ICQLITE4;
-		
-		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(dwFP1==0)&&(dwFP2==0)&&(dwFP3==0)&&((caps&CAP_RICHTEXT)!=0)&&((caps&(CAP_XTRAZ+CAP_AVATAR+CAP_AIMFILE))==0) )
-			client = CLI_ICQLITE4;
-		
-		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(dwFP1==0)&&(dwFP2==0)&&(dwFP3==0)&&((caps&CAP_RICHTEXT)==0)&&((caps&CAP_UIM)!=0))
-			client = CLI_UIM;
-		
-		else if ( ((caps&CAP_UTF8_INTERNAL)!=0)&&(dwFP1==0)&&(dwFP2==0)&&(dwFP3==0)&&((caps&CAP_RICHTEXT)==0)&&((caps&CAP_UIM)==0))
-			client = CLI_AGILE;
-		
-		else if ( (caps&CAP_MACICQ)!=0 )
-			client = CLI_MACICQ;
-		
-		else if ( (caps&CAP_AIMCHAT)!=0 )
-			client = CLI_AIM;
-		
-		else if (  (dwFP1 & 0xFF7F0000) == 0x7D000000 )
-		{
-			client = CLI_LICQ;
-			int ver = dwFP1 & 0xFFFF;
-			  if (ver % 10 !=0)
-			  {
-				  szVersion += ver / 1000 + "."+(ver / 10) % 100+"."+ ver % 10;
-			  }
-			  else
-			  {
-				  szVersion += ver / 1000 + "."+(ver / 10) % 100;
-			  }
-
-		}
-		
-		else if ( dwFP1==0xFFFFFFFF )
-		{
-			if ( (dwFP2==0xFFFFFFFF)&&(dwFP3==0xFFFFFFFF) )
-				client = CLI_GAIM;
-			else
-			{
-				if ( (dwFP2==0)&&(dwFP3!=0xFFFFFFFF) )
-				{
-					if (wVersion==7)
-						client = CLI_WEBICQ;
-					else if ( (dwFP3==0x3B7248ED)&&((caps&CAP_UTF8_INTERNAL)==0)&&((caps&CAP_RICHTEXT)==0) )
-						client = CLI_SPAM;
-				}
-				else
-				{
-					client = CLI_MIRANDA;
-					szVersion = ((dwFP2>>24)&0x7F)+"."+((dwFP2>>16)&0xFF)+"."+((dwFP2>>8)&0xFF)+"."+(dwFP2&0xFF);
-				}
-			}
-		}
-		
-		else if ( (dwFP1==0xFFFFFFFE)&&(dwFP3==0xFFFFFFFE) )
-		{
-			client = CLI_JIMM;
-			szVersion = cliVersion;
-		}
-		
-		else if ( dwFP1==0xFFFFFF8F )
-			client = CLI_STRICQ;
-		
-		else if ( dwFP1==0xFFFFFF42 )
-			client = CLI_MICQ;
-		
-		else if ( dwFP1==0xFFFFFFBE )
-			client = CLI_ALICQ;
-		
-		else if ( dwFP1==0xFFFFFF7F )
-		{
-			client = CLI_ANDRQ;
-			szVersion = ((dwFP2>>24)&0xFF)+"."+((dwFP2>>16)&0xFF)+"."+((dwFP2>>8)&0xFF)+"."+(dwFP2&0xFF);
-		}
-		
-		else if ( dwFP1==0xFFFFFFAB )
-			client = CLI_YSM;
-		
-		else if ( dwFP1==0x04031980 )
-			client = CLI_VICQ;
-		
-		else if ( (dwFP1==0x3AA773EE)&&(dwFP2 == 0x3AA66380) && (dwFP3 == 0x3A877A42))
-			{
-				if (wVersion==7)
-				{
-					if ( (caps&(CAP_AIM_SERVERRELAY_INTERNAL+CAP_DIRECT))!=0 )
-					{
-						if ((caps&CAP_RICHTEXT)!=0)
-							client = CLI_CENTERICQ;
-						else
-							client = CLI_LIBICQJABBER;
-					}
-				}
-				else
-					client = CLI_LIBICQ2000;
-			}
-
-		else if ( dwFP1==0x3b75ac09 )
-			client = CLI_TRILLIAN;
-		
-		else if ( (dwFP1==0x3FF19BEB)&&(wVersion==8)&&(dwFP1==dwFP3) )
-			client = CLI_IM2;
-		
-		else if ( (dwFP1==0x4201F414)&&((dwFP2&dwFP3)==dwFP1)&&(wVersion==8) )
-			client = CLI_SPAM;
-		
-		else if ( (dwFP1!=0) && ((dwFP1 == dwFP3) && (dwFP3 == dwFP2) && (caps==0)) )
-			client = CLI_VICQ;
-
-		else if ( ((caps&(CAP_AIM_SERVERRELAY_INTERNAL+CAP_DIRECT+CAP_UTF8_INTERNAL+CAP_RICHTEXT))!=0)&&((dwFP1|dwFP2|dwFP3)!=0) )
-			client = CLI_ICQ2002A2003A;
-		
-		else if ( ((caps&(CAP_STR20012+CAP_AIM_SERVERRELAY_INTERNAL+CAP_IS2001))!=0)&&((dwFP1|dwFP2|dwFP3|wVersion)!=0) )
-			client = CLI_ICQ2001B;
-		
-		else if ( (wVersion==7)&&((caps&(CAP_AIM_SERVERRELAY_INTERNAL+CAP_DIRECT))!=0)&&((dwFP1|dwFP2|dwFP3)==0) )
-			client = CLI_ANDRQ;
-		
-		else if ( (wVersion==7)&&((caps&(CAP_AIM_SERVERRELAY_INTERNAL+CAP_DIRECT))!=0)&&((dwFP1|dwFP2|dwFP3)!=0) )
-			client = CLI_ICQ2000;
-		
-		else if ( (wVersion==7)&&(((caps&CAP_UTF8_INTERNAL)!=0)) )
-			client = CLI_GNOMEICQ;
-		
-		else if (dwFP1 > 0x35000000 && dwFP1 < 0x40000000) 
-		{
-		  switch(wVersion) 
-			  {
-				  case 6:  client = CLI_ICQ99;break;
-				  case 7:  client = CLI_ICQ2000;break;
-				  case 8:  client = CLI_ICQ2001B;break;
-				  case 9:  client = CLI_ICQLITE;break;
-				  case 10: client = CLI_ICQ2003B;break;
-			  }
-		} 
-		
-		setIntValue(ContactListContactItem.CONTACTITEM_CLIENT,client);
-		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION,szVersion);
-	}
-	
-	public static String getClientString(byte cli)
-	{
-		return ( clientNames[cli] );
-	}
-	
 	public void init(int id, int group, String uin, String name, boolean noAuth, boolean added)
 	{
 		if (id == -1)
@@ -639,7 +336,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		online = -1;
 		setIntValue(ContactListContactItem.CONTACTITEM_IDLE, -1);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
-		setIntValue(ContactListContactItem.CONTACTITEM_CLIENT, CLI_NONE);
+		setIntValue(ContactListContactItem.CONTACTITEM_CLIENT, Util.CLI_NONE);
 		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, "");
 	}
 	
@@ -866,15 +563,18 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 	public void checkForInvis()
 	{
-		VisibilityCheckerAction act = new VisibilityCheckerAction(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
-		try
+		if ( getLongValue(CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE )
 		{
-			Icq.requestAction(act);
-		}
-		catch (JimmException e)
-		{
-			JimmException.handleException(e);
-			if (e.isCritical()) return;
+			VisibilityCheckerAction act = new VisibilityCheckerAction(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+			try
+			{
+				Icq.requestAction(act);
+			}
+			catch (JimmException e)
+			{
+				JimmException.handleException(e);
+				if (e.isCritical()) return;
+			}
 		}
 	}
 	
@@ -1202,7 +902,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				//#sijapp cond.if modules_FILES is "true"#                     
 				addToTextList("DC typ", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE)));
 				addToTextList("ICQ version", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT)));
-				addToTextList("ICQ client", getClientString((byte)getIntValue(ContactListContactItem.CONTACTITEM_CLIENT))+ " " + getStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION));
+				if ( getIntValue(CONTACTITEM_CLIENT) != Util.CLI_NONE )
+					addToTextList("ICQ client", Util.getClientString((byte)getIntValue(CONTACTITEM_CLIENT))+ " " + getStringValue(CONTACTITEM_CLIVERSION));
+				else
+					addToTextList("ICQ client", Util.getClientString((byte)getIntValue(CONTACTITEM_CLIENT)));
 				addToTextList("Int IP", Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)));
 				addToTextList("Ext IP", Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP)));
 				addToTextList("Port", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT)));

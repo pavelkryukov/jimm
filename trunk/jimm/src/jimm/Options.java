@@ -577,7 +577,7 @@ class OptionsForm implements CommandListener
 		"history",
 		// #sijapp cond.end#
 		"ext_hotkey_action_onoff",
-		"options",
+		"options_lng",
 		"menu",
 		"keylock",
 		// #sijapp cond.if target is "MIDP2"#
@@ -625,7 +625,7 @@ class OptionsForm implements CommandListener
         selectCommand=new Command(ResourceBundle.getString("select"), Command.OK, 1);
         // #sijapp cond.end#
         
-        optionsMenu = new List(ResourceBundle.getString("options"), List.IMPLICIT);
+        optionsMenu = new List(ResourceBundle.getString("options_lng"), List.IMPLICIT);
 
         // #sijapp cond.if target is "MOTOROLA"#
         optionsMenu.addCommand(selectCommand);
@@ -634,7 +634,7 @@ class OptionsForm implements CommandListener
         optionsMenu.setCommandListener(this);            
                 
 		// Initialize options form
-		optionsForm = new Form(ResourceBundle.getString("options"));
+		optionsForm = new Form(ResourceBundle.getString("options_lng"));
 		optionsForm.addCommand(saveCommand);
 		optionsForm.addCommand(backCommand);
 		optionsForm.setCommandListener(this);
@@ -657,7 +657,7 @@ class OptionsForm implements CommandListener
 	    eventList[optionsMenu.append(ResourceBundle.getString("options_hotkeys"), null)]  = OPTIONS_HOTKEYS;
         eventList[optionsMenu.append(ResourceBundle.getString("options_signaling"), null)]  = OPTIONS_SIGNALING;
         // #sijapp cond.if modules_TRAFFIC is "true"#
-        eventList[optionsMenu.append(ResourceBundle.getString("traffic"), null)]      = OPTIONS_TRAFFIC;
+        eventList[optionsMenu.append(ResourceBundle.getString("traffic_lng"), null)]      = OPTIONS_TRAFFIC;
         // #sijapp cond.end#
 	}
 

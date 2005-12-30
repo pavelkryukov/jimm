@@ -30,7 +30,7 @@
         "next"                        "Наступний"
         // #sijapp cond.end#
 
-        "."                           "."
+        "point"                       "."
         "about"                       "Про..."
         "about_info"                  "Jimm - Мобiльний ICQ\n\nICQ Клiєнт для J2ME\nВерсiя 0.4.2\n http://www.jimm.org/"
         "account"                     "Облiковий запис"
@@ -155,7 +155,7 @@
         "onl_notification"            "Iнформувати про пiд'єднанi контакти"
         "onl_sound_file_name"         "Файл звуку пiд'єднання"
         "only_online"                 "Показувати лише онлайн контакти"
-        "options"                     "Налаштування"
+        "options_lng"                 "Налаштування"
         "options_account"             "Облiковий запис"
         "options_cost"                "Вартiсть"
         "options_effect"              "Вам необхiдно перез'єднатися для застосування змiн"
@@ -218,7 +218,7 @@
         "text_too_long"               "Текст є задовгий для вставки"
         "timeout_interv"              "Таймаут пiнга"
         "title"                       "Заголовок"
-        "traffic"                     "Трафiк"
+        "traffic_lng"                 "Трафiк"
         "uin"                         "UIN"
         "url"                         "URL"
         "use_history"                 "Зберiгати iсторiю"

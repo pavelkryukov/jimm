@@ -148,10 +148,10 @@ public class SendMessageAction extends Action
         // What message format/encoding should we use?
         int type = 1;
         boolean utf8;
-        utf8 = rcvr.hasCapability(ContactListContactItem.CAP_UTF8_INTERNAL);
+        utf8 = rcvr.hasCapability(Util.CAPF_UTF8_INTERNAL);
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
-        if ((this.fileTrans != null) && (rcvr.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(ContactListContactItem.CAP_AIM_SERVERRELAY_INTERNAL))
+        if ((this.fileTrans != null) && (rcvr.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(Util.CAPF_AIM_SERVERRELAY_INTERNAL))
         {
             type = 2;
         }
@@ -347,7 +347,7 @@ public class SendMessageAction extends Action
                 Util.putDWord(buf, marker, 0x00000000);
                 marker += 4;
 
-                System.arraycopy(ActionListener.CAP_AIM_SERVERRELAY, 0, buf, marker, 16);
+                System.arraycopy(Util.CAP_AIM_SERVERRELAY, 0, buf, marker, 16);
                 // SUB_MSG_TYPE2.CAPABILITY
                 marker += 16;
 
@@ -501,7 +501,7 @@ public class SendMessageAction extends Action
                     marker += 4;
                     Util.putDWord(buf, marker, 0x26000000);
                     marker += 4;
-                    System.arraycopy(ActionListener.CAP_UTF8_GUID, 0, buf, marker, 38);
+                    System.arraycopy(Util.CAP_UTF8_GUID, 0, buf, marker, 38);
                     // SUB_MSG_TYPE2.CAPABILITY
                     marker += 38;
                 }
@@ -596,7 +596,7 @@ public class SendMessageAction extends Action
                 marker += 4;
                 Util.putDWord(buf, marker, 0x26000000);
                 marker += 4;
-                System.arraycopy(ActionListener.CAP_UTF8_GUID, 0, buf, marker, 38);
+                System.arraycopy(Util.CAP_UTF8_GUID, 0, buf, marker, 38);
                 // SUB_MSG_TYPE2.CAPABILITY
                 marker += 38;                
                 // #sijapp cond.end#
@@ -617,7 +617,7 @@ public class SendMessageAction extends Action
                 marker += 4;
                 Util.putDWord(buf, marker, 0x26000000);
                 marker += 4;
-                System.arraycopy(ActionListener.CAP_UTF8_GUID, 0, buf, marker, 38);
+                System.arraycopy(Util.CAP_UTF8_GUID, 0, buf, marker, 38);
                 // SUB_MSG_TYPE2.CAPABILITY
                 marker += 38;
                 // #sijapp cond.end#

@@ -23,28 +23,42 @@
 
 package jimm.comm;
 
-import jimm.Jimm;
-import jimm.JimmException;
-import jimm.ContactList;
-import jimm.ContactListContactItem;
-import jimm.JimmUI;
 import jimm.util.ResourceBundle;
 import javax.microedition.lcdui.*;
 import DrawControls.*;
-import jimm.Options;
+import jimm.*;
 
 public class VisibilityCheckerAction extends Action implements CommandListener
 {
-	protected byte[] uin;
+    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+    // #sijapp cond.if modules_FILES is "true"#
+    // DC variables
+	boolean statusChange = true;
+	byte[] tmpCaps;
+    byte[] internalIP = new byte[4];
+    long dcPort = 0;
+    int dcType = -1;
+    int icqProt = 0;
+    long authCookie = 0;
+    // #sijapp cond.end#
+    // #sijapp cond.end#
+    
+    int dwFT1=0, dwFT2=0, dwFT3=0;
+    int capabilities = 0;
+    
+    int idle = -1;
+    long online = -1;
+    long signon = -1;
+    
+	private byte[] uin;
 	private String strUin;
-
-	protected String nick;
-
-	protected boolean completed;
-
-	protected boolean showResult;
-
-	protected long status;
+	private String nick;
+	private boolean completed;
+	private boolean showResult;
+	private long status;
+	private int[] caps_and_dc = new int[9];
+	private String ver_detected;
+	private byte[][] ip_and_cookie = new byte[3][4];
 
 	public VisibilityCheckerAction(
 		String _uin,
@@ -69,7 +83,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 
 	public boolean isExecutable()
 	{
-		return !(Icq.isNotConnected());
+		return Icq.isConnected();
 	}
 
 	public boolean isExclusive()
@@ -108,11 +122,53 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 					try
 					{
 						int tlvType = Util.getWord(buf, marker);
-						marker += 2;
-						int tlvLen = Util.getWord(buf, marker);
-						marker += 2;
-						if ((tlvType == 0x0006) && (tlvLen == 4)) this.status = Util.translateStatusReceived(Util.getDWord(buf, marker));
-						marker += tlvLen;
+						byte[] tlvData = Util.getTlv(buf, marker);
+						marker += 2 + 2 + tlvData.length;
+						switch (tlvType) {
+							case 0x0006:
+								this.status = Util.translateStatusReceived(Util.getDWord(tlvData, 0));
+								break;
+							case 0x0005:
+								capabilities = Util.parseCapabilities(strUin,tlvData);
+								break;
+							case 0x000c:
+		                        // dcMarker
+		                        int dcMarker = 0;
+		                        
+		                        // Get internal IP
+		                        System.arraycopy(tlvData,dcMarker,internalIP,0,4);
+		                        dcMarker += 4;
+		                        
+		                        // Get tcp port
+		                        dcPort = Util.getDWord(tlvData,dcMarker);
+		                        dcMarker += 4;
+		                        
+		                        // Get DC type
+		                        dcType = Util.getByte(tlvData,dcMarker);
+		                        dcMarker ++;
+		                        
+		                        // Get protocol version
+		                        icqProt = Util.getWord(tlvData,dcMarker);
+		                        dcMarker += 2;
+		                        
+		                        // Get auth cookie
+		                        authCookie = Util.getDWord(tlvData,dcMarker);
+		                        dcMarker +=12;
+		                        
+		                        // Get data for client detection
+		                        dwFT1 = (int) Util.getDWord(tlvData,dcMarker);
+		                        dcMarker += 4;
+		                        dwFT2 = (int) Util.getDWord(tlvData,dcMarker);
+		                        dcMarker += 4;
+		                        dwFT3 = (int) Util.getDWord(tlvData,dcMarker);
+		                        statusChange = false;
+							case 0x0003:
+								signon = Util.byteArrayToLong(tlvData); //signon time
+								break;
+							case 0x000f:
+								online = Util.byteArrayToLong(tlvData); //online time
+								break;
+						}
 					}
 					catch (Exception e)
 					{
@@ -150,20 +206,29 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 				results.setCaption(ResourceBundle.getString("invisible_check"));
 				results.setFontSize(Font.SIZE_SMALL);
 				//#sijapp cond.end#
-				StringBuffer str_begin = new StringBuffer();
-				str_begin.append(ResourceBundle.getString("status")).append(" ").append(this.nick).append(":\n");
+				String str_begin = ResourceBundle.getString("status") + " " + this.nick + ":\n";
 				Image st_image = ContactList.getImageList().elementAt(ContactListContactItem.getStatusImageIndex(this.status));
-				StringBuffer str_end = new StringBuffer();
-				str_end.append(" (").append(ContactListContactItem.getStatusString(this.status)).append(")");
+				String str_end = " (" + ContactListContactItem.getStatusString(this.status) + ")";
 				results
-						.addBigText(str_begin.toString(), Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Font.STYLE_PLAIN, -1)
+						.addBigText(str_begin, Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Font.STYLE_PLAIN, -1)
 						.addImage(st_image, null, st_image.getWidth(), st_image.getHeight(), -1)
-						.addBigText(str_end.toString(), Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Font.STYLE_PLAIN, -1);
+						.addBigText(str_end, Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Font.STYLE_PLAIN, -1);
 				results.addCommand(new Command("OK", Command.OK, 1));
 				results.setCommandListener(this);
 				Jimm.display.setCurrent(results);
-				
-				ContactList.update(strUin, this.status);
+				// Update contact list
+				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+				// #sijapp cond.if modules_FILES is "true"#
+				if ( !statusChange )
+					Util.detectUserClient(strUin, dwFT1, dwFT2, dwFT3,capabilities,icqProt);
+				ContactList.update(strUin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
+				// #sijapp cond.else#
+				ContactList.update(strUin, status, capabilities,signon,online,idle);
+				// #sijapp cond.end#
+				// #sijapp cond.else#
+				ContactList.update(strUin, status, capabilities,signon,online,idle);
+				// #sijapp cond.end#
+
 			}
 			return true;
 		}

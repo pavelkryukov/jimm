@@ -28,7 +28,7 @@
   "send"                        "Siųsti"
   // #sijapp cond.end#
 
-  "."                           "."
+  "point"                       "."
   "about"                       "Apie"
   "about_info"                  "Jimm - Mobile Messaging\n\nICQ klientas J2ME palaikantiems telefonams\n\nVersija: ###VERSION###\nTipas: ###TARGET###\nModuliai: ###MODULES###\n\nDaugiau informacijos http://www.jimm.org/"
   "account"                     "Paskyra"
@@ -158,7 +158,7 @@
   "onl_notification"            "Pranešimas apie prisijungusį"
   "onl_sound_file_name"         "Online garsas"
   "only_online"                 "Rodyti tik prisijungusius"
-  "options"                     "Savybės"
+  "options_lng"                 "Savybės"
   "options_account"             "Vartotojas"
   "options_cost"                "Kaina"
   "options_effect"              "Jums gali tekti prisijungti dar kartą, kad pamatytumėte pakeitimus!"
@@ -221,7 +221,7 @@
   "text_too_long"               "Per ilgas tekstas įterpimui"
   "timeout_interv"              "Keepalive packet interval"
   "title"                       "Kreipinys"
-  "traffic"                     "Srautas"
+  "traffic_lng"                 "Srautas"
   "uin"                         "UIN"
   "url"                         "Nuoroda"
   "use_history"                 "Saugoti istoriją"

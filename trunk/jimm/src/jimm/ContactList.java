@@ -75,63 +75,6 @@ import net.rim.device.api.system.LED;
 import DrawControls.*;
 import jimm.Options;
 
-
-// Comparer for node sorting by status and by name
-class NodeComparer implements TreeNodeComparer
-{
-	final static public int SORT_BY_NAME   = 1;
-	final static public int SORT_BY_STATUS = 0;
-	final private int sortType;
-	
-	NodeComparer(int sortType)
-	{
-		this.sortType = sortType;
-	}
-	
-	static int getNodeWeight(TreeNode node)
-	{
-		ContactListContactItem cItem;
-		Object obj;
-
-		obj = node.getData();
-		if ( !(obj instanceof ContactListContactItem) ) return 10;
-		cItem = (ContactListContactItem)obj;
-		if (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) return 0;
-		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) return 20;
-	
-		return 10;
-	}
-
-	public int compareNodes(TreeNode node1, TreeNode node2)
-	{
-		ContactListContactItem item1, item2;
-		Object obj1, obj2;
-		int result = 0;
-	
-		obj1 = node1.getData();
-		obj2 = node2.getData();
-		
-		item1 = (ContactListContactItem)obj1;
-		item2 = (ContactListContactItem)obj2;
-		
-		switch (sortType)
-		{
-		case SORT_BY_NAME: 
-			result = item1.getLowerText().compareTo( item2.getLowerText() );
-			break;
-		case SORT_BY_STATUS:
-			int weight1 = getNodeWeight(node1);
-			int weight2 = getNodeWeight(node2);
-			if (weight1 == weight2) result = item1.getLowerText().compareTo( item2.getLowerText() );		
-			else result = (weight1 < weight2) ? -1 : 1; 
-			break;
-		}
-		
-		return result;
-	}
-}
-
-
 //////////////////////////////////////////////////////////////////////////////////
 public class ContactList implements CommandListener, VirtualTreeCommands, VirtualListCommands
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -286,6 +229,54 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		
         tree.setCommandListener(this);
     }
+    
+    ///////////////////////////////////////////////////////////////////////////
+	final static public int SORT_BY_NAME   = 1;
+	final static public int SORT_BY_STATUS = 0;
+	static private int sortType;
+	
+	static int getNodeWeight(TreeNode node)
+	{
+		ContactListContactItem cItem;
+		Object obj;
+
+		obj = node.getData();
+		if ( !(obj instanceof ContactListContactItem) ) return 10;
+		cItem = (ContactListContactItem)obj;
+		if (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) return 0;
+		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) return 20;
+	
+		return 10;
+	}
+
+	public int compareNodes(TreeNode node1, TreeNode node2)
+	{
+		ContactListContactItem item1, item2;
+		Object obj1, obj2;
+		int result = 0;
+	
+		obj1 = node1.getData();
+		obj2 = node2.getData();
+		
+		item1 = (ContactListContactItem)obj1;
+		item2 = (ContactListContactItem)obj2;
+		
+		switch (sortType)
+		{
+		case SORT_BY_NAME: 
+			result = item1.getLowerText().compareTo( item2.getLowerText() );
+			break;
+		case SORT_BY_STATUS:
+			int weight1 = getNodeWeight(node1);
+			int weight2 = getNodeWeight(node2);
+			if (weight1 == weight2) result = item1.getLowerText().compareTo( item2.getLowerText() );		
+			else result = (weight1 < weight2) ? -1 : 1; 
+			break;
+		}
+		
+		return result;
+	}
+	///////////////////////////////////////////////////////////////////////////
     
     // Returns reference to tree 
     static public Displayable getVisibleContactListRef()
@@ -474,6 +465,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                     }
                 }
             }
+            
             System.gc();
             System.out.println("\n clload mem used: "+(mem-Runtime.getRuntime().freeMemory()));
 		}
@@ -654,24 +646,19 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static private void sortAll()
     {
     	if (treeSorted) return;
+    	sortType = Options.getIntOption(Options.OPTION_CL_SORT_BY);
     	if (Options.getBooleanOption(Options.OPTION_USER_GROUPS))
     	{
             for (int i = 0; i < gItems.size(); i++)
     		{
     		    ContactListGroupItem gItem = (ContactListGroupItem)gItems.elementAt(i);
     		    TreeNode groupNode = (TreeNode)gNodes.get( new Integer(gItem.getId()) );
-    		    tree.sortNode( groupNode, createNodeComparer() );
+    		    tree.sortNode(groupNode);
     		    calcGroupData(groupNode, gItem);
     		}
     	}
-    	else tree.sortNode( null, createNodeComparer() );
+    	else tree.sortNode(null);
     	treeSorted = true;
-    }
-    
-    // creates node comparer for node sorting
-    static private TreeNodeComparer createNodeComparer()
-    {
-       	return new NodeComparer( Options.getIntOption(Options.OPTION_CL_SORT_BY) );
     }
     
     // Builds contacts tree (without sorting) 
@@ -851,13 +838,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     		tree.deleteChild( groupNode, tree.getIndexOfChild(groupNode, cItemNode) );
     		
     		int contCount = groupNode.size();
-    		TreeNodeComparer comparer = createNodeComparer();
+    		sortType = Options.getIntOption(Options.OPTION_CL_SORT_BY);
     		
     		for (int j = 0; j < contCount; j++)
     		{
     			TreeNode testNode = groupNode.elementAt(j);
     			if ( !(testNode.getData() instanceof ContactListContactItem) ) continue;
-    			if (comparer.compareNodes(cItemNode, testNode) < 0)
+    			if (_this.compareNodes(cItemNode, testNode) < 0)
     			{
     				tree.insertChild(groupNode, cItemNode, j);
     				inserted = true;

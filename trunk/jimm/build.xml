@@ -265,7 +265,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		    <replacefilter token="${3ns}MODULES${3ns}" value="${modules}" />
 		</replace>
 		<mkdir dir="${build}/res" />
-		<langs languages="${lang}" inDir="${build}/init/src/lng" outDir="${build}/res" />
+		<langs languages="${lang}" inDir="${build}/init/src/lng" outDir="${build}/res" srcDir="${build}/init/src/"/>
 	</target>
 	
 	<!--  Internal target: compile   -->
@@ -304,7 +304,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<arg line="-cldc" />
 		</exec>
 	</target>
-	
+
+
 	<!--  Internal target: preprocess-manifest   -->
 	<target name="preprocess-manifest" depends="init">
 		<copy file="${res}/MANIFEST.MF" todir="${build}" />

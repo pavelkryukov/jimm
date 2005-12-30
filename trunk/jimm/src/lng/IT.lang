@@ -26,7 +26,7 @@
   "send"                        "Invia"
   // #sijapp cond.end#
 
-  "."                           "."
+  "point"                           "."
   "about"                       "Informazioni"
   "about_info"                  "Jimm - Mobile Messaging\n\nClient ICQ per J2ME\n\nVersione: ###VERSION###\nPiattaforma: ###TARGET###\nModuli: ###MODULES###\n\nSito http://www.jimm.org/"
   "account"                     "Account"
@@ -133,7 +133,7 @@
   "onl_notification"            "Notifica contatti in arrivo"
   "onl_sound_file_name"         "File Audio per Connessione Contatto"
   "only_online"                 "Mostra solo contatti connessi"
-  "options"                     "Opzioni"
+  "options_lng"                 "Opzioni"
   "options_account"             "Account"
   "options_cost"                "Costi"
   "options_effect"              "Può essere necessario riconnettersi per applicare alcune modifiche!"
@@ -185,7 +185,7 @@
   "status_online"               "Connesso"
   "successful"                  "riuscito"
   "sysnotice"                   "Avviso di Sistema"
-  "traffic"                     "Traffico"
+  "traffic_lng"                     "Traffico"
   "uin"                         "UIN"
   "url"                         "URL"
   "use_history"                 "Salva cronologia"
