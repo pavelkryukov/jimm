@@ -244,11 +244,13 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		
 		case CONTACTITEM_IDLE:          idle = value;          return;
 		case CONTACTITEM_CAPABILITIES:  caps = value;          return;
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_DC_TYPE:       dcType = value;        return;
 		case CONTACTITEM_ICQ_PROT:      icqProt = value;       return;
 		case CONTACTITEM_DC_PORT:       dcPort = value;        return;
 		case CONTACTITEM_CLIENT:     	clientId = value;      return;
+		// #sijapp cond.end #
 		// #sijapp cond.end #
 		}
 	}
@@ -265,11 +267,13 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_AUTREQUESTS:   return (sysNoticesAndAuthRequests & 0x0000FFFF);
 		case CONTACTITEM_IDLE:          return idle;
 		case CONTACTITEM_CAPABILITIES:  return caps;
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_DC_TYPE:       return dcType;
 		case CONTACTITEM_ICQ_PROT:      return icqProt;
 		case CONTACTITEM_DC_PORT:       return dcPort;
 		case CONTACTITEM_CLIENT:        return clientId;
+		// #sijapp cond.end #
 		// #sijapp cond.end #
 		}
 		return 0;
@@ -296,9 +300,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_ONLINE:      online = value;     return;
 		case CONTACTITEM_SIGNON:      signOn = value;     return;
 		case CONTACTITEM_STATUS:      status = value;     return;
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_AUTH_COOKIE: authCookie = value; return;
-		// #sijapp cond.end #
+		//#sijapp cond.end #
+		//#sijapp cond.end #
 		}
 	}
 	
@@ -309,15 +315,18 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_ONLINE:      return online;
 		case CONTACTITEM_SIGNON:      return signOn;
 		case CONTACTITEM_STATUS:      return status;
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_AUTH_COOKIE: return authCookie;
-		// #sijapp cond.end #
+		//#sijapp cond.end #
+		//#sijapp cond.end #
 		}
 		return 0;
 	}
 	
 ///////////////////////////////////////////////////////////////////////////
 	
+	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	//#sijapp cond.if modules_FILES is "true"#
 	public static byte[] longIPToByteAray(int value)
 	{
@@ -358,7 +367,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return null;
 	}
 	
-	// #sijapp cond.end #
+	//#sijapp cond.end #
+	//#sijapp cond.end #
 	
 	// Variable keys
 	public static final int CONTACTITEM_UIN						= 0;   /* String */

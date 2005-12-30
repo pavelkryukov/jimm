@@ -168,8 +168,12 @@ public class SplashCanvas extends Canvas
 		//  #sijapp cond.else#
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight());
 		//  #sijapp cond.end#
-		int r, g;
 		Graphics bg_graph = background.getGraphics();
+		// #sijapp cond.if target is "DEFAULT" | target is "SIEMENS1"#
+		bg_graph.setColor(0,0,0);
+		bg_graph.fillRect(0,0,this.getWidth(),this.getHeight());
+		//  #sijapp cond.else#
+		int r, g;
 		for (int x = 0; x < this.getWidth(); x+=2)
 		{
 			//  #sijapp cond.if target is "MOTOROLA"#
@@ -184,6 +188,7 @@ public class SplashCanvas extends Canvas
 				bg_graph.fillRect(x, y, 2, 2);
 			}
 		}
+		//  #sijapp cond.end#
 	}
 
 
