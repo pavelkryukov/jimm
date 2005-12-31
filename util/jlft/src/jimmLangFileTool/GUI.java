@@ -48,6 +48,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.JLabel;
+import java.awt.GridLayout;
 
 public class GUI extends JFrame implements ActionListener
 {
@@ -67,6 +69,11 @@ public class GUI extends JFrame implements ActionListener
 	private JButton saveCompare = null;
 	private JButton remove = null;
 	private JButton about = null;
+	private JPanel legendPanel = null;
+	private JLabel white = null;
+	private JLabel yellow = null;
+	private JLabel orange = null;
+	private JLabel red = null;
 	
 	/**
 	 * This is the default constructor
@@ -87,7 +94,8 @@ public class GUI extends JFrame implements ActionListener
 		renderer = new JlftTableRenderer();
 		this.setContentPane(getJContentPane(false));
 		this.setTitle("Jimm Lang File Tool");
-		this.setBounds(new java.awt.Rectangle(20,20,800,500));
+		this.setSize(new java.awt.Dimension(850,500));
+		this.setLocation(new java.awt.Point(20,20));
 		fillInValues();
 		this.pack();
 		this.setVisible(true);
@@ -177,7 +185,8 @@ public class GUI extends JFrame implements ActionListener
 			gridBagConstraints.gridx = 0;
 			jContentPane = new JPanel();
 			jContentPane.setLayout(new GridBagLayout());
-			jContentPane.setPreferredSize(new java.awt.Dimension(800,500));
+			jContentPane.setPreferredSize(new java.awt.Dimension(850,500));
+			jContentPane.setMinimumSize(new java.awt.Dimension(810,66));
 			jContentPane.add(getCompareToolBar(), gridBagConstraints);
 			jContentPane.add(getCompareScrollPane(), gridBagConstraints1);
 		}
@@ -291,6 +300,7 @@ public class GUI extends JFrame implements ActionListener
 			compareToolBar.add(getSaveCompare());
 			compareToolBar.add(getRemove());
 			compareToolBar.add(getAbout());
+			compareToolBar.add(getLegendPanel());
 		}
 		return compareToolBar;
 	}
@@ -549,6 +559,112 @@ public class GUI extends JFrame implements ActionListener
 				super.setValueAt(value, row, colum);
 	
 		}
+	}
+
+
+	/**
+	 * This method initializes legendPanel	
+	 * 	
+	 * @return javax.swing.JPanel	
+	 */
+	private JPanel getLegendPanel()
+	{
+		if (legendPanel == null)
+		{
+			GridLayout gridLayout = new GridLayout();
+			gridLayout.setRows(2);
+			gridLayout.setHgap(3);
+			gridLayout.setVgap(3);
+			gridLayout.setColumns(2);
+			legendPanel = new JPanel();
+			legendPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(3,3,3,3));
+			legendPanel.setLayout(gridLayout);
+			legendPanel.add(getWhite(), null);
+			legendPanel.add(getRed(), null);
+			legendPanel.add(getOrange(), null);
+			legendPanel.add(getYellow(), null);
+		}
+		return legendPanel;
+	}
+
+	/**
+	 * This method initializes white	
+	 * 	
+	 * @return javax.swing.JLabel	
+	 */
+	private JLabel getWhite()
+	{
+		if (white == null)
+		{
+			white = new JLabel();
+			white.setText("Key was found in base and compare file");
+			white.setComponentOrientation(java.awt.ComponentOrientation.LEFT_TO_RIGHT);
+			white.setFont(new java.awt.Font("MS Sans Serif", java.awt.Font.PLAIN, 10));
+			white.setOpaque(true);
+			white.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,3,0,3));
+			white.setBackground(new Color(255,255,255));
+		}
+		return white;
+	}
+
+	/**
+	 * This method initializes yellow	
+	 * 	
+	 * @return javax.swing.JLabel	
+	 */
+	private JLabel getYellow()
+	{
+		if (yellow == null)
+		{
+			yellow = new JLabel();
+			yellow.setText("Key was not found in compare file");
+			yellow.setComponentOrientation(java.awt.ComponentOrientation.LEFT_TO_RIGHT);
+			yellow.setFont(new java.awt.Font("MS Sans Serif", java.awt.Font.PLAIN, 10));
+			yellow.setOpaque(true);
+			yellow.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,3,0,3));
+			yellow.setBackground(java.awt.Color.yellow);
+		}
+		return yellow;
+	}
+
+	/**
+	 * This method initializes orange	
+	 * 	
+	 * @return javax.swing.JLabel	
+	 */
+	private JLabel getOrange()
+	{
+		if (orange == null)
+		{
+			orange = new JLabel();
+			orange.setText("Text for this key was changed but not saved yet");
+			orange.setComponentOrientation(java.awt.ComponentOrientation.LEFT_TO_RIGHT);
+			orange.setFont(new java.awt.Font("MS Sans Serif", java.awt.Font.PLAIN, 10));
+			orange.setOpaque(true);
+			orange.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,3,0,3));
+			orange.setBackground(java.awt.Color.orange);
+		}
+		return orange;
+	}
+
+	/**
+	 * This method initializes red	
+	 * 	
+	 * @return javax.swing.JLabel	
+	 */
+	private JLabel getRed()
+	{
+		if (red == null)
+		{
+			red = new JLabel();
+			red.setText("Key was found in compare but not in base");
+			red.setComponentOrientation(java.awt.ComponentOrientation.LEFT_TO_RIGHT);
+			red.setFont(new java.awt.Font("MS Sans Serif", java.awt.Font.PLAIN, 10));
+			red.setOpaque(true);
+			red.setBorder(javax.swing.BorderFactory.createEmptyBorder(0,3,0,3));
+			red.setBackground(java.awt.Color.red);
+		}
+		return red;
 	}
 
 }
