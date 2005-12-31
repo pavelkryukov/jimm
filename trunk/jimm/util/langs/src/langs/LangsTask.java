@@ -1,3 +1,26 @@
+/*******************************************************************************
+ Jimm - Mobile Messaging - J2ME ICQ clone
+ Copyright (C) 2003-06  Jimm Project
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ ********************************************************************************
+ File: util/langs/src/langs/LangsTask.java
+ Version: ###VERSION###  Date: ###DATE###
+ Author(s): Artyomov Denis
+ *******************************************************************************/
+
 package langs;
 
 import java.io.*;
@@ -6,10 +29,38 @@ import java.util.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
+class ShortKeyword
+{
+	private String shortKeyword;
+	boolean used;
+	
+	public ShortKeyword(String shortKeyword)
+	{
+		this.shortKeyword = shortKeyword;
+		used = false;
+	}
+	
+	public String getShortKeyword()
+	{
+		return shortKeyword;
+	}
+	
+	public void wasUsed()
+	{
+		used = true;
+	}
+	
+	public boolean getUsed()
+	{
+		return used;
+	}
+}
+
 public class LangsTask extends Task
 {
-	private String languages, inDir, outDir, srcDir;
-	private static Hashtable shortKeys = new Hashtable();
+	private String languages, inDir, outDir, srcDir, idealLang;
+	private static Hashtable shortKeys  = new Hashtable();
+	private static Vector warnings = new Vector(); 
 	
 	private static char[] shortKeyElems = 
 	{
@@ -49,8 +100,8 @@ public class LangsTask extends Task
 	{
 		if ( isSpecialKey(keyword) ) return keyword;
 		
-		String tableKeyword = (String)shortKeys.get(keyword);
-		if (tableKeyword != null) return tableKeyword;
+		ShortKeyword tableKeyword = (ShortKeyword)shortKeys.get(keyword);
+		if (tableKeyword != null) return tableKeyword.getShortKeyword();
 		
 		StringBuffer shortKeyword = new StringBuffer();
 	
@@ -61,9 +112,9 @@ public class LangsTask extends Task
 			value /= shortKeyElems.length;
 		} while (value > 0);
 		
-		String newKey = shortKeyword.toString(); 
+		String newKey = shortKeyword.toString();
 		
-		shortKeys.put(keyword, newKey);
+		shortKeys.put(keyword, new ShortKeyword(newKey));
 		
 		shortKeywordCounter++;
 		
@@ -236,8 +287,14 @@ public class LangsTask extends Task
 			while (allKeys.hasMoreElements())
 			{
 				String oldKey = (String)allKeys.nextElement();
-				String newKey = (String)shortKeys.get(oldKey);
-				line = replaceString(line, "\""+oldKey+"\"", "\""+newKey+"\"");
+				ShortKeyword shortKeyword = (ShortKeyword)shortKeys.get(oldKey);
+				String newKey = shortKeyword.getShortKeyword();
+				
+				String textToReplace = "\""+oldKey+"\"";
+				boolean contains = (line.indexOf(textToReplace) != -1);
+				if (contains) shortKeyword.wasUsed();
+				
+				line = replaceString(line, textToReplace, "\""+newKey+"\"");
 			}
 			
 			// Write source lines with new lang keys 
@@ -255,36 +312,12 @@ public class LangsTask extends Task
 		}
 	}
 	
-	static void generateStringSrcFile(String fileName)
-	{
-		String[] lines;
-		
-		try
-		{
-			lines = readFile(fileName);
-			
-			OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8");
-			BufferedWriter writer = new BufferedWriter(osw);
-			for (int i = 0; i < lines.length; i++)
-			{
-				writer.write(lines[i]);
-				writer.newLine();
-			}
-			writer.close();
-			osw.close();
-		}
-		catch (Exception e)
-		{
-			throw new BuildException(e);
-		}
-	}
-	
 	// Load and prepare file (remove comments)
 	private final static int PP_STATE_DIRECT_COPY       = 1;
 	private final static int PP_STATE_WAIT_FOR_COMMENT  = 2;
 	private final static int PP_STATE_SIMPLE_COMMENT    = 3;
 	private final static int PP_STATE_MULTILINE_COMMENT = 4;
-	private final static int PP_STATE_WAIT_FOR_MLC_END  = 5;
+	private final static int PP_STATE_WAIT_FOR_MLC_END  = 5; // wait for multiline comment end
 	private final static int PP_STATE_STRING            = 6;
 	
 	static String readAndPrepareSrcFile(String fileName) throws BuildException
@@ -311,7 +344,7 @@ public class LangsTask extends Task
 						state = PP_STATE_STRING;
 						buffer.append((char)curByte);
 					}
-					else /*if (curByte >= ' ')*/  buffer.append((char)curByte);
+					else buffer.append((char)curByte);
 					break;
 					
 				case PP_STATE_WAIT_FOR_COMMENT:
@@ -344,8 +377,6 @@ public class LangsTask extends Task
 					if (curByte == '\"') state = PP_STATE_DIRECT_COPY;
 					break;
 				}
-				
-				
 			}
 			
 			reader.close();
@@ -358,6 +389,58 @@ public class LangsTask extends Task
 		return buffer.toString();
 	}
 	
+	static private void showWarnings()
+	{
+		int size = warnings.size();
+		if (size == 0) return;
+		System.out.println("*** WARNINGS ***");
+		for (int i = 0; i < size; i++) System.out.println((String)warnings.elementAt(i));
+		warnings.clear();
+	}
+	
+	static private void checkUnusedKeys()
+	{
+		StringBuffer wtext = new StringBuffer(); 
+		
+		Enumeration allKeys = shortKeys.keys();
+		while (allKeys.hasMoreElements())
+		{
+			String key = (String)allKeys.nextElement();
+			ShortKeyword keyObj = (ShortKeyword)shortKeys.get(key);
+			if ( !keyObj.getUsed() )
+			{
+				if (wtext.length() != 0) wtext.append(", ");
+				wtext.append(key);
+			}
+		}
+		
+		if (wtext.length() != 0)
+		{
+			warnings.add("Next key[s] not found in sources:");
+			warnings.add(wtext.toString());
+		}
+	}
+	
+	static private void compareToIdealFile(Vector idealPairs, Vector normalPairs, String langName)
+	{
+		// Place normal keys to hashset for quick finding
+		Set normalData = new HashSet();
+		for (int i = 0; i < normalPairs.size(); i++)
+		{
+			String[] pair = (String[])normalPairs.elementAt(i);
+			normalData.add(pair[0]);
+		}
+		
+		// Find indeal keys in normal keys  
+		for (int i = 0; i < normalPairs.size(); i++)
+		{
+			String[] pair = (String[])idealPairs.elementAt(i);
+			if (!normalData.contains(pair[0]))
+			{
+				warnings.add(langName+".lang: missed \""+pair[0]+"\" ("+pair[1]+")");
+			}
+		}
+	}
 	
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
@@ -382,6 +465,11 @@ public class LangsTask extends Task
 		srcDir = value;
 	}
 	
+	public void setIdealLang(String value)
+	{
+		idealLang = value;
+	}
+	
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	
@@ -389,6 +477,7 @@ public class LangsTask extends Task
 	{
 		System.out.println("Creating lng file[s]... ");
 		shortKeys.clear();
+		warnings.clear();
 		Vector langs = new Vector(); 
 		StringTokenizer strTok = new StringTokenizer(languages, ",");
 		while (strTok.hasMoreTokens())
@@ -399,12 +488,16 @@ public class LangsTask extends Task
 		
 		int size = langs.size();
 		if (size == 0) new BuildException("No language specified");
-		Vector pairs;
+		
+		 
+		Vector pairs, idealPairs = null;
+		if (idealLang != null) idealPairs = readLangFile(inDir+"/"+idealLang+".lang"); 
 		for (int i = 0; i < size; i++)
 		{
 			String langName = (String)langs.elementAt(i);
 			pairs = readLangFile(inDir+"/"+langName+".lang");
 			writeLngFile(pairs, outDir+"/"+langName+".lng", size == 1);
+			if (idealPairs != null) compareToIdealFile(idealPairs, pairs, langName);
 		}
 		
 		try
@@ -413,10 +506,7 @@ public class LangsTask extends Task
 			DataOutputStream dos = new DataOutputStream(ostream);
 			
 			dos.writeShort(langs.size());
-			for (int i = 0; i < langs.size(); i++)
-			{
-				dos.writeUTF((String)langs.elementAt(i));
-			}
+			for (int i = 0; i < langs.size(); i++) dos.writeUTF((String)langs.elementAt(i));
 			
 			dos.flush();
 			ostream.close();
@@ -425,15 +515,17 @@ public class LangsTask extends Task
 		{
 			throw new BuildException(e);
 		}
+		
+		// Show warnings
+		showWarnings();
 
 		// Replace keys in sources
 		System.out.println("Preprocessing java sources... ");
 		String[] files = scanDir(new File(srcDir), "");
+		for (int i = 0; i < files.length; i++) replaceLangKeysInSources(files[i]);
+		checkUnusedKeys();
 		
-		for (int i = 0; i < files.length; i++)
-		{
-			replaceLangKeysInSources(files[i]);
-		}
+		// Show warnings
+		showWarnings();
 	}
-	
 }
