@@ -265,7 +265,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		    <replacefilter token="${3ns}MODULES${3ns}" value="${modules}" />
 		</replace>
 		<mkdir dir="${build}/res" />
-		<langs languages="${lang}" inDir="${build}/init/src/lng" outDir="${build}/res" srcDir="${build}/init/src/"/>
+		<langs languages="${lang}" inDir="${build}/init/src/lng" outDir="${build}/res" srcDir="${build}/init/src/" idealLang="EN"/>
 	</target>
 	
 	<!--  Internal target: compile   -->
