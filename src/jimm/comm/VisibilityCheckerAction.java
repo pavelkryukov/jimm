@@ -96,7 +96,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 		marker += 1;
 		System.arraycopy(this.uin, 0, buf, marker, this.uin.length);
 		marker += this.uin.length;
-		Jimm.jimm.getIcqRef().c.sendPacket(new SnacPacket(0x0002, 0x0015, 0x00000005, new byte[0], buf));
+		Icq.c.sendPacket(new SnacPacket(0x0002, 0x0015, 0x00000005, new byte[0], buf));
 	}
 
 	protected boolean forward(Packet packet) throws JimmException
