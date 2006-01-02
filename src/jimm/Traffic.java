@@ -294,7 +294,7 @@ public class Traffic
 	}
 
 	//Returns value of session traffic
-	static protected int getSessionTraffic(boolean kb)
+	static public int getSessionTraffic(boolean kb)
 	{
 		if (kb) return (session_traffic / 1024);
 		return (session_traffic);

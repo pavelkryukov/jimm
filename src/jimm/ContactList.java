@@ -151,6 +151,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	// Images for icons
 	private static ImageList imageList;
 
+	//
+	private static int online;
+
     // Initializer
     static
     {
@@ -161,6 +164,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         //#sijapp cond.end #
         
         selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
+    	
+		online = 0;
     	
         // Construct image objects
         try
@@ -309,6 +314,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     {
     	return cItems.size();
     }
+    
+	//
+	public static void incOnlineCount() {
+		online++;
+	}
+	public static void decOnlineCount() {
+		online--;
+	}
     
 
     // Returns all contact items as array
@@ -580,6 +593,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     {
     	tree.clear();
     	treeBuilt = treeSorted = false;
+		online = 0;
     	int count = cItems.size();
     	for (int i = 0; i < count; i++) 
     		((ContactListContactItem)cItems.elementAt(i)).setLongValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
@@ -1046,15 +1060,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static public void updateTitle(int traffic)
     {
 
-        String text;
+        String text = online + "/" + cItems.size();
         String sep = " - ";
-        if (traffic != 0)
-        {
-            text = ResourceBundle.getString("contact_list");
+        if (traffic != 0) {
             if (text.length() > 4) sep = "-";
             text += sep + traffic + ResourceBundle.getString("kb") + sep + Util.getDateString(true);
-        } else
-            text = ResourceBundle.getString("contact_list") + sep + Util.getDateString(true);
+        } else {
+            text += sep + Util.getDateString(true);
+		}
 
         //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         tree.setTitle(text);

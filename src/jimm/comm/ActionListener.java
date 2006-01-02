@@ -35,6 +35,9 @@ import jimm.RunnableImpl;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
+// #sijapp cond.if modules_TRAFFIC is "true"#
+import jimm.Traffic;
+// #sijapp cond.end#
 import jimm.util.ResourceBundle;
 
 public class ActionListener
@@ -157,7 +160,6 @@ public class ActionListener
                     }
                     // #sijapp cond.end#
                     // #sijapp cond.end#
-                    
                     else if (tlvType == 0x0003) // Signon time
                     {
                     	signon = Util.byteArrayToLong(tlvData);
@@ -177,9 +179,19 @@ public class ActionListener
                     marker += 2 + 2 + tlvData.length;
                 }
 
+				if (ContactList.getItembyUIN(uin).getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE) {
+					ContactList.incOnlineCount();
+					ContactList.updateTitle(
+						// #sijapp cond.if modules_TRAFFIC is "true"#
+						Traffic.getSessionTraffic(true)
+						// #sijapp cond.else#
+						0
+						// #sijapp cond.end#
+						);
+				}
+
                 // Update contact list
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                
                 // #sijapp cond.if modules_FILES is "true"#
                 	if ( !statusChange )
                 		Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt);
@@ -190,9 +202,6 @@ public class ActionListener
                 	// #sijapp cond.else#
                 	ContactList.update(uin, status, capabilities,signon,online,idle);
                 	// #sijapp cond.end#
-
-                
-                
 
             }
 
@@ -211,6 +220,14 @@ public class ActionListener
                 String uin = Util.byteArrayToString(buf, 1, uinLen);
 
                 // Update contact list
+				ContactList.decOnlineCount();
+				ContactList.updateTitle(
+					// #sijapp cond.if modules_TRAFFIC is "true"#
+					Traffic.getSessionTraffic(true)
+					// #sijapp cond.else#
+					0
+					// #sijapp cond.end#
+					);
                 RunnableImpl.callSerially(RunnableImpl.TYPE_USER_OFFLINE, uin);
             }
 
