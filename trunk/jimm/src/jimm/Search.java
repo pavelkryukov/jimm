@@ -45,7 +45,6 @@ import DrawControls.*;
 
 public class Search
 {
-      
     private SearchForm searchForm;
 
     // Request
@@ -65,9 +64,7 @@ public class Search
     // Constructor
     public Search()
     {
-        this.searchForm = new SearchForm();
-        
-        this.results = new Vector();
+    	this.results = new Vector();
     }
     
     // Add a result to the results vector
@@ -137,7 +134,8 @@ public class Search
     // Return the SearchForm object
     public SearchForm getSearchForm()
     {
-        return this.searchForm;
+    	if (searchForm == null) searchForm = new SearchForm();
+        return searchForm;
     }
 
     
@@ -224,9 +222,6 @@ public class Search
             this.searchForm.append(this.emailSearchTextBox);
             this.searchForm.append(this.citySearchTextBox);
             this.searchForm.append(this.keywordSearchTextBox);
-
-            this.searchForm.addCommand(this.searchCommand);
-            this.searchForm.addCommand(this.backCommand);
             this.searchForm.setCommandListener(this);
 
             // Result Screen
@@ -236,7 +231,7 @@ public class Search
             screen.addCommand(this.nextCommand);
             screen.addCommand(this.addCommand);
         }
-
+        
         // Activate search form
         public void activate(boolean result)
         {
@@ -244,8 +239,13 @@ public class Search
             {
                 drawResultScreen(selectedIndex);
                 Jimm.display.setCurrent(this.screen);
-            } else
+            }
+            else
+            {
+                this.searchForm.addCommand(this.searchCommand);
+                this.searchForm.addCommand(this.backCommand);
                 Jimm.display.setCurrent(this.searchForm);
+            }
         }
         
         public void drawResultScreen(int n)
@@ -335,7 +335,15 @@ public class Search
 
         public void commandAction(Command c, Displayable d)
         {
-            if (c == this.backCommand) MainMenu.activate();
+            if (c == this.backCommand)
+            {
+            	if (d == screen) activate(false);
+            	else
+            	{
+            		searchForm = null;
+            		MainMenu.activate();
+            	}
+            }
             else if (c == this.searchCommand)
             {
                 // Display splash canvas
@@ -370,6 +378,7 @@ public class Search
             else if (c == this.previousCommand) nextOrPrev(false);
             else if (c == this.addCommand && d == screen)
             {
+            	searchForm = null;
                 if (ContactList.getGroupItems().length == 0)
                 {
                     MainMenu.addUserOrGroupCmd(null, false);
