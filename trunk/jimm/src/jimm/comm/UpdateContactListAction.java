@@ -282,9 +282,11 @@ public class UpdateContactListAction extends Action
 
                         // Delete or add contact or group item from internal list
                         if (cItem != null)
-                            if (action == ACTION_DEL)
+                            if (action == ACTION_DEL) {
+								if (this.cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
+									ContactList.decOnlineCount();
                                 ContactList.removeContactItem(this.cItem);
-                            else
+							} else
                             	ContactList.addContactItem(this.cItem);
                         else
                             if (action == ACTION_DEL)
