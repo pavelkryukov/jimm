@@ -31,6 +31,8 @@ import java.io.DataInputStream;
 import java.util.*;
 
 import DrawControls.*;
+import jimm.comm.Icq;
+import jimm.comm.RequestInfoAction;
 import jimm.util.ResourceBundle;
 import jimm.ContactListContactItem;
 import jimm.ContactList;
@@ -46,12 +48,13 @@ public class JimmUI implements CommandListener
 	final public static int CMD_BACK   = 6;
 	
 	// Commands
-	final private static Command cmdOk     = new Command("OK",     Command.OK,     1);
-	final private static Command cmdCancel = new Command("Cancel", Command.BACK,   2);
-	final private static Command cmdYes    = new Command("Yes",    Command.OK,     1);
-	final private static Command cmdNo     = new Command("No",     Command.CANCEL, 2);
-	final private static Command cmdFind   = new Command("Find",   Command.OK,     1);
-	final private static Command cmdBack   = new Command("Back",   Command.BACK,   2);
+	final private static Command cmdOk       = new Command(ResourceBundle.getString("ok"),        Command.OK,     1);
+	final private static Command cmdCancel   = new Command(ResourceBundle.getString("cancel"),    Command.BACK,   2);
+	final private static Command cmdYes      = new Command(ResourceBundle.getString("yes"),       Command.OK,     1);
+	final private static Command cmdNo       = new Command(ResourceBundle.getString("no"),        Command.CANCEL, 2);
+	final private static Command cmdFind     = new Command(ResourceBundle.getString("find"),      Command.OK,     1);
+	final private static Command cmdBack     = new Command(ResourceBundle.getString("back"),      Command.BACK,   2);
+	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"), Command.ITEM,   2);
 
 	static private Hashtable commands = new Hashtable();
 	static private Displayable lastDisplayable;
@@ -87,6 +90,71 @@ public class JimmUI implements CommandListener
 		aboutTextList = null;
 		System.gc();
 	}
+	
+	public void commandAction(Command c, Displayable d)
+	{
+		// "About" -> "Back"
+		if ((d == aboutTextList) && (c == cmdBack))
+		{
+			synchronized(jimmUIobj)
+			{
+				Jimm.display.setCurrent(lastDisplayable);
+				aboutTextList = null;
+			}
+		}
+		
+		// "User info"
+		if (d == userInfoTL)
+		{
+			// "User info" -> "Cancel, Back"
+			if ((c == cmdCancel) || (c == cmdBack)) cancelUserInfo();
+			else if (c == cmdCopyText)
+			{
+				JimmUI.setClipBoardText
+				(
+					"["+getCaption(userInfoTL)+"]\n"
+					+userInfoTL.getCurrText(0)
+				);
+			}
+		}
+	}
+	
+	public static void setCaption(Displayable ctrl, String caption)
+	{
+		if (ctrl instanceof VirtualList)
+		{
+			VirtualList vl = (VirtualList)ctrl;
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			vl.setTitle(caption);
+			// #sijapp cond.else#
+			vl.setCaption(caption);
+			// #sijapp cond.end#
+		}
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		else ctrl.setTitle(caption);
+		// #sijapp cond.end#
+	}
+	
+	public static String getCaption(Displayable ctrl)
+	{
+		if (ctrl == null) return null;
+		String result = null;
+		if (ctrl instanceof VirtualList)
+		{
+			VirtualList vl = (VirtualList)ctrl;
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			result = vl.getTitle();
+			// #sijapp cond.else#
+			result = vl.getCaption();
+			// #sijapp cond.end#
+		}
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		else result = ctrl.getTitle();
+		// #sijapp cond.end#
+		
+		return result;
+	}
+	
 	
 	/////////////////////////
 	//                     // 
@@ -188,20 +256,6 @@ public class JimmUI implements CommandListener
 		if (!versionLoaded) Jimm.jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
 	}
     	
-	public void commandAction(Command c, Displayable d)
-	{
-		// "About" -> "Back"
-		if ((d == aboutTextList) && (c == cmdBack))
-		{
-			synchronized(jimmUIobj)
-			{
-				Jimm.display.setCurrent(lastDisplayable);
-				aboutTextList = null;
-			}
-		}
-	}
-	
-	
 	//////////////////////
 	//                  //
 	//    Clipboard     //
@@ -259,7 +313,7 @@ public class JimmUI implements CommandListener
 		HistoryStorage.setColorScheme();
 		// #sijapp cond.end#
 		
-		Jimm.jimm.getChatHistoryRef().setColorScheme();
+		ChatHistory.setColorScheme();
 		setColorScheme((VirtualList)ContactList.getVisibleContactListRef());
 	}
     
@@ -377,7 +431,8 @@ public class JimmUI implements CommandListener
 			// #sijapp cond.end#
 
 			case Options.HOTKEY_INFO:
-				if (item != null) item.showInfo();
+				if (item != null)
+					requiestUserInfo(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 				break;
 
 			case Options.HOTKEY_NEWMSG:
@@ -429,4 +484,185 @@ public class JimmUI implements CommandListener
 		}
 	}
 	
+	///////////////////////////////////////////////////////////////////////////
+	//                                                                       //
+	//                            U S E R   I N F O                          //
+	//                                                                       //
+	///////////////////////////////////////////////////////////////////////////
+	
+	// Information about the user
+	final public static int UI_UIN       = 0;
+	final public static int UI_NICK      = 1;
+	final public static int UI_NAME      = 2;
+	final public static int UI_EMAIL     = 3;
+	final public static int UI_CITY      = 4;
+	final public static int UI_STATE     = 5;
+	final public static int UI_PHONE     = 6;
+	final public static int UI_FAX       = 7;
+	final public static int UI_ADDR      = 8;
+	final public static int UI_CPHONE    = 9;
+	final public static int UI_AGE       = 10;
+	final public static int UI_GENDER    = 11;
+	final public static int UI_HOME_PAGE = 12;
+	final public static int UI_BDAY      = 13;
+	final public static int UI_W_CITY    = 14;
+	final public static int UI_W_STATE   = 15;
+	final public static int UI_W_PHONE   = 16;
+	final public static int UI_W_FAX     = 17;
+	final public static int UI_W_ADDR    = 18;
+	final public static int UI_W_NAME    = 19;
+	final public static int UI_W_DEP     = 20;
+	final public static int UI_W_POS     = 21;
+	final public static int UI_ABOUT     = 22;
+	final public static int UI_INETRESTS = 23;
+	final public static int UI_AUTH      = 24;
+	final public static int UI_STATUS    = 25;
+	
+	final public static int UI_LAST_ID   = 26;
+	
+	static private int uiBigTextIndex;
+	static private String uiSectName = null;
+	
+	static private void addToTextList(int index, String[] data, String langStr, TextList list)
+	{
+		String str = data[index];
+		if (str == null) return;
+		if (str.length() == 0) return;
+
+		if (uiSectName != null)
+		{
+			list.addBigText
+			(
+				ResourceBundle.getString(uiSectName),
+				list.getTextColor(),
+				Font.STYLE_BOLD,
+				-1
+			).doCRLF(-1);
+			uiSectName = null;
+		}
+		
+		list.addBigText(ResourceBundle.getString(langStr)+": ", list.getTextColor(), Font.STYLE_PLAIN, uiBigTextIndex)
+		  .addBigText(str, Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_PLAIN, uiBigTextIndex)
+		  .doCRLF(uiBigTextIndex);
+		uiBigTextIndex++;
+	}
+	
+	static public void fillUserInfo(String[] data, TextList list, String caption)
+	{
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		list.setTitle(caption);
+		list.setFullScreenMode(false);
+		list.setFontSize(Font.SIZE_MEDIUM);
+		// #sijapp cond.else#
+		list.setCaption(caption);
+		list.setFontSize(Font.SIZE_SMALL);
+		// #sijapp cond.end#
+		
+		JimmUI.setColorScheme(list);
+		list.setCursorMode(TextList.SEL_NONE);
+		
+		uiSectName = "main_info";
+		addToTextList(UI_NICK,      data, "nick",       list);
+		addToTextList(UI_NAME,      data, "name",       list);
+		addToTextList(UI_GENDER,    data, "gender",     list);
+		addToTextList(UI_AGE,       data, "age",        list);
+		addToTextList(UI_EMAIL,     data, "email",      list);
+		addToTextList(UI_AUTH,      data, "auth",       list);
+		addToTextList(UI_BDAY,      data, "birth_day",  list);
+		addToTextList(UI_CPHONE,    data, "cell_phone", list);
+		addToTextList(UI_HOME_PAGE, data, "home_page",  list);
+		addToTextList(UI_ABOUT,     data, "notes",      list);
+		addToTextList(UI_INETRESTS, data, "interests",  list);
+		
+		if (data[UI_STATUS] != null)
+		{
+	        int stat = Integer.parseInt(data[UI_STATUS]);
+	        int imgIndex = 0;
+	        if (stat == 0) imgIndex = 6;
+	        else if (stat == 1) imgIndex = 7;
+	        else if (stat == 2) imgIndex = 3;
+	        list
+				.addBigText(ResourceBundle.getString("status") + ": ",list.getTextColor(),Font.STYLE_PLAIN, uiBigTextIndex)
+				.addImage
+				(
+					ContactList.getImageList().elementAt(imgIndex),
+					null,
+					ContactList.getImageList().getWidth(),
+					ContactList.getImageList().getHeight(),
+					uiBigTextIndex
+				)
+				.doCRLF(uiBigTextIndex);
+	        uiBigTextIndex++;
+		}
+		
+		uiSectName = "home_info";
+		addToTextList(UI_CITY,      data, "city",  list);
+		addToTextList(UI_STATE,     data, "state", list);
+		addToTextList(UI_ADDR,      data, "addr",  list);
+		addToTextList(UI_PHONE,     data, "phone", list);
+		addToTextList(UI_FAX,       data, "fax",   list);
+		
+		uiSectName = "work_info";
+		addToTextList(UI_W_NAME,    data, "title",    list);
+		addToTextList(UI_W_DEP,     data, "depart",   list);
+		addToTextList(UI_W_POS,     data, "position", list);
+		addToTextList(UI_W_CITY,    data, "city",     list);
+		addToTextList(UI_W_STATE,   data, "state",    list);
+		addToTextList(UI_W_ADDR,    data, "addr",     list);
+		addToTextList(UI_W_PHONE,   data, "phone",    list);
+		addToTextList(UI_W_FAX,     data, "fax",      list);
+	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	
+	static private TextList userInfoTL = null;
+	
+	static public void requiestUserInfo(String uin)
+	{
+		RequestInfoAction act = new RequestInfoAction(uin);
+		lastDisplayable = Jimm.display.getCurrent();
+		
+		userInfoTL = new TextList(null);
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		userInfoTL.setTitle(uin);
+		// #sijapp cond.else#
+		userInfoTL.setCaption(uin);
+		// #sijapp cond.end#
+		
+		userInfoTL.setCommandListener(jimmUIobj);
+		userInfoTL.setCursorMode(TextList.SEL_NONE);
+		setColorScheme(userInfoTL);
+		userInfoTL.addCommand(cmdCancel);
+		
+		try
+		{
+			Icq.requestAction(act);
+		}
+		catch (JimmException e)
+		{
+			JimmException.handleException(e);
+			if (e.isCritical()) return;
+		}
+		
+		userInfoTL.add(ResourceBundle.getString("wait"));
+		Jimm.display.setCurrent(userInfoTL);
+	}
+	
+	static private void cancelUserInfo()
+	{
+		userInfoTL = null;
+		Jimm.display.setCurrent(lastDisplayable);
+	}
+	
+	static public void showUserInfo(String[] data)
+	{
+		if (userInfoTL == null) return;
+		userInfoTL.clear();
+		JimmUI.fillUserInfo(data, userInfoTL, data[UI_UIN]);
+		userInfoTL.removeCommand(cmdCancel);
+		userInfoTL.addCommand(cmdBack);
+		userInfoTL.addCommand(cmdCopyText);
+	}
 }

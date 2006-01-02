@@ -24,6 +24,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_SET_CAPTION    = 3;
 	final static public int TYPE_USER_OFFLINE   = 4;
 	final static public int TYPE_STATUS_CHANGED = 5;
+	final static public int TYPE_SHOW_USER_INFO = 6;
 	
 	RunnableImpl(int type, Object[] data)
 	{
@@ -68,6 +69,10 @@ public class RunnableImpl implements Runnable
 				boolValues[1],
 				boolValues[2]
 			);
+			break;
+			
+		case TYPE_SHOW_USER_INFO:
+			JimmUI.showUserInfo((String[])data[0]);
 			break;
 		}
 	}

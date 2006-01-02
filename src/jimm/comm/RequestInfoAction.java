@@ -30,6 +30,8 @@ import java.util.Date;
 import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
+import jimm.JimmUI;
+import jimm.RunnableImpl;
 
 class BinaryInputStream
 {
@@ -65,59 +67,27 @@ class BinaryInputStream
 public class RequestInfoAction extends Action
 {
 
-
 	// Receive timeout
-	private static final int TIMEOUT = 20 * 1000; // milliseconds
+	private static final int TIMEOUT = 10 * 1000; // milliseconds
 
+	private boolean infoShown;
 
 	/****************************************************************************/
-
-
-	// Information about the user
-	final public static int UIN        = 0;
-	final public static int NICK       = 1;
-	final public static int NAME       = 2;
-	final public static int EMAIL      = 3;
-	final public static int CITY       = 4;
-	final public static int STATE      = 5;
-	final public static int PHONE      = 6;
-	final public static int FAX        = 7;
-	final public static int ADDR       = 8;
-	final public static int CPHONE     = 9;
-	final public static int AGE        = 10;
-	final public static int GENDER     = 11;
-	final public static int HOME_PAGE  = 12;
-	final public static int BDAY       = 13;
-	final public static int W_CITY     = 14;
-	final public static int W_STATE    = 15;
-	final public static int W_PHONE    = 16;
-	final public static int W_FAX      = 17;
-	final public static int W_ADDR     = 18;
-	final public static int W_NAME     = 19;
-	final public static int W_DEP      = 20;
-	final public static int W_POS      = 21;
-	final public static int ABOUT      = 22;
-	final public static int INETRESTS  = 23;
 	
-	final public static int LAST_ID    = 24;
-	
-	private String[] strData = new String[LAST_ID];	
+	private String[] strData = new String[JimmUI.UI_LAST_ID];	
 
 	// Date of init
 	private Date init;
+	private int packetCounter;
 
 
 	// Constructor
 	public RequestInfoAction(String uin)
 	{
-		strData[UIN] = uin;
+		infoShown = false;
+		packetCounter = 0;
+		strData[JimmUI.UI_UIN] = uin;
 	}
-
-	public String getStringData(int id)
-	{
-		return strData[id];
-	}
-
 
 	// Returns true if the action can be performed
 	public boolean isExecutable()
@@ -140,7 +110,7 @@ public class RequestInfoAction extends Action
 		// Send a CLI_METAREQINFO packet
 		byte[] buf = new byte[6];
 		Util.putWord(buf, 0, ToIcqSrvPacket.CLI_META_REQMOREINFO_TYPE, false);
-		Util.putDWord(buf, 2, Long.parseLong(strData[UIN]), false);
+		Util.putDWord(buf, 2, Long.parseLong(strData[JimmUI.UI_UIN]), false);
 		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options.getStringOption(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
 		Jimm.jimm.getIcqRef().c.sendPacket(packet);
 
@@ -153,6 +123,7 @@ public class RequestInfoAction extends Action
 	// Forwards received packet, returns true if packet was consumed
 	protected synchronized boolean forward(Packet packet) throws JimmException
 	{
+		boolean consumed = false; 
 
 		// Watch out for SRV_FROMICQSRV packet
 		if (packet instanceof FromIcqSrvPacket)
@@ -160,95 +131,111 @@ public class RequestInfoAction extends Action
 			FromIcqSrvPacket fromIcqSrvPacket = (FromIcqSrvPacket) packet;
 
 			// Watch out for SRV_META packet
-			if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_META_SUBCMD)
+			if (fromIcqSrvPacket.getSubcommand() != FromIcqSrvPacket.SRV_META_SUBCMD) return false;
+			
+			// Get packet data
+			byte[] data = fromIcqSrvPacket.getData();
+			
+			// Watch out for SRV_METAGENERAL packet
+			switch (Util.getWord(data, 0, false))
 			{
-				// Get packet data
-				byte[] data = fromIcqSrvPacket.getData();
-
-				// Watch out for SRV_METAGENERAL packet
-				switch (Util.getWord(data, 0, false))
+			case FromIcqSrvPacket.SRV_META_GENERAL_TYPE: //  basic user information
 				{
-				case FromIcqSrvPacket.SRV_META_GENERAL_TYPE: //  basic user information
-					{
-						BinaryInputStream stream = new BinaryInputStream(data, 3);
-						strData[NICK]   = stream.readAsciiz();     // nickname
-						strData[NAME]   = stream.readAsciiz()+" "+ // first name + last name
-						                 stream.readAsciiz();
-						strData[EMAIL]  = stream.readAsciiz();     // email 
-						strData[CITY]   = stream.readAsciiz();     // home city
-						strData[STATE]  = stream.readAsciiz();     // home state
-						strData[PHONE]  = stream.readAsciiz();     // home phone
-						strData[FAX]    = stream.readAsciiz();     // home fax
-						strData[ADDR]   = stream.readAsciiz();     // home address
-						strData[CPHONE] = stream.readAsciiz();     // cell phone
-						return (true);
-					}
+					BinaryInputStream stream = new BinaryInputStream(data, 3);
+					
+					strData[JimmUI.UI_NICK]   = stream.readAsciiz();     // nickname
+					// first name + last name
+					strData[JimmUI.UI_NAME]   = stream.readAsciiz()+" "+stream.readAsciiz();
+					strData[JimmUI.UI_EMAIL]  = stream.readAsciiz();     // email
+					strData[JimmUI.UI_CITY]   = stream.readAsciiz();     // home city
+					strData[JimmUI.UI_STATE]  = stream.readAsciiz();     // home state
+					strData[JimmUI.UI_PHONE]  = stream.readAsciiz();     // home phone
+					strData[JimmUI.UI_FAX]    = stream.readAsciiz();     // home fax
+					strData[JimmUI.UI_ADDR]   = stream.readAsciiz();     // home address
+					strData[JimmUI.UI_CPHONE] = stream.readAsciiz();     // cell phone
+					packetCounter++;
+					consumed = true;
+					break;
+				}
 				
-				case 0x00DC: // more user information
-					{
-						BinaryInputStream stream = new BinaryInputStream(data, 3);
+			case 0x00DC: // more user information
+				{
+					BinaryInputStream stream = new BinaryInputStream(data, 3);
 						
-						int age = stream.readWord();
-						strData[AGE]       = (age != 0) ? Integer.toString(age) : new String();
-						strData[GENDER]    = Util.genderToString( stream.readByte() );
-						strData[HOME_PAGE] = stream.readAsciiz();
-						int year = stream.readWord();
-						int mon  = stream.readByte();
-						int day  = stream.readByte();
-						strData[BDAY] = (year != 0) ? year+"."+mon+"."+day : new String();
-						return true;
-					}
+					int age = stream.readWord();
+					strData[JimmUI.UI_AGE]       = (age != 0) ? Integer.toString(age) : new String();
+					strData[JimmUI.UI_GENDER]    = Util.genderToString( stream.readByte() );
+					strData[JimmUI.UI_HOME_PAGE] = stream.readAsciiz();
+					int year = stream.readWord();
+					int mon  = stream.readByte();
+					int day  = stream.readByte();
+					strData[JimmUI.UI_BDAY] = (year != 0) ? year+"."+mon+"."+day : new String();
+					packetCounter++;
+					consumed = true;
+					break;
+				}
 					
-				case 0x00D2: // work user information
-					{
-						BinaryInputStream stream = new BinaryInputStream(data, 3);
-						for (int i = W_CITY; i <= W_ADDR; i++) strData[i] = stream.readAsciiz(); // city - address
-						stream.readAsciiz();                   // work zip code
-						stream.readWord();                     // work country code
-						strData[W_NAME] = stream.readAsciiz(); // work company
-						strData[W_DEP]  = stream.readAsciiz(); // work department
-						strData[W_POS]  = stream.readAsciiz(); // work position
-						return (true);
-					}
+			case 0x00D2: // work user information
+				{
+					BinaryInputStream stream = new BinaryInputStream(data, 3);
+					for (int i = JimmUI.UI_W_CITY; i <= JimmUI.UI_W_ADDR; i++) strData[i] = stream.readAsciiz(); // city - address
+					stream.readAsciiz();                   // work zip code
+					stream.readWord();                     // work country code
+					strData[JimmUI.UI_W_NAME] = stream.readAsciiz(); // work company
+					strData[JimmUI.UI_W_DEP]  = stream.readAsciiz(); // work department
+					strData[JimmUI.UI_W_POS]  = stream.readAsciiz(); // work position
+					packetCounter++;
+					consumed = true;
+					break;
+				}
 					
-				case 0x00E6: // user about information
-					{
-						BinaryInputStream stream = new BinaryInputStream(data, 3);
-						strData[ABOUT] = stream.readAsciiz(); // notes string
-						return true;
-					}
+			case 0x00E6: // user about information
+				{
+					BinaryInputStream stream = new BinaryInputStream(data, 3);
+					strData[JimmUI.UI_ABOUT] = stream.readAsciiz(); // notes string
+					packetCounter++;
+					consumed = true;
+					break;
+				}
 					
-				case 0x00F0: // user interests information
+			case 0x00F0: // user interests information
+				{
+					BinaryInputStream stream = new BinaryInputStream(data, 3);
+					StringBuffer sb = new StringBuffer();
+					int counter = stream.readByte();
+					for (int i = 0; i < counter; i++)
 					{
-						BinaryInputStream stream = new BinaryInputStream(data, 3);
-						StringBuffer sb = new StringBuffer();
-						int counter = stream.readByte();
-						for (int i = 0; i < counter; i++)
-						{
-							stream.readWord();
-							sb.append(stream.readAsciiz());
-							if (i != (counter-1)) sb.append(", ");
-						}
-						strData[INETRESTS] = sb.toString(); 
-						return true;
+						stream.readWord();
+						sb.append(stream.readAsciiz());
+						if (i != (counter-1)) sb.append(", ");
 					}
-				
+					strData[JimmUI.UI_INETRESTS] = sb.toString();
+					packetCounter++;
+					consumed = true;
+					break;
 				}
 			}
+			
+			// is completed?
+			if (isCompleted())
+			{
+				if (!infoShown)
+				{
+					RunnableImpl.callSerially(RunnableImpl.TYPE_SHOW_USER_INFO, (Object)strData);
+					infoShown = true;
+				}
+			}
+			
+		} // end 'if (packet instanceof FromIcqSrvPacket)'
 
-		}
-
-		// Packet has not been consumed
-		return (false);
-
+		return (consumed);
 	}
 
 
 	// Returns true if the action is completed
 	public synchronized boolean isCompleted()
 	{
-		for (int i = 0; i < LAST_ID; i++) if (strData[i] == null) return false;
-		return true;
+		return (packetCounter >= 5);
 	}
 
 

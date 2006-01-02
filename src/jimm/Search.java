@@ -74,14 +74,24 @@ public class Search
     public void addResult(String uin, String nick, String name, String email, String auth, int status, String gender,
             int age)
     {
-        SearchResult result = new SearchResult(uin,nick,name,email,auth,status,gender,age);
-        this.results.addElement(result);
+    	String[] resultData = new String[JimmUI.UI_LAST_ID];
+   	
+    	resultData[JimmUI.UI_UIN]    = uin;
+    	resultData[JimmUI.UI_NICK]   = nick;
+    	resultData[JimmUI.UI_NAME]   = name;
+    	resultData[JimmUI.UI_EMAIL]  = email;
+    	resultData[JimmUI.UI_AUTH]   = auth;
+    	resultData[JimmUI.UI_STATUS] = Integer.toString(status);
+    	resultData[JimmUI.UI_GENDER] = gender;
+    	resultData[JimmUI.UI_AGE]    = Integer.toString(age);
+    	
+        this.results.addElement(resultData);
     }
     
     // Return a result object by given Nr
-    public SearchResult getResult(int nr)
+    public String[] getResult(int nr)
     {
-        return (SearchResult) results.elementAt(nr);
+        return (String[]) results.elementAt(nr);
     }
 
     // Set a search request
@@ -130,70 +140,6 @@ public class Search
         return this.searchForm;
     }
 
-    /** ************************************************************************* */
-    /** ************************************************************************* */
-    /** ************************************************************************* */
-    
-    // Class for search result entries
-    private class SearchResult
-    {
-        
-        // Return types
-        public static final int FIELD_UIN	  = 1;
-        public static final int FIELD_NICK    = 2;
-        public static final int FIELD_NAME    = 3;
-        public static final int FIELD_EMAIL   = 4;
-        public static final int FIELD_STATUS  = 5;
-        public static final int FIELD_AUTH    = 6;
-        public static final int FIELD_GENDER  = 7;
-        public static final int FIELD_AGE     = 8;
-        
-        // Results
-        private String uin;
-        private String nick;
-        private String name;
-        private String email;
-        private String auth;
-        private int status;
-        private String gender;
-        private int age;
-        
-        public SearchResult(String _uin,String _nick,String _name,String _email,String _auth,int _status,String _gender,int _age)
-        {
-            uin = _uin;
-            nick = _nick;
-            name = _name;
-            email = _email;
-            auth = _auth;
-            status = _status;
-            gender = _gender;
-            age = _age;
-            
-        }
-        
-        // Return given String value
-        public String getStringValue(int value)
-        {
-            switch (value)
-            {
-            case FIELD_UIN: return uin; 
-            case FIELD_NICK: return nick;
-            case FIELD_NAME: return name;
-            case FIELD_EMAIL: return email;
-            case FIELD_AUTH: return auth;
-            case FIELD_GENDER: return gender;
-            case FIELD_AGE: return (age == 0) ? null : Integer.toString(age);
-            default: return "";
-            }
-        }
-        
-        // Return given int value
-        public int getStatus()
-        {
-            return status; 
-        }
-    
-    }
     
     /** ************************************************************************* */
     /** ************************************************************************* */
@@ -285,7 +231,6 @@ public class Search
 
             // Result Screen
             screen = new TextList(null);
-            screen.setCursorMode(TextList.SEL_NONE);
             screen.setVLCommands(this);
             screen.addCommand(this.previousCommand);
             screen.addCommand(this.nextCommand);
@@ -303,22 +248,6 @@ public class Search
                 Jimm.display.setCurrent(this.searchForm);
         }
         
-        int bigTextIndex;
-        private int textColor, brightColor;
-        
-        private void showString(int n, String resName, int id, boolean nextLine)
-        {
-        	String text = Search.this.getResult(n).getStringValue(id);
-        	if (text == null)  return;
-        	if (text.trim().length() == 0) return;
-        	String name = ResourceBundle.getString(resName)+": ";
-        	screen.addBigText(name, textColor, Font.STYLE_PLAIN, bigTextIndex);
-        	if (nextLine) screen.doCRLF(bigTextIndex); 
-        	screen.addBigText(text, brightColor, Font.STYLE_BOLD, bigTextIndex);
-        	screen.doCRLF(bigTextIndex);
-        	bigTextIndex++;
-        }
-
         public void drawResultScreen(int n)
         {
             // Remove the older entrys here
@@ -335,60 +264,13 @@ public class Search
                 
                 screen.lock();
                 
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                screen.setFullScreenMode(false);
-                screen.setTitle(ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
-                screen.setFontSize(Font.SIZE_MEDIUM);
-                // #sijapp cond.else #
-                screen.setCaption(  ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
-                screen.setFontSize(Font.SIZE_SMALL);
-                // #sijapp cond.end#
+                JimmUI.fillUserInfo
+                (
+                	getResult(n),
+                	screen,
+                	ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size())
+                );
                 
-                JimmUI.setColorScheme(screen);
-                
-                textColor = Options.getSchemeColor(Options.CLRSCHHEME_TEXT);
-				brightColor = Options.getSchemeColor(Options.CLRSCHHEME_BLUE);
-                bigTextIndex = 0;
-                
-                // UIN
-                showString(n, "uin", SearchResult.FIELD_UIN, false);
-                
-                // Nick
-                showString(n, "nick", SearchResult.FIELD_NICK, false);
-                
-                // Name
-                showString(n, "name", SearchResult.FIELD_NAME, true);
-                
-                // EMail
-                showString(n, "email", SearchResult.FIELD_EMAIL, true);
-                
-                // Auth
-                showString(n, "auth", SearchResult.FIELD_AUTH, false);
-                
-                // Gender
-                showString(n, "gender", SearchResult.FIELD_GENDER, false);
-                
-                // Age
-                showString(n, "age", SearchResult.FIELD_AGE, false);
-                
-				// Draw status image
-                int stat = Search.this.getResult(n).getStatus();
-                int imgIndex = 0;
-                if (stat == 0) imgIndex = 6;
-                else if (stat == 1) imgIndex = 7;
-                else if (stat == 2) imgIndex = 3;
-                
-                screen
-					.addBigText(ResourceBundle.getString("status") + ": ",textColor,Font.STYLE_PLAIN, bigTextIndex)
-					.addImage
-					(
-						ContactList.getImageList().elementAt(imgIndex),
-						null,
-						ContactList.getImageList().getWidth(),
-						ContactList.getImageList().getHeight(),
-						bigTextIndex
-					)
-					.doCRLF(bigTextIndex);
                 screen.unlock();
             } else
             {
@@ -450,7 +332,6 @@ public class Search
     	
     	public void onCursorMove(VirtualList sender) {}
     	public void onItemSelected(VirtualList sender) {}
-        
 
         public void commandAction(Command c, Displayable d)
         {
@@ -481,7 +362,7 @@ public class Search
                     if (e.isCritical()) return;
                 }
                 
-//              // Start timer
+                // Start timer
                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
 
             }
@@ -510,11 +391,15 @@ public class Search
                 }
             } else if (c == this.addCommand && d == this.groupList)
             {
-                ContactListContactItem cItem = new ContactListContactItem(-1,ContactList
-                        .getGroupItems()[this.groupList.getSelectedIndex()].getId(), Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_UIN),
-                        Search.this.getResult(selectedIndex).getStringValue(SearchResult.FIELD_NICK), false, false);
+            	String[] resultData = getResult(selectedIndex);
+                ContactListContactItem 
+                	cItem = new ContactListContactItem(-1,
+                			ContactList.getGroupItems()[groupList.getSelectedIndex()].getId(),
+                			resultData[JimmUI.UI_UIN],
+                			resultData[JimmUI.UI_NICK],
+                        false, false);
                 cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
-                cItem.setLongValue(ContactListContactItem.CONTACTITEM_STATUS,Search.this.getResult(selectedIndex).getStatus());
+                cItem.setLongValue(ContactListContactItem.CONTACTITEM_STATUS, Long.parseLong(resultData[JimmUI.UI_STATUS]));
                 Icq.addToContactList(cItem);
 
             }
