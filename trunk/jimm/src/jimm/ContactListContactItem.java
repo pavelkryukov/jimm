@@ -1400,6 +1400,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     
 	static void initList(boolean showAuthItem, ContactListContactItem item)
 	{
+		long status = item.getLongValue(ContactListContactItem.CONTACTITEM_STATUS);
+		
         // Size of the event list equals last entry number
         eventList = new int[USER_MENU_LAST_ITEM];
         menuList = new List("", List.IMPLICIT);
@@ -1420,7 +1422,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         if (showAuthItem)
             eventList[menuList.append(ResourceBundle.getString("requauth"), null)] = USER_MENU_REQU_AUTH;
         
-        if (item.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE)
+        if (status == ContactList.STATUS_OFFLINE)
         {
         	eventList[menuList.append(ResourceBundle.getString("invisible_check"), null)] = USER_MENU_INVIS_CHECK;
         }
@@ -1447,7 +1449,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         eventList[menuList.append(ResourceBundle.getString("history"), null)]   = USER_MENU_HISTORY;
         // #sijapp cond.end#
         eventList[menuList.append(ResourceBundle.getString("info"), null)]      = USER_MENU_USER_INFO;
-        eventList[menuList.append(ResourceBundle.getString("dc_info"), null)]   = USER_MENU_LOCAL_INFO;
+        
+        if (status != ContactList.STATUS_OFFLINE)
+        	eventList[menuList.append(ResourceBundle.getString("dc_info"), null)]   = USER_MENU_LOCAL_INFO;
 	}
 	 
 	static private Displayable getCurrDisplayable(String uin)
@@ -1554,27 +1558,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		reasonTextbox.addCommand(textboxCancelCommand);
 		reasonTextbox.addCommand(textboxSendCommand);
 	}
-	
-	static String getCaption(Displayable ctrl)
-	{
-		if (ctrl == null) return null;
-		String result = null;
-		if (ctrl instanceof VirtualList)
-		{
-			VirtualList vl = (VirtualList)ctrl;
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			result = vl.getTitle();
-			// #sijapp cond.else#
-			result = vl.getCaption();
-			// #sijapp cond.end#
-		}
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		else result = ctrl.getTitle();
-		// #sijapp cond.end#
-		
-		return result;
-	}
-	
 }
 
 class FlashCapClass extends TimerTask
