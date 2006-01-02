@@ -72,22 +72,19 @@ public class SplashCanvas extends Canvas
 	// Location of the splash image (inside the JAR file)
 	private static final String SPLASH_IMG = "/splash.png";
 
-
 	// Image object, holds the splash image
 	private static Image splash;
 
-
 	// Image object, holds the background image
+	// #sijapp cond.if target isnot  "DEFAULT" & target isnot "SIEMENS1"#
 	private static Image background;
-
+	// #sijapp cond.end#
 
 	// Location of the notice image (inside the JAR file)
 	private static final String NOTICE_IMG = "/notice.png";
 
-
 	// Image object, holds the notice image
 	private static Image notice;
-
 
 	// Font used to display the logo (if image is not available)
 	private static Font logoFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_LARGE);
@@ -163,24 +160,23 @@ public class SplashCanvas extends Canvas
 		
 		message = new String(message);
 		showKeylock = false;
-		//  #sijapp cond.if target is "MOTOROLA"#
+		// #sijapp cond.if target isnot  "DEFAULT" & target isnot "SIEMENS1"#
+		// #sijapp cond.if target is "MOTOROLA"#
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight()+22);
-		//  #sijapp cond.else#
+		// #sijapp cond.else#
 		SplashCanvas.background = Image.createImage(this.getWidth(), this.getHeight());
-		//  #sijapp cond.end#
+		// #sijapp cond.end#
 		Graphics bg_graph = background.getGraphics();
-		// #sijapp cond.if target is "DEFAULT" | target is "SIEMENS1"#
-		bg_graph.setColor(0,0,0);
-		bg_graph.fillRect(0,0,this.getWidth(),this.getHeight());
-		//  #sijapp cond.else#
+
 		int r, g;
 		for (int x = 0; x < this.getWidth(); x+=2)
 		{
-			//  #sijapp cond.if target is "MOTOROLA"#
-			for (int y = 0; y < this.getHeight()+22; y+=2)
-			//  #sijapp cond.else#
-			for (int y = 0; y < this.getHeight(); y+=2)
-			//  #sijapp cond.end#
+			int y;
+			// #sijapp cond.if target is "MOTOROLA"#
+			for (y = 0; y < this.getHeight()+22; y+=2)
+			// #sijapp cond.else#
+			for (y = 0; y < this.getHeight(); y+=2)
+			// #sijapp cond.end#
 			{
 				r = x * y / (y + x + 1) % 256;
 				g = ((r ^ x ^ y)) % 256;
@@ -362,7 +358,12 @@ public class SplashCanvas extends Canvas
 		if (g.getClipY() < this.getHeight() - SplashCanvas.height - 2)
 		{
 			// Draw background
+			// #sijapp cond.if target isnot  "DEFAULT" & target isnot "SIEMENS1"#
 			g.drawImage(background,0,0, Graphics.LEFT | Graphics.TOP);
+			// #sijapp cond.else#
+			g.setColor(0,0,0);
+			g.fillRect(0,0,this.getWidth(),this.getHeight());
+			// #sijapp cond.end#
 
 			// Display splash image (or text)
 			if (SplashCanvas.splash != null)
