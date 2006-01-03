@@ -145,13 +145,19 @@ class ChatTextList implements VirtualListCommands
                              // #sijapp cond.if target is "SIEMENS2"#
                              ,ItemStateListener
                              ,ItemCommandListener
+                             ,CommandListener
                              // #sijapp cond.end#
 {
-	// #sijapp cond.if target is "SIEMENS2"#
+	// #sijapp cond.if target is "SIEMENS2"# ===>
 	static public Form form;
 	static public TextField textLine;
 	static public ChatItem chatItem;
 	static private Command cmdSend; 
+	//#sijapp cond.if modules_SMILES is "true" #
+	private static Command insertEmotionCommand;
+	//#sijapp cond.end#
+	static private ChatTextList _this;
+	
 	
 	static
 	{
@@ -161,10 +167,16 @@ class ChatTextList implements VirtualListCommands
 		cmdSend = new Command(ResourceBundle.getString("send"), Command.OK, 0);
 		form.append(chatItem);
 		form.append(textLine);
-		
+	
 		textLine.addCommand(cmdSend);
+		
+		//#sijapp cond.if modules_SMILES is "true" #
+		insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.SCREEN, 3);
+		textLine.addCommand(insertEmotionCommand);
+		//#sijapp cond.end#
+		
 	}
-	// #sijapp cond.end#
+	// #sijapp cond.end# <===
 	
 	TextList textList;
 	public String ChatName, uin;
@@ -173,6 +185,10 @@ class ChatTextList implements VirtualListCommands
 	
 	ChatTextList(String name, String uin)
 	{
+		// #sijapp cond.if target is "SIEMENS2"#
+		_this = this;
+		// #sijapp cond.end#
+		
 		textList = new TextList(null);
 		
 		textList.setCursorMode(TextList.SEL_NONE);
@@ -205,7 +221,6 @@ class ChatTextList implements VirtualListCommands
 		       0xFF0000 : 
 		       Options.getSchemeColor(Options.CLRSCHHEME_BLUE);
 	}
-	
 
 	Vector getMessData()
 	{
@@ -315,19 +330,43 @@ class ChatTextList implements VirtualListCommands
 		if (lastHeight != height)
 		{
 			chatItem.setHeight(height);
+			_this.textList.setForcedSize(_this.textList.getWidth(), height);
+			int size = _this.textList.getSize();
+			if (size != 0)
+			_this.textList.setCurrentItem(size-1);
 			lastHeight = height; 
 		}
 	}
 	
+	private static int caretPos;
 	public void commandAction(Command c, Item item)
 	{
 		if (c == cmdSend)
 		{
 			ContactListContactItem cItem = ContactList.getItembyUIN(uin);
-			cItem.sendMessage(textLine.getString());
+			String text = textLine.getString();
 			textLine.setString(new String());
 			updateChatHeight(true);
+			cItem.sendMessage(text);
 		}
+		
+		//#sijapp cond.if modules_SMILES is "true" #
+		if (c == insertEmotionCommand)
+		{
+			caretPos = textLine.getCaretPosition();
+			Emotions.selectEmotion(_this, form);
+		}
+		//#sijapp cond.end#
+	}
+	
+	public void commandAction(Command c, Displayable d)
+	{
+		//#sijapp cond.if modules_SMILES is "true" #
+		if (Emotions.isMyOkCommand(c))
+		{
+			textLine.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
+		}
+		//#sijapp cond.end#
 	}
 	
 	//#sijapp cond.end#

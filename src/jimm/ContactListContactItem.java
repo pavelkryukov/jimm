@@ -258,38 +258,38 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//#sijapp cond.end #
 	
 	// Variable keys
-	public static final int CONTACTITEM_UIN						= 0;   /* String */
-	public static final int CONTACTITEM_NAME					= 1;   /* String */
-	public static final int CONTACTITEM_ID						= 64;  /* Integer */ //
-	public static final int CONTACTITEM_GROUP					= 65;  /* Integer */
-	public static final int CONTACTITEM_PLAINMESSAGES			= 67;  /* Integer */
-	public static final int CONTACTITEM_URLMESSAGES				= 68;  /* Integer */
-	public static final int CONTACTITEM_SYSNOTICES				= 69;  /* Integer */
-	public static final int CONTACTITEM_AUTREQUESTS				= 70;  /* Integer */
-	public static final int CONTACTITEM_IDLE					= 71;  /* Integer */
-	public static final int CONTACTITEM_ADDED					= 1 << 0; /* Boolean */
-	public static final int CONTACTITEM_NO_AUTH					= 1 << 1; /* Boolean */
-	public static final int CONTACTITEM_CHAT_SHOWN				= 1 << 2; /* Boolean */
-	public static final int CONTACTITEM_IS_TEMP					= 1 << 3; /* Boolean */
-	public static final int CONTACTITEM_HAS_CHAT				= 1 << 4; /* Boolean */
-	public static final int CONTACTITEM_REQU_REASON				= 1 << 5; /* Boolean */
-	public static final int CONTACTITEM_STATUS					= 192; /* Long */
-	public static final int CONTACTITEM_SIGNON					= 194; /* Long */
-	public static final int CONTACTITEM_ONLINE					= 195; /* Long */
+	public static final int CONTACTITEM_UIN           = 0;      /* String */
+	public static final int CONTACTITEM_NAME          = 1;      /* String */
+	public static final int CONTACTITEM_ID            = 64;     /* Integer */
+	public static final int CONTACTITEM_GROUP         = 65;     /* Integer */
+	public static final int CONTACTITEM_PLAINMESSAGES = 67;     /* Integer */
+	public static final int CONTACTITEM_URLMESSAGES   = 68;     /* Integer */
+	public static final int CONTACTITEM_SYSNOTICES    = 69;     /* Integer */
+	public static final int CONTACTITEM_AUTREQUESTS   = 70;     /* Integer */
+	public static final int CONTACTITEM_IDLE          = 71;     /* Integer */
+	public static final int CONTACTITEM_ADDED         = 1 << 0; /* Boolean */
+	public static final int CONTACTITEM_NO_AUTH       = 1 << 1; /* Boolean */
+	public static final int CONTACTITEM_CHAT_SHOWN    = 1 << 2; /* Boolean */
+	public static final int CONTACTITEM_IS_TEMP       = 1 << 3; /* Boolean */
+	public static final int CONTACTITEM_HAS_CHAT      = 1 << 4; /* Boolean */
+	public static final int CONTACTITEM_REQU_REASON   = 1 << 5; /* Boolean */
+	public static final int CONTACTITEM_STATUS        = 192;    /* Long */
+	public static final int CONTACTITEM_SIGNON        = 194;    /* Long */
+	public static final int CONTACTITEM_ONLINE        = 195;    /* Long */
 	
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// #sijapp cond.if modules_FILES is "true"#
-	public static final int CONTACTITEM_INTERNAL_IP				= 225; /* Byte array */
-	public static final int CONTACTITEM_EXTERNAL_IP				= 226; /* Byte array */
-	public static final int CONTACTITEM_AUTH_COOKIE				= 193; /* Long */
-	public static final int CONTACTITEM_DC_TYPE					= 72;  /* Integer */
-	public static final int CONTACTITEM_ICQ_PROT				= 73;  /* Integer */
-	public static final int CONTACTITEM_DC_PORT					= 74;  /* Integer */
+	public static final int CONTACTITEM_INTERNAL_IP   = 225;    /* IP address */
+	public static final int CONTACTITEM_EXTERNAL_IP   = 226;    /* IP address */
+	public static final int CONTACTITEM_AUTH_COOKIE   = 193;    /* Long */
+	public static final int CONTACTITEM_DC_TYPE       = 72;     /* Integer */
+	public static final int CONTACTITEM_ICQ_PROT      = 73;     /* Integer */
+	public static final int CONTACTITEM_DC_PORT       = 74;     /* Integer */
 	// #sijapp cond.end#
 	// #sijapp cond.end#
-	public static final int CONTACTITEM_CAPABILITIES			= 75;  /* Integer */
-	public static final int CONTACTITEM_CLIENT					= 76;	/* Integer */
-	public static final int CONTACTITEM_CLIVERSION					= 2;	/* String */	
+	public static final int CONTACTITEM_CAPABILITIES  = 75;     /* Integer */
+	public static final int CONTACTITEM_CLIENT        = 76;     /* Integer */
+	public static final int CONTACTITEM_CLIVERSION    = 2;      /* String */	
 
 
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -1208,7 +1208,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		} catch (JimmException e)
 		{
 			ContactList.activate(JimmException.handleException(e));
-               if (e.isCritical()) return;
+			if (e.isCritical()) return;
 		}
 		ChatHistory.addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getDate(), name);
 
@@ -1220,7 +1220,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		
 	static private int caretPos;
 		
-	Displayable getCurrDisplay()
+	private Displayable getCurrDisplay()
 	{
 		return ChatHistory.getChatHistoryAt(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN)).getDisplayable();
 	}
@@ -1245,9 +1245,16 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			msgDisplay.removeCommand(denyAuthCommand);
 			msgDisplay.removeCommand(reqAuthCommand);
 			msgDisplay.removeCommand(replWithQuotaCommand);
+			msgDisplay.removeCommand(msgReplyCommand);
 			msgDisplay.addCommand(copyTextCommand);
 			msgDisplay.addCommand(msgCloseCommand);
+			
+			// #sijapp cond.if target is "SIEMENS2"#
+			if (!Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT)) msgDisplay.addCommand(msgReplyCommand);
+			//#sijapp cond.else#
 			msgDisplay.addCommand(msgReplyCommand);
+			//#sijapp cond.end#
+				
 			msgDisplay.addCommand(deleteChatCommand);
 			msgDisplay.addCommand(addMenuCommand);
 			//#sijapp cond.if modules_HISTORY is "true" #
