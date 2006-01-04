@@ -64,9 +64,10 @@ public class ContactListGroupItem implements ContactListItem
 	    totalCount  = total;
 	}
 	
-	public int getTotalCount()
+	public void updateCounters(int onlineInc, int totalInc)
 	{
-	    return totalCount;
+	    onlineCount += onlineInc;
+	    totalCount  += totalInc;
 	}
 	
 	public String getText()

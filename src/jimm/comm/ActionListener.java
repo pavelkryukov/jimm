@@ -179,29 +179,14 @@ public class ActionListener
                     marker += 2 + 2 + tlvData.length;
                 }
 
-				if (ContactList.getItembyUIN(uin).getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE) {
-					ContactList.incOnlineCount();
-					ContactList.updateTitle(
-						// #sijapp cond.if modules_TRAFFIC is "true"#
-						Traffic.getSessionTraffic(true)
-						// #sijapp cond.else#
-						0
-						// #sijapp cond.end#
-						);
-				}
-
                 // Update contact list
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                // #sijapp cond.if modules_FILES is "true"#
-                	if ( !statusChange )
-                		Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt);
-                	ContactList.update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
-                	// #sijapp cond.else#
-                	ContactList.update(uin, status, capabilities,signon,online,idle);
-                	// #sijapp cond.end#
-                	// #sijapp cond.else#
-                	ContactList.update(uin, status, capabilities,signon,online,idle);
-                	// #sijapp cond.end#
+                // #sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
+               	if ( !statusChange )
+               		Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt);
+               	RunnableImpl.updateContactList(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
+               	// #sijapp cond.else#
+               	RunnableImpl.updateContactList(uin, status, capabilities, null, 0, 0, 0, 0, signon, online,idle);
+               	// #sijapp cond.end#
 
             }
 
@@ -220,14 +205,6 @@ public class ActionListener
                 String uin = Util.byteArrayToString(buf, 1, uinLen);
 
                 // Update contact list
-				ContactList.decOnlineCount();
-				ContactList.updateTitle(
-					// #sijapp cond.if modules_TRAFFIC is "true"#
-					Traffic.getSessionTraffic(true)
-					// #sijapp cond.else#
-					0
-					// #sijapp cond.end#
-					);
                 RunnableImpl.callSerially(RunnableImpl.TYPE_USER_OFFLINE, uin);
             }
 

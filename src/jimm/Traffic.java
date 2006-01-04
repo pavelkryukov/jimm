@@ -480,7 +480,7 @@ public class Traffic
 			Jimm.display.setCurrent(this.trafficScreen);
 		}
 
-		public void update(boolean doIt)
+		private void update(boolean doIt)
 		{
 			ContactList.updateTitle(Traffic.getSessionTraffic(true));
 			if (((Traffic.getSessionTraffic(true) - compareTraffic) >= updateThreshold) | doIt)

@@ -216,19 +216,13 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 				results.addCommand(new Command("OK", Command.OK, 1));
 				results.setCommandListener(this);
 				Jimm.display.setCurrent(results);
-				// Update contact list
-				if (status != ContactList.STATUS_OFFLINE)
-					ContactList.incOnlineCount();
-				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				// #sijapp cond.if modules_FILES is "true"#
+				
+				// #sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
 				if ( !statusChange )
 					Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt);
-				ContactList.update(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
+				RunnableImpl.updateContactList(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
 				// #sijapp cond.else#
-				ContactList.update(uin, status, capabilities,signon,online,idle);
-				// #sijapp cond.end#
-				// #sijapp cond.else#
-				ContactList.update(uin, status, capabilities,signon,online,idle);
+				RunnableImpl.updateContactList(uin, status, capabilities, null, 0, 0, 0, 0, signon, online, idle);
 				// #sijapp cond.end#
 
 			}
