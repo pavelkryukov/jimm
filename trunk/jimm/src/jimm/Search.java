@@ -410,7 +410,6 @@ public class Search
                 cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
                 cItem.setLongValue(ContactListContactItem.CONTACTITEM_STATUS, Long.parseLong(resultData[JimmUI.UI_STATUS]));
                 Icq.addToContactList(cItem);
-
             }
         }
     }

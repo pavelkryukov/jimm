@@ -10,6 +10,7 @@ import javax.microedition.media.Player;
 
 
 import jimm.comm.Message;
+import jimm.comm.Util;
 import jimm.ContactListContactItem;
 
 
@@ -19,12 +20,13 @@ public class RunnableImpl implements Runnable
 	private Object[] data;
 	private static MIDlet midlet;
 	
-	final static public int TYPE_ADD_MSG        = 1;
-	final static public int TYPE_CLOSE_PLAYER   = 2;
-	final static public int TYPE_SET_CAPTION    = 3;
-	final static public int TYPE_USER_OFFLINE   = 4;
-	final static public int TYPE_STATUS_CHANGED = 5;
-	final static public int TYPE_SHOW_USER_INFO = 6;
+	final static public int TYPE_ADD_MSG             = 1;
+	final static public int TYPE_CLOSE_PLAYER        = 2;
+	final static public int TYPE_SET_CAPTION         = 3;
+	final static public int TYPE_USER_OFFLINE        = 4;
+	final static public int TYPE_UPDATE_CONTACT_LIST = 5;
+	final static public int TYPE_SHOW_USER_INFO      = 6;
+	final static public int TYPE_UPDATE_CL_CAPTION   = 7;
 	
 	RunnableImpl(int type, Object[] data)
 	{
@@ -60,19 +62,33 @@ public class RunnableImpl implements Runnable
 			ContactList.update((String)data[0], ContactList.STATUS_OFFLINE);
 			break;
 			
-		case TYPE_STATUS_CHANGED:
-			boolean[] boolValues = (boolean[])data[1];
-			ContactList.contactChanged
-			(
-				(ContactListContactItem)data[0],
-				boolValues[0],
-				boolValues[1],
-				boolValues[2]
-			);
-			break;
-			
 		case TYPE_SHOW_USER_INFO:
 			JimmUI.showUserInfo((String[])data[0]);
+			break;
+			
+		case TYPE_UPDATE_CL_CAPTION:
+			//#sijapp cond.if modules_TRAFFIC="true"#
+			ContactList.updateTitle(Traffic.getSessionTraffic(true));
+			//#sijapp cond.else#
+			ContactList.updateTitle(0);
+			//#sijapp cond.end#
+			break;
+			
+		case TYPE_UPDATE_CONTACT_LIST:
+			ContactList.update
+			(
+				(String)data[0],
+				Util.getLong(data,  1),
+				Util.getInt (data,  2),
+				(byte[])data[3],
+				Util.getLong(data,  4),
+				Util.getInt (data,  5),
+				Util.getInt (data,  6),
+				Util.getLong(data,  7),
+				Util.getLong(data,  8),
+				Util.getLong(data,  9),
+				Util.getInt (data, 10)
+			);
 			break;
 		}
 	}
@@ -92,10 +108,54 @@ public class RunnableImpl implements Runnable
 		callSerially(type, new Object[] {obj1});
 	}
 	
+	static public void callSerially(int type)
+	{
+		callSerially(type, null);
+	}
+	
+	
 	static public void callSerially(int type, Object obj1, Object obj2)
 	{
 		callSerially(type, new Object[] {obj1, obj2});
 	}
 	
+	///////////////////////////////////////////////////////////////////////////
+	
+	static public void updateContactListCaption()
+	{
+		callSerially(TYPE_UPDATE_CL_CAPTION);
+	}
+	
+	static public void updateContactList
+	(
+	   	String uin,
+    	long status,
+    	int capabilities,
+    	byte[] internalIP,
+    	long dcPort,
+    	int dcType,
+    	int icqProt,
+        long authCookie,
+        long signon,
+        long online,
+        int idle
+	)
+	{
+		Object[] arguments = new Object[11];
+		
+		arguments[0] = uin;
+		Util.setLong(arguments,  1, status      );
+		Util.setInt (arguments,  2, capabilities);
+		arguments[3] = internalIP;
+		Util.setLong(arguments,  4, dcPort      );
+		Util.setInt (arguments,  5, dcType      );
+		Util.setInt (arguments,  6, icqProt     );
+		Util.setLong(arguments,  7, authCookie  );
+		Util.setLong(arguments,  8, signon      ); 
+		Util.setLong(arguments,  9, online      );
+		Util.setInt (arguments, 10, idle        );  
+		
+		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
+	}
 	
 }

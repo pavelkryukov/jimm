@@ -282,9 +282,8 @@ public class UpdateContactListAction extends Action
 
                         // Delete or add contact or group item from internal list
                         if (cItem != null)
-                            if (action == ACTION_DEL) {
-								if (this.cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
-									ContactList.decOnlineCount();
+                            if (action == ACTION_DEL) 
+                            {
                                 ContactList.removeContactItem(this.cItem);
 							} else
                             	ContactList.addContactItem(this.cItem);
@@ -305,7 +304,7 @@ public class UpdateContactListAction extends Action
 
             // Update activity timestamp
             this.lastActivity = new Date();
-
+            
             // Return consumption flag
             return (consumed);
         }
@@ -334,6 +333,8 @@ public class UpdateContactListAction extends Action
             // Forward exception
             throw (e);
         }
+        
+        
     }
 
     // Returns type of the error that happend

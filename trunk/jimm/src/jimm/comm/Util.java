@@ -1419,5 +1419,41 @@ public class Util
 		return stringbuffer.toString();
 	}
 	
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	
+	static public void setBoolean(Object[] data, int index, boolean value)
+	{
+		data[index] = new Boolean(value);
+	}
+	
+	static public boolean getBoolean(Object[] data, int index)
+	{
+		return (data[index] == null) ? false : ((Boolean)data[index]).booleanValue();
+	}
+
+	static public void setLong(Object[] data, int index, long value)
+	{
+		data[index] = new Long(value);
+	}
+	
+	static public long getLong(Object[] data, int index)
+	{
+		return (data[index] == null) ? 0 : ((Long)data[index]).longValue();
+	}
+
+	static public void setInt(Object[] data, int index, int value)
+	{
+		data[index] = new Integer(value);
+	}
+	
+	static public int getInt(Object[] data, int index)
+	{
+		return (data[index] == null) ? 0 : ((Integer)data[index]).intValue();
+	}
+	
+	
+	
 }
 

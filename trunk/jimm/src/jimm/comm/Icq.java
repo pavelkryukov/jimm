@@ -49,6 +49,7 @@ import jimm.Options;
 import jimm.SplashCanvas;
 import jimm.util.ResourceBundle;
 import jimm.ContactList;
+import jimm.RunnableImpl;
 
 //#sijapp cond.if modules_TRAFFIC is "true" #
 import jimm.Traffic;
@@ -120,10 +121,12 @@ public class Icq implements Runnable
         // Display splash canvas
         SplashCanvas.setMessage(ResourceBundle.getString("wait"));
         SplashCanvas.setProgress(0);
+     
         Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
-
+       
         // Request contact item adding
         UpdateContactListAction act = new UpdateContactListAction(cItem, UpdateContactListAction.ACTION_ADD);
+        
         try
         {
             requestAction(act);
@@ -941,7 +944,7 @@ public class Icq implements Runnable
 					Traffic.addTraffic(outpack.length + 40 + 190 + 14 + 170);
 					if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
 					{
-						Traffic.trafficScreen.update(false);
+						RunnableImpl.updateContactListCaption();
 					}
 					// #sijapp cond.end#
 					// System.out.println(" ");
@@ -1049,7 +1052,7 @@ public class Icq implements Runnable
 
 							if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
 							{
-								Traffic.trafficScreen.update(false);
+								RunnableImpl.updateContactListCaption();
 							}
 							// #sijapp cond.end#
 							// Notify main loop
@@ -1265,7 +1268,7 @@ public class Icq implements Runnable
                     Traffic.addTraffic(outpack.length + 40); // 40 is the overhead for each packet
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.trafficScreen.update(false);
+                    	RunnableImpl.updateContactListCaption();
                     }
                     // #sijapp cond.end#
                 } catch (IOException e)
@@ -1373,7 +1376,7 @@ public class Icq implements Runnable
                     // 46 is the overhead for each packet (6 byte flap header)
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.trafficScreen.update(false);
+                    	RunnableImpl.updateContactListCaption();
                     }
                     // #sijapp cond.end#
 
@@ -1903,7 +1906,7 @@ public class Icq implements Runnable
                     Traffic.addTraffic(outpack.length + 40); // 40 is the overhead for each packet
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.trafficScreen.update(false);
+                    	Traffic.updateContactList();
                     }
                     // #sijapp cond.end#
                 } catch (IOException e)
@@ -2075,7 +2078,7 @@ public class Icq implements Runnable
                     // 46 is the overhead for each packet (6 byte flap header)
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.trafficScreen.update(false);
+                    	Traffic.updateContactList();
                     }
                     // #sijapp cond.end#
 
@@ -2284,7 +2287,7 @@ public class Icq implements Runnable
                     Traffic.addTraffic(outpack.length + 40);
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.trafficScreen.update(false);
+                    	Traffic.updateContactList();
                     }
                     // #sijapp cond.end#
                 } catch (IOException e)
@@ -2379,7 +2382,7 @@ public class Icq implements Runnable
                     // 42 is the overhead for each packet (2 byte packet length)
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.trafficScreen.update(false);
+                    	Traffic.updateContactList();
                     }
                     // #sijapp cond.end#
 
