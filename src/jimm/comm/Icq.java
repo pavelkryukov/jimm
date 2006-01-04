@@ -1906,7 +1906,7 @@ public class Icq implements Runnable
                     Traffic.addTraffic(outpack.length + 40); // 40 is the overhead for each packet
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.updateContactList();
+                    	RunnableImpl.updateContactListCaption();
                     }
                     // #sijapp cond.end#
                 } catch (IOException e)
@@ -2078,7 +2078,7 @@ public class Icq implements Runnable
                     // 46 is the overhead for each packet (6 byte flap header)
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.updateContactList();
+                    	RunnableImpl.updateContactListCaption();
                     }
                     // #sijapp cond.end#
 
@@ -2287,7 +2287,7 @@ public class Icq implements Runnable
                     Traffic.addTraffic(outpack.length + 40);
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.updateContactList();
+                    	RunnableImpl.updateContactListCaption();
                     }
                     // #sijapp cond.end#
                 } catch (IOException e)
@@ -2382,7 +2382,7 @@ public class Icq implements Runnable
                     // 42 is the overhead for each packet (2 byte packet length)
                     if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
-                    	Traffic.updateContactList();
+                    	RunnableImpl.updateContactListCaption();
                     }
                     // #sijapp cond.end#
 
