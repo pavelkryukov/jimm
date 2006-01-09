@@ -118,6 +118,8 @@ public class Icq implements Runnable
 	// Sends to server client-side contacts
 	public static void addLocalContacts(String[] uins)
 	{
+		if (uins.length == 0) return;
+		
 		int len = 0, i;
 		
 		for (i = 0; i < uins.length; i++) len += (1+uins[i].length());
