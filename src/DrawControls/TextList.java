@@ -283,7 +283,7 @@ public class TextList extends VirtualList
 
 	// Returns lines of text which were added by 
 	// methon addBigText in current selection
-	public String getCurrText(int offset)
+	public String getCurrText(int offset, boolean wholeText)
 	{
 		int offsetCounter = 0;
 		StringBuffer result = new StringBuffer();
@@ -294,7 +294,7 @@ public class TextList extends VirtualList
 		for (int i = 0; i < size; i++)
 		{
 			TextLine line = getLine(i);
-			if (line.bigTextIndex == currTextIndex)
+			if (wholeText || (line.bigTextIndex == currTextIndex))
 			{
 				if (offset != offsetCounter)
 				{
@@ -303,7 +303,7 @@ public class TextList extends VirtualList
 				}
 				int count = line.items.size(); 
 				for (int k = 0; k < count; k++) result.append(line.elementAt(k).text);
-				result.append(' ');
+				result.append("\n");
 			}
 		}
 		

@@ -259,11 +259,12 @@ Contributors:
   *  Dmitry Tunin 
   		(MOTOROLA build maintainer, some bugfixes)
   *  Alexander Shvedow
-        (Smiles pictures)
+  		(Smiles pictures)
   *  Andrey Kazakov
-        (Invisible check feature)
+  		(Invisible check feature, status for temporary and unauthorized
+  		contacts, safe login)
   *  Igor Palkin
-        (Configurable hotkeys, history exporting, client info)
+  		(Configurable hotkeys, history exporting, client info)
 
 Translators:
   *  Guy Aroshas (Hebrew translation)

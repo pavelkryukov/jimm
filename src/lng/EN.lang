@@ -60,6 +60,7 @@
   "connect"                     "Connect"
   "connecting"                  "Connecting"
   "copy_text"                   "Copy text"
+  "copy_all_text"               "Copy all"
   "cost"                        "Cost"
   "contact_list"                "List"
   "cp1251"                      "Use Win1251 coding"
@@ -115,6 +116,7 @@
   "home_info"                   "Home"
   "hours"						"h"
   "http"						"HTTP"
+  "icq_client"                  "ICQ client"
   "info"                        "Info"
   "init_ft"                     "Initializing"
   "insert_emotion"              "Insert emotion"
@@ -152,6 +154,7 @@
   "li_idle_time"				"Idle"
   "main_info"                   "About user"
   "male"                        "M"
+  "md5_login"                   "Safe login"
   "me"                          "me"
   "menu"                        "Menu"
   "message_notification"        "Message Notice"
@@ -279,7 +282,7 @@
   "proxy_server_pass"           "Proxy password:"
   "auto_retry_count"            "Retry count:"
   //#sijapp cond.end#
-
+  
   //#sijapp cond.if modules_HISTORY is "true" #
   "add_to_history"              "Add to history"
   "text_to_find"                "Text"

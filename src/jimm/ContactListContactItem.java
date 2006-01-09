@@ -23,7 +23,6 @@
 
 package jimm;
 
-import java.util.Date;
 import java.util.TimerTask;
 import javax.microedition.lcdui.*;
 
@@ -51,7 +50,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	  0 -  63 (00XXXXXX)  String
 	 64 - 127 (01XXXXXX)  INTEGER
 	192 - 224 (110XXXXX)  LONG
-	225 - 255 (111XXXXX)  OBJECT
+	225 - 255 (111XXXXX)  byte array
 	******************************************************************************/
 	
 	private int    id,
@@ -370,11 +369,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Returns color for contact name
 	public int getTextColor()
 	{
-		if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) return 0x808080;
-		return 
-		getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) 
+		if (getBooleanValue(CONTACTITEM_IS_TEMP)) return 0x808080;
+		int color = getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) 
 				? Options.getSchemeColor(Options.CLRSCHHEME_BLUE)
 				: Options.getSchemeColor(Options.CLRSCHHEME_TEXT); 
+		return color;
 	}
 	
 	// Returns font style for contact name 
@@ -383,7 +382,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
 	}
 	
-	long getUIN()
+	public long getUIN()
 	{
 		return uinLong;
 	}
@@ -396,13 +395,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		if (isMessageAvailable(MESSAGE_PLAIN)) tempIndex = 8;
 		else if (isMessageAvailable(MESSAGE_URL)) tempIndex = 9;
 		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
-		else if (isMessageAvailable(MESSAGE_SYS_NOTICE) || getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) tempIndex = 10;
+		else if (isMessageAvailable(MESSAGE_SYS_NOTICE)) tempIndex = 10;
 		else tempIndex = getStatusImageIndex(getLongValue(ContactListContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
 	
 	public String getText()
 	{
+		if (getBooleanValue(CONTACTITEM_NO_AUTH)) return "[!] "+name; 
 		return name;
 	}
 
@@ -565,7 +565,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		if ( getLongValue(CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE )
 		{
-			VisibilityCheckerAction act = new VisibilityCheckerAction(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+			VisibilityCheckerAction act = new VisibilityCheckerAction(this);
 			try
 			{
 				Icq.requestAction(act);
@@ -598,19 +598,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 	private static String lastAnsUIN = new String();
 	private static boolean repliedWithQuota = false;
-	private static TextList clientInfo = null;
-	private static Command cmdClientInfoBack = null;
-	private static int bigTextIndex;
-
-	static private void addToTextList(String langStr, String data)
-	{
-		if (data.length() == 0) return;
-		clientInfo
-			.addBigText(ResourceBundle.getString(langStr)+": ", clientInfo.getTextColor(), Font.STYLE_PLAIN, bigTextIndex)
-			.addBigText(data, Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Font.STYLE_PLAIN, bigTextIndex)
-			.doCRLF(bigTextIndex);
-		bigTextIndex++;
-	}
 	
 	final public static int MSGBS_DELETECONTACT = 1;
 
@@ -649,10 +636,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		LightControl.flash(true);
 		// #sijapp cond.end#
 
-		if (c == cmdClientInfoBack)
-		{
-			this.activate(true);
-		}
 		// Return to contact list
 		if (c == backCommand)
 		{
@@ -734,7 +717,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 					else if (status == ContactList.STATUS_CHAT) msgType = Message.MESSAGE_TYPE_FFC;
 					else msgType = Message.MESSAGE_TYPE_AWAY;
 
-					PlainMessage awayReq = new PlainMessage(Options.getStringOption(Options.OPTION_UIN), ContactListContactItem.this, msgType, new Date(), "");
+					PlainMessage awayReq = new PlainMessage(Options.getStringOption(Options.OPTION_UIN), ContactListContactItem.this, msgType, Util.createCurrentDate(), "");
 
 					SendMessageAction act = new SendMessageAction(awayReq);
 					try
@@ -831,67 +814,46 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 			// Show Timeing info and DC info 
 			case USER_MENU_LOCAL_INFO:
-				cmdClientInfoBack = new Command(ResourceBundle.getString("back"), Command.BACK, 0);
-				clientInfo = new TextList(null);
-				clientInfo.addCommand(cmdClientInfoBack);
-				clientInfo.setCommandListener(this);
-				JimmUI.setColorScheme(clientInfo);
-				clientInfo.setCursorMode(TextList.SEL_NONE);
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				clientInfo.setTitle(ResourceBundle.getString("dc_info"));
-				clientInfo.setFontSize(Font.SIZE_MEDIUM);
-				// #sijapp cond.else#
-				clientInfo.setFontSize(Font.SIZE_SMALL);
-				clientInfo.setCaption(ResourceBundle.getString("dc_info"));
-				// #sijapp cond.end#
-				clientInfo.clear();
-				bigTextIndex = 0;
-
-				if (getLongValue(ContactListContactItem.CONTACTITEM_SIGNON) > 0)
-				{
-					Date signon = new Date(getLongValue(ContactListContactItem.CONTACTITEM_SIGNON));
-					addToTextList(ResourceBundle.getString("li_signon_time"), Util.getDateString(false, signon));
-				}
-				if (getLongValue(ContactListContactItem.CONTACTITEM_ONLINE) > 0)
-				{
-					StringBuffer buf = new StringBuffer();
-					long online = getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
-					if ((online / 86400) != 0)
-					{
-						buf.append(online / 86400 + ResourceBundle.getString("days") + " ");
-						online = online % 86400;
-					}
-					if ((online / 3600) != 0)
-					{
-						buf.append(online / 3600 + ResourceBundle.getString("hours") + " ");
-						online = online % 3600;
-					}
-					buf.append(online / 60 + ResourceBundle.getString("minutes"));
-					addToTextList(ResourceBundle.getString("li_online_time"), buf.toString());
-				}
-				if (getIntValue(ContactListContactItem.CONTACTITEM_IDLE) > 0)
-				{
-					StringBuffer buf = new StringBuffer();
-					int idleTime = getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
-					if ((idleTime / 60) != 0) buf.append(idleTime / 60 + "h ");
-					buf.append(idleTime % 60 + ResourceBundle.getString("minutes"));
-					addToTextList(ResourceBundle.getString("li_idle_time"), buf.toString());
-				}
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				//#sijapp cond.if modules_FILES is "true"#                     
-				addToTextList("DC typ", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE)));
-				addToTextList("ICQ version", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT)));
-				if ( getIntValue(CONTACTITEM_CLIENT) != Util.CLI_NONE )
-					addToTextList("ICQ client", Util.getClientString((byte)getIntValue(CONTACTITEM_CLIENT))+ " " + getStringValue(CONTACTITEM_CLIVERSION));
-				else
-					addToTextList("ICQ client", Util.getClientString((byte)getIntValue(CONTACTITEM_CLIENT)));
-				addToTextList("Int IP", Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)));
-				addToTextList("Ext IP", Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP)));
-				addToTextList("Port", String.valueOf(getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT)));
-				// #sijapp cond.end#
-				// #sijapp cond.end# 
-
-				Jimm.display.setCurrent(clientInfo);
+				TextList tlist = JimmUI.getInfoTextList(uin, true);
+				String[] clInfoData = new String[JimmUI.UI_LAST_ID];
+				
+				// sign on time
+				long signonTime = getLongValue(ContactListContactItem.CONTACTITEM_SIGNON); 
+				if (signonTime > 0) clInfoData[JimmUI.UI_SIGNON] = Util.getDateString(false, Util.createDate(signonTime));
+				
+				// online time
+				long onlineTime = getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
+				if (onlineTime > 0) clInfoData[JimmUI.UI_ONLINETIME] = Util.longitudeToString(onlineTime);
+				
+				// idle time
+				int idleTime = getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
+				if (idleTime > 0) clInfoData[JimmUI.UI_IDLE_TIME] = Util.longitudeToString(idleTime);
+				
+				//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
+				
+				// Client version
+				int clientVers = getIntValue(CONTACTITEM_CLIENT);
+				if (clientVers != Util.CLI_NONE) clInfoData[JimmUI.UI_ICQ_CLIENT] = Util.getClientString((byte)clientVers)+ " " + getStringValue(CONTACTITEM_CLIVERSION);
+				
+				// DC type
+				clInfoData[JimmUI.UI_DCTYPE] = Integer.toString(getIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE));
+				
+				// ICQ protocol version
+				clInfoData[JimmUI.UI_ICQ_VERS] = Integer.toString(getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT));
+				
+				// Internal IP
+				clInfoData[JimmUI.UI_INT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP));
+				
+				// External IP
+				clInfoData[JimmUI.UI_EXT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP));
+				
+				// Port
+				clInfoData[JimmUI.UI_PORT] = Integer.toString(getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT));
+				
+				//#sijapp cond.end#
+				
+				JimmUI.fillUserInfo(clInfoData, tlist);
+				JimmUI.showInfoTextList(tlist);
 				break;
 
 			case USER_MENU_REQU_AUTH:
@@ -1011,7 +973,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 				// Construct URL message object and request new
 				// SendMessageAction
-				UrlMessage urlMsg = new UrlMessage(Options.getStringOption(Options.OPTION_UIN), this, Message.MESSAGE_TYPE_NORM, new Date(), urlTextbox.getString(), messageTextbox.getString());
+				UrlMessage urlMsg = new UrlMessage(Options.getStringOption(Options.OPTION_UIN), this, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(), urlTextbox.getString(), messageTextbox.getString());
 				SendMessageAction sendMsgAct = new SendMessageAction(urlMsg);
 				try
 				{
@@ -1175,7 +1137,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		else if (Emotions.isMyOkCommand(c))
 		{
 			// #sijapp cond.if target is "MOTOROLA"#
-			//caretPos = messageTextbox.getString().length();
+			caretPos = messageTextbox.getString().length();
 			// #sijapp cond.end#
 
 			messageTextbox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
@@ -1197,7 +1159,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			    	Options.getStringOption(Options.OPTION_UIN),
 			    	this,
 			    	Message.MESSAGE_TYPE_NORM,
-			    	new Date(),
+			    	Util.createCurrentDate(),
 			    	text
 			    );
 			
@@ -1210,11 +1172,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ContactList.activate(JimmException.handleException(e));
 			if (e.isCritical()) return;
 		}
-		ChatHistory.addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getDate(), name);
+		ChatHistory.addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getNewDate(), name);
 
 		// #sijapp cond.if modules_HISTORY is "true" #
 		if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
-			HistoryStorage.addText(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, (byte)1, ResourceBundle.getString("me"), plainMsg.getDate());
+			HistoryStorage.addText(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, (byte)1, ResourceBundle.getString("me"), plainMsg.getNewDate());
 		// #sijapp cond.end#
 	}
 		
@@ -1228,16 +1190,16 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Activates the contact item menu
 	public void activate(boolean initChat)
 	{
-		currentUin = new String(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+		currentUin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		
 		//#sijapp cond.if modules_HISTORY is "true" #
 		ChatHistory.fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 		//#sijapp cond.end#
 			
 		// Display chat history
-		if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
+		if (getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
 		{
-			initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
+			initList(getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
 			Displayable msgDisplay = getCurrDisplay();
 
 			msgDisplay.removeCommand(addUrsCommand);
@@ -1262,7 +1224,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			if ( !Options.getBooleanOption(Options.OPTION_HISTORY) )
 				msgDisplay.addCommand(addToHistoryCommand);
 			//#sijapp cond.end#
-			if (ContactListContactItem.this.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
+			if (isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
 			{
 				msgDisplay.addCommand(grantAuthCommand);
 				msgDisplay.addCommand(denyAuthCommand);
@@ -1270,7 +1232,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			
 			if (JimmUI.getClipBoardText() != null) msgDisplay.addCommand(replWithQuotaCommand);
 			
-			if (ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
+			if (getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) msgDisplay.addCommand(reqAuthCommand);
 				msgDisplay.setCommandListener(this);
 				
 			if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) && !getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) 
@@ -1279,8 +1241,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ChatHistory.UpdateCaption(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			
 			// Display history
-			ContactListContactItem.this.resetUnreadMessages();
-			ChatHistory.getChatHistoryAt( ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat);
+			resetUnreadMessages();
+			ChatHistory.getChatHistoryAt( getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat, !currentUin.equals(lastAnsUIN));
+			lastAnsUIN = currentUin;
 				
 			// #sijapp cond.if target is "MOTOROLA"#
 			LightControl.flash(false);
@@ -1289,7 +1252,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// Display menu
 		else
 		{
-			initList(ContactListContactItem.this.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
+			initList(getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
 			menuList.setTitle(name);
 			menuList.setSelectedIndex(0, true);
 			menuList.setCommandListener(this);
@@ -1419,6 +1382,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         menuList.addCommand(backCommand);
         
         // Add the needed elements to the event list
+        if (showAuthItem)
+            eventList[menuList.append(ResourceBundle.getString("requauth"), null)] = USER_MENU_REQU_AUTH;
+        
         eventList[menuList.append(ResourceBundle.getString("send_message"), null)] = USER_MENU_MESSAGE;
         
         if (JimmUI.getClipBoardText() != null)
@@ -1426,8 +1392,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         
         eventList[menuList.append(ResourceBundle.getString("send_url"), null)]     = USER_MENU_URL;
         
-        if (showAuthItem)
-            eventList[menuList.append(ResourceBundle.getString("requauth"), null)] = USER_MENU_REQU_AUTH;
+        eventList[menuList.append(ResourceBundle.getString("info"), null)]      = USER_MENU_USER_INFO;
         
         if (status == ContactList.STATUS_OFFLINE)
         {
@@ -1435,7 +1400,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         }
         else
         {
-       		eventList[menuList.append(ResourceBundle.getString("reqstatmsg"), null)] = USER_MENU_STATUS_MESSAGE;
+        	if (status != ContactList.STATUS_ONLINE)
+        		eventList[menuList.append(ResourceBundle.getString("reqstatmsg"), null)] = USER_MENU_STATUS_MESSAGE;
         }
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
@@ -1455,7 +1421,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         // #sijapp cond.if modules_HISTORY is "true" #
         eventList[menuList.append(ResourceBundle.getString("history"), null)]   = USER_MENU_HISTORY;
         // #sijapp cond.end#
-        eventList[menuList.append(ResourceBundle.getString("info"), null)]      = USER_MENU_USER_INFO;
         
         if (status != ContactList.STATUS_OFFLINE)
         	eventList[menuList.append(ResourceBundle.getString("dc_info"), null)]   = USER_MENU_LOCAL_INFO;
@@ -1473,6 +1438,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Shows popup window with text of received message
 	static public void showPopupWindow(String uin, String name, String text)
 	{
+		if (SplashCanvas.locked()) return;
 		switch (Options.getIntOption(Options.OPTION_POPUP_WIN2) )
 		{
 		case 0: return;

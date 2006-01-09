@@ -258,9 +258,14 @@ VERSION 0.5.0
   * NEW FEATURE: Connection via HTTP possilble
   * NEW FEATURE: Jimm can show contact client info. 
                  Also Jimm is specified as JIMM client for other ones.
+  * NEW FEATURE: Classic chat (text at top and edit area at bottom). For
+                 siemens2 build only
+  * NEW FEATURE: Safe login (MD5 login). Strongly recommended if
+                 socks-proxy is used.
   * BUGFIX: Jimm sometimes crashed if was restored from flip on Motorola phones
   * BUGFIX: There are no more echo errors after errorous connections
   * BUGFIX: Jimm stoped login when received offline message from unknown contact
+  * BUGFIX: Flag "no auth" was not stored in RMS
   * Added possibility to save stored history to file (at siemens only)
   * Rewrote Connection handler to be more modular and better readable
   * Now Jimm works with touchscreen (only for MIDP2 build)
@@ -275,4 +280,6 @@ VERSION 0.5.0
   * Internal data handling for ContactItems rewritten (should consume less heap)
   * Login time, online time and idle time can be seen on Information page
   * Code optimized for lower memory usage
+  * External IP of contact are shown in client info
+  * Status of temporary contacts and contacts awaiting authorization is shown
   * New util JLFT - "Jimm Lang File Tool" for easy comparing and changing Jimm .lang files

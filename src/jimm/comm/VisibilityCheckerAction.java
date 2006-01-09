@@ -28,12 +28,11 @@ import javax.microedition.lcdui.*;
 import DrawControls.*;
 import jimm.*;
 
-public class VisibilityCheckerAction extends Action implements CommandListener
-{
+public class VisibilityCheckerAction extends Action implements CommandListener {
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_FILES is "true"#
     // DC variables
-	boolean statusChange = true;
+	//boolean statusChange = true;
 	byte[] tmpCaps;
     byte[] internalIP = new byte[4];
     long dcPort = 0;
@@ -42,73 +41,52 @@ public class VisibilityCheckerAction extends Action implements CommandListener
     long authCookie = 0;
     // #sijapp cond.end#
     // #sijapp cond.end#
-    
     int dwFT1=0, dwFT2=0, dwFT3=0;
     int capabilities = 0;
-    
     int idle = -1;
     long online = -1;
     long signon = -1;
-    
-	private byte[] uin;
-	private String nick;
+	private ContactListContactItem item;
+	private byte[] uinRaw;
 	private boolean completed;
 	private boolean showResult;
+	private boolean statusReceived;
 	private long status;
-
-	public VisibilityCheckerAction(
-		String _uin,
-		String _nick,
-		boolean _showResult)
-	{
-		this.uin = Util.stringToByteArray(_uin);
-		this.nick = _nick;
-		this.showResult = _showResult;
+	public VisibilityCheckerAction(ContactListContactItem citem) {
+		item = citem;
+		showResult = true;
+		uinRaw = Util.stringToByteArray(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 	}
-
-	public VisibilityCheckerAction(String _uin, String _nick)
-	{
-		this(_uin, _nick, true);
-	}
-
-	public VisibilityCheckerAction(String _uin)
-	{
-		this(_uin, _uin, true);
-	}
-
-	public boolean isExecutable()
-	{
+	public boolean isExecutable() {
 		return Icq.isConnected();
 	}
-
-	public boolean isExclusive()
-	{
+	public boolean isExclusive() {
 		return false;
 	}
-
-	protected void init() throws JimmException
-	{
-		byte[] buf = new byte[5 + this.uin.length];
+	protected void init() throws JimmException {
+		byte[] buf = new byte[5 + uinRaw.length];
 		int marker = 0;
 		Util.putDWord(buf, marker, 0x00000005);
 		marker += 4;
-		Util.putByte(buf, marker, this.uin.length);
+		Util.putByte(buf, marker, uinRaw.length);
 		marker += 1;
-		System.arraycopy(this.uin, 0, buf, marker, this.uin.length);
-		marker += this.uin.length;
+		System.arraycopy(uinRaw, 0, buf, marker, uinRaw.length);
+		marker += uinRaw.length;
 		Icq.c.sendPacket(new SnacPacket(0x0002, 0x0015, 0x00000005, new byte[0], buf));
 	}
 
 	protected boolean forward(Packet packet) throws JimmException
 	{
 		boolean consumed = false;
+		int marker = 0;
+		byte[] buf;
+		if (!statusReceived) {
 		if (packet instanceof SnacPacket)
 		{
 			SnacPacket p = (SnacPacket) packet;
 			if ((p.getFamily() == 0x0002) && (p.getCommand() == 0x0006))
 			{
-				byte[] buf = p.getData();
-				int marker = 0;
+					buf = p.getData();
 				marker += Util.getByte(buf, marker) + 3;
 				int tlvCount = Util.getWord(buf, marker);
 				marker += 2;
@@ -121,10 +99,10 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 						marker += 2 + 2 + tlvData.length;
 						switch (tlvType) {
 							case 0x0006:
-								this.status = Util.translateStatusReceived(Util.getDWord(tlvData, 0));
+									status = Util.translateStatusReceived(Util.getDWord(tlvData, 0));
 								break;
 							case 0x0005:
-								capabilities = Util.parseCapabilities(new String(uin), tlvData);
+									capabilities = Util.parseCapabilities(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), tlvData);
 								break;
 							// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 							// #sijapp cond.if modules_FILES is "true"#
@@ -158,7 +136,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 		                        dwFT2 = (int) Util.getDWord(tlvData,dcMarker);
 		                        dcMarker += 4;
 		                        dwFT3 = (int) Util.getDWord(tlvData,dcMarker);
-		                        statusChange = false;
+									//statusChange = false;
 								break;
 							// #sijapp cond.end#
 							// #sijapp cond.end#
@@ -175,29 +153,23 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 						break;
 					}
 				}
-				this.completed = true;
 				consumed = true;
 			}
 			else if ((p.getFamily() == 0x0002) && (p.getCommand() == 0x0001))
 			{
-				this.completed = true;
-				this.status = ContactList.STATUS_OFFLINE;
+					status = ContactList.STATUS_OFFLINE;
 				consumed = true;
+			}
+				if (consumed) statusReceived = completed = true;
 			}
 		}
 		return consumed;
 	}
-
-	public boolean isCompleted()
-	{
-		if (completed)
-		{
-			if (showResult)
-			{
+	public boolean isCompleted() {
+		if (completed && showResult) {
 				TextList results = new TextList(null);
 				results.setCursorMode(TextList.SEL_NONE);
 				JimmUI.setColorScheme(results);
-				String uin = new String(this.uin);
 				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 				results.setTitle(ResourceBundle.getString("invisible_check"));
 				results.setFullScreenMode(false);
@@ -206,7 +178,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 				results.setCaption(ResourceBundle.getString("invisible_check"));
 				results.setFontSize(Font.SIZE_SMALL);
 				//#sijapp cond.end#
-				String str_begin = ResourceBundle.getString("status") + " " + nick + ":\n";
+			String str_begin = ResourceBundle.getString("status") + " " + item.getStringValue(ContactListContactItem.CONTACTITEM_NAME) + ":\n";
 				Image st_image = ContactList.getImageList().elementAt(ContactListContactItem.getStatusImageIndex(status));
 				String str_end = " (" + ContactListContactItem.getStatusString(status) + ")";
 				results
@@ -216,36 +188,23 @@ public class VisibilityCheckerAction extends Action implements CommandListener
 				results.addCommand(new Command("OK", Command.OK, 1));
 				results.setCommandListener(this);
 				Jimm.display.setCurrent(results);
-				
 				// #sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
-				if ( !statusChange )
-					Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt);
-				RunnableImpl.updateContactList(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
+			//if (!statusChange)
+				Util.detectUserClient(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), dwFT1, dwFT2, dwFT3,capabilities,icqProt);
+			RunnableImpl.updateContactList(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), status, capabilities,internalIP, null, dcPort,dcType,icqProt,authCookie,signon,online,idle);
 				// #sijapp cond.else#
-				RunnableImpl.updateContactList(uin, status, capabilities, null, 0, 0, 0, 0, signon, online, idle);
+			RunnableImpl.updateContactList(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), status, capabilities, null, null, 0, 0, 0, 0, signon, online, idle);
 				// #sijapp cond.end#
-
-			}
-			return true;
 		}
-		else
-		{
-			return false;
+		return completed;
 		}
+	public long getStatus() {
+		return status;
 	}
-
-	public long getStatus()
-	{
-		return this.status;
-	}
-
-	public boolean isError()
-	{
+	public boolean isError() {
 		return false;
 	}
-
-	public void commandAction(Command c, Displayable d)
-	{
+	public void commandAction(Command c, Displayable d) {
 		ContactList.activate();
 	}
 }

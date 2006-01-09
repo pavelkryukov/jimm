@@ -123,11 +123,11 @@ class ChatItem extends CustomItem
 class MessData
 {
 	private boolean incoming;
-	private Date time;
+	private byte[] time;
 	private String from;
 	private int textOffset;
 	
-	public MessData(boolean incoming, Date time, String from, int textOffset)
+	public MessData(boolean incoming, byte[] time, String from, int textOffset)
 	{
 		this.incoming   = incoming;
 		this.time       = time;
@@ -137,7 +137,7 @@ class MessData
 		
 	public boolean getIncoming() { return incoming; }
 	public String getFrom() { return from; }
-	public Date getTime() { return time; }
+	public byte[] getTime() { return time; }
 	public int getOffset() { return textOffset; }
 }
 
@@ -252,7 +252,7 @@ class ChatTextList implements VirtualListCommands
 	}
 	
 	
-	void addTextToForm(String from, String message, String url, Date time, boolean red, boolean offline)
+	void addTextToForm(String from, String message, String url, byte[] time, boolean red, boolean offline)
 	{
 		int texOffset;
 		
@@ -298,7 +298,7 @@ class ChatTextList implements VirtualListCommands
 		messTotalCounter++;
 	}
 	
-	public void activate(boolean initChat)
+	public void activate(boolean initChat, boolean resetText)
 	{
 		//#sijapp cond.if target is "SIEMENS2"#
 		if ( Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT) )
@@ -308,10 +308,14 @@ class ChatTextList implements VirtualListCommands
 			chatItem.setTextList(textList);
 			chatItem.updateContents();
 			Jimm.display.setCurrent(form);
-			System.out.println("activate "+initChat);
 			if (initChat) Jimm.display.setCurrentItem(textLine);
+			if (resetText) textLine.setString(new String());
 		}
-		else Jimm.display.setCurrent(textList); 
+		else
+		{
+			textList.setForcedSize(textList.getWidth(), textList.getHeight());
+			Jimm.display.setCurrent(textList);
+		}
 		//#sijapp cond.else#
 		Jimm.display.setCurrent(textList);
 		//#sijapp cond.end#
@@ -383,10 +387,13 @@ public class ChatHistory
 	{
 		ChatTextList list = getChatHistoryAt(uin);
 		int textIndex = list.textList.getCurrTextIndex();
-		String text = list.textList.getCurrText(1);
-		if (text == null) return;
 		
 		MessData data = (MessData)list.getMessData().elementAt(textIndex);
+		
+		String text = list.textList.getCurrText(data.getOffset(), false);
+		if (text == null) return;
+		
+		
 		HistoryStorage.addText
 		(
 			uin, 
@@ -420,11 +427,11 @@ public class ChatHistory
 			
 			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
 			
-			addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText(), "", plainMsg.getDate(), true, offline);
+			addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText(), "", plainMsg.getNewDate(), true, offline);
 			
 			// #sijapp cond.if modules_HISTORY is "true" #
 			if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
-				HistoryStorage.addText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), plainMsg.getText(), (byte)0, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getDate());
+				HistoryStorage.addText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), plainMsg.getText(), (byte)0, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getNewDate());
 			// #sijapp cond.end#
 			
 			if ( !message.getOffline() )
@@ -434,7 +441,7 @@ public class ChatHistory
 		{
 			UrlMessage urlMsg = (UrlMessage) message;
 			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_URL);
-			addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getDate(), false, offline);
+			addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getNewDate(), false, offline);
 		}
 		if (message instanceof SystemNotice)
 		{
@@ -444,32 +451,32 @@ public class ChatHistory
 			if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
 			{
 				addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("youwereadded")
-						+ notice.getSndrUin(), "", notice.getDate(), false, offline);
+						+ notice.getSndrUin(), "", notice.getNewDate(), false, offline);
 			} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
 			{
 				contact.increaseMessageCount(ContactListContactItem.MESSAGE_AUTH_REQUEST);
 				addTextToForm(uin,ResourceBundle.getString("sysnotice"), notice.getSndrUin()
-						+ ResourceBundle.getString("wantsyourauth") + notice.getReason(), "", notice.getDate(), false, offline);
+						+ ResourceBundle.getString("wantsyourauth") + notice.getReason(), "", notice.getNewDate(), false, offline);
 			} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
 			{
 				if (notice.isAUTH_granted())
 				{
 					contact.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH,false);
 					addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("grantedby")
-							+ notice.getSndrUin() + ".", "", notice.getDate(), false, offline);
+							+ notice.getSndrUin() + ".", "", notice.getNewDate(), false, offline);
 				} else if (notice.getReason() != null)
 					addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
 							+ notice.getSndrUin() + ". " + ResourceBundle.getString("reason") + ": " + notice.getReason(),
-							"", notice.getDate(), false, offline);
+							"", notice.getNewDate(), false, offline);
 				else
 					addTextToForm(uin,ResourceBundle.getString("sysnotice"), ResourceBundle.getString("denyedby")
-							+ notice.getSndrUin() + ". " + ResourceBundle.getString("noreason"), "", notice.getDate(),
+							+ notice.getSndrUin() + ". " + ResourceBundle.getString("noreason"), "", notice.getNewDate(),
 							false, offline);
 			}
 		}
 	}
 	
-	static protected synchronized void addMyMessage(String uin, String message, Date time, String ChatName)
+	static protected synchronized void addMyMessage(String uin, String message, byte[] time, String ChatName)
 	{
 		if (!historyTable.containsKey(uin))
 			newChatForm(uin,ChatName);
@@ -478,7 +485,7 @@ public class ChatHistory
 	}
 	
 	// Add text to message form
-	static synchronized private void addTextToForm(String uin,String from, String message, String url, Date time, boolean red, boolean offline)
+	static synchronized private void addTextToForm(String uin,String from, String message, String url, byte[] time, boolean red, boolean offline)
 	{
 		ChatTextList msgDisplay = (ChatTextList) historyTable.get(uin);
 
@@ -496,7 +503,7 @@ public class ChatHistory
 			md.getIncoming(),
 			Util.getDateString(false, md.getTime()),
 			md.getFrom(),
-			list.textList.getCurrText(md.getOffset())
+			list.textList.getCurrText(md.getOffset(), false)
 		);
 	}
 

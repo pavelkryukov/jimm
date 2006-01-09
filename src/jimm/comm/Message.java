@@ -43,21 +43,29 @@ public abstract class Message
 
 
     // Message type
-    protected int messageType;
+    private int messageType;
     
     protected boolean offline;
     
     // Senders UIN (set for both incoming and outgoing messages)
-    protected String sndrUin;
+    private String sndrUin;
 
     // Receivers UIN (set only for incoming messages)
-    protected String rcvrUin;
+    private String rcvrUin;
 
     // Receiver object (set only for outgoing messages)
     protected ContactListContactItem rcvr;
 
     // Date of dispatch
-    protected Date date;
+    private byte[] newDate;
+    
+    protected Message(byte[] date, String rcvrUin, String sndrUin, int messageType)
+    {
+    	newDate          = date;
+    	this.rcvrUin     = rcvrUin;
+    	this.sndrUin     = sndrUin;
+    	this.messageType = messageType;
+    }
 
     // Returns the senders UIN
     public String getSndrUin()
@@ -90,15 +98,14 @@ public abstract class Message
         return (this.rcvr);
     }
 
-    // Returns the date of dispatch
-    public Date getDate()
-    {
-        return (new Date(this.date.getTime()));
-    }
-    
     public boolean getOffline()
     {
     	return offline;
+    }
+    
+    public byte[] getNewDate()
+    {
+    	return newDate;
     }
 
 }

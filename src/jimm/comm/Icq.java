@@ -115,6 +115,33 @@ public class Icq implements Runnable
 
     }
 
+	// Sends to server client-side contacts
+	public static void addLocalContacts(String[] uins)
+	{
+		int len = 0, i;
+		
+		for (i = 0; i < uins.length; i++) len += (1+uins[i].length());
+		
+		byte[] buf = new byte[len];
+		
+		int position = 0;
+		for (i = 0; i < uins.length; i++)
+		{
+			byte[] rowUin = Util.stringToByteArray(uins[i]);
+			buf[position++] = (byte)rowUin.length;
+			System.arraycopy(rowUin, 0, buf, position, rowUin.length);
+			position += rowUin.length;
+		}
+		
+		try 
+		{
+			c.sendPacket(new SnacPacket(0x0003, 0x0004, 0, new byte[0], buf));
+		} catch (JimmException e) 
+		{
+			JimmException.handleException(e);
+		}
+	}
+
     // Adds a ContactListContactItem to the server saved contact list
     static public synchronized void addToContactList(ContactListContactItem cItem)
     {

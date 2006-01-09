@@ -23,13 +23,8 @@
 
 package jimm.comm;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Vector;
-import java.util.TimeZone;
-
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
@@ -45,16 +40,17 @@ public class ConnectAction extends Action
 {
     // Action states
     public static final int STATE_ERROR = -1;
-    public static final int STATE_INIT_DONE = 1;
+    public static final int STATE_INIT_DONE = 0;
+	public static final int STATE_AUTHKEY_REQUESTED = 1;
     public static final int STATE_CLI_IDENT_SENT = 2;
-    public static final int STATE_CLI_DISCONNECT_SENT = 3;
-    public static final int STATE_CLI_COOKIE_SENT = 4;
-    public static final int STATE_CLI_FAMILIES_SENT = 5;
-    public static final int STATE_CLI_RATESREQUEST_SENT = 6;
-    public static final int STATE_CLI_REQLISTS_SENT = 7;
-    public static final int STATE_CLI_CHECKROSTER_SENT = 8;
-    public static final int STATE_CLI_REQOFFLINEMSGS_SENT = 9;
-    public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 10;
+    public static final int STATE_CLI_DISCONNECT_SENT = 4;
+    public static final int STATE_CLI_COOKIE_SENT = 5;
+    public static final int STATE_CLI_FAMILIES_SENT = 6;
+    public static final int STATE_CLI_RATESREQUEST_SENT = 7;
+    public static final int STATE_CLI_REQLISTS_SENT = 8;
+    public static final int STATE_CLI_CHECKROSTER_SENT = 9;
+    public static final int STATE_CLI_REQOFFLINEMSGS_SENT = 10;
+    public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 11;
 
     // CLI_FAMILIES packet data
     public static final byte[] CLI_FAMILIES_DATA =
@@ -102,10 +98,7 @@ public class ConnectAction extends Action
 
     // CLI_SETICBM packet data
     public static final byte[] CLI_SETICBM_DATA =
-    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, 
-      (byte) 0x00, (byte) 0x0B, (byte) 0x1F, (byte) 0x40, 
-      (byte) 0x03, (byte) 0xE7, (byte) 0x03, (byte) 0xE7, 
-      (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
+    { 0, 0, 0, 0, 0, 3, 0x1F,  0x40, 3, (byte)0xE7, 3, (byte)0xE7, 0, 0, 0, 0};
 
     // CLI_SETSTATUS packet data
     public static final byte[] CLI_SETSTATUS_DATA =
@@ -128,26 +121,26 @@ public class ConnectAction extends Action
 
     // CLI_READY packet data
     public static final byte[] CLI_READY_DATA =
-    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x04, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
-      (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x04, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
-      (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
-      (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
-      (byte) 0x00, (byte) 0x15, (byte) 0x00, (byte) 0x01,
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
-      (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
-      (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
-      (byte) 0x00, (byte) 0x09, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4, 
-      (byte) 0x00, (byte) 0x0A, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4,
-      (byte) 0x00, (byte) 0x0B, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x01, (byte) 0x10, (byte) 0x08, (byte) 0xE4};
+    {(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x03,
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04,	(byte) 0x7B,
+	 (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x02,
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
+     (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x01, 
+	 (byte) 0x01, (byte) 0x01, (byte) 0x04, (byte) 0x7B,
+     (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, 
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
+     (byte) 0x00, (byte) 0x15, (byte) 0x00, (byte) 0x01,
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
+     (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x01, 
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
+     (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x01, 
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
+     (byte) 0x00, (byte) 0x09, (byte) 0x00, (byte) 0x01, 
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
+     (byte) 0x00, (byte) 0x0A, (byte) 0x00, (byte) 0x01, 
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
+     (byte) 0x00, (byte) 0x0B, (byte) 0x00, (byte) 0x01, 
+	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B};
 
     // Timeout
     // #sijapp cond.if modules_PROXY is "true" #
@@ -177,6 +170,7 @@ public class ConnectAction extends Action
     private boolean active;
 
     // Temporary variables
+	private String server;
     private byte[] cookie;
     private boolean srvFamilies2Rcvd;
     private boolean srvMotdRcvd;
@@ -265,7 +259,7 @@ public class ConnectAction extends Action
 
             try
             {
-            	Jimm.jimm.getIcqRef().c.connect(this.srvHost + ":" + this.srvPort);
+            	Icq.c.connect(this.srvHost + ":" + this.srvPort);
                 // #sijapp cond.if modules_PROXY is "true" #
                 break;
                 // #sijapp cond.end #
@@ -283,7 +277,7 @@ public class ConnectAction extends Action
                 else
                     if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
                     {
-                    	Jimm.jimm.getIcqRef().c.close();
+                    	Icq.c.close();
                         try
                         {
                             // Wait the given time
@@ -340,12 +334,23 @@ public class ConnectAction extends Action
                     ConnectPacket connectPacket = (ConnectPacket) packet;
                     if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
                     {
-                        // Send a CLI_IDENT packet as reply
-                        ConnectPacket reply = new ConnectPacket(this.uin, this.password, ResourceBundle.getCurrUiLanguage().toLowerCase(), ResourceBundle.getCurrUiLanguage().toLowerCase());
-                        Jimm.jimm.getIcqRef().c.sendPacket(reply);
+						if (Options.getBooleanOption(Options.OPTION_MD5_LOGIN)) {
+							Icq.c.sendPacket(new ConnectPacket());
+							byte[] buf = new byte[4 + this.uin.length()];
+							Util.putWord(buf, 0, 0x0001);
+							Util.putWord(buf, 2, this.uin.length());
+							byte[] uinRaw = Util.stringToByteArray(this.uin);
+							System.arraycopy(uinRaw, 0, buf, 4, uinRaw.length);
+							Icq.c.sendPacket(new SnacPacket(0x0017, 0x0006, 0, new byte[0], buf));
+						} else {
+							// Send a CLI_IDENT packet as reply
+							ConnectPacket reply = new ConnectPacket(this.uin, this.password);
+							Icq.c.sendPacket(reply);
+						}
 
                         // Move to next state
-                        this.state = ConnectAction.STATE_CLI_IDENT_SENT;
+                        this.state = !Options.getBooleanOption(Options.OPTION_MD5_LOGIN) ? ConnectAction.STATE_CLI_IDENT_SENT :
+							STATE_AUTHKEY_REQUESTED;
 
                         // Packet has been consumed
                         consumed = true;
@@ -354,807 +359,778 @@ public class ConnectAction extends Action
                 }
 
             }
+			else if (state == STATE_AUTHKEY_REQUESTED) {
+				if (packet instanceof SnacPacket) {
+					SnacPacket snacPacket = (SnacPacket)packet;
+					if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0007)) {
+						byte[] rbuf = snacPacket.getData();
+						int len = Util.getWord(rbuf, 0);
+						byte[] authkey = new byte[len];
+						System.arraycopy(rbuf, 2, authkey, 0, len);
+						rbuf = null;
+						byte[] buf = new byte[2 + 2 + this.uin.length() + 2 + 2 + 16];
+						int marker = 0;
+						Util.putWord(buf, marker, 0x0001);
+						marker += 2;
+						Util.putWord(buf, marker, this.uin.length());
+						marker += 2;
+						byte[] uinRaw = Util.stringToByteArray(this.uin);
+						System.arraycopy(uinRaw, 0, buf, marker, uinRaw.length);
+						marker += uinRaw.length;
+						Util.putWord(buf, marker, 0x0025);
+						marker += 2;
+						Util.putWord(buf, marker, 0x0010);
+						marker += 2;
+						byte[] md5buf = new byte[authkey.length + this.password.length() + Util.AIM_MD5_STRING.length];
+						int md5marker = 0;
+						System.arraycopy(authkey, 0, md5buf, md5marker, authkey.length);
+						md5marker += authkey.length;
+						byte[] passwordRaw = Util.stringToByteArray(this.password);
+						System.arraycopy(passwordRaw, 0, md5buf, md5marker, passwordRaw.length);
+						md5marker += passwordRaw.length;
+						System.arraycopy(Util.AIM_MD5_STRING, 0, md5buf, md5marker, Util.AIM_MD5_STRING.length);
+						byte[] hash = Util.calculateMD5(md5buf);
+						System.arraycopy(hash, 0, buf, marker, 16);
+						Icq.c.sendPacket(new SnacPacket(0x0017, 0x0002, 0, new byte[0], buf));
+					}
+				}
+				state = STATE_CLI_IDENT_SENT;
+				consumed = true;
+			}
             // Watch out for STATE_CLI_IDENT_SENT
-            else
-                if (this.state == ConnectAction.STATE_CLI_IDENT_SENT)
-                {
-
-                    // watch out for channel 4 packet
-                    if (packet instanceof DisconnectPacket)
-                    {
-                        DisconnectPacket disconnectPacket = (DisconnectPacket) packet;
-
-                        // Watch out for SRV_COOKIE packet
-                        if (disconnectPacket.getType() == DisconnectPacket.TYPE_SRV_COOKIE)
-                        {
-
-                            // Save cookie
-                            this.cookie = disconnectPacket.getCookie();
-
-                            // Send a CLI_GOODBYE packet as reply (only if not HTTP Connection)
-							if (Jimm.jimm.getIcqRef().c instanceof HTTPConnection)
-							{
-								// Do nothing
+            else if (this.state == ConnectAction.STATE_CLI_IDENT_SENT)
+			{
+				int errcode = -1;
+				if (Options.getBooleanOption(Options.OPTION_MD5_LOGIN)) {
+					if (packet instanceof SnacPacket) {
+						SnacPacket snacPacket = (SnacPacket)packet;
+						if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0003)) {
+							byte[] buf = snacPacket.getData();
+							int marker = 0;
+							while (marker < buf.length) {
+								byte[] tlvData = Util.getTlv(buf, marker);
+								int tlvType = Util.getWord(buf, marker);
+								marker += 4 + tlvData.length;
+								switch (tlvType) {
+									case 0x0008:
+										errcode = Util.getWord(tlvData, 0);
+										break;
+									case 0x0005:
+										this.server = Util.byteArrayToString(tlvData);
+										break;
+									case 0x0006:
+										this.cookie = tlvData;
+										break;
+								}
 							}
+						}
+					} else if (packet instanceof DisconnectPacket) {
+						consumed = true;
+					}
+				} else {
+					// watch out for channel 4 packet
+					if (packet instanceof DisconnectPacket) {
+						DisconnectPacket disconnectPacket = (DisconnectPacket) packet;
+						// Watch out for SRV_COOKIE packet
+						if (disconnectPacket.getType() == DisconnectPacket.TYPE_SRV_COOKIE) {
+							// Save cookie
+							this.cookie = disconnectPacket.getCookie();
+							this.server = disconnectPacket.getServer();
+						}
+						// Watch out for SRV_GOODBYE packet
+						else if (disconnectPacket.getType() == DisconnectPacket.TYPE_SRV_GOODBYE)
+							errcode = disconnectPacket.getError();
+						consumed = true;
+					}
+				}
+
+				if (errcode != -1) {
+					int toThrow = 100;
+					switch (errcode) {
+						// Multiple logins
+						case 0x0001:
+							toThrow = 110;
+							break;
+						// Bad password
+						case 0x0004: case 0x0005:
+							toThrow = 111;
+							break;
+						// Non-existant UIN
+						case 0x0007: case 0x0008:
+							toThrow = 112;
+							break;
+						// Too many clients from same IP
+						case 0x0015: case 0x0016:
+							toThrow = 113;
+							break;
+						// Rate exceeded
+						case 0x0018: case 0x001d:
+							toThrow = 114;
+							break;
+					}
+					throw new JimmException(toThrow, errcode);
+				}
+
+				if (consumed) {
+					// Close connection (only if not HTTP Connection)
+					if (!(Icq.c instanceof HTTPConnection))
+						Icq.c.close();
+					// #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
+					if (Options.getBooleanOption(Options.OPTION_SHADOW_CON)) try
+					{
+						// Wait the given time before starting the
+						// new connection
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {}
+					// #sijapp cond.end#
+					// Open connection
+					// #sijapp cond.if modules_PROXY is "true" #
+					for (int i = 0; i < retry; i++)
+					{
+						try
+						{
+							// #sijapp cond.end #
+							Icq.c.connect(server);
+							// #sijapp cond.if modules_PROXY is "true" #
+							break;
+
+						} catch (JimmException e)
+						{
+							if (i >= (retry - 1) || ((this.lastActivity.getTime() + this.TIMEOUT) < System.currentTimeMillis()))
+							{
+								this.active = false;
+								this.state = ConnectAction.STATE_ERROR;
+								throw (e);
+							}
+							else if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
+							{
+								Icq.c.close();
+								try
+								{
+									// Wait the given time
+									Thread.sleep(2000);
+								} catch (InterruptedException er)
+								{
+									// Do nothing
+								}
+							}
+						}
+					}
+					// #sijapp cond.end #
+					// Move to next state
+					this.state = ConnectAction.STATE_CLI_DISCONNECT_SENT;
+				}
+
+			}
+			// Watch out for STATE_CLI_DISCONNECT_SENT
+			else if (this.state == ConnectAction.STATE_CLI_DISCONNECT_SENT)
+			{
+
+				// Watch out for SRV_HELLO packet
+				if (packet instanceof ConnectPacket)
+				{
+					ConnectPacket connectPacket = (ConnectPacket) packet;
+					if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
+					{
+
+						// Send a CLI_COOKIE packet as reply
+						ConnectPacket reply = new ConnectPacket(this.cookie);
+						Icq.c.sendPacket(reply);
+
+						// Move to next state
+						this.state = ConnectAction.STATE_CLI_COOKIE_SENT;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+				}
+
+			}
+			// Watch out for STATE_CLI_COOKIE_SENT
+			else if (this.state == ConnectAction.STATE_CLI_COOKIE_SENT)
+			{
+
+				// Watch out for SRV_FAMILIES packet type
+				if (packet instanceof SnacPacket)
+				{
+					SnacPacket snacPacket = (SnacPacket) packet;
+					if ((snacPacket.getFamily() == SnacPacket.SRV_FAMILIES_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_FAMILIES_COMMAND))
+					{
+
+						// Send a CLI_FAMILIES packet as reply
+						SnacPacket reply = new SnacPacket(SnacPacket.CLI_FAMILIES_FAMILY, SnacPacket.CLI_FAMILIES_COMMAND, SnacPacket.CLI_FAMILIES_COMMAND, new byte[0], ConnectAction.CLI_FAMILIES_DATA);
+						Icq.c.sendPacket(reply);
+
+						// Move to next state
+						this.state = ConnectAction.STATE_CLI_FAMILIES_SENT;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+				}
+
+			}
+			// Watch out for STATE_CLI_FAMILIES_SENT
+			else if (this.state == ConnectAction.STATE_CLI_FAMILIES_SENT)
+			{
+
+				// Watch out for SNAC packet
+				if (packet instanceof SnacPacket)
+				{
+					SnacPacket snacPacket = (SnacPacket) packet;
+
+					// Watch out for SRV_FAMILIES2 packet
+					if ((snacPacket.getFamily() == SnacPacket.SRV_FAMILIES2_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_FAMILIES2_COMMAND))
+					{
+						this.srvFamilies2Rcvd = true;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+
+					// Watch out for SRV_MOTD packet
+					if ((snacPacket.getFamily() == SnacPacket.SRV_MOTD_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_MOTD_COMMAND))
+					{
+						this.srvMotdRcvd = true;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+
+					// Check if we received both SRV_FAMILIES2
+					// and SRV_MOTD packet
+					if (this.srvFamilies2Rcvd && this.srvMotdRcvd)
+					{
+
+						// Send a CLI_RATESREQUEST packet as
+						// reply
+						SnacPacket reply = new SnacPacket(SnacPacket.CLI_RATESREQUEST_FAMILY, SnacPacket.CLI_RATESREQUEST_COMMAND, 0x00000000, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply);
+
+						// Move to next state
+						this.state = ConnectAction.STATE_CLI_RATESREQUEST_SENT;
+
+					}
+
+				}
+
+			}
+			// Watch out for STATE_CLI_RATESREQUEST_SENT
+			else if (this.state == ConnectAction.STATE_CLI_RATESREQUEST_SENT)
+			{
+
+				// Watch out for SRV_RATES packet
+				if (packet instanceof SnacPacket)
+				{
+					SnacPacket snacPacket = (SnacPacket) packet;
+					if ((snacPacket.getFamily() == SnacPacket.SRV_RATES_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_RATES_COMMAND))
+					{
+
+						// Send a CLI_ACKRATES packet
+						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ACKRATES_FAMILY, SnacPacket.CLI_ACKRATES_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_ACKRATES_DATA);
+						Icq.c.sendPacket(reply1);
+
+						// Send a CLI_REQLOCATION packet
+						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQLOCATION_FAMILY, SnacPacket.CLI_REQLOCATION_COMMAND, 0x00000000, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply2);
+
+						// Send a CLI_SETUSERINFO packet
+						// Set version information to this packet in our capability
+						byte[] tmp = ConnectAction.CLI_SETUSERINFO_DATA;
+						byte[] ver = Util.stringToByteArray(Jimm.VERSION);
+						if ( ver.length<12 )
+							System.arraycopy(ver,0,tmp,tmp.length-11,ver.length);
+	
+						SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 0x00000000, new byte[0], tmp);
+						Icq.c.sendPacket(reply3);
+
+						// Send a CLI_REQBUDDY packet
+						SnacPacket reply4 = new SnacPacket(SnacPacket.CLI_REQBUDDY_FAMILY, SnacPacket.CLI_REQBUDDY_COMMAND, 0x00000000, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply4);
+
+						// Send a CLI_REQICBM packet
+						SnacPacket reply5 = new SnacPacket(SnacPacket.CLI_REQICBM_FAMILY, SnacPacket.CLI_REQICBM_COMMAND, 0x00000000, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply5);
+
+						// Send a CLI_REQBOS packet
+						SnacPacket reply6 = new SnacPacket(SnacPacket.CLI_REQBOS_FAMILY, SnacPacket.CLI_REQBOS_COMMAND, 0x00000000, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply6);
+
+						// Send a CLI_REQLISTS packet
+						SnacPacket reply7 = new SnacPacket(SnacPacket.CLI_REQLISTS_FAMILY, SnacPacket.CLI_REQLISTS_COMMAND, 0x00000000, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply7);
+
+						// Move to next state
+						this.state = ConnectAction.STATE_CLI_REQLISTS_SENT;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+				}
+
+			}
+			// Watch out for STATE_CLI_REQLISTS_SENT
+			else if (this.state == ConnectAction.STATE_CLI_REQLISTS_SENT)
+			{
+
+				// Watch out for SNAC packet
+				if (packet instanceof SnacPacket)
+				{
+					SnacPacket snacPacket = (SnacPacket) packet;
+
+					// Watch out for SRV_REPLYLOCATION
+					// packet
+					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYLOCATION_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYLOCATION_COMMAND))
+					{
+						this.srvReplyLocationRcvd = true;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+
+					// Watch out for SRV_REPLYBUDDY
+					// packet
+					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYBUDDY_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYBUDDY_COMMAND))
+					{
+						this.srvReplyBuddyRcvd = true;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+
+					// Watch out for SRV_REPLYICBM
+					// packet
+					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYICBM_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYICBM_COMMAND))
+					{
+						this.srvReplyIcbmRcvd = true;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+
+					// Watch out for SRV_REPLYBOS packet
+					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYBOS_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYBOS_COMMAND))
+					{
+						this.srvReplyBosRcvd = true;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+
+					// Watch out for SRV_REPLYLISTS
+					// packet
+					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYLISTS_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYLISTS_COMMAND))
+					{
+						this.srvReplyListsRcvd = true;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+
+					// Check if all packets have been
+					// received
+					if (this.srvReplyLocationRcvd && this.srvReplyBuddyRcvd && this.srvReplyIcbmRcvd && this.srvReplyBosRcvd && this.srvReplyListsRcvd)
+					{
+
+						// Send a CLI_SETICBM packet
+						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
+						Icq.c.sendPacket(reply1);
+
+						// Send a CLI_REQROSTER or
+						// CLI_CHECKROSTER packet
+						long versionId1 = ContactList.getVersionId1();
+						int versionId2 = ContactList.getVersionId2();
+						if (((versionId1 == -1) && (versionId2 == -1)) || (ContactList.getSize() == 0))
+						{
+							SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND, 0x00000000, new byte[0], new byte[0]);
+							Icq.c.sendPacket(reply2);
+						}
+						else
+						{
+							byte[] data = new byte[6];
+							Util.putDWord(data, 0, versionId1);
+							Util.putWord(data, 4, versionId2);
+							SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_CHECKROSTER_FAMILY, SnacPacket.CLI_CHECKROSTER_COMMAND, 0x00000000, new byte[0], data);
+							Icq.c.sendPacket(reply2);
+						}
+
+						// Move to next state
+						this.state = ConnectAction.STATE_CLI_CHECKROSTER_SENT;
+
+					}
+
+				}
+
+			}
+			// Watch out for STATE_CLI_CHECKROSTER_SENT
+			else if (this.state == ConnectAction.STATE_CLI_CHECKROSTER_SENT)
+			{
+
+				// Watch out for SNAC packet
+				if (packet instanceof SnacPacket)
+				{
+					SnacPacket snacPacket = (SnacPacket) packet;
+
+					// Watch out for
+					// SRV_REPLYROSTEROK
+					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYROSTEROK_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYROSTEROK_COMMAND))
+					{
+						this.srvReplyRosterRcvd = true;
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+					// watch out for SRV_REPLYROSTER
+					// packet
+					else if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYROSTER_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYROSTER_COMMAND))
+					{
+
+						if (snacPacket.getFlags() != 1) this.srvReplyRosterRcvd = true;
+
+						// System.out.println("Flag:
+						// "+snacPacket.getFlags());
+
+						// Initialize vector for
+						// items
+						Vector items = new Vector();
+
+						// Get data
+						byte[] buf = snacPacket.getData();
+						int marker = 0;
+
+						// Check length
+						if (buf.length < 3) { throw (new JimmException(115, 0)); }
+
+						// Skip
+						// SRV_REPLYROSTER.UNKNOWN
+						marker += 1;
+
+						// Iterate through all
+						// items
+						int count = Util.getWord(buf, marker);
+						marker += 2;
+						// System.out.println("elemente in serverlist: "+count);
+						for (int i = 0; i < count; i++)
+						{
+
+							// Check length
+							if (buf.length < marker + 2) { throw (new JimmException(115, 1)); }
+
+							// Get name length
+							int nameLen = Util.getWord(buf, marker);
+							marker += 2;
+
+							// Check length
+							if (buf.length < marker + nameLen + 2 + 2 + 2 + 2) { throw (new JimmException(115, 2)); }
+
+							// Get name
+							String name = Util.byteArrayToString(buf, marker, nameLen, true);
+							marker += nameLen;
+
+							// Get group, id and type
+							int group = Util.getWord(buf, marker);
+							int id = Util.getWord(buf, marker + 2);
+							int type = Util.getWord(buf, marker + 4);
+							marker += 6;
+
+							// Get length of the following TLVs
+							int len = Util.getWord(buf, marker);
+							marker += 2;
+
+							// Check length
+							if (buf.length < marker + len) { throw (new JimmException(115, 3)); }
+
+							// Normal contact
+							if (type == 0x0000)
+							{
+
+								// Get nick
+								String nick = new String(name);
+								//System.out.println("c "+i+": "+name);
+								boolean noAuth = false;
+								while (len > 0)
+								{
+									byte[] tlvData = Util.getTlv(buf, marker);
+									if (tlvData == null) { throw (new JimmException(115, 4)); }
+									int tlvType = Util.getWord(buf, marker);
+									if (tlvType == 0x0131)
+									{
+										nick = Util.byteArrayToString(tlvData, true);
+									}
+									else if (tlvType == 0x0066)
+									{
+										noAuth = true;
+									}
+									len -= 4;
+									len -= tlvData.length;
+									marker += 4 + tlvData.length;
+								}
+								if (len != 0) { throw (new JimmException(115, 5)); }
+
+								// Add this contact item to the vector
+								items.addElement(new ContactListContactItem(id, group, name, nick, noAuth, true));
+
+							}
+							// Group of contacts
+							else if (type == 0x0001)
+							{
+								//System.out.println("g "+i+": "+name);
+								// Skip TLVs
+								marker += len;
+
+								// Add this group item to the vector
+								if (group != 0x0000)
+								{
+									items.addElement(new ContactListGroupItem(group, name));
+								}
+
+							}
+							// My visibility settings
+							else if (type == 0x0004)
+							{
+								while (len > 0)
+								{
+									byte[] tlvData = Util.getTlv(buf, marker);
+									if (tlvData == null) { throw (new JimmException(115, 110)); }
+									int tlvType = Util.getWord(buf, marker);
+
+									if (tlvType == 0x00CA)
+									{
+										Options.setIntOption(Options.OPTION_VISIBILITY_ID, (int)id);
+									}
+
+									len -= 4;
+									len -= tlvData.length;
+									marker += 4 + tlvData.length;
+								}
+								if (len != 0) { throw (new JimmException(115, 111)); }
+							}
+							// All other item types
 							else
 							{
-								DisconnectPacket reply = new DisconnectPacket();
-								Jimm.jimm.getIcqRef().c.sendPacket(reply);
+								//System.out.println("x "+i+": ");
+								// Skip TLVs
+								marker += len;
+
 							}
+
+						}
+
+						// Check length
+						if (buf.length != marker + 4) { throw (new JimmException(115, 6)); }
+
+						// Get timestamp
+						long timestamp = Util.getDWord(buf, marker);
+
+						// Update contact list
+						ContactListItem[] itemsAsArray = new ContactListItem[items.size()];
+						items.copyInto(itemsAsArray);
+						ContactList.update(snacPacket.getFlags(), timestamp, count, itemsAsArray);
+
+						// Packet has been consumed
+						consumed = true;
+
+					}
+
+					// Check if all required packets have been received
+					if (this.srvReplyRosterRcvd)
+					{
+
+						// Send a CLI_ROSTERACK packet
+						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply1);
+
+						long onlineStatusOpt = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
+						long onlineStatus = Util.translateStatusSend(onlineStatusOpt);
+						int visibilityItemId = Options.getIntOption(Options.OPTION_VISIBILITY_ID);
+						byte[] buf = new byte[15];
+						byte bCode = 0;
+						if(visibilityItemId != 0)
+						{
+							// Build packet for privacy setting changing
+							int marker = 0;
+
+							if(onlineStatus == Util.SET_STATUS_INVISIBLE)
+								bCode = (onlineStatusOpt == ContactList.STATUS_INVIS_ALL)?(byte)2:(byte)3;
+							else
+								bCode = (byte)4;
+
+							Util.putWord(buf, marker,    0); marker += 2; // name (null)
+							Util.putWord(buf, marker,    0); marker += 2; // GroupID
+							Util.putWord(buf, marker,  visibilityItemId); marker += 2; // EntryID
+							Util.putWord(buf, marker,    4); marker += 2; // EntryType
+							Util.putWord(buf, marker,    5); marker += 2; // Length in bytes of following TLV
+							Util.putWord(buf, marker, 0xCA); marker += 2; // TLV Type
+							Util.putWord(buf, marker,    1); marker += 2; // TLV Length
+							Util.putByte(buf, marker,bCode);              // TLV Value
+
+							// Change privacy setting according to new status
+							if(onlineStatus == Util.SET_STATUS_INVISIBLE)
+							{
+								SnacPacket reply2pre = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+														   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+														   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+														   new byte[0],
+														   buf);
+								Icq.c.sendPacket(reply2pre);
+							}
+						}
+
+						// Send to server sequence of unuthoruzed contacts to see their statuses 
+						String[] noauth = ContactList.unauthorizedContactsAsByteArray();
+						if (noauth.length > 0)
+							Icq.addLocalContacts(noauth);
+
+						// Send a CLI_SETSTATUS packet
+						Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, onlineStatus);
+						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
+						Icq.c.sendPacket(reply2);
+
+						// Change privacy setting according to new status
+						if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
+						{
+							SnacPacket reply2post = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+														SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+														SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+														new byte[0],
+														buf);
+							Icq.c.sendPacket(reply2post);
+						}
+
+						// Send a CLI_READY packet
+						SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
+						Icq.c.sendPacket(reply3);
+
+						// Send a CLI_TOICQSRV/CLI_REQOFFLINEMSGS packet
+						ToIcqSrvPacket reply4 = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_REQOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply4);
+
+						// Move to next state
+						this.state = ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT;
+
+					}
+
+				}
+
+			}
+			// Watch out for STATE_CLI_REQOFFLINEMSGS_SENT
+			else if (this.state == ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT)
+			{
+
+				if (packet instanceof FromIcqSrvPacket)
+				{
+					FromIcqSrvPacket fromIcqSrvPacket = (FromIcqSrvPacket) packet;
+
+					// Watch out for SRV_OFFLINEMSG
+					if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_OFFLINEMSG_SUBCMD)
+					{
+
+						// Get raw data
+						byte[] buf = fromIcqSrvPacket.getData();
+
+						// Check length
+						if (buf.length < 14) { throw (new JimmException(116, 0)); }
+
+						// Extract UIN
+						long uinRaw = Util.getDWord(buf, 0, false);
+
+						String uin = String.valueOf(uinRaw);
+
+						// Extract date of dispatch
+						byte[] date = Util.createDate
+									  (
+										  0,
+										  Util.getByte(buf, 9),
+										  Util.getByte(buf, 8),
+										  Util.getByte(buf, 7),
+										  Util.getByte(buf, 6),
+										  Util.getWord(buf, 4, false)
+									   );
+
+						// Get type
+						int type = Util.getWord(buf, 10, false);
+
+						// Get text length
+						int textLen = Util.getWord(buf, 12, false);
+
+						// Check length
+						if (buf.length != 14 + textLen) { throw (new JimmException(116, 1)); }
+
+						// Get text
+						String text = Util.crlfToCr(Util.byteArrayToString(buf, 14, textLen, Util.isDataUTF8(buf, 14, textLen)));
+
+						// Normal message
+						if (type == 0x0001)
+						{
+							 // Forward message to contact list
 							
-                            // Close connection (only if not HTTP Connection)
-							if (Jimm.jimm.getIcqRef().c instanceof HTTPConnection)
+							PlainMessage message = new PlainMessage(uin, this.uin, date, text, true);
+							ContactList.addMessage(message);
+
+						}
+						// URL message
+						else if (type == 0x0004)
+						{
+
+							// Search for delimiter
+							int delim = text.indexOf(0xFE);
+
+							// Split message, if delimiter could be found
+							String urlText;
+							String url;
+							if (delim != -1)
 							{
-								// Do nothing
+								urlText = text.substring(0, delim);
+								url = text.substring(delim + 1);
 							}
 							else
 							{
-	                            Jimm.jimm.getIcqRef().c.close();
+								urlText = text;
+								url = "";
 							}
-                            // #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
-                            if (Options.getBooleanOption(Options.OPTION_SHADOW_CON))
-                            {
-                                try
-                                {
-                                    // Wait the given time before starting the
-                                    // new connection
-                                    Thread.sleep(2000);
-                                } catch (InterruptedException e)
-                                {
-                                    // Do nothing
-                                }
-                            }
-                            // #sijapp cond.end#
-                            // Open connection
-                            // #sijapp cond.if modules_PROXY is "true" #
-                            for (int i = 0; i < retry; i++)
-                            {
-                                try
-                                {
-                                    // #sijapp cond.end #
-                                	Jimm.jimm.getIcqRef().c.connect(disconnectPacket.getServer());
-                                    // #sijapp cond.if modules_PROXY is "true" #
-                                    break;
 
-                                } catch (JimmException e)
-                                {
-                                    if (i >= (retry - 1) || ((this.lastActivity.getTime() + this.TIMEOUT) < System.currentTimeMillis()))
-                                    {
-                                        this.active = false;
-                                        this.state = ConnectAction.STATE_ERROR;
-                                        throw (e);
-                                    }
-                                    else
-                                        if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
-                                        {
-                                        	Jimm.jimm.getIcqRef().c.close();
-                                            try
-                                            {
-                                                // Wait the given time
-                                                Thread.sleep(2000);
-                                            } catch (InterruptedException er)
-                                            {
-                                                // Do nothing
-                                            }
-                                        }
-                                }
-                            }
-                            // #sijapp cond.end #
+							// Forward message message to contact list
+							UrlMessage message = new UrlMessage(uin, this.uin, date, url, urlText);
+							ContactList.addMessage(message);
+						}
 
-                            // Move to next state
-                            this.state = ConnectAction.STATE_CLI_DISCONNECT_SENT;
+						// Packet has been consumed
+						consumed = true;
 
-                            // Packet has been consumed
-                            consumed = true;
+					}
+					// Watch out for SRV_DONEOFFLINEMSGS
+					else if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_DONEOFFLINEMSGS_SUBCMD)
+					{
 
-                        }
-                        // Watch out for SRV_GOODBYE packet
-                        else
-                            if (disconnectPacket.getType() == DisconnectPacket.TYPE_SRV_GOODBYE)
-                            {
+						// Send a CLI_TOICQSRV/CLI_ACKOFFLINEMSGS packet
+						ToIcqSrvPacket reply = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_ACKOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply);
 
-                                // Multiple logins
-                                if (disconnectPacket.getError() == 0x0001)
-                                {
-                                    throw (new JimmException(110, 1));
-                                }
-                                // Bad password
-                                else
-                                    if ((disconnectPacket.getError() == 0x0004) || (disconnectPacket.getError() == 0x0005))
-                                    {
-                                        throw (new JimmException(111, 0));
-                                    }
-                                    // Non-existant UIN
-                                    else
-                                        if ((disconnectPacket.getError() == 0x0007) || (disconnectPacket.getError() == 0x0008))
-                                        {
-                                            throw (new JimmException(112, 0));
-                                        }
-                                        // Too many clients from same IP
-                                        else
-                                            if ((disconnectPacket.getError() == 0x0015) || (disconnectPacket.getError() == 0x0016))
-                                            {
-                                                throw (new JimmException(113, 0));
-                                            }
-                                            // Rate exceeded
-                                            else
-                                                if (disconnectPacket.getError() == 0x0018)
-                                                {
-                                                    throw (new JimmException(114, 0));
-                                                }
-                                                // Uknown error
-                                                else
-                                                {
-                                                    throw (new JimmException(100, 1));
-                                                }
+						// Move to next state
+						this.state = ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT;
 
-                            }
+						// Move to STATE_CONNECTED
+						Icq.setConnected();
 
-                    }
+						// Packet has been consumed
+						consumed = true;
 
-                }
-                // Watch out for STATE_CLI_DISCONNECT_SENT
-                else
-                    if (this.state == ConnectAction.STATE_CLI_DISCONNECT_SENT)
-                    {
+					}
 
-                        // Watch out for SRV_HELLO packet
-                        if (packet instanceof ConnectPacket)
-                        {
-                            ConnectPacket connectPacket = (ConnectPacket) packet;
-                            if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
-                            {
+				}
 
-                                // Send a CLI_COOKIE packet as reply
-                                ConnectPacket reply = new ConnectPacket(this.cookie);
-                                Jimm.jimm.getIcqRef().c.sendPacket(reply);
-
-                                // Move to next state
-                                this.state = ConnectAction.STATE_CLI_COOKIE_SENT;
-
-                                // Packet has been consumed
-                                consumed = true;
-
-                            }
-                        }
-
-                    }
-                    // Watch out for STATE_CLI_COOKIE_SENT
-                    else
-                        if (this.state == ConnectAction.STATE_CLI_COOKIE_SENT)
-                        {
-
-                            // Watch out for SRV_FAMILIES packet type
-                            if (packet instanceof SnacPacket)
-                            {
-                                SnacPacket snacPacket = (SnacPacket) packet;
-                                if ((snacPacket.getFamily() == SnacPacket.SRV_FAMILIES_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_FAMILIES_COMMAND))
-                                {
-
-                                    // Send a CLI_FAMILIES packet as reply
-                                    SnacPacket reply = new SnacPacket(SnacPacket.CLI_FAMILIES_FAMILY, SnacPacket.CLI_FAMILIES_COMMAND, SnacPacket.CLI_FAMILIES_COMMAND, new byte[0], ConnectAction.CLI_FAMILIES_DATA);
-                                    Jimm.jimm.getIcqRef().c.sendPacket(reply);
-
-                                    // Move to next state
-                                    this.state = ConnectAction.STATE_CLI_FAMILIES_SENT;
-
-                                    // Packet has been consumed
-                                    consumed = true;
-
-                                }
-                            }
-
-                        }
-                        // Watch out for STATE_CLI_FAMILIES_SENT
-                        else
-                            if (this.state == ConnectAction.STATE_CLI_FAMILIES_SENT)
-                            {
-
-                                // Watch out for SNAC packet
-                                if (packet instanceof SnacPacket)
-                                {
-                                    SnacPacket snacPacket = (SnacPacket) packet;
-
-                                    // Watch out for SRV_FAMILIES2 packet
-                                    if ((snacPacket.getFamily() == SnacPacket.SRV_FAMILIES2_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_FAMILIES2_COMMAND))
-                                    {
-                                        this.srvFamilies2Rcvd = true;
-
-                                        // Packet has been consumed
-                                        consumed = true;
-
-                                    }
-
-                                    // Watch out for SRV_MOTD packet
-                                    if ((snacPacket.getFamily() == SnacPacket.SRV_MOTD_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_MOTD_COMMAND))
-                                    {
-                                        this.srvMotdRcvd = true;
-
-                                        // Packet has been consumed
-                                        consumed = true;
-
-                                    }
-
-                                    // Check if we received both SRV_FAMILIES2
-                                    // and SRV_MOTD packet
-                                    if (this.srvFamilies2Rcvd && this.srvMotdRcvd)
-                                    {
-
-                                        // Send a CLI_RATESREQUEST packet as
-                                        // reply
-                                        SnacPacket reply = new SnacPacket(SnacPacket.CLI_RATESREQUEST_FAMILY, SnacPacket.CLI_RATESREQUEST_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                        Jimm.jimm.getIcqRef().c.sendPacket(reply);
-
-                                        // Move to next state
-                                        this.state = ConnectAction.STATE_CLI_RATESREQUEST_SENT;
-
-                                    }
-
-                                }
-
-                            }
-                            // Watch out for STATE_CLI_RATESREQUEST_SENT
-                            else
-                                if (this.state == ConnectAction.STATE_CLI_RATESREQUEST_SENT)
-                                {
-
-                                    // Watch out for SRV_RATES packet
-                                    if (packet instanceof SnacPacket)
-                                    {
-                                        SnacPacket snacPacket = (SnacPacket) packet;
-                                        if ((snacPacket.getFamily() == SnacPacket.SRV_RATES_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_RATES_COMMAND))
-                                        {
-
-                                            // Send a CLI_ACKRATES packet
-                                            SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ACKRATES_FAMILY, SnacPacket.CLI_ACKRATES_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_ACKRATES_DATA);
-                                            Jimm.jimm.getIcqRef().c.sendPacket(reply1);
-
-                                            // Send a CLI_REQLOCATION packet
-                                            SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQLOCATION_FAMILY, SnacPacket.CLI_REQLOCATION_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Jimm.jimm.getIcqRef().c.sendPacket(reply2);
-
-                                            // Send a CLI_SETUSERINFO packet
-                                            // Set version information to this packet in our capability
-                                            byte[] tmp = ConnectAction.CLI_SETUSERINFO_DATA;
-                                            byte[] ver = Util.stringToByteArray(Jimm.VERSION);
-                                            if ( ver.length<12 )
-                                            	System.arraycopy(ver,0,tmp,tmp.length-11,ver.length);
-					    
-                                            SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 0x00000000, new byte[0], tmp);
-                                            Jimm.jimm.getIcqRef().c.sendPacket(reply3);
-
-                                            // Send a CLI_REQBUDDY packet
-                                            SnacPacket reply4 = new SnacPacket(SnacPacket.CLI_REQBUDDY_FAMILY, SnacPacket.CLI_REQBUDDY_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Jimm.jimm.getIcqRef().c.sendPacket(reply4);
-
-                                            // Send a CLI_REQICBM packet
-                                            SnacPacket reply5 = new SnacPacket(SnacPacket.CLI_REQICBM_FAMILY, SnacPacket.CLI_REQICBM_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Jimm.jimm.getIcqRef().c.sendPacket(reply5);
-
-                                            // Send a CLI_REQBOS packet
-                                            SnacPacket reply6 = new SnacPacket(SnacPacket.CLI_REQBOS_FAMILY, SnacPacket.CLI_REQBOS_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Jimm.jimm.getIcqRef().c.sendPacket(reply6);
-
-                                            // Send a CLI_REQLISTS packet
-                                            SnacPacket reply7 = new SnacPacket(SnacPacket.CLI_REQLISTS_FAMILY, SnacPacket.CLI_REQLISTS_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                            Jimm.jimm.getIcqRef().c.sendPacket(reply7);
-
-                                            // Move to next state
-                                            this.state = ConnectAction.STATE_CLI_REQLISTS_SENT;
-
-                                            // Packet has been consumed
-                                            consumed = true;
-
-                                        }
-                                    }
-
-                                }
-                                // Watch out for STATE_CLI_REQLISTS_SENT
-                                else
-                                    if (this.state == ConnectAction.STATE_CLI_REQLISTS_SENT)
-                                    {
-
-                                        // Watch out for SNAC packet
-                                        if (packet instanceof SnacPacket)
-                                        {
-                                            SnacPacket snacPacket = (SnacPacket) packet;
-
-                                            // Watch out for SRV_REPLYLOCATION
-                                            // packet
-                                            if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYLOCATION_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYLOCATION_COMMAND))
-                                            {
-                                                this.srvReplyLocationRcvd = true;
-
-                                                // Packet has been consumed
-                                                consumed = true;
-
-                                            }
-
-                                            // Watch out for SRV_REPLYBUDDY
-                                            // packet
-                                            if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYBUDDY_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYBUDDY_COMMAND))
-                                            {
-                                                this.srvReplyBuddyRcvd = true;
-
-                                                // Packet has been consumed
-                                                consumed = true;
-
-                                            }
-
-                                            // Watch out for SRV_REPLYICBM
-                                            // packet
-                                            if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYICBM_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYICBM_COMMAND))
-                                            {
-                                                this.srvReplyIcbmRcvd = true;
-
-                                                // Packet has been consumed
-                                                consumed = true;
-
-                                            }
-
-                                            // Watch out for SRV_REPLYBOS packet
-                                            if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYBOS_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYBOS_COMMAND))
-                                            {
-                                                this.srvReplyBosRcvd = true;
-
-                                                // Packet has been consumed
-                                                consumed = true;
-
-                                            }
-
-                                            // Watch out for SRV_REPLYLISTS
-                                            // packet
-                                            if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYLISTS_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYLISTS_COMMAND))
-                                            {
-                                                this.srvReplyListsRcvd = true;
-
-                                                // Packet has been consumed
-                                                consumed = true;
-
-                                            }
-
-                                            // Check if all packets have been
-                                            // received
-                                            if (this.srvReplyLocationRcvd && this.srvReplyBuddyRcvd && this.srvReplyIcbmRcvd && this.srvReplyBosRcvd && this.srvReplyListsRcvd)
-                                            {
-
-                                                // Send a CLI_SETICBM packet
-                                                SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
-                                                Jimm.jimm.getIcqRef().c.sendPacket(reply1);
-
-                                                // Send a CLI_REQROSTER or
-                                                // CLI_CHECKROSTER packet
-                                                long versionId1 = ContactList.getVersionId1();
-                                                int versionId2 = ContactList.getVersionId2();
-                                                if (((versionId1 == -1) && (versionId2 == -1)) || (ContactList.getSize() == 0))
-                                                {
-                                                    SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply2);
-                                                }
-                                                else
-                                                {
-                                                    byte[] data = new byte[6];
-                                                    Util.putDWord(data, 0, versionId1);
-                                                    Util.putWord(data, 4, versionId2);
-                                                    SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_CHECKROSTER_FAMILY, SnacPacket.CLI_CHECKROSTER_COMMAND, 0x00000000, new byte[0], data);
-                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply2);
-                                                }
-
-                                                // Move to next state
-                                                this.state = ConnectAction.STATE_CLI_CHECKROSTER_SENT;
-
-                                            }
-
-                                        }
-
-                                    }
-                                    // Watch out for STATE_CLI_CHECKROSTER_SENT
-                                    else
-                                        if (this.state == ConnectAction.STATE_CLI_CHECKROSTER_SENT)
-                                        {
-
-                                            // Watch out for SNAC packet
-                                            if (packet instanceof SnacPacket)
-                                            {
-                                                SnacPacket snacPacket = (SnacPacket) packet;
-
-                                                // Watch out for
-                                                // SRV_REPLYROSTEROK
-                                                if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYROSTEROK_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYROSTEROK_COMMAND))
-                                                {
-                                                    this.srvReplyRosterRcvd = true;
-
-                                                    // Packet has been consumed
-                                                    consumed = true;
-
-                                                }
-                                                // watch out for SRV_REPLYROSTER
-                                                // packet
-                                                else
-                                                    if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYROSTER_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYROSTER_COMMAND))
-                                                    {
-
-                                                        if (snacPacket.getFlags() != 1) this.srvReplyRosterRcvd = true;
-
-                                                        // System.out.println("Flag:
-                                                        // "+snacPacket.getFlags());
-
-                                                        // Initialize vector for
-                                                        // items
-                                                        Vector items = new Vector();
-
-                                                        // Get data
-                                                        byte[] buf = snacPacket.getData();
-                                                        int marker = 0;
-
-                                                        // Check length
-                                                        if (buf.length < 3) { throw (new JimmException(115, 0)); }
-
-                                                        // Skip
-                                                        // SRV_REPLYROSTER.UNKNOWN
-                                                        marker += 1;
-
-                                                        // Iterate through all
-                                                        // items
-                                                        int count = Util.getWord(buf, marker);
-                                                        marker += 2;
-                                                        // System.out.println("elemente in serverlist: "+count);
-                                                        for (int i = 0; i < count; i++)
-                                                        {
-
-                                                            // Check length
-                                                            if (buf.length < marker + 2) { throw (new JimmException(115, 1)); }
-
-                                                            // Get name length
-                                                            int nameLen = Util.getWord(buf, marker);
-                                                            marker += 2;
-
-                                                            // Check length
-                                                            if (buf.length < marker + nameLen + 2 + 2 + 2 + 2) { throw (new JimmException(115, 2)); }
-
-                                                            // Get name
-                                                            String name = Util.byteArrayToString(buf, marker, nameLen, true);
-                                                            marker += nameLen;
-
-                                                            // Get group, id and type
-                                                            int group = Util.getWord(buf, marker);
-                                                            int id = Util.getWord(buf, marker + 2);
-                                                            int type = Util.getWord(buf, marker + 4);
-                                                            marker += 6;
-
-                                                            // Get length of the following TLVs
-                                                            int len = Util.getWord(buf, marker);
-                                                            marker += 2;
-
-                                                            // Check length
-                                                            if (buf.length < marker + len) { throw (new JimmException(115, 3)); }
-
-                                                            // Normal contact
-                                                            if (type == 0x0000)
-                                                            {
-
-                                                                // Get nick
-                                                                String nick = new String(name);
-                                                                //System.out.println("c "+i+": "+name);
-                                                                boolean noAuth = false;
-                                                                while (len > 0)
-                                                                {
-                                                                    byte[] tlvData = Util.getTlv(buf, marker);
-                                                                    if (tlvData == null) { throw (new JimmException(115, 4)); }
-                                                                    int tlvType = Util.getWord(buf, marker);
-                                                                    if (tlvType == 0x0131)
-                                                                    {
-                                                                        nick = Util.byteArrayToString(tlvData, true);
-                                                                    }
-                                                                    else
-                                                                        if (tlvType == 0x0066)
-                                                                        {
-                                                                            noAuth = true;
-                                                                        }
-                                                                    len -= 4;
-                                                                    len -= tlvData.length;
-                                                                    marker += 4 + tlvData.length;
-                                                                }
-                                                                if (len != 0) { throw (new JimmException(115, 5)); }
-
-                                                                // Add this contact item to the vector
-                                                                items.addElement(new ContactListContactItem(id, group, name, nick, noAuth, true));
-
-                                                            }
-                                                            // Group of contacts
-                                                            else
-                                                                if (type == 0x0001)
-                                                                {
-                                                                    //System.out.println("g "+i+": "+name);
-                                                                    // Skip TLVs
-                                                                    marker += len;
-
-                                                                    // Add this group item to the vector
-                                                                    if (group != 0x0000)
-                                                                    {
-                                                                        items.addElement(new ContactListGroupItem(group, name));
-                                                                    }
-
-                                                                }
-															// My visibility settings
-															else
-															if (type == 0x0004)
-															{
-																while (len > 0)
-																{
-																	byte[] tlvData = Util.getTlv(buf, marker);
-																	if (tlvData == null) { throw (new JimmException(115, 110)); }
-																	int tlvType = Util.getWord(buf, marker);
-
-																	if (tlvType == 0x00CA)
-																	{
-																		Options.setIntOption(Options.OPTION_VISIBILITY_ID, (int)id);
-																	}
-
-																	len -= 4;
-																	len -= tlvData.length;
-																	marker += 4 + tlvData.length;
-																}
-																if (len != 0) { throw (new JimmException(115, 111)); }
-															}
-                                                                // All other item types
-                                                                else
-                                                                {
-                                                                    //System.out.println("x "+i+": ");
-                                                                    // Skip TLVs
-                                                                    marker += len;
-
-                                                                }
-
-                                                        }
-
-                                                        // Check length
-                                                        if (buf.length != marker + 4) { throw (new JimmException(115, 6)); }
-
-                                                        // Get timestamp
-                                                        long timestamp = Util.getDWord(buf, marker);
-
-                                                        // Update contact list
-                                                        ContactListItem[] itemsAsArray = new ContactListItem[items.size()];
-                                                        items.copyInto(itemsAsArray);
-                                                        ContactList.update(snacPacket.getFlags(), timestamp, count, itemsAsArray);
-
-                                                        // Packet has been consumed
-                                                        consumed = true;
-
-                                                    }
-
-                                                // Check if all required packets have been received
-                                                if (this.srvReplyRosterRcvd)
-                                                {
-
-                                                    // Send a CLI_ROSTERACK packet
-                                                    SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]);
-                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply1);
-
-													long onlineStatusOpt = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
-													long onlineStatus = Util.translateStatusSend(onlineStatusOpt);
-													int visibilityItemId = Options.getIntOption(Options.OPTION_VISIBILITY_ID);
-													byte[] buf = new byte[15];
-													byte bCode = 0;
-													if(visibilityItemId != 0)
-													{
-														// Build packet for privacy setting changing
-														int marker = 0;
-
-														if(onlineStatus == Util.SET_STATUS_INVISIBLE)
-															bCode = (onlineStatusOpt == ContactList.STATUS_INVIS_ALL)?(byte)2:(byte)3;
-														else
-															bCode = (byte)4;
-
-														Util.putWord(buf, marker,    0); marker += 2; // name (null)
-														Util.putWord(buf, marker,    0); marker += 2; // GroupID
-														Util.putWord(buf, marker,  visibilityItemId); marker += 2; // EntryID
-														Util.putWord(buf, marker,    4); marker += 2; // EntryType
-														Util.putWord(buf, marker,    5); marker += 2; // Length in bytes of following TLV
-														Util.putWord(buf, marker, 0xCA); marker += 2; // TLV Type
-														Util.putWord(buf, marker,    1); marker += 2; // TLV Length
-														Util.putByte(buf, marker,bCode);              // TLV Value
-
-														// Change privacy setting according to new status
-														if(onlineStatus == Util.SET_STATUS_INVISIBLE)
-														{
-															SnacPacket reply2pre = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-																					   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-																					   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-																					   new byte[0],
-																					   buf);
-															Jimm.jimm.getIcqRef().c.sendPacket(reply2pre);
-														}
-													}
-
-													// Send a CLI_SETSTATUS packet
-													Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, 0x10000000+onlineStatus);
-													SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
-													Jimm.jimm.getIcqRef().c.sendPacket(reply2);
-
-													// Change privacy setting according to new status
-													if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
-													{
-														SnacPacket reply2post = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-																					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-																					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-																					new byte[0],
-																					buf);
-														Jimm.jimm.getIcqRef().c.sendPacket(reply2post);
-													}
-
-                                                    // Send a CLI_READY packet
-                                                    SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
-                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply3);
-
-                                                    // Send a CLI_TOICQSRV/CLI_REQOFFLINEMSGS packet
-                                                    ToIcqSrvPacket reply4 = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_REQOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
-                                                    Jimm.jimm.getIcqRef().c.sendPacket(reply4);
-
-                                                    // Move to next state
-                                                    this.state = ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT;
-
-                                                }
-
-                                            }
-
-                                        }
-                                        // Watch out for STATE_CLI_REQOFFLINEMSGS_SENT
-                                        else
-                                            if (this.state == ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT)
-                                            {
-
-                                                if (packet instanceof FromIcqSrvPacket)
-                                                {
-                                                    FromIcqSrvPacket fromIcqSrvPacket = (FromIcqSrvPacket) packet;
-
-                                                    // Watch out for SRV_OFFLINEMSG
-                                                    if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_OFFLINEMSG_SUBCMD)
-                                                    {
-
-                                                        // Get raw data
-                                                        byte[] buf = fromIcqSrvPacket.getData();
-
-                                                        // Check length
-                                                        if (buf.length < 14) { throw (new JimmException(116, 0)); }
-
-                                                        // Extract UIN
-                                                        long uinRaw = Util.getDWord(buf, 0, false);
-                                                        // If message is from uin 1003 it's from ICQ webmessage and we ignore it
-                                                        if (uinRaw != 1003)
-                                                        {
-                                                            String uin = String.valueOf(uinRaw);
-
-                                                            // Extract date of dispatch
-                                                            int dateYear = Util.getWord(buf, 4, false);
-                                                            int dateMonth = Util.getByte(buf, 6);
-                                                            int dateDay = Util.getByte(buf, 7);
-                                                            int dateHour = Util.getByte(buf, 8);
-                                                            int dateMinute = Util.getByte(buf, 9);
-                                                            Calendar c = Calendar.getInstance();
-                                                            c.set(Calendar.YEAR, dateYear);
-                                                            switch (dateMonth)
-                                                            {
-                                                            case 1:
-                                                                c.set(Calendar.MONTH, Calendar.JANUARY);
-                                                                break;
-                                                            case 2:
-                                                                c.set(Calendar.MONTH, Calendar.FEBRUARY);
-                                                                break;
-                                                            case 3:
-                                                                c.set(Calendar.MONTH, Calendar.MARCH);
-                                                                break;
-                                                            case 4:
-                                                                c.set(Calendar.MONTH, Calendar.APRIL);
-                                                                break;
-                                                            case 5:
-                                                                c.set(Calendar.MONTH, Calendar.MAY);
-                                                                break;
-                                                            case 6:
-                                                                c.set(Calendar.MONTH, Calendar.JUNE);
-                                                                break;
-                                                            case 7:
-                                                                c.set(Calendar.MONTH, Calendar.JULY);
-                                                                break;
-                                                            case 8:
-                                                                c.set(Calendar.MONTH, Calendar.AUGUST);
-                                                                break;
-                                                            case 9:
-                                                                c.set(Calendar.MONTH, Calendar.SEPTEMBER);
-                                                                break;
-                                                            case 10:
-                                                                c.set(Calendar.MONTH, Calendar.OCTOBER);
-                                                                break;
-                                                            case 11:
-                                                                c.set(Calendar.MONTH, Calendar.NOVEMBER);
-                                                                break;
-                                                            case 12:
-                                                                c.set(Calendar.MONTH, Calendar.DECEMBER);
-                                                            }
-                                                            c.set(Calendar.DAY_OF_MONTH, dateDay);
-                                                            c.set(Calendar.HOUR_OF_DAY, dateHour);
-                                                            c.set(Calendar.MINUTE, dateMinute);
-                                                            c.set(Calendar.SECOND, 0);
-                                                            Date date = c.getTime();
-                                                            date.setTime(date.getTime() - (TimeZone.getDefault().useDaylightTime() ? (60 * 60 * 1000) : 0));
-
-                                                            // Get type
-                                                            int type = Util.getWord(buf, 10, false);
-
-                                                            // Get text length
-                                                            int textLen = Util.getWord(buf, 12, false);
-
-                                                            // Check length
-                                                            if (buf.length != 14 + textLen) { throw (new JimmException(116, 1)); }
-
-                                                            // Get text
-                                                            String text = Util.crlfToCr(Util.byteArrayToString(buf, 14, textLen, Util.isDataUTF8(buf, 14, textLen)));
-
-                                                            // Normal message
-                                                            if (type == 0x0001)
-                                                            {
-                                                                 // Forward message to contact list
-                                                                PlainMessage message = new PlainMessage(uin, this.uin, date, text, true);
-                                                                ContactList.addMessage(message);
-
-                                                            }
-                                                            // URL message
-                                                            else
-                                                                if (type == 0x0004)
-                                                                {
-
-                                                                    // Search for delimiter
-                                                                    int delim = text.indexOf(0xFE);
-
-                                                                    // Split message, if delimiter could be found
-                                                                    String urlText;
-                                                                    String url;
-                                                                    if (delim != -1)
-                                                                    {
-                                                                        urlText = text.substring(0, delim);
-                                                                        url = text.substring(delim + 1);
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        urlText = text;
-                                                                        url = "";
-                                                                    }
-
-                                                                    // Forward message message to contact list
-                                                                    UrlMessage message = new UrlMessage(uin, this.uin, date, url, urlText);
-                                                                    ContactList.addMessage(message);
-
-                                                                }
-                                                        }
-
-                                                        // Packet has been consumed
-                                                        consumed = true;
-
-                                                    }
-                                                    // Watch out for SRV_DONEOFFLINEMSGS
-                                                    else
-                                                        if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_DONEOFFLINEMSGS_SUBCMD)
-                                                        {
-
-                                                            // Send a CLI_TOICQSRV/CLI_ACKOFFLINEMSGS packet
-                                                            ToIcqSrvPacket reply = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_ACKOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
-                                                            Jimm.jimm.getIcqRef().c.sendPacket(reply);
-
-                                                            // Move to next state
-                                                            this.state = ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT;
-
-                                                            // Move to STATE_CONNECTED
-                                                            Icq.setConnected();
-
-                                                            // Packet has been consumed
-                                                            consumed = true;
-
-                                                        }
-
-                                                }
-
-                                            }
+			}
 
             // Update activity timestamp and reset activity flag
             this.lastActivity = new Date();
@@ -1206,6 +1182,8 @@ public class ConnectAction extends Action
         {
         case ConnectAction.STATE_INIT_DONE:
             return (10);
+		case STATE_AUTHKEY_REQUESTED:
+			return 15;
         case ConnectAction.STATE_CLI_IDENT_SENT:
             return (20);
         case ConnectAction.STATE_CLI_DISCONNECT_SENT:
