@@ -78,16 +78,17 @@ public class RunnableImpl implements Runnable
 			ContactList.update
 			(
 				(String)data[0],
-				Util.getLong(data,  1),
-				Util.getInt (data,  2),
+				getLong(data,  1),
+				getInt (data,  2),
 				(byte[])data[3],
-				Util.getLong(data,  4),
-				Util.getInt (data,  5),
-				Util.getInt (data,  6),
-				Util.getLong(data,  7),
-				Util.getLong(data,  8),
-				Util.getLong(data,  9),
-				Util.getInt (data, 10)
+				(byte[])data[4],
+				getLong(data,  5),
+				getInt (data,  6),
+				getInt (data,  7),
+				getLong(data,  8),
+				getLong(data,  9),
+				getLong(data, 10),
+				getInt (data, 11)
 			);
 			break;
 		}
@@ -129,33 +130,70 @@ public class RunnableImpl implements Runnable
 	static public void updateContactList
 	(
 	   	String uin,
-    	long status,
-    	int capabilities,
-    	byte[] internalIP,
-    	long dcPort,
-    	int dcType,
-    	int icqProt,
-        long authCookie,
-        long signon,
-        long online,
-        int idle
+		long status,
+		int capabilities,
+		byte[] internalIP,
+		byte[] externalIP,
+		long dcPort,
+		int dcType,
+		int icqProt,
+		long authCookie,
+		long signon,
+		long online,
+		int idle
 	)
 	{
-		Object[] arguments = new Object[11];
+		Object[] arguments = new Object[12];
 		
 		arguments[0] = uin;
-		Util.setLong(arguments,  1, status      );
-		Util.setInt (arguments,  2, capabilities);
+		setLong(arguments,  1, status      );
+		setInt (arguments,  2, capabilities);
 		arguments[3] = internalIP;
-		Util.setLong(arguments,  4, dcPort      );
-		Util.setInt (arguments,  5, dcType      );
-		Util.setInt (arguments,  6, icqProt     );
-		Util.setLong(arguments,  7, authCookie  );
-		Util.setLong(arguments,  8, signon      ); 
-		Util.setLong(arguments,  9, online      );
-		Util.setInt (arguments, 10, idle        );  
+		arguments[4] = externalIP;
+		setLong(arguments,  5, dcPort      );
+		setInt (arguments,  6, dcType      );
+		setInt (arguments,  7, icqProt     );
+		setLong(arguments,  8, authCookie  );
+		setLong(arguments,  9, signon      ); 
+		setLong(arguments, 10, online      );
+		setInt (arguments, 11, idle        );  
 		
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	
+	static public void setBoolean(Object[] data, int index, boolean value)
+	{
+		data[index] = new Boolean(value);
+	}
+	
+	static public boolean getBoolean(Object[] data, int index)
+	{
+		return (data[index] == null) ? false : ((Boolean)data[index]).booleanValue();
+	}
+
+	static public void setLong(Object[] data, int index, long value)
+	{
+		data[index] = new Long(value);
+	}
+	
+	static public long getLong(Object[] data, int index)
+	{
+		return (data[index] == null) ? 0 : ((Long)data[index]).longValue();
+	}
+
+	static public void setInt(Object[] data, int index, int value)
+	{
+		data[index] = new Integer(value);
+	}
+	
+	static public int getInt(Object[] data, int index)
+	{
+		return (data[index] == null) ? 0 : ((Integer)data[index]).intValue();
+	}
+	
 	
 }

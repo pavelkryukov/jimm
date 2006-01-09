@@ -49,11 +49,10 @@ public class SystemNotice extends Message {
 	private String reason;
 
 	// Constructs system notice
-	public SystemNotice(int _sysnotetype, String _uin, boolean _AUTH_granted, String _reason) {
+	public SystemNotice(int _sysnotetype, String _uin, boolean _AUTH_granted, String _reason) 
+	{
+		super(Util.createCurrentDate(), Options.getStringOption(Options.OPTION_UIN), _uin, MESSAGE_TYPE_AUTO);
 		sysnotetype = _sysnotetype;
-		this.sndrUin = _uin;
-		this.rcvrUin = Options.getStringOption(Options.OPTION_UIN);
-		this.date = new Date();
 		AUTH_granted = _AUTH_granted;
 		reason = _reason;
 	}

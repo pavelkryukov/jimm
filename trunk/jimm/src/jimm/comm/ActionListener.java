@@ -80,6 +80,7 @@ public class ActionListener
                 // DC variables
             	boolean statusChange = true;
                 byte[] internalIP = new byte[4];
+                byte[] externalIP = new byte[4];
                 long dcPort = 0;
                 int dcType = -1;
                 int icqProt = 0;
@@ -122,6 +123,11 @@ public class ActionListener
                     } 
                     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
                     // #sijapp cond.if modules_FILES is "true"#
+                    
+                    else if (tlvType == 0x000A) // External IP
+                    {
+                    	System.arraycopy(tlvData, 0, externalIP, 0 ,4);
+                    }
                     else if (tlvType == 0x000c) // DC Infos
                     {                        
                         // dcMarker
@@ -183,9 +189,9 @@ public class ActionListener
                 // #sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
                	if ( !statusChange )
                		Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt);
-               	RunnableImpl.updateContactList(uin, status, capabilities,internalIP,dcPort,dcType,icqProt,authCookie,signon,online,idle);
+               	RunnableImpl.updateContactList(uin, status, capabilities, internalIP, externalIP, dcPort, dcType, icqProt,authCookie, signon, online, idle);
                	// #sijapp cond.else#
-               	RunnableImpl.updateContactList(uin, status, capabilities, null, 0, 0, 0, 0, signon, online,idle);
+               	RunnableImpl.updateContactList(uin, status, capabilities, null, null, 0, 0, 0, 0, signon, online,idle);
                	// #sijapp cond.end#
 
             }
@@ -346,7 +352,7 @@ public class ActionListener
                         // Construct object which encapsulates the received
                         // plain message
 
-                        PlainMessage plainMsg = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), text, false);
+                        PlainMessage plainMsg = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), Util.createCurrentDate(), text, false);
 						RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, plainMsg);
 						// #sijapp cond.if target is "MIDP2" #
 						Jimm.setMinimized(false);
@@ -484,7 +490,7 @@ public class ActionListener
                             String text = Util.crlfToCr(Util.byteArrayToString(rawText, isUtf8));
 
                             // Instantiate message object
-                            message = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN),new Date(), text, false);
+                            message = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), Util.createCurrentDate(), text, false);
 
                         } else
                         {
@@ -515,7 +521,7 @@ public class ActionListener
                             }
 
                             // Instantiate UrlMessage object
-                            message = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
+                            message = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), Util.createCurrentDate(), url, urlText);
                         }
 
                         // Forward message object to contact list
@@ -677,7 +683,7 @@ public class ActionListener
                             }
 
                             // Forward message message to contact list
-                            UrlMessage message = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
+                            UrlMessage message = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), Util.createCurrentDate(), url, urlText);
                             RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
 							// #sijapp cond.if target is "MIDP2" #
 							Jimm.setMinimized(false);
@@ -790,7 +796,7 @@ public class ActionListener
                     if (msgType == 0x0001)
                     {
                         // Forward message to contact list
-                        PlainMessage plainMsg = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), text, false);
+                        PlainMessage plainMsg = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), Util.createCurrentDate(), text, false);
                         RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, plainMsg);
 						// #sijapp cond.if target is "MIDP2" #
 						Jimm.setMinimized(false);
@@ -817,7 +823,7 @@ public class ActionListener
                         }
 
                         // Forward message message to contact list
-                        UrlMessage urlMsg = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), new Date(), url, urlText);
+                        UrlMessage urlMsg = new UrlMessage(uin, Options.getStringOption(Options.OPTION_UIN), Util.createCurrentDate(), url, urlText);
 						RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, urlMsg);
 						// #sijapp cond.if target is "MIDP2" #
 						Jimm.setMinimized(false);

@@ -28,6 +28,8 @@ import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.comm.Message;
 import jimm.comm.Util;
+import jimm.comm.Icq;
+import jimm.comm.VisibilityCheckerAction;
 import jimm.util.ResourceBundle;
 
 import java.util.Hashtable;
@@ -247,7 +249,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		if ( !(obj instanceof ContactListContactItem) ) return 10;
 		cItem = (ContactListContactItem)obj;
 		if (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) return 0;
-		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) return 20;
+		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) && 
+			cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE) return 20;
 	
 		return 10;
 	}
@@ -311,6 +314,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static public int getSize()
     {
     	return cItems.size();
+    }
+    
+    static private ContactListContactItem getCItem(int index)
+    {
+    	return (ContactListContactItem)cItems.elementAt(index);
     }
     
     // Returns all contact items as array
@@ -447,11 +455,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                         // Get id, group id, UIN and name from the record store
                         int id = dis.readInt();
                         int group = dis.readInt();
+						boolean noAuth = dis.readBoolean();
+						boolean istemp = dis.readBoolean();
                         String uin = dis.readUTF();
                         String name = dis.readUTF();
 
                         // Instantiate ContactListContactItem object and add to vector
-                        ContactListContactItem ci = new ContactListContactItem(id, group, uin, name, false, true);
+                        ContactListContactItem ci = new ContactListContactItem(id, group, uin, name, noAuth, true);
+						ci.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, istemp);
                         ContactList.cItems.addElement(ci);
                     }
                     // Group of contacts
@@ -520,12 +531,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // Iterate through all contact items
         for (int i = 0; i < ContactList.cItems.size(); i++)
         {
-            ContactListContactItem cItem = (ContactListContactItem) cItems.elementAt(i);
+            ContactListContactItem cItem = getCItem(i);
 
             // Add next contact item
             dos.writeInt(0);
             dos.writeInt(cItem.getIntValue(ContactListContactItem.CONTACTITEM_ID));
             dos.writeInt(cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
+			dos.writeBoolean(cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH));
+			dos.writeBoolean(cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP));
             dos.writeUTF(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
             dos.writeUTF(cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 
@@ -584,9 +597,27 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	treeBuilt = treeSorted = false;
 		onlineCounter = 0;
     	int count = cItems.size();
-    	for (int i = 0; i < count; i++) 
-    		((ContactListContactItem)cItems.elementAt(i)).setLongValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
+    	for (int i = 0; i < count; i++) getCItem(i).setLongValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
     }
+    
+	// Returns array of uins of unuthorized contacts
+	public static String[] unauthorizedContactsAsByteArray() 
+	{
+		int count = 0, i, index;
+		
+		for (i = 0; i < cItems.size(); i++)
+			if (getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) count++;
+		
+		String result[] = new String[count];
+		
+		index = 0;
+		for (i = 0; i < cItems.size(); i++)
+		{
+			if (getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
+				result[index++] = getCItem(i).getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		}
+		return result;
+	}
     
     // Updates the client-side conact list (called when a new roster has been
     // received)
@@ -694,7 +725,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		// add contacts
 		for (i = 0; i < cCount; i++)
 		{
-			ContactListContactItem cItem = (ContactListContactItem)cItems.elementAt(i);
+			ContactListContactItem cItem = getCItem(i);
 			
 			if (only_online && 
 			    (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == STATUS_OFFLINE) &&
@@ -733,8 +764,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		long uinLong = Long.parseLong(uin);
     	for (int i = cItems.size()-1; i >= 0; i--)
     	{
-    		ContactListContactItem citem = (ContactListContactItem)cItems.elementAt(i); 
-    	    if (citem.getUIN() == uinLong) return citem;
+    		ContactListContactItem citem = getCItem(i); 
+    	    if (getCItem(i).getUIN() == uinLong) return citem;
     	}
     	return null;
     }
@@ -832,7 +863,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	    if (status != ContactList.STATUS_OFFLINE)
     	    {
     	    	onlineCounter++;
-    	    	group.updateCounters(1, 1);
+    	    	if (group != null) group.updateCounters(1, 1);
     	    	RunnableImpl.updateContactListCaption();
     	    }
     	}
@@ -845,7 +876,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     		if (status != ContactList.STATUS_OFFLINE)
     		{
     			onlineCounter--;
-    			group.updateCounters(-1, -1);
+    			if (group != null) group.updateCounters(-1, -1);
     			RunnableImpl.updateContactListCaption();
     		}
     	}
@@ -855,7 +886,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     		{
     			int onlineInc = (status == ContactList.STATUS_OFFLINE) ? -1 : 1;
     			onlineCounter += onlineInc;
-    			group.updateCounters(onlineInc, 0);
+    			if (group != null) group.updateCounters(onlineInc, 0);
     			RunnableImpl.updateContactListCaption();
     		}
     	}
@@ -895,12 +926,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     }
     
     // Updates the client-side contact list (called when a contact changes status)
+    // DO NOT CALL THIS DIRECTLY FROM OTHER THREAND THAN MAIN!
+    // USE RunnableImpl.updateContactList INSTEAD!
     static public synchronized void update
     (
     	String uin,
     	long status,
     	int capabilities,
     	byte[] internalIP,
+    	byte[] externalIP,
     	long dcPort,
     	int dcType,
     	int icqProt,
@@ -912,7 +946,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     {
         ContactListContactItem cItem = getItembyUIN(uin);
         if (cItem == null) return; // error ???
-       
+        
         
         long oldStatus = cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS);
     	long trueStatus = Util.translateStatusReceived(status);
@@ -931,6 +965,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         if (dcType != -1)
         {
             cItem.setIPValue  (ContactListContactItem.CONTACTITEM_INTERNAL_IP, internalIP);
+            cItem.setIPValue  (ContactListContactItem.CONTACTITEM_EXTERNAL_IP, externalIP); 
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_PORT,     (int)dcPort);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_TYPE,     dcType);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_ICQ_PROT,    icqProt);
@@ -957,7 +992,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // Updates the client-side contact list (called when a contact changes status)
     static public synchronized void update(String uin, long status)
     {
-        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL, null, 0,0,-1,0,-1,-1,-1);
+        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL, null, null, 0,0,-1,0,-1,-1,-1);
     }
 
     //Updates the title of the list
@@ -987,13 +1022,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 
         // Update visual list
     	contactChanged(cItem, false, false, true);
-    	
-    	// Update online counter
-        if (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
-        {
-        	onlineCounter--;
-        	RunnableImpl.updateContactListCaption();
-        }
     }
 
     // Adds a contact list item
@@ -1011,13 +1039,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             
             // Update visual list
             contactChanged(cItem, true, true, true);
-
-            // Update online counter
-            if (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
-            {
-            	onlineCounter++;
-            	RunnableImpl.updateContactListCaption();
-            }
         }
     }
     
@@ -1040,8 +1061,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     		TreeNode node = (TreeNode)gNodes.get( new Integer(realGroup.getId()) );
     		tree.deleteChild
 			(
-					tree.getRoot(), 
-					tree.getIndexOfChild(tree.getRoot(), node)
+				tree.getRoot(), 
+				tree.getIndexOfChild(tree.getRoot(), node)
 			);
     		gNodes.remove( new Integer(realGroup.getId()) );
     	}	
@@ -1068,6 +1089,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
             cItem.addMessage(message);
             temp = true;
+            Icq.addLocalContacts(new String[] { message.getSndrUin() });
         }
 
         // Notify splash canvas
@@ -1347,7 +1369,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			if (i >= maxSize) i = 0;
 			if (i == index) break;
 			
-			ContactListContactItem cItem = (ContactListContactItem)cItems.elementAt(i); 
+			ContactListContactItem cItem = getCItem(i); 
 			if ( cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) )
 			{
 				lastChatItem = cItem;
@@ -1363,12 +1385,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	{
 		int count = cItems.size();
 		int result = 0;
-		for (int i = 0; i < count; i++)
-			result += ((ContactListContactItem)cItems.elementAt(i)).getUnreadMessCount();
+		for (int i = 0; i < count; i++) result += getCItem(i).getUnreadMessCount();
 		return result;
 	}
 	
-
     // Command listener
     public void commandAction(Command c, Displayable d)
     {

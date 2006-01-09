@@ -41,25 +41,19 @@ public class UrlMessage extends Message
 	// Message text
 	private String text;
 
-
 	// Constructs an incoming message
-	public UrlMessage(String sndrUin, String rcvrUin, Date date, String url, String text)
+	public UrlMessage(String sndrUin, String rcvrUin, byte[] date, String url, String text)
 	{
-		this.sndrUin = sndrUin;
-		this.rcvrUin = rcvrUin;
-		this.date = new Date(date.getTime());
+		super(date, rcvrUin, sndrUin, MESSAGE_TYPE_AUTO);
 		this.url = url;
 		this.text = text;
 	}
 
-
 	// Constructs an outgoing message
-	public UrlMessage(String sndrUin, ContactListContactItem rcvr, int _messageType, Date date, String url, String text)
+	public UrlMessage(String sndrUin, ContactListContactItem rcvr, int _messageType, byte[] date, String url, String text)
 	{
-		this.sndrUin = sndrUin;
+		super(date, null, sndrUin, _messageType);
 		this.rcvr = rcvr;
-        this.messageType = _messageType;
-		this.date = new Date(date.getTime());
 		this.url = url;
 		this.text = text;
 	}

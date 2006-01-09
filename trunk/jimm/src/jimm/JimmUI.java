@@ -48,13 +48,14 @@ public class JimmUI implements CommandListener
 	final public static int CMD_BACK   = 6;
 	
 	// Commands
-	final private static Command cmdOk       = new Command(ResourceBundle.getString("ok"),        Command.OK,     1);
-	final private static Command cmdCancel   = new Command(ResourceBundle.getString("cancel"),    Command.BACK,   2);
-	final private static Command cmdYes      = new Command(ResourceBundle.getString("yes"),       Command.OK,     1);
-	final private static Command cmdNo       = new Command(ResourceBundle.getString("no"),        Command.CANCEL, 2);
-	final private static Command cmdFind     = new Command(ResourceBundle.getString("find"),      Command.OK,     1);
-	final private static Command cmdBack     = new Command(ResourceBundle.getString("back"),      Command.BACK,   2);
-	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"), Command.ITEM,   2);
+	final private static Command cmdOk       = new Command(ResourceBundle.getString("ok"),            Command.OK,     1);
+	final private static Command cmdCancel   = new Command(ResourceBundle.getString("cancel"),        Command.BACK,   2);
+	final private static Command cmdYes      = new Command(ResourceBundle.getString("yes"),           Command.OK,     1);
+	final private static Command cmdNo       = new Command(ResourceBundle.getString("no"),            Command.CANCEL, 2);
+	final private static Command cmdFind     = new Command(ResourceBundle.getString("find"),          Command.OK,     1);
+	final private static Command cmdBack     = new Command(ResourceBundle.getString("back"),          Command.BACK,   2);
+	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"),     Command.ITEM,   2);
+	final private static Command cmdCopyAll  = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM,   3);  
 
 	static private Hashtable commands = new Hashtable();
 	static private Displayable lastDisplayable;
@@ -104,16 +105,18 @@ public class JimmUI implements CommandListener
 		}
 		
 		// "User info"
-		if (d == userInfoTL)
+		if (d == infoTextList)
 		{
 			// "User info" -> "Cancel, Back"
 			if ((c == cmdCancel) || (c == cmdBack)) cancelUserInfo();
-			else if (c == cmdCopyText)
+			
+			// "User info" -> "Copy text, Copy all"
+			else if ((c == cmdCopyText) || (c == cmdCopyAll))
 			{
 				JimmUI.setClipBoardText
 				(
-					"["+getCaption(userInfoTL)+"]\n"
-					+userInfoTL.getCurrText(0)
+					"["+getCaption(infoTextList)+"]\n"
+					+infoTextList.getCurrText(0, (c == cmdCopyAll))
 				);
 			}
 		}
@@ -410,7 +413,6 @@ public class JimmUI implements CommandListener
 		}
 	}
 	
-	
 	private static long lockPressedTime = -1;
 	static private void execHotKeyAction(int actionNum, ContactListContactItem item, int keyType)
 	{
@@ -486,39 +488,49 @@ public class JimmUI implements CommandListener
 	
 	///////////////////////////////////////////////////////////////////////////
 	//                                                                       //
-	//                            U S E R   I N F O                          //
+	//               U S E R   A N D   C L I E N T   I N F O                 //
 	//                                                                       //
 	///////////////////////////////////////////////////////////////////////////
 	
 	// Information about the user
-	final public static int UI_UIN       = 0;
-	final public static int UI_NICK      = 1;
-	final public static int UI_NAME      = 2;
-	final public static int UI_EMAIL     = 3;
-	final public static int UI_CITY      = 4;
-	final public static int UI_STATE     = 5;
-	final public static int UI_PHONE     = 6;
-	final public static int UI_FAX       = 7;
-	final public static int UI_ADDR      = 8;
-	final public static int UI_CPHONE    = 9;
-	final public static int UI_AGE       = 10;
-	final public static int UI_GENDER    = 11;
-	final public static int UI_HOME_PAGE = 12;
-	final public static int UI_BDAY      = 13;
-	final public static int UI_W_CITY    = 14;
-	final public static int UI_W_STATE   = 15;
-	final public static int UI_W_PHONE   = 16;
-	final public static int UI_W_FAX     = 17;
-	final public static int UI_W_ADDR    = 18;
-	final public static int UI_W_NAME    = 19;
-	final public static int UI_W_DEP     = 20;
-	final public static int UI_W_POS     = 21;
-	final public static int UI_ABOUT     = 22;
-	final public static int UI_INETRESTS = 23;
-	final public static int UI_AUTH      = 24;
-	final public static int UI_STATUS    = 25;
+	final public static int UI_UIN        = 0;
+	final public static int UI_NICK       = 1;
+	final public static int UI_NAME       = 2;
+	final public static int UI_EMAIL      = 3;
+	final public static int UI_CITY       = 4;
+	final public static int UI_STATE      = 5;
+	final public static int UI_PHONE      = 6;
+	final public static int UI_FAX        = 7;
+	final public static int UI_ADDR       = 8;
+	final public static int UI_CPHONE     = 9;
+	final public static int UI_AGE        = 10;
+	final public static int UI_GENDER     = 11;
+	final public static int UI_HOME_PAGE  = 12;
+	final public static int UI_BDAY       = 13;
+	final public static int UI_W_CITY     = 14;
+	final public static int UI_W_STATE    = 15;
+	final public static int UI_W_PHONE    = 16;
+	final public static int UI_W_FAX      = 17;
+	final public static int UI_W_ADDR     = 18;
+	final public static int UI_W_NAME     = 19;
+	final public static int UI_W_DEP      = 20;
+	final public static int UI_W_POS      = 21;
+	final public static int UI_ABOUT      = 22;
+	final public static int UI_INETRESTS  = 23;
+	final public static int UI_AUTH       = 24;
+	final public static int UI_STATUS     = 25;
+	final public static int UI_ICQ_CLIENT = 26;
+	final public static int UI_SIGNON     = 27;
+	final public static int UI_ONLINETIME = 28;
+	final public static int UI_IDLE_TIME  = 29;
+	final public static int UI_DCTYPE     = 30;
+	final public static int UI_ICQ_VERS   = 31;
+	final public static int UI_INT_IP     = 32;
+	final public static int UI_EXT_IP     = 33;
+	final public static int UI_PORT       = 34;
 	
-	final public static int UI_LAST_ID   = 26;
+	//////
+	final public static int UI_LAST_ID    = 35;
 	
 	static private int uiBigTextIndex;
 	static private String uiSectName = null;
@@ -547,20 +559,8 @@ public class JimmUI implements CommandListener
 		uiBigTextIndex++;
 	}
 	
-	static public void fillUserInfo(String[] data, TextList list, String caption)
+	static public void fillUserInfo(String[] data, TextList list)
 	{
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		list.setTitle(caption);
-		list.setFullScreenMode(false);
-		list.setFontSize(Font.SIZE_MEDIUM);
-		// #sijapp cond.else#
-		list.setCaption(caption);
-		list.setFontSize(Font.SIZE_SMALL);
-		// #sijapp cond.end#
-		
-		JimmUI.setColorScheme(list);
-		list.setCursorMode(TextList.SEL_NONE);
-		
 		uiSectName = "main_info";
 		addToTextList(UI_NICK,      data, "nick",       list);
 		addToTextList(UI_NAME,      data, "name",       list);
@@ -611,30 +611,34 @@ public class JimmUI implements CommandListener
 		addToTextList(UI_W_ADDR,    data, "addr",     list);
 		addToTextList(UI_W_PHONE,   data, "phone",    list);
 		addToTextList(UI_W_FAX,     data, "fax",      list);
+		
+		uiSectName = "dc_info";
+		addToTextList(UI_ICQ_CLIENT, data, "icq_client",     list);
+		addToTextList(UI_SIGNON,     data, "li_signon_time", list);
+		addToTextList(UI_ONLINETIME, data, "li_online_time", list);
+		addToTextList(UI_IDLE_TIME,  data, "li_idle_time",   list);
+		
+		uiSectName = "DC";
+		addToTextList(UI_DCTYPE,   data, "DC type",     list);
+		addToTextList(UI_ICQ_VERS, data, "ICQ version", list);
+		addToTextList(UI_INT_IP,   data, "Int IP",      list);
+		addToTextList(UI_EXT_IP,   data, "Ext IP",      list);
+		addToTextList(UI_PORT,     data, "Port",        list);
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	
-	static private TextList userInfoTL = null;
+	static private TextList infoTextList = null;
 	
 	static public void requiestUserInfo(String uin)
 	{
 		RequestInfoAction act = new RequestInfoAction(uin);
-		lastDisplayable = Jimm.display.getCurrent();
 		
-		userInfoTL = new TextList(null);
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		userInfoTL.setTitle(uin);
-		// #sijapp cond.else#
-		userInfoTL.setCaption(uin);
-		// #sijapp cond.end#
-		
-		userInfoTL.setCommandListener(jimmUIobj);
-		userInfoTL.setCursorMode(TextList.SEL_NONE);
-		setColorScheme(userInfoTL);
-		userInfoTL.addCommand(cmdCancel);
+		infoTextList = getInfoTextList(uin, false);
+		infoTextList.addCommand(cmdCancel);
+		infoTextList.setCommandListener(jimmUIobj);
 		
 		try
 		{
@@ -646,23 +650,57 @@ public class JimmUI implements CommandListener
 			if (e.isCritical()) return;
 		}
 		
-		userInfoTL.add(ResourceBundle.getString("wait"));
-		Jimm.display.setCurrent(userInfoTL);
+		infoTextList.add(ResourceBundle.getString("wait"));
+		showInfoTextList(infoTextList);
 	}
 	
 	static private void cancelUserInfo()
 	{
-		userInfoTL = null;
+		infoTextList = null;
 		Jimm.display.setCurrent(lastDisplayable);
 	}
 	
 	static public void showUserInfo(String[] data)
 	{
-		if (userInfoTL == null) return;
-		userInfoTL.clear();
-		JimmUI.fillUserInfo(data, userInfoTL, data[UI_UIN]);
-		userInfoTL.removeCommand(cmdCancel);
-		userInfoTL.addCommand(cmdBack);
-		userInfoTL.addCommand(cmdCopyText);
+		if (infoTextList == null) return;
+		infoTextList.clear();
+		JimmUI.fillUserInfo(data, infoTextList);
+		infoTextList.removeCommand(cmdCancel);
+		infoTextList.addCommand(cmdBack);
+		infoTextList.addCommand(cmdCopyText);
+		infoTextList.addCommand(cmdCopyAll);
+	}
+	
+	static public TextList getInfoTextList(String caption, boolean addCommands)
+	{
+		infoTextList = new TextList(null);
+		
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		infoTextList.setTitle(caption);
+		infoTextList.setFullScreenMode(false);
+		infoTextList.setFontSize(Font.SIZE_MEDIUM);
+		// #sijapp cond.else#
+		infoTextList.setCaption(caption);
+		infoTextList.setFontSize(Font.SIZE_SMALL);
+		// #sijapp cond.end#
+		
+		JimmUI.setColorScheme(infoTextList);
+		infoTextList.setCursorMode(TextList.SEL_NONE);
+		
+		if (addCommands)
+		{
+			infoTextList.addCommand(cmdBack);
+			infoTextList.addCommand(cmdCopyText);
+			infoTextList.addCommand(cmdCopyAll);
+			infoTextList.setCommandListener(jimmUIobj);
+		}
+		
+		return infoTextList;
+	}
+	
+	static public void showInfoTextList(TextList list)
+	{
+		lastDisplayable = Jimm.display.getCurrent();
+		Jimm.display.setCurrent(list);
 	}
 }

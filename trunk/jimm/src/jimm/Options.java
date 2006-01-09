@@ -114,6 +114,7 @@ public class Options
 	// #sijapp cond.end#
 	
 	public static final int OPTION_USE_SMILES		              = 141;   /* boolean */
+	public static final int OPTION_MD5_LOGIN                      = 144;   /* boolean */
     // #sijapp cond.if modules_PROXY is "true" #
 	public static final int OPTION_PRX_TYPE                       =  76;   /* int     */
 	public static final int OPTION_PRX_SERV                       =   8;   /* String  */
@@ -198,6 +199,7 @@ public class Options
         // #sijapp cond.if target isnot "MOTOROLA"#
 		setBooleanOption(Options.OPTION_SHADOW_CON,                      false);
         // #sijapp cond.end#
+		setBooleanOption(Options.OPTION_MD5_LOGIN,                       false);
 		setBooleanOption(Options.OPTION_AUTO_CONNECT,					 false);
 		setStringOption (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.langAvailable[0]);
 		setBooleanOption(Options.OPTION_DISPLAY_DATE,                   false);
@@ -227,12 +229,7 @@ public class Options
 		setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		             5);
 		setBooleanOption(Options.OPTION_LIGHT_MANUAL,		             false);	
 		// #sijapp cond.end#
-		
-		// #sijapp cond.if lang_RU is "true"#
-		setBooleanOption(Options.OPTION_CP1251_HACK,                    true);
-		// #sijapp cond.else#
-		setBooleanOption(Options.OPTION_CP1251_HACK,                    false);
-		// #sijapp cond.end#
+		setBooleanOption(Options.OPTION_CP1251_HACK,                    (ResourceBundle.langAvailable[0] == "RU") ? true : false);
         // #sijapp cond.if target isnot "DEFAULT"#
 		setIntOption    (Options.OPTION_VIBRATOR,                       0);
 		// #sijapp cond.end#		
@@ -810,16 +807,18 @@ class OptionsForm implements CommandListener
 	                keepConnAliveChoiceGroup.setSelectedIndex(0, Options.getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE));
 	                connAliveIntervTextField = new TextField(ResourceBundle.getString("timeout_interv"), Options.getStringOption(Options.OPTION_CONN_ALIVE_INVTERV), 3, TextField.NUMERIC);
 	                connPropChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_prop"), Choice.MULTIPLE);
+					connPropChoiceGroup.append(ResourceBundle.getString("md5_login"), null);
 	                connPropChoiceGroup.append(ResourceBundle.getString("async"), null);
 	                // #sijapp cond.if target isnot "MOTOROLA"#
 	                connPropChoiceGroup.append(ResourceBundle.getString("shadow_con"), null);
 	                // #sijapp cond.end#
+					connPropChoiceGroup.setSelectedIndex(0, Options.getBooleanOption(Options.OPTION_MD5_LOGIN));
 	                if (Options.getIntOption(Options.OPTION_CONN_PROP) == 0)
-	                	connPropChoiceGroup.setSelectedIndex(0, false);
+	                	connPropChoiceGroup.setSelectedIndex(1, false);
 	                else
-	                	connPropChoiceGroup.setSelectedIndex(0, true);
+	                	connPropChoiceGroup.setSelectedIndex(1, true);
 	                // #sijapp cond.if target isnot "MOTOROLA"#
-	                connPropChoiceGroup.setSelectedIndex(1, Options.getBooleanOption(Options.OPTION_SHADOW_CON));
+	                connPropChoiceGroup.setSelectedIndex(2, Options.getBooleanOption(Options.OPTION_SHADOW_CON));
 	                // #sijapp cond.end#
 	                autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
 	                autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
@@ -1067,12 +1066,13 @@ class OptionsForm implements CommandListener
 					Options.setBooleanOption(Options.OPTION_KEEP_CONN_ALIVE,keepConnAliveChoiceGroup.isSelected(0));
 					Options.setStringOption(Options.OPTION_CONN_ALIVE_INVTERV,connAliveIntervTextField.getString());
 					Options.setBooleanOption(Options.OPTION_AUTO_CONNECT,autoConnectChoiceGroup.isSelected(0));
-					if (connPropChoiceGroup.isSelected(0))
+					Options.setBooleanOption(Options.OPTION_MD5_LOGIN,connPropChoiceGroup.isSelected(0));
+					if (connPropChoiceGroup.isSelected(1))
 						Options.setIntOption(Options.OPTION_CONN_PROP,1);
 					else
 						Options.setIntOption(Options.OPTION_CONN_PROP,0);
                     // #sijapp cond.if target isnot "MOTOROLA"#
-					Options.setBooleanOption(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(1));
+					Options.setBooleanOption(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(2));
                     // #sijapp cond.end#
 					break;
                 // #sijapp cond.if modules_PROXY is "true"#

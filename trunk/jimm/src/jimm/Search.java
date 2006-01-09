@@ -230,6 +230,7 @@ public class Search
             screen.addCommand(this.previousCommand);
             screen.addCommand(this.nextCommand);
             screen.addCommand(this.addCommand);
+            screen.setCursorMode(TextList.SEL_NONE);
         }
         
         // Activate search form
@@ -264,12 +265,13 @@ public class Search
                 
                 screen.lock();
                 
-                JimmUI.fillUserInfo
-                (
-                	getResult(n),
-                	screen,
-                	ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size())
-                );
+                JimmUI.fillUserInfo(getResult(n), screen);
+                
+                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+                screen.setTitle( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+                // #sijapp cond.else #
+                screen.setCaption( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+                // #sijapp cond.end#
                 
                 screen.unlock();
             } else
