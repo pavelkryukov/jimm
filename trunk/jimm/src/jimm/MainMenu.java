@@ -390,13 +390,13 @@ public class MainMenu implements CommandListener
         }
         
         // User select OK in exit questiom message box
-        else if (JimmUI.isMsgBoxCommand(c, MSGBS_EXIT) == JimmUI.CMD_YES)
+        else if (JimmUI.getCommandType(c, MSGBS_EXIT) == JimmUI.CMD_YES)
         {
         	doExit(true);
         }
         
         // User select CANCEL in exit questiom message box
-        else if (JimmUI.isMsgBoxCommand(c, MSGBS_EXIT) == JimmUI.CMD_NO)
+        else if (JimmUI.getCommandType(c, MSGBS_EXIT) == JimmUI.CMD_NO)
         {
         	ContactList.activate();
         }

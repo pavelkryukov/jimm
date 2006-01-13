@@ -73,11 +73,10 @@ class HistoryStorageList extends VirtualList
 	private static Command cmdMsgCopyText = new Command(ResourceBundle.getString("copy_text"), Command.ITEM,   4);
 	
 	// commands for messages list
-	private static Command cmdClrAll   = new Command(ResourceBundle.getString("clear_all"),    Command.SCREEN, 10);
 	private static Command cmdSelect   = new Command(ResourceBundle.getString("select")   ,    Command.OK,     1);
 	private static Command cmdBack     = new Command(ResourceBundle.getString("back"),         Command.BACK,   2);
-	private static Command cmdClear    = new Command(ResourceBundle.getString("clear"),        Command.ITEM,   4); 
-	private static Command cmdFind     = new Command(ResourceBundle.getString("find"),         Command.ITEM,   3);
+	private static Command cmdClear    = new Command(ResourceBundle.getString("clear", ResourceBundle.FLAG_ELLIPSIS),        Command.ITEM,   4); 
+	private static Command cmdFind     = new Command(ResourceBundle.getString("find", ResourceBundle.FLAG_ELLIPSIS),         Command.ITEM,   3);
 	private static Command cmdInfo     = new Command(ResourceBundle.getString("history_info"), Command.ITEM,   6);
 	private static Command cmdCopytext = new Command(ResourceBundle.getString("copy_text"),    Command.ITEM,   5);
 	private static Command cmdExport   = new Command(ResourceBundle.getString("export"),    Command.ITEM,   7);
@@ -85,7 +84,7 @@ class HistoryStorageList extends VirtualList
 	
 	static TextList messText;
 	
-	private final static int MB_CLEAR_ALL_TAG = 1;
+	private final static int SELECTOR_DEL_HISTORY = 2;
 	
 	// list UIN
 	private static String currUin  = new String(),
@@ -107,7 +106,6 @@ class HistoryStorageList extends VirtualList
 		addCommand(cmdClear);
 		addCommand(cmdFind);
 		addCommand(cmdInfo);
-		addCommand(cmdClrAll);
 		addCommand(cmdCopytext);
 		addCommand(cmdExport);
 		addCommand(cmdExportAll);
@@ -272,9 +270,40 @@ class HistoryStorageList extends VirtualList
 		// Clear messages
 		else if (c == cmdClear)
 		{
-			HistoryStorage.clearHistory(currUin);
+			/*
+			
+			
+			*/
+			JimmUI.showSelector
+			(
+				"clear_history",
+				JimmUI.stdSelector,
+				this,
+				SELECTOR_DEL_HISTORY
+			);
+		}
+		
+		// "Clear history"
+		else if (JimmUI.getCommandType(c, SELECTOR_DEL_HISTORY) == JimmUI.CMD_OK)
+		{
+			switch (JimmUI.getLastSelIndex())
+			{
+			case 0: // Current
+				HistoryStorage.clearHistory(currUin);
+				break;
+				
+			case 1: // All except current
+				HistoryStorage.clear_all(currUin);
+				break;
+				
+			case 2: // All
+				HistoryStorage.clear_all(null);
+				break;
+			}
+			Jimm.display.setCurrent(this);
 			invalidate();
 		}
+		
 		
 		// Copy text from messages list
 		else if ((c == cmdCopytext) || (c == cmdMsgCopyText))
@@ -382,34 +411,7 @@ class HistoryStorageList extends VirtualList
 			{
 			}
 		}
-		
-		// "Clear all" menu
-		else if (c == cmdClrAll)
-		{
-			JimmUI.messageBox
-			(
-				ResourceBundle.getString("attention"),
-				ResourceBundle.getString("clear_all2"),
-				JimmUI.MESBOX_YESNO,
-				this,
-				MB_CLEAR_ALL_TAG
-			);
-		}
-		
-		// "Clear all?" -> YES
-		else if (JimmUI.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == JimmUI.CMD_YES)
-		{
-			HistoryStorage.clear_all();
-			Jimm.display.setCurrent(this);
-			invalidate();
-		}
-		
-		// "Clear all?" -> NO
-		else if (JimmUI.isMsgBoxCommand(c, MB_CLEAR_ALL_TAG) == JimmUI.CMD_NO)
-		{
-			Jimm.display.setCurrent(this);
-		}
-	}
+	} // end 'commandAction'
 	
 	// Show text message of current message of messages list
 	void showMessText()
@@ -518,7 +520,6 @@ public class HistoryStorage
 		{
 			
 		}
-		autoClearAndTestVers();
 	}
 	
 
@@ -802,8 +803,10 @@ public class HistoryStorage
 	}
 	
 	// Clears all records for all uins
-	static synchronized void clear_all()
+	static synchronized void clear_all(String except)
 	{
+		String exceptRMS = (except == null) ? null : getRSName(except);
+		
 		try
 		{
 			if (recordStore != null)
@@ -818,100 +821,16 @@ public class HistoryStorage
 			
 			for (int i = 0; i < stores.length; i++)
 			{
-				if (stores[i].indexOf(prefix) == -1) continue;
-				RecordStore.deleteRecordStore(stores[i]);
+				String store = stores[i];
+				if (store.indexOf(prefix) == -1) continue;
+				if (exceptRMS != null) if ( exceptRMS.equals(store) ) continue;
+				RecordStore.deleteRecordStore(store);
 			}
 		}
 		catch (Exception e)
 		{
 
 		}
-	}
-	
-	private final static String histMainRSName = "hst";  
-	
-	// Checks if clraring needs and clears
-	static private void autoClearAndTestVers()
-	{/*
-		RecordStore rs = null;
-		boolean needToClear = false;
-		int version, day, day_of_week, month;
-		
-		try
-		{
-			rs = RecordStore.openRecordStore(histMainRSName, false);
-		}
-		catch (Exception e)
-		{
-			saveLastClearTime();
-			return;
-		}
-		
-		try
-		{
-			ByteArrayInputStream bais = new ByteArrayInputStream(rs.getRecord(1));
-			DataInputStream dis = new DataInputStream(bais);
-			version = dis.readInt();
-			if (version != VERSION) throw new Exception();
-			day = dis.readInt();
-			day_of_week = dis.readInt();
-			month = dis.readInt();
-
-//			static final public int CLEAR_EACH_DAY   = 0;
-			//static final public int CLEAR_EACH_WEEK  = 1;
-			///static final public int CLEAR_EACH_MONTH = 2;
-			
-			
-			//switch (Jimm.jimm.getOptionsRef().getBooleanOption(Options.OPTION_HISTORY_CLEAR))
-			//{
-			//case CLEAR_EACH_DAY:
-			//}
-		}
-		catch (Exception e)
-		{
-			needToClear = true;
-		}
-		finally
-		{
-			try
-			{
-				rs.closeRecordStore();
-			}
-			catch (Exception e)
-			{
-				
-			}
-		}
-		
-		
-		if (needToClear)
-		{
-			clear_all();
-			saveLastClearTime();
-		}*/
-	}
-
-	// Saves last clearing time
-	static private void saveLastClearTime()
-	{
-		/*
-		Calendar calend = Calendar.getInstance();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		DataOutputStream dos = new DataOutputStream(baos);
-		
-		try
-		{
-			RecordStore rs = RecordStore.openRecordStore(histMainRSName, true);
-			dos.write(VERSION);
-			dos.write(calend.get(Calendar.DAY_OF_MONTH));
-			dos.write(calend.get(Calendar.DAY_OF_WEEK));
-			dos.write(calend.get(Calendar.MONTH));
-			rs.addRecord(baos.toByteArray(), 0, baos.size());
-		}
-		catch (Exception e)
-		{
-
-		}*/
 	}
 }
 

@@ -104,5 +104,17 @@ public class ResourceBundle
 
 	// Resource hashtable
 	static private Hashtable resources = null;
+	
+	final static public int FLAG_ELLIPSIS = 1 << 0;  
+	
+	public static synchronized String getString(String key, int flags)
+	{
+		String result = getString(key);
+		
+		if ((flags&FLAG_ELLIPSIS) != 0) result = result+"..."; 
+		
+		return result;
+	}
+	
 }
 

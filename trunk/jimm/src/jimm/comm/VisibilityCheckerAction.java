@@ -32,7 +32,6 @@ public class VisibilityCheckerAction extends Action implements CommandListener {
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_FILES is "true"#
     // DC variables
-	//boolean statusChange = true;
 	byte[] tmpCaps;
     byte[] internalIP = new byte[4];
     long dcPort = 0;
@@ -41,8 +40,9 @@ public class VisibilityCheckerAction extends Action implements CommandListener {
     long authCookie = 0;
     // #sijapp cond.end#
     // #sijapp cond.end#
+    boolean statusChange=true;
     int dwFT1=0, dwFT2=0, dwFT3=0;
-    int capabilities = 0;
+    byte[] capabilities = null;
     int idle = -1;
     long online = -1;
     long signon = -1;
@@ -102,7 +102,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener {
 									status = Util.translateStatusReceived(Util.getDWord(tlvData, 0));
 								break;
 							case 0x0005:
-									capabilities = Util.parseCapabilities(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), tlvData);
+									capabilities = tlvData;
 								break;
 							// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 							// #sijapp cond.if modules_FILES is "true"#
@@ -136,7 +136,7 @@ public class VisibilityCheckerAction extends Action implements CommandListener {
 		                        dwFT2 = (int) Util.getDWord(tlvData,dcMarker);
 		                        dcMarker += 4;
 		                        dwFT3 = (int) Util.getDWord(tlvData,dcMarker);
-									//statusChange = false;
+								statusChange = false;
 								break;
 							// #sijapp cond.end#
 							// #sijapp cond.end#
@@ -189,11 +189,10 @@ public class VisibilityCheckerAction extends Action implements CommandListener {
 				results.setCommandListener(this);
 				Jimm.display.setCurrent(results);
 				// #sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
-			//if (!statusChange)
-				Util.detectUserClient(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), dwFT1, dwFT2, dwFT3,capabilities,icqProt);
-			RunnableImpl.updateContactList(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), status, capabilities,internalIP, null, dcPort,dcType,icqProt,authCookie,signon,online,idle);
+				Util.detectUserClient(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), dwFT1, dwFT2, dwFT3,capabilities,icqProt, statusChange);
+				RunnableImpl.updateContactList(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), status, internalIP, null, dcPort,dcType,icqProt,authCookie,signon,online,idle);
 				// #sijapp cond.else#
-			RunnableImpl.updateContactList(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), status, capabilities, null, null, 0, 0, 0, 0, signon, online, idle);
+				RunnableImpl.updateContactList(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN), status, null, null, 0, 0, 0, 0, signon, online, idle);
 				// #sijapp cond.end#
 		}
 		return completed;

@@ -79,16 +79,15 @@ public class RunnableImpl implements Runnable
 			(
 				(String)data[0],
 				getLong(data,  1),
-				getInt (data,  2),
+				(byte[])data[2],
 				(byte[])data[3],
-				(byte[])data[4],
-				getLong(data,  5),
+				getLong(data,  4),
+				getInt (data,  5),
 				getInt (data,  6),
-				getInt (data,  7),
+				getLong(data,  7),
 				getLong(data,  8),
 				getLong(data,  9),
-				getLong(data, 10),
-				getInt (data, 11)
+				getInt (data, 10)
 			);
 			break;
 		}
@@ -131,7 +130,6 @@ public class RunnableImpl implements Runnable
 	(
 	   	String uin,
 		long status,
-		int capabilities,
 		byte[] internalIP,
 		byte[] externalIP,
 		long dcPort,
@@ -147,16 +145,15 @@ public class RunnableImpl implements Runnable
 		
 		arguments[0] = uin;
 		setLong(arguments,  1, status      );
-		setInt (arguments,  2, capabilities);
-		arguments[3] = internalIP;
-		arguments[4] = externalIP;
-		setLong(arguments,  5, dcPort      );
-		setInt (arguments,  6, dcType      );
-		setInt (arguments,  7, icqProt     );
-		setLong(arguments,  8, authCookie  );
-		setLong(arguments,  9, signon      ); 
-		setLong(arguments, 10, online      );
-		setInt (arguments, 11, idle        );  
+		arguments[2] = internalIP;
+		arguments[3] = externalIP;
+		setLong(arguments,  4, dcPort      );
+		setInt (arguments,  5, dcType      );
+		setInt (arguments,  6, icqProt     );
+		setLong(arguments,  7, authCookie  );
+		setLong(arguments,  8, signon      ); 
+		setLong(arguments, 9, online      );
+		setInt (arguments, 10, idle        );  
 		
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
 	}

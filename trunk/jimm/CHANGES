@@ -282,4 +282,5 @@ VERSION 0.5.0
   * Code optimized for lower memory usage
   * External IP of contact are shown in client info
   * Status of temporary contacts and contacts awaiting authorization is shown
+  * Improved dialogs for deleting chat and history
   * New util JLFT - "Jimm Lang File Tool" for easy comparing and changing Jimm .lang files
