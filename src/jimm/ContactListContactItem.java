@@ -221,6 +221,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//#sijapp cond.if modules_FILES is "true"#
 	public static byte[] longIPToByteAray(int value)
 	{
+		if (value == 0) return null;
 		return new byte[] 
 		                { 
 							(byte)( value&0x000000FF),
@@ -848,7 +849,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				clInfoData[JimmUI.UI_EXT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP));
 				
 				// Port
-				clInfoData[JimmUI.UI_PORT] = Integer.toString(getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT));
+				int port = getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT);
+				if (port != 0) clInfoData[JimmUI.UI_PORT] = Integer.toString(port);
 				
 				//#sijapp cond.end#
 				
