@@ -43,32 +43,11 @@ public class ConnectAction extends Action
     public static final int STATE_INIT_DONE = 0;
 	public static final int STATE_AUTHKEY_REQUESTED = 1;
     public static final int STATE_CLI_IDENT_SENT = 2;
-    public static final int STATE_CLI_DISCONNECT_SENT = 4;
-    public static final int STATE_CLI_COOKIE_SENT = 5;
-    public static final int STATE_CLI_FAMILIES_SENT = 6;
-    public static final int STATE_CLI_RATESREQUEST_SENT = 7;
-    public static final int STATE_CLI_REQLISTS_SENT = 8;
-    public static final int STATE_CLI_CHECKROSTER_SENT = 9;
-    public static final int STATE_CLI_REQOFFLINEMSGS_SENT = 10;
-    public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 11;
-
-    // CLI_FAMILIES packet data
-    public static final byte[] CLI_FAMILIES_DATA =
-    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x04, 
-      (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x04, 
-      (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x00, (byte) 0x15, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x00, (byte) 0x09, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x00, (byte) 0x0A, (byte) 0x00, (byte) 0x01, 
-      (byte) 0x00, (byte) 0x0B, (byte) 0x00, (byte) 0x01};
-
-    // CLI_ACKRATES packet data
-    public static final byte[] CLI_ACKRATES_DATA =
-    { (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x04, 
-      (byte) 0x00, (byte) 0x05};
+    public static final int STATE_CLI_DISCONNECT_SENT = 3;
+    public static final int STATE_CLI_COOKIE_SENT = 4;
+    public static final int STATE_CLI_CHECKROSTER_SENT = 5;
+    public static final int STATE_CLI_REQOFFLINEMSGS_SENT = 6;
+    public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 7;
 
     // CLI_SETUSERINFO packet data
     public static final byte[] CLI_SETUSERINFO_DATA =
@@ -104,12 +83,10 @@ public class ConnectAction extends Action
     public static final byte[] CLI_SETSTATUS_DATA =
     { (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x04, 
 	  (byte) 0x10, (byte) 0x00, (byte) 0x00, (byte) 0x00, // Online status
-      (byte) 0x00, (byte) 0x08, (byte) 0x00, (byte) 0x02, 
-      (byte) 0x00, (byte) 0x00, // No error
       (byte) 0x00, (byte) 0x0C, (byte) 0x00, (byte) 0x25, // TLV(C)
       (byte) 0xC0, (byte) 0xA8, (byte) 0x00, (byte) 0x01, // 192.168.0.1, cannot get own IP address
       (byte) 0x00, (byte) 0x00, (byte) 0xAB, (byte) 0xCD, // Port 43981
-      (byte) 0x01, // Firewall
+      (byte) 0x00, // Firewall
       (byte) 0x00, (byte) 0x08, // Support protocol version 8
       (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 
       (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x50, 
@@ -172,13 +149,6 @@ public class ConnectAction extends Action
     // Temporary variables
 	private String server;
     private byte[] cookie;
-    private boolean srvFamilies2Rcvd;
-    private boolean srvMotdRcvd;
-    private boolean srvReplyLocationRcvd;
-    private boolean srvReplyBuddyRcvd;
-    private boolean srvReplyIcbmRcvd;
-    private boolean srvReplyBosRcvd;
-    private boolean srvReplyListsRcvd;
     private boolean srvReplyRosterRcvd;
 
     // Constructor
@@ -537,6 +507,23 @@ public class ConnectAction extends Action
 						ConnectPacket reply = new ConnectPacket(this.cookie);
 						Icq.c.sendPacket(reply);
 
+						// Send a CLI_SETUSERINFO packet
+						// Set version information to this packet in our capability
+						byte[] tmp = ConnectAction.CLI_SETUSERINFO_DATA;
+						byte[] ver = Util.stringToByteArray(Jimm.VERSION);
+						if ( ver.length<12 )
+							System.arraycopy(ver,0,tmp,tmp.length-11,ver.length);
+						Icq.c.sendPacket(new SnacPacket(0x0002, 0x0004, 0, new byte[0], tmp));
+
+						// Send a CLI_SETICBM packet
+						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
+						Icq.c.sendPacket(reply1);
+
+						// Send a CLI_SETSTATUS packet
+						Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, (0x10<<24)|Util.translateStatusSend(Options.getLongOption(Options.OPTION_ONLINE_STATUS)));
+						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
+						Icq.c.sendPacket(reply2);
+
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_COOKIE_SENT;
 
@@ -551,225 +538,26 @@ public class ConnectAction extends Action
 			else if (this.state == ConnectAction.STATE_CLI_COOKIE_SENT)
 			{
 
-				// Watch out for SRV_FAMILIES packet type
-				if (packet instanceof SnacPacket)
+				// Send a CLI_REQROSTER or
+				// CLI_CHECKROSTER packet
+				long versionId1 = ContactList.getVersionId1();
+				int versionId2 = ContactList.getVersionId2();
+				if (((versionId1 == -1) && (versionId2 == -1)) || (ContactList.getSize() == 0))
 				{
-					SnacPacket snacPacket = (SnacPacket) packet;
-					if ((snacPacket.getFamily() == SnacPacket.SRV_FAMILIES_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_FAMILIES_COMMAND))
-					{
-
-						// Send a CLI_FAMILIES packet as reply
-						SnacPacket reply = new SnacPacket(SnacPacket.CLI_FAMILIES_FAMILY, SnacPacket.CLI_FAMILIES_COMMAND, SnacPacket.CLI_FAMILIES_COMMAND, new byte[0], ConnectAction.CLI_FAMILIES_DATA);
-						Icq.c.sendPacket(reply);
-
-						// Move to next state
-						this.state = ConnectAction.STATE_CLI_FAMILIES_SENT;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
+					SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND, 0x00000000, new byte[0], new byte[0]);
+					Icq.c.sendPacket(reply2);
+				}
+				else
+				{
+					byte[] data = new byte[6];
+					Util.putDWord(data, 0, versionId1);
+					Util.putWord(data, 4, versionId2);
+					SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_CHECKROSTER_FAMILY, SnacPacket.CLI_CHECKROSTER_COMMAND, 0x00000000, new byte[0], data);
+					Icq.c.sendPacket(reply2);
 				}
 
-			}
-			// Watch out for STATE_CLI_FAMILIES_SENT
-			else if (this.state == ConnectAction.STATE_CLI_FAMILIES_SENT)
-			{
-
-				// Watch out for SNAC packet
-				if (packet instanceof SnacPacket)
-				{
-					SnacPacket snacPacket = (SnacPacket) packet;
-
-					// Watch out for SRV_FAMILIES2 packet
-					if ((snacPacket.getFamily() == SnacPacket.SRV_FAMILIES2_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_FAMILIES2_COMMAND))
-					{
-						this.srvFamilies2Rcvd = true;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
-
-					// Watch out for SRV_MOTD packet
-					if ((snacPacket.getFamily() == SnacPacket.SRV_MOTD_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_MOTD_COMMAND))
-					{
-						this.srvMotdRcvd = true;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
-
-					// Check if we received both SRV_FAMILIES2
-					// and SRV_MOTD packet
-					if (this.srvFamilies2Rcvd && this.srvMotdRcvd)
-					{
-
-						// Send a CLI_RATESREQUEST packet as
-						// reply
-						SnacPacket reply = new SnacPacket(SnacPacket.CLI_RATESREQUEST_FAMILY, SnacPacket.CLI_RATESREQUEST_COMMAND, 0x00000000, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply);
-
-						// Move to next state
-						this.state = ConnectAction.STATE_CLI_RATESREQUEST_SENT;
-
-					}
-
-				}
-
-			}
-			// Watch out for STATE_CLI_RATESREQUEST_SENT
-			else if (this.state == ConnectAction.STATE_CLI_RATESREQUEST_SENT)
-			{
-
-				// Watch out for SRV_RATES packet
-				if (packet instanceof SnacPacket)
-				{
-					SnacPacket snacPacket = (SnacPacket) packet;
-					if ((snacPacket.getFamily() == SnacPacket.SRV_RATES_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_RATES_COMMAND))
-					{
-
-						// Send a CLI_ACKRATES packet
-						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ACKRATES_FAMILY, SnacPacket.CLI_ACKRATES_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_ACKRATES_DATA);
-						Icq.c.sendPacket(reply1);
-
-						// Send a CLI_REQLOCATION packet
-						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQLOCATION_FAMILY, SnacPacket.CLI_REQLOCATION_COMMAND, 0x00000000, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply2);
-
-						// Send a CLI_SETUSERINFO packet
-						// Set version information to this packet in our capability
-						byte[] tmp = ConnectAction.CLI_SETUSERINFO_DATA;
-						byte[] ver = Util.stringToByteArray(Jimm.VERSION);
-						if ( ver.length<12 )
-							System.arraycopy(ver,0,tmp,tmp.length-11,ver.length);
-	
-						SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 0x00000000, new byte[0], tmp);
-						Icq.c.sendPacket(reply3);
-
-						// Send a CLI_REQBUDDY packet
-						SnacPacket reply4 = new SnacPacket(SnacPacket.CLI_REQBUDDY_FAMILY, SnacPacket.CLI_REQBUDDY_COMMAND, 0x00000000, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply4);
-
-						// Send a CLI_REQICBM packet
-						SnacPacket reply5 = new SnacPacket(SnacPacket.CLI_REQICBM_FAMILY, SnacPacket.CLI_REQICBM_COMMAND, 0x00000000, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply5);
-
-						// Send a CLI_REQBOS packet
-						SnacPacket reply6 = new SnacPacket(SnacPacket.CLI_REQBOS_FAMILY, SnacPacket.CLI_REQBOS_COMMAND, 0x00000000, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply6);
-
-						// Send a CLI_REQLISTS packet
-						SnacPacket reply7 = new SnacPacket(SnacPacket.CLI_REQLISTS_FAMILY, SnacPacket.CLI_REQLISTS_COMMAND, 0x00000000, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply7);
-
-						// Move to next state
-						this.state = ConnectAction.STATE_CLI_REQLISTS_SENT;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
-				}
-
-			}
-			// Watch out for STATE_CLI_REQLISTS_SENT
-			else if (this.state == ConnectAction.STATE_CLI_REQLISTS_SENT)
-			{
-
-				// Watch out for SNAC packet
-				if (packet instanceof SnacPacket)
-				{
-					SnacPacket snacPacket = (SnacPacket) packet;
-
-					// Watch out for SRV_REPLYLOCATION
-					// packet
-					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYLOCATION_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYLOCATION_COMMAND))
-					{
-						this.srvReplyLocationRcvd = true;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
-
-					// Watch out for SRV_REPLYBUDDY
-					// packet
-					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYBUDDY_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYBUDDY_COMMAND))
-					{
-						this.srvReplyBuddyRcvd = true;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
-
-					// Watch out for SRV_REPLYICBM
-					// packet
-					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYICBM_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYICBM_COMMAND))
-					{
-						this.srvReplyIcbmRcvd = true;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
-
-					// Watch out for SRV_REPLYBOS packet
-					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYBOS_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYBOS_COMMAND))
-					{
-						this.srvReplyBosRcvd = true;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
-
-					// Watch out for SRV_REPLYLISTS
-					// packet
-					if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYLISTS_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYLISTS_COMMAND))
-					{
-						this.srvReplyListsRcvd = true;
-
-						// Packet has been consumed
-						consumed = true;
-
-					}
-
-					// Check if all packets have been
-					// received
-					if (this.srvReplyLocationRcvd && this.srvReplyBuddyRcvd && this.srvReplyIcbmRcvd && this.srvReplyBosRcvd && this.srvReplyListsRcvd)
-					{
-
-						// Send a CLI_SETICBM packet
-						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
-						Icq.c.sendPacket(reply1);
-
-						// Send a CLI_REQROSTER or
-						// CLI_CHECKROSTER packet
-						long versionId1 = ContactList.getVersionId1();
-						int versionId2 = ContactList.getVersionId2();
-						if (((versionId1 == -1) && (versionId2 == -1)) || (ContactList.getSize() == 0))
-						{
-							SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND, 0x00000000, new byte[0], new byte[0]);
-							Icq.c.sendPacket(reply2);
-						}
-						else
-						{
-							byte[] data = new byte[6];
-							Util.putDWord(data, 0, versionId1);
-							Util.putWord(data, 4, versionId2);
-							SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_CHECKROSTER_FAMILY, SnacPacket.CLI_CHECKROSTER_COMMAND, 0x00000000, new byte[0], data);
-							Icq.c.sendPacket(reply2);
-						}
-
-						// Move to next state
-						this.state = ConnectAction.STATE_CLI_CHECKROSTER_SENT;
-
-					}
-
-				}
+				// Move to next state
+				this.state = ConnectAction.STATE_CLI_CHECKROSTER_SENT;
 
 			}
 			// Watch out for STATE_CLI_CHECKROSTER_SENT
@@ -992,11 +780,6 @@ public class ConnectAction extends Action
 						if (noauth.length > 0)
 							Icq.addLocalContacts(noauth);
 
-						// Send a CLI_SETSTATUS packet
-						Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, onlineStatus);
-						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
-						Icq.c.sendPacket(reply2);
-
 						// Change privacy setting according to new status
 						if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
 						{
@@ -1009,12 +792,12 @@ public class ConnectAction extends Action
 						}
 
 						// Send a CLI_READY packet
-						SnacPacket reply3 = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
-						Icq.c.sendPacket(reply3);
+						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
+						Icq.c.sendPacket(reply2);
 
 						// Send a CLI_TOICQSRV/CLI_REQOFFLINEMSGS packet
-						ToIcqSrvPacket reply4 = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_REQOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply4);
+						ToIcqSrvPacket reply3 = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_REQOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply3);
 
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT;
@@ -1181,27 +964,21 @@ public class ConnectAction extends Action
         switch (this.state)
         {
         case ConnectAction.STATE_INIT_DONE:
-            return (10);
+            return 12;
 		case STATE_AUTHKEY_REQUESTED:
-			return 15;
+			return 25;
         case ConnectAction.STATE_CLI_IDENT_SENT:
-            return (20);
+            return 37;
         case ConnectAction.STATE_CLI_DISCONNECT_SENT:
-            return (30);
+            return 50;
         case ConnectAction.STATE_CLI_COOKIE_SENT:
-            return (40);
-        case ConnectAction.STATE_CLI_FAMILIES_SENT:
-            return (50);
-        case ConnectAction.STATE_CLI_RATESREQUEST_SENT:
-            return (60);
-        case ConnectAction.STATE_CLI_REQLISTS_SENT:
-            return (70);
+            return 62;
         case ConnectAction.STATE_CLI_CHECKROSTER_SENT:
-            return (80);
+            return 75;
         case ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT:
-            return (90);
+            return 87;
         case ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT:
-            return (100);
+            return 100;
         default:
             return (0);
         }

@@ -321,8 +321,8 @@ public class Icq implements Runnable
         Jimm.jimm.cancelTimer();
         
         // Delete all actions
-        actAction.removeAllElements();
-        reqAction.removeAllElements();
+        if (actAction != null) actAction.removeAllElements();
+        if (reqAction != null) reqAction.removeAllElements();
        
     }
     

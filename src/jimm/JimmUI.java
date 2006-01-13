@@ -57,24 +57,26 @@ public class JimmUI implements CommandListener
 	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"),     Command.ITEM,   2);
 	final private static Command cmdCopyAll  = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM,   3);  
 
+	static private CommandListener listener;
 	static private Hashtable commands = new Hashtable();
 	static private Displayable lastDisplayable;
-	static private JimmUI jimmUIobj;
+	static private JimmUI _this;
 	
 	// Associate commands and commands codes 
 	static 
 	{
-		commands.put(cmdOk,     new Integer(CMD_OK)    );
-		commands.put(cmdCancel, new Integer(CMD_CANCEL));
-		commands.put(cmdYes,    new Integer(CMD_YES)   );
-		commands.put(cmdNo,     new Integer(CMD_NO)    );
-		commands.put(cmdFind,   new Integer(CMD_FIND)  );
-		commands.put(cmdBack,   new Integer(CMD_BACK)  );
+		commands.put(cmdOk,               new Integer(CMD_OK)    );
+		commands.put(List.SELECT_COMMAND, new Integer(CMD_OK)    );
+		commands.put(cmdCancel,           new Integer(CMD_CANCEL));
+		commands.put(cmdYes,              new Integer(CMD_YES)   );
+		commands.put(cmdNo,               new Integer(CMD_NO)    );
+		commands.put(cmdFind,             new Integer(CMD_FIND)  );
+		commands.put(cmdBack,             new Integer(CMD_BACK)  );
 	}
 	
 	JimmUI()
 	{
-		jimmUIobj = this;
+		_this = this;
 	}
 	
 	// Returns commands index of command
@@ -97,7 +99,7 @@ public class JimmUI implements CommandListener
 		// "About" -> "Back"
 		if ((d == aboutTextList) && (c == cmdBack))
 		{
-			synchronized(jimmUIobj)
+			synchronized(_this)
 			{
 				Jimm.display.setCurrent(lastDisplayable);
 				aboutTextList = null;
@@ -119,6 +121,20 @@ public class JimmUI implements CommandListener
 					+infoTextList.getCurrText(0, (c == cmdCopyAll))
 				);
 			}
+		}
+		
+		// "Selector"
+		if (d == lstSelector)
+		{
+			lastSelectedItemIndex = lstSelector.getSelectedIndex();
+			
+			// "Selector" -> "Cancel"
+			if (c == cmdCancel) Jimm.display.setCurrent(lastDisplayable);
+			
+			// "Selector" -> "Ok"
+			else if ((c == cmdOk) || (c == List.SELECT_COMMAND)) listener.commandAction(c, d);
+			
+			lstSelector = null;
 		}
 	}
 	
@@ -165,11 +181,11 @@ public class JimmUI implements CommandListener
 	//                     //
 	/////////////////////////
 	static private Form msgForm;
-	static private int msgBoxTag;
+	static private int actionTag;
 
-	public static int isMsgBoxCommand(Command testCommand, int testTag)
+	public static int getCommandType(Command testCommand, int testTag)
 	{
-		return (msgBoxTag == testTag) ? getCommandIdx(testCommand) : -1;
+		return (actionTag == testTag) ? getCommandIdx(testCommand) : -1;
 	}
 
 	final public static int MESBOX_YESNO    = 1;
@@ -178,7 +194,7 @@ public class JimmUI implements CommandListener
 	{
 		clearAll();
 		
-		msgBoxTag = tag;
+		actionTag = tag;
 		msgForm = new Form(cap);
 		msgForm.append(text);
 		
@@ -247,7 +263,7 @@ public class JimmUI implements CommandListener
 				.addBigText(str.toString(), textColor, Font.STYLE_PLAIN, -1);
 		
 			aboutTextList.addCommand(cmdBack);
-			aboutTextList.setCommandListener(jimmUIobj);
+			aboutTextList.setCommandListener(_this);
            
             // Set the color sceme (background would not fit otherwise)
 			Jimm.display.setCurrent(aboutTextList);
@@ -352,7 +368,7 @@ public class JimmUI implements CommandListener
                 version = ResourceBundle.getString("no_recent_ver");
             }
             
-            synchronized(jimmUIobj)
+            synchronized(_this)
             {
             	if ((aboutTextList != null) && aboutTextList.isShown())
             	{
@@ -523,7 +539,7 @@ public class JimmUI implements CommandListener
 	final public static int UI_SIGNON     = 27;
 	final public static int UI_ONLINETIME = 28;
 	final public static int UI_IDLE_TIME  = 29;
-	final public static int UI_DCTYPE     = 30;
+	
 	final public static int UI_ICQ_VERS   = 31;
 	final public static int UI_INT_IP     = 32;
 	final public static int UI_EXT_IP     = 33;
@@ -619,7 +635,6 @@ public class JimmUI implements CommandListener
 		addToTextList(UI_IDLE_TIME,  data, "li_idle_time",   list);
 		
 		uiSectName = "DC";
-		addToTextList(UI_DCTYPE,   data, "DC type",     list);
 		addToTextList(UI_ICQ_VERS, data, "ICQ version", list);
 		addToTextList(UI_INT_IP,   data, "Int IP",      list);
 		addToTextList(UI_EXT_IP,   data, "Ext IP",      list);
@@ -638,7 +653,7 @@ public class JimmUI implements CommandListener
 		
 		infoTextList = getInfoTextList(uin, false);
 		infoTextList.addCommand(cmdCancel);
-		infoTextList.setCommandListener(jimmUIobj);
+		infoTextList.setCommandListener(_this);
 		
 		try
 		{
@@ -692,7 +707,7 @@ public class JimmUI implements CommandListener
 			infoTextList.addCommand(cmdBack);
 			infoTextList.addCommand(cmdCopyText);
 			infoTextList.addCommand(cmdCopyAll);
-			infoTextList.setCommandListener(jimmUIobj);
+			infoTextList.setCommandListener(_this);
 		}
 		
 		return infoTextList;
@@ -703,4 +718,34 @@ public class JimmUI implements CommandListener
 		lastDisplayable = Jimm.display.getCurrent();
 		Jimm.display.setCurrent(list);
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	
+	static public String[] stdSelector = {"currect_contact", "all_contact_except_this", "all_contacts" };
+	
+	static private List lstSelector;
+	
+	static private int lastSelectedItemIndex;
+	
+	static public void showSelector(String caption, String[] elements, CommandListener listener, int tag)
+	{
+		String[] strItems = new String[elements.length];
+		for (int i = 0; i < elements.length; i++) strItems[i] = ResourceBundle.getString(elements[i]);
+		actionTag = tag;
+		lstSelector = new List(ResourceBundle.getString(caption), List.IMPLICIT, strItems, null);
+		lstSelector.addCommand(cmdOk);
+		lstSelector.addCommand(cmdCancel);
+		lstSelector.setCommandListener(_this);
+		lastDisplayable = Jimm.display.getCurrent();
+		JimmUI.listener = listener;
+		Jimm.display.setCurrent(lstSelector);
+	}
+	
+	static public int getLastSelIndex()
+	{
+		return lastSelectedItemIndex;
+	}
+
 }

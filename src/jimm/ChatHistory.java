@@ -207,12 +207,15 @@ class ChatTextList implements VirtualListCommands
 	
 	public Displayable getDisplayable()
 	{
+		Displayable result;
 		// #sijapp cond.if target is "SIEMENS2"#
-		return Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT) ? (Displayable)form : (Displayable)textList;
+		result = Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT) ? (Displayable)form : (Displayable)textList;
 		// #sijapp cond.else#
 		textList.setForcedSize(textList.getWidth(), textList.getHeight());
-		return textList;
+		result = textList;
 		// #sijapp cond.end#
+		
+		return result;
 	}
 	
 	static int getInOutColor(boolean incoming)
@@ -496,6 +499,7 @@ public class ChatHistory
 	{
 		ChatTextList list = getChatHistoryAt(uin);
 		int messIndex = list.textList.getCurrTextIndex();
+		if (messIndex == -1) return;
 		MessData md = (MessData)list.getMessData().elementAt(messIndex);
 		
 		JimmUI.setClipBoardText
@@ -515,11 +519,42 @@ public class ChatHistory
 		else
 			return new ChatTextList("Error", null);
 	}
+	
+	final static public int DEL_TYPE_CURRENT        = 1;
+	final static public int DEL_TYPE_ALL_EXCEPT_CUR = 2;
+	final static public int DEL_TYPE_ALL            = 3;
+	
+	static private void chatHistoryDelete(String uin)
+	{
+		ContactListContactItem cItem = ContactList.getItembyUIN(uin);
+		historyTable.remove(uin);
+		
+		cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, false);
+		cItem.setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
+		cItem.setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
+		cItem.setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES, 0);
+	}
 
 	// Delete the chat history for uin
-	static public void chatHistoryDelete(String uin)
+	static public void chatHistoryDelete(String uin, int delType)
 	{
-		historyTable.remove(uin);
+		switch (delType)
+		{
+		case DEL_TYPE_CURRENT:
+			chatHistoryDelete(uin);
+			break;
+			
+		case DEL_TYPE_ALL_EXCEPT_CUR:
+		case DEL_TYPE_ALL:
+			Enumeration AllChats = historyTable.keys();
+			while (AllChats.hasMoreElements())
+			{
+				String key = (String)AllChats.nextElement();
+				if ((delType == DEL_TYPE_ALL_EXCEPT_CUR) && (key.equals(uin))) continue;
+				chatHistoryDelete(key);
+			}
+			break;
+		}
 	}
 
 	// Returns if the chat history at the given number is shown
@@ -611,7 +646,6 @@ public class ChatHistory
 		// #sijapp cond.else#
 		temp.textList.setCaption(Title);
 		// #sijapp cond.end#
-		
 	}
 
 	static public void setColorScheme()

@@ -78,7 +78,6 @@ public class ActionListener
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_FILES is "true"#
                 // DC variables
-            	boolean statusChange = true;
                 byte[] internalIP = new byte[4];
                 byte[] externalIP = new byte[4];
                 long dcPort = 0;
@@ -88,9 +87,10 @@ public class ActionListener
                 // #sijapp cond.end#
                 // #sijapp cond.end#
                 
+            	boolean statusChange = true;
                 int dwFT1=0, dwFT2=0, dwFT3=0;
                 int wVersion=0;
-                int capabilities = 0;
+                byte[] capabilities=null;
                 
                 // Time variables
                 int idle = -1;
@@ -119,7 +119,7 @@ public class ActionListener
                         status = Util.getDWord(tlvData, 0);
                     } else if (tlvType == 0x000D) // CAPABILITIES
                     {
-                    	capabilities = Util.parseCapabilities(uin,tlvData);
+                    	capabilities = tlvData;
                     } 
                     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
                     // #sijapp cond.if modules_FILES is "true"#
@@ -187,11 +187,10 @@ public class ActionListener
 
                 // Update contact list
                 // #sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
-               	if ( !statusChange )
-               		Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt);
-               	RunnableImpl.updateContactList(uin, status, capabilities, internalIP, externalIP, dcPort, dcType, icqProt,authCookie, signon, online, idle);
+                Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt,statusChange);
+               	RunnableImpl.updateContactList(uin, status, internalIP, externalIP, dcPort, dcType, icqProt,authCookie, signon, online, idle);
                	// #sijapp cond.else#
-               	RunnableImpl.updateContactList(uin, status, capabilities, null, null, 0, 0, 0, 0, signon, online,idle);
+               	RunnableImpl.updateContactList(uin, status, null, null, 0, 0, 0, 0, signon, online,idle);
                	// #sijapp cond.end#
 
             }

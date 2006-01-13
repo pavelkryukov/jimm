@@ -169,7 +169,7 @@ public class RequestInfoAction extends Action
 					int year = stream.readWord();
 					int mon  = stream.readByte();
 					int day  = stream.readByte();
-					strData[JimmUI.UI_BDAY] = (year != 0) ? year+"."+mon+"."+day : new String();
+					strData[JimmUI.UI_BDAY] = (year != 0) ? day+"."+mon+"."+year : new String();
 					packetCounter++;
 					consumed = true;
 					break;
@@ -206,8 +206,10 @@ public class RequestInfoAction extends Action
 					for (int i = 0; i < counter; i++)
 					{
 						stream.readWord();
-						sb.append(stream.readAsciiz());
-						if (i != (counter-1)) sb.append(", ");
+						String item = stream.readAsciiz();
+						if (item.trim().length() == 0) continue;
+						if (sb.length() != 0) sb.append(", ");
+						sb.append(item);
 					}
 					strData[JimmUI.UI_INETRESTS] = sb.toString();
 					packetCounter++;

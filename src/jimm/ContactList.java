@@ -630,7 +630,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             gItems.removeAllElements();
             ContactList.updated = false;
         }
+
+        System.out.println("ContactList.update");
+        System.out.println("flags = "+flags);
+        System.out.println("versionId1_ = "+versionId1_);
+        System.out.println("versionId2_ = "+versionId2_);
+        System.out.println("Ver 1: "+versionId1);
+        System.out.println("Ver 2: "+versionId2);
         
+        /*
         if (flags == 0)
             versionId1 = versionId1_;
         
@@ -638,10 +646,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             versionId2 = versionId2_;
         else
             versionId2 = versionId2+versionId2_;
+            */
         
-        //System.out.println("Ver 1: "+this.versionId1);
-        //System.out.println("Ver 2: "+this.versionId2);
-
         // Add new contact items and group items
         for (int i = 0; i < items.length; i++)
         {
@@ -658,12 +664,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // Save new contact list
         if (flags == 0)
         {
+        	versionId1 = versionId1_;
+        	versionId2 = versionId2_;
             try
             {
-                //System.out.println("List saved");
                 save();
+                System.out.println("List saved");
             } catch (Exception e)
             {
+            	System.out.println("Save KL: "+e.toString());
             }
         }
         
@@ -932,7 +941,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     (
     	String uin,
     	long status,
-    	int capabilities,
     	byte[] internalIP,
     	byte[] externalIP,
     	long dcPort,
@@ -956,7 +964,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         
         // Set Status
         cItem.setLongValue(ContactListContactItem.CONTACTITEM_STATUS, trueStatus);
-        cItem.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, capabilities);
         
         if (treeBuilt && statusChanged) ContactListContactItem.statusChanged(uin, trueStatus);
 
@@ -992,7 +999,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // Updates the client-side contact list (called when a contact changes status)
     static public synchronized void update(String uin, long status)
     {
-        update(uin, status, ContactListContactItem.CAP_NO_INTERNAL, null, null, 0,0,-1,0,-1,-1,-1);
+        update(uin, status, null, null, 0,0,-1,0,-1,-1,-1);
     }
 
     //Updates the title of the list
