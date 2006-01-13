@@ -1087,18 +1087,17 @@ public static String toHexString(byte[] b) {
 	// Byte array IP to String
 	public static String ipToString(byte[] ip)
 	{
-	    String strIP = new String();
-	    int tmp;
-	    
-	    for (int i=0;i<3;i++)
-	    {
-	        tmp = (int) ip[i] & 0xFF;
-	        strIP = strIP + String.valueOf(tmp)+ ".";
-	    }
-	    tmp = (int) ip[3] & 0xFF;
-        strIP = strIP + String.valueOf(tmp);
-	    
-	    return strIP;
+		if (ip == null) return null;
+		StringBuffer strIP = new StringBuffer();
+
+		for (int i = 0; i < 4; i++)
+		{
+			int tmp = (int) ip[i] & 0xFF;
+			if (strIP.length() != 0) strIP.append('.');
+			strIP.append(tmp);
+		}
+
+		return strIP.toString();
 	}
 	
 	// String IP to byte array
@@ -1504,10 +1503,10 @@ public static String toHexString(byte[] b) {
 		hour %= 24;
 		
 		int dayCount;
-		if ((mon == 2) && (year%4 == 0)) dayCount = 29;
-		else dayCount = 28;
+		if (mon == 2) dayCount = (year%4 == 0) ? 29 : 28;
+		else dayCount = dayCounts[mon-1];
 		
-		mon += day/dayCount;
+		mon += day/dayCount; // not right in general but it works in particular :-)  
 		day %= dayCount;
 		
 		year += mon/12;
