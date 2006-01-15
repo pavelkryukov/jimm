@@ -623,7 +623,7 @@ public class ConnectAction extends Action
 							if (buf.length < marker + nameLen + 2 + 2 + 2 + 2) { throw (new JimmException(115, 2)); }
 
 							// Get name
-							String name = Util.byteArrayToString(buf, marker, nameLen, true);
+							String name = Util.byteArrayToString(buf, marker, nameLen, Util.isDataUTF8(buf, marker, nameLen));
 							marker += nameLen;
 
 							// Get group, id and type
@@ -776,7 +776,7 @@ public class ConnectAction extends Action
 						}
 
 						// Send to server sequence of unuthoruzed contacts to see their statuses 
-						String[] noauth = ContactList.unauthorizedContactsAsByteArray();
+						String[] noauth = ContactList.getUnauthAndTempContacts();
 						if (noauth.length > 0)
 							Icq.addLocalContacts(noauth);
 

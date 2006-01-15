@@ -1128,7 +1128,6 @@ public static String toHexString(byte[] b) {
     // Try to parse string IP
     public static boolean isIP(String ip)
     {
-        int digit = 0;
         int i;
         try
         {
@@ -1140,11 +1139,11 @@ public static String toHexString(byte[] b) {
                     if (ip.charAt(i) == '.') break;
                 }
 
-                digit = Integer.parseInt(ip.substring(0, i));
+                Integer.parseInt(ip.substring(0, i));
                 ip = ip.substring(i + 1);
             }
 
-            digit = Integer.parseInt(ip);
+            Integer.parseInt(ip);
 
             return true;
         } catch (NumberFormatException e)
