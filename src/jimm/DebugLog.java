@@ -28,29 +28,20 @@ import javax.microedition.lcdui.*;
 import DrawControls.TextList;
 import jimm.Jimm;
 
-//#sijapp cond.if modules_DEBUGLOG is "true" #
-
-class Helper implements CommandListener
-{
-
-    public void commandAction(Command c, Displayable d)
-    {
-        ContactList.activate();
-    }
-}
-
 public class DebugLog
+	//#sijapp cond.if modules_DEBUGLOG is "true" #
+	implements CommandListener
+	//#sijapp cond.end#
 {
-
+	//#sijapp cond.if modules_DEBUGLOG is "true" #
     private static TextList list;
-
     private static Command backCommand = new Command("Back", Command.BACK, 1);
 
     static
     {
         list = new TextList(null);
         list.addCommand(backCommand);
-        list.setCommandListener(new Helper());
+        list.setCommandListener(new DebugLog());
         list.setFontSize(TextList.SMALL_FONT);
         //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         list.setTitle("Debug log");
@@ -75,9 +66,17 @@ public class DebugLog
     }
 
     static int counter = 0;
+    
+    public void commandAction(Command c, Displayable d)
+    {
+        ContactList.activate();
+    }
+    
+    //#sijapp cond.end#
 
     public static void addText(String text)
     {
+    	//#sijapp cond.if modules_DEBUGLOG is "true" #
     	synchronized (list)
 		{
     		list.addBigText("[" + Integer.toString(counter+1) + "]: ", 0xFF, Font.STYLE_PLAIN, counter);
@@ -85,19 +84,8 @@ public class DebugLog
     		list.doCRLF(counter);
     		counter++;
 		}
-    }
-
-}
-
-//#sijapp cond.else#
-
-public class DebugLog
-{
-
-    synchronized public static void addText(String text)
-    {
-        System.out.println(text);
+		//#sijapp cond.else#
+		System.out.println(text);
+		//#sijapp cond.end#
     }
 }
-
-//#sijapp cond.end#

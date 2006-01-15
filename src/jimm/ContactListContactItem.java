@@ -63,13 +63,16 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	               group,
 	               idle,
 	               booleanValues,
-	               plainAndUrlMessages, 
-	               sysNoticesAndAuthRequests;
+	               plainMessages,
+	               urlMessages,
+	               sysNotices,
+	               authRequests;
+	
 	//#sijapp cond.if modules_FILES is "true"#
 	private int    dcType,
-	               dcPort, 
 	               icqProt,
-	               clientId,
+	               clientId;
+	private int    dcPort,
 	               intIP,
 	               extIP;
 	
@@ -118,19 +121,19 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_ID:            id = value;            return;
 		case CONTACTITEM_GROUP:         group = value;         return;
 		case CONTACTITEM_PLAINMESSAGES:
-			plainAndUrlMessages = (plainAndUrlMessages & 0x0000FFFF) | (value << 16);
+			plainMessages = value;
 			return;
 			
 		case CONTACTITEM_URLMESSAGES:
-			plainAndUrlMessages = (plainAndUrlMessages & 0xFFFF0000) | value;
+			urlMessages = value;
 			return;
 			
 		case CONTACTITEM_SYSNOTICES:
-			sysNoticesAndAuthRequests = (sysNoticesAndAuthRequests & 0x0000FFFF) | (value << 16);
+			sysNotices = value;
 			return;
 			
 		case CONTACTITEM_AUTREQUESTS:
-			sysNoticesAndAuthRequests = (sysNoticesAndAuthRequests & 0xFFFF0000) | value;
+			authRequests = value;
 			return;
 		
 		case CONTACTITEM_IDLE:          idle = value;          return;
@@ -152,10 +155,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		{
 		case CONTACTITEM_ID:            return id;
 		case CONTACTITEM_GROUP:         return group;
-		case CONTACTITEM_PLAINMESSAGES: return (plainAndUrlMessages & 0xFFFF0000) >> 16;
-		case CONTACTITEM_URLMESSAGES:   return (plainAndUrlMessages & 0x0000FFFF);
-		case CONTACTITEM_SYSNOTICES:    return (sysNoticesAndAuthRequests & 0xFFFF0000) >> 16;
-		case CONTACTITEM_AUTREQUESTS:   return (sysNoticesAndAuthRequests & 0x0000FFFF);
+		case CONTACTITEM_PLAINMESSAGES: return plainMessages;
+		case CONTACTITEM_URLMESSAGES:   return urlMessages;
+		case CONTACTITEM_SYSNOTICES:    return sysNotices;
+		case CONTACTITEM_AUTREQUESTS:   return authRequests;
 		case CONTACTITEM_IDLE:          return idle;
 		case CONTACTITEM_CAPABILITIES:  return caps;
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -567,23 +570,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	}
 
 
-	public void checkForInvis()
-	{
-		if ( getLongValue(CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE )
-		{
-			VisibilityCheckerAction act = new VisibilityCheckerAction(this);
-			try
-			{
-				Icq.requestAction(act);
-			}
-			catch (JimmException e)
-			{
-				JimmException.handleException(e);
-				if (e.isCritical()) return;
-			}
-		}
-	}
-	
 	//#sijapp cond.if modules_HISTORY is "true" #
 	public void showHistory()
 	{
@@ -659,9 +645,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		else if ((c == msgReplyCommand) || (c == replWithQuotaCommand))
 		{
 			repliedWithQuota = (c == replWithQuotaCommand);
-
-			// Select first list element (new message)
-			menuList.setSelectedIndex(0, true);
 
 			// Show message form
 			try
@@ -868,9 +851,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				Jimm.display.setCurrent(reasonTextbox);
 				break;
 
-			case USER_MENU_INVIS_CHECK:
-				checkForInvis();
-				break;
 			}
 		}
 
@@ -976,7 +956,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 					messageTextbox.setString(null);
 
 					// Clear clipboard
-					if (repliedWithQuota) JimmUI.clearClipBoardText();
 					getCurrDisplay().removeCommand(replWithQuotaCommand);
 					repliedWithQuota = false;
 				}
@@ -1107,6 +1086,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// Textbox has been canceled
 		else if (c == textboxCancelCommand)
 		{
+			//if (d == )
 			this.activate(true);
 		}
 		// Menu should be activated
@@ -1312,9 +1292,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     private static final int USER_MENU_LOCAL_INFO       = 11;
     private static final int USER_MENU_USER_INFO        = 12;
     private static final int USER_MENU_QUOTA            = 14;
-    private static final int USER_MENU_INVIS_CHECK      = 15;
     
-    private static final int USER_MENU_LAST_ITEM        = 16; // YOU NEED TO CHANGE IT!
+    private static final int USER_MENU_LAST_ITEM        = 15; // YOU NEED TO CHANGE IT!
 
     
 	// Menu list
@@ -1414,15 +1393,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         
         eventList[menuList.append(ResourceBundle.getString("info"), null)]      = USER_MENU_USER_INFO;
         
-        if (status == ContactList.STATUS_OFFLINE)
-        {
-        	eventList[menuList.append(ResourceBundle.getString("invisible_check"), null)] = USER_MENU_INVIS_CHECK;
-        }
-        else
-        {
-        	if (status != ContactList.STATUS_ONLINE)
-        		eventList[menuList.append(ResourceBundle.getString("reqstatmsg"), null)] = USER_MENU_STATUS_MESSAGE;
-        }
+        if ((status != ContactList.STATUS_ONLINE) && (status != ContactList.STATUS_OFFLINE) &&
+				(status != ContactList.STATUS_INVISIBLE))
+        	eventList[menuList.append(ResourceBundle.getString("reqstatmsg"), null)] = USER_MENU_STATUS_MESSAGE;
+
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
 		if (item.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8)

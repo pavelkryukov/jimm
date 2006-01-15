@@ -219,15 +219,13 @@ public class Icq implements Runnable
 
 
         // Disconnect
-        DisconnectAction act = new DisconnectAction();
-        try
-        {
-            requestAction(act);
-        } catch (JimmException e)
-        {
-            JimmException.handleException(e);
-            if (e.isCritical()) return;
-        }
+		c.close();
+		resetServerCon();
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		// #sijapp cond.if modules_FILES is "true"#
+		resetPeerCon();
+		// #sijapp cond.end#
+		// #sijapp cond.end#
         
         // #sijapp cond.if modules_TRAFFIC is "true" #
         try

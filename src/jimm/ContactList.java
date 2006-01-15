@@ -29,7 +29,6 @@ import jimm.Jimm;
 import jimm.comm.Message;
 import jimm.comm.Util;
 import jimm.comm.Icq;
-import jimm.comm.VisibilityCheckerAction;
 import jimm.util.ResourceBundle;
 
 import java.util.Hashtable;
@@ -600,20 +599,22 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	for (int i = 0; i < count; i++) getCItem(i).setLongValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
     }
     
-	// Returns array of uins of unuthorized contacts
-	public static String[] unauthorizedContactsAsByteArray() 
+	// Returns array of uins of unuthorized and temporary contacts
+	public static String[] getUnauthAndTempContacts() 
 	{
 		int count = 0, i, index;
 		
 		for (i = 0; i < cItems.size(); i++)
-			if (getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH)) count++;
+			if (getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH) ||
+				getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) count++;
 		
 		String result[] = new String[count];
 		
 		index = 0;
 		for (i = 0; i < cItems.size(); i++)
 		{
-			if (getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
+			if (getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH) ||
+					getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
 				result[index++] = getCItem(i).getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		}
 		return result;
@@ -631,23 +632,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             ContactList.updated = false;
         }
 
-        System.out.println("ContactList.update");
-        System.out.println("flags = "+flags);
-        System.out.println("versionId1_ = "+versionId1_);
-        System.out.println("versionId2_ = "+versionId2_);
-        System.out.println("Ver 1: "+versionId1);
-        System.out.println("Ver 2: "+versionId2);
-        
-        /*
-        if (flags == 0)
-            versionId1 = versionId1_;
-        
-        if (! ContactList.updated)
-            versionId2 = versionId2_;
-        else
-            versionId2 = versionId2+versionId2_;
-            */
-        
         // Add new contact items and group items
         for (int i = 0; i < items.length; i++)
         {
@@ -669,10 +653,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             try
             {
                 save();
-                System.out.println("List saved");
             } catch (Exception e)
             {
-            	System.out.println("Save KL: "+e.toString());
             }
         }
         

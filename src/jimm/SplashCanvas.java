@@ -31,7 +31,6 @@ import jimm.comm.ConnectAction;
 import jimm.comm.DirectConnectionAction;
 //  #sijapp cond.end#
 //  #sijapp cond.end#
-import jimm.comm.DisconnectAction;
 import jimm.comm.RequestInfoAction;
 import jimm.comm.SearchAction;
 import jimm.comm.UpdateContactListAction;
