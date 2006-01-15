@@ -323,6 +323,7 @@
   "error_170"                   "Asi není dost paměti (#170.EXT)"
   "error_171"                   "Nemůžu získat meta info (#171.EXT)"
   
+  //#sijapp cond.if modules_FILES is "true"#
   // Camera errors
   "error_180"                   "Chyba při vytváření VideoControl (#180.EXT)"
   "error_181"                   "Selhala inicializace hledáčku (#181.EXT)"
@@ -335,3 +336,5 @@
   "error_191"                   "Chyba při čtení souboru. Asi není podporováno (#191.EXT)"
   "error_192"                   "Chyba při načítání souboru. Soubor nenalezen nebo není podporován (#192.EXT)"
   "error_193"                   "Chyba při přístupu k souboru. Bezpečnostní chyba (#193.EXT)"
+  //#sijapp cond.end#
+  

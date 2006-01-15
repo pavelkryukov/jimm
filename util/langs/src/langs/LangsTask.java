@@ -211,6 +211,16 @@ public class LangsTask extends Task
 		return data;
 	}
 	
+	static private void addKeysToSpecialKeys(Vector pairs)
+	{
+		int size = pairs.size();
+		for (int i = 0; i < size; i++)
+		{
+			String[] pair = (String[])pairs.elementAt(i);
+			keyToShortKey(pair[0]);
+		}
+	}
+	
 	static private void writeLngFile(Vector pairs, String outFile, boolean onelang) throws BuildException
 	{
 		try
@@ -260,6 +270,67 @@ public class LangsTask extends Task
 		filenames.copyInto(ret);
 		return (ret);
 
+	}
+	
+	static private void correctToIdealLang(String langName, Vector pairs, Hashtable idealPairs)
+	{
+		// Place normal keys to hashset for quick finding
+		Hashtable normalData = pairsToTable(pairs);
+		
+		// Which pairs absent?
+		Enumeration idealKeys = idealPairs.keys();
+		while (idealKeys.hasMoreElements())
+		{
+			String idealKey = (String)idealKeys.nextElement();
+		
+			if ( !normalData.containsKey(idealKey) )
+			{
+				String value = (String)idealPairs.get(idealKey);
+				normalData.put(idealKey, value);
+				
+				warnings.add(langName+".lang: missed \""+idealKey+"\" ("+value+")");
+			}
+		}
+		
+		// Which keys are unnecessary?
+		Enumeration normalKeys = normalData.keys();
+		while (normalKeys.hasMoreElements())
+		{
+			String normalKey = (String)normalKeys.nextElement();
+			
+			if ( !idealPairs.containsKey(normalKey) )
+			{
+				warnings.add(langName+".lang: unnecessary \""+normalKey+"\"");
+				normalData.remove(normalKey);
+				normalKeys = normalData.keys();
+			}
+		}
+		
+		// Whick keys are not in sources?
+		normalKeys = normalData.keys();
+		while (normalKeys.hasMoreElements())
+		{
+			String normalKey = (String)normalKeys.nextElement();
+		
+			ShortKeyword keyObj = (ShortKeyword)shortKeys.get(normalKey);
+			if (keyObj == null) continue;
+			if ( !keyObj.getUsed() )
+			{
+				warnings.add(langName+".lang: not present at sources \""+normalKey+"\"");
+				normalData.remove(normalKey);
+				normalKeys = normalData.keys();
+			}
+		}
+		
+		// Save corrcted data to pairs
+		pairs.clear();
+		normalKeys = normalData.keys();
+		while (normalKeys.hasMoreElements())
+		{
+			String normalKey = (String)normalKeys.nextElement();
+			pairs.add( new String[] {normalKey, (String)normalData.get(normalKey)} );
+		}
+			
 	}
 	
 	static private String replaceString(String str, String from, String to)
@@ -397,49 +468,17 @@ public class LangsTask extends Task
 		for (int i = 0; i < size; i++) System.out.println((String)warnings.elementAt(i));
 		warnings.clear();
 	}
-	
-	static private void checkUnusedKeys()
+
+	static private Hashtable pairsToTable(Vector pairs)
 	{
-		StringBuffer wtext = new StringBuffer(); 
-		
-		Enumeration allKeys = shortKeys.keys();
-		while (allKeys.hasMoreElements())
+		Hashtable result = new Hashtable();
+		for (int i = 0; i < pairs.size(); i++)
 		{
-			String key = (String)allKeys.nextElement();
-			ShortKeyword keyObj = (ShortKeyword)shortKeys.get(key);
-			if ( !keyObj.getUsed() )
-			{
-				if (wtext.length() != 0) wtext.append(", ");
-				wtext.append(key);
-			}
+			String[] pair = (String[])pairs.elementAt(i);
+			result.put(pair[0], pair[1]);
 		}
 		
-		if (wtext.length() != 0)
-		{
-			warnings.add("Next key[s] not found in sources:");
-			warnings.add(wtext.toString());
-		}
-	}
-	
-	static private void compareToIdealFile(Vector idealPairs, Vector normalPairs, String langName)
-	{
-		// Place normal keys to hashset for quick finding
-		Set normalData = new HashSet();
-		for (int i = 0; i < normalPairs.size(); i++)
-		{
-			String[] pair = (String[])normalPairs.elementAt(i);
-			normalData.add(pair[0]);
-		}
-		
-		// Find indeal keys in normal keys  
-		for (int i = 0; i < normalPairs.size(); i++)
-		{
-			String[] pair = (String[])idealPairs.elementAt(i);
-			if (!normalData.contains(pair[0]))
-			{
-				warnings.add(langName+".lang: missed \""+pair[0]+"\" ("+pair[1]+")");
-			}
-		}
+		return result;
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -475,7 +514,8 @@ public class LangsTask extends Task
 	
 	public void execute() throws BuildException
 	{
-		System.out.println("Creating lng file[s]... ");
+		Hashtable idealHashTable = null;
+		
 		shortKeys.clear();
 		warnings.clear();
 		Vector langs = new Vector(); 
@@ -489,15 +529,18 @@ public class LangsTask extends Task
 		int size = langs.size();
 		if (size == 0) new BuildException("No language specified");
 		
-		 
+		System.out.println("Loading lang file[s]... ");
 		Vector pairs, idealPairs = null;
-		if (idealLang != null) idealPairs = readLangFile(inDir+"/"+idealLang+".lang"); 
+		if (idealLang != null)
+		{
+			idealPairs = readLangFile(inDir+"/"+idealLang+".lang");
+			idealHashTable = pairsToTable(idealPairs);
+		}
 		for (int i = 0; i < size; i++)
 		{
 			String langName = (String)langs.elementAt(i);
 			pairs = readLangFile(inDir+"/"+langName+".lang");
-			writeLngFile(pairs, outDir+"/"+langName+".lng", size == 1);
-			if (idealPairs != null) compareToIdealFile(idealPairs, pairs, langName);
+			addKeysToSpecialKeys(pairs);
 		}
 		
 		try
@@ -523,9 +566,18 @@ public class LangsTask extends Task
 		System.out.println("Preprocessing java sources... ");
 		String[] files = scanDir(new File(srcDir), "");
 		for (int i = 0; i < files.length; i++) replaceLangKeysInSources(files[i]);
-		checkUnusedKeys();
 		
-		// Show warnings
+		// Save LNG files
+		System.out.println("Saving lng file[s]... ");
+		size = langs.size();
+		for (int i = 0; i < size; i++)
+		{
+			String langName = (String)langs.elementAt(i);
+			pairs = readLangFile(inDir+"/"+langName+".lang");
+			correctToIdealLang(langName, pairs, idealHashTable);
+			writeLngFile(pairs, outDir+"/"+langName+".lng", size == 1);
+		}
 		showWarnings();
+		
 	}
 }
