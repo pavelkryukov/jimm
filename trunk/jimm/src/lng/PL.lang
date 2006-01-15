@@ -293,6 +293,7 @@
   "error_170"                   "Prawdpodobnie brak wystarczającej ilości pamięci (#170.EXT)"
   "error_171"                   "Nie można pobrać informacji o nagłówku (#171.EXT)"
 
+  //#sijapp cond.if modules_FILES is "true"#
   // Camera errors
   "error_180"                   "Błąd tworzenia VideoControl (#180.EXT)"
   "error_181"                   "Błąd inicjalizacji podglądu (#181.EXT)"
@@ -305,3 +306,5 @@
   "error_191"                   "Błąd odczytu pliku. Plik prawdopodobnie nieobsługiwany (#191.EXT)"
   "error_192"                   "Błąd odczytu pliku. Zła ścieżka lub plik nieobsługiwany (#192.EXT)"
   "error_193"                   "Błąd dostępu do systemu plików podczas przeglądanjia. Błąd ochrony (#193.EXT)"
+  //#sijapp cond.end#
+  

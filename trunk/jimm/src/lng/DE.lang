@@ -366,6 +366,7 @@
   "error_171"                   "Meta-Informationen nicht verfügbar (#171.EXT)"
   "error_172"                   "Fehler beim speichern der Einstellungen (#172.EXT)"
   
+  //#sijapp cond.if modules_FILES is "true"#
   // Camera errors
   "error_180"                   "Fehler beim Erstellen der VideoControl (#180.EXT)"
   "error_181"                   "Fehler beim Initialisieren des Suchers (#181.EXT)"
@@ -378,6 +379,7 @@
   "error_191"                   "Fehler beim Lesen der Datei. Möglichwerweise nicht unterstützt (#191.EXT)"
   "error_192"                   "Fehler beim lesen der Datei. Datei nicht gefunden oder nicht unterstützt(#192.EXT)"
   "error_193"                   "Fehler Öffnen des Dateisystems. Sicherheitsfehler(#193.EXT)"
+  //#sijapp cond.end#
 
   // HTTP Connection erros
   "error_220"					"Server hat HTTP-Request nicht akzeptiert (#220.EXT)"

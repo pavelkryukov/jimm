@@ -291,6 +291,7 @@
   "error_170"                   "Probabile insufficienza di memoria heap disponibile (#170.EXT)"
   "error_171"                   "Impossibile leggere le metainfo (#171.EXT)"
 
+  //#sijapp cond.if modules_FILES is "true"#
   // Camera errors
   "error_180"                   "Errore nella creazione del VideoControl (#180.EXT)"
   "error_181"                   "Errore nell'inizializzazione dell'anteprima (#181.EXT)"
@@ -303,3 +304,4 @@
   "error_191"                   "Errore di lettura del file. Funzione forse non supportata (#191.EXT)"
   "error_192"                   "Errore di lettura del file. Percorso sbagliato o funzione non supportata (#192.EXT)"
   "error_193"                   "Errore durante l'accesso al file system. Errore di sicurezza (#193.EXT)"
+  //#sijapp cond.end#

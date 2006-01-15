@@ -124,7 +124,6 @@
   "init_ft"                     "Initializing"
   "insert_emotion"              "Insert emotion"
   "interests"                   "Interests"
-  "invisible_check"             "Invisible?"
   "kb"                          "kB"
   "kbs"                         "kb/s"
   "keep_chat"                   "Keep chat history?"
@@ -216,7 +215,6 @@
   "search_user"                 "Search for User"
   "send_img"                    "Send image"
   "send_message"                "New Message"
-  "send_url"                    "New URL"
   "server"                      "Login server"
   "server_host"                 "Hostname"
   "server_port"                 "Port"
@@ -252,7 +250,6 @@
   "title"                       "Title"
   "traffic_lng"                 "Traffic"
   "uin"                         "UIN"
-  "url"                         "URL"
   "use_history"                 "Store history"
   "use_smiles"                  "Show emotions"
   "user_add"                    "Add user"
@@ -370,6 +367,7 @@
   "error_171"                   "Could not fetch meta info (#171.EXT)"
   "error_172"                   "Error while saving the options (#172.EXT)"        
 
+  //#sijapp cond.if modules_FILES is "true"#
   // Camera errors
   "error_180"                   "Error creating the VideoControl (#180.EXT)"
   "error_181"                   "Viewfinder initialization error (#181.EXT)"
@@ -382,6 +380,7 @@
   "error_191"                   "Error reading the file. Possibly not supported (#191.EXT)"
   "error_192"                   "Error reading the file. File not found, or not supported (#192.EXT)"
   "error_193"                   "Error accessing file system for browsing. Security error (#193.EXT)"
+  //#sijapp cond.end#
   
   // HTTP Connection erros
   "error_220"					"Server did not accept HTTP request (#220.EXT)"

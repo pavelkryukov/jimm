@@ -339,6 +339,7 @@
   "error_171"                   "Negaliu perskaityti meta informacijos (#161.EXT)"
   "error_172"                   "Klaida saugant nustatymus (#172.EXT)"
   
+  //#sijapp cond.if modules_FILES is "true"#
   // Camera errors
   "error_180"                   "Klaida sukuriant vaizdo apdorojimo objektą (#180.EXT)"
   "error_181"                   "Išankstinės fotografavimo vaizdo paieškos bandymo sukurti klaida (#181.EXT)"
@@ -351,3 +352,4 @@
   "error_191"                   "Klaida skaitant failą. Greičiausiai nepalaikoma (#191.EXT)"
   "error_192"                   "Klaida skaitant failą. Blogai nurodytas kelias arba nepalaikoma (#192.EXT)"
   "error_193"                   "Klaida bandant naršyti failų sistemą. Saugumo klaida (#193.EXT)"
+  //#sijapp cond.end#
