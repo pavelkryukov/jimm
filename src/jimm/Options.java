@@ -135,7 +135,7 @@ public class Options
 	
 	//Hotkey Actions
 	public static final int HOTKEY_NONE     = 0;
-	public static final int HOTKEY_INVIS    = 1;
+
 	public static final int HOTKEY_INFO     = 2;
 	public static final int HOTKEY_NEWMSG   = 3;
 	public static final int HOTKEY_ONOFF    = 4;
@@ -567,7 +567,6 @@ class OptionsForm implements CommandListener
 	final private String[] hotkeyActionNames = 
 	{
 		"ext_hotkey_action_none",
-		"invisible_check",
 		"info",
 		"send_message",
 		//#sijapp cond.if modules_HISTORY is "true"#
@@ -595,7 +594,6 @@ class OptionsForm implements CommandListener
 		hotkeyActions = new int[20];
 		int optIdx = 0;
 		hotkeyActions[optIdx++] = Options.HOTKEY_NONE;
-		hotkeyActions[optIdx++] = Options.HOTKEY_INVIS;
 		hotkeyActions[optIdx++] = Options.HOTKEY_INFO;
 		hotkeyActions[optIdx++] = Options.HOTKEY_NEWMSG;
 		//#sijapp cond.if modules_HISTORY is "true"#
