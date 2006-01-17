@@ -36,7 +36,6 @@ import DrawControls.*;
 public class ContactListContactItem implements CommandListener, ContactListItem
 {
 	private static final int SENDING_MESSAGE = 1;
-	private static final int SENDING_URL     = 2;
 	private static int sendingType; 
 	
 	
@@ -678,18 +677,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				writeMessage(JimmUI.getClipBoardText());
 				break;
 
-			case USER_MENU_URL:
-				// Send URL message
-				// Reset and display textbox for entering messages
-				sendingType = SENDING_URL;
-				messageTextbox.setString(null);
-				messageTextbox.setTitle(ResourceBundle.getString("send_url"));
-				clearMessBoxCommands();
-				messageTextbox.addCommand(textboxOkCommand);
-				messageTextbox.setCommandListener(this);
-				Jimm.display.setCurrent(messageTextbox);
-				break;
-
 			case USER_MENU_STATUS_MESSAGE:
 				// Send a status message request message
 				if (!((status == ContactList.STATUS_ONLINE)
@@ -959,43 +946,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 					getCurrDisplay().removeCommand(replWithQuotaCommand);
 					repliedWithQuota = false;
 				}
-
-				// Send URL message (continue creation)
-				else if (sendingType == SENDING_URL)
-				{
-					// Reset and display textbox for entering URLs
-					urlTextbox.setString(null);
-					urlTextbox.setCommandListener(this);
-					Jimm.display.setCurrent(urlTextbox);
-				}
-
-			}
-			// URL has been entered
-			else if (d == urlTextbox)
-			{
-
-				// Abort if nothing has been entered
-				if (urlTextbox.getString().length() < 1)
-				{
-					this.activate(true);
-				}
-
-				// Construct URL message object and request new
-				// SendMessageAction
-				UrlMessage urlMsg = new UrlMessage(Options.getStringOption(Options.OPTION_UIN), this, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(), urlTextbox.getString(), messageTextbox.getString());
-				SendMessageAction sendMsgAct = new SendMessageAction(urlMsg);
-				try
-				{
-					Icq.requestAction(sendMsgAct);
-				}
-				catch (JimmException e)
-				{
-					JimmException.handleException(e);
-					if (e.isCritical()) return;
-				}
-
-				// Return to contact list
-				this.activate(true);
 
 			}
 			// Reason has been entered
@@ -1305,9 +1255,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Textbox for entering messages
 	private static TextBox messageTextbox;
 
-	// Textbox for entering URLs
-	private static TextBox urlTextbox;
-
 	// Textbox for entering a reason
 	private static TextBox reasonTextbox;
 	
@@ -1521,11 +1468,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		//#sijapp cond.end#
 		
 		messageTextbox.addCommand(textboxCancelCommand);
-
-		// Initialize the textbox for entering URLs
-		urlTextbox = new TextBox(ResourceBundle.getString("url"), null, 1000, TextField.URL);
-		urlTextbox.addCommand(textboxCancelCommand);
-		urlTextbox.addCommand(textboxSendCommand);
 
 		// Initialize the textfor for entering reasons
 		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 1000, TextField.ANY);

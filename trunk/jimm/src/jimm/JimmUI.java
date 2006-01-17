@@ -438,9 +438,6 @@ public class JimmUI implements CommandListener
 			
 			switch (actionNum)
 			{
-			case Options.HOTKEY_INVIS:
-				if (item != null) item.checkForInvis();
-				break;
 
 			// #sijapp cond.if modules_HISTORY is "true" #
 			case Options.HOTKEY_HISTORY:
