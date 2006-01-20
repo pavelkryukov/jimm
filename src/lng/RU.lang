@@ -258,7 +258,6 @@
   "title"                       "Название"
   "traffic_lng"                 "Трафик"
   "uin"                         "UIN"
-  "url"                         "URL"
   "use_history"                 "Хранить историю"
   "use_smiles"                  "Смайлики"
   "user_add"                    "Добавить контакт"

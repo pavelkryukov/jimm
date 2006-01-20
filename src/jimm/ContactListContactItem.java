@@ -38,8 +38,9 @@ import DrawControls.*;
 
 public class ContactListContactItem implements CommandListener, ContactListItem
 {
-	private static final int SENDING_MESSAGE = 1;
-	private static int sendingType; 
+	private static final int CM_SENDING_MESSAGE  = 1;
+	private static final int CM_RENAMING_CONTACT = 2;
+	private static int currentMode; 
 	
 	
 	// No capability
@@ -618,7 +619,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Shows new message form 
 	private void writeMessage(String initText)
 	{
-		sendingType = SENDING_MESSAGE;
+		currentMode = CM_SENDING_MESSAGE;
 		
 		// If user want reply with quotation 
 		if (initText != null) messageTextbox.setString(initText);
@@ -788,6 +789,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			case USER_MENU_RENAME:
 				// Rename the contact local and on the server
 				// Reset and display textbox for entering name
+				currentMode = CM_RENAMING_CONTACT;
 				messageTextbox.setTitle(ResourceBundle.getString("rename"));
 				messageTextbox.setString(name);
 				clearMessBoxCommands();
@@ -804,7 +806,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			// #sijapp cond.end#
 
 			case USER_MENU_USER_INFO:
-				JimmUI.requiestUserInfo(uin);
+				JimmUI.requiestUserInfo(uin, name);
 				break;
 
 			// Show Timeing info and DC info 
@@ -895,6 +897,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			);
 		}
 		
+		// Delete chat history -> "Current", "Others", "All"
 		else if (JimmUI.getCommandType(c, SELECTOR_DEL_CHAT) == JimmUI.CMD_OK)
 		{
 			String uin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
@@ -912,33 +915,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			return;
 		}
 
-		// User wants to rename Contact
+		// Rename contact -> "OK"
 		else if (c == renameOkCommand)
 		{
-			name = messageTextbox.getString();
-			try
-			{
-				// Save ContactList
-				ContactList.save();
-
-				// Try to save ContactList to server
-				UpdateContactListAction action = new UpdateContactListAction(this, UpdateContactListAction.ACTION_RENAME);
-				Icq.requestAction(action);
-			}
-			catch (JimmException je)
-			{
-				messageTextbox.setString(null);
-				if (je.isCritical()) return;
-			}
-			catch (Exception e)
-			{
-				// Do nothing
-			}
-
-			ChatHistory.contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
-			ContactList.activate();
+			rename( messageTextbox.getString() );
 			messageTextbox.setString(null);
+			ContactList.activate();
 		}
+		
 		// Textbox has been closed
 		else if ((c == textboxOkCommand) || (c == textboxSendCommand))
 		{
@@ -952,7 +936,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				}
 
 				// Send plain message
-				if ((sendingType == SENDING_MESSAGE) && !messageTextbox.getString().equals(""))
+				if ((currentMode == CM_SENDING_MESSAGE) && !messageTextbox.getString().equals(""))
 				{
 					// Send message via icq
 					sendMessage(messageTextbox.getString());
@@ -1057,7 +1041,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// Textbox has been canceled
 		else if (c == textboxCancelCommand)
 		{
-			//if (d == )
+			if (currentMode == CM_RENAMING_CONTACT) messageTextbox.setString(null);
 			this.activate(true);
 		}
 		// Menu should be activated
@@ -1117,6 +1101,31 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			messageTextbox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
 		}
 		// #sijapp cond.end#
+	}
+	
+	public void rename(String newName)
+	{
+		name = newName;
+		try
+		{
+			// Save ContactList
+			ContactList.save();
+
+			// Try to save ContactList to server
+			UpdateContactListAction action = new UpdateContactListAction(this, UpdateContactListAction.ACTION_RENAME);
+			Icq.requestAction(action);
+		}
+		catch (JimmException je)
+		{
+			messageTextbox.setString(null);
+			if (je.isCritical()) return;
+		}
+		catch (Exception e)
+		{
+			// Do nothing
+		}
+
+		ChatHistory.contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 	}
 		
 	public void sendMessage(String text)

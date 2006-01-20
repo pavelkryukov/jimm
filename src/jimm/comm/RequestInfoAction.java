@@ -32,6 +32,8 @@ import jimm.JimmException;
 import jimm.Options;
 import jimm.JimmUI;
 import jimm.RunnableImpl;
+import jimm.ContactListContactItem;
+import jimm.ContactList;
 
 class BinaryInputStream
 {
@@ -79,11 +81,13 @@ public class RequestInfoAction extends Action
 	// Date of init
 	private Date init;
 	private int packetCounter;
+	private String existingNick;
 
 
 	// Constructor
-	public RequestInfoAction(String uin)
+	public RequestInfoAction(String uin, String nick)
 	{
+		existingNick = nick;
 		infoShown = false;
 		packetCounter = 0;
 		strData[JimmUI.UI_UIN] = uin;
@@ -224,6 +228,7 @@ public class RequestInfoAction extends Action
 				if (!infoShown)
 				{
 					RunnableImpl.callSerially(RunnableImpl.TYPE_SHOW_USER_INFO, (Object)strData);
+					tryToChangeName();
 					infoShown = true;
 				}
 			}
@@ -231,6 +236,16 @@ public class RequestInfoAction extends Action
 		} // end 'if (packet instanceof FromIcqSrvPacket)'
 
 		return (consumed);
+	}
+	
+	// Rename contact if its name consists of digits
+	private void tryToChangeName()
+	{
+		if (strData[JimmUI.UI_UIN].equals(existingNick))
+		{
+			ContactListContactItem item = ContactList.getItembyUIN(strData[JimmUI.UI_UIN]);
+			item.rename(strData[JimmUI.UI_NICK]);
+		}
 	}
 
 
