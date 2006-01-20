@@ -1824,5 +1824,44 @@ public static String toHexString(byte[] b) {
 	{
 		return b < 0 ? b & 0x7F + 128 : b;
 	}
+
+	public static String getCurrentDay()
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		String day = "";
+		
+		switch (cal.get(Calendar.DAY_OF_WEEK))
+		{
+			case Calendar.MONDAY:
+				day = "monday";
+				break;
+
+			case Calendar.TUESDAY:
+				day = "tuesday";
+				break;
+				
+			case Calendar.WEDNESDAY:
+				day = "wednesday";
+				break;
+				
+			case Calendar.THURSDAY:
+				day = "thursday";
+				break;
+				
+			case Calendar.FRIDAY:
+				day = "friday";
+				break;
+				
+			case Calendar.SATURDAY:
+				day = "saturday";
+				break;
+				
+			case Calendar.SUNDAY:
+				day = "sunday";
+				break;
+		}
+		return ResourceBundle.getString( day );
+	}
 	
 }

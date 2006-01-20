@@ -30,6 +30,16 @@
   "next"                        "Next"
   // #sijapp cond.end#
 
+//Days of the week
+	"monday"					"Monday"
+	"tuesday"					"Tuesday"
+	"wednesday"					"Wednesday"
+	"thursday"					"Thursday"
+	"friday"					"Friday"
+	"saturday"					"Saturday"
+	"sunday"					"Sunday"		
+//End
+
   "point"                       ","
   "about"                       "About"
   "about_info"                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModules: ###MODULES###\n\nSee http://www.jimm.org/"

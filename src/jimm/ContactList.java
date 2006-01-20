@@ -443,36 +443,24 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 //int load = 0;
                 while (dis.available() > 0)
                 {
-
                     // Get item type
-                    int type = dis.readInt();
-
+                    byte type = dis.readByte();
+                    
                     // Normal contact
                     if (type == 0)
                     {
-
-                        // Get id, group id, UIN and name from the record store
-                        int id = dis.readInt();
-                        int group = dis.readInt();
-						boolean noAuth = dis.readBoolean();
-						boolean istemp = dis.readBoolean();
-                        String uin = dis.readUTF();
-                        String name = dis.readUTF();
-
+                    	
                         // Instantiate ContactListContactItem object and add to vector
-                        ContactListContactItem ci = new ContactListContactItem(id, group, uin, name, noAuth, true);
-						ci.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, istemp);
+                        ContactListContactItem ci = new ContactListContactItem();
+                        ci.loadFromStream(dis);
                         ContactList.cItems.addElement(ci);
                     }
                     // Group of contacts
                     else if (type == 1)
                     {
-                        // Get id and name from the record store
-                        int id = dis.readInt();
-                        String name = dis.readUTF();
-
                         // Instantiate ContactListGroupItem object and add to vector
-                        ContactListGroupItem gi = new ContactListGroupItem(id, name);
+                        ContactListGroupItem gi = new ContactListGroupItem();
+                        gi.loadFromStream(dis);
                         ContactList.gItems.addElement(gi);
                     }
                 }
@@ -504,9 +492,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         RecordStore cl = RecordStore.openRecordStore("contactlist", true);
 
         // Temporary variables
-        byte[] buf;
         ByteArrayOutputStream baos;
         DataOutputStream dos;
+        byte[] buf;
 
         // Add version info to record store
         baos = new ByteArrayOutputStream();
@@ -516,75 +504,39 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         cl.addRecord(buf, 0, buf.length);
 
         // Add version ids to the record store
-        baos = new ByteArrayOutputStream();
-        dos = new DataOutputStream(baos);
+        baos.reset();
         dos.writeLong(versionId1);
         dos.writeInt(versionId2);
         buf = baos.toByteArray();
         cl.addRecord(buf, 0, buf.length);
 
         // Initialize buffer
-        baos = new ByteArrayOutputStream();
-        dos = new DataOutputStream(baos);
+        baos.reset();
 
         // Iterate through all contact items
-        for (int i = 0; i < ContactList.cItems.size(); i++)
+        int cItemsCount = cItems.size();
+        int totalCount = cItemsCount+gItems.size();
+        for (int i = 0; i < totalCount; i++)
         {
-            ContactListContactItem cItem = getCItem(i);
-
-            // Add next contact item
-            dos.writeInt(0);
-            dos.writeInt(cItem.getIntValue(ContactListContactItem.CONTACTITEM_ID));
-            dos.writeInt(cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
-			dos.writeBoolean(cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH));
-			dos.writeBoolean(cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP));
-            dos.writeUTF(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-            dos.writeUTF(cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
-
-            // Start new record if it exceeds 4096 bytes
-            if (baos.size() >= 4096)
-            {
-
-                // Save record
-                buf = baos.toByteArray();
-                cl.addRecord(buf, 0, buf.length);
-
-                // Initialize buffer
-                baos = new ByteArrayOutputStream();
-                dos = new DataOutputStream(baos);
-            }
-
-        }
-
-        // Iterate through all group items
-        for (int i = 0; i < ContactList.gItems.size(); i++)
-        {
-            ContactListGroupItem gItem = (ContactListGroupItem) gItems.elementAt(i);
-
-            // Add next group item
-            dos.writeInt(1);
-            dos.writeInt(gItem.getId());
-            dos.writeUTF(gItem.getName());
-
-            // Start new record if it exceeds 4096 bytes
-            if (baos.size() >= 4096)
+        	if (i < cItemsCount) getCItem(i).saveToStream(dos);
+        	else
+        	{
+        		ContactListGroupItem gItem = (ContactListGroupItem)gItems.elementAt(i-cItemsCount);
+        		gItem.saveToStream(dos);
+        	}
+        	
+            // Start new record if it exceeds 4000 bytes
+            if ((baos.size() >= 4000) || (i == totalCount-1))
             {
                 // Save record
                 buf = baos.toByteArray();
                 cl.addRecord(buf, 0, buf.length);
 
                 // Initialize buffer
-                baos = new ByteArrayOutputStream();
-                dos = new DataOutputStream(baos);
+                baos.reset();
             }
         }
-        // Save pending record
-        if (baos.size() > 0)
-        {
-            // Save record
-            buf = baos.toByteArray();
-            cl.addRecord(buf, 0, buf.length);
-        }
+
         // Close record store
         cl.closeRecordStore();
     }
@@ -752,11 +704,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	// Returns reference to contact item with uin or null if not found  
 	static public ContactListContactItem getItembyUIN(String uin)
     {
-		long uinLong = Long.parseLong(uin);
+		int uinInt = Integer.parseInt(uin);
     	for (int i = cItems.size()-1; i >= 0; i--)
     	{
     		ContactListContactItem citem = getCItem(i); 
-    	    if (getCItem(i).getUIN() == uinLong) return citem;
+    	    if (citem.getUIN() == uinInt) return citem;
     	}
     	return null;
     }
@@ -1043,19 +995,18 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // removes existing group 
     static public synchronized void removeGroup(ContactListGroupItem gItem)
     {
-    	ContactListGroupItem realGroup = getGroupById(gItem.getId());
-    	if (realGroup == null) return;
+    	Integer groupId = new Integer(gItem.getId());
     	if ( Options.getBooleanOption(Options.OPTION_USER_GROUPS) )
     	{
-    		TreeNode node = (TreeNode)gNodes.get( new Integer(realGroup.getId()) );
+    		TreeNode node = (TreeNode)gNodes.get(groupId);
     		tree.deleteChild
 			(
 				tree.getRoot(), 
 				tree.getIndexOfChild(tree.getRoot(), node)
 			);
-    		gNodes.remove( new Integer(realGroup.getId()) );
+    		gNodes.remove(groupId);
     	}	
-    	gItems.removeElement(realGroup);
+    	gItems.removeElement(gItem);
     }
 
     // Adds the given message to the message queue of the contact item
