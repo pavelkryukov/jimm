@@ -1252,7 +1252,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     
     // Static constants for menu actios
     private static final int USER_MENU_MESSAGE          = 1;
-    private static final int USER_MENU_URL              = 2;
     private static final int USER_MENU_STATUS_MESSAGE   = 3;
     private static final int USER_MENU_REQU_AUTH        = 4;
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
