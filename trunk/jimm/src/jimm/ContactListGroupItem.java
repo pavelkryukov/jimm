@@ -25,6 +25,10 @@
 package jimm;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import jimm.comm.Util;
 import javax.microedition.lcdui.Font;
 
@@ -48,6 +52,11 @@ public class ContactListGroupItem implements ContactListItem
 		this.id = id;
 		this.name = new String(name);
 		onlineCount = totalCount = 0;
+	}
+	
+	public ContactListGroupItem()
+	{
+		
 	}
 	
 	// Constructor for a new group item
@@ -133,6 +142,18 @@ public class ContactListGroupItem implements ContactListItem
 		return Font.STYLE_PLAIN;
 	}
 	
+	public void saveToStream(DataOutputStream stream) throws IOException
+	{
+		stream.writeByte(1);
+		stream.writeInt(id);
+		stream.writeUTF(name);
+	}
+	
+	public void loadFromStream(DataInputStream stream) throws IOException
+	{
+		id = stream.readInt();
+		name = stream.readUTF();
+	}
 
 
 }

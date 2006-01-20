@@ -30,6 +30,16 @@
   "next"       "Следующий"
   // #sijapp cond.end#
 
+//Days of the week
+	"monday"					"Понедельник"
+	"tuesday"					"Вторник"
+	"wednesday"					"Среда"
+	"thursday"					"Четверг"
+	"friday"					"Пятница"
+	"saturday"					"Суббота"
+	"sunday"					"Воскресенье"		
+//End
+
   "point"                       "."
   "about"                       "О программе"
   "about_info"                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\nУстройство: ###TARGET###\nМодули: ###MODULES###\n\nhttp://www.jimm.org/"
@@ -124,7 +134,6 @@
   "init_ft"                     "Инициализация..."
   "insert_emotion"              "Смайлики"
   "interests"                   "Интересы"
-  "invisible_check"             "Невидимый?"
   "kb"                          " КБ"
   "kbs"                         "КБ/сек"
   "keep_chat"                   "Хранить историю чата?"
@@ -215,7 +224,6 @@
   "results"                     "Результаты"  
   "send_img"                    "Отправить фото"
   "send_message"                "Новое сообщение"
-  "send_url"                    "Новый URL"
   "server"                      "Сервер"
   "server_host"                 "Имя сервера"
   "server_port"                 "Порт"

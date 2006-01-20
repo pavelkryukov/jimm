@@ -23,8 +23,11 @@
 
 package jimm;
 
+import java.io.IOException;
 import java.util.TimerTask;
 import javax.microedition.lcdui.*;
+import java.io.DataOutputStream;
+import java.io.DataInputStream;
 
 import jimm.JimmUI;
 import jimm.comm.*;
@@ -57,21 +60,17 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	225 - 255 (111XXXXX)  byte array
 	******************************************************************************/
 	
-	private int    id,
+	private int    idAndGropup,
 	               caps,
-	               group,
 	               idle,
 	               booleanValues,
-	               plainMessages,
-	               urlMessages,
-	               sysNotices,
-	               authRequests;
+	               messCounters;
 	
 	//#sijapp cond.if modules_FILES is "true"#
 	private int    dcType,
 	               icqProt,
-	               clientId;
-	private int    dcPort,
+	               clientId,
+	               dcPort,
 	               intIP,
 	               extIP;
 	
@@ -79,8 +78,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	
 	// #sijapp cond.end #
 	
-	private long   uinLong,
-	               online,
+	private int    uinLong;
+	private long   online,
 	               signOn,
 	               status;
 	               
@@ -94,7 +93,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		switch(key)
 		{
-		case CONTACTITEM_UIN:        uinLong = Long.parseLong(value); return;
+		case CONTACTITEM_UIN:        uinLong = Integer.parseInt(value); return;
 		case CONTACTITEM_NAME:       name = value; lowerText = null; return;
 		case CONTACTITEM_CLIVERSION: clientVersion = value; return;
 		}
@@ -104,7 +103,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		switch(key)
 		{
-		case CONTACTITEM_UIN:        return Long.toString(uinLong);
+		case CONTACTITEM_UIN:        return Integer.toString(uinLong);
 		case CONTACTITEM_NAME:       return name;
 		case CONTACTITEM_CLIVERSION: return clientVersion;
 		}
@@ -117,22 +116,28 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		switch (key)
 		{
-		case CONTACTITEM_ID:            id = value;            return;
-		case CONTACTITEM_GROUP:         group = value;         return;
+		case CONTACTITEM_ID:
+			idAndGropup = (idAndGropup&0x0000FFFF)|(value << 16);
+			return;
+			
+		case CONTACTITEM_GROUP:
+			idAndGropup = (idAndGropup&0xFFFF0000)|value;
+			return;
+			
 		case CONTACTITEM_PLAINMESSAGES:
-			plainMessages = value;
+			messCounters = (messCounters&0x00FFFFFF)|(value << 24);
 			return;
 			
 		case CONTACTITEM_URLMESSAGES:
-			urlMessages = value;
+			messCounters = (messCounters&0xFF00FFFF)|(value << 16);
 			return;
 			
 		case CONTACTITEM_SYSNOTICES:
-			sysNotices = value;
+			messCounters = (messCounters&0xFFFF00FF)|(value << 8);
 			return;
 			
 		case CONTACTITEM_AUTREQUESTS:
-			authRequests = value;
+			messCounters = (messCounters&0xFFFFFF00)|value;
 			return;
 		
 		case CONTACTITEM_IDLE:          idle = value;          return;
@@ -152,12 +157,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		switch (key)
 		{
-		case CONTACTITEM_ID:            return id;
-		case CONTACTITEM_GROUP:         return group;
-		case CONTACTITEM_PLAINMESSAGES: return plainMessages;
-		case CONTACTITEM_URLMESSAGES:   return urlMessages;
-		case CONTACTITEM_SYSNOTICES:    return sysNotices;
-		case CONTACTITEM_AUTREQUESTS:   return authRequests;
+		case CONTACTITEM_ID:            return (idAndGropup&0xFFFF0000) >> 16;
+		case CONTACTITEM_GROUP:         return (idAndGropup&0x0000FFFF);
+		case CONTACTITEM_PLAINMESSAGES: return (messCounters&0xFF000000) >> 24;
+		case CONTACTITEM_URLMESSAGES:   return (messCounters&0x00FF0000) >> 16;
+		case CONTACTITEM_SYSNOTICES:    return (messCounters&0x0000FF00) >> 8;
+		case CONTACTITEM_AUTREQUESTS:   return (messCounters&0x000000FF);
 		case CONTACTITEM_IDLE:          return idle;
 		case CONTACTITEM_CAPABILITIES:  return caps;
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -264,6 +269,23 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//#sijapp cond.end #
 	//#sijapp cond.end #
 	
+	public void saveToStream(DataOutputStream stream) throws IOException
+	{
+		stream.writeByte(0);
+		stream.writeInt(idAndGropup);
+		stream.writeByte(booleanValues&(CONTACTITEM_IS_TEMP|CONTACTITEM_NO_AUTH));
+		stream.writeInt(uinLong);
+		stream.writeUTF(name);
+	}
+	
+	public void loadFromStream(DataInputStream stream) throws IOException
+	{
+		idAndGropup = stream.readInt();
+		booleanValues = stream.readByte();
+		uinLong = stream.readInt();
+		name = stream.readUTF();
+	}
+	
 	// Variable keys
 	public static final int CONTACTITEM_UIN           = 0;      /* String */
 	public static final int CONTACTITEM_NAME          = 1;      /* String */
@@ -355,7 +377,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	
 	public ContactListContactItem()
 	{
-	    this.init(-1, -1, null, null, false, false);
 	}
 	
 	// Returns true if client supports given capability
@@ -390,7 +411,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
 	}
 	
-	public long getUIN()
+	public int getUIN()
 	{
 		return uinLong;
 	}
@@ -1335,8 +1356,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         
         if (JimmUI.getClipBoardText() != null)
         	eventList[menuList.append(ResourceBundle.getString("quote"), null)] = USER_MENU_QUOTA;
-        
-        eventList[menuList.append(ResourceBundle.getString("send_url", ResourceBundle.FLAG_ELLIPSIS), null)]     = USER_MENU_URL;
         
         eventList[menuList.append(ResourceBundle.getString("info"), null)]      = USER_MENU_USER_INFO;
         

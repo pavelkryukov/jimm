@@ -37,4 +37,9 @@ public interface ContactListItem
 	public int getTextColor();
 	
 	public int getFontStyle();
+	
+	/*
+	void saveToStream(DataOutputStream stream) throws IOException;
+	void loadFromStream(DataInputStream stream) throws IOException;
+	*/
 }
