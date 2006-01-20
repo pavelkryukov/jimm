@@ -527,7 +527,6 @@ class OptionsForm implements CommandListener
     private ChoiceGroup clSortByChoiceGroup;
     private ChoiceGroup chrgChat;
     private ChoiceGroup chrgPopupWin;
-    private ChoiceGroup clHideOfflineChoiceGroup;
     private ChoiceGroup vibratorChoiceGroup;
 	// #sijapp cond.if target isnot "DEFAULT"#
     private ChoiceGroup messageNotificationModeChoiceGroup;
@@ -539,14 +538,14 @@ class OptionsForm implements CommandListener
     private Gauge onlineNotificationSoundVolume;
     // #sijapp cond.end#
     // #sijapp cond.end#
-    private ChoiceGroup cp1251HackChoiceGroup;
+    
 	// #sijapp cond.if modules_TRAFFIC is "true" #
     private TextField costPerPacketTextField;
     private TextField costPerDayTextField;
     private TextField costPacketLengthTextField;
     private TextField currencyTextField;
 	// #sijapp cond.end#
-    private ChoiceGroup showUserGroups;
+    private ChoiceGroup choiceContactList;
     private ChoiceGroup colorScheme;
 	// #sijapp cond.if target is "MOTOROLA"#
     private TextField lightTimeout;
@@ -581,32 +580,31 @@ class OptionsForm implements CommandListener
 		// #sijapp cond.end#
 	};
 	
-	private int[] hotkeyOpts, hotkeyActions;
+	final private int [] hotkeyActions = 
+	{
+		Options.HOTKEY_NONE,
+		Options.HOTKEY_INFO,
+		Options.HOTKEY_NEWMSG,
+		//#sijapp cond.if modules_HISTORY is "true"#
+		Options.HOTKEY_HISTORY,
+		// #sijapp cond.end#
+		Options.HOTKEY_ONOFF,
+		Options.HOTKEY_OPTIONS,
+		Options.HOTKEY_MENU,
+		Options.HOTKEY_LOCK,
+		// #sijapp cond.if target is "MIDP2"#
+		Options.HOTKEY_MINIMIZE,
+		// #sijapp cond.end#
+	};
+	
+	private int[] hotkeyOpts;
 	
 	
 	// Constructor
 	public OptionsForm() throws NullPointerException
 	{
-		/*************************************************************************/
 		// Initialize hotkeys
 		hotkeyOpts = new int[10];
-		
-		hotkeyActions = new int[20];
-		int optIdx = 0;
-		hotkeyActions[optIdx++] = Options.HOTKEY_NONE;
-		hotkeyActions[optIdx++] = Options.HOTKEY_INFO;
-		hotkeyActions[optIdx++] = Options.HOTKEY_NEWMSG;
-		//#sijapp cond.if modules_HISTORY is "true"#
-		hotkeyActions[optIdx++] = Options.HOTKEY_HISTORY;
-		// #sijapp cond.end#
-		hotkeyActions[optIdx++] = Options.HOTKEY_ONOFF;
-		hotkeyActions[optIdx++] = Options.HOTKEY_OPTIONS;
-		hotkeyActions[optIdx++] = Options.HOTKEY_MENU;
-		hotkeyActions[optIdx++] = Options.HOTKEY_LOCK;
-		// #sijapp cond.if target is "MIDP2"#
-		hotkeyActions[optIdx++] = Options.HOTKEY_MINIMIZE;
-		// #sijapp cond.end#
-		
 		keysMenu = new List(ResourceBundle.getString("ext_listhotkeys"), List.IMPLICIT);
 		keysMenu.setCommandListener(this);
 		actionMenu = new List(ResourceBundle.getString("ext_actionhotkeys"), List.EXCLUSIVE);
@@ -857,15 +855,18 @@ class OptionsForm implements CommandListener
                 // #sijapp cond.end# 
 				case OPTIONS_INTERFACE:
 	                // Initialize elements (interface section)
-	                uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle.getString("language"), Choice.EXCLUSIVE);
-	                for (int j = 0; j < ResourceBundle.langAvailable.length; j++)
-	                {
-	                    uiLanguageChoiceGroup.append(ResourceBundle.getString("lang_" + ResourceBundle.langAvailable[j]), null);
-	                    if (ResourceBundle.langAvailable[j].equals(Options.getStringOption(Options.OPTION_UI_LANGUAGE)))
-	                    {
-	                        uiLanguageChoiceGroup.setSelectedIndex(j, true);
-	                    }
-	                }
+					if (ResourceBundle.langAvailable.length > 1)
+					{
+						uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle.getString("language"), Choice.EXCLUSIVE);
+						for (int j = 0; j < ResourceBundle.langAvailable.length; j++)
+						{
+							uiLanguageChoiceGroup.append(ResourceBundle.getString("lang_" + ResourceBundle.langAvailable[j]), null);
+							if (ResourceBundle.langAvailable[j].equals(Options.getStringOption(Options.OPTION_UI_LANGUAGE)))
+							{
+								uiLanguageChoiceGroup.setSelectedIndex(j, true);
+							}
+						}
+					}
 	                displayDateChoiceGroup = new ChoiceGroup(ResourceBundle.getString("display_date"), Choice.MULTIPLE);
 	                displayDateChoiceGroup.append(ResourceBundle.getString("yes"), null);
 	                displayDateChoiceGroup.setSelectedIndex(0, Options.getBooleanOption(Options.OPTION_DISPLAY_DATE));
@@ -873,16 +874,12 @@ class OptionsForm implements CommandListener
 	                clSortByChoiceGroup.append(ResourceBundle.getString("sort_by_status"), null);
 	                clSortByChoiceGroup.append(ResourceBundle.getString("sort_by_name"), null);
 	                clSortByChoiceGroup.setSelectedIndex(Options.getIntOption(Options.OPTION_CL_SORT_BY), true);
-	                clHideOfflineChoiceGroup = new ChoiceGroup(ResourceBundle.getString("hide_offline"), Choice.MULTIPLE);
-	                clHideOfflineChoiceGroup.append(ResourceBundle.getString("yes"), null);
-	                clHideOfflineChoiceGroup.setSelectedIndex(0, Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE));
-	                cp1251HackChoiceGroup = new ChoiceGroup(ResourceBundle.getString("cp1251"), Choice.MULTIPLE);
-	                cp1251HackChoiceGroup.append(ResourceBundle.getString("yes"), null);
-	                cp1251HackChoiceGroup.setSelectedIndex(0, Options.getBooleanOption(Options.OPTION_CP1251_HACK));
 
-	                showUserGroups = new ChoiceGroup(ResourceBundle.getString("show_user_groups"), Choice.MULTIPLE);
-	                showUserGroups.append(ResourceBundle.getString("yes"), null);
-	                showUserGroups.setSelectedIndex(0, Options.getBooleanOption(Options.OPTION_USER_GROUPS));
+	                choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
+	                choiceContactList.append(ResourceBundle.getString("show_user_groups"), null);
+	                choiceContactList.append(ResourceBundle.getString("hide_offline"), null);
+	                choiceContactList.setSelectedIndex(0, Options.getBooleanOption(Options.OPTION_USER_GROUPS));
+	                choiceContactList.setSelectedIndex(1, Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE));
 
 	                colorScheme = new ChoiceGroup(ResourceBundle.getString("color_scheme"), Choice.EXCLUSIVE);
 	                colorScheme.append(ResourceBundle.getString("black_on_white"), null);
@@ -911,6 +908,10 @@ class OptionsForm implements CommandListener
 	                chrgChat.append(ResourceBundle.getString("cl_chat"), null);
 	                chrgChat.setSelectedIndex(idx1++, Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT));
 	                // #sijapp cond.end#
+	                
+	                chrgChat.append(ResourceBundle.getString("cp1251"), null);
+	                chrgChat.setSelectedIndex(idx1++, Options.getBooleanOption(Options.OPTION_CP1251_HACK));
+	                
 	               
 					// #sijapp cond.if target is "MOTOROLA"#
 					lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.getIntOption(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
@@ -919,15 +920,13 @@ class OptionsForm implements CommandListener
 					lightManual.setSelectedIndex(0, Options.getBooleanOption(Options.OPTION_LIGHT_MANUAL));
 					// #sijapp cond.end#
 					
-					optionsForm.append(uiLanguageChoiceGroup);
+					if (uiLanguageChoiceGroup != null) optionsForm.append(uiLanguageChoiceGroup);
 					optionsForm.append(displayDateChoiceGroup);
-					optionsForm.append(showUserGroups);
+					optionsForm.append(choiceContactList);
 					optionsForm.append(clSortByChoiceGroup);
-					optionsForm.append(clHideOfflineChoiceGroup);
 					
 					optionsForm.append(chrgChat);
 					
-					optionsForm.append(cp1251HackChoiceGroup);
 					optionsForm.append(colorScheme);
 					// #sijapp cond.if target is "MOTOROLA"#
 					optionsForm.append(lightTimeout);
@@ -1086,24 +1085,19 @@ class OptionsForm implements CommandListener
                     break;
                 // #sijapp cond.end#      
 				case OPTIONS_INTERFACE:
-					Options.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.langAvailable[uiLanguageChoiceGroup.getSelectedIndex()]);
-					Options.setBooleanOption(Options.OPTION_DISPLAY_DATE,displayDateChoiceGroup.isSelected(0));
-					
-					int newSortMethod = 0;
-					
-					if (clHideOfflineChoiceGroup.isSelected(0))
+					if (ResourceBundle.langAvailable.length > 1)
 					{
-						newSortMethod = 0;
+						Options.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.langAvailable[uiLanguageChoiceGroup.getSelectedIndex()]);
+						Options.setBooleanOption(Options.OPTION_DISPLAY_DATE,displayDateChoiceGroup.isSelected(0));
 					}
-					else
-  					{
-						newSortMethod = clSortByChoiceGroup.getSelectedIndex();
-					}
+					
+					int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
+					boolean newHideOffline = choiceContactList.isSelected(1);
+					boolean newUseGroups = choiceContactList.isSelected(0);
+					int newColorScheme = colorScheme.getSelectedIndex();
 					
 					Options.setIntOption(Options.OPTION_CL_SORT_BY, newSortMethod);
-					
-					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,clHideOfflineChoiceGroup.isSelected(0));
-					Options.setBooleanOption(Options.OPTION_CP1251_HACK,cp1251HackChoiceGroup.isSelected(0));
+					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
 					
 					int idx = 0;
 					Options.setBooleanOption(Options.OPTION_CHAT_SMALL_FONT, chrgChat.isSelected(idx++));
@@ -1121,13 +1115,11 @@ class OptionsForm implements CommandListener
 					Options.setBooleanOption(Options.OPTION_CLASSIC_CHAT, chrgChat.isSelected(idx++));
 					// #sijapp cond.end#
 					
-					boolean newUseGroups = showUserGroups.isSelected(0);
-					Options.setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);
+					Options.setBooleanOption(Options.OPTION_CP1251_HACK, chrgChat.isSelected(idx++));
 					
-					int newColorScheme = colorScheme.getSelectedIndex(); 
+					Options.setBooleanOption(Options.OPTION_USER_GROUPS, newUseGroups);
 					Options.setIntOption(Options.OPTION_COLOR_SCHEME, newColorScheme);
 					
-					boolean newHideOffline = Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
 					ContactList.optionsChanged
 					(
 						(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline),
