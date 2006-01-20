@@ -447,7 +447,11 @@ public class JimmUI implements CommandListener
 
 			case Options.HOTKEY_INFO:
 				if (item != null)
-					requiestUserInfo(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+					requiestUserInfo
+					(
+						item.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+						item.getStringValue(ContactListContactItem.CONTACTITEM_NAME)
+					);
 				break;
 
 			case Options.HOTKEY_NEWMSG:
@@ -644,9 +648,9 @@ public class JimmUI implements CommandListener
 	
 	static private TextList infoTextList = null;
 	
-	static public void requiestUserInfo(String uin)
+	static public void requiestUserInfo(String uin, String name)
 	{
-		RequestInfoAction act = new RequestInfoAction(uin);
+		RequestInfoAction act = new RequestInfoAction(uin, name);
 		
 		infoTextList = getInfoTextList(uin, false);
 		infoTextList.addCommand(cmdCancel);

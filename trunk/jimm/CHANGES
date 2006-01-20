@@ -266,6 +266,10 @@ VERSION 0.5.0
   * BUGFIX: There are no more echo errors after errorous connections
   * BUGFIX: Jimm stoped login when received offline message from unknown contact
   * BUGFIX: Flag "no auth" was not stored in RMS
+  * Contact name which consists of digits is renamed automatically after
+    requesting user info
+  * Deleted ability to send URL message as is possible to send URLs as text
+    messages
   * Added possibility to save stored history to file (at siemens only)
   * Rewrote Connection handler to be more modular and better readable
   * Now Jimm works with touchscreen (only for MIDP2 build)
