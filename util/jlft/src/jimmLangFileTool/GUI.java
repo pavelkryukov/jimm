@@ -436,7 +436,7 @@ public class GUI extends JFrame implements ActionListener
 				File file = chooser.getSelectedFile();
 				try
 				{
-					jlft.getBase().save(file.getCanonicalPath());
+					jlft.getCompare().save(file.getCanonicalPath());
 				} catch (Exception e)
 				{
 					JOptionPane.showMessageDialog(this, "Error saving the file", "Error", JOptionPane.ERROR_MESSAGE);
