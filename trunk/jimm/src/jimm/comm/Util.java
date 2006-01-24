@@ -638,17 +638,18 @@ public class Util
 	    
 	}
 	
-public static String toHexString(byte[] b) {
+	public static String toHexString(byte[] b)
+	{
 		StringBuffer sb = new StringBuffer(b.length * 2);
-		for (int i = 0; i < b.length; i++) {
+		for (int i = 0; i < b.length; i++)
+		{
 			//	look up high nibble char
 			sb.append(hexChar[(b[i] & 0xf0) >>> 4]);
 
 			//	look up low nibble char
 			sb.append(hexChar[b[i] & 0x0f]);
 			sb.append(" ");
-			if ((i != 0) && ((i % 15) == 0))
-			    sb.append("\n");
+			if ((i != 0) && ((i % 15) == 0)) sb.append("\n");
 		}
 		return sb.toString();
 	}
@@ -967,6 +968,8 @@ public static String toHexString(byte[] b) {
 	// Replaces all CRLF occurences in the string (val) with CR
 	public static String crlfToCr(String val)
 	{
+		return val; 
+		/*
 		char[] dst = new char[val.length()];
 		int dstLen = 0, i;
 		for (i = 0; i < (val.length() - 1); i++)   // 0 to next to last
@@ -990,6 +993,7 @@ public static String toHexString(byte[] b) {
 			dst[dstLen++] = val.charAt(i);
 		}
 		return (new String(dst, 0, dstLen));
+		*/
 	}
 	
 	public static String removeClRfAndTabs(String val)
