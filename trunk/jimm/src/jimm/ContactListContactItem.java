@@ -811,44 +811,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 			// Show Timeing info and DC info 
 			case USER_MENU_LOCAL_INFO:
-				TextList tlist = JimmUI.getInfoTextList(uin, true);
-				String[] clInfoData = new String[JimmUI.UI_LAST_ID];
-				
-				// sign on time
-				long signonTime = getLongValue(ContactListContactItem.CONTACTITEM_SIGNON); 
-				if (signonTime > 0) clInfoData[JimmUI.UI_SIGNON] = Util.getDateString(false, Util.createDate(signonTime));
-				
-				// online time
-				long onlineTime = getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
-				if (onlineTime > 0) clInfoData[JimmUI.UI_ONLINETIME] = Util.longitudeToString(onlineTime);
-				
-				// idle time
-				int idleTime = getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
-				if (idleTime > 0) clInfoData[JimmUI.UI_IDLE_TIME] = Util.longitudeToString(idleTime);
-				
-				//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
-				
-				// Client version
-				int clientVers = getIntValue(CONTACTITEM_CLIENT);
-				if (clientVers != Util.CLI_NONE) clInfoData[JimmUI.UI_ICQ_CLIENT] = Util.getClientString((byte)clientVers)+ " " + getStringValue(CONTACTITEM_CLIVERSION);
-				
-				// ICQ protocol version
-				clInfoData[JimmUI.UI_ICQ_VERS] = Integer.toString(getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT));
-				
-				// Internal IP
-				clInfoData[JimmUI.UI_INT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP));
-				
-				// External IP
-				clInfoData[JimmUI.UI_EXT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP));
-				
-				// Port
-				int port = getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT);
-				if (port != 0) clInfoData[JimmUI.UI_PORT] = Integer.toString(port);
-				
-				//#sijapp cond.end#
-				
-				JimmUI.fillUserInfo(clInfoData, tlist);
-				JimmUI.showInfoTextList(tlist);
+				showClientInfo();
 				break;
 
 			case USER_MENU_REQU_AUTH:
@@ -1101,6 +1064,48 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			messageTextbox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
 		}
 		// #sijapp cond.end#
+	}
+	
+	public void showClientInfo()
+	{
+		TextList tlist = JimmUI.getInfoTextList(getStringValue(ContactListContactItem.CONTACTITEM_UIN), true);
+		String[] clInfoData = new String[JimmUI.UI_LAST_ID];
+		
+		// sign on time
+		long signonTime = getLongValue(ContactListContactItem.CONTACTITEM_SIGNON); 
+		if (signonTime > 0) clInfoData[JimmUI.UI_SIGNON] = Util.getDateString(false, Util.createDate(signonTime));
+		
+		// online time
+		long onlineTime = getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
+		if (onlineTime > 0) clInfoData[JimmUI.UI_ONLINETIME] = Util.longitudeToString(onlineTime);
+		
+		// idle time
+		int idleTime = getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
+		if (idleTime > 0) clInfoData[JimmUI.UI_IDLE_TIME] = Util.longitudeToString(idleTime);
+		
+		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
+		
+		// Client version
+		int clientVers = getIntValue(CONTACTITEM_CLIENT);
+		if (clientVers != Util.CLI_NONE) clInfoData[JimmUI.UI_ICQ_CLIENT] = Util.getClientString((byte)clientVers)+ " " + getStringValue(CONTACTITEM_CLIVERSION);
+		
+		// ICQ protocol version
+		clInfoData[JimmUI.UI_ICQ_VERS] = Integer.toString(getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT));
+		
+		// Internal IP
+		clInfoData[JimmUI.UI_INT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP));
+		
+		// External IP
+		clInfoData[JimmUI.UI_EXT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP));
+		
+		// Port
+		int port = getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT);
+		if (port != 0) clInfoData[JimmUI.UI_PORT] = Integer.toString(port);
+		
+		//#sijapp cond.end#
+		
+		JimmUI.fillUserInfo(clInfoData, tlist);
+		JimmUI.showInfoTextList(tlist);
 	}
 	
 	public void rename(String newName)

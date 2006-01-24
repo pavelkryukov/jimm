@@ -505,6 +505,10 @@ public class JimmUI implements CommandListener
 				Jimm.setMinimized(true);
 				break;
 			// #sijapp cond.end#
+				
+			case Options.HOTKEY_CLI_INFO:
+				item.showClientInfo();
+				break;
 			}
 		}
 

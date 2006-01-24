@@ -146,6 +146,7 @@ public class Options
 	public static final int HOTKEY_HISTORY  = 8;
 	// #sijapp cond.end #
 	public static final int HOTKEY_MINIMIZE = 9;
+	public static final int HOTKEY_CLI_INFO = 10;
 	
 
 
@@ -577,7 +578,8 @@ class OptionsForm implements CommandListener
 		"keylock",
 		// #sijapp cond.if target is "MIDP2"#
 		"minimize",
-		// #sijapp cond.end#
+		// #sijapp cond.end#,
+		"dc_info",
 	};
 	
 	final private int [] hotkeyActions = 
@@ -595,6 +597,7 @@ class OptionsForm implements CommandListener
 		// #sijapp cond.if target is "MIDP2"#
 		Options.HOTKEY_MINIMIZE,
 		// #sijapp cond.end#
+		Options.HOTKEY_CLI_INFO,
 	};
 	
 	private int[] hotkeyOpts;
