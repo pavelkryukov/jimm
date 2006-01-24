@@ -35,7 +35,8 @@ class TextLine
 {
 	final Vector items = new Vector();
 	int height = -1;
-  	int bigTextIndex = -1;	
+  	int bigTextIndex = -1;
+  	char last_charaster;
 	
 	ListItem elementAt(int index)
 	{
@@ -151,7 +152,7 @@ public class TextList extends VirtualList
 	                        setImageList to set images for list lines */
 	)
 	{
-		internAdd(text, color, imageIndex, Font.STYLE_PLAIN, -1, true);
+		internAdd(text, color, imageIndex, Font.STYLE_PLAIN, -1, true, '\0');
 		invalidate();
 	}
 
@@ -165,18 +166,20 @@ public class TextList extends VirtualList
 		int fontStyle   //!< Text font style. See MID profile for details
 	)
 	{
-		internAdd(text, color, imageIndex, fontStyle, -1, true);
+		internAdd(text, color, imageIndex, fontStyle, -1, true, '\0');
 		invalidate();
 	}
 
 	private void internAdd
 	(
-		String text,
-		int color,
-		int imageIndex,
-		int fontStyle,
-		int textIndex,
-		boolean doCRLF)
+		String  text,
+		int     color,
+		int     imageIndex,
+		int     fontStyle,
+		int     textIndex,
+		boolean doCRLF,
+		char    last_charaster
+	)
 	{
 		ListItem new_item = new ListItem(text, color, imageIndex, fontStyle);
 
@@ -184,7 +187,13 @@ public class TextList extends VirtualList
 		TextLine textLine = (TextLine) lines.lastElement();
 		textLine.items.addElement(new_item);
 		textLine.bigTextIndex = textIndex;
-		if (doCRLF) this.doCRLF(textIndex);
+		if (doCRLF)
+		{
+			textLine.last_charaster = last_charaster;
+			TextLine newLine = new TextLine();
+			newLine.bigTextIndex = textIndex; 
+			lines.addElement(newLine);
+		}
 	}
 
 	//! Add new black text item to list
@@ -302,8 +311,16 @@ public class TextList extends VirtualList
 					continue;
 				}
 				int count = line.items.size(); 
-				for (int k = 0; k < count; k++) result.append(line.elementAt(k).text);
-				result.append("\n");
+				for (int k = 0; k < count; k++)
+				{
+					if (k != 0) result.append(' ');
+					result.append(line.elementAt(k).text);
+				}
+				if (line.last_charaster != '\0')
+				{
+					if (line.last_charaster == '\n') result.append("\r\n");
+					else result.append(line.last_charaster);
+				}
 			}
 		}
 		
@@ -342,6 +359,7 @@ public class TextList extends VirtualList
 
 	public TextList doCRLF(int blockTextIndex)
 	{
+		if (lines.size() != 0) ((TextLine) lines.lastElement()).last_charaster = '\n';
 		TextLine newLine = new TextLine();
 		newLine.bigTextIndex = blockTextIndex; 
 		lines.addElement(newLine);
@@ -379,10 +397,18 @@ public class TextList extends VirtualList
 	)
 	{
 		Font font;
-		int textLen, curPos, lastWordEnd, startPos, width, testStringWidth = 0;
+		int i, textLen, curPos, lastWordEnd, startPos, width, testStringWidth = 0;
 		char curChar;
 		boolean lineBreak, wordEnd, textEnd, divideLineToWords;
 		String testString = null;
+		
+		// Remove '\r' charaster
+		for (;;)
+		{
+			int pos = text.indexOf('\r'); 
+			if (pos == -1) break;
+			text = text.substring(0, pos)+text.substring(pos+1, text.length());
+		}
 
 		font = getQuickFont(fontStyle);
 		
@@ -416,8 +442,7 @@ public class TextList extends VirtualList
 			// simply add line
 			if ((lineBreak || textEnd) && (testStringWidth <= width)) 
 			{
-				//System.out.println("*1*");
-				internAdd(testString, color, -1, fontStyle, textIndex, lineBreak);
+				internAdd(testString, color, -1, fontStyle, textIndex, lineBreak, lineBreak ? '\n' : ' ');
 				width = trueWidth;
 				curPos++;
 				startPos = curPos;
@@ -429,14 +454,12 @@ public class TextList extends VirtualList
 			{
 				if ((testStringWidth < trueWidth) && (lastWordEnd != -1))
 				{
-					//System.out.println("*3*");
 					divideLineToWords = true;
 				}
 				
 				// Insert new line and try again
 				else if (trueWidth != width)
 				{
-					//System.out.println("*2*");
 					doCRLF(textIndex);
 					curPos = startPos;
 					width = trueWidth;
@@ -450,13 +473,12 @@ public class TextList extends VirtualList
 				// divide big word to several lines
 				if (lastWordEnd == -1)
 				{
-					//System.out.println("*4*");
 					for (; curPos >= 1; curPos--)
 					{
 						testString = text.substring(startPos, curPos);
 						if (font.stringWidth(testString) <= width) break;
 					}
-					internAdd(testString, color, -1, fontStyle, textIndex, true);
+					internAdd(testString, color, -1, fontStyle, textIndex, true, '\0');
 					width = trueWidth;
 					startPos = curPos;
 					lastWordEnd = -1;
@@ -466,7 +488,6 @@ public class TextList extends VirtualList
 				// several words in line
 				else
 				{
-					//System.out.println("*5*");
 					divideLineToWords = true;
 				}
 			}
@@ -474,7 +495,7 @@ public class TextList extends VirtualList
 			if (divideLineToWords)
 			{
 				String insString = text.substring(startPos, lastWordEnd);
-				internAdd(insString, color, -1, fontStyle, textIndex, true);
+				internAdd(insString, color, -1, fontStyle, textIndex, true, ' ');
 				curPos = lastWordEnd + 1;
 				startPos = curPos;
 				width = trueWidth;
@@ -503,7 +524,8 @@ public class TextList extends VirtualList
 		invalidate();
 		return this;
 	}
-	
+
+	// TODO: full rewrite code below!
     static public int getLineNumbers(String s, int width, int fontSize, int fontStyle, int textColor)
     {
         TextList paintList = new TextList(null);
