@@ -314,7 +314,6 @@ class HistoryStorageList extends VirtualList
 			if (record == null) return;
 			JimmUI.setClipBoardText
 			(
-				(record.type == 0),
 				record.date,
 				record.from,
 				record.text

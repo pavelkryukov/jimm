@@ -118,7 +118,7 @@ public class JimmUI implements CommandListener
 				JimmUI.setClipBoardText
 				(
 					"["+getCaption(infoTextList)+"]\n"
-					+infoTextList.getCurrText(0, (c == cmdCopyAll))
+					+infoTextList.getCurrText(0, (c == cmdCopyAll), null)
 				);
 			}
 		}
@@ -293,11 +293,11 @@ public class JimmUI implements CommandListener
 		clipBoardText = text;
 	}
 	
-	static public void setClipBoardText(boolean incoming, String date, String from, String text)
+	static public void setClipBoardText(String date, String from, String text)
 	{
 		StringBuffer sb = new StringBuffer();
 		sb.append('[').append(from).append(' ').append(date).append(']')
-		  .append(incoming ? " >> " : " << ").append(text);
+		  .append(CRLFstr).append(text);
 		clipBoardText = sb.toString();
 	}
 	
@@ -306,6 +306,7 @@ public class JimmUI implements CommandListener
 		clipBoardText = null;	
 	}
 	
+	final public static String CRLFstr = "\r\n";  
 	
 	////////////////////////
 	//                    //

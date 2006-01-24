@@ -393,7 +393,7 @@ public class ChatHistory
 		
 		MessData data = (MessData)list.getMessData().elementAt(textIndex);
 		
-		String text = list.textList.getCurrText(data.getOffset(), false);
+		String text = list.textList.getCurrText(data.getOffset(), false, null);
 		if (text == null) return;
 		
 		
@@ -504,10 +504,9 @@ public class ChatHistory
 		
 		JimmUI.setClipBoardText
 		(
-			md.getIncoming(),
 			Util.getDateString(false, md.getTime()),
 			md.getFrom(),
-			list.textList.getCurrText(md.getOffset(), false)
+			list.textList.getCurrText(md.getOffset(), false, md.getIncoming() ? ">> " : "<< ")
 		);
 	}
 
