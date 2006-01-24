@@ -118,7 +118,7 @@ public class JimmUI implements CommandListener
 				JimmUI.setClipBoardText
 				(
 					"["+getCaption(infoTextList)+"]\n"
-					+infoTextList.getCurrText(0, (c == cmdCopyAll), null)
+					+infoTextList.getCurrText(0, (c == cmdCopyAll))
 				);
 			}
 		}
@@ -283,6 +283,22 @@ public class JimmUI implements CommandListener
 	
 	static private String clipBoardText;
 	
+	static private String insertQuotingChars(String text, String qChars)
+	{
+		StringBuffer result = new StringBuffer();
+		int size = text.length();
+		boolean wasNewLine = true;
+		for (int i = 0; i < size; i++)
+		{
+			char chr = text.charAt(i);
+			if (wasNewLine) result.append(qChars);
+			result.append(chr);
+			wasNewLine = (chr == '\n');
+		}
+		
+		return result.toString();
+	}
+	
 	static public String getClipBoardText()
 	{
 		return clipBoardText;
@@ -293,11 +309,11 @@ public class JimmUI implements CommandListener
 		clipBoardText = text;
 	}
 	
-	static public void setClipBoardText(String date, String from, String text)
+	static public void setClipBoardText(boolean incoming, String date, String from, String text)
 	{
 		StringBuffer sb = new StringBuffer();
-		sb.append('[').append(from).append(' ').append(date).append(']')
-		  .append(CRLFstr).append(text);
+		sb.append('[').append(from).append(' ').append(date).append(']').append(CRLFstr)
+		  .append( insertQuotingChars(text, incoming ? ">> " : "<< ") );
 		clipBoardText = sb.toString();
 	}
 	
