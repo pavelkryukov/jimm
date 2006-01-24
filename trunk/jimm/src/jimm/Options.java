@@ -1086,10 +1086,9 @@ class OptionsForm implements CommandListener
                 // #sijapp cond.end#      
 				case OPTIONS_INTERFACE:
 					if (ResourceBundle.langAvailable.length > 1)
-					{
 						Options.setStringOption(Options.OPTION_UI_LANGUAGE,ResourceBundle.langAvailable[uiLanguageChoiceGroup.getSelectedIndex()]);
-						Options.setBooleanOption(Options.OPTION_DISPLAY_DATE,displayDateChoiceGroup.isSelected(0));
-					}
+					
+					Options.setBooleanOption(Options.OPTION_DISPLAY_DATE,displayDateChoiceGroup.isSelected(0));
 					
 					int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
 					boolean newHideOffline = choiceContactList.isSelected(1);
