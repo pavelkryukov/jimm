@@ -813,7 +813,12 @@ class OptionsForm implements CommandListener, ItemStateListener
 		{
 			if (choiceCurAccount == null)
 				choiceCurAccount = new ChoiceGroup(ResourceBundle.getString("options_account"), Choice.EXCLUSIVE);
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			choiceCurAccount.deleteAll();
+			//#sijapp cond.else#
+			while (choiceCurAccount.size() > 0) { choiceCurAccount.delete(0); }
+			//#sijapp cond.end#
+			
 			for (int i = 0; i < size; i++)
 				choiceCurAccount.append(checkUin((String)uins.elementAt(i)), null);
 			optionsForm.append(choiceCurAccount);

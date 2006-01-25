@@ -1304,7 +1304,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     // Message reply command
     private static Command msgReplyCommand;
     
-    private static Command replWithQuotaCommand = new Command(ResourceBundle.getString("quote"), Command.ITEM, 3);
+    private static Command replWithQuotaCommand = new Command(ResourceBundle.getString("quote", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
     
     private static Command copyTextCommand = new Command(ResourceBundle.getString("copy_text"), Command.ITEM, 4);
 
