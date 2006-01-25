@@ -1162,11 +1162,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         switch (notType)
 		{
 		case SOUND_TYPE_MESSAGE:
-			not_mode = Options.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
+			not_mode = Options.getIntOption(Options.OPTION_MESS_NOTIF_MODE);
 			break;
 			
 		case SOUND_TYPE_ONLINE:
-			not_mode = Options.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
+			not_mode = Options.getIntOption(Options.OPTION_ONLINE_NOTIF_MODE);
 			break;
 		}
             
@@ -1178,10 +1178,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 switch(notType)
                 {
                 case SOUND_TYPE_MESSAGE:
-                    Manager.playTone(ToneControl.C4, 500, Options.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
+                    Manager.playTone(ToneControl.C4, 500, Options.getIntOption(Options.OPTION_MESS_NOTIF_VOL));
                     break;
                 case SOUND_TYPE_ONLINE:
-                    Manager.playTone(ToneControl.C4+7, 500, Options.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME));
+                    Manager.playTone(ToneControl.C4+7, 500, Options.getIntOption(Options.OPTION_ONLINE_NOTIF_VOL));
                 }
 
             } catch (MediaException e)
@@ -1196,15 +1196,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 
                 if (notType == SOUND_TYPE_MESSAGE)
                 {
-                	p = createPlayer( Options.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE) );
+                	p = createPlayer( Options.getStringOption(Options.OPTION_MESS_NOTIF_FILE) );
                 	if (p == null) return;
-                    setVolume(p, Options.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME));
+                    setVolume(p, Options.getIntOption(Options.OPTION_MESS_NOTIF_VOL));
                 }
                 else
                 {
-                	p = createPlayer( Options.getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE) );
+                	p = createPlayer( Options.getStringOption(Options.OPTION_ONLINE_NOTIF_FILE) );
                 	if (p == null) return;
-                    setVolume(p, Options.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME)); 
+                    setVolume(p, Options.getIntOption(Options.OPTION_ONLINE_NOTIF_VOL)); 
                 }
                 
                 p.start();
@@ -1232,9 +1232,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         }
         int mode_rim;
         if (notType == SOUND_TYPE_MESSAGE)
-            mode_rim = Options.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE);
+            mode_rim = Options.getIntOption(Options.OPTION_MESS_NOTIF_MODE);
         else
-            mode_rim = Options.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE);
+            mode_rim = Options.getIntOption(Options.OPTION_ONLINE_NOTIF_MODE);
         switch (mode_rim)
         {
         case 1:

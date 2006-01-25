@@ -66,85 +66,84 @@ import javax.microedition.rms.RecordStoreException;
 
 public class Options
 {
-	// Option keys
-	static final int OPTION_UIN1                                  =   0;   /* String */
-	static final int OPTION_PASSWORD1                             = 225;   /* String */
-	static final int OPTION_UIN2                                  =  14;   /* String */
-	static final int OPTION_PASSWORD2                             = 226;   /* String */
-	static final int OPTION_UIN3                                  =  15;   /* String */
-	static final int OPTION_PASSWORD3                             = 227;   /* String */
-	static final int OPTIONS_CURR_ACCOUNT                         =  86;   /* int    */
+	/* Option keys */
+	static final int OPTION_UIN1                       =   0;   /* String */
+	static final int OPTION_PASSWORD1                  = 225;   /* String  */
+	static final int OPTION_UIN2                       =  14;   /* String  */
+	static final int OPTION_PASSWORD2                  = 226;   /* String  */
+	static final int OPTION_UIN3                       =  15;   /* String  */
+	static final int OPTION_PASSWORD3                  = 227;   /* String  */
+	static final int OPTIONS_CURR_ACCOUNT              =  86;   /* int     */
 	
 	// Theese two options are not stored in RMS 
-	public static final int OPTION_UIN                            = 254;   /* String */
-	public static final int OPTION_PASSWORD                       = 255;   /* String */
+	public static final int OPTION_UIN                 = 254;   /* String  */
+	public static final int OPTION_PASSWORD            = 255;   /* String  */
 	
-	public static final int OPTION_SRV_HOST                       =   1;   /* String  */
-	public static final int OPTION_SRV_PORT                       =   2;   /* String  */
-	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
-    public static final int OPTION_CONN_ALIVE_INVTERV             =  13;   /* String  */
-	public static final int OPTION_CONN_PROP                      =  64;   /* int     */
-	public static final int OPTION_CONN_TYPE                      =  83;   /* int     */
-	public static final int OPTION_AUTO_CONNECT	                  = 138;   /* boolean */
+	public static final int OPTION_SRV_HOST            =   1;   /* String  */
+	public static final int OPTION_SRV_PORT            =   2;   /* String  */
+	public static final int OPTION_KEEP_CONN_ALIVE     = 128;   /* boolean */
+    public static final int OPTION_CONN_ALIVE_INVTERV  =  13;   /* String  */
+	public static final int OPTION_CONN_PROP           =  64;   /* int     */
+	public static final int OPTION_CONN_TYPE           =  83;   /* int     */
+	public static final int OPTION_AUTO_CONNECT	       = 138;   /* boolean */
     // #sijapp cond.if target isnot  "MOTOROLA"#
-	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
+	public static final int OPTION_SHADOW_CON          = 139;   /* boolean */
     // #sijapp cond.end#
-	public static final int OPTION_UI_LANGUAGE                    =   3;   /* String  */
-	public static final int OPTION_DISPLAY_DATE                   = 129;   /* boolean */
-	public static final int OPTION_CL_SORT_BY                     =  65;   /* int     */
-	public static final int OPTION_CL_HIDE_OFFLINE                = 130;   /* boolean */
+	public static final int OPTION_UI_LANGUAGE         =   3;   /* String  */
+	public static final int OPTION_DISPLAY_DATE        = 129;   /* boolean */
+	public static final int OPTION_CL_SORT_BY          =  65;   /* int     */
+	public static final int OPTION_CL_HIDE_OFFLINE     = 130;   /* boolean */
     // #sijapp cond.if target isnot  "DEFAULT"#	
-	public static final int OPTION_MESSAGE_NOTIFICATION_MODE      =  66;   /* int     */
-	public static final int OPTION_MESSAGE_NOTIFICATION_SOUNDFILE =   4;   /* String  */
-	public static final int OPTION_MESSAGE_NOTIFICATION_VOLUME    =  67;   /* int     */
-	public static final int OPTION_ONLINE_NOTIFICATION_MODE       =  68;   /* int     */
-	public static final int OPTION_ONLINE_NOTIFICATION_SOUNDFILE  =   5;   /* String  */
-	public static final int OPTION_ONLINE_NOTIFICATION_VOLUME     =  69;   /* int     */
-	public static final int OPTION_VIBRATOR                       =  75;   /* integer */
+	public static final int OPTION_MESS_NOTIF_MODE     =  66;   /* int     */
+	public static final int OPTION_MESS_NOTIF_FILE     =   4;   /* String  */
+	public static final int OPTION_MESS_NOTIF_VOL      =  67;   /* int     */
+	public static final int OPTION_ONLINE_NOTIF_MODE   =  68;   /* int     */
+	public static final int OPTION_ONLINE_NOTIF_FILE   =   5;   /* String  */
+	public static final int OPTION_ONLINE_NOTIF_VOL    =  69;   /* int     */
+	public static final int OPTION_VIBRATOR            =  75;   /* integer */
     // #sijapp cond.end #	
-	public static final int OPTION_CP1251_HACK                    = 133;   /* boolean */
+	public static final int OPTION_CP1251_HACK         = 133;   /* boolean */
     // #sijapp cond.if modules_TRAFFIC is "true" #
-	public static final int OPTION_COST_PER_PACKET                =  70;   /* int     */
-	public static final int OPTION_COST_PER_DAY                   =  71;   /* int     */
-	public static final int OPTION_COST_PACKET_LENGTH             =  72;   /* int     */
-	public static final int OPTION_CURRENCY                       =   6;   /* String  */
+	public static final int OPTION_COST_PER_PACKET     =  70;   /* int     */
+	public static final int OPTION_COST_PER_DAY        =  71;   /* int     */
+	public static final int OPTION_COST_PACKET_LENGTH  =  72;   /* int     */
+	public static final int OPTION_CURRENCY            =   6;   /* String  */
     // #sijapp cond.end #
-	public static final int OPTION_ONLINE_STATUS                  = 192;   /* long    */
-	public static final int OPTION_CHAT_SMALL_FONT                = 135;   /* boolean */
-	public static final int OPTION_USER_GROUPS                    = 136;   /* boolean */
-	public static final int OPTION_HISTORY                        = 137;   /* boolean */
-	public static final int OPTION_SHOW_LAST_MESS                 = 142;   /* boolean */
-	public static final int OPTION_CLASSIC_CHAT                   = 143;   /* boolean */
-	public static final int OPTION_COLOR_SCHEME                   =  73;   /* int     */
-	public static final int OPTION_STATUS_MESSAGE                 =   7;   /* String  */
+	public static final int OPTION_ONLINE_STATUS       = 192;   /* long    */
+	public static final int OPTION_CHAT_SMALL_FONT     = 135;   /* boolean */
+	public static final int OPTION_USER_GROUPS         = 136;   /* boolean */
+	public static final int OPTION_HISTORY             = 137;   /* boolean */
+	public static final int OPTION_SHOW_LAST_MESS      = 142;   /* boolean */
+	public static final int OPTION_CLASSIC_CHAT        = 143;   /* boolean */
+	public static final int OPTION_COLOR_SCHEME        =  73;   /* int     */
+	public static final int OPTION_STATUS_MESSAGE      =   7;   /* String  */
 	// #sijapp cond.if target is "MOTOROLA"#
-	public static final int OPTION_LIGHT_TIMEOUT		          =  74;   /* int     */
-	public static final int OPTION_LIGHT_MANUAL		              = 140;   /* boolean */
+	public static final int OPTION_LIGHT_TIMEOUT       =  74;   /* int     */
+	public static final int OPTION_LIGHT_MANUAL	       = 140;   /* boolean */
 	// #sijapp cond.end#
 	
-	public static final int OPTION_USE_SMILES		              = 141;   /* boolean */
-	public static final int OPTION_MD5_LOGIN                      = 144;   /* boolean */
+	public static final int OPTION_USE_SMILES		   = 141;   /* boolean */
+	public static final int OPTION_MD5_LOGIN           = 144;   /* boolean */
     // #sijapp cond.if modules_PROXY is "true" #
-	public static final int OPTION_PRX_TYPE                       =  76;   /* int     */
-	public static final int OPTION_PRX_SERV                       =   8;   /* String  */
-	public static final int OPTION_PRX_PORT                       =   9;   /* String  */
-	public static final int OPTION_AUTORETRY_COUNT                =  10;   /* String  */
-	public static final int OPTION_PRX_NAME                       =  11;   /* String  */
-	public static final int OPTION_PRX_PASS                       =  12;   /* String  */
+	public static final int OPTION_PRX_TYPE            =  76;   /* int     */
+	public static final int OPTION_PRX_SERV            =   8;   /* String  */
+	public static final int OPTION_PRX_PORT            =   9;   /* String  */
+	public static final int OPTION_AUTORETRY_COUNT     =  10;   /* String  */
+	public static final int OPTION_PRX_NAME            =  11;   /* String  */
+	public static final int OPTION_PRX_PASS            =  12;   /* String  */
 	// #sijapp cond.end#
 	
-	public static final int OPTION_POPUP_WIN2                     =  84;   /*int*/
-	public static final int OPTION_EXT_CLKEY0                     =  77;   /*int*/
-	public static final int OPTION_EXT_CLKEYSTAR                  =  78;   /*int*/
-	public static final int OPTION_EXT_CLKEY4                     =  79;   /*int*/
-	public static final int OPTION_EXT_CLKEY6                     =  80;   /*int*/
-	public static final int OPTION_EXT_CLKEYCALL                  =  81;   /*int*/
-	public static final int OPTION_EXT_CLKEYPOUND                 =  82;   /*int*/
-	public static final int OPTION_VISIBILITY_ID                  =  85;   /* int     */
+	public static final int OPTION_POPUP_WIN2          =  84;   /* int     */
+	public static final int OPTION_EXT_CLKEY0          =  77;   /* int     */
+	public static final int OPTION_EXT_CLKEYSTAR       =  78;   /* int     */
+	public static final int OPTION_EXT_CLKEY4          =  79;   /* int     */
+	public static final int OPTION_EXT_CLKEY6          =  80;   /* int     */
+	public static final int OPTION_EXT_CLKEYCALL       =  81;   /* int     */
+	public static final int OPTION_EXT_CLKEYPOUND      =  82;   /* int     */
+	public static final int OPTION_VISIBILITY_ID       =  85;   /* int     */
 	
 	//Hotkey Actions
 	public static final int HOTKEY_NONE     = 0;
-
 	public static final int HOTKEY_INFO     = 2;
 	public static final int HOTKEY_NEWMSG   = 3;
 	public static final int HOTKEY_ONOFF    = 4;
@@ -236,26 +235,26 @@ public class Options
 		setIntOption    (Options.OPTION_CL_SORT_BY,                     0);
 		setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE,                false);
 		// #sijapp cond.if target is "SIEMENS1"#
-		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
-		setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mmf");
-		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
-		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
-		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mmf");
-		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
+		setIntOption    (Options.OPTION_MESS_NOTIF_MODE,      0);
+		setStringOption (Options.OPTION_MESS_NOTIF_FILE, "message.mmf");
+		setIntOption    (Options.OPTION_MESS_NOTIF_VOL,    50);
+		setIntOption    (Options.OPTION_ONLINE_NOTIF_MODE,       0);
+		setStringOption (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mmf");
+		setIntOption    (Options.OPTION_ONLINE_NOTIF_VOL,     50);
 		// #sijapp cond.elseif target is "MIDP2" | target is "SIEMENS2"#
-		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
-		setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.wav");
-		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
-		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
-		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.wav");
-		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
+		setIntOption    (Options.OPTION_MESS_NOTIF_MODE,      0);
+		setStringOption (Options.OPTION_MESS_NOTIF_FILE, "message.wav");
+		setIntOption    (Options.OPTION_MESS_NOTIF_VOL,    50);
+		setIntOption    (Options.OPTION_ONLINE_NOTIF_MODE,       0);
+		setStringOption (Options.OPTION_ONLINE_NOTIF_FILE,  "online.wav");
+		setIntOption    (Options.OPTION_ONLINE_NOTIF_VOL,     50);
         // #sijapp cond.elseif target is "MOTOROLA"#
-        setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_MODE,      0);
-		setStringOption (Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE, "message.mp3");
-		setIntOption    (Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,    50);
-		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
-		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mp3");
-		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
+        setIntOption    (Options.OPTION_MESS_NOTIF_MODE,      0);
+		setStringOption (Options.OPTION_MESS_NOTIF_FILE, "message.mp3");
+		setIntOption    (Options.OPTION_MESS_NOTIF_VOL,    50);
+		setIntOption    (Options.OPTION_ONLINE_NOTIF_MODE,       0);
+		setStringOption (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mp3");
+		setIntOption    (Options.OPTION_ONLINE_NOTIF_VOL,     50);
 		setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		            5);
 		setBooleanOption(Options.OPTION_LIGHT_MANUAL,		            false);	
 		// #sijapp cond.end#
@@ -1138,9 +1137,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                // #sijapp cond.if target isnot "RIM"#        
 	                onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);               
 	                // #sijapp cond.end#                  
-	                onlineNotificationModeChoiceGroup.setSelectedIndex(Options.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE),true);
+	                onlineNotificationModeChoiceGroup.setSelectedIndex(Options.getIntOption(Options.OPTION_ONLINE_NOTIF_MODE),true);
 	                // #sijapp cond.if target isnot "RIM"#                 
-	                onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("onl_sound_file_name"), Options.getStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
+	                onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("onl_sound_file_name"), Options.getStringOption(Options.OPTION_ONLINE_NOTIF_FILE), 32, TextField.ANY);
 	                // #sijapp cond.end#                 
 	                messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("message_notification"),Choice.EXCLUSIVE);
 	                messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
@@ -1148,11 +1147,11 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                // #sijapp cond.if target isnot "RIM"#                 
 	                messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
 	                // #sijapp cond.end#                  
-	                messageNotificationModeChoiceGroup.setSelectedIndex(Options.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE), true);
+	                messageNotificationModeChoiceGroup.setSelectedIndex(Options.getIntOption(Options.OPTION_MESS_NOTIF_MODE), true);
 	                // #sijapp cond.if target isnot "RIM"#                  
-	                messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.getStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE), 32, TextField.ANY);
-	                messageNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME) / 10);
-	                onlineNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.getIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME) / 10);
+	                messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.getStringOption(Options.OPTION_MESS_NOTIF_FILE), 32, TextField.ANY);
+	                messageNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.getIntOption(Options.OPTION_MESS_NOTIF_VOL) / 10);
+	                onlineNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.getIntOption(Options.OPTION_ONLINE_NOTIF_VOL) / 10);
 	                // #sijapp cond.end#
 	                
 	                vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration"), Choice.EXCLUSIVE);
@@ -1323,15 +1322,15 @@ class OptionsForm implements CommandListener, ItemStateListener
                 				
 				case OPTIONS_SIGNALING:
 					// #sijapp cond.if target isnot "DEFAULT"# ===>
-					Options.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE,messageNotificationModeChoiceGroup.getSelectedIndex());
+					Options.setIntOption(Options.OPTION_MESS_NOTIF_MODE,messageNotificationModeChoiceGroup.getSelectedIndex());
 					Options.setIntOption(Options.OPTION_VIBRATOR, vibratorChoiceGroup.getSelectedIndex());
-					Options.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_MODE,onlineNotificationModeChoiceGroup.getSelectedIndex());
+					Options.setIntOption(Options.OPTION_ONLINE_NOTIF_MODE,onlineNotificationModeChoiceGroup.getSelectedIndex());
 					
 					// #sijapp cond.if target isnot "RIM"#       
-					Options.setStringOption(Options.OPTION_MESSAGE_NOTIFICATION_SOUNDFILE,messageNotificationSoundfileTextField.getString());
-					Options.setIntOption(Options.OPTION_MESSAGE_NOTIFICATION_VOLUME,messageNotificationSoundVolume.getValue()*10);
-					Options.setStringOption(Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,onlineNotificationSoundfileTextField.getString());
-					Options.setIntOption(Options.OPTION_ONLINE_NOTIFICATION_VOLUME,onlineNotificationSoundVolume.getValue()*10);
+					Options.setStringOption(Options.OPTION_MESS_NOTIF_FILE,messageNotificationSoundfileTextField.getString());
+					Options.setIntOption(Options.OPTION_MESS_NOTIF_VOL,messageNotificationSoundVolume.getValue()*10);
+					Options.setStringOption(Options.OPTION_ONLINE_NOTIF_FILE,onlineNotificationSoundfileTextField.getString());
+					Options.setIntOption(Options.OPTION_ONLINE_NOTIF_VOL,onlineNotificationSoundVolume.getValue()*10);
                     // #sijapp cond.end#
 					// #sijapp cond.end# <===
 					Options.setIntOption(Options.OPTION_POPUP_WIN2, chrgPopupWin.getSelectedIndex()); 
