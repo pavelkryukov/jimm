@@ -857,7 +857,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				JimmUI.stdSelector,
 				this,
 				SELECTOR_DEL_CHAT,
-				false
+				true
 			);
 		}
 		
