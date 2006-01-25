@@ -417,29 +417,29 @@ public class JimmUI implements CommandListener
 		switch (keyCode)
 		{
 		case Canvas.KEY_NUM0:
-			execHotKeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY0), cItem, type);
+			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEY0), cItem, type);
 			break;
 		case Canvas.KEY_NUM4:
-			execHotKeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY4), cItem, type);
+			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEY4), cItem, type);
 			break;
 			
 		case Canvas.KEY_NUM6:
-			execHotKeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEY6), cItem, type);
+			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEY6), cItem, type);
 			break;
 
 		case Canvas.KEY_STAR:
-			execHotKeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYSTAR), cItem, type);
+			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEYSTAR), cItem, type);
 			break;
 			
 		case Canvas.KEY_POUND:
-			execHotKeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYPOUND), cItem, type);
+			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEYPOUND), cItem, type);
 			break;
 			
 			
 		// #sijapp cond.if target is "SIEMENS2"#
 		case -11:
 			// This means the CALL button was pressed...
-			execHotKeyAction(Options.getIntOption(Options.OPTION_EXT_CLKEYCALL), cItem, type);
+			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEYCALL), cItem, type);
 			break;
 		// #sijapp cond.end#
 			
@@ -476,10 +476,10 @@ public class JimmUI implements CommandListener
 				break;
 
 			case Options.HOTKEY_ONOFF:
-				if (Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) 
-					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE, false);
+				if (Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE)) 
+					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
 				else 
-					Options.setBooleanOption(Options.OPTION_CL_HIDE_OFFLINE, true);
+					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, true);
 				try
 				{
 					Options.save();

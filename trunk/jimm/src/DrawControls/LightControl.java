@@ -28,12 +28,12 @@ import jimm.Options;
 
 public class LightControl
 {
-private static int TIMEOUT = Options.getIntOption(Options.OPTION_LIGHT_TIMEOUT) * 1000; //millisec
+private static int TIMEOUT = Options.getInt(Options.OPTION_LIGHT_TIMEOUT) * 1000; //millisec
 private static boolean lightOn = true;
 
     public static void flash(boolean constant)
     {
-	if (!Options.getBooleanOption(Options.OPTION_LIGHT_MANUAL))
+	if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL))
 		{
 		    if (constant) Jimm.display.flashBacklight(Integer.MAX_VALUE);
 		    else    	Jimm.display.flashBacklight(TIMEOUT);
@@ -42,7 +42,7 @@ private static boolean lightOn = true;
     }
     public static void changeState()
     {
-	if (Options.getBooleanOption(Options.OPTION_LIGHT_MANUAL))
+	if (Options.getBoolean(Options.OPTION_LIGHT_MANUAL))
 	{
 		if (lightOn)	Off();
 		else		On();

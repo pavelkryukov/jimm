@@ -203,7 +203,7 @@ public class ConnectAction extends Action
         int retry = 1;
         try
         {
-            retry = Integer.parseInt(Options.getStringOption(Options.OPTION_AUTORETRY_COUNT));
+            retry = Integer.parseInt(Options.getString(Options.OPTION_AUTORETRY_COUNT));
             retry = (retry > 0) ? retry : 1;
         } catch (NumberFormatException e)
         {
@@ -277,7 +277,7 @@ public class ConnectAction extends Action
         int retry = 1;
         try
         {
-            retry = Integer.parseInt(Options.getStringOption(Options.OPTION_AUTORETRY_COUNT));
+            retry = Integer.parseInt(Options.getString(Options.OPTION_AUTORETRY_COUNT));
             retry = (retry > 0) ? retry : 1;
         } catch (NumberFormatException e)
         {
@@ -304,7 +304,7 @@ public class ConnectAction extends Action
                     ConnectPacket connectPacket = (ConnectPacket) packet;
                     if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
                     {
-						if (Options.getBooleanOption(Options.OPTION_MD5_LOGIN)) {
+						if (Options.getBoolean(Options.OPTION_MD5_LOGIN)) {
 							Icq.c.sendPacket(new ConnectPacket());
 							byte[] buf = new byte[4 + this.uin.length()];
 							Util.putWord(buf, 0, 0x0001);
@@ -319,7 +319,7 @@ public class ConnectAction extends Action
 						}
 
                         // Move to next state
-                        this.state = !Options.getBooleanOption(Options.OPTION_MD5_LOGIN) ? ConnectAction.STATE_CLI_IDENT_SENT :
+                        this.state = !Options.getBoolean(Options.OPTION_MD5_LOGIN) ? ConnectAction.STATE_CLI_IDENT_SENT :
 							STATE_AUTHKEY_REQUESTED;
 
                         // Packet has been consumed
@@ -371,7 +371,7 @@ public class ConnectAction extends Action
             else if (this.state == ConnectAction.STATE_CLI_IDENT_SENT)
 			{
 				int errcode = -1;
-				if (Options.getBooleanOption(Options.OPTION_MD5_LOGIN)) {
+				if (Options.getBoolean(Options.OPTION_MD5_LOGIN)) {
 					if (packet instanceof SnacPacket) {
 						SnacPacket snacPacket = (SnacPacket)packet;
 						if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0003)) {
@@ -446,7 +446,7 @@ public class ConnectAction extends Action
 					if (!(Icq.c instanceof HTTPConnection))
 						Icq.c.close();
 					// #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
-					if (Options.getBooleanOption(Options.OPTION_SHADOW_CON)) try
+					if (Options.getBoolean(Options.OPTION_SHADOW_CON)) try
 					{
 						// Wait the given time before starting the
 						// new connection
@@ -520,7 +520,7 @@ public class ConnectAction extends Action
 						Icq.c.sendPacket(reply1);
 
 						// Send a CLI_SETSTATUS packet
-						Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, (0x10<<24)|Util.translateStatusSend(Options.getLongOption(Options.OPTION_ONLINE_STATUS)));
+						Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, (0x10<<24)|Util.translateStatusSend(Options.getLong(Options.OPTION_ONLINE_STATUS)));
 						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
 						Icq.c.sendPacket(reply2);
 
@@ -695,7 +695,7 @@ public class ConnectAction extends Action
 
 									if (tlvType == 0x00CA)
 									{
-										Options.setIntOption(Options.OPTION_VISIBILITY_ID, (int)id);
+										Options.setInt(Options.OPTION_VISIBILITY_ID, (int)id);
 									}
 
 									len -= 4;
@@ -739,9 +739,9 @@ public class ConnectAction extends Action
 						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]);
 						Icq.c.sendPacket(reply1);
 
-						long onlineStatusOpt = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
+						long onlineStatusOpt = Options.getLong(Options.OPTION_ONLINE_STATUS);
 						long onlineStatus = Util.translateStatusSend(onlineStatusOpt);
-						int visibilityItemId = Options.getIntOption(Options.OPTION_VISIBILITY_ID);
+						int visibilityItemId = Options.getInt(Options.OPTION_VISIBILITY_ID);
 						byte[] buf = new byte[15];
 						byte bCode = 0;
 						if(visibilityItemId != 0)

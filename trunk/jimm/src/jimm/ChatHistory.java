@@ -194,7 +194,7 @@ class ChatTextList implements VirtualListCommands
 		textList.setCursorMode(TextList.SEL_NONE);
 		textList.setFontSize
 		(
-			Options.getBooleanOption(Options.OPTION_CHAT_SMALL_FONT)
+			Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT)
 				   ? TextList.SMALL_FONT : TextList.MEDIUM_FONT
 		);
 		
@@ -209,7 +209,7 @@ class ChatTextList implements VirtualListCommands
 	{
 		Displayable result;
 		// #sijapp cond.if target is "SIEMENS2"#
-		result = Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT) ? (Displayable)form : (Displayable)textList;
+		result = Options.getBoolean(Options.OPTION_CLASSIC_CHAT) ? (Displayable)form : (Displayable)textList;
 		// #sijapp cond.else#
 		textList.setForcedSize(textList.getWidth(), textList.getHeight());
 		result = textList;
@@ -304,7 +304,7 @@ class ChatTextList implements VirtualListCommands
 	public void activate(boolean initChat, boolean resetText)
 	{
 		//#sijapp cond.if target is "SIEMENS2"#
-		if ( Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT) )
+		if ( Options.getBoolean(Options.OPTION_CLASSIC_CHAT) )
 		{
 			form.setItemStateListener(this);
 			textLine.setItemCommandListener(this);
@@ -433,7 +433,7 @@ public class ChatHistory
 			addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText(), "", plainMsg.getNewDate(), true, offline);
 			
 			// #sijapp cond.if modules_HISTORY is "true" #
-			if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
+			if ( Options.getBoolean(Options.OPTION_HISTORY) )
 				HistoryStorage.addText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), plainMsg.getText(), (byte)0, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getNewDate());
 			// #sijapp cond.end#
 			
@@ -593,7 +593,7 @@ public class ChatHistory
 	final static private int MAX_HIST_LAST_MESS = 5;
 	static public void fillFormHistory(String uin, String name)
 	{
-		if (Options.getBooleanOption(Options.OPTION_SHOW_LAST_MESS))
+		if (Options.getBoolean(Options.OPTION_SHOW_LAST_MESS))
 		{
 			int recCount = HistoryStorage.getRecordCount(uin);
 			if (recCount == 0) return;

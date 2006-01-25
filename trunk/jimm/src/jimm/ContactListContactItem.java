@@ -713,7 +713,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 					else if (status == ContactList.STATUS_CHAT) msgType = Message.MESSAGE_TYPE_FFC;
 					else msgType = Message.MESSAGE_TYPE_AWAY;
 
-					PlainMessage awayReq = new PlainMessage(Options.getStringOption(Options.OPTION_UIN), ContactListContactItem.this, msgType, Util.createCurrentDate(), "");
+					PlainMessage awayReq = new PlainMessage(Options.getString(Options.OPTION_UIN), ContactListContactItem.this, msgType, Util.createCurrentDate(), "");
 
 					SendMessageAction act = new SendMessageAction(awayReq);
 					try
@@ -1145,7 +1145,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		PlainMessage plainMsg = 
 			new PlainMessage
 			    (
-			    	Options.getStringOption(Options.OPTION_UIN),
+			    	Options.getString(Options.OPTION_UIN),
 			    	this,
 			    	Message.MESSAGE_TYPE_NORM,
 			    	Util.createCurrentDate(),
@@ -1164,7 +1164,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		ChatHistory.addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getNewDate(), name);
 
 		// #sijapp cond.if modules_HISTORY is "true" #
-		if ( Options.getBooleanOption(Options.OPTION_HISTORY) )
+		if ( Options.getBoolean(Options.OPTION_HISTORY) )
 			HistoryStorage.addText(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, (byte)1, ResourceBundle.getString("me"), plainMsg.getNewDate());
 		// #sijapp cond.end#
 	}
@@ -1201,7 +1201,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			msgDisplay.addCommand(msgCloseCommand);
 			
 			// #sijapp cond.if target is "SIEMENS2"#
-			if (!Options.getBooleanOption(Options.OPTION_CLASSIC_CHAT)) msgDisplay.addCommand(msgReplyCommand);
+			if (!Options.getBoolean(Options.OPTION_CLASSIC_CHAT)) msgDisplay.addCommand(msgReplyCommand);
 			//#sijapp cond.else#
 			msgDisplay.addCommand(msgReplyCommand);
 			//#sijapp cond.end#
@@ -1210,7 +1210,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			msgDisplay.addCommand(addMenuCommand);
 			//#sijapp cond.if modules_HISTORY is "true" #
 			msgDisplay.removeCommand(addToHistoryCommand);
-			if ( !Options.getBooleanOption(Options.OPTION_HISTORY) )
+			if ( !Options.getBoolean(Options.OPTION_HISTORY) )
 				msgDisplay.addCommand(addToHistoryCommand);
 			//#sijapp cond.end#
 			if (isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
@@ -1418,7 +1418,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		boolean chatVisible = ChatHistory.chatHistoryShown(uin);
 		boolean uinEquals = uin.equals(currentUin); 
 		
-		switch (Options.getIntOption(Options.OPTION_POPUP_WIN2) )
+		switch (Options.getInt(Options.OPTION_POPUP_WIN2) )
 		{
 		case 0: return;
 		case 1:

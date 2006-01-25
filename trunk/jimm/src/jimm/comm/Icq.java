@@ -178,7 +178,7 @@ public class Icq implements Runnable
         SplashCanvas.setProgress(0);
         Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
         // #sijapp cond.if target isnot "MOTOROLA"#
-        if (Options.getBooleanOption(Options.OPTION_SHADOW_CON))
+        if (Options.getBoolean(Options.OPTION_SHADOW_CON))
         {
             // Make the shadow connection for Nokia 6230 of other devices if
             // needed
@@ -197,7 +197,7 @@ public class Icq implements Runnable
         }
         // #sijapp cond.end#
         // Connect
-        ConnectAction act = new ConnectAction(Options.getStringOption(Options.OPTION_UIN), Options.getStringOption(Options.OPTION_PASSWORD), Options.getStringOption(Options.OPTION_SRV_HOST), Options.getStringOption(Options.OPTION_SRV_PORT));
+        ConnectAction act = new ConnectAction(Options.getString(Options.OPTION_UIN), Options.getString(Options.OPTION_PASSWORD), Options.getString(Options.OPTION_SRV_HOST), Options.getString(Options.OPTION_SRV_PORT));
         try
         {
             requestAction(act);
@@ -380,12 +380,12 @@ public class Icq implements Runnable
         Action newAction;
 
         // Instantiate connections
-        if (Options.getIntOption(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_SOCKET)
+        if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_SOCKET)
         	c = new SOCKETConnection();
-        else if (Options.getIntOption(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_HTTP)
+        else if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_HTTP)
         	c = new HTTPConnection();
         // #sijapp cond.if modules_PROXY is "true"#
-        else if (Options.getIntOption(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
+        else if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
         	c = new SOCKSConnection();
         // #sijapp cond.end#
 
@@ -398,7 +398,7 @@ public class Icq implements Runnable
         // Instantiate KeepAliveTimerTask
         keepAliveTimerTask = new KeepAliveTimerTask();
         keepAliveTimerTask.setIcq(this);
-        Jimm.jimm.getTimerRef().schedule(keepAliveTimerTask, Integer.parseInt(Options.getStringOption(Options.OPTION_CONN_ALIVE_INVTERV))*1000, Integer.parseInt(Options.getStringOption(Options.OPTION_CONN_ALIVE_INVTERV))*1000);
+        Jimm.jimm.getTimerRef().schedule(keepAliveTimerTask, Integer.parseInt(Options.getString(Options.OPTION_CONN_ALIVE_INVTERV))*1000, Integer.parseInt(Options.getString(Options.OPTION_CONN_ALIVE_INVTERV))*1000);
 
         // Catch JimmExceptions
         try
@@ -1362,7 +1362,7 @@ public class Icq implements Runnable
 
                     // Read flap header
                     bReadSum = 0;
-                    if (Options.getIntOption(Options.OPTION_CONN_PROP) == 1)
+                    if (Options.getInt(Options.OPTION_CONN_PROP) == 1)
                     {
                         while (is.available() == 0)
                             Thread.sleep(250);
@@ -1591,7 +1591,7 @@ public class Icq implements Runnable
         // thread
     	public synchronized void connect(String hostAndPort) throws JimmException
         {
-            int mode = Options.getIntOption(Options.OPTION_PRX_TYPE);
+            int mode = Options.getInt(Options.OPTION_PRX_TYPE);
             is_connected = false;
             is_socks4 = false;
             is_socks5 = false;
@@ -1664,8 +1664,8 @@ public class Icq implements Runnable
         private synchronized void connect_socks4(String host, String port) throws JimmException
         {
             is_socks4 = false;
-            String proxy_host = Options.getStringOption(Options.OPTION_PRX_SERV);
-            String proxy_port = Options.getStringOption(Options.OPTION_PRX_PORT);
+            String proxy_host = Options.getString(Options.OPTION_PRX_SERV);
+            String proxy_port = Options.getString(Options.OPTION_PRX_PORT);
             int i = 0;
             byte[] buf;
 
@@ -1748,10 +1748,10 @@ public class Icq implements Runnable
         private synchronized void connect_socks5(String host, String port) throws JimmException
         {
             is_socks5 = false;
-            String proxy_host = Options.getStringOption(Options.OPTION_PRX_SERV);
-            String proxy_port = Options.getStringOption(Options.OPTION_PRX_PORT);
-            String proxy_login = Options.getStringOption(Options.OPTION_PRX_NAME);
-            String proxy_pass = Options.getStringOption(Options.OPTION_PRX_PASS);
+            String proxy_host = Options.getString(Options.OPTION_PRX_SERV);
+            String proxy_port = Options.getString(Options.OPTION_PRX_PORT);
+            String proxy_login = Options.getString(Options.OPTION_PRX_NAME);
+            String proxy_pass = Options.getString(Options.OPTION_PRX_PASS);
             int i = 0;
             byte[] buf;
 
@@ -2000,7 +2000,7 @@ public class Icq implements Runnable
 
                     // Read flap header
                     bReadSum = 0;
-                    if (Options.getIntOption(Options.OPTION_CONN_PROP) == 1)
+                    if (Options.getInt(Options.OPTION_CONN_PROP) == 1)
                     {
                         while (is.available() == 0)
                             Thread.sleep(250);
@@ -2374,7 +2374,7 @@ public class Icq implements Runnable
 
                     // Read flap header
                     bReadSum = 0;
-                    if (Options.getIntOption(Options.OPTION_CONN_PROP) == 1)
+                    if (Options.getInt(Options.OPTION_CONN_PROP) == 1)
                     {
                         while (is.available() == 0)
                             Thread.sleep(250);
