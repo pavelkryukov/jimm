@@ -318,7 +318,7 @@ public class TextList extends VirtualList
 				}
 				if (line.last_charaster != '\0')
 				{
-					if (line.last_charaster == '\n') result.append("\r\n");
+					if (line.last_charaster == '\n') result.append("\n");
 					else result.append(line.last_charaster);
 				}
 			}
