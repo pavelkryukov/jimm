@@ -298,7 +298,7 @@ public class SplashCanvas extends Canvas
 	        LED.setState(LED.STATE_BLINKING);
             // #sijapp cond.end#
 			// #sijapp cond.if target is "MOTOROLA"#
-			if (Options.getIntOption(Options.OPTION_MESSAGE_NOTIFICATION_MODE) == 0)
+			if (Options.getIntOption(Options.OPTION_MESS_NOTIF_MODE) == 0)
 			Jimm.display.flashBacklight(1000);
 			// #sijapp cond.end#
 			_this.repaint();
