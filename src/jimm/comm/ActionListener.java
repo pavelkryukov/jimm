@@ -342,10 +342,10 @@ public class ActionListener
                         String text;
                         if (Util.getWord(message, 0) == 0x0002)
                         {
-                            text = Util.crlfToCr(Util.ucs2beByteArrayToString(message, 4, message.length - 4));
+                            text = Util.removeCr(Util.ucs2beByteArrayToString(message, 4, message.length - 4));
                         } else
                         {
-                            text = Util.crlfToCr(Util.byteArrayToString(message, 4, message.length - 4));
+                            text = Util.removeCr(Util.byteArrayToString(message, 4, message.length - 4));
                         }
 
                         // Construct object which encapsulates the received
@@ -486,7 +486,7 @@ public class ActionListener
                         {
 
                             // Decode text
-                            String text = Util.crlfToCr(Util.byteArrayToString(rawText, isUtf8));
+                            String text = Util.removeCr(Util.byteArrayToString(rawText, isUtf8));
 
                             // Instantiate message object
                             message = new PlainMessage(uin, Options.getStringOption(Options.OPTION_UIN), Util.createCurrentDate(), text, false);
@@ -510,12 +510,12 @@ public class ActionListener
                             String urlText, url;
                             if (delim != -1)
                             {
-                                urlText = Util.crlfToCr(Util.byteArrayToString(rawText, 0, delim, isUtf8));
-                                url = Util.crlfToCr(Util.byteArrayToString(rawText, delim + 1, rawText.length - delim
+                                urlText = Util.removeCr(Util.byteArrayToString(rawText, 0, delim, isUtf8));
+                                url = Util.removeCr(Util.byteArrayToString(rawText, delim + 1, rawText.length - delim
                                         - 1, isUtf8));
                             } else
                             {
-                                urlText = Util.crlfToCr(Util.byteArrayToString(rawText, isUtf8));
+                                urlText = Util.removeCr(Util.byteArrayToString(rawText, isUtf8));
                                 url = "";
                             }
 
@@ -588,7 +588,7 @@ public class ActionListener
                         if (msg2Buf.length < msg2Marker + textLen) { throw (new JimmException(152, 7, false)); }
 
                         // Get text
-                        String text = Util.crlfToCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
+                        String text = Util.removeCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
                         msg2Marker += textLen;
 
                         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -614,7 +614,7 @@ public class ActionListener
                              if (msg2Buf.length < msg2Marker + textLen) { throw (new JimmException(152, 8, false)); }
 
                              // Get text
-                             String filename = Util.crlfToCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
+                             String filename = Util.removeCr(Util.byteArrayToString(msg2Buf, msg2Marker, textLen));
                              msg2Marker += textLen;
                              
                              // Get filesize
@@ -788,7 +788,7 @@ public class ActionListener
                     if (msgBuf.length != 8 + textLen) { throw (new JimmException(153, 1, false)); }
 
                     // Get text
-                    String text = Util.crlfToCr(Util.byteArrayToString(msgBuf, msgMarker, textLen));
+                    String text = Util.removeCr(Util.byteArrayToString(msgBuf, msgMarker, textLen));
                     msgMarker += textLen;
 
                     // Plain message

@@ -963,37 +963,33 @@ public class Util
 	{
 		return (Util.ucs2beByteArrayToString(buf, 0, buf.length));
 	}
-
-
-	// Replaces all CRLF occurences in the string (val) with CR
-	public static String crlfToCr(String val)
+	
+	// Removes all CR occurences
+	public static String removeCr(String val)
 	{
-		return val; 
-		/*
-		char[] dst = new char[val.length()];
-		int dstLen = 0, i;
-		for (i = 0; i < (val.length() - 1); i++)   // 0 to next to last
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < val.length(); i++)
 		{
-			if ((val.charAt(i) == '\r') && (val.charAt(i + 1) == '\n'))
-			{
-				dst[dstLen++] = val.charAt(i++);
-			}
-			else if (val.charAt(i + 1) == '\r')
-			{
-				dst[dstLen++] = val.charAt(i);
-			}
-			else
-			{
-				dst[dstLen++] = val.charAt(i++);
-				dst[dstLen++] = val.charAt(i);
-			}
+			char chr = val.charAt(i);
+			if ((chr == 0) || (chr == '\r')) continue;
+			result.append(chr);
 		}
-		if (i < val.length())
+		return result.toString();
+	}
+	
+	// Restores CRLF sequense from LF
+	public static String restoreCrLf(String val)
+	{
+		StringBuffer result = new StringBuffer();
+		int size = val.length();
+		for (int i = 0; i < size; i++)
 		{
-			dst[dstLen++] = val.charAt(i);
+			char chr = val.charAt(i);
+			if (chr == '\r') continue;
+			if (chr == '\n') result.append("\r\n");
+			else result.append(chr);
 		}
-		return (new String(dst, 0, dstLen));
-		*/
+		return result.toString();
 	}
 	
 	public static String removeClRfAndTabs(String val)

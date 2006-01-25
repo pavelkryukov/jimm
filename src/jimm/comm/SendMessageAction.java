@@ -33,15 +33,8 @@ import jimm.Options;
 
 public class SendMessageAction extends Action
 {
-
-
   // Plain message
   private PlainMessage plainMsg;
-
-
-  // URL message
-  private UrlMessage urlMsg;
-
   
   // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
   // #sijapp cond.if modules_FILES is "true"#
@@ -62,24 +55,14 @@ public class SendMessageAction extends Action
     if (msg instanceof PlainMessage)
     {
       this.plainMsg = (PlainMessage) msg;
-      this.urlMsg = null;
       // #sijapp cond.if modules_FILES is"true"#
       this.fileTrans = null;
       // #sijapp cond.end#
-    }
-    else if (msg instanceof UrlMessage)
-    {
-      this.plainMsg = null;
-      this.urlMsg = (UrlMessage) msg;
-     // #sijapp cond.if modules_FILES is "true"#  
-    this.fileTrans = null;
-     // #sijapp cond.end#
     }
     // #sijapp cond.if modules_FILES is "true"#
     else if (msg instanceof FileTransferMessage) 
     {
       this.plainMsg = null;
-      this.urlMsg = null;
       this.fileTrans = (FileTransferMessage) msg;
     }
     // #sijapp cond.end#
@@ -87,12 +70,6 @@ public class SendMessageAction extends Action
        if (msg instanceof PlainMessage)
     {
       this.plainMsg = (PlainMessage) msg;
-      this.urlMsg = null;
-    }
-    else if (msg instanceof UrlMessage)
-    {
-      this.plainMsg = null;
-      this.urlMsg = (UrlMessage) msg;
     }
     // #sijapp cond.end#
   }
@@ -117,12 +94,7 @@ public class SendMessageAction extends Action
   {
     // Forward init request depending on message type
     SEQ1--; 
-    if (this.urlMsg != null)
-      this.initUrlMsg();
-    else
-      this.initPlainMsg();
-    
-
+    initPlainMsg();
   }
 
 
@@ -176,11 +148,11 @@ public class SendMessageAction extends Action
             byte[] textRaw;
             if (utf8)
             {
-                textRaw = Util.stringToUcs2beByteArray(this.plainMsg.getText());
+                textRaw = Util.stringToUcs2beByteArray( Util.restoreCrLf(this.plainMsg.getText()) );
             }
             else
             {
-                textRaw = Util.stringToByteArray(this.plainMsg.getText());
+                textRaw = Util.stringToByteArray( Util.restoreCrLf(this.plainMsg.getText()) );
             }
 
             // Pack data
@@ -257,7 +229,7 @@ public class SendMessageAction extends Action
                 if (this.fileTrans == null)
                 {
 
-                    textRaw = Util.stringToByteArray(this.plainMsg.getText());
+                    textRaw = Util.stringToByteArray( Util.restoreCrLf(this.plainMsg.getText()) );
                     filenameRaw = new byte[0];
                 }
                 else
@@ -266,11 +238,11 @@ public class SendMessageAction extends Action
                     filenameRaw = Util.stringToByteArray(this.fileTrans.getFilename());
                 }
                 // #sijapp cond.else#
-                textRaw = Util.stringToByteArray(this.plainMsg.getText());
+                textRaw = Util.stringToByteArray( Util.restoreCrLf(this.plainMsg.getText()) );
                 filenameRaw = new byte[0];                
                 // #sijapp cond.end#
                 // #sijapp cond.else#
-                textRaw = Util.stringToByteArray(this.plainMsg.getText());
+                textRaw = Util.stringToByteArray( Util.restoreCrLf(this.plainMsg.getText()) );
                 filenameRaw = new byte[0];
                 // #sijapp cond.end#
 
@@ -636,50 +608,6 @@ public class SendMessageAction extends Action
         SEQ1--;
 
     }
-
-
-  // Init action for URL messages
-  private void initUrlMsg() throws JimmException
-  {
-
-    // Get UIN
-    String uin = this.urlMsg.getRcvrUin();
-
-    // Get message
-    String message = this.urlMsg.getText() + (char) (0xFE) + this.urlMsg.getUrl();
-
-    // Pack data
-    byte[] buf = new byte[10 + 1 + uin.length() + 4 + 4 + 2 + 2 + message.length() + 1 + 4];
-    int marker = 0;
-    Util.putDWord(buf, marker, 0x00000000);   // CLI_SENDMSG.TIME
-    marker += 4;
-    Util.putDWord(buf, marker, 0x00000000);   // CLI_SENDMSG.ID
-    marker += 4;
-    Util.putWord(buf, marker, 0x0004);   // CLI_SENDMSG.FORMAT
-    marker += 2;
-    Util.putByte(buf, marker, uin.length());   // CLI_SENDMSG.UIN
-    System.arraycopy(Util.stringToByteArray(uin), 0, buf, marker + 1, uin.length());
-    marker += 1 + uin.length();
-    Util.putWord(buf, marker, 0x0005);   // CLI_SENDMSG.SUB_MSG_TYPE4
-    Util.putWord(buf, marker + 2, 4 + 2 + 2 + message.length() + 1);
-    marker += 4;
-    Util.putDWord(buf, marker, Long.parseLong(this.urlMsg.getSndrUin()), false);   // SUB_MSG_TYPE4.UIN
-    marker += 4;
-    Util.putWord(buf, marker, 0x0004, false);   // SUB_MSG_TYPE4.MSGTYPE
-    marker += 2;
-    Util.putWord(buf, marker, message.length() + 1, false);   // SUB_MSG_TYPE4.MESSAGE
-    System.arraycopy(Util.stringToByteArray(message), 0, buf, marker + 2, message.length());
-    Util.putByte(buf, marker + 2 + message.length(), 0x00);
-    marker += 2 + message.length() + 1;
-    Util.putWord(buf, marker, 0x0006);   // CLI_SENDMSG.UNKNOWN
-    Util.putWord(buf, marker + 2, 0x0000);
-    marker += 4;
-
-    // Send packet
-    SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY, SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-    Jimm.jimm.getIcqRef().c.sendPacket(snacPkt);
-
-  }
 
 
 	// Forwards received packet, returns true if packet was consumed

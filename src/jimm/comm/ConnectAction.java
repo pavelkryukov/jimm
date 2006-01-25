@@ -851,7 +851,7 @@ public class ConnectAction extends Action
 						if (buf.length != 14 + textLen) { throw (new JimmException(116, 1)); }
 
 						// Get text
-						String text = Util.crlfToCr(Util.byteArrayToString(buf, 14, textLen, Util.isDataUTF8(buf, 14, textLen)));
+						String text = Util.removeCr(Util.byteArrayToString(buf, 14, textLen, Util.isDataUTF8(buf, 14, textLen)));
 
 						// Normal message
 						if (type == 0x0001)

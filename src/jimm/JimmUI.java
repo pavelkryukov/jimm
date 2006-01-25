@@ -322,7 +322,7 @@ public class JimmUI implements CommandListener
 		clipBoardText = null;	
 	}
 	
-	final public static String CRLFstr = "\r\n";  
+	final public static String CRLFstr = "\n";
 	
 	////////////////////////
 	//                    //
