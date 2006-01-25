@@ -50,7 +50,7 @@ public class KeepAliveTimerTask extends TimerTask
 	{
 
 		// If STATE_CONNECTED is active, we've already got an reference to the ICQ object and the corresponding option has been set, send an alive packet
-		if ((this.icq != null) && Icq.isConnected() && Options.getBooleanOption(Options.OPTION_KEEP_CONN_ALIVE))
+		if ((this.icq != null) && Icq.isConnected() && Options.getBoolean(Options.OPTION_KEEP_CONN_ALIVE))
 		{
 
 			// Instantiate and send an alive packet

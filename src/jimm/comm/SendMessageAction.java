@@ -444,7 +444,7 @@ public class SendMessageAction extends Action
                 marker += 2;
 
                 // Put contact status
-                Util.putWord(buf, marker, Util.translateStatusSend(Options.getLongOption(Options.OPTION_ONLINE_STATUS)), false);
+                Util.putWord(buf, marker, Util.translateStatusSend(Options.getLong(Options.OPTION_ONLINE_STATUS)), false);
                 marker += 2;
 
                 // Put priority

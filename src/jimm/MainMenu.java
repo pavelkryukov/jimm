@@ -136,7 +136,7 @@ public class MainMenu implements CommandListener
     
     static private Image getStatusImage()
     {
-    	long cursStatus = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
+    	long cursStatus = Options.getLong(Options.OPTION_ONLINE_STATUS);
     	int imageIndex = ContactListContactItem.getStatusImageIndex(cursStatus);
     	return ContactList.getImageList().elementAt(imageIndex);
     }
@@ -438,7 +438,7 @@ public class MainMenu implements CommandListener
                     
                 case MENU_STATUS:
                     // Set status
-                    long onlineStatus = Options.getLongOption(Options.OPTION_ONLINE_STATUS);
+                    long onlineStatus = Options.getLong(Options.OPTION_ONLINE_STATUS);
                     if (onlineStatus == ContactList.STATUS_AWAY)
                     {
                         MainMenu.statusList.setSelectedIndex(2, true);
@@ -583,7 +583,7 @@ public class MainMenu implements CommandListener
 			{
 				this.isConnected = !Icq.isConnected();
 				// Save new online status
-				Options.setLongOption(Options.OPTION_ONLINE_STATUS, onlineStatus);
+				Options.setLong(Options.OPTION_ONLINE_STATUS, onlineStatus);
 				try
 				{
 					Options.save();
@@ -596,9 +596,9 @@ public class MainMenu implements CommandListener
 			if (!((onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_INVIS_ALL) || (onlineStatus == ContactList.STATUS_ONLINE)))
 			{
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Options.getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
+                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Options.getString(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
                 //#sijapp cond.else#
-                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Options.getStringOption(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY);
+                statusMessage = new TextBox(ResourceBundle.getString("status_message"),Options.getString(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY);
                 //#sijapp cond.end#
                 
                 statusMessage.addCommand(selectCommand);
@@ -619,7 +619,7 @@ public class MainMenu implements CommandListener
         }
         else if ((c == selectCommand) && (d == statusMessage))
         {
-            Options.setStringOption(Options.OPTION_STATUS_MESSAGE,statusMessage.getString());
+            Options.setString(Options.OPTION_STATUS_MESSAGE,statusMessage.getString());
             try
             {
                 Options.save();

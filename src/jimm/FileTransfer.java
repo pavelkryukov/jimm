@@ -170,7 +170,7 @@ public class FileTransfer implements CommandListener
         Display.getDisplay(Jimm.jimm).setCurrent(SplashCanvas._this);
 
         // Send the ft message
-        FileTransferMessage ftm = new FileTransferMessage(Options.getStringOption(Options.OPTION_UIN), this.cItem,Message.MESSAGE_TYPE_EXTENDED, filename, description, this.data);
+        FileTransferMessage ftm = new FileTransferMessage(Options.getString(Options.OPTION_UIN), this.cItem,Message.MESSAGE_TYPE_EXTENDED, filename, description, this.data);
         SendMessageAction act = new SendMessageAction(ftm);
         try
         {
@@ -195,8 +195,8 @@ public class FileTransfer implements CommandListener
         name_Desc.append(new StringItem(ResourceBundle.getString("size")+": ", String.valueOf(data.length/1024)+" kb"));
         // #sijapp cond.if modules_TRAFFIC is "true" #
         name_Desc.append(new StringItem(ResourceBundle.getString("cost")+": ", 
-                Traffic.getString(((data.length/Options.getIntOption(Options.OPTION_COST_PACKET_LENGTH))+1)*Options.getIntOption(Options.OPTION_COST_PER_PACKET))
-                +" "+Options.getStringOption(Options.OPTION_CURRENCY)));                       
+                Traffic.getString(((data.length/Options.getInt(Options.OPTION_COST_PACKET_LENGTH))+1)*Options.getInt(Options.OPTION_COST_PER_PACKET))
+                +" "+Options.getString(Options.OPTION_CURRENCY)));                       
         // #sijapp cond.end #
         
         name_Desc.addCommand(this.backCommand);

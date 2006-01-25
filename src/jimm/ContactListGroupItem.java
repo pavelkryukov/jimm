@@ -84,7 +84,7 @@ public class ContactListGroupItem implements ContactListItem
         String result;
         
         if ((onlineCount != 0) && 
-        	 !Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE)) 
+        	 !Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE)) 
             result = name+" ("+Integer.toString(onlineCount)+"/"
                          +Integer.toString(totalCount)+")";
         else result = name;

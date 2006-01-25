@@ -123,7 +123,7 @@ public class DirectConnectionAction extends Action
         marker += 4;
 
         // UIN of the sender
-        Util.putDWord(dcpacket, marker, Long.parseLong(Options.getStringOption(Options.OPTION_UIN)), false);
+        Util.putDWord(dcpacket, marker, Long.parseLong(Options.getString(Options.OPTION_UIN)), false);
         marker += 4;
 
         // our internal IP
@@ -191,7 +191,7 @@ public class DirectConnectionAction extends Action
                 // System.out.println(Util.toHexString(buf));
 
                 // And now we send out a file transfer init
-                buf = new byte[17 + 2 + Options.getStringOption(Options.OPTION_UIN).length() + 1];
+                buf = new byte[17 + 2 + Options.getString(Options.OPTION_UIN).length() + 1];
 
                 int marker = 0;
 
@@ -219,12 +219,12 @@ public class DirectConnectionAction extends Action
 
                 // Put nick (or uin in this case)
                 //First the size in one byte
-                Util.putByte(buf, marker, Options.getStringOption(Options.OPTION_UIN).length() + 1);
+                Util.putByte(buf, marker, Options.getString(Options.OPTION_UIN).length() + 1);
                 // Then one zero byte
                 Util.putByte(buf, marker + 1, 0x00);
                 marker += 2;
                 // Then the string itself
-                byte[] nick = Util.stringToByteArray(Options.getStringOption(Options.OPTION_UIN));
+                byte[] nick = Util.stringToByteArray(Options.getString(Options.OPTION_UIN));
                 System.arraycopy(nick, 0, buf, marker, nick.length);
                 marker += nick.length;
                 Util.putByte(buf, marker, 0x00);

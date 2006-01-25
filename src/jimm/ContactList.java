@@ -623,8 +623,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static private void sortAll()
     {
     	if (treeSorted) return;
-    	sortType = Options.getIntOption(Options.OPTION_CL_SORT_BY);
-    	if (Options.getBooleanOption(Options.OPTION_USER_GROUPS))
+    	sortType = Options.getInt(Options.OPTION_CL_SORT_BY);
+    	if (Options.getBoolean(Options.OPTION_USER_GROUPS))
     	{
             for (int i = 0; i < gItems.size(); i++)
     		{
@@ -642,8 +642,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static private void buildTree()
 	{
 	    int i, gCount, cCount;
-	    boolean use_groups  = Options.getBooleanOption(Options.OPTION_USER_GROUPS),
-		        only_online = Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
+	    boolean use_groups  = Options.getBoolean(Options.OPTION_USER_GROUPS),
+		        only_online = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 			    
 		cCount = cItems.size();
 		if (treeBuilt || (cCount == 0)) return;
@@ -765,7 +765,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	    // which group ?
 	    ContactListGroupItem group = getGroupById(groupId);
 	    
-		boolean only_online = Options.getBooleanOption(Options.OPTION_CL_HIDE_OFFLINE);
+		boolean only_online = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
     	
     	// Whitch group node?
     	TreeNode groupNode = (TreeNode)gNodes.get( new Integer(groupId) );
@@ -843,7 +843,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     		tree.deleteChild( groupNode, tree.getIndexOfChild(groupNode, cItemNode) );
     		
     		int contCount = groupNode.size();
-    		sortType = Options.getIntOption(Options.OPTION_CL_SORT_BY);
+    		sortType = Options.getInt(Options.OPTION_CL_SORT_BY);
     		
     		// TODO: Make binary search instead of linear before child insertion!!!
     		for (int j = 0; j < contCount; j++)
@@ -987,7 +987,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static public synchronized void addGroup(ContactListGroupItem gItem)
     {
     	gItems.addElement(gItem);
-    	if ( !Options.getBooleanOption(Options.OPTION_USER_GROUPS) ) return;
+    	if ( !Options.getBoolean(Options.OPTION_USER_GROUPS) ) return;
 		TreeNode groupNode = tree.addNode(null, gItem);
 		gNodes.put(new Integer(gItem.getId()), groupNode);
     }
@@ -996,7 +996,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static public synchronized void removeGroup(ContactListGroupItem gItem)
     {
     	Integer groupId = new Integer(gItem.getId());
-    	if ( Options.getBooleanOption(Options.OPTION_USER_GROUPS) )
+    	if ( Options.getBoolean(Options.OPTION_USER_GROUPS) )
     	{
     		TreeNode node = (TreeNode)gNodes.get(groupId);
     		tree.deleteChild
@@ -1146,7 +1146,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         Light.setLightOn();
         // #sijapp cond.end#
         
-        int vibraKind = Options.getIntOption(Options.OPTION_VIBRATOR);
+        int vibraKind = Options.getInt(Options.OPTION_VIBRATOR);
         if(vibraKind == 2) vibraKind = SplashCanvas.locked()?1:0;
         if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
         {
@@ -1162,11 +1162,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         switch (notType)
 		{
 		case SOUND_TYPE_MESSAGE:
-			not_mode = Options.getIntOption(Options.OPTION_MESS_NOTIF_MODE);
+			not_mode = Options.getInt(Options.OPTION_MESS_NOTIF_MODE);
 			break;
 			
 		case SOUND_TYPE_ONLINE:
-			not_mode = Options.getIntOption(Options.OPTION_ONLINE_NOTIF_MODE);
+			not_mode = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
 			break;
 		}
             
@@ -1178,10 +1178,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 switch(notType)
                 {
                 case SOUND_TYPE_MESSAGE:
-                    Manager.playTone(ToneControl.C4, 500, Options.getIntOption(Options.OPTION_MESS_NOTIF_VOL));
+                    Manager.playTone(ToneControl.C4, 500, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
                     break;
                 case SOUND_TYPE_ONLINE:
-                    Manager.playTone(ToneControl.C4+7, 500, Options.getIntOption(Options.OPTION_ONLINE_NOTIF_VOL));
+                    Manager.playTone(ToneControl.C4+7, 500, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
                 }
 
             } catch (MediaException e)
@@ -1196,15 +1196,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 
                 if (notType == SOUND_TYPE_MESSAGE)
                 {
-                	p = createPlayer( Options.getStringOption(Options.OPTION_MESS_NOTIF_FILE) );
+                	p = createPlayer( Options.getString(Options.OPTION_MESS_NOTIF_FILE) );
                 	if (p == null) return;
-                    setVolume(p, Options.getIntOption(Options.OPTION_MESS_NOTIF_VOL));
+                    setVolume(p, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
                 }
                 else
                 {
-                	p = createPlayer( Options.getStringOption(Options.OPTION_ONLINE_NOTIF_FILE) );
+                	p = createPlayer( Options.getString(Options.OPTION_ONLINE_NOTIF_FILE) );
                 	if (p == null) return;
-                    setVolume(p, Options.getIntOption(Options.OPTION_ONLINE_NOTIF_VOL)); 
+                    setVolume(p, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL)); 
                 }
                 
                 p.start();
@@ -1225,16 +1225,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // #sijapp cond.end#
         
         // #sijapp cond.if target is "RIM"#
-        if (Options.getBooleanOption(Options.OPTION_VIBRATOR))
+        if (Options.getBoolean(Options.OPTION_VIBRATOR))
         {
 						// had to use full path since import already contains another Alert object
             net.rim.device.api.system.Alert.startVibrate(500);
         }
         int mode_rim;
         if (notType == SOUND_TYPE_MESSAGE)
-            mode_rim = Options.getIntOption(Options.OPTION_MESS_NOTIF_MODE);
+            mode_rim = Options.getInt(Options.OPTION_MESS_NOTIF_MODE);
         else
-            mode_rim = Options.getIntOption(Options.OPTION_ONLINE_NOTIF_MODE);
+            mode_rim = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
         switch (mode_rim)
         {
         case 1:

@@ -209,7 +209,7 @@ public class Jimm extends MIDlet
 		// set color scheme for all forms
 		JimmUI.setColorScheme();
 		
-		if (Options.getBooleanOption(Options.OPTION_AUTO_CONNECT))
+		if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
         {
             // Remove version string from splash screen
 			SplashCanvas.delVersionString();
@@ -341,7 +341,7 @@ public class Jimm extends MIDlet
 		
 		if (!mini && minimized)
 		{
-			long status = Options.getLongOption(Options.OPTION_ONLINE_STATUS); 
+			long status = Options.getLong(Options.OPTION_ONLINE_STATUS); 
 			if ((status == ContactList.STATUS_ONLINE) || 
 			    (status == ContactList.STATUS_CHAT)) ContactList.activate();
 		}

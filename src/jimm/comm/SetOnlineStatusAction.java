@@ -73,7 +73,7 @@ public class SetOnlineStatusAction extends Action
 		// Convert online status
 		int onlineStatus = Util.translateStatusSend(this.onlineStatus);
 
-		int visibilityItemId = Options.getIntOption(Options.OPTION_VISIBILITY_ID);
+		int visibilityItemId = Options.getInt(Options.OPTION_VISIBILITY_ID);
 		byte[] buf = new byte[15];
 		byte bCode = 0;
 		if(visibilityItemId != 0)
@@ -128,7 +128,7 @@ public class SetOnlineStatusAction extends Action
 		}
 		
 		// Save new online status
-		Options.setLongOption(Options.OPTION_ONLINE_STATUS, this.onlineStatus);
+		Options.setLong(Options.OPTION_ONLINE_STATUS, this.onlineStatus);
 		try
 		{
 			Options.save();

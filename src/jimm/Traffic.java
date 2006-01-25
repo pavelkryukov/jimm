@@ -187,7 +187,7 @@ public class Traffic
 		traffic = ResourceBundle.getString("session") + ":\n" +
 				getSessionTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
 				getSessionTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
-				getString(generateCostSum(true)) + " " + Options.getStringOption(Options.OPTION_CURRENCY) + "\n" +
+				getString(generateCostSum(true)) + " " + Options.getString(Options.OPTION_CURRENCY) + "\n" +
 				ResourceBundle.getString("since") + ": " + makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
 				makeTwo(time.get(Calendar.MONTH) + 1) + "." +
 				time.get(Calendar.YEAR) + " " +
@@ -195,7 +195,7 @@ public class Traffic
 				makeTwo(time.get(Calendar.MINUTE)) + "\n" +
 				getAllTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
 				getAllTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
-				getString(generateCostSum(false))+ " " + Options.getStringOption(Options.OPTION_CURRENCY);
+				getString(generateCostSum(false))+ " " + Options.getString(Options.OPTION_CURRENCY);
 		return (traffic);
 
 	}
@@ -227,9 +227,9 @@ public class Traffic
 	{
 
 		int cost;
-		int costPerPacket = Options.getIntOption(Options.OPTION_COST_PER_PACKET);
+		int costPerPacket = Options.getInt(Options.OPTION_COST_PER_PACKET);
 //		int costPerDay = Options.getCostPerDay();
-		int costPacketLength = Options.getIntOption(Options.OPTION_COST_PACKET_LENGTH);
+		int costPacketLength = Options.getInt(Options.OPTION_COST_PACKET_LENGTH);
 
 		if (thisSession)
 		{
@@ -409,7 +409,7 @@ public class Traffic
 	// Increases costPerDaySum at one unit
 	static public void increaseCostPerDaySum()
 	{
-		costPerDaySum = costPerDaySum + Options.getIntOption(Options.OPTION_COST_PER_DAY);
+		costPerDaySum = costPerDaySum + Options.getInt(Options.OPTION_COST_PER_DAY);
 		setLastTimeUsed(new Date().getTime());
 	}
 

@@ -115,7 +115,7 @@ public class RequestInfoAction extends Action
 		byte[] buf = new byte[6];
 		Util.putWord(buf, 0, ToIcqSrvPacket.CLI_META_REQMOREINFO_TYPE, false);
 		Util.putDWord(buf, 2, Long.parseLong(strData[JimmUI.UI_UIN]), false);
-		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options.getStringOption(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
+		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options.getString(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
 		Jimm.jimm.getIcqRef().c.sendPacket(packet);
 
 		// Save date

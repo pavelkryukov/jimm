@@ -825,7 +825,7 @@ public class Util
 		}
 
 		// CP1251 or default character encoding?
-		if (Options.getBooleanOption(Options.OPTION_CP1251_HACK))
+		if (Options.getBoolean(Options.OPTION_CP1251_HACK))
 		{
 			return (byteArray1251ToString(buf, off, len));
 		}
@@ -906,7 +906,7 @@ public class Util
 		}
 
 		// CP1251 or default character encoding?
-		if (Options.getBooleanOption(Options.OPTION_CP1251_HACK))
+		if (Options.getBoolean(Options.OPTION_CP1251_HACK))
 		{
 			return (stringToByteArray1251(val));
 		}

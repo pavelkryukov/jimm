@@ -242,7 +242,7 @@ public class SplashCanvas extends Canvas
 		LightControl.Off();
 		//  #sijapp cond.end#
 		Jimm.display.setCurrent(_this);
-		if (Options.getBooleanOption(Options.OPTION_DISPLAY_DATE))
+		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
         {
             t1 = new Timer();
             t1.schedule(new TimerTask()
@@ -267,12 +267,12 @@ public class SplashCanvas extends Canvas
         LED.setState(LED.STATE_OFF);
         //  #sijapp cond.end#
         	//  #sijapp cond.if target is "MOTOROLA"#
-		if (Options.getBooleanOption(Options.OPTION_LIGHT_MANUAL))
+		if (Options.getBoolean(Options.OPTION_LIGHT_MANUAL))
 		{
 			LightControl.On();
 		}
 		//  #sijapp cond.end#
-		if (Options.getBooleanOption(Options.OPTION_DISPLAY_DATE))
+		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
 		{
 			
 			t1.cancel();
@@ -298,7 +298,7 @@ public class SplashCanvas extends Canvas
 	        LED.setState(LED.STATE_BLINKING);
             // #sijapp cond.end#
 			// #sijapp cond.if target is "MOTOROLA"#
-			if (Options.getIntOption(Options.OPTION_MESS_NOTIF_MODE) == 0)
+			if (Options.getInt(Options.OPTION_MESS_NOTIF_MODE) == 0)
 			Jimm.display.flashBacklight(1000);
 			// #sijapp cond.end#
 			_this.repaint();
@@ -435,7 +435,7 @@ public class SplashCanvas extends Canvas
 			g.setColor(255, 255, 255);
 			g.setFont(SplashCanvas.font);
 			// Draw the date bellow notice if set up to do so
-			if (Options.getBooleanOption(Options.OPTION_DISPLAY_DATE))
+			if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
 			{
 				g.drawString(Util.getDateString(false), this.getWidth() / 2, 12, Graphics.TOP | Graphics.HCENTER);
 				g.drawString(Util.getCurrentDay(), this.getWidth() / 2, 25, Graphics.TOP | Graphics.HCENTER);
@@ -464,7 +464,7 @@ public class SplashCanvas extends Canvas
 		{
 			g.setColor(0, 0, 0);
 			// Draw the date bellow notice if set up to do so
-			if (Options.getBooleanOption(Options.OPTION_DISPLAY_DATE))
+			if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
 			{
 				g.drawString(Util.getDateString(false), this.getWidth() / 2, 12, Graphics.TOP | Graphics.HCENTER);
 			}
