@@ -270,17 +270,13 @@ class HistoryStorageList extends VirtualList
 		// Clear messages
 		else if (c == cmdClear)
 		{
-			/*
-			
-			
-			*/
 			JimmUI.showSelector
 			(
 				"clear_history",
 				JimmUI.stdSelector,
 				this,
 				SELECTOR_DEL_HISTORY,
-				false
+				true
 			);
 		}
 		
