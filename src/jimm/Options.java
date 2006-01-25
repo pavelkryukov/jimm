@@ -57,6 +57,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import javax.microedition.lcdui.*;
 import javax.microedition.rms.RecordStore;
@@ -65,18 +66,26 @@ import javax.microedition.rms.RecordStoreException;
 
 public class Options
 {
-
-
 	// Option keys
-	public static final int OPTION_UIN                            =   0;   /* String  */
-	public static final int OPTION_PASSWORD                       = 225;   /* String  */
+	static final int OPTION_UIN1                                  =   0;   /* String */
+	static final int OPTION_PASSWORD1                             = 225;   /* String */
+	static final int OPTION_UIN2                                  =  14;   /* String */
+	static final int OPTION_PASSWORD2                             = 226;   /* String */
+	static final int OPTION_UIN3                                  =  15;   /* String */
+	static final int OPTION_PASSWORD3                             = 227;   /* String */
+	static final int OPTIONS_CURR_ACCOUNT                         =  86;   /* int    */
+	
+	// Theese two options are not stored in RMS 
+	public static final int OPTION_UIN                            = 254;   /* String */
+	public static final int OPTION_PASSWORD                       = 255;   /* String */
+	
 	public static final int OPTION_SRV_HOST                       =   1;   /* String  */
 	public static final int OPTION_SRV_PORT                       =   2;   /* String  */
 	public static final int OPTION_KEEP_CONN_ALIVE                = 128;   /* boolean */
     public static final int OPTION_CONN_ALIVE_INVTERV             =  13;   /* String  */
 	public static final int OPTION_CONN_PROP                      =  64;   /* int     */
 	public static final int OPTION_CONN_TYPE                      =  83;   /* int     */
-	public static final int OPTION_AUTO_CONNECT	  = 138;   /* boolean */
+	public static final int OPTION_AUTO_CONNECT	                  = 138;   /* boolean */
     // #sijapp cond.if target isnot  "MOTOROLA"#
 	public static final int OPTION_SHADOW_CON                     = 139;   /* boolean */
     // #sijapp cond.end#
@@ -148,9 +157,21 @@ public class Options
 	public static final int HOTKEY_MINIMIZE = 9;
 	public static final int HOTKEY_CLI_INFO = 10;
 	
+	//#sijapp cond.if modules_DEBUGLOG is "true" #
+	private static boolean checkKeys = false;
+	//#sijapp cond.end #
 
+	static int accountKeys[] = 
+	{
+		Options.OPTION_UIN1, Options.OPTION_PASSWORD1,
+		Options.OPTION_UIN2, Options.OPTION_PASSWORD2,
+		Options.OPTION_UIN3, Options.OPTION_PASSWORD3,
+	};
+	
 
 	/**************************************************************************/
+	
+	final public static String emptyString = new String();  
 
 	// Hashtable containing all option key-value pairs
 	static private Hashtable options;
@@ -165,7 +186,15 @@ public class Options
 		try
 		{
 			options = new Hashtable();
-		    Options.setDefaults();
+			
+			//#sijapp cond.if modules_DEBUGLOG is "true"#
+			checkKeys = true;
+			Options.setDefaults();
+			checkKeys = false;
+			//#sijapp cond.else#
+			Options.setDefaults();
+			//#sijapp cond.end #
+			
 			load();
 			ResourceBundle.setCurrUiLanguage(getStringOption(Options.OPTION_UI_LANGUAGE));
 			
@@ -181,8 +210,8 @@ public class Options
 	// This is done before loading because older saves may not contain all new values
 	static private void setDefaults()
 	{
-	    setStringOption (Options.OPTION_UIN,                            "");
-		setStringOption (Options.OPTION_PASSWORD,                       "");
+	    setStringOption (Options.OPTION_UIN1,                           emptyString);
+		setStringOption (Options.OPTION_PASSWORD1,                      emptyString);
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"# ===>
 		setStringOption (Options.OPTION_SRV_HOST,                       "login.icq.com");
 		// #sijapp cond.else# ===
@@ -227,10 +256,13 @@ public class Options
 		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_MODE,       0);
 		setStringOption (Options.OPTION_ONLINE_NOTIFICATION_SOUNDFILE,  "online.mp3");
 		setIntOption    (Options.OPTION_ONLINE_NOTIFICATION_VOLUME,     50);
-		setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		             5);
-		setBooleanOption(Options.OPTION_LIGHT_MANUAL,		             false);	
+		setIntOption    (Options.OPTION_LIGHT_TIMEOUT,		            5);
+		setBooleanOption(Options.OPTION_LIGHT_MANUAL,		            false);	
 		// #sijapp cond.end#
-		setBooleanOption(Options.OPTION_CP1251_HACK,                    (ResourceBundle.langAvailable[0] == "RU") ? true : false);
+		
+		boolean cp1251hack = false;
+		for (int i = 0; i < ResourceBundle.langAvailable.length; i++) cp1251hack |= (ResourceBundle.langAvailable[i] == "RU");
+		setBooleanOption(Options.OPTION_CP1251_HACK,                    cp1251hack);
         // #sijapp cond.if target isnot "DEFAULT"#
 		setIntOption    (Options.OPTION_VIBRATOR,                       0);
 		// #sijapp cond.end#		
@@ -253,18 +285,24 @@ public class Options
 		setStringOption (Options.OPTION_PRX_SERV,                     	"");
 		setStringOption (Options.OPTION_PRX_PORT,						"1080");
 		setStringOption (Options.OPTION_AUTORETRY_COUNT,                "1");
-		setStringOption (Options.OPTION_PRX_NAME,                  		"");
-		setStringOption (Options.OPTION_PRX_PASS,                       "");
+		setStringOption (Options.OPTION_PRX_NAME,                  		emptyString);
+		setStringOption (Options.OPTION_PRX_PASS,                       emptyString);
 	    // #sijapp cond.end #
 		setIntOption    (Options.OPTION_VISIBILITY_ID,                  0);
 		setIntOption    (Options.OPTION_EXT_CLKEY0,                     0);
 		setIntOption    (Options.OPTION_EXT_CLKEYSTAR,                  0);
 		setIntOption    (Options.OPTION_EXT_CLKEY4,                     0);
 		setIntOption    (Options.OPTION_EXT_CLKEY6,                     0);
-		setIntOption    (Options.OPTION_EXT_CLKEYCALL,                  0);
+		setIntOption    (Options.OPTION_EXT_CLKEYCALL,                  HOTKEY_NEWMSG);
 		setIntOption    (Options.OPTION_EXT_CLKEYPOUND,                 HOTKEY_LOCK);
 		setIntOption    (Options.OPTION_POPUP_WIN2,                     0);
 		setBooleanOption(Options.OPTION_CLASSIC_CHAT,                   false);
+		
+		setStringOption (Options.OPTION_UIN2,                           emptyString);
+		setStringOption (Options.OPTION_PASSWORD2,                      emptyString);
+		setStringOption (Options.OPTION_UIN3,                           emptyString);     
+		setStringOption (Options.OPTION_PASSWORD3,                      emptyString);
+		setIntOption    (Options.OPTIONS_CURR_ACCOUNT,                          0);
 	}
 
 	// Load option values from record store
@@ -396,6 +434,13 @@ public class Options
 	// Option retrieval methods (no type checking!)
 	static public synchronized String getStringOption(int key)
 	{
+		switch (key)
+		{
+		case OPTION_UIN:
+		case OPTION_PASSWORD:
+			int index = getIntOption(Options.OPTIONS_CURR_ACCOUNT)*2;
+			return getStringOption(accountKeys[key == OPTION_UIN ? index : index+1]);
+		}
 		return ((String) options.get(new Integer(key)));
 	}
 	static public synchronized int getIntOption(int key)
@@ -415,18 +460,38 @@ public class Options
 	// Option setting methods (no type checking!)
 	static public synchronized void setStringOption(int key, String value)
 	{
+		//#sijapp cond.if modules_DEBUGLOG is "true" #
+		if (checkKeys && options.containsKey(new Integer(key)))
+			System.out.println("Identical keys: "+key);
+		//#sijapp cond.end#
+		
 	    options.put(new Integer(key), value);
 	}
 	static public synchronized void setIntOption(int key, int value)
 	{
+		//#sijapp cond.if modules_DEBUGLOG is "true" #
+		if (checkKeys && options.containsKey(new Integer(key)))
+			System.out.println("Identical keys: "+key);
+		//#sijapp cond.end#
+		
 	    options.put(new Integer(key), new Integer(value));
 	}
 	static public synchronized void setBooleanOption(int key, boolean value)
 	{
+		//#sijapp cond.if modules_DEBUGLOG is "true" #
+		if (checkKeys && options.containsKey(new Integer(key)))
+			System.out.println("Identical keys: "+key);
+		//#sijapp cond.end#
+
 	    options.put(new Integer(key), new Boolean(value));
 	}
 	static public synchronized void setLongOption(int key, long value)
 	{
+		//#sijapp cond.if modules_DEBUGLOG is "true" #
+		if (checkKeys && options.containsKey(new Integer(key)))
+			System.out.println("Identical keys: "+key);
+		//#sijapp cond.end#
+		
 	    options.put(new Integer(key), new Long(value));
 	}
 	
@@ -477,7 +542,7 @@ public class Options
 
 //Form for editing option values
 
-class OptionsForm implements CommandListener
+class OptionsForm implements CommandListener, ItemStateListener
 {
 	private boolean lastGroupsUsed, lastHideOffline;
 	private int lastSortMethod, lastColorScheme;
@@ -497,6 +562,7 @@ class OptionsForm implements CommandListener
 
 	// Options form
 	private Form optionsForm;
+	
 
     // Static constants for menu actios
     private static final int OPTIONS_ACCOUNT    = 0;
@@ -514,8 +580,8 @@ class OptionsForm implements CommandListener
     private static final int MENU_EXIT          = 7;
 
 	// Options
-    private TextField uinTextField;
-    private TextField passwordTextField;
+    private TextField[] uinTextField;
+    private TextField[] passwordTextField;
     private TextField srvHostTextField;
     private TextField srvPortTextField;
     private ChoiceGroup keepConnAliveChoiceGroup;
@@ -529,6 +595,8 @@ class OptionsForm implements CommandListener
     private ChoiceGroup chrgChat;
     private ChoiceGroup chrgPopupWin;
     private ChoiceGroup vibratorChoiceGroup;
+    private ChoiceGroup choiceCurAccount;
+    
 	// #sijapp cond.if target isnot "DEFAULT"#
     private ChoiceGroup messageNotificationModeChoiceGroup;
     private ChoiceGroup onlineNotificationModeChoiceGroup;
@@ -634,6 +702,7 @@ class OptionsForm implements CommandListener
 		optionsForm.addCommand(saveCommand);
 		optionsForm.addCommand(backCommand);
 		optionsForm.setCommandListener(this);
+		optionsForm.setItemStateListener(this);
 	}
 
 	
@@ -703,7 +772,128 @@ class OptionsForm implements CommandListener
 		keysMenu.addCommand(saveCommand);
 		keysMenu.addCommand(backCommand);
 		Jimm.display.setCurrent(keysMenu);			
-	} 
+	}
+	
+	
+	///////////////////////////////////////////////////////////////////////////
+	
+	// Accounts
+	private Command cmdAddNewAccount = new Command(ResourceBundle.getString("add_new"), Command.ITEM, 3);
+	private Command cmdDeleteAccount = new Command(ResourceBundle.getString("delete", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
+	private int currAccount;
+	private Vector uins = new Vector();
+	private Vector passwords = new Vector();
+	private int maxAccountsCount = Options.accountKeys.length/2;
+	
+	private void readAccontsData()
+	{
+		uins.removeAllElements();
+		passwords.removeAllElements();
+		for (int i = 0; i < maxAccountsCount; i++)
+		{
+			int index = i*2;
+			String uin = Options.getStringOption(Options.accountKeys[index]);
+			if ((i != 0) && (uin.length() == 0)) continue;
+			uins.addElement(uin);
+			passwords.addElement( Options.getStringOption(Options.accountKeys[index+1]) );
+		}
+		currAccount = Options.getIntOption(Options.OPTIONS_CURR_ACCOUNT);
+	}
+	
+	private String checkUin(String value)
+	{
+		if ((value == null) || (value.length() == 0)) return "---";
+		return value;
+	}
+	
+	private void showAccountControls()
+	{
+		int size = uins.size();
+		
+		if (size != 1)
+		{
+			if (choiceCurAccount == null)
+				choiceCurAccount = new ChoiceGroup(ResourceBundle.getString("options_account"), Choice.EXCLUSIVE);
+			choiceCurAccount.deleteAll();
+			for (int i = 0; i < size; i++)
+				choiceCurAccount.append(checkUin((String)uins.elementAt(i)), null);
+			optionsForm.append(choiceCurAccount);
+			if (currAccount >= size) currAccount = size-1;
+			choiceCurAccount.setSelectedIndex(currAccount, true);
+		}
+		
+		uinTextField = new TextField[size];
+		passwordTextField = new TextField[size];
+		for (int i = 0; i < size; i++)
+		{
+			if (size != 1) optionsForm.append("--- "+(i+1)+" ---");
+			
+			TextField uinFld = new TextField(ResourceBundle.getString("uin"), (String)uins.elementAt(i), 12,TextField.NUMERIC);
+			TextField passFld = new TextField(ResourceBundle.getString("password"), (String)passwords.elementAt(i), 32, TextField.PASSWORD);
+			
+		    optionsForm.append(uinFld);
+			optionsForm.append(passFld);
+			
+			uinTextField[i] = uinFld;
+			passwordTextField[i] = passFld; 
+		}
+		
+		optionsForm.removeCommand(cmdAddNewAccount);
+		optionsForm.removeCommand(cmdDeleteAccount);
+		if (size != maxAccountsCount) optionsForm.addCommand(cmdAddNewAccount);
+		if (size != 1) optionsForm.addCommand(cmdDeleteAccount);
+	}
+	
+	private void setAccountOptions()
+	{
+		int size = uins.size();
+		String uin, pass;
+		
+		for (int i = 0; i < maxAccountsCount; i++)
+		{
+			if (i < size)
+			{
+				uin  = (String)uins.elementAt(i);
+				pass = (String)passwords.elementAt(i);
+			}
+			else uin = pass = Options.emptyString;
+			
+			Options.setStringOption(Options.accountKeys[2*i],   uin);
+			Options.setStringOption(Options.accountKeys[2*i+1], pass);
+		}
+		
+		if (currAccount >= size) currAccount = size-1;
+		Options.setIntOption(Options.OPTIONS_CURR_ACCOUNT, currAccount);
+	}
+	
+	private void readAccontsControls()
+	{
+		uins.removeAllElements();
+		passwords.removeAllElements();
+		for (int i = 0; i < uinTextField.length; i++)
+		{
+			uins.addElement(uinTextField[i].getString());
+			passwords.addElement(passwordTextField[i].getString());
+		}
+		
+		currAccount = (choiceCurAccount == null) ? 0 : choiceCurAccount.getSelectedIndex();
+	}
+	
+	public void itemStateChanged(Item item)
+	{
+		int accCount = uinTextField.length;
+		if (accCount != 1)
+		{
+			for (int i = 0; i < accCount; i++)
+			{
+				if (uinTextField[i] != item) continue;
+				choiceCurAccount.set(i, checkUin(uinTextField[i].getString()), null);
+				return;
+			}
+		}
+	}
+	
+	///////////////////////////////////////////////////////////////////////////
 	
 	// Activate options menu
     protected void activate()
@@ -713,6 +903,8 @@ class OptionsForm implements CommandListener
 		optionsMenu.addCommand(backCommand);
 		Jimm.display.setCurrent(optionsMenu);
 	}
+    
+    final private static int TAG_DELETE_ACCOUNT = 1;
     
 	// Command listener
 	public void commandAction(Command c, Displayable d)
@@ -771,20 +963,14 @@ class OptionsForm implements CommandListener
 			lastColorScheme = Options.getIntOption(Options.OPTION_COLOR_SCHEME);
 
 			// Delete all items
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			optionsForm.deleteAll();
-			//#sijapp cond.else#
-			while (optionsForm.size() > 0) { optionsForm.delete(0); }
-			//#sijapp cond.end#
+			clearForm();
 			
 			// Add elements, depending on selected option menu item
 			switch (eventList[optionsMenu.getSelectedIndex()])
 			{
 				case OPTIONS_ACCOUNT:
-	                uinTextField = new TextField(ResourceBundle.getString("uin"), Options.getStringOption(Options.OPTION_UIN), 12,TextField.NUMERIC);
-	                passwordTextField = new TextField(ResourceBundle.getString("password"), Options.getStringOption(Options.OPTION_PASSWORD), 32, TextField.PASSWORD);
-				    optionsForm.append(uinTextField);
-					optionsForm.append(passwordTextField);
+					readAccontsData();
+					showAccountControls();
 					break;
 					
 				case OPTIONS_NETWORK:
@@ -1056,8 +1242,8 @@ class OptionsForm implements CommandListener
 			switch (eventList[optionsMenu.getSelectedIndex()])
 			{
 				case OPTIONS_ACCOUNT:
-					Options.setStringOption(Options.OPTION_UIN,uinTextField.getString());
-					Options.setStringOption(Options.OPTION_PASSWORD,passwordTextField.getString());
+					readAccontsControls();
+					setAccountOptions();
 					break;
 				case OPTIONS_NETWORK:
 					Options.setStringOption(Options.OPTION_SRV_HOST,srvHostTextField.getString());
@@ -1184,7 +1370,47 @@ class OptionsForm implements CommandListener
 			{
 				activate();
 			}
+		} 
+		
+		// Accounts
+		else if (c == cmdAddNewAccount)
+		{
+			readAccontsControls();
+			uins.addElement(Options.emptyString);
+			passwords.addElement(Options.emptyString);
+			clearForm();
+			showAccountControls();
+			return;
 		}
+		else if (c == cmdDeleteAccount)
+		{
+			readAccontsControls();
+			int size = uins.size();
+			String items[] = new String[size];
+			for (int i = 0; i < size; i++) items[i] = checkUin((String)uins.elementAt(i));
+			JimmUI.showSelector("delete", items, this, TAG_DELETE_ACCOUNT, false);
+			return;
+		}
+		else if (JimmUI.getCommandType(c, TAG_DELETE_ACCOUNT) == JimmUI.CMD_OK)
+		{
+			readAccontsControls();
+			int index = JimmUI.getLastSelIndex();
+			uins.removeElementAt(index);
+			passwords.removeElementAt(index);
+			clearForm();
+			showAccountControls();
+			Jimm.display.setCurrent(optionsForm);
+		}
+
+	}
+	
+	private void clearForm()
+	{
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		optionsForm.deleteAll();
+		//#sijapp cond.else#
+		while (optionsForm.size() > 0) { optionsForm.delete(0); }
+		//#sijapp cond.end#
 	}
 	
 } // end of 'class OptionsForm'

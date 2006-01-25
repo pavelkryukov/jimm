@@ -751,12 +751,11 @@ public class JimmUI implements CommandListener
 	
 	static private int lastSelectedItemIndex;
 	
-	static public void showSelector(String caption, String[] elements, CommandListener listener, int tag)
+	static public void showSelector(String caption, String[] elements, CommandListener listener, int tag, boolean translateWords)
 	{
-		String[] strItems = new String[elements.length];
-		for (int i = 0; i < elements.length; i++) strItems[i] = ResourceBundle.getString(elements[i]);
+		if (translateWords) for (int i = 0; i < elements.length; i++) elements[i] = ResourceBundle.getString(elements[i]);
 		actionTag = tag;
-		lstSelector = new List(ResourceBundle.getString(caption), List.IMPLICIT, strItems, null);
+		lstSelector = new List(ResourceBundle.getString(caption), List.IMPLICIT, elements, null);
 		lstSelector.addCommand(cmdOk);
 		lstSelector.addCommand(cmdCancel);
 		lstSelector.setCommandListener(_this);

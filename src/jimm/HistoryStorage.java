@@ -279,7 +279,8 @@ class HistoryStorageList extends VirtualList
 				"clear_history",
 				JimmUI.stdSelector,
 				this,
-				SELECTOR_DEL_HISTORY
+				SELECTOR_DEL_HISTORY,
+				false
 			);
 		}
 		

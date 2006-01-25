@@ -271,7 +271,6 @@ public class Icq implements Runnable
 
             // Start timer
             Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
-
         }
     }
 
