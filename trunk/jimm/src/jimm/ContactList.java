@@ -429,8 +429,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             
             // Read all remaining items from the record store
             int marker = 3;
+            
+            //#sijapp cond.if modules_DEBUGLOG is "true"#
             System.gc();
             long mem = Runtime.getRuntime().freeMemory();
+            //#sijapp cond.end#
+            
             while (marker <= cl.getNumRecords())
             {
 
@@ -466,8 +470,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 }
             }
             
+            //#sijapp cond.if modules_DEBUGLOG is "true"#
+            buf = null;
+            dis = null;
+            bais = null;
             System.gc();
             System.out.println("\n clload mem used: "+(mem-Runtime.getRuntime().freeMemory()));
+            //#sijapp cond.end#
 		}
         finally
 		{

@@ -39,15 +39,23 @@ public class Emotions implements VirtualListCommands, CommandListener
 	final private static ImageList images = new ImageList();
 	final private static Vector findedEmotions = new Vector();
 	private static boolean used;
-	final private static Vector textCorr = new Vector();
-	final private static Vector selEmotions = new Vector();
+	private static int[] selEmotionsIndexes, textCorrIndexes;
+	private static String[] selEmotionsWord, selEmotionsSmileNames, textCorrWords;
 	
 	public Emotions()
 	{
 		int iconsSize;
 		used = false;
 		_this = this;
+		
+		Vector textCorr = new Vector();
+		Vector selEmotions = new Vector();
 
+		//#sijapp cond.if modules_DEBUGLOG is "true"#
+        System.gc();
+        long mem = Runtime.getRuntime().freeMemory();
+        //#sijapp cond.end#
+		
 		// Load file "smiles.txt"
 		InputStream stream = this.getClass().getResourceAsStream("/smiles.txt");
 		if (stream == null) return;
@@ -88,7 +96,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 					String word = new String(strBuffer).trim();
 				
 					// Add pair (word, integer) to textCorr
-					if (word.length() != 0) insertTextCorr(word, currIndex);
+					if (word.length() != 0) insertTextCorr(textCorr, word, currIndex);
 					
 					// Add triple (index, word, name) to selEmotions  
 					if (i == 0) selEmotions.addElement(new Object[] {currIndex, word, smileName});
@@ -108,11 +116,45 @@ public class Emotions implements VirtualListCommands, CommandListener
 			return;
 		}
 		
+		// Write emotions data from vectors to arrays
+		int size = selEmotions.size();
+		selEmotionsIndexes = new int[size];
+		selEmotionsWord = new String[size];
+		selEmotionsSmileNames = new String[size];
+		for (int i = 0; i < size; i++)
+		{
+			Object[] data = (Object[])selEmotions.elementAt(i);
+			selEmotionsIndexes[i]    = ((Integer)data[0]).intValue();
+			selEmotionsWord[i]       = (String)data[1];
+			selEmotionsSmileNames[i] = (String)data[2];
+		}
+		
+		size = textCorr.size();
+		textCorrWords = new String[size];
+		textCorrIndexes = new int[size];
+		for (int i = 0; i < size; i++)
+		{
+			Object[] data = (Object[])textCorr.elementAt(i);
+			textCorrWords[i]   = (String)data[0];
+			textCorrIndexes[i] = ((Integer)data[1]).intValue();
+		}
+		
+		//#sijapp cond.if modules_DEBUGLOG is "true"#
+		selEmotions.removeAllElements();
+		selEmotions = null;
+		textCorr.removeAllElements();
+		textCorr = null;
+		dos = null;
+		stream = null;
+		System.gc();
+		System.out.println("Emotions used: "+(mem-Runtime.getRuntime().freeMemory()));
+		//#sijapp cond.end#
+		
 		used = true;
 	}
 	
 	// Add smile text and index to textCorr in decreasing order of text length 
-	static void insertTextCorr(String word, Integer index)
+	static void insertTextCorr(Vector textCorr, String word, Integer index)
 	{
 		Object[] data = new Object[] {word, index};
 		int wordLen = word.length();
@@ -147,13 +189,13 @@ public class Emotions implements VirtualListCommands, CommandListener
 		return (chr == '\n');
 	}
 	
-	static private void findEmotionInText(String text, String emotion, Integer index, int startIndex)
+	static private void findEmotionInText(String text, String emotion, int index, int startIndex)
 	{
 		int findedIndex, len = emotion.length();
 		
 		findedIndex = text.indexOf(emotion, startIndex);
 		if (findedIndex == -1) return;
-		findedEmotions.addElement( new int[] {findedIndex, len, index.intValue()} );
+		findedEmotions.addElement( new int[] {findedIndex, len, index} );
 	}
 	
 	static public void addTextWithEmotions(TextList textList, String text, int fontStyle, int textColor, int bigTextIndex)
@@ -169,15 +211,14 @@ public class Emotions implements VirtualListCommands, CommandListener
 		{
 			findedEmotions.removeAllElements();
 			
-			int size = textCorr.size();
+			int size = textCorrWords.length;
 			for (int i = 0; i < size; i++)
 			{
-				Object[] array = (Object[])textCorr.elementAt(i); 
 				findEmotionInText
 				(
 					text,
-					(String)array[0],
-					(Integer)array[1], 
+					textCorrWords[i],
+					textCorrIndexes[i],
 					startIndex
 				);  
 			}
@@ -314,7 +355,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 			itemHeight = imgHeight+5;
 			
 			cols = drawWidth/itemHeight;
-			rows = (selEmotions.size()+cols-1)/cols;
+			rows = (selEmotionsIndexes.length+cols-1)/cols;
 			curCol = 0;
 			
 			showCurrSmileName();
@@ -352,9 +393,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 			xa = x1;
 			for (int i = 0; i < cols; i++, startIdx++)
 			{
-				if (startIdx >= selEmotions.size()) break;
-				Object[] data = (Object[])selEmotions.elementAt(startIdx);
-				int smileIdx = ((Integer)data[0]).intValue(); 
+				if (startIdx >= selEmotionsIndexes.length) break;
+				int smileIdx = selEmotionsIndexes[startIdx]; 
 				
 				xb = xa+itemHeight;
 				
@@ -374,13 +414,12 @@ public class Emotions implements VirtualListCommands, CommandListener
 		static private void showCurrSmileName()
 		{
 			int selIdx = _this.getCurrIndex()*cols+curCol;
-			if (selIdx >= selEmotions.size()) return;
-			Object[] data = (Object[])selEmotions.elementAt(selIdx);
-			emotionText = (String)data[1];			
+			if (selIdx >= selEmotionsSmileNames.length) return;
+			emotionText = selEmotionsWord[selIdx];			
 			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			_this.setTitle((String)data[2]);
+			_this.setTitle(selEmotionsSmileNames[selIdx]);
 			// #sijapp cond.else#
-			_this.setCaption((String)data[2]);
+			_this.setCaption(selEmotionsSmileNames[selIdx]);
 			// #sijapp cond.end#			
 		}
 		
@@ -415,7 +454,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 			}
 			
 			int index = curCol+getCurrIndex()*cols;
-			if (index >= selEmotions.size()) curCol = (selEmotions.size()-1)%cols; 
+			if (index >= selEmotionsIndexes.length) curCol = (selEmotionsIndexes.length-1)%cols; 
 			
 			if (lastCol != curCol)
 			{
