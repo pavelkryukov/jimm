@@ -842,8 +842,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 			passwordTextField[i] = passFld; 
 		}
 		
-		optionsForm.removeCommand(cmdAddNewAccount);
-		optionsForm.removeCommand(cmdDeleteAccount);
 		if (size != maxAccountsCount) optionsForm.addCommand(cmdAddNewAccount);
 		if (size != 1) optionsForm.addCommand(cmdDeleteAccount);
 	}
@@ -1410,6 +1408,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 	
 	private void clearForm()
 	{
+		optionsForm.removeCommand(cmdAddNewAccount);
+		optionsForm.removeCommand(cmdDeleteAccount);
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		optionsForm.deleteAll();
 		//#sijapp cond.else#
