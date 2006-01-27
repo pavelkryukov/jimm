@@ -231,6 +231,7 @@ public class Search
             screen.addCommand(this.nextCommand);
             screen.addCommand(this.addCommand);
             screen.setCursorMode(TextList.SEL_NONE);
+            JimmUI.setColorScheme(screen);
         }
         
         // Activate search form
@@ -266,7 +267,7 @@ public class Search
                 screen.lock();
                 
                 JimmUI.fillUserInfo(getResult(n), screen);
-		screen.setCaption( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
+                screen.setCaption( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
                 screen.unlock();
             }
             else
@@ -274,7 +275,7 @@ public class Search
                 // Show a result entry
             	
             	screen.lock();
-		screen.setCaption(ResourceBundle.getString("results")+" 0/0");
+            	screen.setCaption(ResourceBundle.getString("results")+" 0/0");
                 screen.addBigText(ResourceBundle.getString("no_results")+": ",0x0,Font.STYLE_BOLD, -1);
                 screen.unlock();
             }
