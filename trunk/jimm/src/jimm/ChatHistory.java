@@ -640,12 +640,7 @@ public class ChatHistory
 		ChatTextList temp = (ChatTextList) historyTable.get(uin);
 		// Calculate the title for the chatdisplay.
 		String Title = temp.ChatName+" ("+counter+"/"+historyTable.size()+")";
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		temp.textList.setFullScreenMode(false);
-		temp.getDisplayable().setTitle(Title);
-		// #sijapp cond.else#
 		temp.textList.setCaption(Title);
-		// #sijapp cond.end#
 	}
 
 	static public void setColorScheme()

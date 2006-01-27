@@ -416,11 +416,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 			int selIdx = _this.getCurrIndex()*cols+curCol;
 			if (selIdx >= selEmotionsSmileNames.length) return;
 			emotionText = selEmotionsWord[selIdx];			
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			_this.setTitle(selEmotionsSmileNames[selIdx]);
-			// #sijapp cond.else#
 			_this.setCaption(selEmotionsSmileNames[selIdx]);
-			// #sijapp cond.end#			
 		}
 		
 		public int getItemHeight(int itemIndex)

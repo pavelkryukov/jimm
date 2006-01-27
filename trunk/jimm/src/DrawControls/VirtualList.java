@@ -95,6 +95,9 @@ public abstract class VirtualList extends Canvas
 	// Used to catch changes to repaint data
 	private int lastCurrItem = 0, lastTopItem = 0;
 
+	private static VirtualList current;
+	private static boolean fullScreen = false;
+	
 	private int 
 		topItem     = 0,            // Index of top visilbe item 
 		fontSize    = MEDIUM_FONT,  // Current font size of VL
@@ -110,6 +113,19 @@ public abstract class VirtualList extends Canvas
 		int width = capFont.getHeight() / 4;
 		scrollerWidth = width > 4 ? width : 4;
 		paintedItem = new ListItem();
+	}
+	
+	static public void setFullScreen(boolean value)
+	{
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		if (fullScreen == value) return;
+		fullScreen = value;
+		if (current != null)
+		{
+			current.setFullScreenMode(fullScreen);
+			if (!fullScreen) current.setTitle(current.caption); 
+		}
+		//#sijapp cond.end#
 	}
 	
 	//! Create new virtual list with default values  
@@ -264,6 +280,16 @@ public abstract class VirtualList extends Canvas
 	public int getCursorMode()
 	{
 		return cursorMode;
+	}
+	
+	protected void showNotify()
+	{
+		current = this;
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		setFullScreenMode(fullScreen);
+		if (!fullScreen) setTitle(caption);
+		//#sijapp cond.end #
+		forcedHeight = forcedWidth = -1;
 	}
 
 	//! Returns height of each item in list
@@ -533,13 +559,18 @@ public abstract class VirtualList extends Canvas
 	public void setCaption(String capt)
 	{
 		if (caption != null) if (caption.equals(capt)) return;
-		caption = (capt == null) ? null : new String(capt);
-		repaint();
+		caption = capt;
+		
+		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
+		if (fullScreen) invalidate();
+		//#sijapp cond.else#
+		invalidate();
+		//#sijapp cond.end#
 	}
 	
 	public String getCaption()
 	{
-		return new String(caption); 
+		return caption; 
 	}
 
 	public void setTopItem(int index)
@@ -569,13 +600,20 @@ public abstract class VirtualList extends Canvas
 	private int getCapHeight()
 	{
 		if (caption == null) return 0;
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		if (!fullScreen) return 0;
+		//#sijapp cond.end#
 		return capFont.getHeight()+3;
 	}
 	
 	// private int drawCaption(Graphics g)
 	private int drawCaption(Graphics g)
 	{
-		if (this.caption == null) return 0;
+		if (caption == null) return 0;
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		if (!fullScreen) return 0;
+		//#sijapp cond.end#
+		
 		int width = getWidthInternal();
 		g.setFont(capFont);
 		int th = capFont.getHeight();

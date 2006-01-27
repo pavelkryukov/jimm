@@ -143,11 +143,7 @@ public class JimmUI implements CommandListener
 		if (ctrl instanceof VirtualList)
 		{
 			VirtualList vl = (VirtualList)ctrl;
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			vl.setTitle(caption);
-			// #sijapp cond.else#
 			vl.setCaption(caption);
-			// #sijapp cond.end#
 		}
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		else ctrl.setTitle(caption);
@@ -238,19 +234,18 @@ public class JimmUI implements CommandListener
 		setColorScheme(aboutTextList);
 		
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		aboutTextList.setTitle(ResourceBundle.getString("about"));
-		aboutTextList.setFullScreenMode(false);
 		aboutTextList.setFontSize(Font.SIZE_MEDIUM);
 		//#sijapp cond.else#
-		aboutTextList.setCaption(ResourceBundle.getString("about"));
 		aboutTextList.setFontSize(Font.SIZE_SMALL);
 		//#sijapp cond.end#
+
+		aboutTextList.setCaption(ResourceBundle.getString("about"));
 	    
 		StringBuffer str = new StringBuffer();
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
 		   .append(freeMem).append("kb\n\n")
-           .append(ResourceBundle.getString("latest_ver")).append(":");
+		   .append(ResourceBundle.getString("latest_ver")).append(":");
 		
 		if (versionLoaded) str.append(" ").append(version);
 		else str.append(" ...");
@@ -480,14 +475,7 @@ public class JimmUI implements CommandListener
 					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
 				else 
 					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, true);
-				try
-				{
-					Options.save();
-				}
-				catch (Exception e)
-				{
-					JimmException.handleException(new JimmException(172, 0, true));
-				}
+				Options.safe_save();
 				ContactList.optionsChanged(true, false);
 				ContactList.activate();
 				break;
@@ -509,6 +497,15 @@ public class JimmUI implements CommandListener
 			case Options.HOTKEY_CLI_INFO:
 				item.showClientInfo();
 				break;
+				
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			case Options.HOTKEY_FULLSCR:
+				boolean fsValue = !Options.getBoolean(Options.OPTION_FULL_SCREEN);
+				VirtualList.setFullScreen(fsValue);
+				Options.setBoolean(Options.OPTION_FULL_SCREEN, fsValue);
+				Options.safe_save();
+				break;
+			//#sijapp cond.end#
 			}
 		}
 
@@ -713,13 +710,12 @@ public class JimmUI implements CommandListener
 		infoTextList = new TextList(null);
 		
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		infoTextList.setTitle(caption);
-		infoTextList.setFullScreenMode(false);
 		infoTextList.setFontSize(Font.SIZE_MEDIUM);
 		// #sijapp cond.else#
-		infoTextList.setCaption(caption);
 		infoTextList.setFontSize(Font.SIZE_SMALL);
 		// #sijapp cond.end#
+
+		infoTextList.setCaption(caption);
 		
 		JimmUI.setColorScheme(infoTextList);
 		infoTextList.setCursorMode(TextList.SEL_NONE);

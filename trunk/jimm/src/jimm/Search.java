@@ -266,26 +266,15 @@ public class Search
                 screen.lock();
                 
                 JimmUI.fillUserInfo(getResult(n), screen);
-                
-                // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                screen.setTitle( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
-                // #sijapp cond.else #
-                screen.setCaption( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
-                // #sijapp cond.end#
-                
+		screen.setCaption( ResourceBundle.getString("results")+" "+Integer.toString(n+1) + "/" + Integer.toString(Search.this.size()) );
                 screen.unlock();
-            } else
+            }
+            else
             {
                 // Show a result entry
             	
             	screen.lock();
-            	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-                screen.setFullScreenMode(false);
-                screen.setTitle(ResourceBundle.getString("results")+" 0/0");
-                // #sijapp cond.else #
-                screen.setCaption(ResourceBundle.getString("results")+" 0/0");
-                // #sijapp cond.end#
-            	
+		screen.setCaption(ResourceBundle.getString("results")+" 0/0");
                 screen.addBigText(ResourceBundle.getString("no_results")+": ",0x0,Font.STYLE_BOLD, -1);
                 screen.unlock();
             }
