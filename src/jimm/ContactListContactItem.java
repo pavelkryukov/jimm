@@ -36,6 +36,7 @@ import jimm.SplashCanvas;
 import DrawControls.*;
 
 
+// TODO: remove UI code to ChatHistory 
 public class ContactListContactItem implements CommandListener, ContactListItem
 {
 	private static final int CM_SENDING_MESSAGE  = 1;

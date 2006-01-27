@@ -540,8 +540,8 @@ public class ConnectAction extends Action
 
 				// Send a CLI_REQROSTER or
 				// CLI_CHECKROSTER packet
-				long versionId1 = ContactList.getVersionId1();
-				int versionId2 = ContactList.getVersionId2();
+				long versionId1 = ContactList.getSsiListLastChangeTime();
+				int versionId2 = ContactList.getSsiNumberOfItems();
 				if (((versionId1 == -1) && (versionId2 == -1)) || (ContactList.getSize() == 0))
 				{
 					SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND, 0x00000000, new byte[0], new byte[0]);
