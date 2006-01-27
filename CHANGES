@@ -290,4 +290,5 @@ VERSION 0.5.0
   * Status of temporary contacts and contacts awaiting authorization is shown
   * Improved dialogs for deleting chat and history (it is possible to delete
     current item, others items or all items)
+  * It is possible to select full screen for contact list, chats etc...
   * New util JLFT - "Jimm Lang File Tool" for easy comparing and changing Jimm .lang files

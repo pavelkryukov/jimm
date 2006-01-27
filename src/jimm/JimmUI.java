@@ -157,11 +157,7 @@ public class JimmUI implements CommandListener
 		if (ctrl instanceof VirtualList)
 		{
 			VirtualList vl = (VirtualList)ctrl;
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			result = vl.getTitle();
-			// #sijapp cond.else#
 			result = vl.getCaption();
-			// #sijapp cond.end#
 		}
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		else result = ctrl.getTitle();
