@@ -63,6 +63,8 @@ import javax.microedition.lcdui.*;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 
+import DrawControls.VirtualList;
+
 
 public class Options
 {
@@ -133,6 +135,8 @@ public class Options
 	public static final int OPTION_PRX_PASS            =  12;   /* String  */
 	// #sijapp cond.end#
 	
+	public static final int OPTION_FULL_SCREEN         = 145;   /* boolean */
+	
 	public static final int OPTION_POPUP_WIN2          =  84;   /* int     */
 	public static final int OPTION_EXT_CLKEY0          =  77;   /* int     */
 	public static final int OPTION_EXT_CLKEYSTAR       =  78;   /* int     */
@@ -150,11 +154,10 @@ public class Options
 	public static final int HOTKEY_OPTIONS  = 5;
 	public static final int HOTKEY_MENU     = 6;
 	public static final int HOTKEY_LOCK     = 7;
-	// #sijapp cond.if modules_HISTORY is "true" #
 	public static final int HOTKEY_HISTORY  = 8;
-	// #sijapp cond.end #
 	public static final int HOTKEY_MINIMIZE = 9;
 	public static final int HOTKEY_CLI_INFO = 10;
+	public static final int HOTKEY_FULLSCR  = 11;
 	
 	//#sijapp cond.if modules_DEBUGLOG is "true" #
 	private static boolean checkKeys = false;
@@ -195,113 +198,116 @@ public class Options
 			//#sijapp cond.end #
 			
 			load();
-			ResourceBundle.setCurrUiLanguage(getString(Options.OPTION_UI_LANGUAGE));
-			
 		}
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
 		{
 			Options.setDefaults();
 		}
+		
+		ResourceBundle.setCurrUiLanguage(getString(Options.OPTION_UI_LANGUAGE));
+		VirtualList.setFullScreen( getBoolean(Options.OPTION_FULL_SCREEN) );
 	}
 
 	// Set default values
 	// This is done before loading because older saves may not contain all new values
 	static private void setDefaults()
 	{
-	    setString (Options.OPTION_UIN1,                           emptyString);
-		setString (Options.OPTION_PASSWORD1,                      emptyString);
+	    setString (Options.OPTION_UIN1,               emptyString);
+		setString (Options.OPTION_PASSWORD1,          emptyString);
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"# ===>
-		setString (Options.OPTION_SRV_HOST,                       "login.icq.com");
+		setString (Options.OPTION_SRV_HOST,           "login.icq.com");
 		// #sijapp cond.else# ===
 		// #sijapp cond.if modules_PROXY is "true" #
-		setString (Options.OPTION_SRV_HOST,                       "64.12.161.185"); //Cannot resolve host IP on MIDP1 devices
+		setString (Options.OPTION_SRV_HOST,           "64.12.161.185"); //Cannot resolve host IP on MIDP1 devices
 		// #sijapp cond.else#
-		setString (Options.OPTION_SRV_HOST,                       "login.icq.com");
+		setString (Options.OPTION_SRV_HOST,           "login.icq.com");
 		// #sijapp cond.end#
 		// #sijapp cond.end# <===
-		setString (Options.OPTION_SRV_PORT,                       "5190");
-		setBoolean(Options.OPTION_KEEP_CONN_ALIVE,                true);
-        setString (Options.OPTION_CONN_ALIVE_INVTERV,             "120");
-		setInt    (Options.OPTION_CONN_PROP,                      0);
-		setInt    (Options.OPTION_CONN_TYPE,                      0);
+		setString (Options.OPTION_SRV_PORT,           "5190");
+		setBoolean(Options.OPTION_KEEP_CONN_ALIVE,    true);
+        setString (Options.OPTION_CONN_ALIVE_INVTERV, "120");
+		setInt    (Options.OPTION_CONN_PROP,          0);
+		setInt    (Options.OPTION_CONN_TYPE,          0);
         // #sijapp cond.if target isnot "MOTOROLA"#
-		setBoolean(Options.OPTION_SHADOW_CON,                      false);
+		setBoolean(Options.OPTION_SHADOW_CON,         false);
         // #sijapp cond.end#
-		setBoolean(Options.OPTION_MD5_LOGIN,                       false);
-		setBoolean(Options.OPTION_AUTO_CONNECT,					 false);
-		setString (Options.OPTION_UI_LANGUAGE,                    ResourceBundle.langAvailable[0]);
-		setBoolean(Options.OPTION_DISPLAY_DATE,                   false);
-		setInt    (Options.OPTION_CL_SORT_BY,                     0);
-		setBoolean(Options.OPTION_CL_HIDE_OFFLINE,                false);
+		setBoolean(Options.OPTION_MD5_LOGIN,          false);
+		setBoolean(Options.OPTION_AUTO_CONNECT,       false);
+		setString (Options.OPTION_UI_LANGUAGE,        ResourceBundle.langAvailable[0]);
+		setBoolean(Options.OPTION_DISPLAY_DATE,       false);
+		setInt    (Options.OPTION_CL_SORT_BY,         0);
+		setBoolean(Options.OPTION_CL_HIDE_OFFLINE,    false);
 		// #sijapp cond.if target is "SIEMENS1"#
-		setInt    (Options.OPTION_MESS_NOTIF_MODE,      0);
-		setString (Options.OPTION_MESS_NOTIF_FILE, "message.mmf");
-		setInt    (Options.OPTION_MESS_NOTIF_VOL,    50);
-		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,       0);
+		setInt    (Options.OPTION_MESS_NOTIF_MODE,    0);
+		setString (Options.OPTION_MESS_NOTIF_FILE,    "message.mmf");
+		setInt    (Options.OPTION_MESS_NOTIF_VOL,     50);
+		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  0);
 		setString (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mmf");
-		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,     50);
+		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
 		// #sijapp cond.elseif target is "MIDP2" | target is "SIEMENS2"#
-		setInt    (Options.OPTION_MESS_NOTIF_MODE,      0);
-		setString (Options.OPTION_MESS_NOTIF_FILE, "message.wav");
-		setInt    (Options.OPTION_MESS_NOTIF_VOL,    50);
-		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,       0);
+		setInt    (Options.OPTION_MESS_NOTIF_MODE,    0);
+		setString (Options.OPTION_MESS_NOTIF_FILE,    "message.wav");
+		setInt    (Options.OPTION_MESS_NOTIF_VOL,     50);
+		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  0);
 		setString (Options.OPTION_ONLINE_NOTIF_FILE,  "online.wav");
-		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,     50);
+		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
         // #sijapp cond.elseif target is "MOTOROLA"#
-        setInt    (Options.OPTION_MESS_NOTIF_MODE,      0);
-		setString (Options.OPTION_MESS_NOTIF_FILE, "message.mp3");
-		setInt    (Options.OPTION_MESS_NOTIF_VOL,    50);
-		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,       0);
+        setInt    (Options.OPTION_MESS_NOTIF_MODE,    0);
+		setString (Options.OPTION_MESS_NOTIF_FILE,    "message.mp3");
+		setInt    (Options.OPTION_MESS_NOTIF_VOL,     50);
+		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  0);
 		setString (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mp3");
-		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,     50);
-		setInt    (Options.OPTION_LIGHT_TIMEOUT,		            5);
-		setBoolean(Options.OPTION_LIGHT_MANUAL,		            false);	
+		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
+		setInt    (Options.OPTION_LIGHT_TIMEOUT,      5);
+		setBoolean(Options.OPTION_LIGHT_MANUAL,       false);	
 		// #sijapp cond.end#
 		
 		boolean cp1251hack = false;
 		for (int i = 0; i < ResourceBundle.langAvailable.length; i++) cp1251hack |= (ResourceBundle.langAvailable[i] == "RU");
-		setBoolean(Options.OPTION_CP1251_HACK,                    cp1251hack);
+		setBoolean(Options.OPTION_CP1251_HACK,        cp1251hack);
         // #sijapp cond.if target isnot "DEFAULT"#
-		setInt    (Options.OPTION_VIBRATOR,                       0);
+		setInt    (Options.OPTION_VIBRATOR,           0);
 		// #sijapp cond.end#		
         // #sijapp cond.if modules_TRAFFIC is "true" #
-		setInt    (Options.OPTION_COST_PER_PACKET,                0);
-		setInt    (Options.OPTION_COST_PER_DAY,                   0);
-		setInt    (Options.OPTION_COST_PACKET_LENGTH,             1024);
-		setString (Options.OPTION_CURRENCY,                       "$");
+		setInt    (Options.OPTION_COST_PER_PACKET,    0);
+		setInt    (Options.OPTION_COST_PER_DAY,       0);
+		setInt    (Options.OPTION_COST_PACKET_LENGTH, 1024);
+		setString (Options.OPTION_CURRENCY,           "$");
 	    // #sijapp cond.end #
-		setLong   (Options.OPTION_ONLINE_STATUS,                  ContactList.STATUS_ONLINE);
-		setBoolean(Options.OPTION_CHAT_SMALL_FONT,                true);
-		setBoolean(Options.OPTION_USER_GROUPS,                    false);
-		setBoolean(Options.OPTION_HISTORY,                        false);
-		setInt    (Options.OPTION_COLOR_SCHEME,                   CLRSCHHEME_BOW);
-        setString (Options.OPTION_STATUS_MESSAGE,                 "User is currently unavailable.\n You could leave a message.");
-        setBoolean(Options.OPTION_USE_SMILES,                     true);
-        setBoolean(Options.OPTION_SHOW_LAST_MESS,                 false);
+		setLong   (Options.OPTION_ONLINE_STATUS,      ContactList.STATUS_ONLINE);
+		setBoolean(Options.OPTION_CHAT_SMALL_FONT,    true);
+		setBoolean(Options.OPTION_USER_GROUPS,        false);
+		setBoolean(Options.OPTION_HISTORY,            false);
+		setInt    (Options.OPTION_COLOR_SCHEME,       CLRSCHHEME_BOW);
+        setString (Options.OPTION_STATUS_MESSAGE,     "User is currently unavailable.\n You could leave a message.");
+        setBoolean(Options.OPTION_USE_SMILES,         true);
+        setBoolean(Options.OPTION_SHOW_LAST_MESS,     false);
         // #sijapp cond.if modules_PROXY is "true" #
-		setInt    (Options.OPTION_PRX_TYPE,                     	0);
-		setString (Options.OPTION_PRX_SERV,                     	"");
-		setString (Options.OPTION_PRX_PORT,						"1080");
-		setString (Options.OPTION_AUTORETRY_COUNT,                "1");
-		setString (Options.OPTION_PRX_NAME,                  		emptyString);
-		setString (Options.OPTION_PRX_PASS,                       emptyString);
+		setInt    (Options.OPTION_PRX_TYPE,           0);
+		setString (Options.OPTION_PRX_SERV,           emptyString);
+		setString (Options.OPTION_PRX_PORT,           "1080");
+		setString (Options.OPTION_AUTORETRY_COUNT,    "1");
+		setString (Options.OPTION_PRX_NAME,           emptyString);
+		setString (Options.OPTION_PRX_PASS,           emptyString);
 	    // #sijapp cond.end #
-		setInt    (Options.OPTION_VISIBILITY_ID,                  0);
-		setInt    (Options.OPTION_EXT_CLKEY0,                     0);
-		setInt    (Options.OPTION_EXT_CLKEYSTAR,                  0);
-		setInt    (Options.OPTION_EXT_CLKEY4,                     0);
-		setInt    (Options.OPTION_EXT_CLKEY6,                     0);
-		setInt    (Options.OPTION_EXT_CLKEYCALL,                  HOTKEY_NEWMSG);
-		setInt    (Options.OPTION_EXT_CLKEYPOUND,                 HOTKEY_LOCK);
-		setInt    (Options.OPTION_POPUP_WIN2,                     0);
-		setBoolean(Options.OPTION_CLASSIC_CHAT,                   false);
+		setInt    (Options.OPTION_VISIBILITY_ID,      0);
+		setInt    (Options.OPTION_EXT_CLKEY0,         0);
+		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);
+		setInt    (Options.OPTION_EXT_CLKEY4,         0);
+		setInt    (Options.OPTION_EXT_CLKEY6,         0);
+		setInt    (Options.OPTION_EXT_CLKEYCALL,      HOTKEY_NEWMSG);
+		setInt    (Options.OPTION_EXT_CLKEYPOUND,     HOTKEY_LOCK);
+		setInt    (Options.OPTION_POPUP_WIN2,         0);
+		setBoolean(Options.OPTION_CLASSIC_CHAT,       false);
 		
-		setString (Options.OPTION_UIN2,                           emptyString);
-		setString (Options.OPTION_PASSWORD2,                      emptyString);
-		setString (Options.OPTION_UIN3,                           emptyString);     
-		setString (Options.OPTION_PASSWORD3,                      emptyString);
-		setInt    (Options.OPTIONS_CURR_ACCOUNT,                          0);
+		setString (Options.OPTION_UIN2,               emptyString);
+		setString (Options.OPTION_PASSWORD2,          emptyString);
+		setString (Options.OPTION_UIN3,               emptyString);     
+		setString (Options.OPTION_PASSWORD3,          emptyString);
+		setInt    (Options.OPTIONS_CURR_ACCOUNT,      0);
+		
+		setBoolean(Options.OPTION_FULL_SCREEN,        false);
 	}
 
 	// Load option values from record store
@@ -429,6 +435,17 @@ public class Options
 		account.closeRecordStore();
 	}
 
+	static public void safe_save()
+	{
+		try
+		{
+			save();
+		}
+		catch (Exception e)
+		{
+			JimmException.handleException(new JimmException(172, 0, true));
+		}
+	}
 
 	// Option retrieval methods (no type checking!)
 	static public synchronized String getString(int key)
@@ -589,7 +606,7 @@ class OptionsForm implements CommandListener, ItemStateListener
     private ChoiceGroup connTypeChoiceGroup;
     private ChoiceGroup autoConnectChoiceGroup;
     private ChoiceGroup uiLanguageChoiceGroup;
-    private ChoiceGroup displayDateChoiceGroup;
+    private ChoiceGroup choiceInterfaceMisc;
     private ChoiceGroup clSortByChoiceGroup;
     private ChoiceGroup chrgChat;
     private ChoiceGroup chrgPopupWin;
@@ -647,6 +664,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 		"minimize",
 		// #sijapp cond.end#,
 		"dc_info",
+		
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		"full_screen",
+		// #sijapp cond.end#
 	};
 	
 	final private int [] hotkeyActions = 
@@ -665,6 +686,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 		Options.HOTKEY_MINIMIZE,
 		// #sijapp cond.end#
 		Options.HOTKEY_CLI_INFO,
+		
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		Options.HOTKEY_FULLSCR,
+		// #sijapp cond.end#
 	};
 	
 	private int[] hotkeyOpts;
@@ -883,14 +908,17 @@ class OptionsForm implements CommandListener, ItemStateListener
 	
 	public void itemStateChanged(Item item)
 	{
-		int accCount = uinTextField.length;
-		if (accCount != 1)
+		if (uinTextField != null)
 		{
-			for (int i = 0; i < accCount; i++)
+			int accCount = uinTextField.length;
+			if (accCount != 1)
 			{
-				if (uinTextField[i] != item) continue;
-				choiceCurAccount.set(i, checkUin(uinTextField[i].getString()), null);
-				return;
+				for (int i = 0; i < accCount; i++)
+				{
+					if (uinTextField[i] != item) continue;
+					choiceCurAccount.set(i, checkUin(uinTextField[i].getString()), null);
+					return;
+				}
 			}
 		}
 	}
@@ -1058,9 +1086,19 @@ class OptionsForm implements CommandListener, ItemStateListener
 							}
 						}
 					}
-	                displayDateChoiceGroup = new ChoiceGroup(ResourceBundle.getString("display_date"), Choice.MULTIPLE);
-	                displayDateChoiceGroup.append(ResourceBundle.getString("yes"), null);
-	                displayDateChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_DISPLAY_DATE));
+					
+					int idx1 = 0;
+					
+	                choiceInterfaceMisc = new ChoiceGroup(ResourceBundle.getString("misc"), Choice.MULTIPLE);
+	                
+	                choiceInterfaceMisc.append(ResourceBundle.getString("display_date"), null);
+	                choiceInterfaceMisc.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_DISPLAY_DATE));
+	                
+	                //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	                choiceInterfaceMisc.append(ResourceBundle.getString("full_screen"), null);
+	                choiceInterfaceMisc.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_FULL_SCREEN));
+	                //#sijapp cond.end#
+	                
 	                clSortByChoiceGroup = new ChoiceGroup(ResourceBundle.getString("sort_by"), Choice.EXCLUSIVE);
 	                clSortByChoiceGroup.append(ResourceBundle.getString("sort_by_status"), null);
 	                clSortByChoiceGroup.append(ResourceBundle.getString("sort_by_name"), null);
@@ -1078,7 +1116,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                colorScheme.append(ResourceBundle.getString("white_on_blue"), null);
 	                colorScheme.setSelectedIndex(Options.getInt(Options.OPTION_COLOR_SCHEME), true);
 	                
-	                int idx1 = 0;
+	                idx1 = 0;
 	                chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"), Choice.MULTIPLE);
 	                chrgChat.append(ResourceBundle.getString("chat_small_font"), null);
 	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT));
@@ -1112,7 +1150,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					// #sijapp cond.end#
 					
 					if (uiLanguageChoiceGroup != null) optionsForm.append(uiLanguageChoiceGroup);
-					optionsForm.append(displayDateChoiceGroup);
+					optionsForm.append(choiceInterfaceMisc);
 					optionsForm.append(choiceContactList);
 					optionsForm.append(clSortByChoiceGroup);
 					
@@ -1279,7 +1317,14 @@ class OptionsForm implements CommandListener, ItemStateListener
 					if (ResourceBundle.langAvailable.length > 1)
 						Options.setString(Options.OPTION_UI_LANGUAGE,ResourceBundle.langAvailable[uiLanguageChoiceGroup.getSelectedIndex()]);
 					
-					Options.setBoolean(Options.OPTION_DISPLAY_DATE,displayDateChoiceGroup.isSelected(0));
+					int idx = 0;
+					
+					Options.setBoolean(Options.OPTION_DISPLAY_DATE, choiceInterfaceMisc.isSelected(idx++));
+					
+	                //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+					Options.setBoolean(Options.OPTION_FULL_SCREEN, choiceInterfaceMisc.isSelected(idx++));
+	                //#sijapp cond.end#
+					
 					
 					int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
 					boolean newHideOffline = choiceContactList.isSelected(1);
@@ -1289,7 +1334,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
 					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
 					
-					int idx = 0;
+					idx = 0;
 					Options.setBoolean(Options.OPTION_CHAT_SMALL_FONT, chrgChat.isSelected(idx++));
 					
 					// #sijapp cond.if modules_SMILES is "true"#
@@ -1310,6 +1355,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
 					Options.setInt(Options.OPTION_COLOR_SCHEME, newColorScheme);
 					
+					// Set UI options for real controls
 					ContactList.optionsChanged
 					(
 						(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline),
@@ -1321,6 +1367,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 					Options.setInt(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(lightTimeout.getString()));
 					Options.setBoolean(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
 					// #sijapp cond.end#
+					
+					VirtualList.setFullScreen( Options.getBoolean(Options.OPTION_FULL_SCREEN) );
 					break;
                 				
 				case OPTIONS_SIGNALING:
@@ -1353,14 +1401,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 			}
 
 			// Save options
-			try
-			{
-				Options.save();
-			}
-			catch (Exception e)
-			{
-				JimmException.handleException(new JimmException(172,0,true));
-			}
+			Options.safe_save();
 
 			// Activate MM/CL
 			if (Icq.isConnected())

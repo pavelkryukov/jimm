@@ -43,14 +43,8 @@ public class DebugLog
         list.addCommand(backCommand);
         list.setCommandListener(new DebugLog());
         list.setFontSize(TextList.SMALL_FONT);
-        //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-        list.setTitle("Debug log");
-        list.setFullScreenMode(false);
-        //#sijapp cond.else#
-        list.setCaption("Debug log");
-        //#sijapp cond.end#
+	list.setCaption("Debug log");
         list.setCursorMode(TextList.SEL_NONE);
-
     }
 
     private static boolean wasShown = false;

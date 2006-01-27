@@ -123,12 +123,7 @@ class HistoryStorageList extends VirtualList
 			CachedRecord record = HistoryStorage.getCachedRecord(currUin, getCurrIndex());
 			
 			if (record == null) return;
-			
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			setTitle(record.from+" "+record.date);
-			//#sijapp cond.else#
 			setCaption(record.from+" "+record.date);
-			//#sijapp cond.end#
 		}
 	}
 	
@@ -443,12 +438,7 @@ class HistoryStorageList extends VirtualList
 		//#sijapp cond.end#
 		
 		messText.doCRLF(-1);
-		
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		messText.setTitle(record.from);
-		//#sijapp cond.else#
 		messText.setCaption(record.from);
-		//#sijapp cond.end#
 	
 		Jimm.display.setCurrent(messText);
 		messText.repaint();
@@ -689,12 +679,7 @@ public class HistoryStorage
 		{
 			String caption = ResourceBundle.getString("history");
 			list = new HistoryStorageList();
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			list.setTitle(caption);
-			list.setFullScreenMode(false);
-			//#sijapp cond.else#
 			list.setCaption(caption);
-			//#sijapp cond.end#
 		}
 		
 		HistoryStorageList.setCurrUin(uin, nick);
