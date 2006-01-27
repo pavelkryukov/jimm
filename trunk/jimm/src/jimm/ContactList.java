@@ -128,12 +128,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     /** ************************************************************************* */
 
     // Version id numbers
-    static private long versionId1 = -1;
+    static private long ssiListLastChangeTime = -1;
+    static private int ssiNumberOfItems = 0;
 
-    static private int versionId2 = -1;
-    
     // Update help variable
-    private static boolean updated;
+    private static boolean haveToBeCleared;
 
     // Contact items
     private static Vector cItems;
@@ -201,7 +200,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             load();
         } catch (Exception e)
         {
-            updated = false;
+            haveToBeCleared = false;
             cItems = new Vector();
             gItems = new Vector();
         }
@@ -297,16 +296,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 
     // Returns the id number #1 which identifies (together with id number #2)
     // the saved contact list version
-	static public long getVersionId1()
+	static public long getSsiListLastChangeTime()
     {
-        return (versionId1);
+        return ssiListLastChangeTime;
     }
 
     // Returns the id number #2 which identifies (together with id number #1)
     // the saved contact list version
-	static public int getVersionId2()
+	static public int getSsiNumberOfItems()
     {
-        return (versionId2);
+        return (ssiNumberOfItems);
     }
     
     // Returns number of contact items
@@ -424,8 +423,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             buf = cl.getRecord(2);
             bais = new ByteArrayInputStream(buf);
             dis = new DataInputStream(bais);
-            versionId1 = dis.readLong();
-            versionId2 = dis.readInt();
+            ssiListLastChangeTime = dis.readLong();
+            ssiNumberOfItems = dis.readInt();
             
             // Read all remaining items from the record store
             int marker = 3;
@@ -514,8 +513,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 
         // Add version ids to the record store
         baos.reset();
-        dos.writeLong(versionId1);
-        dos.writeInt(versionId2);
+        dos.writeLong(ssiListLastChangeTime);
+        dos.writeInt(ssiNumberOfItems);
         buf = baos.toByteArray();
         cl.addRecord(buf, 0, buf.length);
 
@@ -555,9 +554,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     {
     	tree.clear();
     	treeBuilt = treeSorted = false;
+    	haveToBeCleared = true;
 		onlineCounter = 0;
     	int count = cItems.size();
-    	for (int i = 0; i < count; i++) getCItem(i).setLongValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
+    	for (int i = 0; i < count; i++)
+    		getCItem(i).setLongValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
     }
     
 	// Returns array of uins of unuthorized and temporary contacts
@@ -585,12 +586,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // received)
     static public synchronized void update(int flags, long versionId1_, int versionId2_, ContactListItem[] items)
     {
+    	//#sijapp cond.if modules_DEBUGLOG is "true"#
+    	System.out.println("New roster. versionId1_="+ssiListLastChangeTime+", versionId2="+versionId2_+", flags="+flags);
+    	System.out.println("Old versionId1="+ssiListLastChangeTime+", versionId2="+ssiNumberOfItems+", updated="+haveToBeCleared);
+    	System.out.println();
+    	//#sijapp cond.end #
+    	
         // Remove all Elemente form the old ContactList
-        if (!updated)
+        if (haveToBeCleared)
         {
+        	System.out.println("Clear CL");
             cItems.removeAllElements();
             gItems.removeAllElements();
-            ContactList.updated = false;
+            haveToBeCleared = false;
+            ssiNumberOfItems = 0;
         }
 
         // Add new contact items and group items
@@ -604,22 +613,29 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             	gItems.addElement(items[i]);
             }
         }
-        treeBuilt = false;
+        ssiNumberOfItems += versionId2_;
         
         // Save new contact list
-        if (flags == 0)
+        if (ssiListLastChangeTime != 0)
         {
-        	versionId1 = versionId1_;
-        	versionId2 = versionId2_;
-            try
-            {
-                save();
-            } catch (Exception e)
-            {
-            }
-        }
-        
-        ContactList.updated = (flags == 1);
+        	ssiListLastChangeTime = versionId1_;
+        	try
+        	{
+        		save();
+        	} catch (Exception e) { }
+        	treeBuilt = false;
+        	
+        	// Which contacts already have chats?
+        	for (int i = getSize()-1; i >= 0; i--)
+        	{
+        		ContactListContactItem cItem = getCItem(i); 
+        		cItem.setBooleanValue
+        		(
+        			ContactListContactItem.CONTACTITEM_HAS_CHAT,
+        			ChatHistory.chatHistoryExists(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN))
+        		);
+        	}
+        }	
     }
     
     //==================================//
