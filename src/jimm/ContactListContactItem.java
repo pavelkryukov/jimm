@@ -815,16 +815,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				showClientInfo();
 				break;
 
+			// Request auth
 			case USER_MENU_REQU_AUTH:
-				// Request auth
-				setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, true);
-				reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
-				reasonTextbox.removeCommand(textboxOkCommand);
-				reasonTextbox.addCommand(textboxSendCommand);
-				reasonTextbox.setCommandListener(this);
-				Jimm.display.setCurrent(reasonTextbox);
+				reqAuth();
 				break;
-
 			}
 		}
 
@@ -1035,13 +1029,15 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			}
 			this.activate(true);
 		}
+		
+		// Request auth
+		else if (c == reqAuthCommand) reqAuth();
+		
 		//Deny authorisation OR request authorisation
-		else if (c == denyAuthCommand || c == reqAuthCommand)
+		else if (c == denyAuthCommand)
 		{
 			// Reset and display textbox for entering deney reason
-			if (c == reqAuthCommand) setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, true);
-			if (c == reqAuthCommand) reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
-			else reasonTextbox.setString(null);
+			reasonTextbox.setString(null);
 			reasonTextbox.removeCommand(textboxOkCommand);
 			reasonTextbox.addCommand(textboxSendCommand);
 			reasonTextbox.setCommandListener(this);
@@ -1066,6 +1062,17 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			messageTextbox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
 		}
 		// #sijapp cond.end#
+	}
+
+	// Requests authorization
+	private void reqAuth()
+	{
+		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, true);
+		reasonTextbox.setString(ResourceBundle.getString("plsauthme"));
+		reasonTextbox.removeCommand(textboxOkCommand);
+		reasonTextbox.addCommand(textboxSendCommand);
+		reasonTextbox.setCommandListener(this);
+		Jimm.display.setCurrent(reasonTextbox);
 	}
 	
 	public void showClientInfo()
@@ -1455,29 +1462,35 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		if (Jimm.is_phone_SE() && (oldText != null)) messageTextbox.setString(oldText); 
 		// #sijapp cond.end#
 	}
-	
-	// Timer task for flashing form caption
-	private static FlashCapClass lastFlashTask = null;
+
 
 	// flashs form caption when current contact have changed status
 	static synchronized public void statusChanged(String uin, long status)
 	{
 		if (currentUin.equals(uin))
 		{
-			Displayable disp = getCurrDisplayable(uin);
-			if (disp != null)
-			{
-				if (lastFlashTask != null)
-				{
-					lastFlashTask.restoreCaption();
-					lastFlashTask.cancel();
-				}
-				lastFlashTask = new FlashCapClass(disp, getStatusString(status));;
-				Jimm.jimm.getTimerRef().scheduleAtFixedRate(lastFlashTask, 0, 500);
-			}
+			showTopLine(uin, getStatusString(status), 8, FlashCapClass.TYPE_FLASH);
 		}	 
 	}
-
+	
+	//	 Timer task for flashing form caption
+	private static FlashCapClass lastFlashTask = null;
+	
+	static void showTopLine(String uin, String text, int counter, int type)
+	{
+		Displayable disp = getCurrDisplayable(uin);
+		if (disp != null)
+		{
+			if (lastFlashTask != null)
+			{
+				lastFlashTask.restoreCaption();
+				lastFlashTask.cancel();
+			}
+			lastFlashTask = new FlashCapClass(disp, text, counter, type);
+			Jimm.jimm.getTimerRef().scheduleAtFixedRate(lastFlashTask, 0, 500);
+		}
+	}
+	
 	// Initializer
 	static
 	{
@@ -1504,7 +1517,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		messageTextbox.addCommand(textboxCancelCommand);
 
 		// Initialize the textfor for entering reasons
-		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 1000, TextField.ANY);
+		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 500, TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
 		reasonTextbox.addCommand(textboxCancelCommand);
 		reasonTextbox.addCommand(textboxSendCommand);
 	}
@@ -1512,23 +1525,37 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 class FlashCapClass extends TimerTask
 {
+	final static public int TYPE_FLASH    = 1;
+	final static public int TYPE_CREEPING = 2;
+	
 	private Displayable displ;
 	private String text, oldText;
-	private int counter;
+	private int counter, counter2;
+	private int type;
 	
-	public FlashCapClass(Displayable displ, String text)
+	public FlashCapClass(Displayable displ, String text, int counter, int type)
 	{
 		this.displ   = displ;
 		this.text    = text;
 		this.oldText = JimmUI.getCaption(displ);
-		this.counter = 8;
+		this.counter = counter;
+		this.type    = type;
+		counter2 = 0;
 	}
 	
 	public void run()
 	{
 		if ((counter != 0) && displ.isShown())
 		{
-			JimmUI.setCaption(displ, ((counter&1) == 0) ? text : " ");
+			switch (type)
+			{
+			case TYPE_FLASH:
+				JimmUI.setCaption(displ, ((counter&1) == 0) ? text : " ");
+				break;
+
+			case TYPE_CREEPING:
+				break;
+			}
 			counter--;
 		}
 		else
