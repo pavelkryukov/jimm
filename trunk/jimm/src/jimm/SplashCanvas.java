@@ -259,7 +259,7 @@ public class SplashCanvas extends Canvas
 
 
 	// Disable keylock
-	static private synchronized void unlock()
+	static public synchronized void unlock()
 	{
 		isLocked = false;
 		availableMessages = 0;

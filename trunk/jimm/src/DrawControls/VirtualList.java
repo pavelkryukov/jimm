@@ -563,6 +563,7 @@ public abstract class VirtualList extends Canvas
 		
 		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
 		if (fullScreen) invalidate();
+		else setTitle(capt);
 		//#sijapp cond.else#
 		invalidate();
 		//#sijapp cond.end#
