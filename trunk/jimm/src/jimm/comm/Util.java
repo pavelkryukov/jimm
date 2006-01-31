@@ -1485,11 +1485,11 @@ public class Util
 		int sec  = date[TIME_SECOND];
 		int min  = date[TIME_MINUTE];
 		int hour = date[TIME_HOUR];
-		int day  = date[TIME_DAY];
-		int mon  = date[TIME_MON];
+		int day  = date[TIME_DAY]-1;
+		int mon  = date[TIME_MON]-1;
 		int year = date[TIME_YEAR]+TIME_START_YEAR;
 		
-		if ((mon < 1) || (mon > 12)) return; 
+		if ((mon < 0) || (mon > 11)) return; 
 		sec += seconds;
 		
 		min += sec/60;
@@ -1502,8 +1502,8 @@ public class Util
 		hour %= 24;
 		
 		int dayCount;
-		if (mon == 2) dayCount = (year%4 == 0) ? 29 : 28;
-		else dayCount = dayCounts[mon-1];
+		if (mon == 1) dayCount = (year%4 == 0) ? 29 : 28;
+		else dayCount = dayCounts[mon];
 		
 		mon += day/dayCount; // not right in general but it works in particular :-)  
 		day %= dayCount;
@@ -1514,8 +1514,8 @@ public class Util
 		date[TIME_SECOND] = (byte)sec;
 		date[TIME_MINUTE] = (byte)min;
 		date[TIME_HOUR]   = (byte)hour;
-		date[TIME_DAY]    = (byte)day;
-		date[TIME_MON]    = (byte)mon;
+		date[TIME_DAY]    = (byte)(day+1);
+		date[TIME_MON]    = (byte)(mon+1);
 		date[TIME_YEAR]   = (byte)(year-TIME_START_YEAR);
 	}
 	
