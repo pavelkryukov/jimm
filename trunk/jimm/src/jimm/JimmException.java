@@ -155,7 +155,7 @@ public class JimmException extends Exception
 			Icq.resetServerCon();
 			//  #sijapp cond.end#
 			
-			SplashCanvas.unlock();
+			if (SplashCanvas.locked()) SplashCanvas.unlock();
 
 			// Display error message
 			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
