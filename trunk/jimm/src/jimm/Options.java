@@ -855,10 +855,12 @@ class OptionsForm implements CommandListener, ItemStateListener
 		passwordTextField = new TextField[size];
 		for (int i = 0; i < size; i++)
 		{
-			if (size != 1) optionsForm.append("--- "+(i+1)+" ---");
+			if (size > 1) optionsForm.append("---");
 			
-			TextField uinFld = new TextField(ResourceBundle.getString("uin"), (String)uins.elementAt(i), 12,TextField.NUMERIC);
-			TextField passFld = new TextField(ResourceBundle.getString("password"), (String)passwords.elementAt(i), 32, TextField.PASSWORD);
+			String add = (size == 1) ? "" : "-"+(i+1);
+			
+			TextField uinFld = new TextField(ResourceBundle.getString("uin")+add, (String)uins.elementAt(i), 12,TextField.NUMERIC);
+			TextField passFld = new TextField(ResourceBundle.getString("password")+add, (String)passwords.elementAt(i), 32, TextField.PASSWORD);
 			
 		    optionsForm.append(uinFld);
 			optionsForm.append(passFld);

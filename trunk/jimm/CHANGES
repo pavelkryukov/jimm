@@ -263,6 +263,7 @@ VERSION 0.5.0
   * NEW FEATURE: Safe login (MD5 login). Strongly recommended if
                  socks-proxy is used.
   * NEW FEATURE: Support for several accounts (max. 3 accounts are allowed)
+  * NEW FEATURE: Jimm can open URLs from messages in phone browser
   * BUGFIX: Jimm sometimes crashed if was restored from flip on Motorola phones
   * BUGFIX: There are no more echo errors after errorous connections
   * BUGFIX: Jimm stoped login when received offline message from unknown contact

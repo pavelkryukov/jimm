@@ -30,10 +30,13 @@ import java.lang.StringBuffer;
 import java.lang.System;
 import java.lang.Exception;
 import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.Font;
 import javax.microedition.rms.RecordStore;
 import jimm.util.ResourceBundle;
 import java.io.*;
 import javax.microedition.lcdui.*;
+import javax.microedition.midlet.MIDlet;
+
 import java.lang.Thread;
 
 import DrawControls.ListItem;
@@ -57,6 +60,9 @@ class CachedRecord
 {
 	String shortText, text, date, from;
 	byte type; // 0 - incoming message, 1 - outgoing message
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	boolean contains_url;
+	//#sijapp cond.end#
 }
 
 // Visual messages history list
@@ -81,6 +87,12 @@ class HistoryStorageList extends VirtualList
 	private static Command cmdCopytext = new Command(ResourceBundle.getString("copy_text"),    Command.ITEM,   5);
 	private static Command cmdExport   = new Command(ResourceBundle.getString("export"),    Command.ITEM,   7);
 	private static Command cmdExportAll   = new Command(ResourceBundle.getString("exportall"),    Command.ITEM,   8);
+	// #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	private static Command cmdGotoURL   = new Command(ResourceBundle.getString("goto_url"),    Command.ITEM,   9);
+	// #sijapp cond.end#
+	//commands for url list
+	private static Command cmdurlSelect   = new Command(ResourceBundle.getString("select")   ,    Command.OK,     1);
+	private static Command cmdurlBack     = new Command(ResourceBundle.getString("back"),         Command.BACK,   2);
 	
 	static TextList messText;
 	
@@ -109,6 +121,7 @@ class HistoryStorageList extends VirtualList
 		addCommand(cmdCopytext);
 		addCommand(cmdExport);
 		addCommand(cmdExportAll);
+		//addCommand(cmdGotoURL);
 		setCommandListener(this);
 		setVLCommands(this);
 		JimmUI.setColorScheme(this);
@@ -123,7 +136,15 @@ class HistoryStorageList extends VirtualList
 			CachedRecord record = HistoryStorage.getCachedRecord(currUin, getCurrIndex());
 			
 			if (record == null) return;
+			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+			removeCommand(cmdGotoURL);
+			if ( record.contains_url ) addCommand(cmdGotoURL);
+			//#sijapp cond.end#
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			setTitle(record.from+" "+record.date);
+			//#sijapp cond.else#
 			setCaption(record.from+" "+record.date);
+			//#sijapp cond.end#
 		}
 	}
 	
@@ -235,9 +256,52 @@ class HistoryStorageList extends VirtualList
 		}
 	}
 	// #sijapp cond.end#
+	private TextList URLList;
+	private void gotoURL()
+	{
+		CachedRecord rec = HistoryStorage.getCachedRecord(currUin,getCurrIndex());
+		Vector urls = Util.parseMessageForURL(rec.text+"\n");
+		if (urls == null) return;
+
+		if (urls.size() == 1)
+			try
+			{
+				Jimm.jimm.platformRequest( (String)urls.elementAt(0) );
+			}
+			catch (Exception e){}
+		else
+		{
+			URLList = JimmUI.getInfoTextList(ResourceBundle.getString("goto_url"),false);
+			URLList.addCommand(cmdurlSelect);
+			URLList.addCommand(cmdurlBack);
+			URLList.setCommandListener(this);
+			for (int i = 0 ; i < urls.size() ; i++)
+			{
+				URLList.addBigText( (String)urls.elementAt(i),getTextColor(), Font.STYLE_PLAIN, i).doCRLF(i);
+			}
+			JimmUI.showInfoTextList( URLList );
+		}
+	}
 	
 	public void commandAction(Command c, Displayable d)
 	{
+		if ( c == cmdurlBack )
+		{
+			URLList = null;
+			HistoryStorage.showHistoryList(currUin,currName);
+		}
+		
+		if ( c == cmdurlSelect)
+		{
+			try
+			{
+				Jimm.jimm.platformRequest(URLList.getCurrText(0,false));
+			}
+			catch (Exception e)
+			{
+
+			}
+		}
 		// #sijapp cond.if target is "SIEMENS2"#
 		// Export history to txt file
 		if (c == cmdExport)
@@ -246,7 +310,8 @@ class HistoryStorageList extends VirtualList
 		if (c == cmdExportAll)
 			export(null,null);
 		// #sijapp cond.end#
-		
+		if (c == cmdGotoURL)
+			gotoURL();
 		// back to contact list
 		if (c == cmdBack)
 		{
@@ -436,6 +501,10 @@ class HistoryStorageList extends VirtualList
 		//#sijapp cond.else#
 		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
 		//#sijapp cond.end#
+		
+		messText.removeCommand(cmdGotoURL);
+		if ( Util.parseMessageForURL(record.text+'\n') != null )
+			messText.addCommand(cmdGotoURL);
 		
 		messText.doCRLF(-1);
 		messText.setCaption(record.from);
@@ -640,10 +709,17 @@ public class HistoryStorage
 			result.from = dis.readUTF();
 			result.text = dis.readUTF();
 			result.date = dis.readUTF();
+			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+			if ( Util.parseMessageForURL(result.text) != null ) 
+				result.contains_url = true;
+			else
+				result.contains_url = false;
+			//#sijapp cond.end#
 		}
 		catch (Exception e)
 		{
 			result.text = result.date = result.from = "error"; 
+			result.contains_url = false;
 			return null;
 		}
 		
