@@ -122,6 +122,7 @@
   "ft_cam"                      "Send camera image"  
   "full_screen"                 "Full screen"
   "gender"                      "Gender"
+  "goto_url"                    "Open URL"
   "grant"                       "Grant Auth"
   "grantedby"                   "Your auth request was granted by:"
   "group_name"                  "Group name"

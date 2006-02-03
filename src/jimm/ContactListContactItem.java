@@ -24,8 +24,11 @@
 package jimm;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.TimerTask;
 import javax.microedition.lcdui.*;
+import java.util.Vector;
+
 import java.io.DataOutputStream;
 import java.io.DataInputStream;
 
@@ -643,6 +646,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 	}
 
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	static private TextList URLList;
+	//#sijapp cond.end#
 	// Command listener
 	public void commandAction(Command c, Displayable d)
 	{
@@ -652,8 +658,50 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		LightControl.flash(true);
 		// #sijapp cond.end#
 
+		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+		if (c == gotourlCommand)
+		{
+			String msg = ChatHistory.getCurrentMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			Vector v = Util.parseMessageForURL(msg+"\n");
+			if (v.size() == 1)
+				try
+				{
+					Jimm.jimm.platformRequest( (String)v.elementAt(0) );
+				}
+				catch (Exception e){}
+			else
+			{
+				URLList = JimmUI.getInfoTextList(ResourceBundle.getString("goto_url"),false);
+				URLList.addCommand(selecturlCommand);
+				URLList.addCommand(backurlCommand);
+				URLList.setCommandListener(this);
+				for (int i = 0 ; i < v.size() ; i++)
+				{
+					URLList.addBigText( (String)v.elementAt(i),getTextColor(), Font.STYLE_PLAIN, i).doCRLF(i);
+				}
+				JimmUI.showInfoTextList( URLList );
+			}
+		}
+		
+		else if (c == backurlCommand)
+		{
+			ChatHistory.getChatHistoryAt(currentUin).activate(false,false);
+		}
+		
+		else if (c == selecturlCommand)
+		{
+			try
+			{
+				Jimm.jimm.platformRequest(URLList.getCurrText(0,false));
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+		//#sijapp cond.end#
 		// Return to contact list
-		if (c == backCommand)
+		else if (c == backCommand)
 		{
 			ContactListContactItem.this.resetUnreadMessages();
 			ContactList.activate();
@@ -1330,6 +1378,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//Delete Chat History
 	private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 8);
 
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	public static Command gotourlCommand = new Command(ResourceBundle.getString("goto_url"), Command.ITEM, 9);
+	//#sijapp cond.end#
+
+	private static Command backurlCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
+	
+	private static Command selecturlCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
+	
 	// Textbox OK command
 	private static Command textboxOkCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 2);
 
@@ -1377,7 +1433,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         eventList[menuList.append(ResourceBundle.getString("send_message", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_MESSAGE;
         
         if (JimmUI.getClipBoardText() != null)
-        	eventList[menuList.append(ResourceBundle.getString("quote"), null)] = USER_MENU_QUOTA;
+        	eventList[menuList.append(ResourceBundle.getString("quote", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_QUOTA;
         
         eventList[menuList.append(ResourceBundle.getString("info"), null)]      = USER_MENU_USER_INFO;
         
@@ -1389,9 +1445,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         // #sijapp cond.if modules_FILES is "true"#
 		if (item.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8)
 		{
-			eventList[menuList.append(ResourceBundle.getString("ft_name"), null)] = USER_MENU_FILE_TRANS;
+			eventList[menuList.append(ResourceBundle.getString("ft_name", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_FILE_TRANS;
 			// #sijapp cond.if target isnot "MOTOROLA"#
-			eventList[menuList.append(ResourceBundle.getString("ft_cam"), null)] = USER_MENU_CAM_TRANS;
+			eventList[menuList.append(ResourceBundle.getString("ft_cam", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_CAM_TRANS;
 			// #sijapp cond.end#
 		}
 		// #sijapp cond.end#

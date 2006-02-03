@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 import java.util.TimeZone;
+import java.util.Vector;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
@@ -1864,4 +1865,39 @@ public class Util
 		return ResourceBundle.getString( day );
 	}
 	
+	private static boolean isURLChar(char chr, boolean before)
+	{
+		if (before) return ((chr >= 'A') && (chr <= 'Z')) ||
+		                   ((chr >= 'a') && (chr <= 'z')) ||
+		                   ((chr >= '0') && (chr <= '9'));
+		if ((chr <= ' ') || (chr == '\"')) return false;
+		return ((chr & 0xFF00) == 0);
+	}
+
+	public static Vector parseMessageForURL(String msg)
+	{
+		if (msg.indexOf('.') == -1) return null;
+		
+		Vector result = new Vector();
+		int size = msg.length();
+		int findIndex = 0, beginIdx, endIdx;
+		for (;;)
+		{
+			if (findIndex >= size) break;
+			int ptIndex = msg.indexOf('.', findIndex);
+			if (ptIndex == -1) break;
+			
+			for (beginIdx = ptIndex-1; beginIdx >= 0; beginIdx--) if (!isURLChar(msg.charAt(beginIdx), true)) break;
+			for (endIdx = ptIndex+1; endIdx < size; endIdx++) if (!isURLChar(msg.charAt(endIdx), false)) break;
+			if ((beginIdx == -1) || !isURLChar(msg.charAt(beginIdx), true)) beginIdx++;
+		
+			findIndex = endIdx;
+			if ((ptIndex == beginIdx) || (endIdx-ptIndex < 2)) continue;
+			
+			result.addElement("http:\57\57"+msg.substring(beginIdx, endIdx));
+		}
+		
+		return (result.size() == 0) ? null : result;
+	}
+ 
 }

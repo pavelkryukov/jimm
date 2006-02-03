@@ -126,19 +126,24 @@ class MessData
 	private byte[] time;
 	private String from;
 	private int textOffset;
+	private boolean contains_url;
 	
-	public MessData(boolean incoming, byte[] time, String from, int textOffset)
+	public MessData(boolean incoming, byte[] time, String from, int textOffset, boolean contains_url)
 	{
 		this.incoming   = incoming;
 		this.time       = time;
 		this.from       = from;
 		this.textOffset = textOffset;
+		this.contains_url = contains_url;
 	}
 		
 	public boolean getIncoming() { return incoming; }
 	public String getFrom() { return from; }
 	public byte[] getTime() { return time; }
 	public int getOffset() { return textOffset; }
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	public boolean isURL() { return contains_url; }
+	//#sijapp cond.end#
 }
 
 class ChatTextList implements VirtualListCommands
@@ -230,7 +235,20 @@ class ChatTextList implements VirtualListCommands
 		return messData; 
 	}
 
-	public void onCursorMove(VirtualList sender) {}
+	public void onCursorMove(VirtualList sender) 
+	{
+		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+		sender.removeCommand(ContactListContactItem.gotourlCommand);
+		int messIndex = textList.getCurrTextIndex();
+		if (messIndex != -1)
+		{
+			MessData md = (MessData)getMessData().elementAt(messIndex);
+			if ( md.isURL() )
+				sender.addCommand(ContactListContactItem.gotourlCommand);
+		}
+		//#sijapp cond.end#
+	}
+	
 	public void onItemSelected(VirtualList sender) {}
 	public void onKeyPress(VirtualList sender, int keyCode,int type)
 	{
@@ -289,16 +307,18 @@ class ChatTextList implements VirtualListCommands
 		//#sijapp cond.end#
 		textList.doCRLF(messTotalCounter);
 		
+		boolean contains_url = false;
+		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+		if ( Util.parseMessageForURL(message) != null ) contains_url = true;
+		//#sijapp cond.end#
+		getMessData().addElement( new MessData(red, time, from, texOffset, contains_url) );
+		messTotalCounter++;
+		
 		textList.setTopItem(lastSize);		
 		textList.unlock();
-		
 		// #sijapp cond.if target is "SIEMENS2"#
-		chatItem.updateContents();
+		//chatItem.updateContents();
 		//#sijapp cond.end#
-		
-		getMessData().addElement( new MessData(red, time, from, texOffset) );
-		
-		messTotalCounter++;
 	}
 	
 	public void activate(boolean initChat, boolean resetText)
@@ -495,19 +515,29 @@ public class ChatHistory
 		msgDisplay.addTextToForm(from, message, url, time, red, offline);
 	}
 	
-	static public void copyText(String uin)
+	static private MessData getCurrentMessData(String uin)
 	{
 		ChatTextList list = getChatHistoryAt(uin);
 		int messIndex = list.textList.getCurrTextIndex();
-		if (messIndex == -1) return;
+		if (messIndex == -1) return null;
 		MessData md = (MessData)list.getMessData().elementAt(messIndex);
+		return md;
+	}
+	
+	static public String getCurrentMessage(String uin)
+	{
 		
+		return getChatHistoryAt(uin).textList.getCurrText(getCurrentMessData(uin).getOffset(), false);
+	}
+	
+	static public void copyText(String uin)
+	{
 		JimmUI.setClipBoardText
 		(
-			md.getIncoming(),
-			Util.getDateString(false, md.getTime()),
-			md.getFrom(),
-			list.textList.getCurrText(md.getOffset(), false)
+//			md.getIncoming(),
+//			Util.getDateString(false, md.getTime()),
+//			md.getFrom(),
+			getCurrentMessage(uin)
 		);
 	}
 
