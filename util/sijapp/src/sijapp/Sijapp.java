@@ -42,7 +42,7 @@ public class Sijapp {
   public static String LANG_EXT = ".lang";
 
 
-  /****************************************************************************/
+  /*************************************************************************** */
 
 
   // Source diretory
@@ -134,6 +134,10 @@ public class Sijapp {
         try { destFile.delete(); }
         catch (SecurityException f) { /* Do nothing */ }
         throw (new SijappException(srcFile.getPath() + ":" + e.getMessage()));
+      }
+      catch (Exception e)
+      {
+        throw (new SijappException(srcFile.getPath() + ":" + e.toString()));
       }
 
       // Close files
