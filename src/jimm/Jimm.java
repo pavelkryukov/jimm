@@ -78,6 +78,9 @@ public class Jimm extends MIDlet
 	// Minimized state variable
 	static private boolean minimized, is_phone_SE;
     // #sijapp cond.end #
+	// #sijapp cond.if target is "MOTOROLA" & modules_FILES is "true"#
+	static public boolean supports_JSR75;
+	// #sijapp cond.end#
 
 	// Timer object
 	private Timer t;
@@ -122,6 +125,13 @@ public class Jimm extends MIDlet
 		String microeditionPlatform = System.getProperty("microedition.platform");
 		if (microeditionPlatform != null)
 			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1);
+		// #sijapp cond.end#
+		// #sijapp cond.if target is "MOTOROLA" & modules_FILES is "true"#
+		try {
+			supports_JSR75 = Class.forName("javax.microedition.io.file.FileConnection") != null;
+		} catch (ClassNotFoundException cnfe) {
+			supports_JSR75 = false;
+		}
 		// #sijapp cond.end#
 		
 		// Get Jimm version

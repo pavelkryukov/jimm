@@ -27,6 +27,7 @@ Author(s): Andreas Rossbacher
 package jimm.comm;
 
 import jimm.ContactListContactItem;
+import java.io.InputStream;
 
 public class FileTransferMessage extends Message
 {
@@ -38,16 +39,18 @@ public class FileTransferMessage extends Message
     private String description;
 
     // File to transfer
-    byte[] file;
+    InputStream fis;
+	int fsize;
 
     // Constructs an outgoing message
-    public FileTransferMessage(String sndrUin, ContactListContactItem _rcvr, int _messageType, String _filename, String _description, byte[] _file)
+    public FileTransferMessage(String sndrUin, ContactListContactItem _rcvr, int _messageType, String _filename, String _description, InputStream is, int size)
     {
     	super(null, null, sndrUin, _messageType);
         this.rcvr = _rcvr;
         this.filename = _filename;
         this.description = _description;
-        this.file = _file;
+        fis = is;
+		fsize = size;
         this.rcvr.setFTM(this);
     }
 
@@ -66,28 +69,28 @@ public class FileTransferMessage extends Message
     // Returns the size of the file
     public int getSize()
     {
-        return file.length;
+        return fsize;
     }
 
     // Is another segment available?
     public boolean segmentAvail(int i)
     {
-        return (i <= (file.length / 2048));
+        return (i <= (fsize / 2048));
     }
 
     public byte[] getFileSegmentPacket(int segment)
     {
         byte[] buf;
-        if (segment < (file.length / 2048))
+        if (segment < (fsize / 2048))
             buf = new byte[2049];
         else
-            buf = new byte[(file.length % 2048) + 1];
+            buf = new byte[(fsize % 2048) + 1];
         // System.out.println("buf length: " + buf.length);
         Util.putByte(buf, 0, 0x06);
         // System.out.println("p");
         try
         {
-            System.arraycopy(file, (segment * 2048), buf, 1, buf.length - 1);
+            fis.read(buf, 1, buf.length - 1);
         } catch (Exception e)
         {
             e.printStackTrace();
