@@ -252,24 +252,33 @@ class ChatTextList implements VirtualListCommands
 	public void onItemSelected(VirtualList sender) {}
 	public void onKeyPress(VirtualList sender, int keyCode,int type)
 	{
-		if (type == VirtualList.KEY_PRESSED)
+		try // getGameAction can raise exception
 		{
-			String currUin;
-			switch (sender.getGameAction(keyCode))
+			if (type == VirtualList.KEY_PRESSED)
 			{
-			case Canvas.LEFT:
-				currUin = ContactList.showNextPrevChat(false);
-				ChatHistory.calcCounter(currUin);
-				return;
+				String currUin;
+				switch (sender.getGameAction(keyCode))
+				{
+				case Canvas.LEFT:
+					currUin = ContactList.showNextPrevChat(false);
+					ChatHistory.calcCounter(currUin);
+					return;
 				
-			case Canvas.RIGHT:
-				currUin = ContactList.showNextPrevChat(true);
-				ChatHistory.calcCounter(currUin);
-				return;
+				case Canvas.RIGHT:
+					currUin = ContactList.showNextPrevChat(true);
+					ChatHistory.calcCounter(currUin);
+					return;
+				}
 			}
+			
+			JimmUI.execHotKey(ContactList.getItembyUIN(uin), keyCode, type);
+		}
+		catch(Exception e)
+		{
+			// do nothing
 		}
 
-		JimmUI.execHotKey(ContactList.getItembyUIN(uin), keyCode, type);
+		
 	}
 	
 	
