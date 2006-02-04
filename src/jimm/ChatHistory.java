@@ -122,27 +122,20 @@ class ChatItem extends CustomItem
 
 class MessData
 {
-	private boolean incoming;
 	private byte[] time;
-	private String from;
-	private int textOffset;
-	private boolean contains_url;
+	private int rowData;
 	
-	public MessData(boolean incoming, byte[] time, String from, int textOffset, boolean contains_url)
+	public MessData(boolean incoming, byte[] time, int textOffset, boolean contains_url)
 	{
-		this.incoming   = incoming;
 		this.time       = time;
-		this.from       = from;
-		this.textOffset = textOffset;
-		this.contains_url = contains_url;
+		this.rowData    = (textOffset&0xFFFFFF)|(contains_url ? 0x8000000 : 0)|(incoming ? 0x4000000 : 0);
 	}
 		
-	public boolean getIncoming() { return incoming; }
-	public String getFrom() { return from; }
+	public boolean getIncoming() { return (rowData&0x4000000) != 0; }
 	public byte[] getTime() { return time; }
-	public int getOffset() { return textOffset; }
+	public int getOffset() { return (rowData&0xFFFFFF); }
 	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
-	public boolean isURL() { return contains_url; }
+	public boolean isURL() { return (rowData&0x8000000) != 0; }
 	//#sijapp cond.end#
 }
 
@@ -162,7 +155,6 @@ class ChatTextList implements VirtualListCommands
 	private static Command insertEmotionCommand;
 	//#sijapp cond.end#
 	static private ChatTextList _this;
-	
 	
 	static
 	{
@@ -324,7 +316,7 @@ class ChatTextList implements VirtualListCommands
 			if ( texOffset == 1) textList.addCommand(ContactListContactItem.gotourlCommand);
 		}
 		//#sijapp cond.end#
-		getMessData().addElement( new MessData(red, time, from, texOffset, contains_url) );
+		getMessData().addElement( new MessData(red, time, texOffset, contains_url) );
 		messTotalCounter++;
 		
 		textList.setTopItem(lastSize);		
@@ -419,7 +411,7 @@ public class ChatHistory
 
 	// Adds selected message to history
 	//#sijapp cond.if modules_HISTORY is "true" #
-	static public void addTextToHistory(String uin)
+	static public void addTextToHistory(String uin, String from)
 	{
 		ChatTextList list = getChatHistoryAt(uin);
 		int textIndex = list.textList.getCurrTextIndex();
@@ -429,13 +421,12 @@ public class ChatHistory
 		String text = list.textList.getCurrText(data.getOffset(), false);
 		if (text == null) return;
 		
-		
 		HistoryStorage.addText
 		(
 			uin, 
 			text, 
 			data.getIncoming() ? (byte)0 : (byte)1, 
-			data.getFrom(), 
+			data.getIncoming() ? from : ResourceBundle.getString("me"),
 			data.getTime()
 		);
 	}
@@ -539,17 +530,21 @@ public class ChatHistory
 	
 	static public String getCurrentMessage(String uin)
 	{
-		
 		return getChatHistoryAt(uin).textList.getCurrText(getCurrentMessData(uin).getOffset(), false);
 	}
 	
-	static public void copyText(String uin)
+	static public void copyText(String uin, String from)
 	{
+		ChatTextList list = getChatHistoryAt(uin);
+		int messIndex = list.textList.getCurrTextIndex();
+		if (messIndex == -1) return;
+		MessData md = (MessData)list.getMessData().elementAt(messIndex);
+		
 		JimmUI.setClipBoardText
 		(
-//			md.getIncoming(),
-//			Util.getDateString(false, md.getTime()),
-//			md.getFrom(),
+			md.getIncoming(),
+			Util.getDateString(false, md.getTime()),
+			md.getIncoming() ? from : ResourceBundle.getString("me"),
 			getCurrentMessage(uin)
 		);
 	}

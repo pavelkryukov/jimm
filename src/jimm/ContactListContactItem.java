@@ -881,14 +881,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		//#sijapp cond.if modules_HISTORY is "true" #
 		else if (c == addToHistoryCommand)
 		{
-			ChatHistory.addTextToHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			ChatHistory.addTextToHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 		}
 		//#sijapp cond.end#
 
 		// "Copy text" command selected
 		else if (c == copyTextCommand)
 		{
-			ChatHistory.copyText(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			ChatHistory.copyText(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 			getCurrDisplay().addCommand(replWithQuotaCommand);
 		}
 		
@@ -937,27 +937,22 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			// Message has been entered
 			if (d == messageTextbox)
 			{
+				String messText = messageTextbox.getString();
+				
 				// Abort if nothing has been entered
-				if (messageTextbox.getString().length() < 1)
-				{
-					this.activate(true);
-				}
+				if (messText.length() == 0) this.activate(true);
 
 				// Send plain message
-				if ((currentMode == CM_SENDING_MESSAGE) && !messageTextbox.getString().equals(""))
+				if ((currentMode == CM_SENDING_MESSAGE) && (messText.length() != 0))
 				{
 					// Send message via icq
-					sendMessage(messageTextbox.getString());
+					sendMessage(messText);
 
 					// Return to chat or menu
 					this.activate(true);
 
 					// Clear text in messageTextbox
 					messageTextbox.setString(null);
-
-					// Clear clipboard
-					getCurrDisplay().removeCommand(replWithQuotaCommand);
-					repliedWithQuota = false;
 				}
 
 			}
