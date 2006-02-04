@@ -264,7 +264,7 @@ public class Options
 		// #sijapp cond.end#
 		
 		boolean cp1251hack = false;
-		for (int i = 0; i < ResourceBundle.langAvailable.length; i++) cp1251hack |= (ResourceBundle.langAvailable[i] == "RU");
+		for (int i = 0; i < ResourceBundle.langAvailable.length; i++) cp1251hack |= (ResourceBundle.langAvailable[i].equals("RU"));
 		setBoolean(Options.OPTION_CP1251_HACK,        cp1251hack);
         // #sijapp cond.if target isnot "DEFAULT"#
 		setInt    (Options.OPTION_VIBRATOR,           0);
@@ -293,7 +293,13 @@ public class Options
 	    // #sijapp cond.end #
 		setInt    (Options.OPTION_VISIBILITY_ID,      0);
 		setInt    (Options.OPTION_EXT_CLKEY0,         0);
+		
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		setInt    (Options.OPTION_EXT_CLKEYSTAR,      HOTKEY_FULLSCR);
+		//#sijapp cond.end #
 		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);
+		// #sijapp cond.else#
+		
 		setInt    (Options.OPTION_EXT_CLKEY4,         0);
 		setInt    (Options.OPTION_EXT_CLKEY6,         0);
 		setInt    (Options.OPTION_EXT_CLKEYCALL,      HOTKEY_NEWMSG);

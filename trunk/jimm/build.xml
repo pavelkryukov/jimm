@@ -46,7 +46,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
 	<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp}/lib/API.jar"     />
 	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
-	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar" />
+	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />
 	<!--  *******************************************************************   -->
 	<!--  Change this to the directory where ProGuard is installed. You can     -->
 	<!--  use both the slash and the backslash for separating path components.  -->
