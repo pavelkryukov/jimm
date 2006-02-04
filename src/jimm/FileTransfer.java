@@ -406,7 +406,7 @@ public class FileTransfer implements CommandListener
 				else if (data == null) data = getSnapshot(null);
 				if (data == null) JimmException.handleException(new JimmException(183, 0, true));
 				this.stop();
-				img = Image.createImage(data, 0, fsize);
+				img = Image.createImage(data, 0, data.length);
 				viewfinder = false;
 				repaint();
 			}
@@ -444,7 +444,7 @@ public class FileTransfer implements CommandListener
                 {
                     this.stop();
                     this.reset();
-					FileTransfer.this.setData(new ByteArrayInputStream(data), fsize);
+					FileTransfer.this.setData(new ByteArrayInputStream(data), data.length);
                     FileTransfer.this.askForNameDesc("jimm_cam" + Util.getCounter() + ".jpeg", "");
                 }
                 this.takeSnapshot();

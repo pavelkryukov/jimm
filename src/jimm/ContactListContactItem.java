@@ -658,8 +658,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		LightControl.flash(true);
 		// #sijapp cond.end#
 
+		// Return to contact list
+		if (c == backCommand)
+		{
+			ContactListContactItem.this.resetUnreadMessages();
+			ContactList.activate();
+		}
 		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
-		if (c == gotourlCommand)
+		else if (c == gotourlCommand)
 		{
 			String msg = ChatHistory.getCurrentMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			Vector v = Util.parseMessageForURL(msg+"\n");
@@ -700,12 +706,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			}
 		}
 		//#sijapp cond.end#
-		// Return to contact list
-		else if (c == backCommand)
-		{
-			ContactListContactItem.this.resetUnreadMessages();
-			ContactList.activate();
-		}
+		
 		// Message has been closed
 		else if (c == msgCloseCommand)
 		{
@@ -1573,7 +1574,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		messageTextbox.addCommand(textboxCancelCommand);
 
 		// Initialize the textfor for entering reasons
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 500, TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
+		//#sijapp cond.else#
+		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 500, TextField.ANY);
+		//#sijapp cond.end#
+		
 		reasonTextbox.addCommand(textboxCancelCommand);
 		reasonTextbox.addCommand(textboxSendCommand);
 	}
