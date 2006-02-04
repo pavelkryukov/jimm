@@ -318,7 +318,11 @@ class ChatTextList implements VirtualListCommands
 		
 		boolean contains_url = false;
 		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
-		if ( Util.parseMessageForURL(message) != null ) contains_url = true;
+		if ( Util.parseMessageForURL(message) != null ) 
+		{
+			contains_url = true;
+			if ( texOffset == 1) textList.addCommand(ContactListContactItem.gotourlCommand);
+		}
 		//#sijapp cond.end#
 		getMessData().addElement( new MessData(red, time, from, texOffset, contains_url) );
 		messTotalCounter++;
