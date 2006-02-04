@@ -296,9 +296,10 @@ public class Options
 		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		setInt    (Options.OPTION_EXT_CLKEYSTAR,      HOTKEY_FULLSCR);
-		//#sijapp cond.end #
-		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);
 		// #sijapp cond.else#
+		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);
+		//#sijapp cond.end #
+		
 		
 		setInt    (Options.OPTION_EXT_CLKEY4,         0);
 		setInt    (Options.OPTION_EXT_CLKEY6,         0);
