@@ -957,18 +957,18 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         if (wasOnline && !nowOnline)
         {
         	onlineCounter--;
-        	if (group != null) group.setCounters(-1, 0);
+        	if (group != null) group.updateCounters(-1, 0);
         	changed = true;
         }
         
         if (!wasOnline && nowOnline)
         {
         	onlineCounter++;
-        	if (group != null) group.setCounters(1, 0);
+        	if (group != null) group.updateCounters(1, 0);
         	changed = true;
         }
         
-        group.setCounters(0, tolalChanges);
+        group.updateCounters(0, tolalChanges);
         changed |= (tolalChanges != 0); 
         
         if (changed) RunnableImpl.updateContactListCaption();
