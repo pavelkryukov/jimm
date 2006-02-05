@@ -476,7 +476,7 @@ public class FileTransfer implements CommandListener
             {
                 this.stop();
                 this.reset();
-                FileTransfer.this.setData(new ByteArrayInputStream(data), fsize);
+                FileTransfer.this.setData(new ByteArrayInputStream(data), data.length);
                 FileTransfer.this.askForNameDesc("jimm_cam" + Util.getCounter() + ".jpeg", "");
             } else
             {
@@ -553,22 +553,15 @@ public class FileTransfer implements CommandListener
             {
                 List curr = (List) d;
                 final String currFile = curr.getString(curr.getSelectedIndex());
-                new Thread(new Runnable()
-                {
-                    public void run()
-                    {
                         if (currFile.endsWith(SEP_STR) || currFile.equals(UP_DIRECTORY))
                             traverseDirectory(currFile);
-                        else
-                            try {
+				else try {
                                 startFT(currFile);
                             }
                         	catch (JimmException e)
                         	{
                         	    JimmException.handleException(e);
                         	}
-                    }
-                }).start();
             }
             else
                 if (c == back)

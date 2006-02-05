@@ -3,20 +3,9 @@
   // #sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Время подсветки (сек)"
   "backlight_manual"            "Ручная подсветка (*)"
-  "select"                      "Выбор     "
-  "reset"                       "      Сброс"
-  "cancel"                      "    Отмена"
-  "back"                        "     Назад"
   "exit_button"                 "     Выход"
   "menu_button"                 "      Меню"
-  "save"                        "Сохранить "
-  "ok"                          "OK         "
-  "reply"                       "Ответ      "
-  "close"                       "   Закрыть"
-  "search_user"                 "Найти      "
-  "send"                        "Отправить"
-  "next"                        "Следующий"
-  // #sijapp cond.else#
+  // #sijapp cond.end#
   "reply"                       "Ответ"
   "close"                       "Закрыть"
   "select"                      "Выбрать"
@@ -28,7 +17,6 @@
   "search_user"                 "Найти контакт"
   "send"                        "Отправить"
   "next"       "Следующий"
-  // #sijapp cond.end#
 
 //Days of the week
 	"monday"					"Понедельник"

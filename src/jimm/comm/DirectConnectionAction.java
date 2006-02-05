@@ -92,6 +92,8 @@ public class DirectConnectionAction extends Action
         // Make a new peer connection and connect to the adress and port we got from the FileTransferRequest
         Icq.peerC = icq.new PeerConnection();
         Icq.peerC.connect(Util.ipToString(ft.getRcvr().getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)) + ":" + ft.getRcvr().getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT));
+        
+    	System.out.println("Connected");
 
         // Send a DC init packet
         byte[] dcpacket = new byte[48];
@@ -159,6 +161,8 @@ public class DirectConnectionAction extends Action
 
         DCPacket initPacket = new DCPacket(dcpacket);
         Icq.peerC.sendPacket(initPacket);
+        
+        System.out.println("Connected-2");
     }
 
     // Forwards received packet, returns true if packet was consumed
@@ -301,9 +305,12 @@ public class DirectConnectionAction extends Action
                 Date date = new Date();
                 this.timestamp = date.getTime();
                 
+                System.out.println("Start sending");
+                
                 // Send out the file in 2048 byte blocks
                 while (ft.segmentAvail(packets) && !cancel)
                 {
+                	System.out.println("Continue...");
                     // Send the packet
                     dataPacket = new DCPacket(ft.getFileSegmentPacket(packets));
                     Icq.peerC.sendPacket(dataPacket);
@@ -311,6 +318,9 @@ public class DirectConnectionAction extends Action
                 }
                 date = new Date();
                 this.timestamp = date.getTime()-this.timestamp;
+                
+                System.out.println("End sending");
+                
 
                 try
                 {

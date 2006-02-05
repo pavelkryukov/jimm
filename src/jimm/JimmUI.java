@@ -760,5 +760,20 @@ public class JimmUI implements CommandListener
 	{
 		return lastSelectedItemIndex;
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	
+	static public void addMessageText(TextList textList, String text, int messTotalCounter)
+	{
+		//#sijapp cond.if modules_SMILES is "true" #
+		Emotions.addTextWithEmotions(textList, text, Font.STYLE_PLAIN, textList.getTextColor(), messTotalCounter);
+		//#sijapp cond.else#
+		textList.addBigText(text, textList.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
+		//#sijapp cond.end#
+		textList.doCRLF(messTotalCounter);
+	}
+	
 
 }

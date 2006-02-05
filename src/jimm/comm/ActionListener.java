@@ -23,8 +23,6 @@
 
 package jimm.comm;
 
-import java.util.Date;
-
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 
@@ -35,9 +33,6 @@ import jimm.RunnableImpl;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
-// #sijapp cond.if modules_TRAFFIC is "true"#
-import jimm.Traffic;
-// #sijapp cond.end#
 import jimm.util.ResourceBundle;
 
 public class ActionListener
@@ -178,10 +173,6 @@ public class ActionListener
                     {
                     	online = Util.byteArrayToLong(tlvData);
                     }                    
-                    else if (tlvType == 0x001D) // Avatar
-                    {
-                    	System.out.println("User has avatar");
-                    }
                     marker += 2 + 2 + tlvData.length;
                 }
 
@@ -216,7 +207,7 @@ public class ActionListener
             /** ********************************************************************* */
             
             // Watch out for CLI_ACKMSG_COMMAND packets
-            if ((snacPacket.getFamily() == SnacPacket.CLI_ACKMSG_FAMILY)
+            else if ((snacPacket.getFamily() == SnacPacket.CLI_ACKMSG_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.CLI_ACKMSG_COMMAND))
             {
                 // Get raw data
@@ -238,7 +229,7 @@ public class ActionListener
             /** ********************************************************************* */            
 
             // Watch out for SRV_RECVMSG
-            if ((snacPacket.getFamily() == SnacPacket.SRV_RECVMSG_FAMILY)
+            else if ((snacPacket.getFamily() == SnacPacket.SRV_RECVMSG_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.SRV_RECVMSG_COMMAND))
             {
 
@@ -728,13 +719,16 @@ public class ActionListener
                     	String statusMess;
                     	
                     	long currStatus = Options.getLong(Options.OPTION_ONLINE_STATUS);
-						if ((currStatus != ContactList.STATUS_ONLINE) && (currStatus != ContactList.STATUS_CHAT))
-							statusMess = Util.removeClRfAndTabs(Options.getString(Options.OPTION_STATUS_MESSAGE));
+						if ((currStatus != ContactList.STATUS_ONLINE) && (currStatus != ContactList.STATUS_CHAT) &&
+								(currStatus != ContactList.STATUS_INVISIBLE) && (currStatus != ContactList.STATUS_INVIS_ALL))
+							statusMess = Options.getString(Options.OPTION_STATUS_MESSAGE);
 						else
 							statusMess = new String();
                    	
                         // Acknowledge message with away message
                     	final byte[] statusMessBytes = Util.stringToByteArray(statusMess, false);
+                    	
+						if (statusMessBytes.length < 1) return;
                     	
                         byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 2 + statusMessBytes.length +1];
                         int ackMarker = 0;
@@ -834,7 +828,7 @@ public class ActionListener
             }
 
             //	  Watch out for SRV_ADDEDYOU
-            if ((snacPacket.getFamily() == SnacPacket.SRV_ADDEDYOU_FAMILY)
+            else if ((snacPacket.getFamily() == SnacPacket.SRV_ADDEDYOU_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.SRV_ADDEDYOU_COMMAND))
             {
                 // Get data
@@ -852,7 +846,7 @@ public class ActionListener
             }
 
             //	  Watch out for SRV_AUTHREQ
-            if ((snacPacket.getFamily() == SnacPacket.SRV_AUTHREQ_FAMILY)
+            else if ((snacPacket.getFamily() == SnacPacket.SRV_AUTHREQ_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.SRV_AUTHREQ_COMMAND))
             {
                 int authMarker = 0;
@@ -879,7 +873,7 @@ public class ActionListener
             }
 
             //	  Watch out for SRV_AUTHREPLY
-            if ((snacPacket.getFamily() == SnacPacket.SRV_AUTHREPLY_FAMILY)
+            else if ((snacPacket.getFamily() == SnacPacket.SRV_AUTHREPLY_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.SRV_AUTHREPLY_COMMAND))
             {
 

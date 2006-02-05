@@ -229,7 +229,7 @@ class ChatTextList implements VirtualListCommands
 
 	public void onCursorMove(VirtualList sender) 
 	{
-		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 		sender.removeCommand(ContactListContactItem.gotourlCommand);
 		int messIndex = textList.getCurrTextIndex();
 		if (messIndex != -1)
@@ -301,15 +301,10 @@ class ChatTextList implements VirtualListCommands
 		
 		texOffset = textList.getSize()-lastSize;
 		
-		//#sijapp cond.if modules_SMILES is "true" #
-		Emotions.addTextWithEmotions(textList, message, Font.STYLE_PLAIN, textList.getTextColor(), messTotalCounter);
-		//#sijapp cond.else#
-		textList.addBigText(message, textList.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
-		//#sijapp cond.end#
-		textList.doCRLF(messTotalCounter);
+		JimmUI.addMessageText(textList, message, messTotalCounter);
 		
 		boolean contains_url = false;
-		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 		if ( Util.parseMessageForURL(message) != null ) 
 		{
 			contains_url = true;
@@ -321,8 +316,9 @@ class ChatTextList implements VirtualListCommands
 		
 		textList.setTopItem(lastSize);		
 		textList.unlock();
+		
 		// #sijapp cond.if target is "SIEMENS2"#
-		//chatItem.updateContents();
+		chatItem.updateContents(); // TODO: rest does this line need
 		//#sijapp cond.end#
 	}
 	

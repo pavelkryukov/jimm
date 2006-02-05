@@ -646,7 +646,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 	}
 
-	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 	static private TextList URLList;
 	//#sijapp cond.end#
 	// Command listener
@@ -664,7 +664,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ContactListContactItem.this.resetUnreadMessages();
 			ContactList.activate();
 		}
-		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 		else if (c == gotourlCommand)
 		{
 			String msg = ChatHistory.getCurrentMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
@@ -1163,6 +1163,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	
 	public void rename(String newName)
 	{
+		if ((newName == null) || (newName.length() == 0)) return;
 		name = newName;
 		try
 		{
@@ -1170,12 +1171,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ContactList.save();
 
 			// Try to save ContactList to server
-			UpdateContactListAction action = new UpdateContactListAction(this, UpdateContactListAction.ACTION_RENAME);
-			Icq.requestAction(action);
+			if ( !getBooleanValue(CONTACTITEM_IS_TEMP) )
+			{
+				UpdateContactListAction action = new UpdateContactListAction(this, UpdateContactListAction.ACTION_RENAME);
+				Icq.requestAction(action);
+			}
 		}
 		catch (JimmException je)
 		{
-			messageTextbox.setString(null);
 			if (je.isCritical()) return;
 		}
 		catch (Exception e)
@@ -1184,6 +1187,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		}
 
 		ChatHistory.contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+		messageTextbox.setString(null);
+		
+		// TODO: sort contact list
 	}
 		
 	public void sendMessage(String text)
@@ -1374,7 +1380,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//Delete Chat History
 	private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 8);
 
-	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 	public static Command gotourlCommand = new Command(ResourceBundle.getString("goto_url"), Command.ITEM, 9);
 	//#sijapp cond.end#
 
