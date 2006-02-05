@@ -3,20 +3,9 @@
   // #sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Backlight timeout (sec)"
   "backlight_manual"            "Manual backlight (* key)"
-  "select"                      "Select      "
-  "reset"                       "       Reset"
-  "cancel"                      "      Cancel"
-  "back"                        "       Back"
   "exit_button"                 "       Exit"
   "menu_button"                 "      Menu"
-  "save"                        "Save       "
-  "ok"                          "OK          "
-  "reply"                       "Reply       "
-  "close"                       "       Close"
-  "search_user"                 "Search for User"
-  "send"                        "Send        "
-  "next"                        "Next        "
-  // #sijapp cond.else# 
+  // #sijapp cond.end#
   "reply"                       "Reply"
   "close"                       "Close"
   "select"                      "Select"
@@ -28,8 +17,6 @@
   "search_user"                 "Search for User"
   "send"                        "Send"
   "next"                        "Next"
-  // #sijapp cond.end#
-
 //Days of the week
 	"monday"					"Monday"
 	"tuesday"					"Tuesday"

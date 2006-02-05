@@ -537,7 +537,7 @@ public class SplashCanvas extends Canvas
 				this.cancel();
 				Alert ok = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("successful")+".\n"+ResourceBundle.getString("speed")+": "+dcAct.getSpeed()+" "+ResourceBundle.getString("kbs"),null, AlertType.INFO);
 				ok.setTimeout(2000);
-				Jimm.display.setCurrent(ok);
+				Jimm.display.setCurrent(ok, ContactList.getVisibleContactListRef());
 			}
 			else if (dcAct.isError())
 			{
@@ -545,7 +545,7 @@ public class SplashCanvas extends Canvas
 			    Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
 				this.cancel();
 				Alert err = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("not")+" "+ResourceBundle.getString("successful")+"!",null, AlertType.WARNING);
-				Jimm.display.setCurrent(err);
+				Jimm.display.setCurrent(err, ContactList.getVisibleContactListRef());
 			}
 		}
 		

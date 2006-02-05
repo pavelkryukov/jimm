@@ -60,7 +60,7 @@ class CachedRecord
 {
 	String shortText, text, date, from;
 	byte type; // 0 - incoming message, 1 - outgoing message
-	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 	boolean contains_url;
 	//#sijapp cond.end#
 }
@@ -87,7 +87,7 @@ class HistoryStorageList extends VirtualList
 	private static Command cmdCopytext = new Command(ResourceBundle.getString("copy_text"),    Command.ITEM,   5);
 	private static Command cmdExport   = new Command(ResourceBundle.getString("export"),    Command.ITEM,   7);
 	private static Command cmdExportAll   = new Command(ResourceBundle.getString("exportall"),    Command.ITEM,   8);
-	// #sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	// #sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 	private static Command cmdGotoURL   = new Command(ResourceBundle.getString("goto_url"),    Command.ITEM,   9);
 	// #sijapp cond.end#
 	//commands for url list
@@ -136,7 +136,7 @@ class HistoryStorageList extends VirtualList
 			CachedRecord record = HistoryStorage.getCachedRecord(currUin, getCurrIndex());
 			
 			if (record == null) return;
-			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 			removeCommand(cmdGotoURL);
 			if ( record.contains_url ) addCommand(cmdGotoURL);
 			//#sijapp cond.end#
@@ -719,7 +719,7 @@ public class HistoryStorage
 			result.from = dis.readUTF();
 			result.text = dis.readUTF();
 			result.date = dis.readUTF();
-			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 			if ( Util.parseMessageForURL(result.text) != null ) 
 				result.contains_url = true;
 			else

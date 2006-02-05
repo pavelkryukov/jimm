@@ -441,7 +441,7 @@ public class ConnectAction extends Action
 					throw new JimmException(toThrow, errcode);
 				}
 
-				if (consumed) {
+				if (consumed & (this.server != null) & (this.cookie != null)) {
 					// Close connection (only if not HTTP Connection)
 					if (!(Icq.c instanceof HTTPConnection))
 						Icq.c.close();

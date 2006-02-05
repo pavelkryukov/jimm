@@ -2199,6 +2199,10 @@ public class Icq implements Runnable
         {
             try
             {
+            	//#sijapp cond.if modules_DEBUGLOG is "true" #
+            	System.out.println("Peer conn: connecting to socket://" + hostAndPort);
+            	//#sijapp cond.end #
+            	
                 this.sc = (SocketConnection) Connector.open("socket://" + hostAndPort, Connector.READ_WRITE);
                 this.is = this.sc.openInputStream();
                 this.os = this.sc.openOutputStream();
