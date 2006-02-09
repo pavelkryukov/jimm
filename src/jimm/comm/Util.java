@@ -1568,11 +1568,13 @@ public class Util
 	
 	public static void correctDateForTimerZone(byte[] date)
 	{
-    	// #sijapp cond.if target is "SIEMENS2" #
-        correctDate(date, TimeZone.getDefault().getRawOffset()/1000+ + (TimeZone.getDefault().useDaylightTime() ? 60*60 : 0 ));
-        // #sijapp cond.else#
-        correctDate(date, TimeZone.getDefault().getRawOffset()/1000);
-        // #sijapp cond.end #
+		int timeZone = Options.getInt(Options.OPTIONS_TIME_ZONE);
+		
+		// Simple correct time zone for phones where "new Date()" returns GMS time 
+		if (timeZone > -100)
+		{
+			correctDate(date, timeZone*60*60);
+		}
 	}
 	
 	public static String longitudeToString(long seconds)

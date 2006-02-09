@@ -247,6 +247,7 @@
   "successful"                  "успешной"
   "sysnotice"                   "Системное уведомление"
   "text_too_long"               "Текст слишком большой для вставки в редактор"
+  "time_zone"                   "Время"
   "timeout_interv"              "Таймаут пинга"
   "title"                       "Название"
   "traffic_lng"                 "Трафик"

@@ -248,6 +248,7 @@
   "successful"                  "Successful"
   "sysnotice"                   "System Notice"
   "text_too_long"               "Text too long to be inserted"
+  "time_zone"                   "Time"
   "timeout_interv"              "Keepalive packet interval"
   "title"                       "Title"
   "traffic_lng"                 "Traffic"

@@ -776,12 +776,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	
     	long status = item.getLongValue(ContactListContactItem.CONTACTITEM_STATUS);
     	
-    	if (!treeBuilt)
-    	{
-    		if (status != ContactList.STATUS_OFFLINE) onlineCounter++;
-    		return;
-    	}
-    	
     	String uin = item.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
     	
     	// which group id ?
@@ -968,8 +962,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         	changed = true;
         }
         
-        group.updateCounters(0, tolalChanges);
-        changed |= (tolalChanges != 0); 
+        if (group != null)
+        {
+        	group.updateCounters(0, tolalChanges);
+        	changed |= (tolalChanges != 0);
+        }	
         
         if (changed) RunnableImpl.updateContactListCaption();
     }

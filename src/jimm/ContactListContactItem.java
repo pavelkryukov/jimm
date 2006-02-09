@@ -668,7 +668,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		else if (c == gotourlCommand)
 		{
 			String msg = ChatHistory.getCurrentMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-			Vector v = Util.parseMessageForURL(msg+"\n");
+			Vector v = Util.parseMessageForURL(msg);
 			if (v.size() == 1)
 				try
 				{
@@ -1007,9 +1007,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		else if (JimmUI.getCommandType(c, MSGBS_DELETECONTACT) == JimmUI.CMD_OK)
 		{
 			Icq.delFromContactList(ContactListContactItem.this);
+			
 			//#sijapp cond.if modules_HISTORY is "true" #
 			HistoryStorage.clearHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-			//#sijapp cond.end# 
+			//#sijapp cond.end#
 		}
 
 		// user select CANCEL in delete contact message box
