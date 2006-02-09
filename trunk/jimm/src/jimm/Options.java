@@ -135,6 +135,8 @@ public class Options
 	public static final int OPTION_PRX_PASS            =  12;   /* String  */
 	// #sijapp cond.end#
 	
+	public static final int OPTIONS_TIME_ZONE          =  87;   /* int     */
+	
 	public static final int OPTION_FULL_SCREEN         = 145;   /* boolean */
 	
 	public static final int OPTION_POPUP_WIN2          =  84;   /* int     */
@@ -315,6 +317,8 @@ public class Options
 		setInt    (Options.OPTIONS_CURR_ACCOUNT,      0);
 		
 		setBoolean(Options.OPTION_FULL_SCREEN,        false);
+		
+		setInt    (Options.OPTIONS_TIME_ZONE,         0);
 	}
 
 	// Load option values from record store
@@ -569,6 +573,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 {
 	private boolean lastGroupsUsed, lastHideOffline;
 	private int lastSortMethod, lastColorScheme;
+	private int currentHour; 
 
 	// Commands
 	private Command backCommand;
@@ -586,6 +591,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 	// Options form
 	private Form optionsForm;
 	
+	// Time zone list
+	private List lstTimeZone;
 
     // Static constants for menu actios
     private static final int OPTIONS_ACCOUNT    = 0;
@@ -599,8 +606,11 @@ class OptionsForm implements CommandListener, ItemStateListener
     // #sijapp cond.if modules_TRAFFIC is "true"#
     private static final int OPTIONS_TRAFFIC    = 6;
     // #sijapp cond.end#
+    
+    private static final int OPTIONS_TIMEZONE   = 7;
+    
     // Exit has to be biggest element cause it also marks the size
-    private static final int MENU_EXIT          = 7;
+    private static final int MENU_EXIT          = 8;
 
 	// Options
     private TextField[] uinTextField;
@@ -734,6 +744,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 		optionsForm.addCommand(backCommand);
 		optionsForm.setCommandListener(this);
 		optionsForm.setItemStateListener(this);
+		
+		lstTimeZone = new List(ResourceBundle.getString("time_zone"), List.EXCLUSIVE);
 	}
 
 	
@@ -755,6 +767,8 @@ class OptionsForm implements CommandListener, ItemStateListener
         // #sijapp cond.if modules_TRAFFIC is "true"#
         eventList[optionsMenu.append(ResourceBundle.getString("traffic_lng"), null)]      = OPTIONS_TRAFFIC;
         // #sijapp cond.end#
+        
+        eventList[optionsMenu.append(ResourceBundle.getString("time_zone"), null)]      = OPTIONS_TIMEZONE;
 	}
 
     
@@ -987,6 +1001,26 @@ class OptionsForm implements CommandListener, ItemStateListener
 			}
 			InitHotkeyMenuUI();
 			return;
+		}
+		
+		if (d == lstTimeZone)
+		{
+			if (c == saveCommand)
+			{
+				int diff = lstTimeZone.getSelectedIndex()-currentHour;
+				if (diff > 12) diff -= 24;
+				if (diff < -12)diff += 24;
+				
+				System.out.println("diff="+diff);
+				
+				Options.setInt(Options.OPTIONS_TIME_ZONE, diff);
+				Options.safe_save();
+				
+				optionsMenu.addCommand(backCommand);
+				Jimm.display.setCurrent(optionsMenu);
+				return;
+			}
+			
 		}
 		
 		// Look for select command
@@ -1253,6 +1287,23 @@ class OptionsForm implements CommandListener, ItemStateListener
 					optionsForm.append(currencyTextField);
 					break;
 				// #sijapp cond.end#
+					
+				case OPTIONS_TIMEZONE:
+				{
+					byte[] currDateTime = Util.createCurrentDate();
+					currentHour = currDateTime[Util.TIME_HOUR];
+					Util.correctDateForTimerZone(currDateTime);
+					int minutes = currDateTime[Util.TIME_MINUTE];
+					while (lstTimeZone.size() != 0) lstTimeZone.delete(0);
+					for (int i = 0; i < 24; i++) lstTimeZone.append(i+":"+minutes, null);
+					lstTimeZone.setSelectedIndex(currDateTime[Util.TIME_HOUR], true);
+
+					lstTimeZone.addCommand(saveCommand);
+					lstTimeZone.addCommand(backCommand);
+					lstTimeZone.setCommandListener(this);
+					Jimm.display.setCurrent(lstTimeZone);
+					return;
+				}
 			}
 
 			// Activate options form
