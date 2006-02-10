@@ -587,6 +587,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // received)
     static public synchronized void update(int flags, long versionId1_, int versionId2_, ContactListItem[] items)
     {
+    	//#log("some_debug_text")
+    	
     	//#sijapp cond.if modules_DEBUGLOG is "true"#
     	System.out.println("New roster. versionId1_="+ssiListLastChangeTime+", versionId2="+versionId2_+", flags="+flags);
     	System.out.println("Old versionId1="+ssiListLastChangeTime+", versionId2="+ssiNumberOfItems+", updated="+haveToBeCleared);

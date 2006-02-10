@@ -535,6 +535,7 @@ public class Options
 	public static final int  CLRSCHHEME_TEXT = 2; // retrieving text color
 	public static final int  CLRSCHHEME_BLUE = 3; // retrieving highlight color
 	public static final int  CLRSCHHEME_CURS = 4; // retrieving curr mess highlight color
+	public static final int  CLRSCHHEME_CAP  = 5; // retrieving caption background color
 	
 	// Constants for connection type
 	public static final int  CONN_TYPE_SOCKET = 0;
@@ -543,15 +544,15 @@ public class Options
 
 	final static private int[] colors = 
 	{
-		0xFFFFFF, 0x000000, 0x0000FF, 0x404040,
-		0x000000, 0xFFFFFF, 0x00FFFF, 0x808080,
-		0x000080, 0xFFFFFF, 0x00FFFF, 0xFFFFFF
+		0xFFFFFF, 0x000000, 0x0000FF, 0x404040, 0xC0C0C0,
+		0x000000, 0xFFFFFF, 0x00FFFF, 0x808080, 0x404040, 
+		0x000080, 0xFFFFFF, 0x00FFFF, 0xFFFFFF, 0x000040
 	};
 	
 	// Retrieves color value from color scheme
 	static public int getSchemeColor(int type)
 	{
-		return (colors[getInt(OPTION_COLOR_SCHEME)*4+type-1]);
+		return (colors[getInt(OPTION_COLOR_SCHEME)*5+type-1]);
 	}
 	
 	static public void editOptions()

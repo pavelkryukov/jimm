@@ -349,12 +349,12 @@ public class TextList extends VirtualList
 		super(capt, capTextColor, backColor, fontSize, cursorMode);
 	}
 	
-	public void setColors(int capTxt, int bkgrnd, int cursor, int text)
+	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text)
 	{
 		Enumeration allLines = lines.elements();
 		while (allLines.hasMoreElements())
 			((TextLine) allLines.nextElement()).setItemColor(text);
-		super.setColors(capTxt, bkgrnd, cursor, text);
+		super.setColors(capTxt, capbk, bkgrnd, cursor, text);
 	}
 
 	public TextList doCRLF(int blockTextIndex)

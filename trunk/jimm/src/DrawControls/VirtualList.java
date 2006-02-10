@@ -103,13 +103,14 @@ public abstract class VirtualList extends Canvas
 		fontSize    = MEDIUM_FONT,  // Current font size of VL
 		bkgrndColor = 0xFFFFFF,     // bk color of VL
 		cursorColor = 0x808080,     // Used when drawing focus rect.
-		textColor   = 0x000000,     // Default text color. 
-		capTxtColor = 0xFFFFFF,     // Color of caprion text
+		textColor   = 0x000000,     // Default text color.
+		capBkCOlor  = 0xC0C0C0,
+		capTxtColor = 0x00,     // Color of caprion text
 		cursorMode  = SEL_DOTTED;   // Cursor mode
 	
 	static
 	{
-		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
 		int width = capFont.getHeight() / 4;
 		scrollerWidth = width > 4 ? width : 4;
 		paintedItem = new ListItem();
@@ -136,8 +137,6 @@ public abstract class VirtualList extends Canvas
 	{
 		super();
 		setCaption(capt);
-		this.capTxtColor = 0xFFFFFF;
-		this.bkgrndColor = 0xFFFFFF;
 		this.fontSize = Font.SIZE_MEDIUM; 
 		createSetOfFonts(this.fontSize);
 		this.cursorMode = SEL_DOTTED;
@@ -210,8 +209,9 @@ public abstract class VirtualList extends Canvas
 		this.vlCommands = vlCommands;
 	}
 	
-	public void setColors(int capTxt, int bkgrnd, int cursor, int text)
+	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text)
 	{
+		capBkCOlor  = capbk;
 		capTxtColor = capTxt;
 		bkgrndColor = bkgrnd;
 		cursorColor = cursor;
@@ -618,13 +618,10 @@ public abstract class VirtualList extends Canvas
 		int width = getWidthInternal();
 		g.setFont(capFont);
 		int th = capFont.getHeight();
-		g.setColor(bkgrndColor);
-		g.fillRect(0, 0, width, th+3);
+		drawRect(g, capBkCOlor, 0, 0, width-1, th);
 		g.setColor(capTxtColor);
-		g.drawString(caption, 2, 1, Graphics.TOP | Graphics.LEFT);
-		int lineY = th+1;
-		g.drawLine(0, lineY, width, lineY);
-		return lineY+2;
+		g.drawString(caption, 3, 0, Graphics.TOP | Graphics.LEFT);
+		return th+1;
 	}
 	
 	protected boolean isItemSelected(int index)
@@ -676,6 +673,18 @@ public abstract class VirtualList extends Canvas
 			g.drawLine(width + 1, srcollerY1 + 1, width + 1, srcollerY2 - 2);
 			g.drawLine(width + 1, srcollerY1 + 1, width + scrollerWidth - 2, srcollerY1 + 1);
 		}
+	}
+	
+	private static void drawRect(Graphics g, int color, int x1, int y1, int x2, int y2)
+	{
+		g.setColor(color);
+		g.fillRect(x1+1, y1+1, x2-x1-1, y2-y1-1);
+		g.setColor(transformColorLight(color, -80));
+		g.drawLine(x1, y1, x1, y2);
+		g.drawLine(x1, y1, x2, y1);
+		g.setColor(transformColorLight(color, 32));
+		g.drawLine(x2, y1, x2, y2);
+		g.drawLine(x1, y2, x2, y2);
 	}
 
 	//! returns font height
