@@ -72,7 +72,7 @@ public abstract class VirtualList extends Canvas
 	protected final static int scrollerWidth;
 	
 	// Font for drawing caption
-	private final static Font capFont;
+	private static Font capFont;
 	
 	// Commands to react to VL events
 	private VirtualListCommands vlCommands;
@@ -110,7 +110,11 @@ public abstract class VirtualList extends Canvas
 	
 	static
 	{
+		//#sijapp cond.if target="MIDP2"#
 		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
+		//#sijapp cond.else#
+		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+		//#sijapp cond.end#
 		int width = capFont.getHeight() / 4;
 		scrollerWidth = width > 4 ? width : 4;
 		paintedItem = new ListItem();
@@ -618,10 +622,10 @@ public abstract class VirtualList extends Canvas
 		int width = getWidthInternal();
 		g.setFont(capFont);
 		int th = capFont.getHeight();
-		drawRect(g, capBkCOlor, 0, 0, width-1, th);
+		drawRect(g, capBkCOlor, 0, 0, width-1, th+1);
 		g.setColor(capTxtColor);
-		g.drawString(caption, 3, 0, Graphics.TOP | Graphics.LEFT);
-		return th+1;
+		g.drawString(caption, 3, 1, Graphics.TOP | Graphics.LEFT);
+		return th+2;
 	}
 	
 	protected boolean isItemSelected(int index)
@@ -675,16 +679,13 @@ public abstract class VirtualList extends Canvas
 		}
 	}
 	
-	private static void drawRect(Graphics g, int color, int x1, int y1, int x2, int y2)
+	private void drawRect(Graphics g, int color, int x1, int y1, int x2, int y2)
 	{
 		g.setColor(color);
 		g.fillRect(x1+1, y1+1, x2-x1-1, y2-y1-1);
-		g.setColor(transformColorLight(color, -80));
-		g.drawLine(x1, y1, x1, y2);
-		g.drawLine(x1, y1, x2, y1);
-		g.setColor(transformColorLight(color, 32));
-		g.drawLine(x2, y1, x2, y2);
-		g.drawLine(x1, y2, x2, y2);
+		
+		g.setColor(bkgrndColor);
+		g.drawRect(x1, y1, x2-x1, y2-y1);
 	}
 
 	//! returns font height
