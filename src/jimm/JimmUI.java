@@ -327,7 +327,8 @@ public class JimmUI implements CommandListener
 		
 		vl.setColors
 		(
-			Options.getSchemeColor(Options.CLRSCHHEME_BLUE),
+			Options.getSchemeColor(Options.CLRSCHHEME_TEXT),
+			Options.getSchemeColor(Options.CLRSCHHEME_CAP),
 			Options.getSchemeColor(Options.CLRSCHHEME_BACK),
 			Options.getSchemeColor(Options.CLRSCHHEME_BLUE),
 			Options.getSchemeColor(Options.CLRSCHHEME_TEXT)
