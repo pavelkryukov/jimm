@@ -622,7 +622,11 @@ public abstract class VirtualList extends Canvas
 		int width = getWidthInternal();
 		g.setFont(capFont);
 		int th = capFont.getHeight();
-		drawRect(g, capBkCOlor, 0, 0, width-1, th+1);
+		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -32), 0, 0, width, th);
+		
+		g.setColor(transformColorLight(capBkCOlor, -128));
+		g.drawLine(0, th+1, width, th+1);
+		
 		g.setColor(capTxtColor);
 		g.drawString(caption, 3, 1, Graphics.TOP | Graphics.LEFT);
 		return th+2;
@@ -679,13 +683,22 @@ public abstract class VirtualList extends Canvas
 		}
 	}
 	
-	private void drawRect(Graphics g, int color, int x1, int y1, int x2, int y2)
+	static private void drawRect(Graphics g, int color1, int color2, int x1, int y1, int x2, int y2)
 	{
-		g.setColor(color);
-		g.fillRect(x1+1, y1+1, x2-x1-1, y2-y1-1);
+		int r1 = ((color1 & 0xFF0000) >> 16);
+		int g1 = ((color1 & 0x00FF00) >> 8);
+		int b1 =  (color1 & 0x0000FF);
+		int r2 = ((color2 & 0xFF0000) >> 16);
+		int g2 = ((color2 & 0x00FF00) >> 8);
+		int b2 =  (color2 & 0x0000FF);
 		
-		g.setColor(bkgrndColor);
-		g.drawRect(x1, y1, x2-x1, y2-y1);
+		for (int i = 0; i < 8; i++)
+		{
+			int crd1 = i*(y2-y1)/8+y1;
+			int crd2 = (i+1)*(y2-y1)/8+y1;
+			g.setColor(i*(r2-r1)/7+r1, i*(g2-g1)/7+g1, i*(b2-b1)/7+b1);
+			g.fillRect(x1, crd1, x2, crd2);
+		}
 	}
 
 	//! returns font height
