@@ -38,6 +38,7 @@ import javax.microedition.midlet.MIDletStateChangeException;
 
 import jimm.comm.Icq;
 import jimm.comm.SearchAction;
+import jimm.comm.Action;
 import jimm.comm.SetOnlineStatusAction;
 import jimm.comm.UpdateContactListAction;
 import jimm.util.ResourceBundle;
@@ -303,52 +304,36 @@ public class MainMenu implements CommandListener
             if ((d == MainMenu.addUserOrGroup) || (d == statusList))
                 MainMenu.activate();
             else
-                Jimm.jimm.getContactListRef().activate();
+                ContactList.activate();
         } else if ((c == sendCommand) && (d == MainMenu.addUserOrGroup))
         {
-            // Display splash canvas
-            SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-            wait2.setMessage(ResourceBundle.getString("wait"));
-            wait2.setProgress(0);
-            Jimm.display.setCurrent(wait2);
-
-            SearchAction act1;
-            UpdateContactListAction act2;
+            Action act;
             
             if (addUserFlag) // Make a search for the given UIN
             {
                 Search search = new Search();
                 search.setSearchRequest(uinTextField.getString(), "", "", "", "", "", "", 0, false);
-
-                act1 = new SearchAction(search, SearchAction.CALLED_BY_ADDUSER);
-                act2 = null;
+                act = new SearchAction(search, SearchAction.CALLED_BY_ADDUSER);
             }
             else // Add the group
             {
                 ContactListGroupItem newGroup = new ContactListGroupItem(uinTextField.getString());
-
-                act1 = null;
-                act2 = new UpdateContactListAction(newGroup,UpdateContactListAction.ACTION_ADD);
+                act = new UpdateContactListAction(newGroup,UpdateContactListAction.ACTION_ADD);
             }
             try
             {
-                if (addUserFlag)
-                    Jimm.jimm.getIcqRef().requestAction(act1);
-                else
-                    Jimm.jimm.getIcqRef().requestAction(act2);
-
-            } catch (JimmException e)
+            	Jimm.jimm.getIcqRef().requestAction(act);
+            }
+            catch (JimmException e)
             {
                 JimmException.handleException(e);
                 if (e.isCritical()) return;
             }
 
             // Start timer
-            if (addUserFlag)
-                Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act1), 1000, 1000);
-            else
-                Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
-        } else if ((c == sendCommand) && (d == MainMenu.groupList))
+            SplashCanvas.addTimerTask("wait", act, 0, 0, false);
+        }
+        else if ((c == sendCommand) && (d == MainMenu.groupList))
         {
             ContactListContactItem cItems[];
             cItems = Jimm.jimm.getContactListRef().getContactItems();
@@ -367,12 +352,6 @@ public class MainMenu implements CommandListener
             }
             else
             {
-                // Display splash canvas
-                SplashCanvas wait2 = Jimm.jimm.getSplashCanvasRef();
-                wait2.setMessage(ResourceBundle.getString("wait"));
-                wait2.setProgress(0);
-                Jimm.display.setCurrent(wait2);
-                
                 // Create and request action to delete the group
                 UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[MainMenu.groupList.getSelectedIndex()],UpdateContactListAction.ACTION_DEL);
                 try 
@@ -385,7 +364,7 @@ public class MainMenu implements CommandListener
                     if (e.isCritical()) return;
                 }
                 // Start timer
-                Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act), 1000, 1000);
+                SplashCanvas.addTimerTask("wait", act, 0, 0, false);
             }
         }
         
@@ -542,7 +521,7 @@ public class MainMenu implements CommandListener
         {
 
             // Request online status change
-            long onlineStatus = ContactList.STATUS_ONLINE;
+            int onlineStatus = ContactList.STATUS_ONLINE;
             switch (MainMenu.statusList.getSelectedIndex())
             {
             case 1:

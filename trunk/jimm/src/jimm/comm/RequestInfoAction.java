@@ -87,25 +87,12 @@ public class RequestInfoAction extends Action
 	// Constructor
 	public RequestInfoAction(String uin, String nick)
 	{
+		super(false, true);
 		existingNick = nick;
 		infoShown = false;
 		packetCounter = 0;
 		strData[JimmUI.UI_UIN] = uin;
 	}
-
-	// Returns true if the action can be performed
-	public boolean isExecutable()
-	{
-		return (Icq.isConnected());
-	}
-
-
-	// Returns true if this is an exclusive command
-	public boolean isExclusive()
-	{
-		return (false);
-	}
-
 
 	// Init action
 	protected void init() throws JimmException

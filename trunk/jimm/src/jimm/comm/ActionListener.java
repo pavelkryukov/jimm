@@ -75,10 +75,10 @@ public class ActionListener
                 // DC variables
                 byte[] internalIP = new byte[4];
                 byte[] externalIP = new byte[4];
-                long dcPort = 0;
+                int dcPort = 0;
                 int dcType = -1;
                 int icqProt = 0;
-                long authCookie = 0;
+                int authCookie = 0;
                 // #sijapp cond.end#
                 // #sijapp cond.end#
                 
@@ -89,8 +89,8 @@ public class ActionListener
                 
                 // Time variables
                 int idle = -1;
-                long online = -1;
-                long signon = -1;
+                int online = -1;
+                int signon = -1;
       
                 
                 // Get data
@@ -101,7 +101,7 @@ public class ActionListener
                 String uin = Util.byteArrayToString(buf, 1, uinLen);
 
                 // Get new status and client capabilities
-                long status = ContactList.STATUS_ONLINE;
+                int status = ContactList.STATUS_ONLINE;
                 int marker = 1 + uinLen + 2;
                 int tlvNum = Util.getWord(buf, marker);
                 marker += 2;
@@ -111,7 +111,7 @@ public class ActionListener
                     byte[] tlvData = Util.getTlv(buf, marker);
                     if (tlvType == 0x0006) // STATUS
                     {
-                        status = Util.getDWord(tlvData, 0);
+                        status = (int)Util.getDWord(tlvData, 0);
                     } else if (tlvType == 0x000D) // CAPABILITIES
                     {
                     	capabilities = tlvData;
@@ -133,7 +133,7 @@ public class ActionListener
                         dcMarker += 4;
                         
                         // Get tcp port
-                        dcPort = Util.getDWord(tlvData,dcMarker);
+                        dcPort = (int)Util.getDWord(tlvData,dcMarker);
                         dcMarker += 4;
                         
                         // Get DC type
@@ -145,7 +145,7 @@ public class ActionListener
                         dcMarker += 2;
                         
                         // Get auth cookie
-                        authCookie = Util.getDWord(tlvData,dcMarker);
+                        authCookie = (int)Util.getDWord(tlvData,dcMarker);
                         dcMarker +=12;
                         
                         // Get data for client detection
@@ -156,14 +156,13 @@ public class ActionListener
                         dwFT3 = (int) Util.getDWord(tlvData,dcMarker);
                         
                         statusChange = false;
-                        // System.out.println("length: "+tlvData.length+"IP: "+Util.ipToString(internalIP)+" Port: "+dcPort+" Type: "+dcType+" Version: "+icqProt+" Cookie: "+authCookie);
 
                     }
                     // #sijapp cond.end#
                     // #sijapp cond.end#
                     else if (tlvType == 0x0003) // Signon time
                     {
-                    	signon = Util.byteArrayToLong(tlvData);
+                    	signon = (int)Util.byteArrayToLong(tlvData);
                     }
                     else if (tlvType == 0x0004) // Idle time
                     {
@@ -171,7 +170,7 @@ public class ActionListener
                     }
                     else if (tlvType == 0x000F) // Online time
                     {
-                    	online = Util.byteArrayToLong(tlvData);
+                    	online = (int)Util.byteArrayToLong(tlvData);
                     }                    
                     marker += 2 + 2 + tlvData.length;
                 }
@@ -636,18 +635,16 @@ public class ActionListener
                              try
                              {
                                  Icq.requestAction(dcAct);
-                                 } catch (JimmException e)
+                             }
+                             catch (JimmException e)
                              {
                                  JimmException.handleException(e);
                                  if (e.isCritical()) return;
                              }
                                  
-                                 // Remove Cancel command form init splash screen
-                                 Jimm.jimm.getSplashCanvasRef().removeCommand(sender.getFT().getCancelCommand());
-                                 
-                                 // Start timer (timer will activate splash screen)
-                                 Jimm.jimm.getTimerRef().schedule(new SplashCanvas.FileTransferTimerTask(dcAct), 1000, 1000);
-                         }
+                             // Start timer (timer will activate splash screen)
+                             SplashCanvas.addTimerTask("filetransfer", dcAct, 0, 0, true);
+                          }
                         }
                         // URL message
                         else 

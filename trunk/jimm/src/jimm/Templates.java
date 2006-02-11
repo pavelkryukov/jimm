@@ -151,7 +151,7 @@ public class Templates implements VirtualListCommands, CommandListener
 				System.gc();
 				RecordStore.deleteRecordStore("templates");
 			}
-			catch(Exception e){System.out.println(e.getMessage());};
+			catch(Exception e) {}
 			Jimm.display.setCurrent(lastDisplay);
 			templateList = null;
 		}

@@ -338,11 +338,6 @@ public class Search
             }
             else if (c == this.searchCommand)
             {
-                // Display splash canvas
-                SplashCanvas.setMessage(ResourceBundle.getString("wait"));
-                SplashCanvas.setProgress(0);
-                Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
-                
                 selectedIndex = 0;
 
                 Search.this.setSearchRequest(this.uinSearchTextBox.getString(), this.nickSearchTextBox.getString(),
@@ -362,9 +357,8 @@ public class Search
                     if (e.isCritical()) return;
                 }
                 
-                // Start timer
-                Jimm.jimm.getTimerRef().schedule(new SplashCanvas.SearchTimerTask(act), 1000, 1000);
-
+                // Start timer 
+                SplashCanvas.addTimerTask("wait", act, 0, 0, false);
             }
             else if (c == this.nextCommand) nextOrPrev(true);
             else if (c == this.previousCommand) nextOrPrev(false);
@@ -400,7 +394,7 @@ public class Search
                 			resultData[JimmUI.UI_NICK],
                         false, false);
                 cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
-                cItem.setLongValue(ContactListContactItem.CONTACTITEM_STATUS, Long.parseLong(resultData[JimmUI.UI_STATUS]));
+                cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, Integer.parseInt(resultData[JimmUI.UI_STATUS]));
                 Icq.addToContactList(cItem);
             }
         }

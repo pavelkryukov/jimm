@@ -31,10 +31,8 @@ import jimm.comm.ConnectAction;
 import jimm.comm.DirectConnectionAction;
 //  #sijapp cond.end#
 //  #sijapp cond.end#
-import jimm.comm.RequestInfoAction;
-import jimm.comm.SearchAction;
-import jimm.comm.UpdateContactListAction;
 import jimm.comm.Util;
+import jimm.comm.Action;
 import jimm.util.ResourceBundle;
 
 import java.io.IOException;
@@ -64,6 +62,8 @@ import net.rim.device.api.system.LED;
 public class SplashCanvas extends Canvas
 {
 	static public SplashCanvas _this;
+	
+	public final static Command cancelCommnad = new Command(ResourceBundle.getString("Cancel"), Command.BACK, 1);
 	
 	//Timer for repaint
 	static private Timer t1,t2;
@@ -220,11 +220,10 @@ public class SplashCanvas extends Canvas
 	// Sets the current progress in percent (and request screen refresh)
 	static public synchronized void setProgress(int progress)
 	{
+		if (SplashCanvas.progress == progress) return;
 		SplashCanvas.progress = progress;
 		_this.repaint(0, _this.getHeight() - SplashCanvas.height - 2, _this.getWidth(), SplashCanvas.height + 2);
 	}
-	
-	
 	
 	static public void delVersionString()
 	{
@@ -475,201 +474,60 @@ public class SplashCanvas extends Canvas
 
 	}
 
-
-	/*****************************************************************************/
-	/*****************************************************************************/
-	/*****************************************************************************/
-
-
-	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-    // #sijapp cond.if modules_FILES is "true"#
-
-	// Activates the contact list after connection has been established
-	public static class FileTransferTimerTask extends TimerTask implements CommandListener
+	public static void addTimerTask(String captionLngStr, Action action, int errorCode1, int errorCode2, boolean canCancel)
 	{
-
-		// Reference to ConnectAction
-		static private DirectConnectionAction dcAct;
-
-		// Cancel Command
-		static private Command cancelCommand;
-
-		// Constructor
-		public FileTransferTimerTask(DirectConnectionAction _dcAct)
+		TimerTasks timerTask = new TimerTasks(action, errorCode1, errorCode2); 
+		
+		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommnad);
+		if (canCancel)
 		{
-		    
-			FileTransferTimerTask.dcAct = _dcAct;
-
-			// Set the cancel command
-			cancelCommand = new Command(ResourceBundle.getString("cancel"),Command.CANCEL,1);
-			Jimm.jimm.getSplashCanvasRef().addCommand(cancelCommand);
-			Jimm.jimm.getSplashCanvasRef().setCommandListener(this);
-
-			// Activate the splash screen
-			SplashCanvas.setMessage(ResourceBundle.getString("filetransfer"));
-			Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
-
-		}
-
-
-		// Command listener
-		public void commandAction(Command c, Displayable d)
-		{
-			if (c == cancelCommand)
-			{
-			    ContactList.activate();
-				Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
-				dcAct.setCancel(true);
-				ContactList.activate();
-				this.cancel();
-			}
-		}
-
-
-		// Timer routine
-		public void run()
-		{
-		    SplashCanvas.setProgress(dcAct.getProgress());
-			if (dcAct.isCompleted())
-			{
-			    ContactList.activate();
-			    Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
-				this.cancel();
-				Alert ok = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("successful")+".\n"+ResourceBundle.getString("speed")+": "+dcAct.getSpeed()+" "+ResourceBundle.getString("kbs"),null, AlertType.INFO);
-				ok.setTimeout(2000);
-				Jimm.display.setCurrent(ok, ContactList.getVisibleContactListRef());
-			}
-			else if (dcAct.isError())
-			{
-			    ContactList.activate();
-			    Jimm.jimm.getSplashCanvasRef().removeCommand(cancelCommand);
-				this.cancel();
-				Alert err = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("not")+" "+ResourceBundle.getString("successful")+"!",null, AlertType.WARNING);
-				Jimm.display.setCurrent(err, ContactList.getVisibleContactListRef());
-			}
+			SplashCanvas._this.addCommand(SplashCanvas.cancelCommnad);
+			SplashCanvas._this.setCommandListener(timerTask);
 		}
 		
+		SplashCanvas.setMessage(ResourceBundle.getString(captionLngStr));
+		SplashCanvas.setProgress(0);
+		Jimm.display.setCurrent(SplashCanvas._this);
+		
+		Jimm.jimm.getTimerRef().schedule(timerTask, 1000, 1000);
 	}
-	//#sijapp cond.end#
-    //#sijapp cond.end#
+}
 
-
-	/*****************************************************************************/
-	/*****************************************************************************/
-	/*****************************************************************************/
-
-
-	// Activates the contact list after connection has been established
-	public static class ConnectTimerTask extends TimerTask
-	{
-		// Reference to ConnectAction
-		static private ConnectAction connectAct;
-
-
-		// Constructor
-		public ConnectTimerTask(ConnectAction connectAct)
-		{
-			ConnectTimerTask.connectAct = connectAct;
-		}
-
-
-		// Timer routine
-		public void run()
-		{
-		    SplashCanvas.setProgress(connectAct.getProgress());
-			if (connectAct.isCompleted())
-			{
-			    ContactList.activate();
-				this.cancel();
-			}
-			else if (connectAct.isError())
-			{
-			    this.cancel();
-			}
-		}
-
-
-	}
-
+class TimerTasks extends TimerTask implements CommandListener
+{
+	private Action action;
+	private int errorCode1, errorCode2; 
 	
-	/*****************************************************************************/
-	/*****************************************************************************/
-	/*****************************************************************************/
-
-
-	// Waits until contact listupdate is completed
-	public static class UpdateContactListTimerTask extends TimerTask
+	public TimerTasks(Action action, int errorCode1, int errorCode2)
 	{
-		// Reference to UpdateContactListAction
-		static private UpdateContactListAction updateContactListAct;
-
-		// Constructor
-		public UpdateContactListTimerTask(UpdateContactListAction updateContactListAct)
-		{
-			UpdateContactListTimerTask.updateContactListAct = updateContactListAct;
-		}
-
-
-		// Timer routine
-		public void run()
-		{
-			if (updateContactListAct.isCompleted())
-			{
-				ContactList.activate();
-				this.cancel();
-			}
-			else if (updateContactListAct.isError())
-			{
-				if (updateContactListAct.getErrorType() == 0 )
-				{
-					ContactList.activate(JimmException.handleException(new JimmException(154, 2, true)));
-				}
-				else
-				{
-				ContactList.activate();
-				}
-				this.cancel();
-			}
-		}
-
-
+		this.action = action;
+		this.errorCode1 = errorCode1;
+		this.errorCode2 = errorCode2;
 	}
-
-
-	/*****************************************************************************/
-	/*****************************************************************************/
-	/*****************************************************************************/
-
-
-	// Waits until contact listupdate is completed
-	public static class SearchTimerTask extends TimerTask
+	
+	public void run()
 	{
-		// Reference to UpdateContactListAction
-		static private SearchAction searchAct;
-
-		// Constructor
-		public SearchTimerTask(SearchAction _searchAct)
+		SplashCanvas.setProgress(action.getProgress());
+		if (action.isCompleted())
 		{
-			SearchTimerTask.searchAct = _searchAct;
+			cancel();
+			action.onEvent(Action.ON_COMPLETE);
 		}
-
-
-		// Timer routine
-		public void run()
+		else if (action.isError())
 		{
-			if (searchAct.isCompleted())
-			{
-				searchAct.activateResult();
-				this.cancel();
-			} else if (searchAct.isError()) {
-				if (!searchAct.excepHandled()) ContactList.activate(JimmException.handleException(new JimmException(154, 2, true)));
-				{
-					this.cancel();
-				}
-			}
+			cancel();
+			if (errorCode1 != 0) ContactList.activate(JimmException.handleException(new JimmException(errorCode1, errorCode2, true)));
+			else ContactList.activate();
+			action.onEvent(Action.ON_ERROR);
 		}
-
-
 	}
-
+	
+	public void commandAction(Command c, Displayable d)
+	{
+		if (c == SplashCanvas.cancelCommnad)
+		{
+			action.onEvent(Action.ON_CANCEL);
+			cancel();
+		}
+	}
 }

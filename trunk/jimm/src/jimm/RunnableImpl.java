@@ -78,16 +78,16 @@ public class RunnableImpl implements Runnable
 			ContactList.update
 			(
 				(String)data[0],
-				getLong(data,  1),
+				getInt(data,  1),
 				(byte[])data[2],
 				(byte[])data[3],
-				getLong(data,  4),
-				getInt (data,  5),
-				getInt (data,  6),
-				getLong(data,  7),
-				getLong(data,  8),
-				getLong(data,  9),
-				getInt (data, 10)
+				getInt(data,  4),
+				getInt(data,  5),
+				getInt(data,  6),
+				getInt(data,  7),
+				getInt(data,  8),
+				getInt(data,  9),
+				getInt(data, 10)
 			);
 			break;
 		}
@@ -129,31 +129,31 @@ public class RunnableImpl implements Runnable
 	static public void updateContactList
 	(
 	   	String uin,
-		long status,
+		int status,
 		byte[] internalIP,
 		byte[] externalIP,
-		long dcPort,
+		int dcPort,
 		int dcType,
 		int icqProt,
-		long authCookie,
-		long signon,
-		long online,
+		int authCookie,
+		int signon,
+		int online,
 		int idle
 	)
 	{
 		Object[] arguments = new Object[12];
 		
 		arguments[0] = uin;
-		setLong(arguments,  1, status      );
+		setInt(arguments,  1, status      );
 		arguments[2] = internalIP;
 		arguments[3] = externalIP;
-		setLong(arguments,  4, dcPort      );
-		setInt (arguments,  5, dcType      );
-		setInt (arguments,  6, icqProt     );
-		setLong(arguments,  7, authCookie  );
-		setLong(arguments,  8, signon      ); 
-		setLong(arguments, 9, online      );
-		setInt (arguments, 10, idle        );  
+		setInt(arguments,  4, dcPort      );
+		setInt(arguments,  5, dcType      );
+		setInt(arguments,  6, icqProt     );
+		setInt(arguments,  7, authCookie  );
+		setInt(arguments,  8, signon      ); 
+		setInt(arguments, 9, online      );
+		setInt(arguments, 10, idle        );  
 		
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
 	}

@@ -97,7 +97,6 @@ public class FileTransfer implements CommandListener
     // Commands
     private Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
     private Command okCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
-    private Command cancelCommand = new Command(ResourceBundle.getString("cancel"), Command.OK, 1);
 
     // Constructor
     public FileTransfer(int ftType, ContactListContactItem _cItem)
@@ -163,7 +162,7 @@ public class FileTransfer implements CommandListener
         // Set the splash screen
         SplashCanvas.setProgress(0);
         SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
-        SplashCanvas._this.addCommand(this.cancelCommand);
+        SplashCanvas._this.addCommand(SplashCanvas.cancelCommnad);
         SplashCanvas._this.setCommandListener(this);
         Display.getDisplay(Jimm.jimm).setCurrent(SplashCanvas._this);
 
@@ -203,12 +202,6 @@ public class FileTransfer implements CommandListener
         Jimm.display.setCurrent(name_Desc);
     }
     
-    // Return the cancel command
-    public Command getCancelCommand()
-    {
-        return (this.cancelCommand);
-    }
-
     // Command listener
     public void commandAction(Command c, Displayable d)
     {
@@ -219,24 +212,27 @@ public class FileTransfer implements CommandListener
                 this.initFT(this.fileNameField.getString(), this.descriptionField.getString());
             }
         }
-        else
-            if (c == this.backCommand)
-            {
-            	// #sijapp cond.if target isnot "MOTOROLA" #
-            	vf = null;
-            	// #sijapp cond.end #
-				fis = null;
-            	name_Desc = null;
-            	fileNameField = null;
-            	System.gc();
-                this.getCItem().activate(true);
-            }
-            else
-                if (c == this.cancelCommand)
-                {
-                    ContactList.activate();
-                    Jimm.jimm.getSplashCanvasRef().removeCommand(this.cancelCommand);
-                }
+        else if (c == this.backCommand)
+        {
+        	free();
+            this.getCItem().activate(true);
+        }
+        else if (c == SplashCanvas.cancelCommnad)
+        {
+        	free();
+        	ContactList.activate();
+        }
+    }
+    
+    private void free()
+    {
+     	// #sijapp cond.if target isnot "MOTOROLA" #
+      	vf = null;
+       	// #sijapp cond.end #
+		fis = null;
+       	name_Desc = null;
+       	fileNameField = null;
+       	System.gc();
     }
 
     /** ************************************************************************* */

@@ -42,29 +42,15 @@ public class SetOnlineStatusAction extends Action
 
 
 	// Requested online status
-	private long onlineStatus;
+	private int onlineStatus;
 
 
 	// Constructor
-	public SetOnlineStatusAction(long onlineStatus)
+	public SetOnlineStatusAction(int onlineStatus)
 	{
+		super(false, true);
 		this.onlineStatus = onlineStatus;
 	}
-
-
-	// Returns true if the action can be performed
-	public boolean isExecutable()
-	{
-		return (Icq.isConnected());
-	}
-
-
-	// Returns true if this is an exclusive command
-	public boolean isExclusive()
-	{
-		return (false);
-	}
-
 
 	// Init action
 	protected void init() throws JimmException

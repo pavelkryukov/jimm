@@ -82,7 +82,7 @@ public class ConnectAction extends Action
     // CLI_SETSTATUS packet data
     public static final byte[] CLI_SETSTATUS_DATA =
     { (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x04, 
-	  (byte) 0x10, (byte) 0x00, (byte) 0x00, (byte) 0x00, // Online status
+	  (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x00, // Online status
       (byte) 0x00, (byte) 0x0C, (byte) 0x00, (byte) 0x25, // TLV(C)
       (byte) 0xC0, (byte) 0xA8, (byte) 0x00, (byte) 0x01, // 192.168.0.1, cannot get own IP address
       (byte) 0x00, (byte) 0x00, (byte) 0xAB, (byte) 0xCD, // Port 43981
@@ -154,6 +154,7 @@ public class ConnectAction extends Action
     // Constructor
     public ConnectAction(String uin, String password, String srvHost, String srvPort)
     {
+    	super(true, false);
         this.uin = new String(uin);
         this.password = new String(password);
         this.srvHost = new String(srvHost);
@@ -182,18 +183,6 @@ public class ConnectAction extends Action
     public String getSrvPort()
     {
         return (new String(this.srvPort));
-    }
-
-    // Returns true if the action can be performed
-    public boolean isExecutable()
-    {
-        return (Icq.isNotConnected());
-    }
-
-    // Returns true if this is an exclusive command
-    public boolean isExclusive()
-    {
-        return (true);
     }
 
     // Init action
@@ -362,9 +351,11 @@ public class ConnectAction extends Action
 						byte[] hash = Util.calculateMD5(md5buf);
 						System.arraycopy(hash, 0, buf, marker, 16);
 						Icq.c.sendPacket(new SnacPacket(0x0017, 0x0002, 0, new byte[0], buf));
+						state = STATE_CLI_IDENT_SENT;
+					} else {
+						throw new JimmException(100,0);
 					}
 				}
-				state = STATE_CLI_IDENT_SENT;
 				consumed = true;
 			}
             // Watch out for STATE_CLI_IDENT_SENT
@@ -520,7 +511,7 @@ public class ConnectAction extends Action
 						Icq.c.sendPacket(reply1);
 
 						// Send a CLI_SETSTATUS packet
-						Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, (0x10<<24)|Util.translateStatusSend(Options.getLong(Options.OPTION_ONLINE_STATUS)));
+						Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, (0x10<<24)|Util.translateStatusSend((int)Options.getLong(Options.OPTION_ONLINE_STATUS)));
 						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
 						Icq.c.sendPacket(reply2);
 
@@ -719,7 +710,7 @@ public class ConnectAction extends Action
 						if (buf.length != marker + 4) { throw (new JimmException(115, 6)); }
 
 						// Get timestamp
-						long timestamp = Util.getDWord(buf, marker);
+						int timestamp = (int)Util.getDWord(buf, marker);
 
 						// Update contact list
 						ContactListItem[] itemsAsArray = new ContactListItem[items.size()];
@@ -739,8 +730,8 @@ public class ConnectAction extends Action
 						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]);
 						Icq.c.sendPacket(reply1);
 
-						long onlineStatusOpt = Options.getLong(Options.OPTION_ONLINE_STATUS);
-						long onlineStatus = Util.translateStatusSend(onlineStatusOpt);
+						int onlineStatusOpt = (int)Options.getLong(Options.OPTION_ONLINE_STATUS);
+						int onlineStatus = Util.translateStatusSend(onlineStatusOpt);
 						int visibilityItemId = Options.getInt(Options.OPTION_VISIBILITY_ID);
 						byte[] buf = new byte[15];
 						byte bCode = 0;
@@ -982,6 +973,16 @@ public class ConnectAction extends Action
         default:
             return (0);
         }
+    }
+    
+    public void onEvent(int eventType)
+    {
+    	switch (eventType)
+    	{
+    	case ON_COMPLETE:
+    		ContactList.activate();
+    		break;
+    	}
     }
 
 }

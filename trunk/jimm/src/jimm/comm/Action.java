@@ -30,11 +30,21 @@ import jimm.JimmException;
 
 public abstract class Action
 {
-
-
+	final static public int ON_COMPLETE = 1;
+	final static public int ON_CANCEL   = 2;
+	final static public int ON_ERROR    = 3;
+	
 	// ICQ object
 	protected Icq icq;
+	
+	private boolean exclusive, executableConnected;
 
+	
+	protected Action(boolean exclusive, boolean executableConnected)
+	{
+		this.exclusive = exclusive;
+		this.executableConnected = executableConnected;
+	}
 
 	// Set ICQ object
 	protected void setIcq(Icq icq)
@@ -42,13 +52,19 @@ public abstract class Action
 		this.icq = icq;
 	}
 
-
 	// Returns true if the action can be performed
-	public abstract boolean isExecutable();
+	final public boolean isExecutable()
+	{
+		if (executableConnected) return Icq.isConnected();
+		return Icq.isNotConnected();
+	}
 
 
 	// Returns true if this is an exclusive command
-	public abstract boolean isExclusive();
+	final public boolean isExclusive()
+	{
+		return exclusive;
+	}
 
 
 	// Init action
@@ -66,7 +82,6 @@ public abstract class Action
 	// Returns ture if an error has occured
 	public abstract boolean isError();
 
-
 	// Returns a number between 0 and 100 (inclusive) which indicates the progress
 	public int getProgress()
 	{
@@ -75,6 +90,6 @@ public abstract class Action
 		else
 			return (0);
 	}
-
-
+	
+	public void onEvent(int eventType) {}
 }

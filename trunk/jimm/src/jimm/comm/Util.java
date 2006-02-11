@@ -1045,7 +1045,7 @@ public class Util
 
 
 	// translateStatus(long status) => void
-	public static long translateStatusReceived(long status)
+	public static int translateStatusReceived(int status)
 	{
 		if (status == ContactList.STATUS_OFFLINE) return (ContactList.STATUS_OFFLINE);
 		if ((status & ContactList.STATUS_DND) != 0) return (ContactList.STATUS_DND);
@@ -1059,7 +1059,7 @@ public class Util
 
 
 	// Get online status set value
-	public static int translateStatusSend(long status)
+	public static int translateStatusSend(int status)
 	{
 		if (status == ContactList.STATUS_AWAY) return (Util.SET_STATUS_AWAY);
 		if (status == ContactList.STATUS_CHAT) return (Util.SET_STATUS_CHAT);

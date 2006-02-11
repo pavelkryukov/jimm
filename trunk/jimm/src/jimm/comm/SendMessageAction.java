@@ -44,49 +44,33 @@ public class SendMessageAction extends Action
   // #sijapp cond.end#  
   private int SEQ1 = 0xffff;
 
-  
-  
-  
 
-  // Constructor
-  public SendMessageAction(Message msg)
-  {
-    // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-    if (msg instanceof PlainMessage)
-    {
-      this.plainMsg = (PlainMessage) msg;
-      // #sijapp cond.if modules_FILES is"true"#
-      this.fileTrans = null;
-      // #sijapp cond.end#
-    }
-    // #sijapp cond.if modules_FILES is "true"#
-    else if (msg instanceof FileTransferMessage) 
-    {
-      this.plainMsg = null;
-      this.fileTrans = (FileTransferMessage) msg;
-    }
-    // #sijapp cond.end#
-    // #sijapp cond.else#
-       if (msg instanceof PlainMessage)
-    {
-      this.plainMsg = (PlainMessage) msg;
-    }
-    // #sijapp cond.end#
-  }
-
-
-  // Returns true if the action can be performed
-  public boolean isExecutable()
-  {
-    return (Icq.isConnected());
-  }
-
-
-  // Returns true if this is an exclusive command
-  public boolean isExclusive()
-  {
-    return (false);
-  }
+	// Constructor
+	public SendMessageAction(Message msg)
+	{
+		super(false, true);
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		if (msg instanceof PlainMessage)
+		{
+			this.plainMsg = (PlainMessage) msg;
+			// #sijapp cond.if modules_FILES is"true"#
+			this.fileTrans = null;
+			// #sijapp cond.end#
+		}
+		// #sijapp cond.if modules_FILES is "true"#
+		else if (msg instanceof FileTransferMessage)
+		{
+			this.plainMsg = null;
+			this.fileTrans = (FileTransferMessage) msg;
+		}
+		// #sijapp cond.end#
+		// #sijapp cond.else#
+		if (msg instanceof PlainMessage)
+		{
+			this.plainMsg = (PlainMessage) msg;
+		}
+		// #sijapp cond.end#
+	}
 
 
   // Init action
@@ -123,7 +107,7 @@ public class SendMessageAction extends Action
         utf8 = rcvr.hasCapability(Util.CAPF_UTF8_INTERNAL);
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
-        if ((this.fileTrans != null) && (rcvr.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(Util.CAPF_AIM_SERVERRELAY_INTERNAL))
+        if ((this.fileTrans != null) && (rcvr.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) && rcvr.hasCapability(Util.CAPF_AIM_SERVERRELAY_INTERNAL))
         {
             type = 2;
         }
@@ -444,7 +428,7 @@ public class SendMessageAction extends Action
                 marker += 2;
 
                 // Put contact status
-                Util.putWord(buf, marker, Util.translateStatusSend(Options.getLong(Options.OPTION_ONLINE_STATUS)), false);
+                Util.putWord(buf, marker, Util.translateStatusSend((int)Options.getLong(Options.OPTION_ONLINE_STATUS)), false);
                 marker += 2;
 
                 // Put priority

@@ -80,24 +80,14 @@ public class SearchAction extends Action
     // Excpetion handeled;
     private boolean handeld;
     
-    public SearchAction(Search _cont,int _calledBy){
+    public SearchAction(Search _cont,int _calledBy)
+    {
+    	super(false, true);
         cont = _cont;
         calledBy = _calledBy;
         handeld = false;
     }
 
-    // Returns true if the action can be performed
-    public boolean isExecutable()
-    {
-        return (Icq.isConnected());
-    }
-
-    // Returns true if this is an exclusive command
-    public boolean isExclusive()
-    {
-        return false;
-    }
-    
     // Init action
     protected void init() throws JimmException
     {
@@ -322,10 +312,9 @@ public class SearchAction extends Action
     	this.cont.getSearchForm().activate(true);
     }
     
-    // Activates the result screen
-    public void activateSearchForm()
+    public void onEvent(int eventTuype)
     {
-    	this.cont.getSearchForm().activate(false);
+    	if (eventTuype == ON_COMPLETE) cont.getSearchForm().activate(true);
     }
     
     // Return if exception already handeled
