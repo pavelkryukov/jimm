@@ -37,23 +37,9 @@ public class RemoveMeAction extends Action
 	// Constructor
 	public RemoveMeAction(String uin)
 	{
+		super(false, true);
 		this.uin = new String(uin);
 	}
-
-
-	// Returns true if the action can be performed
-	public boolean isExecutable()
-	{
-		return (Icq.isConnected());
-	}
-
-
-	// Returns true if this is an exclusive command
-	public boolean isExclusive()
-	{
-		return (false);
-	}
-
 
 	// Init action
 	protected void init() throws JimmException {

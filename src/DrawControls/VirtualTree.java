@@ -136,8 +136,6 @@ public class VirtualTree extends VirtualList
 	{
 		int count, i;
 
-		//System.out.println("setCurrentItem. Node = "+node.toString());
-
 		if (getLocked())
 		{
 			lastNode = node;

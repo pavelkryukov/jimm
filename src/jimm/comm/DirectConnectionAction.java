@@ -28,9 +28,15 @@ package jimm.comm;
 
 import java.util.Date;
 
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
+
+import jimm.ContactList;
 import jimm.ContactListContactItem;
+import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
+import jimm.util.ResourceBundle;
 
 public class DirectConnectionAction extends Action
 {
@@ -61,28 +67,11 @@ public class DirectConnectionAction extends Action
     // Constructor
     public DirectConnectionAction(FileTransferMessage _ft)
     {
+    	super(true, true);
         this.ft = _ft;
         packets = 0;
         timestamp = 0;
         cancel = false;
-    }
-
-    // Sete the state
-    public void setCancel(boolean _cancel)
-    {
-        this.cancel = _cancel;
-    }
-    
-    // Returns true if STATE_CONNECTED is active
-    public boolean isExecutable()
-    {
-        return (Icq.isConnected());
-    }
-
-    // This is an exclusive command, so this returns true
-    public boolean isExclusive()
-    {
-        return (true);
     }
 
     // Init action
@@ -93,8 +82,6 @@ public class DirectConnectionAction extends Action
         Icq.peerC = icq.new PeerConnection();
         Icq.peerC.connect(Util.ipToString(ft.getRcvr().getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP)) + ":" + ft.getRcvr().getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT));
         
-    	System.out.println("Connected");
-
         // Send a DC init packet
         byte[] dcpacket = new byte[48];
 
@@ -145,7 +132,7 @@ public class DirectConnectionAction extends Action
         marker += 4;
 
         // connection cookie
-        Util.putDWord(dcpacket, marker, ft.getRcvr().getLongValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE), false);
+        Util.putDWord(dcpacket, marker, ft.getRcvr().getIntValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE), false);
         marker += 4;
 
         // some unknown stuff
@@ -161,8 +148,6 @@ public class DirectConnectionAction extends Action
 
         DCPacket initPacket = new DCPacket(dcpacket);
         Icq.peerC.sendPacket(initPacket);
-        
-        System.out.println("Connected-2");
     }
 
     // Forwards received packet, returns true if packet was consumed
@@ -304,9 +289,7 @@ public class DirectConnectionAction extends Action
                 DCPacket dataPacket;
                 Date date = new Date();
                 this.timestamp = date.getTime();
-                
-                System.out.println("Start sending");
-                
+        
                 // Send out the file in 2048 byte blocks
                 while (ft.segmentAvail(packets) && !cancel)
                 {
@@ -318,8 +301,6 @@ public class DirectConnectionAction extends Action
                 }
                 date = new Date();
                 this.timestamp = date.getTime()-this.timestamp;
-                
-                System.out.println("End sending");
                 
 
                 try
@@ -385,6 +366,28 @@ public class DirectConnectionAction extends Action
         }
         else
             return (false);
+    }
+    
+    public void onEvent(int eventType)
+    {
+    	switch (eventType)
+    	{
+    	case ON_CANCEL:
+    		cancel = true;
+			ContactList.activate();
+    		break;
+    		
+    	case ON_ERROR:
+			Alert err = new Alert(ResourceBundle.getString("filetransfer"), ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("not")+" "+ResourceBundle.getString("successful")+"!",null, AlertType.WARNING);
+			Jimm.display.setCurrent(err, ContactList.getVisibleContactListRef());
+    		break;
+    		
+    	case ON_COMPLETE:
+			Alert ok = new Alert(ResourceBundle.getString("filetransfer"),ResourceBundle.getString("filetransfer")+" "+ResourceBundle.getString("was")+" "+ResourceBundle.getString("successful")+".\n"+ResourceBundle.getString("speed")+": "+getSpeed()+" "+ResourceBundle.getString("kbs"),null, AlertType.INFO);
+			ok.setTimeout(2000);
+			Jimm.display.setCurrent(ok, ContactList.getVisibleContactListRef());
+    		break;
+    	}
     }
 
 }

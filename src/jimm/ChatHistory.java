@@ -80,6 +80,7 @@ class ChatItem extends CustomItem
 	
 	protected void paint(Graphics g, int w, int h)
 	{
+		if (textList == null) return;
 		textList.setForcedSize(w, h);
 		textList.paintAllOnGraphics(g);
 	}
@@ -115,6 +116,7 @@ class ChatItem extends CustomItem
 	
 	void updateContents()
 	{
+		if (textList == null) return;
 		repaint();
 	}
 }
@@ -271,10 +273,7 @@ class ChatTextList implements VirtualListCommands
 		{
 			// do nothing
 		}
-
-		
 	}
-	
 	
 	void addTextToForm(String from, String message, String url, long time, boolean red, boolean offline)
 	{
@@ -319,9 +318,7 @@ class ChatTextList implements VirtualListCommands
 		textList.setTopItem(lastSize);		
 		textList.unlock();
 		// #sijapp cond.if target is "SIEMENS2"#
-		if (Options.getBoolean(Options.OPTION_CLASSIC_CHAT))
-			textList.repaint();
-		chatItem.updateContents();
+		if ( Options.getBoolean(Options.OPTION_CLASSIC_CHAT) ) chatItem.updateContents();
 		//#sijapp cond.end#
 	}
 	
@@ -333,8 +330,7 @@ class ChatTextList implements VirtualListCommands
 			form.setItemStateListener(this);
 			textLine.setItemCommandListener(this);
 			chatItem.setTextList(textList);
-			textList.repaint();
-			//chatItem.updateContents();
+			chatItem.updateContents();
 			Jimm.display.setCurrent(form);
 			if (initChat) Jimm.display.setCurrentItem(textLine);
 			if (resetText) textLine.setString(new String());

@@ -72,19 +72,15 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	               messCounters;
 	
 	//#sijapp cond.if modules_FILES is "true"#
-	private int    dcType,
-	               icqProt,
-	               clientId,
-	               dcPort,
+	private int    typeAndClientId,
+	               portAndProt,
 	               intIP,
-	               extIP;
-	
-	private long   authCookie;
-	
+	               extIP,
+				   authCookie;
 	// #sijapp cond.end #
 	
-	private int    uinLong;
-	private long   online,
+	private int    uinLong,
+				   online,
 	               signOn,
 	               status;
 	               
@@ -147,14 +143,19 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		
 		case CONTACTITEM_IDLE:          idle = value;          return;
 		case CONTACTITEM_CAPABILITIES:  caps = value;          return;
+		case CONTACTITEM_STATUS:        status = value;        return;
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
-		case CONTACTITEM_DC_TYPE:       dcType = value;        return;
-		case CONTACTITEM_ICQ_PROT:      icqProt = value;       return;
-		case CONTACTITEM_DC_PORT:       dcPort = value;        return;
-		case CONTACTITEM_CLIENT:     	clientId = value;      return;
+		case CONTACTITEM_DC_TYPE:       typeAndClientId = (typeAndClientId&0xff)|(value<<8);        return;
+		case CONTACTITEM_ICQ_PROT:      portAndProt = (portAndProt&0xffff0000)|value;       return;
+		case CONTACTITEM_DC_PORT:       portAndProt = (portAndProt&0xffff)|(value<<16);        return;
+		case CONTACTITEM_CLIENT:     	typeAndClientId = (typeAndClientId&0xff00)|value;      return;
+		case CONTACTITEM_AUTH_COOKIE:   authCookie = value; return;
 		// #sijapp cond.end #
 		// #sijapp cond.end #
+		
+		case CONTACTITEM_ONLINE:        online = value; return;
+		case CONTACTITEM_SIGNON:        signOn = value; return;
 		}
 	}
 	
@@ -170,14 +171,18 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_AUTREQUESTS:   return (messCounters&0x000000FF);
 		case CONTACTITEM_IDLE:          return idle;
 		case CONTACTITEM_CAPABILITIES:  return caps;
+		case CONTACTITEM_STATUS:        return status;
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
-		case CONTACTITEM_DC_TYPE:       return dcType;
-		case CONTACTITEM_ICQ_PROT:      return icqProt;
-		case CONTACTITEM_DC_PORT:       return dcPort;
-		case CONTACTITEM_CLIENT:        return clientId;
+		case CONTACTITEM_DC_TYPE:       return ((typeAndClientId&0xff00)>>8);
+		case CONTACTITEM_ICQ_PROT:      return portAndProt&0xffff;
+		case CONTACTITEM_DC_PORT:       return ((portAndProt&0xffff0000)>>16);
+		case CONTACTITEM_CLIENT:        return typeAndClientId&0xff;
+		case CONTACTITEM_AUTH_COOKIE:   return authCookie;
 		// #sijapp cond.end #
 		// #sijapp cond.end #
+		case CONTACTITEM_ONLINE:        return online;
+		case CONTACTITEM_SIGNON:        return signOn;
 		}
 		return 0;
 	}
@@ -192,39 +197,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	synchronized public boolean getBooleanValue(int key)
 	{
 		return (booleanValues&key) != 0;
-	}
-	
-///////////////////////////////////////////////////////////////////////////
-	
-	synchronized public void setLongValue(int key, long value)
-	{
-		switch (key)
-		{
-		case CONTACTITEM_ONLINE:      online = value;     return;
-		case CONTACTITEM_SIGNON:      signOn = value;     return;
-		case CONTACTITEM_STATUS:      status = value;     return;
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		//#sijapp cond.if modules_FILES is "true"#
-		case CONTACTITEM_AUTH_COOKIE: authCookie = value; return;
-		//#sijapp cond.end #
-		//#sijapp cond.end #
-		}
-	}
-	
-	synchronized public long getLongValue(int key)
-	{
-		switch (key)
-		{
-		case CONTACTITEM_ONLINE:      return online;
-		case CONTACTITEM_SIGNON:      return signOn;
-		case CONTACTITEM_STATUS:      return status;
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		//#sijapp cond.if modules_FILES is "true"#
-		case CONTACTITEM_AUTH_COOKIE: return authCookie;
-		//#sijapp cond.end #
-		//#sijapp cond.end #
-		}
-		return 0;
 	}
 	
 ///////////////////////////////////////////////////////////////////////////
@@ -307,15 +279,15 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	public static final int CONTACTITEM_IS_TEMP       = 1 << 3; /* Boolean */
 	public static final int CONTACTITEM_HAS_CHAT      = 1 << 4; /* Boolean */
 	public static final int CONTACTITEM_REQU_REASON   = 1 << 5; /* Boolean */
-	public static final int CONTACTITEM_STATUS        = 192;    /* Long */
-	public static final int CONTACTITEM_SIGNON        = 194;    /* Long */
-	public static final int CONTACTITEM_ONLINE        = 195;    /* Long */
+	public static final int CONTACTITEM_STATUS        = 192;    /* Integer */
+	public static final int CONTACTITEM_SIGNON        = 194;    /* Integer */
+	public static final int CONTACTITEM_ONLINE        = 195;    /* Integer */
 	
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// #sijapp cond.if modules_FILES is "true"#
 	public static final int CONTACTITEM_INTERNAL_IP   = 225;    /* IP address */
 	public static final int CONTACTITEM_EXTERNAL_IP   = 226;    /* IP address */
-	public static final int CONTACTITEM_AUTH_COOKIE   = 193;    /* Long */
+	public static final int CONTACTITEM_AUTH_COOKIE   = 193;    /* Integer */
 	public static final int CONTACTITEM_DC_TYPE       = 72;     /* Integer */
 	public static final int CONTACTITEM_ICQ_PROT      = 73;     /* Integer */
 	public static final int CONTACTITEM_DC_PORT       = 74;     /* Integer */
@@ -349,7 +321,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, false);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED, added);
-		setLongValue(ContactListContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
+		setIntValue(ContactListContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
 		setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, Util.CAPF_NO_INTERNAL);
 		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
@@ -362,11 +334,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		setIntValue(ContactListContactItem.CONTACTITEM_DC_PORT, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE, -1);
 		setIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT, 0);
-		setLongValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE, 0);
+		setIntValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE, 0);
 		this.ft = null;
 		// #sijapp cond.end#
 		// #sijapp cond.end#
-		setLongValue(ContactListContactItem.CONTACTITEM_SIGNON, -1);
+		setIntValue(ContactListContactItem.CONTACTITEM_SIGNON, -1);
 		online = -1;
 		setIntValue(ContactListContactItem.CONTACTITEM_IDLE, -1);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
@@ -430,7 +402,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		else if (isMessageAvailable(MESSAGE_URL)) tempIndex = 9;
 		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
 		else if (isMessageAvailable(MESSAGE_SYS_NOTICE)) tempIndex = 10;
-		else tempIndex = getStatusImageIndex(getLongValue(ContactListContactItem.CONTACTITEM_STATUS));
+		else tempIndex = getStatusImageIndex(getIntValue(ContactListContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
 	
@@ -547,7 +519,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Increases the mesage count
 	protected synchronized void increaseMessageCount(int type)
 	{ 
-		System.out.println("msg++");
 		switch (type)
 		{
 			case MESSAGE_PLAIN:		this.setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES,this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES)+1); break;
@@ -737,7 +708,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		else if (((c == List.SELECT_COMMAND) || (c == selectCommand)) && (d == menuList))
 		{
 			String uin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
-			long status = getLongValue(ContactListContactItem.CONTACTITEM_STATUS);
+			long status = getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
 			
 			switch (eventList[menuList.getSelectedIndex()])
 			{
@@ -1142,11 +1113,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		String[] clInfoData = new String[JimmUI.UI_LAST_ID];
 		
 		// sign on time
-		long signonTime = getLongValue(ContactListContactItem.CONTACTITEM_SIGNON); 
+		long signonTime = getIntValue(ContactListContactItem.CONTACTITEM_SIGNON); 
 		if (signonTime > 0) clInfoData[JimmUI.UI_SIGNON] = Util.getDateString(false, signonTime);
 		
 		// online time
-		long onlineTime = getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
+		long onlineTime = getIntValue(ContactListContactItem.CONTACTITEM_ONLINE);
 		if (onlineTime > 0) clInfoData[JimmUI.UI_ONLINETIME] = Util.longitudeToString(onlineTime);
 		
 		// idle time
@@ -1435,7 +1406,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     
 	static void initList(boolean showAuthItem, ContactListContactItem item)
 	{
-		long status = item.getLongValue(ContactListContactItem.CONTACTITEM_STATUS);
+		long status = item.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
 		
         // Size of the event list equals last entry number
         eventList = new int[USER_MENU_LAST_ITEM];

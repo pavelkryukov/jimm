@@ -83,15 +83,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 //#sijapp cond.end#
 {
     // Status (all are mutual exclusive) TODO: move status to ContactListContactItem
-    public static final long STATUS_AWAY      = 0x00000001;
-    public static final long STATUS_CHAT      = 0x00000020;
-    public static final long STATUS_DND       = 0x00000002;
-    public static final long STATUS_INVISIBLE = 0x00000100;
-	public static final long STATUS_INVIS_ALL = 0x00000200;
-    public static final long STATUS_NA        = 0x00000004;
-    public static final long STATUS_OCCUPIED  = 0x00000010;
-    public static final long STATUS_OFFLINE   = 0xFFFFFFFF;
-    public static final long STATUS_ONLINE    = 0x00000000;
+    public static final int STATUS_AWAY      = 0x00000001;
+    public static final int STATUS_CHAT      = 0x00000020;
+    public static final int STATUS_DND       = 0x00000002;
+    public static final int STATUS_INVISIBLE = 0x00000100;
+	public static final int STATUS_INVIS_ALL = 0x00000200;
+    public static final int STATUS_NA        = 0x00000004;
+    public static final int STATUS_OCCUPIED  = 0x00000010;
+    public static final int STATUS_OFFLINE   = 0xFFFFFFFF;
+    public static final int STATUS_ONLINE    = 0x00000000;
 
     // Sound notification typs
     public static final int SOUND_TYPE_MESSAGE = 1;
@@ -128,7 +128,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     /** ************************************************************************* */
 
     // Version id numbers
-    static private long ssiListLastChangeTime = -1;
+    static private int ssiListLastChangeTime = -1;
     static private int ssiNumberOfItems = 0;
 
     // Update help variable
@@ -246,9 +246,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		obj = node.getData();
 		if ( !(obj instanceof ContactListContactItem) ) return 10;
 		cItem = (ContactListContactItem)obj;
-		if (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) return 0;
+		if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE) return 0;
 		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) && 
-			cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE) return 20;
+			cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE) return 20;
 	
 		return 10;
 	}
@@ -296,7 +296,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 
     // Returns the id number #1 which identifies (together with id number #2)
     // the saved contact list version
-	static public long getSsiListLastChangeTime()
+	static public int getSsiListLastChangeTime()
     {
         return ssiListLastChangeTime;
     }
@@ -423,8 +423,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             buf = cl.getRecord(2);
             bais = new ByteArrayInputStream(buf);
             dis = new DataInputStream(bais);
-            ssiListLastChangeTime = dis.readLong();
-            ssiNumberOfItems = dis.readInt();
+            ssiListLastChangeTime = dis.readInt();
+            ssiNumberOfItems = dis.readUnsignedShort();
             
             // Read all remaining items from the record store
             int marker = 3;
@@ -513,8 +513,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 
         // Add version ids to the record store
         baos.reset();
-        dos.writeLong(ssiListLastChangeTime);
-        dos.writeInt(ssiNumberOfItems);
+        dos.writeInt(ssiListLastChangeTime);
+        dos.writeShort((short)ssiNumberOfItems);
         buf = baos.toByteArray();
         cl.addRecord(buf, 0, buf.length);
 
@@ -559,7 +559,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		onlineCounter = 0;
     	int count = cItems.size();
     	for (int i = 0; i < count; i++)
-    		getCItem(i).setLongValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
+    		getCItem(i).setIntValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
     }
     
 	// Returns array of uins of unuthorized and temporary contacts
@@ -585,7 +585,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     
     // Updates the client-side conact list (called when a new roster has been
     // received)
-    static public synchronized void update(int flags, long versionId1_, int versionId2_, ContactListItem[] items)
+    static public synchronized void update(int flags, int versionId1_, int versionId2_, ContactListItem[] items)
     {
     	//#log("some_debug_text")
     	
@@ -598,7 +598,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // Remove all Elemente form the old ContactList
         if (haveToBeCleared)
         {
-        	System.out.println("Clear CL");
             cItems.removeAllElements();
             gItems.removeAllElements();
             haveToBeCleared = false;
@@ -624,13 +623,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         	ssiListLastChangeTime = versionId1_;
         	try
         	{
-        		System.out.println("contact list saveing");
         		save();
-        		System.out.println("contact list saved");
         	}
         	catch (Exception e) 
         	{
-        		System.out.println(e.toString());
         	}
         	treeBuilt = false;
         	
@@ -705,7 +701,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			ContactListContactItem cItem = getCItem(i);
 			
 			if (only_online && 
-			    (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) == STATUS_OFFLINE) &&
+			    (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) == STATUS_OFFLINE) &&
 				 !cItem.mustBeShownAnyWay()) continue;
 			
 			if (use_groups)
@@ -760,7 +756,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         {
         	if (!(groupNode.elementAt(i).getData() instanceof ContactListContactItem)) continue; // TODO: must be removed
             cItem = (ContactListContactItem)groupNode.elementAt(i).getData();
-            if (cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE) onlineCount++;
+            if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE) onlineCount++;
         }
         group.setCounters(onlineCount, count);
     }
@@ -775,14 +771,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     {
     	boolean contactExistInTree = false,
 		        contactExistsInList,
-		        fullyChanged = false,
 				wasDeleted = false,
 				haveToAdd = false,
 				haveToDelete = false;
     	TreeNode cItemNode = null;
     	int i, count, groupId;
     	
-    	long status = item.getLongValue(ContactListContactItem.CONTACTITEM_STATUS);
+    	int status = item.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
     	
     	String uin = item.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
     	
@@ -825,11 +820,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     		haveToDelete |= ((status == STATUS_OFFLINE) && !item.mustBeShownAnyWay());
     	
     	// if have to add new contact
-    	
-    	if (haveToAdd)
+    	if (haveToAdd && !contactExistInTree)
     	{
     		cItemNode = tree.addNode(groupNode, item);
-    	    fullyChanged = !item.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP);
     	}
     	
     	// if have to delete contact
@@ -879,23 +872,23 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static public synchronized void update
     (
     	String uin,
-    	long status,
+    	int status,
     	byte[] internalIP,
     	byte[] externalIP,
-    	long dcPort,
+    	int dcPort,
     	int dcType,
     	int icqProt,
-        long authCookie,
-        long signon,
-        long online,
+        int authCookie,
+        int signon,
+        int online,
         int idle
     )
     {
         ContactListContactItem cItem = getItembyUIN(uin);
         if (cItem == null) return; // error ???
         
-        long oldStatus = cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS);
-    	long trueStatus = Util.translateStatusReceived(status);
+        long oldStatus = cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+    	int trueStatus = Util.translateStatusReceived(status);
     	boolean statusChanged  = (oldStatus != trueStatus);
         boolean wasOnline  = (oldStatus != STATUS_OFFLINE);
         boolean nowOnline  = (trueStatus != STATUS_OFFLINE);
@@ -906,7 +899,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         statusChanged(cItem, wasOnline, nowOnline, 0);
         
         // Set Status
-        cItem.setLongValue(ContactListContactItem.CONTACTITEM_STATUS, trueStatus);
+        cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, trueStatus);
         
         if (treeBuilt && statusChanged) ContactListContactItem.statusChanged(uin, trueStatus);
 
@@ -919,13 +912,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_PORT,     (int)dcPort);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_DC_TYPE,     dcType);
             cItem.setIntValue (ContactListContactItem.CONTACTITEM_ICQ_PROT,    icqProt);
-            cItem.setLongValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE, authCookie);
+            cItem.setIntValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE, authCookie);
         }
         //#sijapp cond.end#
         
         // Update time values
-		cItem.setLongValue (ContactListContactItem.CONTACTITEM_SIGNON,signon);
-		cItem.setLongValue (ContactListContactItem.CONTACTITEM_ONLINE,online);
+		cItem.setIntValue (ContactListContactItem.CONTACTITEM_SIGNON,signon);
+		cItem.setIntValue (ContactListContactItem.CONTACTITEM_ONLINE,online);
 		cItem.setIntValue (ContactListContactItem.CONTACTITEM_IDLE,idle);
 
         // Play sound notice if selected
@@ -940,15 +933,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     }
 
     // Updates the client-side contact list (called when a contact changes status)
-    static public synchronized void update(String uin, long status)
+    static public synchronized void update(String uin, int status)
     {
         update(uin, status, null, null, 0,0,-1,0,-1,-1,-1);
     }
     
     static private void statusChanged(ContactListContactItem cItem, boolean wasOnline, boolean nowOnline, int tolalChanges)
     {
-    	//System.out.println("statusChanged. name="+cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+", wasOnline="+wasOnline+", nowOnline="+nowOnline+", tolalChanges="+tolalChanges);
-    	
     	boolean changed = false;
     	
     	// which group id ?
@@ -1006,7 +997,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	contactChanged(cItem, false, false);
     	
         // Update online counters
-        statusChanged(cItem, cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE, false, -1);
+        statusChanged(cItem, cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE, false, -1);
     }
 
     // Adds a contact list item
@@ -1026,7 +1017,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             contactChanged(cItem, true, true);
             
             // Update online counters
-            statusChanged(cItem, false, cItem.getLongValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE, 1);
+            statusChanged(cItem, false, cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE, 1);
         }
     }
     
@@ -1259,7 +1250,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             catch (Exception me)
             {
                 // Do nothing
-                //System.out.println(me.toString());
             }
 
             break;

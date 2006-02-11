@@ -1298,7 +1298,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					currentHour = currDateTime[Util.TIME_HOUR];
 					int minutes = currDateTime[Util.TIME_MINUTE];
 					while (lstTimeZone.size() != 0) lstTimeZone.delete(0);
-					for (int i = 0; i < 24; i++) lstTimeZone.append(i+":"+minutes, null);
+					for (int i = 0; i < 24; i++) lstTimeZone.append(i+":"+Util.makeTwo(minutes), null);
 					lstTimeZone.setSelectedIndex(currentHour, true);
 
 					lstTimeZone.addCommand(saveCommand);

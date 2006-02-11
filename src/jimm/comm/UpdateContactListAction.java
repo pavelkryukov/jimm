@@ -80,6 +80,7 @@ public class UpdateContactListAction extends Action
     // Constructor (removes or adds given contact item)
     public UpdateContactListAction(ContactListItem cItem, int _action)
     {
+    	super(false, true);
         this.action = _action;
         if (cItem instanceof ContactListContactItem)
         {
@@ -98,19 +99,6 @@ public class UpdateContactListAction extends Action
         this.error = 0;
     }
         
-
-    // Returns true if the action can be performed
-    public boolean isExecutable()
-    {
-        return (Icq.isConnected());
-    }
-
-    // Returns true if this is an exclusive command
-    public boolean isExclusive()
-    {
-        return (false);
-    }
-
     // Init action
     protected void init() throws JimmException
     {
@@ -346,6 +334,16 @@ public class UpdateContactListAction extends Action
     public boolean isCompleted()
     {
         return (this.state == UpdateContactListAction.STATE_SRV_UPDATEACK_RCVD || this.state == UpdateContactListAction.STATE_SRV_REPLYED_AUTH);
+    }
+    
+    public void onEvent(int eventType)
+    {
+    	switch (eventType)
+    	{
+    	case ON_COMPLETE:
+    		ContactList.activate();
+    		break;
+    	}
     }
 
     // Returns true if an error has occured

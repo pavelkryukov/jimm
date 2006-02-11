@@ -214,6 +214,8 @@ public class Jimm extends MIDlet
 		new Emotions();
 		// #sijapp cond.end#
 		
+		new Templates();
+		
 		ui = new JimmUI();
 		
 		// set color scheme for all forms

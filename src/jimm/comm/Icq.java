@@ -147,12 +147,6 @@ public class Icq implements Runnable
     // Adds a ContactListContactItem to the server saved contact list
     static public synchronized void addToContactList(ContactListContactItem cItem)
     {
-        // Display splash canvas
-        SplashCanvas.setMessage(ResourceBundle.getString("wait"));
-        SplashCanvas.setProgress(0);
-     
-        Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
-       
         // Request contact item adding
         UpdateContactListAction act = new UpdateContactListAction(cItem, UpdateContactListAction.ACTION_ADD);
         
@@ -166,17 +160,13 @@ public class Icq implements Runnable
         }
 
         // Start timer
-        Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act), 1000, 1000);
+        SplashCanvas.addTimerTask("wait", act, 0, 0, false);
         // System.out.println("start addContact");
     }
 
     // Connects to the ICQ network
     static public synchronized void connect()
     {
-        // Display splash canvas
-        SplashCanvas.setMessage(ResourceBundle.getString("connecting"));
-        SplashCanvas.setProgress(0);
-        Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
         // #sijapp cond.if target isnot "MOTOROLA"#
         if (Options.getBoolean(Options.OPTION_SHADOW_CON))
         {
@@ -209,7 +199,7 @@ public class Icq implements Runnable
         }
 
         // Start timer
-        Jimm.jimm.getTimerRef().schedule(new SplashCanvas.ConnectTimerTask(act), 1000, 1000);
+        SplashCanvas.addTimerTask("connecting", act, 0, 0, false);
     }
 
     // Disconnects from the ICQ network
@@ -253,11 +243,6 @@ public class Icq implements Runnable
         }
         else
         {
-            // Display splash canvas
-            SplashCanvas.setMessage(ResourceBundle.getString("wait"));
-            SplashCanvas.setProgress(0);
-            Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
-
             // Request contact item removal
             UpdateContactListAction act2 = new UpdateContactListAction(cItem, UpdateContactListAction.ACTION_DEL);
             try
@@ -270,7 +255,7 @@ public class Icq implements Runnable
             }
 
             // Start timer
-            Jimm.jimm.getTimerRef().schedule(new SplashCanvas.UpdateContactListTimerTask(act2), 1000, 1000);
+            SplashCanvas.addTimerTask("wait", act2, 0, 0, false);
         }
     }
 
