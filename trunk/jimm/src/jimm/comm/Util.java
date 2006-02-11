@@ -1408,7 +1408,6 @@ public class Util
 	final public static int TIME_YEAR   = 5;
 	
 	final private static int TIME_ARRAY_LEN = 6;
-	final private static int TIME_START_YEAR = 1970;
 	
 	final private static byte[] dayCounts = 
 	{
@@ -1423,12 +1422,6 @@ public class Util
 		Calendar.OCTOBER, Calendar.NOVEMBER, Calendar.DECEMBER 
 	};
 	
-	// Creates current date (GMT)
-	public static byte[] createDate(int second, int minute, int hour, int day, int mon, int year)
-	{
-		return new byte[] { (byte)second, (byte)minute, (byte)hour, (byte)day, (byte)mon, (byte)(year-TIME_START_YEAR) };
-	}
-	
 	static private int convertDateMonToSimpleMon(int dateMon)
 	{
 		for (int i = 0; i < monthIndexes.length; i++) if (monthIndexes[i] == dateMon) return i+1;
@@ -1436,31 +1429,35 @@ public class Util
 	}
 	
 	// Creates current date (GMT)
-	public static byte[] createCurrentDate()
+	public static long createCurrentDate(boolean gmt)
 	{
 		Date date = new Date();
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		byte[] data = new byte[] 
-		              {
-		                  (byte)calendar.get(Calendar.SECOND), 
-		                  (byte)calendar.get(Calendar.MINUTE),
-		                  (byte)calendar.get(Calendar.HOUR_OF_DAY),
-		                  (byte)calendar.get(Calendar.DAY_OF_MONTH),
-		                  (byte)convertDateMonToSimpleMon(calendar.get(Calendar.MONTH)),
-		                  (byte)(calendar.get(Calendar.YEAR)-TIME_START_YEAR)
-		              };
-		return data;
+		long result = createLongTime(
+		               	  calendar.get(Calendar.YEAR),
+		               	  convertDateMonToSimpleMon(calendar.get(Calendar.MONTH)),
+		               	  calendar.get(Calendar.DAY_OF_MONTH),
+		               	  calendar.get(Calendar.HOUR_OF_DAY),
+		               	  calendar.get(Calendar.MINUTE),
+		               	  calendar.get(Calendar.SECOND)
+		              );
+		
+		if (gmt)
+		{
+			int timeZone = Options.getInt(Options.OPTIONS_TIME_ZONE); 
+			if (timeZone < -50) result -=(timeZone+100)*(60*60);
+		}
+		
+		return result;
 	}
 	
 	// Show date string. Date is corrected to local date before
-	public static String getDateString(boolean onlyTime, byte[] date)
+	public static String getDateString(boolean onlyTime, long date)
 	{
-		if ((date == null) || (date.length != TIME_ARRAY_LEN)) return error_str;
+		if (date == 0) return error_str;
 		
-		byte[] loclaDate = new byte[date.length];
-		System.arraycopy(date, 0, loclaDate, 0, date.length);
-		correctDateForTimerZone(loclaDate);
+		int[] loclaDate = createDate(correctDateForTimerZone(date));
 		
 		StringBuffer sb = new StringBuffer();
 		
@@ -1470,7 +1467,7 @@ public class Util
 			  .append('.')
 			  .append(Util.makeTwo(loclaDate[TIME_MON]))
 			  .append('.')
-			  .append(loclaDate[TIME_YEAR]+TIME_START_YEAR)
+			  .append(loclaDate[TIME_YEAR])
 			  .append(' ');
         }
 		
@@ -1481,47 +1478,29 @@ public class Util
 		return sb.toString();
 	}
 	
-	public static void correctDate(byte[] date, int seconds)
+	// Creates seconds count from 1st Jan 1970 till mentioned date 
+	public static long createLongTime(int year, int mon, int day, int hour, int min, int sec)
 	{
-		int sec  = date[TIME_SECOND];
-		int min  = date[TIME_MINUTE];
-		int hour = date[TIME_HOUR];
-		int day  = date[TIME_DAY]-1;
-		int mon  = date[TIME_MON]-1;
-		int year = date[TIME_YEAR]+TIME_START_YEAR;
-		
-		if ((mon < 0) || (mon > 11)) return; 
-		sec += seconds;
-		
-		min += sec/60;
-		sec %= 60;
-	
-		hour += min/60;
-		min %= 60;
-		
-		day += hour/24;
-		hour %= 24;
-		
-		int dayCount;
-		if (mon == 1) dayCount = (year%4 == 0) ? 29 : 28;
-		else dayCount = dayCounts[mon];
-		
-		mon += day/dayCount; // not right in general but it works in particular :-)  
-		day %= dayCount;
-		
-		year += mon/12;
-		mon %= 12;
-	
-		date[TIME_SECOND] = (byte)sec;
-		date[TIME_MINUTE] = (byte)min;
-		date[TIME_HOUR]   = (byte)hour;
-		date[TIME_DAY]    = (byte)(day+1);
-		date[TIME_MON]    = (byte)(mon+1);
-		date[TIME_YEAR]   = (byte)(year-TIME_START_YEAR);
+		int day_count, i, febCount;
+
+		day_count = (year - 1970) * 365+day;
+		day_count += (year - 1968) / 4;
+		if (year >= 2000) day_count--;
+
+		if ((year % 4 == 0) && (year != 2000))
+		{
+			day_count--;
+			febCount = 29;
+		}
+		else febCount = 28;
+
+		for (i = 0; i < mon - 1; i++) day_count += (i == 1) ? febCount : dayCounts[i];
+
+		return day_count * 24L * 3600L + hour * 3600L + min * 60L + sec;
 	}
 	
-	// Creates new date form value of seconds since 1st jan 1970 (GMT)
-	public static byte[] createDate(long value)
+	// Creates array of calendar values form value of seconds since 1st jan 1970 (GMT)
+	public static int[] createDate(long value)
 	{
 		int total_days, last_days, i;
 		int sec, min, hour, day, mon, year;
@@ -1558,23 +1537,19 @@ public class Util
 
 		day = total_days; // day
 
-		return createDate(sec, min, hour, day, mon, year);
+		return new int[] { sec, min, hour, day, mon, year };
 	}
 	
 	public static String getDateString(boolean onlyTime)
 	{
-		return getDateString(onlyTime, createCurrentDate());
+		return getDateString(onlyTime, createCurrentDate(true));
 	}
 	
-	public static void correctDateForTimerZone(byte[] date)
+	public static long correctDateForTimerZone(long date)
 	{
 		int timeZone = Options.getInt(Options.OPTIONS_TIME_ZONE);
-		
-		// Simple correct time zone for phones where "new Date()" returns GMS time 
-		if (timeZone > -100)
-		{
-			correctDate(date, timeZone*60*60);
-		}
+		if (timeZone < -50) timeZone += 100;
+		return date+(timeZone*60L*60L);
 	}
 	
 	public static String longitudeToString(long seconds)

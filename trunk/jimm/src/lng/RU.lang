@@ -246,6 +246,7 @@
   "status_online"               "Онлайн"
   "successful"                  "успешной"
   "sysnotice"                   "Системное уведомление"
+  "templates"                   "Шаблоны"
   "text_too_long"               "Текст слишком большой для вставки в редактор"
   "time_zone"                   "Время"
   "timeout_interv"              "Таймаут пинга"

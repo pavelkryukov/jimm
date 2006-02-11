@@ -247,6 +247,7 @@
   "status_online"               "Online"
   "successful"                  "Successful"
   "sysnotice"                   "System Notice"
+  "templates"                   "Templates"
   "text_too_long"               "Text too long to be inserted"
   "time_zone"                   "Time"
   "timeout_interv"              "Keepalive packet interval"

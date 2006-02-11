@@ -438,7 +438,7 @@ public class SplashCanvas extends Canvas
 			if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
 			{
 				g.drawString(Util.getDateString(false), this.getWidth() / 2, 12, Graphics.TOP | Graphics.HCENTER);
-				g.drawString(Util.getCurrentDay(), this.getWidth() / 2, 25, Graphics.TOP | Graphics.HCENTER);
+				g.drawString(Util.getCurrentDay(), this.getWidth() / 2, 13+SplashCanvas.font.getHeight(), Graphics.TOP | Graphics.HCENTER);
 			}
 			// Draw the progressbar message
 			if ((message != null) && (message.length() > 0))

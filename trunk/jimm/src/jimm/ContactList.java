@@ -619,13 +619,19 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         ssiNumberOfItems += versionId2_;
         
         // Save new contact list
-        if (ssiListLastChangeTime != 0)
+        if (versionId1_ != 0)
         {
         	ssiListLastChangeTime = versionId1_;
         	try
         	{
+        		System.out.println("contact list saveing");
         		save();
-        	} catch (Exception e) { }
+        		System.out.println("contact list saved");
+        	}
+        	catch (Exception e) 
+        	{
+        		System.out.println(e.toString());
+        	}
         	treeBuilt = false;
         	
         	// Which contacts already have chats?
@@ -893,6 +899,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	boolean statusChanged  = (oldStatus != trueStatus);
         boolean wasOnline  = (oldStatus != STATUS_OFFLINE);
         boolean nowOnline  = (trueStatus != STATUS_OFFLINE);
+        
+        if (status == STATUS_OFFLINE) cItem.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, 0);
         
         // Online counters
         statusChanged(cItem, wasOnline, nowOnline, 0);

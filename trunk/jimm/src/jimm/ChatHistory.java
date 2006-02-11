@@ -122,17 +122,17 @@ class ChatItem extends CustomItem
 
 class MessData
 {
-	private byte[] time;
+	private long time;
 	private int rowData;
 	
-	public MessData(boolean incoming, byte[] time, int textOffset, boolean contains_url)
+	public MessData(boolean incoming, long time, int textOffset, boolean contains_url)
 	{
-		this.time       = time;
-		this.rowData    = (textOffset&0xFFFFFF)|(contains_url ? 0x8000000 : 0)|(incoming ? 0x4000000 : 0);
+		this.time    = time;
+		this.rowData = (textOffset&0xFFFFFF)|(contains_url ? 0x8000000 : 0)|(incoming ? 0x4000000 : 0);
 	}
 		
 	public boolean getIncoming() { return (rowData&0x4000000) != 0; }
-	public byte[] getTime() { return time; }
+	public long getTime() { return time; }
 	public int getOffset() { return (rowData&0xFFFFFF); }
 	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
 	public boolean isURL() { return (rowData&0x8000000) != 0; }
@@ -154,6 +154,7 @@ class ChatTextList implements VirtualListCommands
 	//#sijapp cond.if modules_SMILES is "true" #
 	private static Command insertEmotionCommand;
 	//#sijapp cond.end#
+	private static Command insertTemplateCommand;
 	static private ChatTextList _this;
 	
 	static
@@ -171,7 +172,8 @@ class ChatTextList implements VirtualListCommands
 		insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.SCREEN, 3);
 		textLine.addCommand(insertEmotionCommand);
 		//#sijapp cond.end#
-		
+		insertTemplateCommand = new Command(ResourceBundle.getString("insert_template"), Command.SCREEN, 4);
+		textLine.addCommand(insertTemplateCommand);
 	}
 	// #sijapp cond.end# <===
 	
@@ -274,7 +276,7 @@ class ChatTextList implements VirtualListCommands
 	}
 	
 	
-	void addTextToForm(String from, String message, String url, byte[] time, boolean red, boolean offline)
+	void addTextToForm(String from, String message, String url, long time, boolean red, boolean offline)
 	{
 		int texOffset;
 		
@@ -316,9 +318,10 @@ class ChatTextList implements VirtualListCommands
 		
 		textList.setTopItem(lastSize);		
 		textList.unlock();
-		
 		// #sijapp cond.if target is "SIEMENS2"#
-		chatItem.updateContents(); // TODO: rest does this line need
+		if (Options.getBoolean(Options.OPTION_CLASSIC_CHAT))
+			textList.repaint();
+		chatItem.updateContents();
 		//#sijapp cond.end#
 	}
 	
@@ -330,7 +333,8 @@ class ChatTextList implements VirtualListCommands
 			form.setItemStateListener(this);
 			textLine.setItemCommandListener(this);
 			chatItem.setTextList(textList);
-			chatItem.updateContents();
+			textList.repaint();
+			//chatItem.updateContents();
 			Jimm.display.setCurrent(form);
 			if (initChat) Jimm.display.setCurrentItem(textLine);
 			if (resetText) textLine.setString(new String());
@@ -378,6 +382,12 @@ class ChatTextList implements VirtualListCommands
 			cItem.sendMessage(text);
 		}
 		
+		if (c == insertTemplateCommand)
+		{
+			caretPos = textLine.getCaretPosition();
+			Templates.selectTemplate(_this, form);
+		}
+		
 		//#sijapp cond.if modules_SMILES is "true" #
 		if (c == insertEmotionCommand)
 		{
@@ -395,6 +405,10 @@ class ChatTextList implements VirtualListCommands
 			textLine.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
 		}
 		//#sijapp cond.end#
+		if (Templates.isMyOkCommand(c))
+		{
+			textLine.insert(Templates.getSelectedTemplate(), caretPos);
+		}
 	}
 	
 	//#sijapp cond.end#
@@ -499,7 +513,7 @@ public class ChatHistory
 		}
 	}
 	
-	static protected synchronized void addMyMessage(String uin, String message, byte[] time, String ChatName)
+	static protected synchronized void addMyMessage(String uin, String message, long time, String ChatName)
 	{
 		if (!historyTable.containsKey(uin))
 			newChatForm(uin,ChatName);
@@ -508,7 +522,7 @@ public class ChatHistory
 	}
 	
 	// Add text to message form
-	static synchronized private void addTextToForm(String uin,String from, String message, String url, byte[] time, boolean red, boolean offline)
+	static synchronized private void addTextToForm(String uin,String from, String message, String url, long time, boolean red, boolean offline)
 	{
 		ChatTextList msgDisplay = (ChatTextList) historyTable.get(uin);
 

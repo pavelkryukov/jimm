@@ -829,16 +829,16 @@ public class ConnectAction extends Action
 						long uinRaw = Util.getDWord(buf, 0, false);
 
 						String uin = String.valueOf(uinRaw);
-
+						
 						// Extract date of dispatch
-						byte[] date = Util.createDate
+						long date = Util.createLongTime
 									  (
-										  0,
-										  Util.getByte(buf, 9),
-										  Util.getByte(buf, 8),
-										  Util.getByte(buf, 7),
-										  Util.getByte(buf, 6),
-										  Util.getWord(buf, 4, false)
+											Util.getWord(buf, 4, false),
+											Util.getByte(buf, 6),
+											Util.getByte(buf, 7),
+											Util.getByte(buf, 8),
+											Util.getByte(buf, 9),
+											0
 									   );
 
 						// Get type
