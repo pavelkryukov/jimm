@@ -592,6 +592,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		//#sijapp cond.if modules_SMILES is "true" #
 		messageTextbox.removeCommand(insertEmotionCommand);
 		// #sijapp cond.end#
+		messageTextbox.removeCommand(insertTemplateCommand);
+		
 	}
 
 
@@ -641,6 +643,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		messageTextbox.addCommand(insertEmotionCommand);
 		// #sijapp cond.end#
 		messageTextbox.addCommand(textboxSendCommand);
+		messageTextbox.addCommand(insertTemplateCommand);
 		messageTextbox.setCommandListener(this);
 		Jimm.display.setCurrent(messageTextbox);
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
@@ -761,9 +764,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 					else if (status == ContactList.STATUS_OCCUPIED) msgType = Message.MESSAGE_TYPE_OCC;
 					else if (status == ContactList.STATUS_DND) msgType = Message.MESSAGE_TYPE_DND;
 					else if (status == ContactList.STATUS_CHAT) msgType = Message.MESSAGE_TYPE_FFC;
+					else if (status == ContactList.STATUS_NA) msgType = Message.MESSAGE_TYPE_NA;
 					else msgType = Message.MESSAGE_TYPE_AWAY;
 
-					PlainMessage awayReq = new PlainMessage(Options.getString(Options.OPTION_UIN), ContactListContactItem.this, msgType, Util.createCurrentDate(), "");
+					PlainMessage awayReq = new PlainMessage(Options.getString(Options.OPTION_UIN), ContactListContactItem.this, msgType, Util.createCurrentDate(true), "");
 
 					SendMessageAction act = new SendMessageAction(awayReq);
 					try
@@ -1007,7 +1011,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		else if (JimmUI.getCommandType(c, MSGBS_DELETECONTACT) == JimmUI.CMD_OK)
 		{
 			Icq.delFromContactList(ContactListContactItem.this);
-			
 			//#sijapp cond.if modules_HISTORY is "true" #
 			HistoryStorage.clearHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			//#sijapp cond.end#
@@ -1089,6 +1092,19 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			Jimm.display.setCurrent(reasonTextbox);
 		}
 
+		else if (c == insertTemplateCommand)
+		{
+			caretPos = messageTextbox.getCaretPosition();
+			Templates.selectTemplate(this, messageTextbox);
+		}
+		
+		else if (Templates.isMyOkCommand(c))
+		{
+			String s = Templates.getSelectedTemplate();
+			if ( s != null)
+				messageTextbox.insert(Templates.getSelectedTemplate(), caretPos);
+		}
+		
 		// User wants to insert emotion in text
 		//#sijapp cond.if modules_SMILES is "true" # 
 		else if (c == insertEmotionCommand)
@@ -1127,7 +1143,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		
 		// sign on time
 		long signonTime = getLongValue(ContactListContactItem.CONTACTITEM_SIGNON); 
-		if (signonTime > 0) clInfoData[JimmUI.UI_SIGNON] = Util.getDateString(false, Util.createDate(signonTime));
+		if (signonTime > 0) clInfoData[JimmUI.UI_SIGNON] = Util.getDateString(false, signonTime);
 		
 		// online time
 		long onlineTime = getLongValue(ContactListContactItem.CONTACTITEM_ONLINE);
@@ -1207,7 +1223,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			    	Options.getString(Options.OPTION_UIN),
 			    	this,
 			    	Message.MESSAGE_TYPE_NORM,
-			    	Util.createCurrentDate(),
+			    	Util.createCurrentDate(true),
 			    	text
 			    );
 			
@@ -1412,6 +1428,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//#sijapp cond.if modules_SMILES is "true" #
 	private static Command insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.ITEM, 3);
 	// #sijapp cond.end#
+	private static Command insertTemplateCommand = new Command(ResourceBundle.getString("insert_template"), Command.ITEM, 4);
     
     // Rename a contact
     private static Command renameOkCommand;

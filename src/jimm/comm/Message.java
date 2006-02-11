@@ -24,8 +24,6 @@
 
 package jimm.comm;
 
-import java.util.Date;
-
 import jimm.ContactListContactItem;
 
 public abstract class Message
@@ -57,9 +55,9 @@ public abstract class Message
     protected ContactListContactItem rcvr;
 
     // Date of dispatch
-    private byte[] newDate;
+    private long newDate;
     
-    protected Message(byte[] date, String rcvrUin, String sndrUin, int messageType)
+    protected Message(long date, String rcvrUin, String sndrUin, int messageType)
     {
     	newDate          = date;
     	this.rcvrUin     = rcvrUin;
@@ -103,7 +101,7 @@ public abstract class Message
     	return offline;
     }
     
-    public byte[] getNewDate()
+    public long getNewDate()
     {
     	return newDate;
     }

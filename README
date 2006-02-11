@@ -264,7 +264,8 @@ Contributors:
   		(Status for temporary and unauthorized contacts, safe login, file
   		transfer improvement)
   *  Igor Palkin
-  		(Configurable hotkeys, history exporting, client info, open URL feature)
+  		(Configurable hotkeys, history exporting, client info, open URL feature,
+  		text templates)
 
 Translators:
   *  Guy Aroshas (Hebrew translation)

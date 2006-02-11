@@ -596,7 +596,7 @@ public class HistoryStorage
 		String text, // text to save
 		byte type,   // type of message 0 - incoming, 1 - outgouing
 		String from, // text sender
-		byte[] time    // date of message
+		long time    // date of message
 	)
 	{
 		byte[] buffer, textData;

@@ -50,6 +50,7 @@ import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 
+import java.util.Calendar;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -1012,8 +1013,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 				if (diff > 12) diff -= 24;
 				if (diff < -12)diff += 24;
 				
-				System.out.println("diff="+diff);
+				if (diff == 0) diff = Calendar.getInstance().getTimeZone().getRawOffset()/(1000*60*60)-100;
 				
+				System.out.println("diff="+diff);
+			
 				Options.setInt(Options.OPTIONS_TIME_ZONE, diff);
 				Options.safe_save();
 				
@@ -1291,13 +1294,12 @@ class OptionsForm implements CommandListener, ItemStateListener
 					
 				case OPTIONS_TIMEZONE:
 				{
-					byte[] currDateTime = Util.createCurrentDate();
+					int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
 					currentHour = currDateTime[Util.TIME_HOUR];
-					Util.correctDateForTimerZone(currDateTime);
 					int minutes = currDateTime[Util.TIME_MINUTE];
 					while (lstTimeZone.size() != 0) lstTimeZone.delete(0);
 					for (int i = 0; i < 24; i++) lstTimeZone.append(i+":"+minutes, null);
-					lstTimeZone.setSelectedIndex(currDateTime[Util.TIME_HOUR], true);
+					lstTimeZone.setSelectedIndex(currentHour, true);
 
 					lstTimeZone.addCommand(saveCommand);
 					lstTimeZone.addCommand(backCommand);
