@@ -3,8 +3,8 @@
   // #sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Backlight timeout (sec)"
   "backlight_manual"            "Manual backlight (* key)"
-  "exit_button"                 "       Exit"
-  "menu_button"                 "      Menu"
+  "exit_button"                 "Exit"
+  "menu_button"                 "Menu"
   // #sijapp cond.end#
   "reply"                       "Reply"
   "close"                       "Close"
@@ -168,6 +168,7 @@
   "minutes"						"m"
   "misc"                        "Misc"
   "name"                        "Name"
+  "new_template"                "New template"
   "nick"                        "Nick"
   "no"                          "No"
   "not"                         "not"

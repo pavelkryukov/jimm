@@ -3,8 +3,8 @@
   // #sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Время подсветки (сек)"
   "backlight_manual"            "Ручная подсветка (*)"
-  "exit_button"                 "     Выход"
-  "menu_button"                 "      Меню"
+  "exit_button"                 "Выход"
+  "menu_button"                 "Меню"
   // #sijapp cond.end#
   "reply"                       "Ответ"
   "close"                       "Закрыть"
@@ -169,6 +169,7 @@
   "minutes"						"мин"
   "misc"                        "Разное"
   "name"                        "Имя"
+  "new_template"                "Новый шаблон"
   "nick"                        "Ник"
   "no"                          "Нет"
   "not"                         "без"
