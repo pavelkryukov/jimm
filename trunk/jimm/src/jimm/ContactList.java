@@ -774,6 +774,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		boolean needSorting
     )
     {
+    	if (!treeBuilt) return;
+    	
     	boolean contactExistInTree = false,
 		        contactExistsInList,
 				wasDeleted = false,
@@ -891,6 +893,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     {
         ContactListContactItem cItem = getItembyUIN(uin);
         if (cItem == null) return; // error ???
+        
+
+        System.out.println("ConatctList.update uin="+uin+", name="+cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+", group="+cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
         
         long oldStatus = cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
     	int trueStatus = Util.translateStatusReceived(status);

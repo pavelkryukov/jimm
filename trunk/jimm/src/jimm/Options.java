@@ -71,11 +71,11 @@ public class Options
 {
 	/* Option keys */
 	static final int OPTION_UIN1                       =   0;   /* String */
-	static final int OPTION_PASSWORD1                  = 225;   /* String  */
+	static final int OPTION_PASSWORD1                  = 228;   /* String  */
 	static final int OPTION_UIN2                       =  14;   /* String  */
-	static final int OPTION_PASSWORD2                  = 226;   /* String  */
+	static final int OPTION_PASSWORD2                  = 229;   /* String  */
 	static final int OPTION_UIN3                       =  15;   /* String  */
-	static final int OPTION_PASSWORD3                  = 227;   /* String  */
+	static final int OPTION_PASSWORD3                  = 230;   /* String  */
 	static final int OPTIONS_CURR_ACCOUNT              =  86;   /* int     */
 	
 	// Theese two options are not stored in RMS 
@@ -367,7 +367,7 @@ public class Options
 			    byte[] optionValue = new byte[dis.readUnsignedShort()];
 			    dis.readFully(optionValue);
 			    optionValue = Util.decipherPassword(optionValue);
-			    setString(optionKey, Util.byteArrayToString(optionValue,2,optionValue.length-2,true));
+			    setString(optionKey, Util.byteArrayToString(optionValue,0,optionValue.length,true));
 			}
 		}
 		
