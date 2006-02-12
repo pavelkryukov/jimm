@@ -762,7 +762,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     }
     
     // Must be called after any changes in contacts
-    private static void contactChanged
+    public static void contactChanged
     (
     	ContactListContactItem item, 
 		boolean setCurrent,

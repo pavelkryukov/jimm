@@ -599,22 +599,50 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		currentMode = CM_SENDING_MESSAGE;
 		
 		// If user want reply with quotation 
-		if (initText != null) messageTextbox.setString(initText);
+		if (initText != null)
+		{
+			boolean wasError = false;
+			try
+			{
+				messageTextbox.setString(initText);
+			}
+			catch (Exception e)
+			{
+				wasError = true;
+			}
+			
+			wasError = (messageTextbox.getString() == null) || (messageTextbox.getString().length() == 0);
+			
+			// Creates new TextBox with larger buffer
+			if (wasError)
+			{
+				System.out.println("initText: wasError");
+				int newSize = initText.length();
+				if (newSize > 4000)
+				{
+					newSize = 4000;
+					initText = initText.substring(0, 4000);
+				}
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#		
+				messageTextbox = new TextBox(ResourceBundle.getString("message"), initText, (newSize+32)*2, TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
+				//#sijapp cond.else#
+				messageTextbox = new TextBox(ResourceBundle.getString("message"), initText, (newSize+32)*2, TextField.ANY);
+				//#sijapp cond.end#
+			}
+		}
 
 		// Keep old text if press "cancel" while last edit 
-		else if (!lastAnsUIN
-				.equals(getStringValue(ContactListContactItem.CONTACTITEM_UIN))) messageTextbox
-				.setString(null);
+		else if (!lastAnsUIN.equals(getStringValue(ContactListContactItem.CONTACTITEM_UIN))) messageTextbox.setString(null);
 
 		// Display textbox for entering messages
-		messageTextbox.setTitle(ResourceBundle.getString("message") + " "
-				+ name);
+		messageTextbox.setTitle(ResourceBundle.getString("message") + " " + name);
 		clearMessBoxCommands();
 		//#sijapp cond.if modules_SMILES is "true" #
 		messageTextbox.addCommand(insertEmotionCommand);
 		// #sijapp cond.end#
 		messageTextbox.addCommand(textboxSendCommand);
 		messageTextbox.addCommand(insertTemplateCommand);
+		messageTextbox.addCommand(textboxCancelCommand);
 		messageTextbox.setCommandListener(this);
 		Jimm.display.setCurrent(messageTextbox);
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
@@ -981,9 +1009,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// user select Ok in delete contact message box
 		else if (JimmUI.getCommandType(c, MSGBS_DELETECONTACT) == JimmUI.CMD_OK)
 		{
+			String uin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+			ChatHistory.chatHistoryDelete(uin);
 			Icq.delFromContactList(ContactListContactItem.this);
 			//#sijapp cond.if modules_HISTORY is "true" #
-			HistoryStorage.clearHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+			HistoryStorage.clearHistory(uin);
 			//#sijapp cond.end#
 		}
 
@@ -1153,6 +1183,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		if ((newName == null) || (newName.length() == 0)) return;
 		name = newName;
+		lowerText = null;
 		try
 		{
 			// Save ContactList
@@ -1174,10 +1205,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			// Do nothing
 		}
 
+		ContactList.contactChanged(this, true, true);
 		ChatHistory.contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 		messageTextbox.setString(null);
-		
-		// TODO: sort contact list
 	}
 		
 	public void sendMessage(String text)
@@ -1399,7 +1429,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//#sijapp cond.if modules_SMILES is "true" #
 	private static Command insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.ITEM, 3);
 	// #sijapp cond.end#
-	private static Command insertTemplateCommand = new Command(ResourceBundle.getString("insert_template"), Command.ITEM, 4);
+	private static Command insertTemplateCommand = new Command(ResourceBundle.getString("templates"), Command.ITEM, 4);
     
     // Rename a contact
     private static Command renameOkCommand;

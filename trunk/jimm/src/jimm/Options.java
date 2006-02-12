@@ -297,7 +297,7 @@ public class Options
 		setInt    (Options.OPTION_VISIBILITY_ID,      0);
 		setInt    (Options.OPTION_EXT_CLKEY0,         0);
 		
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 		setInt    (Options.OPTION_EXT_CLKEYSTAR,      HOTKEY_FULLSCR);
 		// #sijapp cond.else#
 		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);

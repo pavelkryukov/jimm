@@ -33,8 +33,8 @@ import jimm.ContactList;
 import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
+import jimm.RunnableImpl;
 import jimm.comm.Icq.HTTPConnection;
-import jimm.util.ResourceBundle;
 
 public class ConnectAction extends Action
 {
@@ -850,8 +850,7 @@ public class ConnectAction extends Action
 							 // Forward message to contact list
 							
 							PlainMessage message = new PlainMessage(uin, this.uin, date, text, true);
-							ContactList.addMessage(message);
-
+							RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
 						}
 						// URL message
 						else if (type == 0x0004)
@@ -876,7 +875,7 @@ public class ConnectAction extends Action
 
 							// Forward message message to contact list
 							UrlMessage message = new UrlMessage(uin, this.uin, date, url, urlText);
-							ContactList.addMessage(message);
+							RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
 						}
 
 						// Packet has been consumed

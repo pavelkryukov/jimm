@@ -136,7 +136,7 @@ class MessData
 	public boolean getIncoming() { return (rowData&0x4000000) != 0; }
 	public long getTime() { return time; }
 	public int getOffset() { return (rowData&0xFFFFFF); }
-	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 	public boolean isURL() { return (rowData&0x8000000) != 0; }
 	//#sijapp cond.end#
 }
@@ -568,7 +568,7 @@ public class ChatHistory
 	final static public int DEL_TYPE_ALL_EXCEPT_CUR = 2;
 	final static public int DEL_TYPE_ALL            = 3;
 	
-	static private void chatHistoryDelete(String uin)
+	static public void chatHistoryDelete(String uin)
 	{
 		ContactListContactItem cItem = ContactList.getItembyUIN(uin);
 		historyTable.remove(uin);
