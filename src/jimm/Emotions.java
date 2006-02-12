@@ -298,7 +298,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 		{
 			Jimm.display.setCurrent(lastDisplay);
 			selector = null;
-			System.gc();
 		}
 	}
 	

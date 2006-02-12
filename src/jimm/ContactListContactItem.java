@@ -163,20 +163,20 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		switch (key)
 		{
-		case CONTACTITEM_ID:            return (idAndGropup&0xFFFF0000) >> 16;
+		case CONTACTITEM_ID:            return ((idAndGropup&0xFFFF0000) >> 16)&0xFFFF;
 		case CONTACTITEM_GROUP:         return (idAndGropup&0x0000FFFF);
-		case CONTACTITEM_PLAINMESSAGES: return (messCounters&0xFF000000) >> 24;
-		case CONTACTITEM_URLMESSAGES:   return (messCounters&0x00FF0000) >> 16;
-		case CONTACTITEM_SYSNOTICES:    return (messCounters&0x0000FF00) >> 8;
+		case CONTACTITEM_PLAINMESSAGES: return ((messCounters&0xFF000000) >> 24)&0xFF;
+		case CONTACTITEM_URLMESSAGES:   return ((messCounters&0x00FF0000) >> 16)&0xFF;
+		case CONTACTITEM_SYSNOTICES:    return ((messCounters&0x0000FF00) >> 8)&0xFF;
 		case CONTACTITEM_AUTREQUESTS:   return (messCounters&0x000000FF);
 		case CONTACTITEM_IDLE:          return idle;
 		case CONTACTITEM_CAPABILITIES:  return caps;
 		case CONTACTITEM_STATUS:        return status;
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
-		case CONTACTITEM_DC_TYPE:       return ((typeAndClientId&0xff00)>>8);
+		case CONTACTITEM_DC_TYPE:       return ((typeAndClientId&0xff00)>>8)&0xFF;
 		case CONTACTITEM_ICQ_PROT:      return portAndProt&0xffff;
-		case CONTACTITEM_DC_PORT:       return ((portAndProt&0xffff0000)>>16);
+		case CONTACTITEM_DC_PORT:       return ((portAndProt&0xffff0000)>>16)&0xFFFF;
 		case CONTACTITEM_CLIENT:        return typeAndClientId&0xff;
 		case CONTACTITEM_AUTH_COOKIE:   return authCookie;
 		// #sijapp cond.end #
