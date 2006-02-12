@@ -87,7 +87,7 @@ public class UpdateContactListAction extends Action
             this.cItem = (ContactListContactItem) cItem;
             this.gItem = null;
             this.idRaw = Util.stringToByteArray(this.cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-            this.nameRaw = Util.stringToByteArray(this.cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+            this.nameRaw = Util.stringToByteArray(this.cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME), true);
         }
         else
         {

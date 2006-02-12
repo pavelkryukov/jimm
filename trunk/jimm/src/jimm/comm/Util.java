@@ -889,7 +889,6 @@ public class Util
 	// Converts the specified string (val) to a byte array
 	public static byte[] stringToByteArray(String val, boolean utf8)
 	{
-
 		// Write string in UTF-8 format
 		if (utf8)
 		{
@@ -898,7 +897,10 @@ public class Util
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				DataOutputStream dos = new DataOutputStream(baos);
 				dos.writeUTF(val);
-				return (baos.toByteArray());
+				byte[] raw = baos.toByteArray(); 
+				byte[] result = new byte[raw.length-2];
+				System.arraycopy(raw, 2, result, 0, raw.length-2);
+				return result;
 			}
 			catch (Exception e)
 			{
