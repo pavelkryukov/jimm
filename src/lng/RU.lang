@@ -252,6 +252,7 @@
   "time_zone"                   "Время"
   "timeout_interv"              "Таймаут пинга"
   "title"                       "Название"
+  "total_mem"                   "Всего памяти"
   "traffic_lng"                 "Трафик"
   "uin"                         "UIN"
   "use_history"                 "Хранить историю"
