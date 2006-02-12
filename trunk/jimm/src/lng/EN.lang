@@ -253,6 +253,7 @@
   "time_zone"                   "Time"
   "timeout_interv"              "Keepalive packet interval"
   "title"                       "Title"
+  "total_mem"                   "Total memory"
   "traffic_lng"                 "Traffic"
   "uin"                         "UIN"
   "use_history"                 "Store history"

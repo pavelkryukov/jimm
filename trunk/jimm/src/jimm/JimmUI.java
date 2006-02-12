@@ -240,7 +240,11 @@ public class JimmUI implements CommandListener
 		StringBuffer str = new StringBuffer();
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
-		   .append(freeMem).append("kb\n\n")
+		   .append(freeMem)
+		   .append("kb\n")
+		   .append(ResourceBundle.getString("total_mem")).append(": ")
+		   .append(Runtime.getRuntime().totalMemory()/1024)
+		   .append("kb\n\n")
 		   .append(ResourceBundle.getString("latest_ver")).append(":");
 		
 		if (versionLoaded) str.append(" ").append(version);

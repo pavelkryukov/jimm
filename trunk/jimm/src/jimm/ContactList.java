@@ -1035,6 +1035,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			// Update online counters
 			statusChanged(cItem, false, cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE, 1);
 
+			// Check is chat availible 
+    		cItem.setBooleanValue
+    		(
+    			ContactListContactItem.CONTACTITEM_HAS_CHAT,
+    			ChatHistory.chatHistoryExists(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN))
+    		);
+
 			// Save list
 			safeSave();
 		}
