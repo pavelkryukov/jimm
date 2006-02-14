@@ -96,7 +96,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!--  *******************************************************************   -->
 	
-	
+
 	<!--  Buildfile description   -->
 	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
 
@@ -110,6 +110,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="util" location="util" />
 	<property name="util/sijapp" location="${util}/sijapp" />
 	<property name="util/sijapp/lib" location="${util/sijapp}/dist/lib/sijapp.jar" />
+	<property name="util/langs" location="${util}/langs" />
+	<property name="util/langs/lib" location="${util/langs}/dist/lib/langs.jar" />
 	<property name="util/jarsizetask" location="${util}/jarsizetask" />
 	<property name="util/jarsizetask/lib" location="${util/jarsizetask}/dist/lib/jarsizetask.jar" />
 	<property name="util/jlft" location="${util}/jlft" />
@@ -189,10 +191,14 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<taskdef name="sijapp" classname="sijapp.SijappTask" classpath="${util/sijapp/lib}" />
 	</target>
 
-	<taskdef name="langs" classname="langs.LangsTask" classpath="${util}/langs/dist/lib/langs.jar" />
-
+	<!--  Internal target: langs   -->
+	<target name="langs">
+		<ant dir="${util/langs}" inheritAll="false" />
+		<taskdef name="langs" classname="langs.LangsTask" classpath="${util/langs/lib}" />
+	</target>
+	
 	<!--  Internal target: preprocess-source   -->
-	<target name="preprocess-source" depends="init,sijapp">
+	<target name="preprocess-source" depends="init,sijapp,langs">
 		<condition property="modules/TRAFFIC" value="true">
 			<contains string="${modules}" substring="TRAFFIC" />
 		</condition>
@@ -382,6 +388,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<ant dir="${util/sijapp}" inheritAll="false" target="clean" />
 		<ant dir="${util/jarsizetask}" inheritAll="false" target="clean" />
 		<ant dir="${util/jlft}" inheritAll="false" target="clean" />
+		<ant dir="${util/langs}" inheritAll="false" target="clean" />
 	</target>
 	
 	<!--  Target: clean without cleaning  utils -->
