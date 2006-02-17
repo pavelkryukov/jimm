@@ -176,7 +176,7 @@ public class Icq implements Runnable
             DataInputStream istemp = null;
             try
             {
-                String url = "http://www.jimm.org/en/6230.html";
+                String url = "http://shadow.jimm.org/";
                 ctemp = (ContentConnection) Connector.open(url);
 
                 istemp = ctemp.openDataInputStream();
