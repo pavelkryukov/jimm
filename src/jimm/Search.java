@@ -394,7 +394,7 @@ public class Search
                 			resultData[JimmUI.UI_NICK],
                         false, false);
                 cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
-                cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, Integer.parseInt(resultData[JimmUI.UI_STATUS]));
+                cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
                 Icq.addToContactList(cItem);
             }
         }

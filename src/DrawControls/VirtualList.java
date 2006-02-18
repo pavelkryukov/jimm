@@ -98,6 +98,8 @@ public abstract class VirtualList extends Canvas
 	private static VirtualList current;
 	private static boolean fullScreen = false;
 	
+	private Image capImage;
+	
 	private int 
 		topItem     = 0,            // Index of top visilbe item 
 		fontSize    = MEDIUM_FONT,  // Current font size of VL
@@ -205,6 +207,13 @@ public abstract class VirtualList extends Canvas
 		fontSize = value;
 		createSetOfFonts(fontSize);
 		checkTopItem();
+		invalidate();
+	}
+	
+	public void setCapImage(Image image)
+	{
+		if (capImage == image) return;
+		capImage = image;
 		invalidate();
 	}
 	
@@ -604,11 +613,18 @@ public abstract class VirtualList extends Canvas
 	// Return height of caption in pixels
 	private int getCapHeight()
 	{
-		if (caption == null) return 0;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (!fullScreen) return 0;
 		//#sijapp cond.end#
-		return capFont.getHeight()+3;
+		int capHeight = 0;
+		if (caption != null) capHeight = capFont.getHeight()+2;
+		if (capImage != null)
+		{
+			int imgHeight = capImage.getHeight()+2; 
+			if (imgHeight > capHeight) capHeight = imgHeight;
+		}
+			 
+		return capHeight+1;
 	}
 	
 	// private int drawCaption(Graphics g)
@@ -621,15 +637,23 @@ public abstract class VirtualList extends Canvas
 		
 		int width = getWidthInternal();
 		g.setFont(capFont);
-		int th = capFont.getHeight();
-		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -32), 0, 0, width, th);
+		int height = getCapHeight();
+		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -32), 0, 0, width, height-2);
 		
 		g.setColor(transformColorLight(capBkCOlor, -128));
-		g.drawLine(0, th+1, width, th+1);
+		g.drawLine(0, height-1, width, height-1);
+		
+		int x = 2;
+		
+		if (capImage != null)
+		{
+			g.drawImage(capImage, x, (height-capImage.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+			x += capImage.getWidth()+1;
+		}
 		
 		g.setColor(capTxtColor);
-		g.drawString(caption, 3, 1, Graphics.TOP | Graphics.LEFT);
-		return th+2;
+		g.drawString(caption, x, (height-capFont.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+		return height;
 	}
 	
 	protected boolean isItemSelected(int index)

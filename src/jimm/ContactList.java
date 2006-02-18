@@ -91,6 +91,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     public static final int STATUS_NA        = 0x00000004;
     public static final int STATUS_OCCUPIED  = 0x00000010;
     public static final int STATUS_OFFLINE   = 0xFFFFFFFF;
+    public static final int STATUS_NONE      = 0x10000000;
     public static final int STATUS_ONLINE    = 0x00000000;
 
     // Sound notification typs
@@ -149,7 +150,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	private static VirtualTree tree;
 
 	// Images for icons
-	private static ImageList imageList;
+	final public static ImageList imageList;
+	final public static ImageList smallIcons;
 
 	//
 	private static int onlineCounter;
@@ -166,10 +168,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
     	
         // Construct image objects
+        smallIcons = new ImageList();
+        imageList = new ImageList();
         try
         {
-        	imageList = new ImageList();
-        	
         	// reads and divides image "icons.png" to several icons
 			imageList.load("/icons.png", -1, -1, -1);
             ContactList.statusAwayImg        = imageList.elementAt(0);
@@ -184,6 +186,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             ContactList.eventUrlMessageImg   = imageList.elementAt(9);
             ContactList.eventSystemNoticeImg = imageList.elementAt(10);
             ContactList.eventSysActionImg    = imageList.elementAt(11);
+            smallIcons.load("/sicons.png", -1, -1, -1);
         } 
         catch (IOException e)
         {
@@ -339,14 +342,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static public void activate(Alert alert)
     {
         Jimm.display.setCurrent(alert, ContactList.tree);
-	//#sijapp cond.if target is "MOTOROLA"#
-	LightControl.flash(false);
-	//#sijapp cond.end#
+        //#sijapp cond.if target is "MOTOROLA"#
+        LightControl.flash(false);
+        //#sijapp cond.end#
     }
 
     // Request display of the main menu
     static public void activate()
 	{
+    	tree.setCapImage(smallIcons.elementAt(JimmUI.getStatusImageIndex(Jimm.jimm.getIcqRef().getCurrentStatus())));
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		updateTitle(Traffic.getSessionTraffic(true));
 		//#sijapp cond.else #
@@ -555,11 +559,17 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	treeBuilt = treeSorted = false;
     	haveToBeCleared = true;
     	tree.clear();
-    	
-		onlineCounter = 0;
-    	int count = cItems.size();
-    	for (int i = 0; i < count; i++)
+		setStatusesOffline();
+    }
+    
+    static public void setStatusesOffline()
+    {
+    	onlineCounter = 0;
+    	for (int i = cItems.size()-1; i >= 0; i--)
     		getCItem(i).setIntValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
+    	
+    	for (int i = gItems.size()-1; i >= 0; i--)
+    		((ContactListGroupItem)gItems.elementAt(i)).setCounters(0, 0);
     }
     
 	// Returns array of uins of unuthorized and temporary contacts
@@ -871,7 +881,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	
     	// unlock tree and repaint
     	tree.unlock();
+    	
+    	// change status for chat (if exists)
+    	item.setStatusImage();
     }
+    
+    private static int lastUnknownStatus = STATUS_NONE;
     
     // Updates the client-side contact list (called when a contact changes status)
     // DO NOT CALL THIS DIRECTLY FROM OTHER THREAND THAN MAIN!
@@ -892,12 +907,17 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     )
     {
         ContactListContactItem cItem = getItembyUIN(uin);
-        if (cItem == null) return; // error ???
-
-        //System.out.println("ConatctList.update uin="+uin+", name="+cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+", group="+cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
+        
+        int trueStatus = Util.translateStatusReceived(status);
+        
+        if (cItem == null)
+        {
+        	lastUnknownStatus = trueStatus;
+        	return;
+        }
         
         long oldStatus = cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
-    	int trueStatus = Util.translateStatusReceived(status);
+    	
     	boolean statusChanged  = (oldStatus != trueStatus);
         boolean wasOnline  = (oldStatus != STATUS_OFFLINE);
         boolean nowOnline  = (trueStatus != STATUS_OFFLINE);
@@ -1023,17 +1043,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		{
 			// does contact already exists or temporary ?
 			ContactListContactItem oldItem = getItembyUIN(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-			if (oldItem != null) removeContactItem(oldItem);
+			if (oldItem != null)
+			{
+				removeContactItem(oldItem);
+				lastUnknownStatus = oldItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+			}
 
 			// Add given contact item
-			ContactList.cItems.addElement(cItem);
+			cItems.addElement(cItem);
 			cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED, true);
-
-			// Update visual list
-			contactChanged(cItem, true, true);
-
-			// Update online counters
-			statusChanged(cItem, false, cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE, 1);
 
 			// Check is chat availible 
     		cItem.setBooleanValue
@@ -1041,6 +1059,25 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     			ContactListContactItem.CONTACTITEM_HAS_CHAT,
     			ChatHistory.chatHistoryExists(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN))
     		);
+    		
+    		// Set contact status (if already received)
+    		if (lastUnknownStatus != STATUS_NONE)
+    		{
+    			cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, lastUnknownStatus);
+    			lastUnknownStatus = STATUS_NONE;
+    		}
+    		
+    		// Request contact status
+    		else
+    		{
+    			Icq.addLocalContacts(new String[] { cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN) } );
+    		}
+    		
+			// Update visual list
+			contactChanged(cItem, true, true);
+    		
+			// Update online counters
+			statusChanged(cItem, false, cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE, 1);
 
 			// Save list
 			safeSave();
@@ -1086,8 +1123,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // do we have a new temp contact
         else
         {
-            cItem = new ContactListContactItem(0, 0, message.getSndrUin(), message.getSndrUin(), false, true);
-            ContactList.cItems.addElement(cItem);
+        	try
+        	{
+        		cItem = new ContactListContactItem(0, 0, message.getSndrUin(), message.getSndrUin(), false, true);
+        	}
+        	catch (Exception e)
+        	{
+        		// Message from non-icq contact
+        		return;
+        	}
+            cItems.addElement(cItem);
             cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
             cItem.addMessage(message);
             temp = true;

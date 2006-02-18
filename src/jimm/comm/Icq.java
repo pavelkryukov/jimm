@@ -295,6 +295,9 @@ public class Icq implements Runnable
     {    	
     	// Stop thread
         thread = null;
+        
+        // Wake up thread in order to complete
+		synchronized (Icq.wait) { Icq.wait.notify(); }
 
         // Reset all variables
         state = Icq.STATE_NOT_CONNECTED;
@@ -388,11 +391,9 @@ public class Icq implements Runnable
         // Catch JimmExceptions
         try
         {
-
             // Abort only in error state
             while (Icq.thread == thread)
             {
-
                 // Get next action
                 synchronized (this)
                 {
@@ -428,12 +429,13 @@ public class Icq implements Runnable
                     {
                         synchronized (wait)
                         {
-                            wait.wait(Icq.STANDBY);
+                            wait.wait(/*Icq.STANDBY*/);
                         }
                     } catch (InterruptedException e)
                     {
                         // Do nothing
                     }
+                    
                 }
                 // Initialize action
                 else
@@ -641,7 +643,6 @@ public class Icq implements Runnable
 
         // Cancel KeepAliveTimerTask
         keepAliveTimerTask.cancel();
-
     }
     
     /**************************************************************************/
@@ -2451,4 +2452,9 @@ public class Icq implements Runnable
     }
     // #sijapp cond.end#
     // #sijapp cond.end#
+    
+    public int getCurrentStatus()
+    {
+    	return isConnected() ? (int)Options.getLong(Options.OPTION_ONLINE_STATUS) : ContactList.STATUS_OFFLINE;
+    }
 }

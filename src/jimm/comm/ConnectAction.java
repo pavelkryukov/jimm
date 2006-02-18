@@ -658,7 +658,14 @@ public class ConnectAction extends Action
 								if (len != 0) { throw (new JimmException(115, 5)); }
 
 								// Add this contact item to the vector
-								items.addElement(new ContactListContactItem(id, group, name, nick, noAuth, true));
+								try
+								{
+									items.addElement(new ContactListContactItem(id, group, name, nick, noAuth, true));
+								}
+								catch (Exception e)
+								{
+									// Contact with wrong uin was received  
+								}
 
 							}
 							// Group of contacts
