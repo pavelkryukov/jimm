@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.TimerTask;
 import javax.microedition.lcdui.*;
+
 import java.util.Vector;
 
 import java.io.DataOutputStream;
@@ -402,7 +403,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		else if (isMessageAvailable(MESSAGE_URL)) tempIndex = 9;
 		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
 		else if (isMessageAvailable(MESSAGE_SYS_NOTICE)) tempIndex = 10;
-		else tempIndex = getStatusImageIndex(getIntValue(ContactListContactItem.CONTACTITEM_STATUS));
+		else tempIndex = JimmUI.getStatusImageIndex(getIntValue(ContactListContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
 	
@@ -412,51 +413,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return name;
 	}
 
-	private final static long[] statuses = 
-	{
-		ContactList.STATUS_AWAY,
-		ContactList.STATUS_CHAT,
-		ContactList.STATUS_DND,
-		ContactList.STATUS_INVISIBLE,
-		ContactList.STATUS_NA,
-		ContactList.STATUS_OCCUPIED,
-		ContactList.STATUS_OFFLINE,
-		ContactList.STATUS_ONLINE,
-		ContactList.STATUS_INVIS_ALL,
-	};
-	
-	private final static int[] imageIndexes = { 0, 1, 2, 3, 4, 5, 6, 7, 3 };
-	
-	private final static String[] statusStrings = 
-	{
-		"status_away",
-		"status_chat",
-		"status_dnd",
-		"status_invisible",
-		"status_na",
-		"status_occupied",
-		"status_offline",
-		"status_online",
-		"status_invis_all"
-	};
-	
-	private static int getStatusIndex(long status)
-	{
-		for (int i = 0; i < statuses.length; i++) if (statuses[i] == status) return i;
-		return -1;
-	}
-	
-	public static int getStatusImageIndex(long status)
-	{
-		int index = getStatusIndex(status);
-		return (index == -1) ? -1 : imageIndexes[index];
-	}
-
-	public static String getStatusString(long status)
-	{
-		int index = getStatusIndex(status);
-		return (index == -1) ? null : ResourceBundle.getString(statusStrings[index]);
-	}
 	
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_FILES is "true"#  
@@ -1326,6 +1282,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			LightControl.flash(true);
 			// #sijapp cond.end#
 		}
+		
+		setStatusImage();
 	}
 
 	/****************************************************************************/
@@ -1546,8 +1504,19 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		if (currentUin.equals(uin))
 		{
-			showTopLine(uin, getStatusString(status), 8, FlashCapClass.TYPE_FLASH);
+			showTopLine(uin, JimmUI.getStatusString(status), 8, FlashCapClass.TYPE_FLASH);
 		}	 
+	}
+	
+	public void setStatusImage()
+	{
+    	ChatTextList chat = ChatHistory.getChatHistoryAt(getStringValue(CONTACTITEM_UIN));
+    	if (chat != null)
+    	{
+    		Displayable disp = chat.getDisplayable();
+    		if (disp instanceof VirtualList)
+    			((VirtualList)disp).setCapImage(ContactList.smallIcons.elementAt(JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS))));
+    	}
 	}
 	
 	//	 Timer task for flashing form caption

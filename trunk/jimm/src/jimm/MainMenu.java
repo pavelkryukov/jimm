@@ -84,7 +84,7 @@ public class MainMenu implements CommandListener
    
     // #sijapp cond.if target is "MOTOROLA" #
     private static Command exitCommand = new Command(ResourceBundle.getString("exit_button"), Command.EXIT, 1);
-    //#sijapp cond.end# 
+	//#sijapp cond.else#
 
      // List for selecting a online status
     private static List statusList;
@@ -138,7 +138,7 @@ public class MainMenu implements CommandListener
     static private Image getStatusImage()
     {
     	long cursStatus = Options.getLong(Options.OPTION_ONLINE_STATUS);
-    	int imageIndex = ContactListContactItem.getStatusImageIndex(cursStatus);
+    	int imageIndex = JimmUI.getStatusImageIndex(cursStatus);
     	return ContactList.getImageList().elementAt(imageIndex);
     }
 
@@ -280,13 +280,6 @@ public class MainMenu implements CommandListener
     // Command listener
     public void commandAction(Command c, Displayable d)
     {
-        // #sijapp cond.if modules_TRAFFIC is "true" #
-        
-        //Get traffic container
-        Traffic traffic = Jimm.jimm.getTrafficRef();
-        // #sijapp cond.end#
-
-
         // #sijapp cond.if target is "MOTOROLA" #
         //Exit by soft button
           
@@ -322,7 +315,7 @@ public class MainMenu implements CommandListener
             }
             try
             {
-            	Jimm.jimm.getIcqRef().requestAction(act);
+            	Icq.requestAction(act);
             }
             catch (JimmException e)
             {
@@ -336,11 +329,11 @@ public class MainMenu implements CommandListener
         else if ((c == sendCommand) && (d == MainMenu.groupList))
         {
             ContactListContactItem cItems[];
-            cItems = Jimm.jimm.getContactListRef().getContactItems();
+            cItems = ContactList.getContactItems();
             int count = 0;
             for (int i=0;i<cItems.length;i++)
             {
-                if (cItems[i].getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == Jimm.jimm.getContactListRef().getGroupItems()[MainMenu.groupList.getSelectedIndex()].getId())
+                if (cItems[i].getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == ContactList.getGroupItems()[MainMenu.groupList.getSelectedIndex()].getId())
                     count++;
             }
             if (count != 0)
@@ -353,10 +346,10 @@ public class MainMenu implements CommandListener
             else
             {
                 // Create and request action to delete the group
-                UpdateContactListAction act = new UpdateContactListAction(Jimm.jimm.getContactListRef().getGroupItems()[MainMenu.groupList.getSelectedIndex()],UpdateContactListAction.ACTION_DEL);
+                UpdateContactListAction act = new UpdateContactListAction(ContactList.getGroupItems()[MainMenu.groupList.getSelectedIndex()],UpdateContactListAction.ACTION_DEL);
                 try 
                 {
-                    Jimm.jimm.getIcqRef().requestAction(act);
+                    Icq.requestAction(act);
                 }
                 catch (JimmException e)
                 {
@@ -382,24 +375,19 @@ public class MainMenu implements CommandListener
         
         // Menu item has been selected
 
-        //#sijapp cond.if target is "MOTOROLA"#
         else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand)) && (d == MainMenu.list))
-        // #sijapp cond.else#
-        else if ((c == List.SELECT_COMMAND) && (d == MainMenu.list))
-        // #sijapp cond.end#
-
         {
             switch(MainMenu.eventList[MainMenu.list.getSelectedIndex()])
             {
                 case MENU_CONNECT:
                 // Connect
             	ContactList.beforeConnect();
-                Jimm.jimm.getIcqRef().connect();
+                Icq.connect();
                 break;
                 
                 case MENU_DISCONNECT:
                     // Disconnect
-                    Jimm.jimm.getIcqRef().disconnect();
+                    Icq.disconnect();
                     Thread.yield();
                     // Show the main menu
                     MainMenu.activate();
@@ -417,32 +405,22 @@ public class MainMenu implements CommandListener
                     
                 case MENU_STATUS:
                     // Set status
-                    long onlineStatus = Options.getLong(Options.OPTION_ONLINE_STATUS);
-                    if (onlineStatus == ContactList.STATUS_AWAY)
+                    int onlineStatus = (int)Options.getLong(Options.OPTION_ONLINE_STATUS);
+                    int index = 0;
+                    
+                    switch (onlineStatus)
                     {
-                        MainMenu.statusList.setSelectedIndex(2, true);
-                    } else if (onlineStatus == ContactList.STATUS_CHAT)
-                    {
-                        MainMenu.statusList.setSelectedIndex(1, true);
-                    } else if (onlineStatus == ContactList.STATUS_DND)
-                    {
-                        MainMenu.statusList.setSelectedIndex(5, true);
-                    } else if (onlineStatus == ContactList.STATUS_INVISIBLE)
-                    {
-                        MainMenu.statusList.setSelectedIndex(6, true);
-                    } else if (onlineStatus == ContactList.STATUS_NA)
-                    {
-                        MainMenu.statusList.setSelectedIndex(3, true);
-                    } else if (onlineStatus == ContactList.STATUS_OCCUPIED)
-                    {
-                        MainMenu.statusList.setSelectedIndex(4, true);
-                    } else if (onlineStatus == ContactList.STATUS_ONLINE)
-                    {
-                        MainMenu.statusList.setSelectedIndex(0, true);
-                    } else if (onlineStatus == ContactList.STATUS_INVIS_ALL)
-                    {
-                    	MainMenu.statusList.setSelectedIndex(7, true);
+                    case ContactList.STATUS_AWAY:      index = 2; break;
+                    case ContactList.STATUS_CHAT:      index = 1; break;
+                    case ContactList.STATUS_DND:       index = 5; break;
+                    case ContactList.STATUS_INVISIBLE: index = 6; break;
+                    case ContactList.STATUS_NA:        index = 3; break;
+                    case ContactList.STATUS_OCCUPIED:  index = 4; break;
+                    case ContactList.STATUS_ONLINE:    index = 0; break;
+                    case ContactList.STATUS_INVIS_ALL: index = 7; break;
                     }
+                    
+                    MainMenu.statusList.setSelectedIndex(index, true);
                     MainMenu.statusList.setCommandListener(_this);
                     MainMenu.statusList.addCommand(backCommand);
                     //#sijapp cond.if target is "MOTOROLA"#
@@ -471,9 +449,9 @@ public class MainMenu implements CommandListener
                     // Del group
                     // Show list of groups to select which group to delete
                     groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
-                    for (int i = 0; i < Jimm.jimm.getContactListRef().getGroupItems().length; i++)
+                    for (int i = 0; i < ContactList.getGroupItems().length; i++)
                     {
-                        groupList.append(Jimm.jimm.getContactListRef().getGroupItems()[i].getName(), null);
+                        groupList.append(ContactList.getGroupItems()[i].getName(), null);
                     }
                     groupList.addCommand(backCommand);
                     groupList.addCommand(sendCommand);
@@ -489,20 +467,20 @@ public class MainMenu implements CommandListener
                  // #sijapp cond.if modules_TRAFFIC is "true" #
                  case MENU_TRAFFIC:
                      // Traffic
-                     traffic.setIsActive(true);
-                     traffic.trafficScreen.activate();
+                     Traffic.setIsActive(true);
+                     Traffic.trafficScreen.activate();
                      break;
                  // #sijapp cond.end #
                      
                  case MENU_ABOUT:
                 	// Display an info
-                 	Jimm.jimm.getUIRef().about(list);
+                 	JimmUI.about(list);
                     break;
   
                  //#sijapp cond.if target is "MIDP2"#
                  case MENU_MINIMIZE:
                      // Minimize Jimm (if supported)                 
-                     Jimm.jimm.setMinimized(true);
+                     Jimm.setMinimized(true);
                      break;                    
                  //#sijapp cond.end#
                      
@@ -513,11 +491,7 @@ public class MainMenu implements CommandListener
             }
         }
         // Online status has been selected
-        //#sijapp cond.if target is "MOTOROLA"#
         else if (((c == List.SELECT_COMMAND) || (c== MainMenu.selectCommand)) && (d == MainMenu.statusList))
-        //#sijapp cond.else#
-        else if ((c == List.SELECT_COMMAND) && (d == MainMenu.statusList))
-        //#sijapp cond.end#
         {
 
             // Request online status change
@@ -546,12 +520,17 @@ public class MainMenu implements CommandListener
 				onlineStatus = ContactList.STATUS_INVIS_ALL;
 				break;
 			}
+            
+			// Save new online status
+			Options.setLong(Options.OPTION_ONLINE_STATUS, onlineStatus);
+			Options.safe_save();
+            
 			if (Icq.isConnected())
 			{
 				try
 				{
 					SetOnlineStatusAction act = new SetOnlineStatusAction(onlineStatus);
-					Jimm.jimm.getIcqRef().requestAction(act);
+					Icq.requestAction(act);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
@@ -560,19 +539,12 @@ public class MainMenu implements CommandListener
 			}
 			else
 			{
-				this.isConnected = !Icq.isConnected();
-				// Save new online status
-				Options.setLong(Options.OPTION_ONLINE_STATUS, onlineStatus);
-				try
-				{
-					Options.save();
-				}
-				catch (Exception e)
-				{
-					JimmException.handleException(new JimmException(172,0,true));
-				}
+				isConnected = !Icq.isConnected();
 			}
-			if (!((onlineStatus == ContactList.STATUS_INVISIBLE) || (onlineStatus == ContactList.STATUS_INVIS_ALL) || (onlineStatus == ContactList.STATUS_ONLINE)))
+			if ((onlineStatus != ContactList.STATUS_INVISIBLE) && 
+			    (onlineStatus != ContactList.STATUS_INVIS_ALL) &&
+			    (onlineStatus != ContactList.STATUS_ONLINE)    &&
+			    (onlineStatus != ContactList.STATUS_CHAT))
 			{
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 statusMessage = new TextBox(ResourceBundle.getString("status_message"),Options.getString(Options.OPTION_STATUS_MESSAGE),255,TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
@@ -599,14 +571,7 @@ public class MainMenu implements CommandListener
         else if ((c == selectCommand) && (d == statusMessage))
         {
             Options.setString(Options.OPTION_STATUS_MESSAGE,statusMessage.getString());
-            try
-            {
-                Options.save();
-            }
-            catch (Exception e)
-            {
-                JimmException.handleException(new JimmException(172,0,true));
-            }
+            Options.safe_save();
 			// Active MM/CL
 			if (Icq.isConnected())
 			{

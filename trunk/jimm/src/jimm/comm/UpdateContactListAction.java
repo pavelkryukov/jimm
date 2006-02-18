@@ -32,6 +32,7 @@ import jimm.ContactListItem;
 import jimm.ContactList;
 import jimm.Jimm;
 import jimm.JimmException;
+import jimm.RunnableImpl;
 
 public class UpdateContactListAction extends Action
 {
@@ -186,7 +187,7 @@ public class UpdateContactListAction extends Action
                             throw (new JimmException(158, 0, true));
                         case 0x00E:
                             cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH,true);
-                            ContactList.addContactItem(this.cItem);
+                            RunnableImpl.callSerially(RunnableImpl.TYPE_ADDCONTACT, this.cItem);
                             this.state = UpdateContactListAction.STATE_SRV_REPLYED_AUTH;
                             break;
                         default:
@@ -274,7 +275,7 @@ public class UpdateContactListAction extends Action
                             {
                                 ContactList.removeContactItem(this.cItem);
 							} else
-                            	ContactList.addContactItem(this.cItem);
+								RunnableImpl.callSerially(RunnableImpl.TYPE_ADDCONTACT, this.cItem);
                         else
                             if (action == ACTION_DEL)
                             	ContactList.removeGroup(this.gItem);

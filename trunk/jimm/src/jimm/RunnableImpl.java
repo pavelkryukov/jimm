@@ -27,6 +27,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_UPDATE_CONTACT_LIST = 5;
 	final static public int TYPE_SHOW_USER_INFO      = 6;
 	final static public int TYPE_UPDATE_CL_CAPTION   = 7;
+	final static public int TYPE_ADDCONTACT          = 8;
 	
 	RunnableImpl(int type, Object[] data)
 	{
@@ -89,6 +90,10 @@ public class RunnableImpl implements Runnable
 				getInt(data,  9),
 				getInt(data, 10)
 			);
+			break;
+			
+		case TYPE_ADDCONTACT:
+			ContactList.addContactItem((ContactListContactItem)data[0]);
 			break;
 		}
 	}

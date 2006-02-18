@@ -155,6 +155,10 @@ public class JimmException extends Exception
 			Icq.resetServerCon();
 			//  #sijapp cond.end#
 			
+			// Set offline status for all contacts and reset online counters 
+			ContactList.setStatusesOffline();
+			
+			// Unlock splash (if locked)
 			if (SplashCanvas.locked()) SplashCanvas.unlock();
 
 			// Display error message

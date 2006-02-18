@@ -89,7 +89,7 @@ public class SetOnlineStatusAction extends Action
 										   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 										   new byte[0],
 										   buf);
-				Jimm.jimm.getIcqRef().c.sendPacket(reply2pre);
+				Icq.c.sendPacket(reply2pre);
 			}
 		}
 
@@ -100,7 +100,7 @@ public class SetOnlineStatusAction extends Action
 										   0x00000000,
 										   new byte[0],
 										   SetOnlineStatusAction.CLI_SETSTATUS_DATA);
-		Jimm.jimm.getIcqRef().c.sendPacket(packet);
+		Icq.c.sendPacket(packet);
 
 		// Change privacy setting according to new status
 		if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
@@ -110,20 +110,12 @@ public class SetOnlineStatusAction extends Action
 										SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 										new byte[0],
 										buf);
-			this.icq.c.sendPacket(reply2post);
+			Icq.c.sendPacket(reply2post);
 		}
 		
 		// Save new online status
 		Options.setLong(Options.OPTION_ONLINE_STATUS, this.onlineStatus);
-		try
-		{
-			Options.save();
-		}
-		catch (Exception e)
-		{
-			JimmException.handleException(new JimmException(172,0,true));
-		}
-
+		Options.safe_save();
 	}
 
 

@@ -780,5 +780,56 @@ public class JimmUI implements CommandListener
 		textList.doCRLF(messTotalCounter);
 	}
 	
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	
+	private final static long[] statuses = 
+	{
+		ContactList.STATUS_AWAY,
+		ContactList.STATUS_CHAT,
+		ContactList.STATUS_DND,
+		ContactList.STATUS_INVISIBLE,
+		ContactList.STATUS_NA,
+		ContactList.STATUS_OCCUPIED,
+		ContactList.STATUS_OFFLINE,
+		ContactList.STATUS_ONLINE,
+		ContactList.STATUS_INVIS_ALL,
+	};
+	
+	private final static int[] imageIndexes = { 0, 1, 2, 3, 4, 5, 6, 7, 3 };
+	
+	private final static String[] statusStrings = 
+	{
+		"status_away",
+		"status_chat",
+		"status_dnd",
+		"status_invisible",
+		"status_na",
+		"status_occupied",
+		"status_offline",
+		"status_online",
+		"status_invis_all"
+	};
+	
+	private static int getStatusIndex(long status)
+	{
+		for (int i = 0; i < statuses.length; i++) if (statuses[i] == status) return i;
+		return -1;
+	}
+	
+	public static int getStatusImageIndex(long status)
+	{
+		int index = getStatusIndex(status);
+		return (index == -1) ? -1 : imageIndexes[index];
+	}
+
+	public static String getStatusString(long status)
+	{
+		int index = getStatusIndex(status);
+		return (index == -1) ? null : ResourceBundle.getString(statusStrings[index]);
+	}
+	
+	
 
 }
