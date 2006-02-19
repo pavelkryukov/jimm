@@ -177,10 +177,13 @@ public class JimmException extends Exception
 			{
 				Alert errorMsg = new Alert(ResourceBundle.getString("warning"), e.getMessage(), null, AlertType.WARNING);
 				errorMsg.setTimeout(Alert.FOREVER);
-				if (Jimm.display.getCurrent() instanceof Alert)		
-					Jimm.display.setCurrent(errorMsg);
-				else
-					Jimm.display.setCurrent(errorMsg, Jimm.display.getCurrent());
+				if (Jimm.display.getCurrent() == SplashCanvas._this)
+				{
+					if (Icq.isConnected()) ContactList.activate(errorMsg);
+					else MainMenu.activate(errorMsg);
+				}
+				else Jimm.display.setCurrent(errorMsg);
+
 				return(errorMsg);
 			}
 		return(null);

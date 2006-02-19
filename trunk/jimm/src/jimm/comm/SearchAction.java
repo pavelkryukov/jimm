@@ -23,14 +23,9 @@ Author(s): Andreas Rossbacher
 
 package jimm.comm;
 
-import java.util.Date;
-
-import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.Search;
-import jimm.ContactList;
-import jimm.MainMenu;
 import jimm.util.ResourceBundle;
 
 public class SearchAction extends Action
@@ -71,21 +66,14 @@ public class SearchAction extends Action
     // Search object as container for request and results
     private Search cont;
     
-    // Search action was called by
-    private int calledBy;
-    
     // Last activity
-    private Date lastActivity = new Date();
+    private long lastActivity = System.currentTimeMillis();
     
-    // Excpetion handeled;
-    private boolean handeld;
     
     public SearchAction(Search _cont,int _calledBy)
     {
     	super(false, true);
         cont = _cont;
-        calledBy = _calledBy;
-        handeld = false;
     }
 
     // Init action
@@ -212,7 +200,7 @@ public class SearchAction extends Action
 
         packet = new ToIcqSrvPacket(SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getString(Options.OPTION_UIN),0x07D0,new byte[0], buf);
     
-        Jimm.jimm.getIcqRef().c.sendPacket(packet);
+        Icq.c.sendPacket(packet);
         
         this.state = STATE_UIN_SEARCH_SENT;
         
@@ -301,7 +289,7 @@ public class SearchAction extends Action
             }
         
         // Update activity timestamp
-        this.lastActivity = new Date();
+        this.lastActivity = System.currentTimeMillis();
         
         return consumed;
     }
@@ -314,15 +302,25 @@ public class SearchAction extends Action
     
     public void onEvent(int eventTuype)
     {
-    	if (eventTuype == ON_COMPLETE) cont.getSearchForm().activate(true);
+    	switch (eventTuype)
+    	{
+    	case ON_COMPLETE:
+    		cont.getSearchForm().activate(true);
+    		break;
+    		
+    	case ON_ERROR:
+            if (this.state == STATE_FIRSTRESULT_RECEIVED)
+            {
+            	JimmException.handleException(new JimmException(159, 0, true));
+            }
+            else
+            {
+            	JimmException.handleException(new JimmException(159, 1, true));
+            }
+    		break;
+    	}
     }
     
-    // Return if exception already handeled
-    public boolean excepHandled()
-    {
-    	return handeld;
-    }
-
     // Returns true if the action is completed
     public boolean isCompleted()
     {
@@ -332,25 +330,6 @@ public class SearchAction extends Action
     // Returns true if an error has occured
     public synchronized boolean isError()
     {
-        if ((this.state != ConnectAction.STATE_ERROR) && (this.lastActivity.getTime() + SearchAction.TIMEOUT < System.currentTimeMillis()))
-        {
-            if (calledBy == CALLED_BY_SEARCHUSER)
-            	cont.getSearchForm().activate(false);
-            else if (calledBy == CALLED_BY_ADDUSER)
-            	Jimm.display.setCurrent(MainMenu.addUserOrGroup);
-            Thread.yield();
-            if (this.state == STATE_FIRSTRESULT_RECEIVED)
-            {
-            	ContactList.activate(JimmException.handleException(new JimmException(159, 0, true)));
-            	handeld = true;
-            }
-            else
-            {
-            	ContactList.activate(JimmException.handleException(new JimmException(159, 1, true)));
-            	handeld = true;
-            }
-            this.state = ConnectAction.STATE_ERROR;
-        }
-        return (this.state == ConnectAction.STATE_ERROR);
+        return ((this.state == ConnectAction.STATE_ERROR) || ((this.lastActivity+SearchAction.TIMEOUT) < System.currentTimeMillis()));
     }
 }

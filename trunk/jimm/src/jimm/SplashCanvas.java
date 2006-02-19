@@ -497,6 +497,7 @@ public class SplashCanvas extends Canvas
 class TimerTasks extends TimerTask implements CommandListener
 {
 	private Action action;
+	boolean wasError = false;
 	
 	public TimerTasks(Action action)
 	{
@@ -505,6 +506,7 @@ class TimerTasks extends TimerTask implements CommandListener
 	
 	public void run()
 	{
+		if (wasError) return;
 		SplashCanvas.setProgress(action.getProgress());
 		if (action.isCompleted())
 		{
@@ -513,6 +515,7 @@ class TimerTasks extends TimerTask implements CommandListener
 		}
 		else if (action.isError())
 		{
+			wasError = true;
 			cancel();
 			action.onEvent(Action.ON_ERROR);
 		}
