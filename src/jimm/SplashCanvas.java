@@ -32,6 +32,7 @@ import jimm.comm.DirectConnectionAction;
 //  #sijapp cond.end#
 //  #sijapp cond.end#
 import jimm.comm.Util;
+import jimm.comm.Icq;
 import jimm.comm.Action;
 import jimm.util.ResourceBundle;
 
@@ -474,9 +475,9 @@ public class SplashCanvas extends Canvas
 
 	}
 
-	public static void addTimerTask(String captionLngStr, Action action, int errorCode1, int errorCode2, boolean canCancel)
+	public static void addTimerTask(String captionLngStr, Action action, boolean canCancel)
 	{
-		TimerTasks timerTask = new TimerTasks(action, errorCode1, errorCode2); 
+		TimerTasks timerTask = new TimerTasks(action); 
 		
 		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommnad);
 		if (canCancel)
@@ -496,13 +497,10 @@ public class SplashCanvas extends Canvas
 class TimerTasks extends TimerTask implements CommandListener
 {
 	private Action action;
-	private int errorCode1, errorCode2; 
 	
-	public TimerTasks(Action action, int errorCode1, int errorCode2)
+	public TimerTasks(Action action)
 	{
 		this.action = action;
-		this.errorCode1 = errorCode1;
-		this.errorCode2 = errorCode2;
 	}
 	
 	public void run()
@@ -516,8 +514,6 @@ class TimerTasks extends TimerTask implements CommandListener
 		else if (action.isError())
 		{
 			cancel();
-			if (errorCode1 != 0) ContactList.activate(JimmException.handleException(new JimmException(errorCode1, errorCode2, true)));
-			else ContactList.activate();
 			action.onEvent(Action.ON_ERROR);
 		}
 	}

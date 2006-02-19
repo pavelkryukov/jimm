@@ -643,7 +643,7 @@ public class ActionListener
                              }
                                  
                              // Start timer (timer will activate splash screen)
-                             SplashCanvas.addTimerTask("filetransfer", dcAct, 0, 0, true);
+                             SplashCanvas.addTimerTask("filetransfer", dcAct, true);
                           }
                         }
                         // URL message

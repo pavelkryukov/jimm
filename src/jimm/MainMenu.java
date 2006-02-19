@@ -141,6 +141,11 @@ public class MainMenu implements CommandListener
     	int imageIndex = JimmUI.getStatusImageIndex(cursStatus);
     	return ContactList.getImageList().elementAt(imageIndex);
     }
+    
+    public static Displayable getDisplayable()
+    {
+    	return list;
+    }
 
     // Builds the main menu (visual list)
     static private void build()
@@ -324,7 +329,7 @@ public class MainMenu implements CommandListener
             }
 
             // Start timer
-            SplashCanvas.addTimerTask("wait", act, 0, 0, false);
+            SplashCanvas.addTimerTask("wait", act, false);
         }
         else if ((c == sendCommand) && (d == MainMenu.groupList))
         {
@@ -357,7 +362,7 @@ public class MainMenu implements CommandListener
                     if (e.isCritical()) return;
                 }
                 // Start timer
-                SplashCanvas.addTimerTask("wait", act, 0, 0, false);
+                SplashCanvas.addTimerTask("wait", act, false);
             }
         }
         
