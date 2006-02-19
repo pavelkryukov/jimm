@@ -138,6 +138,9 @@ public class Jimm extends MIDlet
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
 		if (Jimm.VERSION == null) Jimm.VERSION = "###VERSION###";
 
+		// Create options container
+		this.o = new Options();
+		
 		// Create splash canvas object
 		this.sc = new SplashCanvas();
 		SplashCanvas.setMessage(ResourceBundle.getString("loading"));
@@ -182,13 +185,10 @@ public class Jimm extends MIDlet
 		SplashCanvas.setProgress(30);
 		// #sijapp cond.end#
 
-		// Create options container (and update progress indicator)
-		this.o = new Options();
-		SplashCanvas.setProgress(40);
 
 		// Initialize main menu object (and update progress indicator)
 		this.mm = new MainMenu();
-		SplashCanvas.setProgress(50);
+		SplashCanvas.setProgress(45);
 
 		// #sijapp cond.if modules_TRAFFIC is "true" #
 		// Create traffic Object (and update progress indicator)
