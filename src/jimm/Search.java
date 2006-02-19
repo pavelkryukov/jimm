@@ -45,7 +45,7 @@ import DrawControls.*;
 
 public class Search
 {
-    private SearchForm searchForm;
+    SearchForm searchForm;
 
     // Request
     private String reqUin;
@@ -57,14 +57,16 @@ public class Search
     private String reqKeyword;
     private int gender;
     private boolean onlyOnline;
+    private boolean liteVersion;
     
     // Results
     private Vector results;
 
     // Constructor
-    public Search()
+    public Search(boolean liteVersion)
     {
     	this.results = new Vector();
+    	this.liteVersion = liteVersion;
     }
     
     // Add a result to the results vector
@@ -329,7 +331,10 @@ public class Search
         {
             if (c == this.backCommand)
             {
-            	if (d == screen) activate(false);
+            	if ((d == screen) && !liteVersion)
+            	{
+            		activate(false);
+            	}
             	else
             	{
             		searchForm = null;
