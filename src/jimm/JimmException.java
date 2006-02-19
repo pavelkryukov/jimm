@@ -30,8 +30,6 @@ import jimm.comm.Icq;
 
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
-import javax.microedition.lcdui.Displayable;
-
 
 public class JimmException extends Exception
 {

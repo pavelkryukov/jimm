@@ -84,7 +84,7 @@ public class MainMenu implements CommandListener
    
     // #sijapp cond.if target is "MOTOROLA" #
     private static Command exitCommand = new Command(ResourceBundle.getString("exit_button"), Command.EXIT, 1);
-	//#sijapp cond.else#
+	//#sijapp cond.end#
 
      // List for selecting a online status
     private static List statusList;
