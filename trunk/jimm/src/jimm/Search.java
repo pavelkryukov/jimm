@@ -358,7 +358,7 @@ public class Search
                 }
                 
                 // Start timer 
-                SplashCanvas.addTimerTask("wait", act, 0, 0, false);
+                SplashCanvas.addTimerTask("wait", act, false);
             }
             else if (c == this.nextCommand) nextOrPrev(true);
             else if (c == this.previousCommand) nextOrPrev(false);

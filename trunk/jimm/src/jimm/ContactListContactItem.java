@@ -904,12 +904,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				// Send plain message
 				if ((currentMode == CM_SENDING_MESSAGE) && (messText.length() != 0))
 				{
-					// Send message via icq
-					sendMessage(messText);
-
 					// Return to chat or menu
 					this.activate(true);
 
+					// Send message via icq
+					sendMessage(messText);
+					
 					// Clear text in messageTextbox
 					messageTextbox.setString(null);
 				}
@@ -1190,7 +1190,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			Icq.requestAction(sendMsgAct);
 		} catch (JimmException e)
 		{
-			ContactList.activate(JimmException.handleException(e));
+			JimmException.handleException(e);
 			if (e.isCritical()) return;
 		}
 		ChatHistory.addMyMessage(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN), text, plainMsg.getNewDate(), name);

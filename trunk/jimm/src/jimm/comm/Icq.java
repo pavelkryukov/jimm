@@ -160,7 +160,7 @@ public class Icq implements Runnable
         }
 
         // Start timer
-        SplashCanvas.addTimerTask("wait", act, 0, 0, false);
+        SplashCanvas.addTimerTask("wait", act, false);
         // System.out.println("start addContact");
     }
 
@@ -199,7 +199,7 @@ public class Icq implements Runnable
         }
 
         // Start timer
-        SplashCanvas.addTimerTask("connecting", act, 0, 0, false);
+        SplashCanvas.addTimerTask("connecting", act, false);
     }
 
     // Disconnects from the ICQ network
@@ -255,7 +255,7 @@ public class Icq implements Runnable
             }
 
             // Start timer
-            SplashCanvas.addTimerTask("wait", act2, 0, 0, false);
+            SplashCanvas.addTimerTask("wait", act2, false);
         }
     }
 
