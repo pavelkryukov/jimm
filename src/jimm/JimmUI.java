@@ -219,7 +219,6 @@ public class JimmUI implements CommandListener
 		System.gc();
 		long freeMem = Runtime.getRuntime().freeMemory()/1024;
 		
-		final int textColor = Options.getSchemeColor(Options.CLRSCHHEME_TEXT);
 	
 		if (lastDisplayable_ != null) lastDisplayable = lastDisplayable_;
 		if (aboutTextList == null) aboutTextList = new TextList(null);
@@ -228,6 +227,7 @@ public class JimmUI implements CommandListener
 		aboutTextList.clear();
 		aboutTextList.setCursorMode(TextList.SEL_NONE);
 		setColorScheme(aboutTextList);
+		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1, 0xffffff);
 		
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		aboutTextList.setFontSize(Font.SIZE_MEDIUM);
@@ -252,10 +252,10 @@ public class JimmUI implements CommandListener
 		
 		try
 		{
-			Image image = Image.createImage("/icon.png");
-			aboutTextList
+			Image image = Image.createImage("/logo.png");
+			aboutTextList.addBigText("\n", 0xffffff, Font.STYLE_PLAIN, -1)
 				.addImage(image, null, image.getWidth(), image.getHeight(), -1)
-				.addBigText(str.toString(), textColor, Font.STYLE_PLAIN, -1);
+				.addBigText(str.toString(), 0xffffff, Font.STYLE_PLAIN, -1);
 		
 			aboutTextList.addCommand(cmdBack);
 			aboutTextList.setCommandListener(_this);
