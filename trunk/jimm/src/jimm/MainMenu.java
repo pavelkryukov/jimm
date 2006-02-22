@@ -254,7 +254,6 @@ public class MainMenu implements CommandListener
         Jimm.display.setCurrent(addUserOrGroup);
 	}
     
-    
     static private void doExit(boolean anyway)
     {
    		if (!anyway && ContactList.getUnreadMessCount() > 0)

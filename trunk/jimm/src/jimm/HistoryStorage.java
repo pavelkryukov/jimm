@@ -26,9 +26,6 @@
 package jimm;
 
 import java.util.*;
-import java.lang.StringBuffer;
-import java.lang.System;
-import java.lang.Exception;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.Font;
 import javax.microedition.rms.RecordStore;
@@ -37,22 +34,22 @@ import java.io.*;
 import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDlet;
 
-import java.lang.Thread;
-
 import DrawControls.ListItem;
 import DrawControls.VirtualList;
 import DrawControls.TextList;
 import DrawControls.VirtualListCommands;
 
 import jimm.comm.Util;
-//#sijapp cond.if target is "SIEMENS2"#
+//#sijapp cond.if target="SIEMENS2" | target="MOTOROLA" | target="MIDP2"#
 import javax.microedition.io.Connector;
+//#sijapp cond.if target is "SIEMENS2"#
 import com.siemens.mp.io.file.FileConnection;
 import com.siemens.mp.io.file.FileSystemRegistry;
-import jimm.ContactListContactItem;
+//#sijapp cond.else#
+import javax.microedition.io.file.FileConnection;
+import javax.microedition.io.file.FileSystemRegistry;
 //#sijapp cond.end#
-//#sijapp cond.if target is "SIEMENS1"#
-import com.siemens.mp.io.File;
+import jimm.ContactListContactItem;
 //#sijapp cond.end#
 // Class to cache one line in messages list
 // All fields are public to easy and fast access
@@ -68,8 +65,8 @@ class CachedRecord
 // Visual messages history list
 class HistoryStorageList extends VirtualList
                          implements CommandListener, VirtualListCommands
-			       //#sijapp cond.if target is "SIEMENS2"# 
-			       , Runnable
+											//#sijapp cond.if target="SIEMENS2" | target="MOTOROLA" | target="MIDP2"#
+											, Runnable, FileBrowserListener
 			       //#sijapp cond.end#
 {
 	// commands for message text
@@ -177,87 +174,116 @@ class HistoryStorageList extends VirtualList
 		}
 	}
 	
-	// #sijapp cond.if target is "SIEMENS2"#
-	private void exportUIN(String uin, DataOutputStream dos) throws IOException
-	{
+	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"|target="SIEMENS2"#
+	private boolean cp1251;
+	private String exportUin;
+	private String directory;
+	public void export(String uin) {
+		exportUin = uin;
+		try {
+			FileBrowser.setListener(this);
+			FileBrowser.setParameters(true);
+			FileBrowser.activate();
+		} catch (JimmException e) {
+			JimmException.handleException(e);
+		}
+	}
+	public void onFileSelect(String s0) {}
+	public void onDirectorySelect(String dir) {
+		directory = dir;
+		(new Thread(this)).start();
+	}
+	public void run() {
+		if (exportUin == null) startExport(null);
+		else startExport(new ContactListContactItem[]{ContactList.getItembyUIN(exportUin)});
+	}
+	private void exportUinToStream(ContactListContactItem item, OutputStream os) throws IOException {
 			CachedRecord record;
+		String uin = item.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 			int max = HistoryStorage.getRecordCount(uin);
-			for (int i = 0; i < max; i++)
-			{
+		if (max > 0) {
+			String nick = (item.getStringValue(ContactListContactItem.CONTACTITEM_NAME).length() > 0) ?
+				item.getStringValue(ContactListContactItem.CONTACTITEM_NAME) : uin;
+			SplashCanvas.setMessage(nick);
+			SplashCanvas.setProgress(0);
+			StringBuffer str_buf = new StringBuffer().append("\r\n").
+				append('\t').
+				append(ResourceBundle.getString("message_history_with")).append(nick).append(" (").append(uin).append(")\r\n").
+				append('\t').
+				append(ResourceBundle.getString("export_date")).append(Util.getDateString(false)).append("\r\n\r\n");
+			os.write(Util.stringToByteArray(str_buf.toString(), !cp1251));
+			for (int i = 0; i < max; i++) {
 				record = HistoryStorage.getRecord(uin, i);
-				byte[] fdt = Util.stringToByteArray1251("["+record.from + " " + record.date+"]\r\n");
-				dos.write(fdt,0,fdt.length);
-				byte[] txt = Util.stringToByteArray1251(record.text+"\r\n");
-				dos.write(txt,0,txt.length);
+				os.write(Util.stringToByteArray(" " + ((record.type == 0) ? nick : ResourceBundle.getString("me")) +
+					" (" + record.date + "):\r\n", !cp1251));
+				String curr_msg_text = record.text.trim();
+				StringBuffer msg_str_buf = new StringBuffer(curr_msg_text.length());
+				for (int k = 0; k < curr_msg_text.length(); k++) {
+					char cc = curr_msg_text.charAt(k);
+					char nc;
+					switch (cc) {
+						case '\n':
+							nc = curr_msg_text.charAt(k++);
+							msg_str_buf = msg_str_buf.append('\r').append('\n');
+							if ((nc != '\r') & (nc != '\n')) msg_str_buf = msg_str_buf.append(nc);
+							break;
+						case '\r':
+							nc = curr_msg_text.charAt(k++);
+							msg_str_buf = msg_str_buf.append('\r').append('\n');
+							if ((nc != '\n') & (nc != '\r')) msg_str_buf = msg_str_buf.append(nc);
+							break;
+						default:
+							msg_str_buf = msg_str_buf.append(cc);
 			}
-			if (max > 0) dos.write("\r\n".getBytes(),0,2);
 	}
-	
-	private String file, uin;
-	private void export(String uin, String file)
-	{
-		this.file = file;
-		this.uin = uin;
-		Thread t = new Thread(this);
-		t.start();
-		SplashCanvas.setProgress(0);
-		SplashCanvas.setMessage("Exporting..");
-		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
+				msg_str_buf = msg_str_buf.append('\r').append('\n');
+				os.write(Util.stringToByteArray(msg_str_buf.toString(), !cp1251));
+				os.flush();
+				SplashCanvas.setProgress((100*i)/max);
 	}
-
-	public void run()
-	{
-		FileConnection fconn = null;
-		try
-		{
-			if (file == null)
-				fconn = (FileConnection)Connector.open("file:///0:/Misc/history.txt");
-			else
-				fconn = (FileConnection)Connector.open("file:///"+file);
-			
-			 if (!fconn.exists())
-				 fconn.create();
-			 else
-				 fconn.truncate(0);
-			 
-			DataOutputStream dos = fconn.openDataOutputStream();
-			
-			if (file == null)
-			{
-				ContactListContactItem[] cItems = ContactList.getContactItems();
-				int num = ContactList.getSize();
-				for(int i = 0;i < cItems.length;i++)
-				{
-					exportUIN(cItems[i].getStringValue(ContactListContactItem.CONTACTITEM_UIN),dos);
-					SplashCanvas.setProgress((i*100)/num);
 				}
 			}
-			else
-				exportUIN(uin, dos);
-			
-			dos.flush();
-			dos.close();
-			fconn.close();
-			dos = null;
-			fconn = null;
-			ContactList.activate();
-		}
-		catch (Exception e)
-		{
-			try
-			{
-				if ((fconn != null) && (fconn.exists())) fconn.delete();// If disk is full..
+	private void exportUinToFile(ContactListContactItem item, String filename) {
+		try {
+			if (HistoryStorage.getRecordCount(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) > 0) {
+				FileSystem file = openFile(filename);
+				OutputStream os = file.openOutputStream();
+				if (!cp1251) os.write(new byte[] {(byte)0xef,(byte)0xbb,(byte)0xbf});
+				exportUinToStream(item, os);
+				file.close();
 			}
-			catch (IOException ioe){}
-			
-			Alert alert = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
-			alert.setTimeout(Alert.FOREVER);
-			Jimm.display.setCurrent(alert);
+		} catch (Exception e) {
+			e.printStackTrace();
+			JimmException.handleException(new JimmException(191, 0, false));
+		}
+			}
+	public void startExport(ContactListContactItem[] citems) {
+		cp1251 = Options.getBoolean(Options.OPTION_CP1251_HACK);
+		SplashCanvas.setMessage(ResourceBundle.getString("exporting", ResourceBundle.FLAG_ELLIPSIS));
+		SplashCanvas.setProgress(0);
+		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
+		if (citems == null) citems = ContactList.getContactItems();
+		for (int i = 0; i < citems.length; i++)
+			exportUinToFile(citems[i], directory+"jimm_hist_"+citems[i].getStringValue(ContactListContactItem.CONTACTITEM_UIN)+".txt");
+		ContactList.activate();
+		Alert ok = new Alert("", ResourceBundle.getString("export_complete"), null, AlertType.INFO);
+		ok.setTimeout(Alert.FOREVER);
+		Jimm.display.setCurrent(ok);
+	}
+	public FileSystem openFile(String fileName) {
+		try {
+			FileSystem file = FileSystem.getInstance();
+			file.openFile(fileName);
+			return file;
+		} catch (Exception e) {
+			e.printStackTrace();
+			JimmException.handleException(new JimmException(191, 0, true));
+			return null;
 		}
 	}
 	// #sijapp cond.end#
 
-	//#sijapp cond.if target is "SIEMENS2" | target is "MIDP2"#
+	//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
 	private static TextList URLList;
 	private void gotoURL()
 	{
@@ -288,7 +314,7 @@ class HistoryStorageList extends VirtualList
 	
 	public void commandAction(Command c, Displayable d)
 	{
-		//#sijapp cond.if target is "SIEMENS2" | target is "MIDP2"#
+		//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
 		if ( c == cmdurlBack )
 		{
 			URLList = null;
@@ -311,13 +337,12 @@ class HistoryStorageList extends VirtualList
 			gotoURL();
 		//#sijapp cond.end#
 		
-		// #sijapp cond.if target is "SIEMENS2"#
+		// #sijapp cond.if target="SIEMENS2"|target="MOTOROLA"|target="MIDP2"#
 		// Export history to txt file
 		if (c == cmdExport)
-			export(currUin,"0:/Misc/" + currName + ".txt");
-		
+			export(currUin);
 		if (c == cmdExportAll)
-			export(null,null);
+			export(null);
 		// #sijapp cond.end#
 
 		// back to contact list
@@ -510,7 +535,7 @@ class HistoryStorageList extends VirtualList
 		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
 		//#sijapp cond.end#
 		
-		//#sijapp cond.if target is "SIEMENS2" | target is "MIDP2"#
+		//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
 		messText.removeCommand(cmdGotoURL);
 		if ( record.contains_url )
 			messText.addCommand(cmdGotoURL);

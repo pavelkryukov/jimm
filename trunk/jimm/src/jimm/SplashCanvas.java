@@ -99,7 +99,6 @@ public class SplashCanvas extends Canvas
 		// Construct splash image
 		try
 		{
-			SplashCanvas.splash = Image.createImage(SplashCanvas.SPLASH_IMG);
 			SplashCanvas.notice = Image.createImage(SplashCanvas.NOTICE_IMG);
 		}
 		catch (IOException e)
@@ -130,11 +129,10 @@ public class SplashCanvas extends Canvas
 	
 
 	// Should the keylock message be drawn to the screen?
-	static private boolean showKeylock;
+	static protected boolean showKeylock;
 
-
-	// Timestamp
-	static private Date pressed; // = null
+	//
+	static protected boolean unlockPressed;
 	
 	// Version string
 	static private boolean version;
@@ -185,6 +183,22 @@ public class SplashCanvas extends Canvas
 	{
 		return (progress);
 	}
+	
+	static public Image getSplashImage()
+	{
+		if (SplashCanvas.splash == null)
+		{
+			try
+			{
+				SplashCanvas.splash = Image.createImage(SplashCanvas.SPLASH_IMG);
+			}
+			catch (Exception e)
+			{
+				SplashCanvas.splash = null;
+			}
+		}
+		return SplashCanvas.splash;
+	}
 
 
 	// Sets the current progress in percent (and request screen refresh)
@@ -211,18 +225,7 @@ public class SplashCanvas extends Canvas
 		LightControl.Off();
 		//  #sijapp cond.end#
 		Jimm.display.setCurrent(_this);
-		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
-        {
-            t1 = new Timer();
-            t1.schedule(new TimerTask()
-            {
-
-                public void run()
-                {
-                    _this.repaint();
-                }
-            }, 20000, 20000);
-        }
+		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE)) (t2 = new Timer()).schedule(new TimerTasks(TimerTasks.SC_AUTO_REPAINT), 20000, 20000);
 		
 	}
 
@@ -280,10 +283,12 @@ public class SplashCanvas extends Canvas
 	{
 		if (isLocked)
 		{
-		    if (keyCode == Canvas.KEY_POUND)
-		        pressed = new Date();
-		    else
+		    if (keyCode == Canvas.KEY_POUND) {
+		        unlockPressed = true;
+				(t1 = new Timer()).schedule(new TimerTasks(TimerTasks.SC_UNLOCK), 900);
+		    } else
 		    {
+				if (t1 != null) t1.cancel();
 		        showKeylock = true;
                 this.repaint();
 			//  #sijapp cond.if target is "MOTOROLA"#
@@ -293,30 +298,10 @@ public class SplashCanvas extends Canvas
 		}
 	}
 
-
-	// Called when a key is repeated (held down)
-	protected void keyRepeated(int keyCode)
-	{
-		if (isLocked && (keyCode == Canvas.KEY_POUND))
-		{
-			if ((pressed.getTime() + 1000) < System.currentTimeMillis())
-			{
-				unlock();
-			}
-		}
-	}
-
-
 	// Called when a key is released
 	protected void keyReleased(int keyCode)
 	{
-		if (isLocked && (keyCode == Canvas.KEY_POUND))
-		{
-			if ((pressed.getTime() + 1000) < System.currentTimeMillis())
-			{
-				unlock();
-			}
-		}
+		unlockPressed = false;
 	}
 
 	// Render the splash image
@@ -330,9 +315,10 @@ public class SplashCanvas extends Canvas
 			g.fillRect(0,0,this.getWidth(),this.getHeight());
 
 			// Display splash image (or text)
-			if (SplashCanvas.splash != null)
+			Image image = getSplashImage();
+			if (image != null)
 			{
-				g.drawImage(SplashCanvas.splash, this.getWidth() / 2, this.getHeight() / 2, Graphics.HCENTER | Graphics.VCENTER);
+				g.drawImage(image, this.getWidth() / 2, this.getHeight() / 2, Graphics.HCENTER | Graphics.VCENTER);
 			}
 			else
 			{
@@ -375,16 +361,8 @@ public class SplashCanvas extends Canvas
                 g.drawRect(x+2,y+2,size_x-5,size_y-5);
                 TextList.showText(g,ResourceBundle.getString("keylock_message"),x+4,y+4,size_x-8,size_y-8,TextList.MEDIUM_FONT,0,0);
                 
-                t2 = new Timer();
-                t2.schedule(new TimerTask()
-                {
+				(t1 = new Timer()).schedule(new TimerTasks(TimerTasks.SC_HIDE_KEYLOCK), 2000);
 
-                    public void run()
-                    {
-                        showKeylock = false;
-                        repaint();
-                    }
-                }, 3000);
             }
 
 		}
@@ -461,6 +439,11 @@ public class SplashCanvas extends Canvas
 
 class TimerTasks extends TimerTask implements CommandListener
 {
+	public static final int SC_AUTO_REPAINT = 1;
+	public static final int SC_HIDE_KEYLOCK = 2;
+	public static final int SC_UNLOCK = 3;
+	private int type = -1;
+
 	private Action action;
 	boolean wasError = false;
 	
@@ -469,9 +452,33 @@ class TimerTasks extends TimerTask implements CommandListener
 		this.action = action;
 	}
 	
+	public TimerTasks(int type)
+	{
+		this.type = type;
+	}
+	
 	public void run()
 	{
 		if (wasError) return;
+		if (type != -1) {
+			switch (type) {
+				case SC_AUTO_REPAINT:
+					SplashCanvas._this.repaint();
+					break;
+				case SC_HIDE_KEYLOCK:
+					SplashCanvas.showKeylock = false;
+					SplashCanvas._this.repaint();
+					break;
+				case SC_UNLOCK:
+					if (SplashCanvas.unlockPressed) {
+						SplashCanvas.unlockPressed = false;
+						SplashCanvas.unlock();
+					}
+					break;
+			}
+			return;
+		}
+
 		SplashCanvas.setProgress(action.getProgress());
 		if (action.isCompleted())
 		{
