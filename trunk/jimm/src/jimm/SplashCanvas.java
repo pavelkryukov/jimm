@@ -247,7 +247,7 @@ public class SplashCanvas extends Canvas
 		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
 		{
 			
-			t1.cancel();
+			t2.cancel();
 		}
 		ContactList.activate();
 	}
