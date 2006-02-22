@@ -78,7 +78,7 @@ public class Jimm extends MIDlet
 	// Minimized state variable
 	static private boolean minimized, is_phone_SE;
     // #sijapp cond.end #
-	// #sijapp cond.if target is "MOTOROLA" & modules_FILES is "true"#
+	// #sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
 	static public boolean supports_JSR75;
 	// #sijapp cond.end#
 
@@ -126,7 +126,7 @@ public class Jimm extends MIDlet
 		if (microeditionPlatform != null)
 			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1);
 		// #sijapp cond.end#
-		// #sijapp cond.if target is "MOTOROLA" & modules_FILES is "true"#
+		// #sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
 		try {
 			supports_JSR75 = Class.forName("javax.microedition.io.file.FileConnection") != null;
 		} catch (ClassNotFoundException cnfe) {

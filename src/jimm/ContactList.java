@@ -575,21 +575,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	// Returns array of uins of unuthorized and temporary contacts
 	public static String[] getUnauthAndTempContacts() 
 	{
-		int count = 0, i, index;
-		
-		for (i = 0; i < cItems.size(); i++)
-			if (getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH) ||
-				getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) count++;
-		
-		String result[] = new String[count];
-		
-		index = 0;
-		for (i = 0; i < cItems.size(); i++)
+		Vector data = new Vector(); 
+		for (int i = cItems.size()-1; i >= 0; i--)
 		{
 			if (getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH) ||
 					getCItem(i).getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
-				result[index++] = getCItem(i).getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+				data.addElement( getCItem(i).getStringValue(ContactListContactItem.CONTACTITEM_UIN) );
 		}
+		String result[] = new String[data.size()];
+		data.copyInto(result);
 		return result;
 	}
     

@@ -21,20 +21,19 @@
  Author(s): Andreas Rossbacher, Dmitry Tunin
  *******************************************************************************/
 
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
 package jimm;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Vector;
 import javax.microedition.io.Connector;
 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.io.file.FileConnection;
-//#sijapp cond.end#
-//#sijapp cond.if target is "SIEMENS2"#
+//#sijapp cond.elseif target is "SIEMENS2"#
 import com.siemens.mp.io.file.FileConnection;
 import com.siemens.mp.io.file.FileSystemRegistry;
 //#sijapp cond.end#
@@ -52,7 +51,9 @@ import javax.microedition.lcdui.TextField;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
+//#sijapp cond.if target isnot "MOTOROLA"#
 import javax.microedition.media.control.VideoControl;
+//#sijapp cond.end#
 
 import jimm.comm.Icq;
 import jimm.comm.FileTransferMessage;
@@ -61,8 +62,7 @@ import jimm.comm.SendMessageAction;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
-
-public class FileTransfer implements CommandListener
+public class FileTransfer implements CommandListener, FileBrowserListener
 {    
     // Type of filetrasfer
     public static final int FT_TYPE_FILE_BY_NAME = 1;
@@ -138,10 +138,11 @@ public class FileTransfer implements CommandListener
         else if (type == FileTransfer.FT_TYPE_FILE_BY_NAME)
         // #sijapp cond.end #
         {
-            FileSelector fc = new FileSelector();
             try 
             {
-                fc.showCurrDir();
+				FileBrowser.setListener(this);
+				FileBrowser.setParameters(false);
+				FileBrowser.activate();
             }
             catch (JimmException e)
             {
@@ -151,6 +152,28 @@ public class FileTransfer implements CommandListener
         }
 
     }
+
+	//
+	public void onFileSelect(String fileName) {
+		try {
+			InputStream fis = null;
+			int size = 0;
+			FileSystem file = FileSystem.getInstance();
+			file.openFile(fileName);
+			fis = file.openInputStream();
+			size = (int)file.fileSize();
+			// Set the file data in file transfer
+			setData(fis, size);
+			// Create filename and ask for name and description
+			askForNameDesc(fileName, "");
+		} catch (Exception e) {
+			e.printStackTrace();
+			JimmException.handleException(new JimmException(191,0,true));
+		}
+	}
+
+	//
+	public void onDirectorySelect(String s0) {}
 
     // Init the ft
     public void initFT(String filename, String description)
@@ -484,278 +507,5 @@ public class FileTransfer implements CommandListener
     }
     // #sijapp cond.end #
 
-    /** ************************************************************************* */
-    /** ************************************************************************* */
-    /** ************************************************************************* */
-    
-    // Class for file selection
-    public class FileSelector implements CommandListener
-    {
-
-        private String currDirName;
-
-        private Command select = new Command(ResourceBundle.getString("select"), Command.ITEM, 1);
-        private Command back = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
-        private Command exit = new Command(ResourceBundle.getString("cancel"), Command.EXIT, 3);
-
-        private Image dirIcon, fileIcon;
-        private Image[] iconList;
-
-        // special string denotes upper directory
-        private final String UP_DIRECTORY = "..";
-
-        // special string that denotes apper directory accessible by this
-        // browser. this virtual directory contains all roots.
-        
-        private final String MEGA_ROOT = "/";
-        
-
-        // separator string as defined by FC specification 
-        private final String SEP_STR = "/";
-
-        // separator character as defined by FC specification
-        private final char SEP = '/';
-
-        public FileSelector()
-        {
-            // #sijapp cond.if target is "MOTOROLA"#
-            currDirName = "/a/mobile/";
-            // #sijapp cond.else#
-            currDirName = MEGA_ROOT;
-            // #sijapp cond.end#
-            try
-            {
-                dirIcon = Image.createImage("/dir.png");
-            } catch (IOException e)
-            {
-                dirIcon = null;
-            }
-            try
-            {
-                fileIcon = Image.createImage("/file.png");
-            } catch (IOException e)
-            {
-                fileIcon = null;
-            }
-            iconList = new Image[]
-            { fileIcon, dirIcon};
-
-        }
-
-        
-        public void commandAction(Command c, Displayable d)
-        {
-            if (c == select)
-            {
-                List curr = (List) d;
-                final String currFile = curr.getString(curr.getSelectedIndex());
-                        if (currFile.endsWith(SEP_STR) || currFile.equals(UP_DIRECTORY))
-                            traverseDirectory(currFile);
-				else try {
-                                startFT(currFile);
-                            }
-                        	catch (JimmException e)
-                        	{
-                        	    JimmException.handleException(e);
-                        	}
-            }
-            else
-                if (c == back)
-                    try 
-                {
-                    showCurrDir();
-                }
-                catch (JimmException e)
-                {
-                    JimmException.handleException(e);
-                }
-                else
-                    if (c == exit) 
-                        FileTransfer.this.getCItem().activate(true);
-        }
-
-        /**
-         * Show file list in the current directory .
-         */
-        void showCurrDir()  throws JimmException
-        {
-            List browser;
-            try
-            {
-				// #sijapp cond.if target is "MOTOROLA"#
-				if (!Jimm.supports_JSR75) {
-                 browser = new List(currDirName, List.IMPLICIT);
-                 if (MEGA_ROOT.equals(currDirName))
-                 {
-						String[] list = com.motorola.io.FileSystemRegistry.listRoots();
-                     for  (int i = 0; i < list.length; i++)
-                             browser.append(list[i],dirIcon);
-                         }
-                 else
-                 {
-                     browser.append(UP_DIRECTORY, dirIcon);
-						com.motorola.io.FileConnection currDir =
-							(com.motorola.io.FileConnection)Connector.open("file://" + currDirName);
-                     String[ ]  list = currDir.list(); 
-						currDir.close();
-                     for (int i = 0; i < list.length; i++)
-                        {
-                             String dirName = list[i];
-                             int idx = -1;
-                             int idxf = 0; 
-                         
-                             if (dirName.endsWith(SEP_STR))
-                             {
-                                 idx = dirName.lastIndexOf(SEP);
-                                 if (idx != -1)  idxf = dirName.lastIndexOf(SEP, idx - 1);
-                                 dirName = dirName.substring(idxf + 1);
-                                 browser.append(dirName, dirIcon);
-                             }
-                        }
-                     for (int i = 0; i < list.length; i++)
-                         {
-                             String fileName = list[i];
-	                     int idx = -1;
-                             if (!fileName.endsWith(SEP_STR))
-                             {
-                                 idx = fileName.lastIndexOf(SEP);
-                                 if (idx != -1)  fileName = fileName.substring(idx + 1);
-                                 browser.append(fileName, fileIcon);
-                             }       
-                         } 
-                 }
-				} else
-				// #sijapp cond.end#
-            {
-					Enumeration e;
-                if (MEGA_ROOT.equals(currDirName))
-                {
-                    e = FileSystemRegistry.listRoots();
-                    browser = new List(currDirName, List.IMPLICIT);
-                }
-                else
-                {
-                    // #sijapp cond.if target is "SIEMENS2"#
-						FileConnection currDir = (FileConnection) Connector.open("file:///" + currDirName);
-                    // #sijapp cond.end#
-						// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-						javax.microedition.io.file.FileConnection currDir =
-							(javax.microedition.io.file.FileConnection) Connector.open("file://localhost/" + currDirName);
-                    // #sijapp cond.end#
-                    e = currDir.list();
-						currDir.close();
-                    browser = new List(currDirName, List.IMPLICIT);
-                    // not root - draw UP_DIRECTORY
-                    browser.append(UP_DIRECTORY, dirIcon);
-                }
-                while (e.hasMoreElements())
-                {
-                    String fileName = (String) e.nextElement();
-                    if (fileName.charAt(fileName.length() - 1) == SEP)
-                        browser.append(fileName, dirIcon);
-                    else
-                        browser.append(fileName, fileIcon);
-                }
-                browser.setSelectCommand(select);
-                browser.addCommand(exit);
-                browser.setCommandListener(this);
-				}
-                Jimm.display.setCurrent(browser);
-            } catch (SecurityException se)
-            {
-                throw new JimmException(193,0,true);
-            } catch (Exception ex)
-            {
-                ex.printStackTrace();
-            }
-        }
-
-        void traverseDirectory(String fileName)
-        {
-            // In case of directory just change the current directory and show it
-            if (currDirName.equals(MEGA_ROOT))
-            {
-                if (fileName.equals(UP_DIRECTORY))
-                {
-                    // can not go up from MEGA_ROOT
-                    return;
-                }
-                // #sijapp cond.if target is "MOTOROLA"#
-                currDirName = currDirName+fileName;
-                // #sijapp cond.else#
-                currDirName = fileName;
-                // #sijapp cond.end#
-            }
-            else
-                if (fileName.equals(UP_DIRECTORY))
-                {
-                    // Go up one directory
-                    // TODO use setFileConnection when implemented
-                    
-                    int i = currDirName.lastIndexOf(SEP, currDirName.length() - 2);
-                    if (i != -1)
-                    {
-                        currDirName = currDirName.substring(0, i + 1);
-                    }
-                    else
-                    {
-                        currDirName = MEGA_ROOT;
-                    }
-                }
-                else
-                {
-                    currDirName = currDirName + fileName;
-                }
-            try 
-            {
-                showCurrDir();
-            }
-            catch (JimmException e)
-            {
-                JimmException.handleException(e);
-            }
-        }
-
-        void startFT(String fileName) throws JimmException
-        {
-            try
-            {                
-				InputStream fis = null;
-				int size = 0;
-                // #sijapp cond.if target is "SIEMENS2"#
-                FileConnection fc = (FileConnection) Connector.open("file:///" + currDirName + fileName);
-				fis = fc.openInputStream();
-				size = (int)fc.fileSize();
-                // #sijapp cond.end#
-				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-                // #sijapp cond.if target is "MOTOROLA"#
-				if (!Jimm.supports_JSR75) {
-					com.motorola.io.FileConnection fc =
-						(com.motorola.io.FileConnection) Connector.open("file://" + currDirName + fileName);
-					fis = fc.openInputStream();
-					size = (int)fc.fileSize();
-				} else
-                // #sijapp cond.end#
-				{
-					javax.microedition.io.file.FileConnection fc =
-						(javax.microedition.io.file.FileConnection) Connector.open("file://localhost/" + currDirName + fileName);
-					fis = fc.openInputStream();
-					size = (int)fc.fileSize();
-				}
-                // #sijapp cond.end#
-
-                // Set the file data in file transfer
-                FileTransfer.this.setData(fis, size);
-                // Create filename and ask for name and description
-                FileTransfer.this.askForNameDesc(fileName, "");
-
-            } catch (Exception e)
-            {
-                throw new JimmException(192,0,true);
-            }
-             
-        }
-    }
 }
-//#sijapp cond.end#
 //#sijapp cond.end#

@@ -252,7 +252,7 @@ public class JimmUI implements CommandListener
 		
 		try
 		{
-			Image image = Image.createImage("/logo.png");
+			Image image = SplashCanvas.getSplashImage();
 			aboutTextList.addBigText("\n", 0xffffff, Font.STYLE_PLAIN, -1)
 				.addImage(image, null, image.getWidth(), image.getHeight(), -1)
 				.addBigText(str.toString(), 0xffffff, Font.STYLE_PLAIN, -1);

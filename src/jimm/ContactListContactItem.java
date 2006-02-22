@@ -57,15 +57,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	public static final int MESSAGE_SYS_NOTICE   = 3;
 	public static final int MESSAGE_AUTH_REQUEST = 4;
 	
-	/*******************************************************************************
-	Persistant variables accessible with keys
-	Variable key          Value
-	  0 -  63 (00XXXXXX)  String
-	 64 - 127 (01XXXXXX)  INTEGER
-	192 - 224 (110XXXXX)  LONG
-	225 - 255 (111XXXXX)  byte array
-	******************************************************************************/
-	
 	private int    idAndGropup,
 	               caps,
 	               idle,
@@ -904,14 +895,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				// Send plain message
 				if ((currentMode == CM_SENDING_MESSAGE) && (messText.length() != 0))
 				{
-					// Return to chat or menu
-					this.activate(true);
-
 					// Send message via icq
 					sendMessage(messText);
 					
 					// Clear text in messageTextbox
 					messageTextbox.setString(null);
+					
+					// Return to chat or menu
+					this.activate(true);
 				}
 
 			}
