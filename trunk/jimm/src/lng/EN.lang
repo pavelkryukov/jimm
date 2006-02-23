@@ -14,6 +14,8 @@
   "back"                        "Back"
   "save"                        "Save"
   "ok"                          "OK"
+  "open"                        "Open"
+  
   "search_user"                 "Search for User"
   "send"                        "Send"
   "next"                        "Next"
@@ -310,6 +312,10 @@
   "export"                      "Export"
   "exportall"                   "Export all"
   "export_complete"             "Export complete!"
+  "message_history_with"        "Messages first date: "
+  "export_date"                 "Exported from Jimm "
+  "exporting"                   "Saving"
+ 
   //#sijapp cond.end#
 
   // Generic errors
