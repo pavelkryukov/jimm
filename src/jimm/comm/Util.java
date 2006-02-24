@@ -31,8 +31,8 @@ import java.io.DataOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
-import java.util.TimeZone;
 import java.util.Vector;
+import java.io.IOException;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
@@ -691,7 +691,30 @@ public class Util
 		}
 		return (val);
 	}
-
+	
+	
+	static public DataInputStream getDataInputStream(byte[] array, int offset)
+	{
+		return new DataInputStream(new ByteArrayInputStream(array, offset, array.length-offset));
+	}
+	
+	static public int getWord(DataInputStream stream, boolean bigEndian) throws IOException
+	{
+		return bigEndian
+				?
+					(((int)stream.readByte()<<8)&0xFF00) | ((int)stream.readByte()&0x00FF)
+				:
+					((int)stream.readByte()&0x00FF) | (((int)stream.readByte()<<8)&0xFF00);
+	}
+	
+	static public String readAsciiz(DataInputStream stream) throws IOException
+	{
+		int len = Util.getWord(stream, false);
+		if (len == 0) return new String();
+		byte[] buffer = new byte[len];
+		stream.readFully(buffer);
+		return Util.byteArrayToString(buffer); 
+	}
 
 	// Extracts the word from the buffer (buf) at position off using big endian byte ordering
 	public static int getWord(byte[] buf, int off)
