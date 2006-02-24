@@ -75,14 +75,14 @@ public class Search
     {
     	String[] resultData = new String[JimmUI.UI_LAST_ID];
    	
-    	resultData[JimmUI.UI_UIN]    = uin;
-    	resultData[JimmUI.UI_NICK]   = nick;
-    	resultData[JimmUI.UI_NAME]   = name;
-    	resultData[JimmUI.UI_EMAIL]  = email;
-    	resultData[JimmUI.UI_AUTH]   = auth;
-    	resultData[JimmUI.UI_STATUS] = Integer.toString(status);
-    	resultData[JimmUI.UI_GENDER] = gender;
-    	resultData[JimmUI.UI_AGE]    = Integer.toString(age);
+    	resultData[JimmUI.UI_UIN_LIST] = uin;
+    	resultData[JimmUI.UI_NICK]     = nick;
+    	resultData[JimmUI.UI_NAME]     = name;
+    	resultData[JimmUI.UI_EMAIL]    = email;
+    	resultData[JimmUI.UI_AUTH]     = auth;
+    	resultData[JimmUI.UI_STATUS]   = Integer.toString(status);
+    	resultData[JimmUI.UI_GENDER]   = gender;
+    	resultData[JimmUI.UI_AGE]      = Integer.toString(age);
     	
         this.results.addElement(resultData);
     }

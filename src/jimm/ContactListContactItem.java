@@ -24,7 +24,6 @@
 package jimm;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.TimerTask;
 import javax.microedition.lcdui.*;
 
