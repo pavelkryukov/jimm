@@ -1950,16 +1950,4 @@ public class Util
 		return (result.size() == 0) ? null : result;
 	}
 	
-	static int stringToIntDef(String value, int defValue)
-	{
-		int result = defValue;
-		try
-		{
-			result = Integer.parseInt(value);
-		}
-		catch (Exception e)
-		{}
-		return result;
-	}
- 
 }

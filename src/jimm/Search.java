@@ -139,7 +139,7 @@ public class Search
         private TextField emailSearchTextBox;
         private TextField citySearchTextBox;
         private TextField keywordSearchTextBox;
-        private TextField ageTextBox;
+        private ChoiceGroup chgrAge;
         
         // Choice boxes for gender and online choice
         private ChoiceGroup gender;
@@ -176,7 +176,8 @@ public class Search
                     TextField.ANY);
             this.keywordSearchTextBox = new TextField(ResourceBundle.getString("keyword"), "", 32,
                     TextField.ANY);
-            this.ageTextBox = new TextField(ResourceBundle.getString("age"), DEFAULT_AGE, 32, TextField.ANY);
+            
+            chgrAge = new ChoiceGroup(ResourceBundle.getString("age"), ChoiceGroup.EXCLUSIVE, new String[] {"-", "18-22", "23-29", "30-39", "40-49", "50-59", ">60"}, null);
             
             // Choice Groups
             this.gender = new ChoiceGroup(ResourceBundle.getString("gender"),Choice.EXCLUSIVE);
@@ -195,7 +196,7 @@ public class Search
             this.searchForm.append(this.emailSearchTextBox);
             this.searchForm.append(this.citySearchTextBox);
             this.searchForm.append(this.keywordSearchTextBox);
-            this.searchForm.append(this.ageTextBox);
+            this.searchForm.append(this.chgrAge);
             this.searchForm.setCommandListener(this);
 
             // Result Screen
@@ -328,7 +329,7 @@ public class Search
                 data[Search.KEYWORD]     = this.keywordSearchTextBox.getString();
                 data[Search.GENDER]      = Integer.toString(this.gender.getSelectedIndex());
                 data[Search.ONLY_ONLINE] = this.onlyOnline.isSelected(0) ? "1" : "0";
-                data[Search.AGE]         = this.ageTextBox.getString();
+                data[Search.AGE]         = Integer.toString(this.chgrAge.getSelectedIndex());
                 
                 SearchAction act = new SearchAction(Search.this, data, SearchAction.CALLED_BY_SEARCHUSER);
                 try
