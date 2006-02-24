@@ -685,7 +685,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		        only_online = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 			    
 		cCount = cItems.size();
-		if (treeBuilt || (cCount == 0)) return;
+		gCount = gItems.size();
+		if (treeBuilt || ((cCount == 0) && (gCount == 0))) return;
 		
 		tree.clear();
 		tree.setShowButtons(use_groups);
@@ -695,7 +696,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		
 		if (use_groups)
 		{
-			gCount = gItems.size();
+			
 			for (i = 0; i < gCount; i++)
 			{
 				ContactListGroupItem item = (ContactListGroupItem)gItems.elementAt(i);

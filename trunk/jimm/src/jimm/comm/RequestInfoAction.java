@@ -110,7 +110,9 @@ public class RequestInfoAction extends Action
 					{
 						strData[JimmUI.UI_NICK]   = Util.readAsciiz(stream);     // nickname
 						// first name + last name
-						strData[JimmUI.UI_NAME]   = Util.readAsciiz(stream)+" "+Util.readAsciiz(stream);
+						String fistName = Util.readAsciiz(stream);
+						String lastName = Util.readAsciiz(stream);
+						if ((fistName.length() != 0) || (lastName.length() != 0)) strData[JimmUI.UI_NAME] = fistName+" "+lastName;
 						strData[JimmUI.UI_EMAIL]  = Util.readAsciiz(stream);     // email
 						strData[JimmUI.UI_CITY]   = Util.readAsciiz(stream);     // home city
 						strData[JimmUI.UI_STATE]  = Util.readAsciiz(stream);     // home state

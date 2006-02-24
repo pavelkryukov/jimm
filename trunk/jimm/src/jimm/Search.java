@@ -46,18 +46,21 @@ import DrawControls.*;
 public class Search
 {
     SearchForm searchForm;
-
-    // Request
-    private String reqUin;
-    private String reqNick;
-    private String reqFirstname;
-    private String reqLastname;
-    private String reqEmail;
-    private String reqCity;
-    private String reqKeyword;
-    private int gender;
-    private boolean onlyOnline;
     private boolean liteVersion;
+    
+    final public static int UIN         = 0; 
+    final public static int NICK        = 1;
+    final public static int FIRST_NAME  = 2;
+    final public static int LAST_NAME   = 3;
+    final public static int EMAIL       = 4;   
+    final public static int CITY        = 5;
+    final public static int KEYWORD     = 6;
+    final public static int GENDER      = 7;
+    final public static int ONLY_ONLINE = 8;
+    final public static int AGE         = 9;
+    final public static int LAST_INDEX  = 10;
+    
+    final public static String DEFAULT_AGE = "0-99";
     
     // Results
     private Vector results;
@@ -91,40 +94,6 @@ public class Search
     public String[] getResult(int nr)
     {
         return (String[]) results.elementAt(nr);
-    }
-
-    // Set a search request
-    public void setSearchRequest(String uin, String nick, String firstname, String lastname, String email,
-    		String city, String keyword, int gender, boolean onlyOnline)
-    {
-        this.reqUin = uin;
-        this.reqNick = nick;
-        this.reqFirstname = firstname;
-        this.reqLastname = lastname;
-        this.gender = gender;
-        this.reqEmail = email;
-        this.reqCity = city;
-        this.reqKeyword = keyword;
-        this.onlyOnline = onlyOnline;
-    }
-
-    // Returns data from the TextFields as an array
-    public String[] getSearchRequest()
-    {
-        String request[] = new String[9];
-        request[0] = reqUin;
-        request[1] = reqNick;
-        request[2] = reqFirstname;
-        request[3] = reqLastname;
-        request[4] = reqEmail;
-        request[5] = reqCity;
-        request[6] = reqKeyword;
-        request[7] = "" + gender;
-        if (onlyOnline)
-            request[8] = "1";
-        else
-            request[8] = "0";
-        return request;
     }
 
     // Return size of search results
@@ -170,6 +139,7 @@ public class Search
         private TextField emailSearchTextBox;
         private TextField citySearchTextBox;
         private TextField keywordSearchTextBox;
+        private TextField ageTextBox;
         
         // Choice boxes for gender and online choice
         private ChoiceGroup gender;
@@ -206,6 +176,7 @@ public class Search
                     TextField.ANY);
             this.keywordSearchTextBox = new TextField(ResourceBundle.getString("keyword"), "", 32,
                     TextField.ANY);
+            this.ageTextBox = new TextField(ResourceBundle.getString("age"), DEFAULT_AGE, 32, TextField.ANY);
             
             // Choice Groups
             this.gender = new ChoiceGroup(ResourceBundle.getString("gender"),Choice.EXCLUSIVE);
@@ -224,6 +195,7 @@ public class Search
             this.searchForm.append(this.emailSearchTextBox);
             this.searchForm.append(this.citySearchTextBox);
             this.searchForm.append(this.keywordSearchTextBox);
+            this.searchForm.append(this.ageTextBox);
             this.searchForm.setCommandListener(this);
 
             // Result Screen
@@ -345,13 +317,20 @@ public class Search
             {
                 selectedIndex = 0;
 
-                Search.this.setSearchRequest(this.uinSearchTextBox.getString(), this.nickSearchTextBox.getString(),
-                        this.firstnameSearchTextBox.getString(), this.lastnameSearchTextBox.getString(),
-						this.emailSearchTextBox.getString(), this.citySearchTextBox.getString(),
-						this.keywordSearchTextBox.getString(), this.gender.getSelectedIndex(),
-						this.onlyOnline.isSelected(0));
-
-                SearchAction act = new SearchAction(Search.this,SearchAction.CALLED_BY_SEARCHUSER);
+                String[] data = new String[Search.LAST_INDEX];
+                
+                data[Search.UIN]         = this.uinSearchTextBox.getString();
+                data[Search.NICK]        = this.nickSearchTextBox.getString(); 
+                data[Search.FIRST_NAME]  = this.firstnameSearchTextBox.getString();
+                data[Search.LAST_NAME]   = this.lastnameSearchTextBox.getString();
+                data[Search.EMAIL]       = this.emailSearchTextBox.getString();
+                data[Search.CITY]        = this.citySearchTextBox.getString();
+                data[Search.KEYWORD]     = this.keywordSearchTextBox.getString();
+                data[Search.GENDER]      = Integer.toString(this.gender.getSelectedIndex());
+                data[Search.ONLY_ONLINE] = this.onlyOnline.isSelected(0) ? "1" : "0";
+                data[Search.AGE]         = this.ageTextBox.getString();
+                
+                SearchAction act = new SearchAction(Search.this, data, SearchAction.CALLED_BY_SEARCHUSER);
                 try
                 {
                     Icq.requestAction(act);
@@ -361,6 +340,9 @@ public class Search
                     JimmException.handleException(e);
                     if (e.isCritical()) return;
                 }
+                
+                // Clear results
+                results.removeAllElements();
                 
                 // Start timer 
                 SplashCanvas.addTimerTask("wait", act, false);

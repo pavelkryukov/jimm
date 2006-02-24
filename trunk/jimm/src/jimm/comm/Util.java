@@ -702,7 +702,7 @@ public class Util
 	{
 		return bigEndian
 				?
-					(((int)stream.readByte()<<8)&0xFF00) | ((int)stream.readByte()&0x00FF)
+					stream.readUnsignedShort()
 				:
 					((int)stream.readByte()&0x00FF) | (((int)stream.readByte()<<8)&0xFF00);
 	}
@@ -714,6 +714,54 @@ public class Util
 		byte[] buffer = new byte[len];
 		stream.readFully(buffer);
 		return Util.byteArrayToString(buffer); 
+	}
+	
+	static public void writeWord(DataOutputStream stream, int value, boolean bigEndian) throws IOException
+	{
+		if (bigEndian) stream.writeShort(value);
+		else
+		{
+			stream.writeByte(value&0xFF);
+			stream.writeByte(((value&0xFF00)>>8)&0xFF);
+		}
+	}
+	
+	static public void writeDWord(DataOutputStream stream, int value, boolean bigEndian) throws IOException
+	{
+		if (bigEndian) stream.writeInt(value);
+		else
+		{
+			stream.writeByte(value&0xFF);
+			stream.writeByte(((value&0xFF00)>>8)&0xFF);
+			stream.writeByte(((value&0xFF0000)>>16)&0xFF);
+			stream.writeByte(((value&0xFF000000)>>24)&0xFF);
+		}
+	}
+	
+	static public void writeAsciiz(DataOutputStream stream, String value) throws IOException
+	{
+		byte[] raw = Util.stringToByteArray(value);
+		writeWord(stream, raw.length+1, false);
+		stream.write(raw);
+		stream.writeByte(0);
+	}
+	
+	static public void writeAsciizTLV(int type, DataOutputStream stream, String value) throws IOException
+	{
+		writeWord(stream, type, true);
+		byte[] raw = Util.stringToByteArray(value);
+		writeWord(stream, raw.length+3, false);
+		writeWord(stream, raw.length+1, false);
+		stream.write(raw);
+		stream.writeByte(0);
+	}
+	
+	
+	static public void writeTLV(int type, DataOutputStream stream, ByteArrayOutputStream data) throws IOException
+	{
+		writeWord(stream, type, true);
+		writeWord(stream, data.size(), false);
+		stream.write(data.toByteArray());
 	}
 
 	// Extracts the word from the buffer (buf) at position off using big endian byte ordering
@@ -1900,6 +1948,18 @@ public class Util
 		}
 		
 		return (result.size() == 0) ? null : result;
+	}
+	
+	static int stringToIntDef(String value, int defValue)
+	{
+		int result = defValue;
+		try
+		{
+			result = Integer.parseInt(value);
+		}
+		catch (Exception e)
+		{}
+		return result;
 	}
  
 }

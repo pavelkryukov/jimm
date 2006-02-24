@@ -309,8 +309,9 @@ public class MainMenu implements CommandListener
             if (addUserFlag) // Make a search for the given UIN
             {
                 Search search = new Search(true);
-                search.setSearchRequest(uinTextField.getString(), "", "", "", "", "", "", 0, false);
-                act = new SearchAction(search, SearchAction.CALLED_BY_ADDUSER);
+                String data[] = new String[Search.LAST_INDEX];
+                data[Search.UIN] = uinTextField.getString();
+                act = new SearchAction(search, data, SearchAction.CALLED_BY_ADDUSER);
             }
             else // Add the group
             {
