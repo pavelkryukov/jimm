@@ -76,6 +76,18 @@ public class SearchAction extends Action
     // Last activity
     private long lastActivity = System.currentTimeMillis();
     
+    // "-", "18-22", "23-29", "30-39", "40-49", "50-59", ">60"
+    
+    private final int[] ages = {
+    	0, 99,
+    	18, 22,
+    	23, 29,
+    	30, 39,
+    	40, 49,
+    	50, 59,
+    	60, 99
+    };
+    
     
     public SearchAction(Search cont, String[] search, int _calledBy)
     {
@@ -127,26 +139,13 @@ public class SearchAction extends Action
     			Util.writeAsciizTLV(TLV_TYPE_KEYWORD, buffer, search[Search.KEYWORD]);
     		
     		// Age (user enter age as "minAge-maxAge", "-maxAge", "minAge-" or "age")
-    		String age = search[Search.AGE];
-    		if (!age.equals(Search.DEFAULT_AGE))
+    		int ageIndex = Integer.parseInt(search[Search.AGE]);
+    		if (ageIndex != 0)
     		{
-    			int minAge, maxAge;
-    			int delimPos = age.indexOf('-');
-    			if (delimPos == -1)
-    			{
-    				maxAge = minAge = Util.stringToIntDef(age, 0);
-    				if (maxAge == 0) maxAge = 99;
-    			}
-    			else
-    			{
-    				minAge = Util.stringToIntDef(age.substring(0, delimPos), 0);
-    				maxAge = Util.stringToIntDef(age.substring(delimPos+1, age.length()), 99);
-    			}
-    			
     			Util.writeWord(buffer, 0x6801, true);
     			Util.writeWord(buffer, 4, false);
-    			Util.writeWord(buffer, minAge, false);
-    			Util.writeWord(buffer, maxAge, false);
+    			Util.writeWord(buffer, ages[2*ageIndex], false);
+    			Util.writeWord(buffer, ages[2*ageIndex+1], false);
     		}
     		
     		
