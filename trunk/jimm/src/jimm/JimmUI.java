@@ -564,9 +564,10 @@ public class JimmUI implements CommandListener
 	final public static int UI_INT_IP     = 32;
 	final public static int UI_EXT_IP     = 33;
 	final public static int UI_PORT       = 34;
+	final public static int UI_UIN_LIST   = 35;
 	
 	//////
-	final public static int UI_LAST_ID    = 35;
+	final public static int UI_LAST_ID    = 36;
 	
 	static private int uiBigTextIndex;
 	static private String uiSectName = null;
@@ -598,6 +599,7 @@ public class JimmUI implements CommandListener
 	static public void fillUserInfo(String[] data, TextList list)
 	{
 		uiSectName = "main_info";
+		addToTextList(UI_UIN_LIST,  data, "uin",        list);
 		addToTextList(UI_NICK,      data, "nick",       list);
 		addToTextList(UI_NAME,      data, "name",       list);
 		addToTextList(UI_GENDER,    data, "gender",     list);
