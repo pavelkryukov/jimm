@@ -27,6 +27,9 @@ import jimm.JimmException;
 import jimm.Options;
 import jimm.Search;
 import jimm.util.ResourceBundle;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+
 
 public class SearchAction extends Action
 {
@@ -50,13 +53,15 @@ public class SearchAction extends Action
     public static final int TLV_TYPE_KEYWORD             = 0x2602; // String (2 byte length + string)
     public static final int TLV_TYPE_GENDER              = 0x7C01; // UINT8 (1 byte: 1 - female, 2 - male)
     public static final int TLV_TYPE_ONLYONLINE          = 0x3002; // UINT8 (1 byte:  1 - search online, 0 - search all)
+    public static final int TLV_TYPE_AGE                 = 0x6801; // 
+    
     
     // Search action was called by
     public static final int CALLED_BY_SEARCHUSER         = 0;
     public static final int CALLED_BY_ADDUSER            = 1;
     
     // Timeout
-    public static final int TIMEOUT = 10 * 1000; // milliseconds
+    public static final int TIMEOUT = 25 * 1000; // milliseconds
     
     /****************************************************************************/
 
@@ -64,146 +69,110 @@ public class SearchAction extends Action
     private int state;
     
     // Search object as container for request and results
+    private String[] search;
+    
     private Search cont;
     
     // Last activity
     private long lastActivity = System.currentTimeMillis();
     
     
-    public SearchAction(Search _cont,int _calledBy)
+    public SearchAction(Search cont, String[] search, int _calledBy)
     {
     	super(false, true);
-        cont = _cont;
+    	this.search = search;
+    	this.cont = cont;
     }
 
     // Init action
     protected void init() throws JimmException
     {
-        // Snac packet
-        ToIcqSrvPacket packet;
-        
-        // Marker for packet building
-        int marker = 0;
-        
-        
-        String[] search = cont.getSearchRequest();
-        
-        // Basic length is 2
-        int length = 2;
-        
-        // Add 8 if there is an uin to search for
-        if (search[0].length() != 0)
-            length+= 8;
-        
-        // For each item which should be added to the search request 
-        // we need 6 byte + length of the string + 1 zero byte for the end.
-        for (int i = 1; i < 7; i++)
-        {
-            if (search[i].length() != 0) 
+    	ByteArrayOutputStream bufferBA = new ByteArrayOutputStream();
+    	DataOutputStream buffer = new DataOutputStream(bufferBA);
+    	
+    	try
+    	{
+    		Util.writeWord(buffer, 0x5f05, true);
+    		
+    		// UIN
+            if (search[Search.UIN].length() != 0)
             {
-                length += 6 + search[i].length() + 1;
+            	Util.writeWord(buffer, TLV_TYPE_UIN, true);
+            	Util.writeWord(buffer, 0x0004, false);
+            	Util.writeDWord(buffer, Integer.parseInt(search[Search.UIN]), false);
             }
-        }
-        // Gender
-        if (!search[7].equals("0"))
-        	length+=5;
-        // Search offline/online TLV
-        length+=5;
-            
-        byte[] buf = new byte[length];
-        
-        Util.putWord(buf,marker,0x5f05);
-        marker+=2;
-        
-        byte[] tmp;
-        
-        if (search[0].length() != 0)
-        {
-            Util.putWord(buf, marker, TLV_TYPE_UIN);
-            marker += 2;
-            
-            Util.putWord(buf, marker, 0x0004, false);
-            marker += 2;
-            
-            Util.putDWord(buf, marker, Integer.parseInt(cont.getSearchRequest()[0]), false);
-            marker += 4;
-        }
-        for (int i = 1; i < 7; i++)
-        {
-            if (search[i].length() != 0)
-            {
-                
-                // Write T of TLV
-                switch (i)
-                {
-                case 1:
-                    Util.putWord(buf, marker, TLV_TYPE_NICK);
-                    break;
-                case 2:
-                    Util.putWord(buf, marker, TLV_TYPE_FIRSTNAME);
-                    break;
-                case 3:
-                    Util.putWord(buf, marker, TLV_TYPE_LASTNAME);
-                    break;
-                case 4:
-                    Util.putWord(buf, marker, TLV_TYPE_EMAIL);
-                    break;
-                case 5:
-                    Util.putWord(buf, marker, TLV_TYPE_CITY);
-                    break;
-                case 6:
-                    Util.putWord(buf, marker, TLV_TYPE_KEYWORD);
-                }
-                marker += 2;
-                
-                // Create byte array from seach string
-                tmp = Util.stringToByteArray(search[i]);
-
-                // Write L of TLV
-                Util.putWord(buf, marker, tmp.length +3, false);
-                marker += 2;
-                
-                // Write V of TLV
-                
-                // First write the length of the string + 1 for zero byte
-                Util.putWord(buf, marker, tmp.length + 1, false);
-                marker += 2;
-                // Second write the string
-                System.arraycopy(tmp, 0, buf, marker, tmp.length);
-                marker += tmp.length;
-                // Third write zero byte
-                Util.putByte(buf, marker, 0x00);
-                marker += 1;
-            }
-        }
-        if (!search[7].equals("0"))
-	    {
-	        Util.putWord(buf, marker, TLV_TYPE_GENDER);
-	        marker+=2;
-	        Util.putWord(buf,marker,1,false);
-	        marker+=2;
-	        if (search[7].equals("1"))
-	            Util.putByte(buf,marker,1);
-	        else
-	            Util.putByte(buf,marker,2);
-	        marker+=1;
-	    }
-        Util.putWord(buf, marker, TLV_TYPE_ONLYONLINE);
-        marker+=2;
-        Util.putWord(buf,marker,1,false);
-        marker+=2;
-        if (search[8].equals("1"))
-            Util.putByte(buf,marker,1);
-        else
-            Util.putByte(buf,marker,0);
-        marker+=1;
-
-        packet = new ToIcqSrvPacket(SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getString(Options.OPTION_UIN),0x07D0,new byte[0], buf);
-    
+    		
+            // NICK
+    		if (search[Search.NICK].length() != 0)
+    			Util.writeAsciizTLV(TLV_TYPE_NICK, buffer, search[Search.NICK]);
+    		
+    		// First name
+    		if (search[Search.FIRST_NAME].length() != 0)
+    			Util.writeAsciizTLV(TLV_TYPE_FIRSTNAME, buffer, search[Search.FIRST_NAME]);
+    		
+    		// Last name
+    		if (search[Search.LAST_NAME].length() != 0)
+    			Util.writeAsciizTLV(TLV_TYPE_LASTNAME, buffer, search[Search.LAST_NAME]);
+    		
+    		// email
+    		if (search[Search.EMAIL].length() != 0)
+    			Util.writeAsciizTLV(TLV_TYPE_EMAIL, buffer, search[Search.EMAIL]);
+    		
+    		// City
+    		if (search[Search.CITY].length() != 0)
+    			Util.writeAsciizTLV(TLV_TYPE_CITY, buffer, search[Search.CITY]);
+    		
+    		// Keyword
+    		if (search[Search.KEYWORD].length() != 0)
+    			Util.writeAsciizTLV(TLV_TYPE_KEYWORD, buffer, search[Search.KEYWORD]);
+    		
+    		// Age (user enter age as "minAge-maxAge", "-maxAge", "minAge-" or "age")
+    		String age = search[Search.AGE];
+    		if (!age.equals(Search.DEFAULT_AGE))
+    		{
+    			int minAge, maxAge;
+    			int delimPos = age.indexOf('-');
+    			if (delimPos == -1)
+    			{
+    				maxAge = minAge = Util.stringToIntDef(age, 0);
+    				if (maxAge == 0) maxAge = 99;
+    			}
+    			else
+    			{
+    				minAge = Util.stringToIntDef(age.substring(0, delimPos), 0);
+    				maxAge = Util.stringToIntDef(age.substring(delimPos+1, age.length()), 99);
+    			}
+    			
+    			Util.writeWord(buffer, 0x6801, true);
+    			Util.writeWord(buffer, 4, false);
+    			Util.writeWord(buffer, minAge, false);
+    			Util.writeWord(buffer, maxAge, false);
+    		}
+    		
+    		
+    		// Gender
+    		if (!search[Search.GENDER].equals("0"))
+    		{
+    			Util.writeWord(buffer, TLV_TYPE_GENDER, true);
+    			Util.writeWord(buffer, 1, false);
+    			buffer.writeByte(search[Search.GENDER].equals("1") ? 1 : 2);
+    		}
+    		
+    		// Only online
+    		Util.writeWord(buffer, TLV_TYPE_ONLYONLINE, true);
+    		Util.writeWord(buffer, 1, false);
+    		buffer.writeByte(search[Search.ONLY_ONLINE].equals("1") ? 1 : 0);
+    	}
+    	catch (Exception e)
+    	{
+    		e.printStackTrace();
+    		return;
+    	}
+    	
+    	ToIcqSrvPacket packet = new ToIcqSrvPacket(SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getString(Options.OPTION_UIN),0x07D0,new byte[0], bufferBA.toByteArray());
         Icq.c.sendPacket(packet);
         
         this.state = STATE_UIN_SEARCH_SENT;
-        
     }
     
 
