@@ -378,7 +378,7 @@ public class Search
                 ContactListContactItem 
                 	cItem = new ContactListContactItem(-1,
                 			ContactList.getGroupItems()[groupList.getSelectedIndex()].getId(),
-                			resultData[JimmUI.UI_UIN],
+                			resultData[JimmUI.UI_UIN_LIST],
                 			resultData[JimmUI.UI_NICK],
                         false, false);
                 cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);

@@ -102,6 +102,8 @@ public class SearchAction extends Action
     	ByteArrayOutputStream bufferBA = new ByteArrayOutputStream();
     	DataOutputStream buffer = new DataOutputStream(bufferBA);
     	
+    	for (int i = search.length-1; i >= 0; i--) if (search[i] == null) search[i] = Options.emptyString;
+    	
     	try
     	{
     		Util.writeWord(buffer, 0x5f05, true);
@@ -139,7 +141,7 @@ public class SearchAction extends Action
     			Util.writeAsciizTLV(TLV_TYPE_KEYWORD, buffer, search[Search.KEYWORD]);
     		
     		// Age (user enter age as "minAge-maxAge", "-maxAge", "minAge-" or "age")
-    		int ageIndex = Integer.parseInt(search[Search.AGE]);
+    		int ageIndex = Util.strToIntDef(search[Search.AGE], 0);
     		if (ageIndex != 0)
     		{
     			Util.writeWord(buffer, 0x6801, true);
@@ -150,11 +152,12 @@ public class SearchAction extends Action
     		
     		
     		// Gender
-    		if (!search[Search.GENDER].equals("0"))
+    		int gender = Util.strToIntDef(search[Search.GENDER], 0);
+    		if (gender != 0)
     		{
     			Util.writeWord(buffer, TLV_TYPE_GENDER, true);
     			Util.writeWord(buffer, 1, false);
-    			buffer.writeByte(search[Search.GENDER].equals("1") ? 1 : 2);
+    			buffer.writeByte(gender);
     		}
     		
     		// Only online
