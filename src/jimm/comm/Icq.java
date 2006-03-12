@@ -325,10 +325,7 @@ public class Icq implements Runnable
     /** *********************************************************************** */
     /** *********************************************************************** */
     /** *********************************************************************** */
-
-    // Milliseconds to wait for new packets
-    private static final int STANDBY = 250;
-
+    
     // Wait object
     static private Object wait = new Object();
 
@@ -875,7 +872,7 @@ public class Icq implements Runnable
 		 *  DWORD	Unkn	0x00000000
 		 *  WORD	Unkn	0x0000
 		 *  WORD	ConnSq	Number of connection the packet is for
-		 *  ...		Data	Data of the packet (Size - 12 bytes)
+		 *  ...		Data	Data of the packet (Size - 14 bytes)
 		 * 
 		 ***************************************************************************** 
 		 *****************************************************************************/
@@ -981,7 +978,9 @@ public class Icq implements Runnable
 
 			// Required variables
 			byte[] length = new byte[2];
-			byte[] httpPacket, packet;
+			byte[] httpPacket;
+			byte[]packet = new byte[0];
+			int flapMarker = 0;
 
 			int bRead, bReadSum;
 			int bReadSumRequest = 0;
@@ -1007,7 +1006,6 @@ public class Icq implements Runnable
 					if (hcm.getResponseCode() != HttpConnection.HTTP_OK) throw new IOException();
 					// Read flap header
 					bReadSumRequest = 0;
-
 					do
 					{
 						bReadSum = 0;
@@ -1033,40 +1031,52 @@ public class Icq implements Runnable
 							bReadSumRequest += bRead;
 						} while (bReadSum < httpPacket.length);
 						if (bRead == -1) break;
+						
 						// Only process type 5 (flap) packets
 						if (Util.getWord(httpPacket, 2) == 0x0005)
 						{
-							// Packet has 12 bytes header and could contain more than one FLAP
+							// Each httpPacket has a 12 bytes header and can contain one or more FLAP packetes
+							// Also FLAP packets could be splitted across serveral httpPackets
+							// httpPacket does not have to start with 2a 02. 
+							// FLAP packet can start within httpPacket and end in another
 							int contBytes = 12;
 							while (contBytes < httpPacket.length)
 							{
-								// Verify flap header
-								if (Util.getByte(httpPacket, contBytes) != 0x2A) { throw (new JimmException(124, 0)); }
-								// Copy flap packet data from http packet
-								packet = new byte[Util.getWord(httpPacket, contBytes + 4) + 6];
-								System.arraycopy(httpPacket, contBytes, packet, 0, packet.length);
 
-								// Lock object and add rcvd packet to vector
-								synchronized (this.rcvdPackets)
+								// Verify flap header only if we are sure there is a start
+								if (flapMarker == 0)
 								{
-									this.rcvdPackets.addElement(packet);
+									if (Util.getByte(httpPacket, contBytes) != 0x2A) { throw (new JimmException(124, 0)); }
+									// Copy flap packet data from http packet
+									packet = new byte[Util.getWord(httpPacket, contBytes + 4) + 6];
 								}
-								contBytes += packet.length;
+								// Read packet data form httpPacket to packet
+								// Packet contains the end of the flap packet
+								if (httpPacket.length-contBytes >= (packet.length - flapMarker))
+								{
+									System.arraycopy(httpPacket, contBytes, packet, flapMarker, (packet.length - flapMarker));
+									contBytes += (packet.length - flapMarker);
+									flapMarker = packet.length;
+								}
+								// Packet does not contain the end of the flap packet
+								else 
+								{
+									System.arraycopy(httpPacket, contBytes, packet, flapMarker, httpPacket.length - contBytes);
+									flapMarker += (httpPacket.length - contBytes);
+									contBytes += httpPacket.length - contBytes;
+								}
+								// If all the bytes from a flap packet have been read add that packet to the queue
+								if (flapMarker == packet.length)
+								{
+									// Lock object and add rcvd packet to vector
+									synchronized (this.rcvdPackets)
+									{
+										this.rcvdPackets.addElement(packet);
+									}
+									flapMarker = 0;
+								}
 							}
 
-							// #sijapp cond.if modules_TRAFFIC is "true" #
-							// This is not accurate for http connection
-							// 42 is the overhead for each packet (2 byte packet length) (TCP IP)
-							// 185 is the overhead for each monitor packet HTTP HEADER
-							// 175 is the overhead for each HTTP/1.1 200 OK answer header
-							// ICQ HTTP data header is counted in bReadSum
-							Traffic.addTraffic(bReadSum + 42 + 185 + 175);
-
-							if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
-							{
-								RunnableImpl.updateContactListCaption();
-							}
-							// #sijapp cond.end#
 							// Notify main loop
 							synchronized (Icq.wait)
 							{
@@ -1105,6 +1115,21 @@ public class Icq implements Runnable
 
 								}
 					} while (bReadSumRequest < hcm.getLength());
+					
+					// #sijapp cond.if modules_TRAFFIC is "true" #
+					// This is not accurate for http connection
+					// 42 is the overhead for each packet (2 byte packet length) (TCP IP)
+					// 185 is the overhead for each monitor packet HTTP HEADER
+					// 175 is the overhead for each HTTP/1.1 200 OK answer header
+					// ICQ HTTP data header is counted in bReadSum
+					Traffic.addTraffic(bReadSumRequest + 42 + 185 + 175);
+
+					if (Traffic.isActive() || ContactList.getVisibleContactListRef().isShown())
+					{
+						RunnableImpl.updateContactListCaption();
+					}
+					// #sijapp cond.end#
+					
 					try
 					{
 						this.ism.close();
