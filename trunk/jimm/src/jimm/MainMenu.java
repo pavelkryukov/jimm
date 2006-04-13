@@ -254,7 +254,7 @@ public class MainMenu implements CommandListener
         Jimm.display.setCurrent(addUserOrGroup);
 	}
     
-    static private void doExit(boolean anyway)
+    private void doExit(boolean anyway)
     {
    		if (!anyway && ContactList.getUnreadMessCount() > 0)
    		{
@@ -270,6 +270,13 @@ public class MainMenu implements CommandListener
    		else 
    		{
    			Icq.disconnect();
+   			try
+			{
+				Thread.sleep(500);
+			} catch (InterruptedException e1)
+			{
+				// Do nothing
+			}
    			// Exit app
    			try 
    			{
