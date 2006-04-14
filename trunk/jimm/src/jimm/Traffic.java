@@ -36,16 +36,29 @@ import java.util.Date;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Font;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 
+import DrawControls.TextList;
+
 import jimm.util.ResourceBundle;
-import jimm.comm.Icq;;
+import jimm.comm.Icq;import jimm.comm.Util;
+;
 
 
 public class Traffic
 {
+	
+	// Static final variables	
+	static final public int SESSION = 10;
+	static final public int OVERALL = 20;
+	static final public int SAVED = 30;
+	static final public int BYTES = 1;
+	static final public int KB = 2;
+	static final public int COST = 3;
+	static final public int SAVED_SINCE = 4;
+	
 	// Persistent variables
 
 	// Traffic read form file
@@ -72,9 +85,6 @@ public class Traffic
 	// Amount of money for the costs per day for this session
 	static private int costPerDaySum;
 
-	// Indicates if the Traffic Screen ist showing.
-	static private boolean active;
-
 	// Traffic Screen
 	static public TrafficScreen trafficScreen;
 
@@ -88,7 +98,6 @@ public class Traffic
 		lastTimeUsed = new Date(1);
 		costPerDaySum = 0;
 		savedSince = new Date();
-		setIsActive(false);
 		try
 		{
 			load();
@@ -117,12 +126,6 @@ public class Traffic
 		ByteArrayInputStream bais;
 		DataInputStream dis;
 
-		// Get version info from record store
-		buf = traffic.getRecord(1);
-		bais = new ByteArrayInputStream(buf);
-		dis = new DataInputStream(bais);
-		if (!(dis.readUTF().equals(Jimm.VERSION))) throw (new IOException());
-
 		// Get traffic amount and savedSince to record store
 		buf = traffic.getRecord(2);
 		bais = new ByteArrayInputStream(buf);
@@ -130,7 +133,7 @@ public class Traffic
 		setTraffic(dis.readInt());
 		setSavedSince(dis.readLong());
 		setLastTimeUsed(dis.readLong());
-		setSavedCost(dis.readInt());
+		setIntData(dis.readInt(),SAVED + COST);
 		// Close record store
 		traffic.closeRecordStore();
 
@@ -166,7 +169,7 @@ public class Traffic
 		baos = new ByteArrayOutputStream();
 
 		dos = new DataOutputStream(baos);
-		dos.writeInt(getAllTraffic(false));
+		dos.writeInt(getIntData(OVERALL + BYTES));
 		dos.writeLong(getSavedSince());
 		dos.writeLong(getLastTimeUsed());
 		dos.writeInt((int) generateCostSum(false));
@@ -178,30 +181,58 @@ public class Traffic
 
 	}
 
-// Generates String for Traffic Info Screen
-	static protected String generateTrafficString()
+	// Generates String for Traffic Info Screen
+	static protected String getTrafficString(int type)
 	{
-		String traffic = new String();
 		Calendar time = Calendar.getInstance();
 		time.setTime(getSavedSinceDate());
-		traffic = ResourceBundle.getString("session") + ":\n" +
-				getSessionTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
-				getSessionTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
-				getString(generateCostSum(true)) + " " + Options.getString(Options.OPTION_CURRENCY) + "\n" +
-				ResourceBundle.getString("since") + ": " + makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." +
-				makeTwo(time.get(Calendar.MONTH) + 1) + "." +
-				time.get(Calendar.YEAR) + " " +
-				makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" +
-				makeTwo(time.get(Calendar.MINUTE)) + "\n" +
-				getAllTraffic(false) + " " + ResourceBundle.getString("byte") + "\n" +
-				getAllTraffic(true) + " " + ResourceBundle.getString("kb") + "\n" +
-				getString(generateCostSum(false))+ " " + Options.getString(Options.OPTION_CURRENCY);
-		return (traffic);
+		switch (type)
+		{
+		case SESSION + BYTES:
+			return (getIntData(type) + " " + ResourceBundle.getString("byte"));
+		case SESSION + KB:
+			return (getIntData(type) + " " + ResourceBundle.getString("kb"));
+		case SESSION + COST:
+			return (getString(generateCostSum(true)) + " " + Options.getString(Options.OPTION_CURRENCY));
+		case SAVED_SINCE:
+			return (Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." + Util.makeTwo(time.get(Calendar.MONTH) + 1) + "." + time.get(Calendar.YEAR) + " " + Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE)));
+		case OVERALL + BYTES:
+			return (getIntData(type) + " " + ResourceBundle.getString("byte"));
+		case OVERALL + KB:
+			return (getIntData(type) + " " + ResourceBundle.getString("kb"));
+		case OVERALL + COST:
+			return (getString(generateCostSum(false)) + " " + Options.getString(Options.OPTION_CURRENCY));
+		}
+		return ("");
 
 	}
 
 
-// Determins whenever we were already connected today or not
+	// Returns String value of cost value
+	static public String getString(int value){
+	  String costString = "";
+	  String afterDot = "";
+	  try{
+		if (value != 0) {costString = Integer.toString(value/100000)+".";
+		afterDot = Integer.toString(value % 100000);
+		while (afterDot.length()!=5)
+			afterDot = "0"+ afterDot;
+		while ((afterDot.endsWith("0")) && (afterDot.length()>2)){
+			afterDot = afterDot.substring(0,afterDot.length()-1);
+		}
+		costString = costString+afterDot;
+		return costString;
+		}
+		else return new String("0.0");
+	
+	  }
+	  catch (Exception e)
+	  {
+		return new String("0.0");
+	  }
+	}
+
+	// Determins whenever we were already connected today or not
 	static private boolean usedToday()
 	{
 //		Date now = new Date();
@@ -228,83 +259,55 @@ public class Traffic
 
 		int cost;
 		int costPerPacket = Options.getInt(Options.OPTION_COST_PER_PACKET);
-//		int costPerDay = Options.getCostPerDay();
 		int costPacketLength = Options.getInt(Options.OPTION_COST_PACKET_LENGTH);
 
 		if (thisSession)
-		{
 			if (session_traffic != 0)
-			{
 				cost = ((session_traffic / costPacketLength) + 1) * costPerPacket;
-			}
 			else
-			{
 				cost = 0;
-			}
-		}
 		else
-		{
 			if (session_traffic != 0)
-			{
-				cost = ((session_traffic / costPacketLength) + 1) * costPerPacket + getSavedCost();
-			}
+				cost = ((session_traffic / costPacketLength) + 1) * costPerPacket + getIntData(SAVED + COST);
 			else
-			{
-				cost = getSavedCost();
-			}
-		}
-		if ((!usedToday()) && (getSessionTraffic(false) != 0) && (costPerDaySum == 0))
-		{
-			increaseCostPerDaySum();
-		}
+				cost = getIntData(SAVED + COST);
+		if ((!usedToday()) && (getIntData(SESSION + BYTES) != 0) && (costPerDaySum == 0)) increaseCostPerDaySum();
 		return (cost + costPerDaySum);
 	}
-
-//Date print utility
-	static protected String makeTwo(int number)
+	
+	//Returns value of  traffic
+	static public int getIntData(int type)
 	{
-		if (number < 10)
-			return ("0" + String.valueOf(number));
-		else
-			return (String.valueOf(number));
-	}
-
-	// Returns String value of cost value
-	static public String getString(int value){
-	  String costString = "";
-	  String afterDot = "";
-	  try{
-		if (value != 0) {costString = Integer.toString(value/100000)+".";
-		afterDot = Integer.toString(value % 100000);
-		while (afterDot.length()!=5)
-			afterDot = "0"+ afterDot;
-		while ((afterDot.endsWith("0")) && (afterDot.length()>2)){
-			afterDot = afterDot.substring(0,afterDot.length()-1);
+		switch (type)
+		{
+		case SESSION + BYTES:
+			return (session_traffic);
+		case SESSION + KB:
+			return (session_traffic / 1024);
+		case OVERALL + KB:
+			return ((all_traffic + session_traffic) / 1024);
+		case OVERALL + BYTES:
+			return (all_traffic + session_traffic);
+		case SAVED + COST:
+			return (savedCost);
+		case SESSION + COST:
+			return (sessionCost + costPerDaySum);
 		}
-		costString = costString+afterDot;
-		return costString;
+		return (0);
+	}
+
+	// Set all cost
+	static public void setIntData(int data,int type)
+	{
+		switch (type)
+		{
+		case SAVED + COST:
+			savedCost = data;
+			break;
+		case SESSION + COST:
+			sessionCost = data;
+			break;
 		}
-		else return new String("0.0");
-
-	  }
-	  catch (Exception e)
-	  {
-		return new String("0.0");
-	  }
-	}
-
-	//Returns value of session traffic
-	static public int getSessionTraffic(boolean kb)
-	{
-		if (kb) return (session_traffic / 1024);
-		return (session_traffic);
-	}
-
-	//Returns value of all traffic
-	static public int getAllTraffic(boolean kb)
-	{
-		if (kb) return ((all_traffic + session_traffic) / 1024);
-		return (all_traffic + session_traffic);
 	}
 
 	// Set value of session traffic
@@ -335,7 +338,7 @@ public class Traffic
 	static public void reset()
 	{
 		setTraffic(0);
-		setSavedCost(0);
+		setIntData(0,SAVED + COST);
 		setSavedSince(new Date().getTime());
 		try
 		{
@@ -370,7 +373,7 @@ public class Traffic
 		lastTimeUsed.setTime(time);
 	}
 
-// Get the value of lastTimeUsed
+	// Get the value of lastTimeUsed
 	static public long getLastTimeUsed()
 	{
 		return (lastTimeUsed.getTime());
@@ -382,47 +385,11 @@ public class Traffic
 		return (lastTimeUsed);
 	}
 
-	// Get all cost
-	static public int getSavedCost()
-	{
-		return (savedCost);
-	}
-
-	// Set all cost
-	static public void setSavedCost(int cost)
-	{
-		savedCost = cost;
-	}
-
-	// Get session cost
-	static public int getSessionCost()
-	{
-		return (sessionCost + costPerDaySum);
-	}
-
-	// Set all cost
-	static public void setSessionCost(int cost)
-	{
-		sessionCost = cost;
-	}
-
 	// Increases costPerDaySum at one unit
 	static public void increaseCostPerDaySum()
 	{
 		costPerDaySum = costPerDaySum + Options.getInt(Options.OPTION_COST_PER_DAY);
 		setLastTimeUsed(new Date().getTime());
-	}
-
-	// Is the traffic screen active?
-	static public boolean isActive()
-	{
-		return (active);
-	}
-
-	// Sets the value if the Traffic Screen is active
-	static public void setIsActive(boolean _active)
-	{
-		active = _active;
 	}
 
 	/****************************************************************************/
@@ -431,15 +398,15 @@ public class Traffic
 
 
 	// Screen for Traffic information
-	public class TrafficScreen implements CommandListener
+	public class TrafficScreen  implements CommandListener
 	{
 
 
 		// Form elements
-
-		private Form trafficScreen;
 		private Command resetCommand;
 		private Command okCommand;
+		private TextList trafficTextList;
+		//private Form trafficScreen;
 
 		//Number of kB defines the threshold when the screen should be update
 		private byte updateThreshold;
@@ -450,9 +417,16 @@ public class Traffic
 		// Constructor
 		public TrafficScreen()
 		{
-
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//super(ResourceBundle.getString("traffic_lng"),Options.getSchemeColor(Options.CLRSCHHEME_CAP),Options.getSchemeColor(Options.CLRSCHHEME_BACK),Font.SIZE_MEDIUM,VirtualList.SEL_NONE);
+			//#sijapp cond.else#
+			//super(ResourceBundle.getString("traffic_lng"),Options.getSchemeColor(Options.CLRSCHHEME_CAP),Options.getSchemeColor(Options.CLRSCHHEME_BACK),Font.SIZE_SMALL,VirtualList.SEL_NONE);
+			//#sijapp cond.end#
+					
+					
+		    // super(ResourceBundle.getString("traffic_lng"),Options.)
 			updateThreshold = 1;
-			compareTraffic = (byte) Traffic.getSessionTraffic(true);
+			compareTraffic = (byte) Traffic.getIntData(SESSION + KB);
 
 			// Initialize command
             // #sijapp cond.if target is "MOTOROLA" # 
@@ -464,33 +438,61 @@ public class Traffic
             // #sijapp cond.end #
 
 			// Initialize traffic screen
-
-			this.trafficScreen = new Form(ResourceBundle.getString("traffic_lng"));
-			this.trafficScreen.addCommand(this.resetCommand);
-			this.trafficScreen.addCommand(this.okCommand);
-			this.trafficScreen.setCommandListener(this);
+			this.trafficTextList = new TextList(ResourceBundle.getString("traffic_lng"));
+			this.trafficTextList.setCursorMode(TextList.SEL_NONE);
+			
+			// Set colors
+			this.trafficTextList.setColors
+			(
+				Options.getSchemeColor(Options.CLRSCHHEME_TEXT),
+				Options.getSchemeColor(Options.CLRSCHHEME_CAP),
+				Options.getSchemeColor(Options.CLRSCHHEME_BACK),
+				Options.getSchemeColor(Options.CLRSCHHEME_BLUE),
+				Options.getSchemeColor(Options.CLRSCHHEME_TEXT)
+			);
+			
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			trafficTextList.setFontSize(Font.SIZE_MEDIUM);
+			//#sijapp cond.else#
+			trafficTextList.setFontSize(Font.SIZE_SMALL);
+			//#sijapp cond.end#
+			
+			this.trafficTextList.addCommand(this.resetCommand);
+			this.trafficTextList.addCommand(this.okCommand);
+			this.trafficTextList.setCommandListener(this);
 
 
 		}
 
-		// Activate options form
+		// Activate traffic form
 		public void activate()
 		{
 			this.update(true);
-			Jimm.display.setCurrent(this.trafficScreen);
+			Jimm.display.setCurrent(this.trafficTextList);
+		}
+		
+		// Is the traffic screen active?
+		public boolean isActive()
+		{
+			return(Jimm.display.getCurrent().equals(this.trafficTextList));
 		}
 
-		private void update(boolean doIt)
+		public void update(boolean doIt)
 		{
-			ContactList.updateTitle(Traffic.getSessionTraffic(true));
-			if (((Traffic.getSessionTraffic(true) - compareTraffic) >= updateThreshold) | doIt)
+			if (((Traffic.getIntData(SESSION + KB) - compareTraffic) >= updateThreshold)|| doIt)
 			{
-				this.trafficScreen.append(Traffic.generateTrafficString());
-				if (this.trafficScreen.size() > 1)
-				{
-					this.trafficScreen.delete(0);
-				}
-				compareTraffic = (byte) Traffic.getSessionTraffic(true);
+				this.trafficTextList.clear();
+				this.trafficTextList.addBigText(ResourceBundle.getString("session")+":\n", 0x006fb1, Font.STYLE_BOLD, -1)
+					.addBigText(Traffic.getTrafficString(SESSION + BYTES)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
+					.addBigText(Traffic.getTrafficString(SESSION + KB)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
+					.addBigText(Traffic.getTrafficString(SESSION + COST)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
+					.addBigText(ResourceBundle.getString("since")+" ", 0x006fb1, Font.STYLE_BOLD, -1)
+					.addBigText(Traffic.getTrafficString(Traffic.SAVED_SINCE)+"\n", 0x006fb1, Font.STYLE_BOLD, -1)
+					.addBigText(Traffic.getTrafficString(OVERALL + BYTES)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
+					.addBigText(Traffic.getTrafficString(OVERALL + KB)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
+					.addBigText(Traffic.getTrafficString(OVERALL + COST)+"\n", 0x000000, Font.STYLE_PLAIN, -1);
+				compareTraffic = (byte) Traffic.getIntData(SESSION + KB);
+				this.trafficTextList.repaint();
 			}
 		}
 
@@ -505,7 +507,6 @@ public class Traffic
 			}
 			if (c == this.okCommand)
 			{
-				Traffic.setIsActive(false);
 				if (Icq.isConnected())
 				{
 					ContactList.activate();

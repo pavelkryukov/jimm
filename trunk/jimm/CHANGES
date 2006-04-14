@@ -258,10 +258,8 @@ VERSION 0.5.0
   * NEW FEATURE: Connection via HTTP possilble
   * NEW FEATURE: Jimm can show contact client info. 
                  Also Jimm is specified as JIMM client for other ones.
-  * NEW FEATURE: Classic chat (text at top and edit area at bottom). For
-                 siemens2 build only
-  * NEW FEATURE: Safe login (MD5 login). Strongly recommended if
-                 socks-proxy is used.
+  * NEW FEATURE: Classic chat (text at top and edit area at bottom). For siemens2 build only
+  * NEW FEATURE: Safe login (MD5 login). Strongly recommended if socks-proxy is used.
   * NEW FEATURE: Support for several accounts (max. 3 accounts are allowed)
   * NEW FEATURE: Jimm can open URLs from messages in phone browser
   * NEW FEATURE: Text templates
@@ -297,4 +295,6 @@ VERSION 0.5.0
     current item, others items or all items)
   * It is possible to select full screen for contact list, chats etc...
   * New Option "Time" to setup time zone
+  * Traffic Screen is now also using TextList for displaying information
+  * Traffic now counts additional GPRS headers to be hopefully more accurate
   * New util JLFT - "Jimm Lang File Tool" for easy comparing and changing Jimm .lang files

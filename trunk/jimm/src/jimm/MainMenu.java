@@ -479,7 +479,6 @@ public class MainMenu implements CommandListener
                  // #sijapp cond.if modules_TRAFFIC is "true" #
                  case MENU_TRAFFIC:
                      // Traffic
-                     Traffic.setIsActive(true);
                      Traffic.trafficScreen.activate();
                      break;
                  // #sijapp cond.end #
