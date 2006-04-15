@@ -271,6 +271,7 @@ VERSION 0.5.0
   * BUGFIX: Contact status was wrong after adding contact
   * BUGFIX: Contacts renamed in Jimm with non-ascii letters were shown incorrectly
             in other ICQ clients
+  * BUGFIX: Jimm should disconnect properly when selecting exit from the main menu
   * Possible to quote big messages (no more than 4kb)
   * Contact name which consists of digits is renamed automatically after
     requesting user info
