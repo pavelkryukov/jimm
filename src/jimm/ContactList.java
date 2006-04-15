@@ -222,7 +222,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		tree.setStepSize( -tree.getFontHeight()/2 );
 		
         // #sijapp cond.if modules_TRAFFIC is "true" #
-		updateTitle(Traffic.getIntData(Traffic.SESSION + Traffic.KB));
+		updateTitle(Traffic.getSessionTraffic());
         // #sijapp cond.else #
         updateTitle(0);
         // #sijapp cond.end#
@@ -352,7 +352,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	{
     	tree.setCapImage(smallIcons.elementAt(JimmUI.getStatusImageIndex(Jimm.jimm.getIcqRef().getCurrentStatus())));
 		//#sijapp cond.if modules_TRAFFIC is "true" #
-		updateTitle(Traffic.getIntData(Traffic.SESSION + Traffic.KB));
+		updateTitle(Traffic.getSessionTraffic());
 		//#sijapp cond.else #
 		updateTitle(0);
 		//#sijapp cond.end#

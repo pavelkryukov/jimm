@@ -69,7 +69,7 @@ public class RunnableImpl implements Runnable
 			
 		case TYPE_UPDATE_CL_CAPTION:
 			//#sijapp cond.if modules_TRAFFIC="true"#
-			ContactList.updateTitle(Traffic.getIntData(Traffic.SESSION + Traffic.KB));
+			ContactList.updateTitle(Traffic.getSessionTraffic());
 			//#sijapp cond.else#
 			ContactList.updateTitle(0);
 			//#sijapp cond.end#
