@@ -1,6 +1,6 @@
   // Labels
   // MOTOROLA formatted buttons
-  // #sijapp cond.if target is "MOTOROLA"#
+  //#sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Backlight timeout (sec)"
   "backlight_manual"            "Manual backlight (* key)"
   "exit_button"                 "Exit"
@@ -19,6 +19,7 @@
   "search_user"                 "Search for User"
   "send"                        "Send"
   "next"                        "Next"
+
 //Days of the week
 	"monday"					"Monday"
 	"tuesday"					"Tuesday"
@@ -31,7 +32,7 @@
 
   "point"                       ","
   "about"                       "About"
-  "about_info"                  "Jimm - Mobile Messaging\n\nICQ client for J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModules: ###MODULES###\n\nSee http://www.jimm.org/"
+  "about_info"                  "\n\nICQ client for J2ME\n\nVersion: ###VERSION###\nTarget: ###TARGET###\nModules: ###MODULES###\n\nSee http://www.jimm.org/"
   "account"                     "Account"
   "add_new"                     "New"
   "add_group"                   "Add group"
@@ -66,8 +67,8 @@
   "cost"                        "Cost"
   "contact_list"                "List"
   "cp1251"                      "Use Win1251 coding"
-  "cpd"                         "Cost per day"
-  "cpp"                         "Cost per packet"
+  "cpd"                         "Cost per day (cent)"
+  "cpp"                         "Cost per packet (cent)"
   "currect_contact"             "Current contact"
   "currency"                    "Currency"
   "days"						"d"      
