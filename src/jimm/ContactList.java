@@ -97,6 +97,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // Sound notification typs
     public static final int SOUND_TYPE_MESSAGE = 1;
     public static final int SOUND_TYPE_ONLINE  = 2;
+    public static final int SOUND_TYPE_TYPING  = 3;
 
     public static Image statusAwayImg;
     public static Image statusChatImg;
@@ -554,7 +555,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     }
     
     // called before jimm start to connect to server
-    static protected void beforeConnect()
+    public static void beforeConnect()
     {
     	treeBuilt = treeSorted = false;
     	haveToBeCleared = true;
@@ -566,7 +567,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     {
     	onlineCounter = 0;
     	for (int i = cItems.size()-1; i >= 0; i--)
-    		getCItem(i).setIntValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
+    	{
+    	    ContactListContactItem item = getCItem(i); 
+    		item.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
+    		item.BeginTyping(false);
+    	}
     	
     	for (int i = gItems.size()-1; i >= 0; i--)
     		((ContactListGroupItem)gItems.elementAt(i)).setCounters(0, 0);
@@ -917,7 +922,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         boolean wasOnline  = (oldStatus != STATUS_OFFLINE);
         boolean nowOnline  = (trueStatus != STATUS_OFFLINE);
         
-        if (status == STATUS_OFFLINE) cItem.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, 0);
+        if (status == STATUS_OFFLINE)
+        	{
+        		cItem.BeginTyping(false);
+        		cItem.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, 0);
+        	}
         
         // Online counters
         statusChanged(cItem, wasOnline, nowOnline, 0);
@@ -1103,13 +1112,29 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		safeSave();
 	}
 
+    static private synchronized ContactListContactItem createTempContact(String uin)
+    {
+    	ContactListContactItem cItem = null;
+    	try
+    	{
+        cItem = new ContactListContactItem(0, 0, uin, uin, false, true);
+    	}
+    	catch (Exception e)
+    	{
+    		// Message from non-icq contact
+    		return null;
+    	}
+        cItems.addElement(cItem);
+        cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
+        Icq.addLocalContacts(new String[] { uin });
+        return cItem;
+    }
+    
     // Adds the given message to the message queue of the contact item
     // identified by the given UIN
     static public synchronized void addMessage(Message message)
     {
         ContactListContactItem cItem = getItembyUIN(message.getSndrUin());
-        
-        boolean temp = false;
         
         // Add message to contact
         if (cItem != null) cItem.addMessage(message);
@@ -1118,20 +1143,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // do we have a new temp contact
         else
         {
-        	try
-        	{
-        		cItem = new ContactListContactItem(0, 0, message.getSndrUin(), message.getSndrUin(), false, true);
-        	}
-        	catch (Exception e)
-        	{
-        		// Message from non-icq contact
-        		return;
-        	}
-            cItems.addElement(cItem);
-            cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP,true);
-            cItem.addMessage(message);
-            temp = true;
-            Icq.addLocalContacts(new String[] { message.getSndrUin() });
+        	cItem = createTempContact( message.getSndrUin() );
+            if ( cItem!=null ) cItem.addMessage(message);
         }
 
         // Notify splash canvas
@@ -1237,6 +1250,35 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	
 	//#sijapp cond.end#
 
+	synchronized static private void TypingHelper(String uin, boolean type)
+	{
+		if (type) playSoundNotification(ContactList.SOUND_TYPE_TYPING);
+		if (ChatHistory.chatHistoryShown(uin))
+		{
+			ChatHistory.getChatHistoryAt(uin).BeginTyping(type);
+		}
+		else
+			tree.repaint();
+	}
+	
+	synchronized static public void BeginTyping(String uin, boolean type)
+	{
+		ContactListContactItem item = getItembyUIN(uin);
+		if (item != null)
+		{
+				item.BeginTyping(type);
+				TypingHelper(uin,type);
+		}
+		else
+		{
+			item = createTempContact(uin);
+			if ( item!=null ) 
+			{
+					item.BeginTyping(type);
+					TypingHelper(uin,type);
+			}
+		}
+	}
     // Play a sound notification
     synchronized static private void playSoundNotification(int notType)
     {
@@ -1270,6 +1312,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		case SOUND_TYPE_ONLINE:
 			not_mode = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
 			break;
+			
+		case SOUND_TYPE_TYPING:
+		    not_mode = Options.getInt(Options.OPTION_TYPING_MODE);
+			break;
 		}
             
         switch (not_mode)
@@ -1283,6 +1329,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                     Manager.playTone(ToneControl.C4, 500, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
                     break;
                 case SOUND_TYPE_ONLINE:
+                case SOUND_TYPE_TYPING:
                     Manager.playTone(ToneControl.C4+7, 500, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
                 }
 
@@ -1302,11 +1349,17 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 	if (p == null) return;
                     setVolume(p, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
                 }
-                else
+                else if (notType == SOUND_TYPE_ONLINE)
                 {
                 	p = createPlayer( Options.getString(Options.OPTION_ONLINE_NOTIF_FILE) );
                 	if (p == null) return;
                     setVolume(p, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL)); 
+                }
+                else
+                {
+                	p = createPlayer( Options.getString(Options.OPTION_TYPING_FILE) );
+                	if (p == null) return;
+                    setVolume(p, Options.getInt(Options.OPTION_TYPING_VOL)); 
                 }
                 
                 p.start();

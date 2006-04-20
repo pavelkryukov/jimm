@@ -65,19 +65,19 @@ public class ConnectAction extends Action
 		(byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
 		(byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
 		(byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00,
+		/* Jimm */ 'J', 'i', 'm', 'm', 						//Jimm version
+		(byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00,	//Place for string & raw version
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, //Place for string & raw version
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, //Last byte - target
 		(byte) 0x56, (byte) 0x3f, (byte) 0xc8, (byte) 0x09,      // CAP_MTN
 		(byte) 0x0b, (byte) 0x6f, (byte) 0x41, (byte) 0xbd,
 		(byte) 0x9f, (byte) 0x79, (byte) 0x42, (byte) 0x26,
-		(byte) 0x09, (byte) 0xdf, (byte) 0xa2, (byte) 0xf3,
-		/* Jimm */ 'J', 'i', 'm', 'm', //Jimm version
-		(byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00,	//Place for string & raw version
-		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00
+		(byte) 0x09, (byte) 0xdf, (byte) 0xa2, (byte) 0xf3		
 	};
 
     // CLI_SETICBM packet data
     public static final byte[] CLI_SETICBM_DATA =
-    { 0, 0, 0, 0, 0, 3, 0x1F,  0x40, 3, (byte)0xE7, 3, (byte)0xE7, 0, 0, 0, 0};
+    { 0, 0, 0, 0, 0, 0x0B, 0x1F,  0x40, 3, (byte)0xE7, 3, (byte)0xE7, 0, 0, 0, 0};
 
     // CLI_SETSTATUS packet data
     public static final byte[] CLI_SETSTATUS_DATA =
@@ -502,12 +502,39 @@ public class ConnectAction extends Action
 						// Set version information to this packet in our capability
 						byte[] tmp = ConnectAction.CLI_SETUSERINFO_DATA;
 						byte[] ver = Util.stringToByteArray(Jimm.VERSION);
-						if ( ver.length<12 )
-							System.arraycopy(ver,0,tmp,tmp.length-11,ver.length);
-						Icq.c.sendPacket(new SnacPacket(0x0002, 0x0004, 0, new byte[0], tmp));
+						if (ver.length <=10)
+							System.arraycopy(ver,0,tmp,tmp.length-11-16,ver.length);
+						
+						// If typing notify is on, we send full caps..with typing
+						byte[] tmp_packet;
+						if (Options.getBoolean(Options.OPTION_NOTIFY))
+						{
+						    tmp_packet = tmp;
+						}
+						// If typing notify option is disabled,
+						// We must remove typing capability
+						else
+						{
+						    tmp_packet = new byte[tmp.length-16];
+						    System.arraycopy(tmp,0,tmp_packet,0,tmp.length-16);
+						    
+						    // Length correction
+						    tmp_packet[3] = (byte)0x40;
+						}
+					    Icq.c.sendPacket(new SnacPacket(0x0002, 0x0004, 0, new byte[0], tmp_packet));
 
 						// Send a CLI_SETICBM packet
-						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
+						SnacPacket reply1;
+						if (Options.getBoolean(Options.OPTION_NOTIFY))
+						{
+							reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
+						}
+						else
+						{
+							tmp_packet = ConnectAction.CLI_SETICBM_DATA;
+							tmp_packet[5] = 0x03;
+							reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], tmp_packet);
+						}
 						Icq.c.sendPacket(reply1);
 
 						// Send a CLI_SETSTATUS packet

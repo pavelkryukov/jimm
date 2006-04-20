@@ -275,6 +275,13 @@ class ChatTextList implements VirtualListCommands
 		}
 	}
 	
+	private boolean typing = false;
+	public void BeginTyping(boolean type)
+	{
+		typing = type;
+		textList.repaint();
+	}
+	
 	void addTextToForm(String from, String message, String url, long time, boolean red, boolean offline)
 	{
 		int texOffset;

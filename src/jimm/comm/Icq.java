@@ -59,6 +59,12 @@ public class Icq implements Runnable
 {
 	private static Icq _this;
 	
+	public static final byte[] MTN_PACKET_BEGIN =
+	{
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+		(byte) 0x00, (byte) 0x01
+	};
     // State constants
     private static final int STATE_NOT_CONNECTED = 0;
     private static final int STATE_CONNECTED = 1;
@@ -225,6 +231,7 @@ public class Icq implements Runnable
         { // Do nothing
         }
         // #sijapp cond.end#        
+        
     }
 
     // Dels a ContactListContactItem to the server saved contact list
@@ -256,6 +263,25 @@ public class Icq implements Runnable
             // Start timer
             SplashCanvas.addTimerTask("wait", act2, false);
         }
+    }
+
+    public synchronized void BeginTyping(String uin, boolean isTyping) throws JimmException
+    {
+		byte[] uinRaw = Util.stringToByteArray(uin);
+		int tempBuffLen = Icq.MTN_PACKET_BEGIN.length + 1 + uinRaw.length + 2;
+		int marker = 0;
+		byte[] tempBuff = new byte[tempBuffLen];
+		System.arraycopy(Icq.MTN_PACKET_BEGIN, 0, tempBuff, marker, Icq.MTN_PACKET_BEGIN.length);
+		marker += Icq.MTN_PACKET_BEGIN.length;
+		Util.putByte(tempBuff, marker, uinRaw.length);
+		marker += 1;
+		System.arraycopy(uinRaw, 0, tempBuff, marker, uinRaw.length);
+		marker += uinRaw.length;
+		Util.putWord(tempBuff, marker, ((isTyping) ? (0x0002) : (0x0000)));
+		marker += 2;
+		// Send packet
+		SnacPacket snacPkt = new SnacPacket(0x0004, 0x0014, 0x00000000, new byte[0], tempBuff);
+		this.c.sendPacket(snacPkt);
     }
 
     // Checks whether the comm. subsystem is in STATE_NOT_CONNECTED
@@ -950,10 +976,9 @@ public class Icq implements Runnable
 					// 14 bytes is the overhead for ICQ HTTP data header
 					// 170 bytes is the ca. overhead of the HTTP/1.1 200 OK
 					Traffic.addTraffic(outpack.length + 40 + 190 + 14 + 170);
-					if (Traffic.trafficScreen.isActive() || ContactList.getVisibleContactListRef().isShown())
+					if (ContactList.getVisibleContactListRef().isShown())
 					{
 						RunnableImpl.updateContactListCaption();
-						Traffic.trafficScreen.update(false);
 					}
 					// #sijapp cond.end#
 					// System.out.println(" ");
@@ -1006,6 +1031,7 @@ public class Icq implements Runnable
 					if (hcm.getResponseCode() != HttpConnection.HTTP_OK) throw new IOException();
 					// Read flap header
 					bReadSumRequest = 0;
+
 					do
 					{
 						bReadSum = 0;
@@ -1035,10 +1061,7 @@ public class Icq implements Runnable
 						// Only process type 5 (flap) packets
 						if (Util.getWord(httpPacket, 2) == 0x0005)
 						{
-							// Each httpPacket has a 12 bytes header and can contain one or more FLAP packetes
-							// Also FLAP packets could be splitted across serveral httpPackets
-							// httpPacket does not have to start with 2a 02. 
-							// FLAP packet can start within httpPacket and end in another
+							// Packet has 12 bytes header and could contain more than one FLAP
 							int contBytes = 12;
 							while (contBytes < httpPacket.length)
 							{
@@ -1124,7 +1147,7 @@ public class Icq implements Runnable
 					// ICQ HTTP data header is counted in bReadSum
 					Traffic.addTraffic(bReadSumRequest + 42 + 185 + 175);
 
-					if (Traffic.trafficScreen.isActive() || ContactList.getVisibleContactListRef().isShown())
+					if ( ContactList.getVisibleContactListRef().isShown())
 					{
 						RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);
@@ -1307,7 +1330,6 @@ public class Icq implements Runnable
                     if (Traffic.trafficScreen.isActive() || ContactList.getVisibleContactListRef().isShown())
                     {
                     	RunnableImpl.updateContactListCaption();
-						Traffic.trafficScreen.update(false);
                     }
                     // #sijapp cond.end#
                 } catch (IOException e)
@@ -1413,7 +1435,7 @@ public class Icq implements Runnable
                     // #sijapp cond.if modules_TRAFFIC is "true" #
                     Traffic.addTraffic(bReadSum + 57);
                     // 46 is the overhead for each packet (6 byte flap header)
-                    if (Traffic.trafficScreen.isActive() || ContactList.getVisibleContactListRef().isShown())
+                    if (ContactList.getVisibleContactListRef().isShown())
                     {
                     	RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);
@@ -2331,7 +2353,7 @@ public class Icq implements Runnable
 
                     // 51 is the overhead for each packet
                     Traffic.addTraffic(outpack.length + 51);
-                    if (Traffic.trafficScreen.isActive() || ContactList.getVisibleContactListRef().isShown())
+                    if (ContactList.getVisibleContactListRef().isShown())
                     {
                     	RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);
@@ -2427,7 +2449,7 @@ public class Icq implements Runnable
                     Traffic.addTraffic(bReadSum + 53);
 
                     // 42 is the overhead for each packet (2 byte packet length)
-                    if (Traffic.trafficScreen.isActive() || ContactList.getVisibleContactListRef().isShown())
+                    if (ContactList.getVisibleContactListRef().isShown())
                     {
                     	RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);

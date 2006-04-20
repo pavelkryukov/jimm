@@ -49,6 +49,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_SHOW_USER_INFO      = 6;
 	final static public int TYPE_UPDATE_CL_CAPTION   = 7;
 	final static public int TYPE_ADDCONTACT          = 8;
+	final static public int TYPE_USER_IS_TYPING		 = 9;
 	
 	RunnableImpl(int type, Object[] data)
 	{
@@ -67,6 +68,9 @@ public class RunnableImpl implements Runnable
 	{
 		switch (type)
 		{
+		case TYPE_USER_IS_TYPING:
+			ContactList.BeginTyping((String)data[0], getBoolean(data,1));
+			break;
 		case TYPE_ADD_MSG:
 			ContactList.addMessage((Message)data[0]);
 			break;
@@ -182,6 +186,14 @@ public class RunnableImpl implements Runnable
 		setInt(arguments, 10, idle        );  
 		
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
+	}
+	
+	static public void BeginTyping(String uin, boolean type)
+	{
+		Object[] args = new Object[2];
+		args[0] = uin;
+		setBoolean(args,1,type);
+		callSerially(TYPE_USER_IS_TYPING, args);
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
