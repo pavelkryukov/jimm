@@ -255,6 +255,7 @@
   "title"                       "Название"
   "total_mem"                   "Всего памяти"
   "traffic_lng"                 "Трафик"
+  "typing_notify"				"Оповещение о наборе"
   "uin"                         "UIN"
   "use_history"                 "Хранить историю"
   "use_smiles"                  "Смайлики"

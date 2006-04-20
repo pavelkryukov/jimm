@@ -258,6 +258,7 @@
   "title"                       "Title"
   "total_mem"                   "Total memory"
   "traffic_lng"                 "Traffic"
+  "typing_notify"				"Typing notify"
   "uin"                         "UIN"
   "use_history"                 "Store history"
   "use_smiles"                  "Show emotions"

@@ -347,7 +347,7 @@ public class Traffic
 			this.okCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
 			// #sijapp cond.else #
 			this.resetCommand = new Command(ResourceBundle.getString("reset"), Command.SCREEN, 2);
-			this.okCommand = new Command(ResourceBundle.getString("ok"), Command.SCREEN, 1);
+			this.okCommand = new Command(ResourceBundle.getString("ok"), Command.BACK, 1);
 			// #sijapp cond.end #
 
 			// Initialize traffic screen
@@ -355,10 +355,11 @@ public class Traffic
 			this.trafficTextList.setCursorMode(TextList.SEL_NONE);
 
 			// Set colors
-			this.trafficTextList.setColors(Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Options.getSchemeColor(Options.CLRSCHHEME_CAP), Options.getSchemeColor(Options.CLRSCHHEME_BACK), Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Options
-					.getSchemeColor(Options.CLRSCHHEME_TEXT));
+			JimmUI.setColorScheme(trafficTextList);
+			//this.trafficTextList.setColors(Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Options.getSchemeColor(Options.CLRSCHHEME_CAP), Options.getSchemeColor(Options.CLRSCHHEME_BACK), Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Options
+			//		.getSchemeColor(Options.CLRSCHHEME_TEXT));
 
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			trafficTextList.setFontSize(Font.SIZE_MEDIUM);
 			//#sijapp cond.else#
 			trafficTextList.setFontSize(Font.SIZE_SMALL);
@@ -367,7 +368,6 @@ public class Traffic
 			this.trafficTextList.addCommand(this.resetCommand);
 			this.trafficTextList.addCommand(this.okCommand);
 			this.trafficTextList.setCommandListener(this);
-
 		}
 
 		// Activate traffic form
@@ -387,16 +387,17 @@ public class Traffic
 		{
 			if (((Traffic.getSessionTraffic() - compareTraffic) >= updateThreshold)|| doIt)
 			{
+				int color = trafficTextList.getTextColor(); 
 				this.trafficTextList.clear();
-				this.trafficTextList.addBigText(ResourceBundle.getString("session")+":\n", 0x006fb1, Font.STYLE_BOLD, -1)
-					.addBigText(Traffic.getTrafficString(SESSION + BYTES)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
-					.addBigText(Traffic.getTrafficString(SESSION + KB)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
-					.addBigText(Traffic.getTrafficString(SESSION + COST)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
-					.addBigText(ResourceBundle.getString("since")+" ", 0x006fb1, Font.STYLE_BOLD, -1)
-					.addBigText(Traffic.getTrafficString(Traffic.SAVED_SINCE)+"\n", 0x006fb1, Font.STYLE_BOLD, -1)
-					.addBigText(Traffic.getTrafficString(OVERALL + BYTES)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
-					.addBigText(Traffic.getTrafficString(OVERALL + KB)+"\n", 0x000000, Font.STYLE_PLAIN, -1)
-					.addBigText(Traffic.getTrafficString(OVERALL + COST)+"\n", 0x000000, Font.STYLE_PLAIN, -1);
+				this.trafficTextList.addBigText(ResourceBundle.getString("session")+":\n", color, Font.STYLE_BOLD, -1)
+					.addBigText(Traffic.getTrafficString(SESSION + BYTES)+"\n", color, Font.STYLE_PLAIN, -1)
+					.addBigText(Traffic.getTrafficString(SESSION + KB)+"\n", color, Font.STYLE_PLAIN, -1)
+					.addBigText(Traffic.getTrafficString(SESSION + COST)+"\n", color, Font.STYLE_PLAIN, -1)
+					.addBigText(ResourceBundle.getString("since")+" ", color, Font.STYLE_BOLD, -1)
+					.addBigText(Traffic.getTrafficString(Traffic.SAVED_SINCE)+"\n", color, Font.STYLE_BOLD, -1)
+					.addBigText(Traffic.getTrafficString(OVERALL + BYTES)+"\n", color, Font.STYLE_PLAIN, -1)
+					.addBigText(Traffic.getTrafficString(OVERALL + KB)+"\n", color, Font.STYLE_PLAIN, -1)
+					.addBigText(Traffic.getTrafficString(OVERALL + COST)+"\n", color, Font.STYLE_PLAIN, -1);
 				compareTraffic = (byte) Traffic.getSessionTraffic();
 				this.trafficTextList.repaint();
 			}

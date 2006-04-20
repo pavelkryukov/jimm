@@ -389,6 +389,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		int tempIndex = -1;
 		
+		if (typing) return 12;
 		if (isMessageAvailable(MESSAGE_PLAIN)) tempIndex = 8;
 		else if (isMessageAvailable(MESSAGE_URL)) tempIndex = 9;
 		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
@@ -528,6 +529,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		writeMessage(null);
 	} 
 
+	private boolean typing = false; 
+	public void BeginTyping(boolean type)
+	{
+		typing = type;
+		setStatusImage();
+	}
 	/** ************************************************************************* */
 	/** ************************************************************************* */
 	/** ************************************************************************* */
@@ -592,6 +599,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		messageTextbox.setCommandListener(this);
 		Jimm.display.setCurrent(messageTextbox);
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+			if ( (Options.getBoolean(Options.OPTION_NOTIFY))&&((caps&Util.CAPF_TYPING)!=0) )
+				try
+				{
+				Jimm.jimm.getIcqRef().BeginTyping(getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
+				}
+				catch (JimmException e){}
 	}
 
 	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
@@ -600,7 +613,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Command listener
 	public void commandAction(Command c, Displayable d)
 	{
-
+		if ( ((c == textboxCancelCommand)||(c == textboxOkCommand)||(c ==textboxSendCommand)) && (Options.getBoolean(Options.OPTION_NOTIFY))&&((caps&Util.CAPF_TYPING)!=0))
+		try
+		{
+			Jimm.jimm.getIcqRef().BeginTyping(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),false);
+		}
+		catch (JimmException e){}
 		// #sijapp cond.if target is "MOTOROLA"#
 		//Constantly turn on backlight
 		LightControl.flash(true);
@@ -1505,8 +1523,13 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     	{
     		Displayable disp = chat.getDisplayable();
     		if (disp instanceof VirtualList)
+    		{
+    			if (typing) 
+    				((VirtualList)disp).setCapImage(ContactList.smallIcons.elementAt(8));
+    			else
     			((VirtualList)disp).setCapImage(ContactList.smallIcons.elementAt(JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS))));
     	}
+		}	 
 	}
 	
 	//	 Timer task for flashing form caption

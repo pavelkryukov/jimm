@@ -65,6 +65,22 @@ public class ActionListener
         {
             SnacPacket snacPacket = (SnacPacket) packet;
 
+	    // Typing notify
+	    	if ((snacPacket.getFamily() == 0x0004) && (snacPacket.getCommand() == 0x0014) && Options.getBoolean(Options.OPTION_NOTIFY))
+	    	{
+			    byte[] p = snacPacket.getData();
+			    int uin_len = Util.getByte(p, 10);
+			    String uin = Util.byteArrayToString(p,11,uin_len);
+			    int flag = Util.getWord(p, 11+uin_len);
+			    System.out.println("Typing notify: "+flag);
+			    if ( flag == 0x0002)
+			    	//Begin typing
+				    RunnableImpl.BeginTyping(uin,true);
+			    else
+			    	//End typing
+			    	RunnableImpl.BeginTyping(uin,false);
+			}
+	
             // Watch out for SRV_USERONLINE packets
             if ((snacPacket.getFamily() == SnacPacket.SRV_USERONLINE_FAMILY)
                     && (snacPacket.getCommand() == SnacPacket.SRV_USERONLINE_COMMAND))

@@ -316,6 +316,11 @@ public class Util
 		switch(1)
 		{
 		default:
+			if ( (caps&CAPF_JIMM) !=0)
+			{
+				client = CLI_JIMM;
+				break;
+			}
 			if ( (caps&CAPF_QIP) !=0)
 			{
 				client = CLI_QIP;

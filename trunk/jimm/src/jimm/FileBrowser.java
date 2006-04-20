@@ -11,6 +11,8 @@ import com.siemens.mp.io.file.FileSystemRegistry;
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.Displayable;
+
 import jimm.util.ResourceBundle;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -334,11 +336,11 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		tree = new VirtualTree(null, false);
 		tree.setVTCommands(this);
 		tree.setVLCommands(this);
-		tree.setFullScreenMode(false);
 		tree.setImageList(imageList);
-		tree
-				.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT : VirtualList.MEDIUM_FONT);
+		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT : VirtualList.MEDIUM_FONT);
 		tree.setStepSize(-tree.getFontHeight() / 2);
+		tree.setCapImage(imageList.elementAt(0));
+		JimmUI.setColorScheme(tree);
 		tree.setShowButtons(false);
 		tree.addCommand(backCommand);
 		tree.setCommandListener(this);
@@ -425,9 +427,10 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 			{
 				JimmException.handleException(e);
 			}
-			if (needToSelectDirectory & !openCommandSelected
-					& (items.length <= 1)) listener.onDirectorySelect(currDir);
-			else rebuildTree();
+//			if (needToSelectDirectory & !openCommandSelected
+//					& (items.length <= 1)) listener.onDirectorySelect(currDir);
+//			else 
+			    rebuildTree();
 			openCommandSelected = false;
 		}
 		else
@@ -444,14 +447,13 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		{
 			int d = currDir.lastIndexOf('/', currDir.length() - 2);
 			tree.addCommand(openCommand);
-			tree
-					.setTitle((d != -1) ? currDir.substring(0, d + 1) : ROOT_DIRECTORY);
+			tree.setCaption((d != -1) ? currDir.substring(0, d + 1) : ROOT_DIRECTORY);
 		}
 		else if (name.endsWith("/") & currDir.equals(ROOT_DIRECTORY))
 		{
 			try
 			{
-				tree.setTitle(ResourceBundle.getString("total_mem") + ": "
+				tree.setCaption(ResourceBundle.getString("total_mem") + ": "
 						+ (FileSystem.totalSize(name) >> 10)
 						+ ResourceBundle.getString("kb"));
 			}
@@ -467,7 +469,7 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		{
 			if (needToSelectDirectory) tree.addCommand(selectCommand);
 			tree.addCommand(openCommand);
-			tree.setTitle(currDir + name);
+			tree.setCaption(currDir + name);
 		}
 		else
 		{
@@ -485,12 +487,10 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 						.toUpperCase()).append(", ");
 				str_buf = str_buf.append(file_size).append(ResourceBundle
 						.getString("kb"));
-				tree.setTitle(str_buf.toString());
+				tree.setCaption(str_buf.toString());
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
-				tree.setTitle("???");
 			}
 		}
 	}
@@ -506,7 +506,7 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		String file = (String) src.getData();
 		dst.text = file;
 		dst.imageIndex = file.endsWith("/") ? 0 : 1;
-		dst.color = 0x000000;
+		dst.color = 0xFFFFFF;
 		dst.fontStyle = javax.microedition.lcdui.Font.STYLE_PLAIN;
 	}
 
@@ -528,13 +528,13 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		Jimm.display.setCurrent(tree);
 	}
 
-	public void commandAction(Command c, javax.microedition.lcdui.Displayable d)
+	public void commandAction(Command c, Displayable d)
 	{
 		if (d == tree)
 		{
 			if (c == openCommand)
 			{
-				openCommandSelected = true & needToSelectDirectory;
+				openCommandSelected = needToSelectDirectory;
 				VTnodeClicked(tree.getCurrentItem());
 			}
 			else if (c == selectCommand)
