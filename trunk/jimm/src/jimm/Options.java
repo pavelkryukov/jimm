@@ -604,9 +604,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 	// Options form
 	private Form optionsForm;
 	
-	// Time zone list
-	private List lstTimeZone;
-
     // Static constants for menu actios
     private static final int OPTIONS_ACCOUNT    = 0;
     private static final int OPTIONS_NETWORK    = 1;
@@ -614,7 +611,7 @@ class OptionsForm implements CommandListener, ItemStateListener
     private static final int OPTIONS_PROXY      = 2;
     // #sijapp cond.end#
     private static final int OPTIONS_INTERFACE  = 3;
-	private static final int OPTIONS_HOTKEYS  = 4;
+	private static final int OPTIONS_HOTKEYS  	= 4;
     private static final int OPTIONS_SIGNALING  = 5;
     // #sijapp cond.if modules_TRAFFIC is "true"#
     private static final int OPTIONS_TRAFFIC    = 6;
@@ -677,6 +674,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 	private TextField srvProxyPassTextField;
 	private TextField connAutoRetryTextField;
 	// #sijapp cond.end#
+	
+	// Time zone gauge
+	private Gauge timeZoneGauge;
+	private StringItem timeStringItem;
 	
 	private List keysMenu;
 	private List actionMenu;
@@ -760,8 +761,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 		optionsForm.addCommand(backCommand);
 		optionsForm.setCommandListener(this);
 		optionsForm.setItemStateListener(this);
-		
-		lstTimeZone = new List(ResourceBundle.getString("time_zone"), List.EXCLUSIVE);
+	
 	}
 
 	
@@ -960,6 +960,17 @@ class OptionsForm implements CommandListener, ItemStateListener
 				}
 			}
 		}
+		if (item == timeZoneGauge)
+		{
+			int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
+			currentHour = currDateTime[Util.TIME_HOUR];
+			int minutes = currDateTime[Util.TIME_MINUTE];
+			int diff = timeZoneGauge.getValue()-currDateTime[Util.TIME_HOUR];
+			if (diff < 0)
+				timeStringItem.setText(timeZoneGauge.getValue()+":"+Util.makeTwo(minutes)+" ("+diff+")");
+			else
+				timeStringItem.setText(timeZoneGauge.getValue()+":"+Util.makeTwo(minutes)+" (+"+diff+")");
+		}
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -1017,28 +1028,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 			}
 			InitHotkeyMenuUI();
 			return;
-		}
-		
-		if (d == lstTimeZone)
-		{
-			if (c == saveCommand)
-			{
-				int diff = lstTimeZone.getSelectedIndex()-currentHour;
-				if (diff > 12) diff -= 24;
-				if (diff < -12)diff += 24;
-				
-				if (diff == 0) diff = Calendar.getInstance().getTimeZone().getRawOffset()/(1000*60*60)-100;
-				
-				System.out.println("diff="+diff);
-			
-				Options.setInt(Options.OPTIONS_TIME_ZONE, diff);
-				Options.safe_save();
-				
-				optionsMenu.addCommand(backCommand);
-				Jimm.display.setCurrent(optionsMenu);
-				return;
-			}
-			
 		}
 		
 		// Look for select command
@@ -1321,17 +1310,18 @@ class OptionsForm implements CommandListener, ItemStateListener
 				case OPTIONS_TIMEZONE:
 				{
 					int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
-					currentHour = currDateTime[Util.TIME_HOUR];
+					currentHour = currDateTime[Util.TIME_HOUR]+Options.getInt(Options.OPTIONS_TIME_ZONE)%24;
 					int minutes = currDateTime[Util.TIME_MINUTE];
-					while (lstTimeZone.size() != 0) lstTimeZone.delete(0);
-					for (int i = 0; i < 24; i++) lstTimeZone.append(i+":"+Util.makeTwo(minutes), null);
-					lstTimeZone.setSelectedIndex(currentHour, true);
-
-					lstTimeZone.addCommand(saveCommand);
-					lstTimeZone.addCommand(backCommand);
-					lstTimeZone.setCommandListener(this);
-					Jimm.display.setCurrent(lstTimeZone);
-					return;
+					timeZoneGauge = new Gauge(ResourceBundle.getString("time_zone"),true,23,currentHour);
+					int diff = currentHour-currDateTime[Util.TIME_HOUR];
+					if (diff < 0)
+						timeStringItem = new StringItem(null,currentHour+":"+Util.makeTwo(minutes)+" ("+diff+")");
+					else
+						timeStringItem = new StringItem(null,currentHour+":"+Util.makeTwo(minutes)+" (+"+diff+")");
+					
+					optionsForm.append(timeZoneGauge);
+					optionsForm.append(timeStringItem);
+					break;
 				}
 			}
 
@@ -1492,6 +1482,19 @@ class OptionsForm implements CommandListener, ItemStateListener
 					break;
 				// #sijapp cond.end#
 					
+				case OPTIONS_TIMEZONE:
+					System.out.println("Save Timezone");
+					int diff = timeZoneGauge.getValue() - currentHour;
+					if (diff > 12) diff -= 24;
+					if (diff < -12) diff += 24;
+
+					if (diff == 0) diff = Calendar.getInstance().getTimeZone().getRawOffset() / (1000 * 60 * 60) - 100;
+
+					System.out.println("diff=" + diff);
+
+					Options.setInt(Options.OPTIONS_TIME_ZONE, diff);
+					break;
+										
 			}
 
 			// Save options
