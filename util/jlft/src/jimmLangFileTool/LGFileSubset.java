@@ -31,10 +31,13 @@ public class LGFileSubset extends Vector
 	private static final long serialVersionUID = 1L;
 	String id;
 	
+	boolean removed;
+	
 	public LGFileSubset(String _id)
 	{
 		super();
 		id = _id;
+		removed = false;
 	}
 	
 	public LGFileSubset()
@@ -67,6 +70,11 @@ public class LGFileSubset extends Vector
 	{
 		return id;
 	}
+	
+	public String toString()
+	{
+		return id;
+	}
 
 	
 	/**
@@ -75,6 +83,24 @@ public class LGFileSubset extends Vector
 	public void setId(String id)
 	{
 		this.id = id;
+	}
+
+	
+	/**
+	 * @return Returns the removed.
+	 */
+	public boolean isRemoved()
+	{
+		return removed;
+	}
+
+	
+	/**
+	 * @param removed The removed to set.
+	 */
+	public void setRemoved(boolean removed)
+	{
+		this.removed = removed;
 	}
 
 }
