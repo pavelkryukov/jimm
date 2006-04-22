@@ -74,6 +74,7 @@ public class GUI extends JFrame implements ActionListener
 	private JLabel yellow = null;
 	private JLabel orange = null;
 	private JLabel red = null;
+	private JButton removeGroup = null;
 	
 	/**
 	 * This is the default constructor
@@ -119,6 +120,7 @@ public class GUI extends JFrame implements ActionListener
 	    int j=0;
 	    int k=0;
 	    int l=0;
+	    int m=0;
 		
 	    // Delete all old stuff
 	    compareTable.removeAll();
@@ -126,21 +128,21 @@ public class GUI extends JFrame implements ActionListener
 	    this.setTableProps();
 	    
 	    // Set base values
-	    for(i=0;i<jlft.getBase().size();i++)
-	    {
-	    	compareTable.setValueAt(((LGFileSubset)jlft.getBase().get(i)).getId(),i+k+l,0);
-	    	for(j=0;j<((LGFileSubset)jlft.getBase().get(i)).size();j++)
-	    	{
-	    		if (((LGString)((LGFileSubset)jlft.getBase().get(i)).get(j)).getTranslated() != LGString.REMOVED)
-	    		{
-	    			compareTable.setValueAt(((LGFileSubset)jlft.getBase().get(i)).get(j),i+k+j+1+l,0);
-		    		compareTable.setValueAt(((LGFileSubset)jlft.getBase().get(i)).get(j),i+k+j+1+l,1);
-	    		}
-	    		else
-	    			l--;
-	    	}
-	    	k+=j;
-	    }
+		for (i = 0; i < jlft.getBase().size(); i++)
+		{
+			compareTable.setValueAt(((LGFileSubset) jlft.getBase().get(i)), i + k + l, 0);
+			for (j = 0; j < ((LGFileSubset) jlft.getBase().get(i)).size(); j++)
+			{
+				if (((LGString) ((LGFileSubset) jlft.getBase().get(i)).get(j)).getTranslated() != LGString.REMOVED)
+				{
+					compareTable.setValueAt(((LGFileSubset) jlft.getBase().get(i)).get(j), i + k + j + 1 + l, 0);
+					compareTable.setValueAt(((LGFileSubset) jlft.getBase().get(i)).get(j), i + k + j + 1 + l, 1);
+				}
+				else
+					l--;
+			}
+			k += j;
+		}
 	    
 	    k =0;
 	    l =0;
@@ -148,19 +150,24 @@ public class GUI extends JFrame implements ActionListener
 	    // Set compare values
 	    for(i=0;i<jlft.getCompare().size();i++)
 	    {
-	    	compareTable.setValueAt(((LGFileSubset)jlft.getCompare().get(i)).getId(),i+k+l,2);
-	    	for(j=0;j<((LGFileSubset)jlft.getCompare().get(i)).size();j++)
-	    	{
-	    		if (((LGString)((LGFileSubset)jlft.getCompare().get(i)).get(j)).getTranslated() != LGString.REMOVED)
-	    		{
-	    			compareTable.setValueAt(((LGFileSubset)jlft.getCompare().get(i)).get(j),i+k+j+1+l,2);
-	    			compareTable.setValueAt(((LGFileSubset)jlft.getCompare().get(i)).get(j),i+k+j+1+l,3);
-	    		}
-	    		else
-	    			l--;
-	    	}
-	    	k+=j;
-	    }
+			if (!((LGFileSubset) jlft.getCompare().get(i)).isRemoved())
+			{
+				compareTable.setValueAt(((LGFileSubset) jlft.getCompare().get(i)), i + k + l + m, 2);
+				for (j = 0; j < ((LGFileSubset) jlft.getCompare().get(i)).size(); j++)
+				{
+					if (((LGString) ((LGFileSubset) jlft.getCompare().get(i)).get(j)).getTranslated() != LGString.REMOVED)
+					{
+						compareTable.setValueAt(((LGFileSubset) jlft.getCompare().get(i)).get(j), i + k + j + 1 + l + m, 2);
+						compareTable.setValueAt(((LGFileSubset) jlft.getCompare().get(i)).get(j), i + k + j + 1 + l + m, 3);
+					}
+					else
+						l--;
+				}
+				k += j;
+			}
+			else
+				m--;
+		}
 	}
 
 	/**
@@ -299,6 +306,7 @@ public class GUI extends JFrame implements ActionListener
 			compareToolBar.add(getOpenCompare());
 			compareToolBar.add(getSaveCompare());
 			compareToolBar.add(getRemove());
+			compareToolBar.add(getRemoveGroup());
 			compareToolBar.add(getAbout());
 			compareToolBar.add(getLegendPanel());
 		}
@@ -316,6 +324,7 @@ public class GUI extends JFrame implements ActionListener
 		{
 			openBase = new JButton();
 			openBase.setText("Open base");
+			openBase.setToolTipText("Open a base langauge file (the left one)");
 			openBase.addActionListener(this);
 		}
 		return openBase;
@@ -332,6 +341,7 @@ public class GUI extends JFrame implements ActionListener
 		{
 			openCompare = new JButton();
 			openCompare.setText("Open compare");
+			openCompare.setToolTipText("Open a compare langauge file (the left one)");
 			openCompare.addActionListener(this);
 		}
 		return openCompare;
@@ -348,6 +358,7 @@ public class GUI extends JFrame implements ActionListener
 		{
 			saveCompare = new JButton();
 			saveCompare.setText("Save compare");
+			saveCompare.setToolTipText("Save the compare file (the right one)");
 			saveCompare.addActionListener(this);
 		}
 		return saveCompare;
@@ -364,6 +375,7 @@ public class GUI extends JFrame implements ActionListener
 		{
 			remove = new JButton();
 			remove.setText("Remove");
+			remove.setToolTipText("Remove the currently selected langauge String");
 			remove.addActionListener(this);
 		}
 		return remove;
@@ -380,6 +392,7 @@ public class GUI extends JFrame implements ActionListener
 		{
 			about = new JButton();
 			about.setText("About");
+			about.setToolTipText("Display info about this application");
 			about.addActionListener(this);
 		}
 		return about;
@@ -448,16 +461,37 @@ public class GUI extends JFrame implements ActionListener
 		if (act.getSource() == this.remove) if ((compareTable.getSelectedColumn() == -1) || (compareTable.getSelectedRow() == -1))
 			JOptionPane.showMessageDialog(this, "You have to select an item first", "Select first", JOptionPane.ERROR_MESSAGE);
 		else
-			if ((((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).isTranslated() != LGString.NOT_IN_BASE_FILE))
-				JOptionPane.showMessageDialog(this, "You can only delete items which are not in the base file(red).", "Cannot delete item", JOptionPane.ERROR_MESSAGE);
-			else
+			if (((compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn()) instanceof LGString)))
 			{
-				answer = JOptionPane.showConfirmDialog(this, "Delete \"" + ((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).getKey() + "\"?", "Delete?", JOptionPane.YES_NO_OPTION);
+				if ((((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).isTranslated() != LGString.NOT_IN_BASE_FILE))
+					JOptionPane.showMessageDialog(this, "You can only delete items which are not in the base file(red).", "Cannot delete item", JOptionPane.ERROR_MESSAGE);
+				else
+				{
+					answer = JOptionPane.showConfirmDialog(this, "Delete \"" + ((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).getKey() + "\"?", "Delete?", JOptionPane.YES_NO_OPTION);
+					switch (answer)
+					{
+					case JOptionPane.YES_OPTION:
+						System.out.println("YES");
+						((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).setTranslated(LGString.REMOVED);
+						fillInValues();
+						break;
+					default: // do nothing
+					}
+				}
+			}
+		
+		if (act.getSource() == this.removeGroup) if (compareTable.getSelectedColumn() > 1) if ((compareTable.getSelectedColumn() == -1) || (compareTable.getSelectedRow() == -1))
+			JOptionPane.showMessageDialog(this, "You have to select a group item first", "Select first", JOptionPane.ERROR_MESSAGE);
+		else
+			if ((compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn()) instanceof LGFileSubset))
+			{
+				answer = JOptionPane.showConfirmDialog(this, "Delete \"" + ((LGFileSubset) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).getId() + "\"?", "Delete?", JOptionPane.YES_NO_OPTION);
 				switch (answer)
 				{
 				case JOptionPane.YES_OPTION:
 					System.out.println("YES");
-					((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).setTranslated(LGString.REMOVED);
+					System.out.println("Delete it");					
+					((LGFileSubset) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).setRemoved(true);
 					fillInValues();
 					break;
 				default: // do nothing
@@ -665,6 +699,23 @@ public class GUI extends JFrame implements ActionListener
 			red.setBackground(java.awt.Color.red);
 		}
 		return red;
+	}
+
+	/**
+	 * This method initializes removeGroup	
+	 * 	
+	 * @return javax.swing.JButton	
+	 */
+	private JButton getRemoveGroup()
+	{
+		if (removeGroup == null)
+		{
+			removeGroup = new JButton();
+			removeGroup.setText("Remove group");
+			removeGroup.setToolTipText("Remove a whole group of Strings at once");
+			removeGroup.addActionListener(this);
+		}
+		return removeGroup;
 	}
 
 }

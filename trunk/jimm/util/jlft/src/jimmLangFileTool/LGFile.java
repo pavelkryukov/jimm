@@ -122,57 +122,59 @@ public class LGFile extends Vector
 		for (int i = 0; i < this.size(); i++)
 		{
 			subset = (LGFileSubset) this.get(i);
-			if (subset.getId().startsWith("TAR_") && !subset.getId().endsWith("_ELSE"))
+			if (!subset.isRemoved())
 			{
-				file.write("// " + subset.getId().substring(4, subset.getId().length()) + " target special strings\n");
-				file.write("//#sijapp cond.if target is \"" + subset.getId().substring(4, subset.getId().length()) + "\"#\n");
-				try
+				if (subset.getId().startsWith("TAR_") && !subset.getId().endsWith("_ELSE"))
 				{
-					if (((LGFileSubset) this.get(i + 1)).getId().endsWith("_ELSE"))
-						print_end = false;
-					else
+					file.write("// " + subset.getId().substring(4, subset.getId().length()) + " target special strings\n");
+					file.write("//#sijapp cond.if target is \"" + subset.getId().substring(4, subset.getId().length()) + "\"#\n");
+					try
+					{
+						if (((LGFileSubset) this.get(i + 1)).getId().endsWith("_ELSE"))
+							print_end = false;
+						else
+							print_end = true;
+					} catch (Exception e)
+					{
 						print_end = true;
-				} catch (Exception e)
-				{
-					print_end = true;
-				}
-			}
-			else
-				if (subset.getId().startsWith("MOD_") && !subset.getId().endsWith("_ELSE"))
-				{
-					file.write("// " + subset.getId().substring(4, subset.getId().length()) + " module strings\n");
-					file.write("//#sijapp cond.if modules_" + subset.getId().substring(4, subset.getId().length()) + " is \"true\" #\n");
-					print_end = true;
+					}
 				}
 				else
-					if (subset.getId().endsWith("_ELSE"))
+					if (subset.getId().startsWith("MOD_") && !subset.getId().endsWith("_ELSE"))
 					{
-						file.write("//#sijapp cond.else#\n");
+						file.write("// " + subset.getId().substring(4, subset.getId().length()) + " module strings\n");
+						file.write("//#sijapp cond.if modules_" + subset.getId().substring(4, subset.getId().length()) + " is \"true\" #\n");
 						print_end = true;
 					}
 					else
-						file.write("// General strings\n");
-			for (int j = 0; j < subset.size(); j++)
-			{
-				lgs = (LGString) subset.get(j);
-				if (lgs.getTranslated() != LGString.REMOVED && lgs.getTranslated() != LGString.NOT_TRANSLATED)
+						if (subset.getId().endsWith("_ELSE"))
+						{
+							file.write("//#sijapp cond.else#\n");
+							print_end = true;
+						}
+						else
+							file.write("// General strings\n");
+				for (int j = 0; j < subset.size(); j++)
 				{
-					if (lgs.getKey().startsWith("error_"))
+					lgs = (LGString) subset.get(j);
+					if (lgs.getTranslated() != LGString.REMOVED && lgs.getTranslated() != LGString.NOT_TRANSLATED)
 					{
-						if (lgs.getKey().endsWith("0")) file.write("\n // " + error[Integer.parseInt(lgs.getKey().substring(6, 8)) - 10] + "\n");
+						if (lgs.getKey().startsWith("error_"))
+						{
+							if (lgs.getKey().endsWith("0")) file.write("\n // " + error[Integer.parseInt(lgs.getKey().substring(6, 8)) - 10] + "\n");
+						}
+						file.write("\"" + lgs.getKey() + "\"\t");
+						for (int k = lgs.getKey().length(); k < 22; k += 4)
+							file.write("\t");
+						file.write("\"" + lgs.getValue() + "\"\n");
 					}
-					file.write("\"" + lgs.getKey() + "\"\t");
-					for (int k = lgs.getKey().length(); k < 22; k += 4)
-						file.write("\t");
-					file.write("\"" + lgs.getValue() + "\"\n");
+				}
+				if (print_end)
+				{
+					print_end = false;
+					file.write("//#sijapp cond.end#\n\n");
 				}
 			}
-			if (print_end)
-			{
-				print_end = false;
-				file.write("//#sijapp cond.end#\n\n");
-			}
-
 		}
 		file.close();
 	}
