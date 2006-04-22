@@ -1,34 +1,13 @@
   // Labels
-  // MOTOROLA formatted buttons
-  //#sijapp cond.if target is "MOTOROLA"#
-  "backlight_timeout"           "Backlight timeout (sec)"
-  "backlight_manual"            "Manual backlight (* key)"
-  "exit_button"                 "Exit"
-  "menu_button"                 "Menu"
-  // #sijapp cond.end#
-  "reply"                       "Reply"
-  "close"                       "Close"
-  "select"                      "Select"
-  "reset"                       "Reset"
-  "cancel"                      "Cancel"
-  "back"                        "Back"
-  "save"                        "Save"
-  "ok"                          "OK"
-  "open"                        "Open"
-  
-  "search_user"                 "Search for User"
-  "send"                        "Send"
-  "next"                        "Next"
 
-//Days of the week
-	"monday"					"Monday"
-	"tuesday"					"Tuesday"
-	"wednesday"					"Wednesday"
-	"thursday"					"Thursday"
-	"friday"					"Friday"
-	"saturday"					"Saturday"
-	"sunday"					"Sunday"		
-//End
+  //Days of the week
+  "monday"						"Monday"
+  "tuesday"						"Tuesday"
+  "wednesday"					"Wednesday"
+  "thursday"					"Thursday"
+  "friday"						"Friday"
+  "saturday"					"Saturday"
+  "sunday"						"Sunday"		
 
   "point"                       ","
   "about"                       "About"
@@ -46,10 +25,12 @@
   "attention"                   "Attention!"
   "auth"                        "Auth"
   "auto_connect"                "Auto connect on startup"
+  "back"                        "Back"  
   "beep"                        "Beep"
   "birth_day"                   "Birthday"
   "black_on_white"              "Black on white"
   "byte"                        "Byte"
+  "cancel"                      "Cancel"  
   "cell_phone"                  "Cell Tel." // ???
   "chat"                        "Chat"
   "chat_small_font"             "Small font"
@@ -57,6 +38,7 @@
   "cl_chat"                     "Classical mode"
   "clear"                       "Clear"
   "cli_none"                    "Not detected"
+  "close"                       "Close"  
   "color_scheme"                "Color scheme"
   "conn_type"                   "Connection type"
   "conn_prop"					"Connection properties"
@@ -172,6 +154,7 @@
   "misc"                        "Misc"
   "name"                        "Name"
   "new_template"                "New template"
+  "next"                        "Next"  
   "nick"                        "Nick"
   "no"                          "No"
   "not"                         "not"
@@ -182,10 +165,12 @@
   "notes"                       "Notes"
   "notice"                      "Notice"
   "nr"                          "Nr"
+  "ok"                          "OK"  
   "once_a_session"              "Once a session"
   "onl_notification"            "Notice for upcoming contact"
   "onl_sound_file_name"         "Online Sound File"
   "only_online"                 "Show only online contacts"
+  "open"                        "Open"  
   "options_lng"                 "Options"
   "options_account"             "Account"
   "options_cost"                "Cost"
@@ -212,13 +197,18 @@
   "remove_group"                "Remove group"
   "remove_user"                 "Remove user"
   "rename"                      "Rename"
+  "reply"                       "Reply"  
   "requauth"                    "Request auth"
   "reqstatmsg"                  "Request status message"
   "requ"                        "Required"
   "requno"                      "Not req"
   "res"                         "Resolution"
+  "reset"                       "Reset"  
   "results"                     "Results"
+  "save"                        "Save"  
   "search_user"                 "Search for User"
+  "select"                      "Select"
+  "send"                        "Send"  
   "send_img"                    "Send image"
   "send_message"                "New Message"
   "server"                      "Login server"
@@ -278,6 +268,14 @@
   "work_info"                   "Work"
   "yes"                         "Yes"
   "youwereadded"                "You were added by UIN: "
+
+  // MOTOROLA strings
+  //#sijapp cond.if target is "MOTOROLA"#
+  "backlight_timeout"           "Backlight timeout (sec)"
+  "backlight_manual"            "Manual backlight (* key)"
+  "exit_button"                 "Exit"
+  "menu_button"                 "Menu"
+  // #sijapp cond.end#
 
   //#sijapp cond.if modules_PROXY is "true" #
   "proxy"                       "Proxy"
