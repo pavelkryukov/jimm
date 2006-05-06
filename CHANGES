@@ -258,7 +258,7 @@ VERSION 0.5.0
   * NEW FEATURE: Connection via HTTP possilble
   * NEW FEATURE: Jimm can show contact client info. 
                  Also Jimm is specified as JIMM client for other ones.
-  * NEW FEATURE: Classic chat (text at top and edit area at bottom). For siemens2 build only
+  * NEW FEATURE: Classic chat (text at top and edit area at bottom). For SIEMENS2 build only
   * NEW FEATURE: Safe login (MD5 login). Strongly recommended if socks-proxy is used.
   * NEW FEATURE: Support for several accounts (max. 3 accounts are allowed)
   * NEW FEATURE: Jimm can open URLs from messages in phone browser
@@ -278,15 +278,15 @@ VERSION 0.5.0
     requesting user info
   * Deleted ability to send URL message as it is possible to send URLs as text
     messages
-  * Added possibility to save stored history to file (at siemens only)
+  * Added possibility to save stored history to file (on SIEMENS only)
   * Rewrote Connection handler to be more modular and better readable
   * Now Jimm works with touchscreen (only for MIDP2 build)
   * New language system is done. Language strings are stored in *.lng files now
-  * Now chat are filled with 5 last messages from history when opened (optional)
+  * Now chat is filled with five last messages from history when opened (optional)
   * Text from user info can be copied
   * Removed creeping line as there were too much bugs on some mobile phones
-  * Menu "Minimize" is shown only at sony-ericsson phones
-  * Options are now compartible between versions
+  * Menu "Minimize" is shown only on sony-ericsson phones
+  * Options are now compartible between Jimm versions (will be imported from 0.2.0 on)
   * Pressing red button on Nokia phones will now end Jimm in a cleaner way
   * Internal data handling for ContactItems rewritten (should consume less heap)
   * Login time, online time and idle time can be seen on Information page
@@ -299,4 +299,6 @@ VERSION 0.5.0
   * New Option "Time" to setup time zone
   * Traffic Screen is now also using TextList for displaying information
   * Traffic now counts additional GPRS headers to be hopefully more accurate
+  * Configurable "User-Agent:" header for HTTP-Connection to make Jimm work with 
+    services which require special "User-Agent" when using HTTP.
   * New util JLFT - "Jimm Lang File Tool" for easy comparing and changing Jimm .lang files

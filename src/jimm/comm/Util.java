@@ -1485,8 +1485,6 @@ public class Util
 	final public static int TIME_MON    = 4;
 	final public static int TIME_YEAR   = 5;
 	
-	final private static int TIME_ARRAY_LEN = 6;
-	
 	final private static byte[] dayCounts = 
 	{
 		31,28,31,30,31,30,31,31,30,31,30,31
@@ -1523,8 +1521,8 @@ public class Util
 		
 		if (gmt)
 		{
-			int timeZone = Options.getInt(Options.OPTIONS_TIME_ZONE); 
-			if (timeZone < -50) result -=(timeZone+100)*(60*60);
+			int diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET); 
+			result += (diff*60*60);
 		}
 		
 		return result;
@@ -1625,9 +1623,8 @@ public class Util
 	
 	public static long correctDateForTimerZone(long date)
 	{
-		int timeZone = Options.getInt(Options.OPTIONS_TIME_ZONE);
-		if (timeZone < -50) timeZone += 100;
-		return date+(timeZone*60L*60L);
+		int diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET);
+		return date+(diff*60L*60L);
 	}
 	
 	public static String longitudeToString(long seconds)

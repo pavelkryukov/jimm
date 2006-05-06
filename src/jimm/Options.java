@@ -92,6 +92,7 @@ public class Options
     // #sijapp cond.if target isnot  "MOTOROLA"#
 	public static final int OPTION_SHADOW_CON          = 139;   /* boolean */
     // #sijapp cond.end#
+	public static final int OPTION_HTTP_USER_AGENT     =  17;   /* String  */
 	public static final int OPTION_UI_LANGUAGE         =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE        = 129;   /* boolean */
 	public static final int OPTION_CL_SORT_BY          =  65;   /* int     */
@@ -105,7 +106,7 @@ public class Options
 	public static final int OPTION_ONLINE_NOTIF_VOL    =  69;   /* int     */
 	public static final int OPTION_VIBRATOR            =  75;   /* integer */
 	public static final int OPTION_TYPING_MODE		   =  88;
-	public static final int OPTION_TYPING_FILE		   =  16;
+	public static final int OPTION_TYPING_FILE		   =  16;   /* Striong */
 	public static final int OPTION_TYPING_VOL		   =  89;
     // #sijapp cond.end #	
 	public static final int OPTION_CP1251_HACK         = 133;   /* boolean */
@@ -139,7 +140,7 @@ public class Options
 	public static final int OPTION_PRX_PASS            =  12;   /* String  */
 	// #sijapp cond.end#
 	
-	public static final int OPTIONS_TIME_ZONE          =  87;   /* int     */
+	public static final int OPTIONS_HOUR_OFFSET        =  87;   /* int     */
 	
 	public static final int OPTION_FULL_SCREEN         = 145;   /* boolean */
 	
@@ -241,6 +242,7 @@ public class Options
         // #sijapp cond.end#
 		setBoolean(Options.OPTION_MD5_LOGIN,          false);
 		setBoolean(Options.OPTION_AUTO_CONNECT,       false);
+		setString (Options.OPTION_HTTP_USER_AGENT,    "unknown");
 		setString (Options.OPTION_UI_LANGUAGE,        ResourceBundle.langAvailable[0]);
 		setBoolean(Options.OPTION_DISPLAY_DATE,       false);
 		setInt    (Options.OPTION_CL_SORT_BY,         0);
@@ -329,8 +331,8 @@ public class Options
 		
 		setBoolean(Options.OPTION_FULL_SCREEN,        false);
 		
-		setInt    (Options.OPTIONS_TIME_ZONE,         0);
-		setBoolean(Options.OPTION_NOTIFY, 			true);
+		setInt    (Options.OPTIONS_HOUR_OFFSET,       0);
+		setBoolean(Options.OPTION_NOTIFY, 		      true);
 	}
 
 	// Load option values from record store
@@ -627,6 +629,7 @@ class OptionsForm implements CommandListener, ItemStateListener
     private TextField[] passwordTextField;
     private TextField srvHostTextField;
     private TextField srvPortTextField;
+    private TextField httpUserAgendTextField;
     private ChoiceGroup keepConnAliveChoiceGroup;
     private TextField connAliveIntervTextField;
     private ChoiceGroup connPropChoiceGroup;
@@ -965,11 +968,11 @@ class OptionsForm implements CommandListener, ItemStateListener
 			int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
 			currentHour = currDateTime[Util.TIME_HOUR];
 			int minutes = currDateTime[Util.TIME_MINUTE];
-			int diff = timeZoneGauge.getValue()-currDateTime[Util.TIME_HOUR];
+			int diff = timeZoneGauge.getValue()-12;
 			if (diff < 0)
-				timeStringItem.setText(timeZoneGauge.getValue()+":"+Util.makeTwo(minutes)+" ("+diff+")");
+				timeStringItem.setText(currentHour+diff+":"+Util.makeTwo(minutes)+" ("+diff+")");
 			else
-				timeStringItem.setText(timeZoneGauge.getValue()+":"+Util.makeTwo(minutes)+" (+"+diff+")");
+				timeStringItem.setText(currentHour+diff+":"+Util.makeTwo(minutes)+" (+"+diff+")");
 		}
 	}
 	
@@ -1090,7 +1093,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
 	                autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
 	                autoConnectChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_AUTO_CONNECT));
-					
+					httpUserAgendTextField = new TextField(ResourceBundle.getString("http_user_agent"), Options.getString(Options.OPTION_HTTP_USER_AGENT), 256, TextField.ANY);
 					optionsForm.append(srvHostTextField);
 					optionsForm.append(srvPortTextField);
 					optionsForm.append(connTypeChoiceGroup);
@@ -1098,6 +1101,7 @@ class OptionsForm implements CommandListener, ItemStateListener
                     optionsForm.append(connAliveIntervTextField);
 					optionsForm.append(autoConnectChoiceGroup);
 					optionsForm.append(connPropChoiceGroup);
+					optionsForm.append(httpUserAgendTextField);
 					break;
                 // #sijapp cond.if modules_PROXY is "true"#
                 case OPTIONS_PROXY:
@@ -1310,14 +1314,13 @@ class OptionsForm implements CommandListener, ItemStateListener
 				case OPTIONS_TIMEZONE:
 				{
 					int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
-					currentHour = currDateTime[Util.TIME_HOUR]+Options.getInt(Options.OPTIONS_TIME_ZONE)%24;
+					currentHour = currDateTime[Util.TIME_HOUR];
 					int minutes = currDateTime[Util.TIME_MINUTE];
-					timeZoneGauge = new Gauge(ResourceBundle.getString("time_zone"),true,23,currentHour);
-					int diff = currentHour-currDateTime[Util.TIME_HOUR];
-					if (diff < 0)
-						timeStringItem = new StringItem(null,currentHour+":"+Util.makeTwo(minutes)+" ("+diff+")");
+					timeZoneGauge = new Gauge(ResourceBundle.getString("time_zone"),true,23,Options.getInt(Options.OPTIONS_HOUR_OFFSET)+12);
+					if (Options.getInt(Options.OPTIONS_HOUR_OFFSET) < 0)
+						timeStringItem = new StringItem(null,(currentHour+Options.getInt(Options.OPTIONS_HOUR_OFFSET))+":"+Util.makeTwo(minutes)+" ("+Options.getInt(Options.OPTIONS_HOUR_OFFSET)+")");
 					else
-						timeStringItem = new StringItem(null,currentHour+":"+Util.makeTwo(minutes)+" (+"+diff+")");
+						timeStringItem = new StringItem(null,(currentHour+Options.getInt(Options.OPTIONS_HOUR_OFFSET))+":"+Util.makeTwo(minutes)+" (+"+Options.getInt(Options.OPTIONS_HOUR_OFFSET)+")");
 					
 					optionsForm.append(timeZoneGauge);
 					optionsForm.append(timeStringItem);
@@ -1380,6 +1383,7 @@ class OptionsForm implements CommandListener, ItemStateListener
                     // #sijapp cond.if target isnot "MOTOROLA"#
 					Options.setBoolean(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(3));
                     // #sijapp cond.end#
+					Options.setString(Options.OPTION_HTTP_USER_AGENT,httpUserAgendTextField.getString());
 					
 					break;
                 // #sijapp cond.if modules_PROXY is "true"#
@@ -1484,15 +1488,11 @@ class OptionsForm implements CommandListener, ItemStateListener
 					
 				case OPTIONS_TIMEZONE:
 					System.out.println("Save Timezone");
-					int diff = timeZoneGauge.getValue() - currentHour;
-					if (diff > 12) diff -= 24;
-					if (diff < -12) diff += 24;
-
-					if (diff == 0) diff = Calendar.getInstance().getTimeZone().getRawOffset() / (1000 * 60 * 60) - 100;
+					int diff = timeZoneGauge.getValue() - 12;
 
 					System.out.println("diff=" + diff);
 
-					Options.setInt(Options.OPTIONS_TIME_ZONE, diff);
+					Options.setInt(Options.OPTIONS_HOUR_OFFSET, diff);
 					break;
 										
 			}
