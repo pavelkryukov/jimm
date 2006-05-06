@@ -116,12 +116,13 @@ public class ImageList
 		{
 			for (int x = 0; x < imgWidth; x += width)
 			{
+				Image newImage;
 				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				Image newImage = Image
+				newImage = Image
 						.createImage(Image
 								.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
 				// #sijapp cond.else#
-				Image newImage = Image.createImage(width, height);
+				newImage = Image.createImage(width, height);
 				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP
 						| Graphics.LEFT);
 				// #sijapp cond.end#
