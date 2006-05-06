@@ -909,7 +909,7 @@ public class Icq implements Runnable
 			try
 			{
 				this.hcd = (HttpConnection) Connector.open("http://" + proxy_host + ":" + proxy_port + "/data?sid=" + sid + "&seq=" + seq, Connector.READ_WRITE);
-				//this.hcd.setRequestProperty("User-Agent","Mozilla/4.08 [en] (WinNT; U ;Nav)");
+				this.hcd.setRequestProperty("User-Agent",Options.getString(Options.OPTION_HTTP_USER_AGENT));
 				this.hcd.setRequestProperty("Cache-Control", "no-store no-cache");
 				this.hcd.setRequestProperty("Pragma", "no-cache");
 				this.hcd.setRequestMethod(HttpConnection.POST);
@@ -1024,6 +1024,7 @@ public class Icq implements Runnable
 				{
 					// Set connection parameters
 					this.hcm = (HttpConnection) Connector.open(monitorURL, Connector.READ_WRITE);
+					this.hcm.setRequestProperty("User-Agent",Options.getString(Options.OPTION_HTTP_USER_AGENT));
 					this.hcm.setRequestProperty("Cache-Control", "no-store no-cache");
 					this.hcm.setRequestProperty("Pragma", "no-cache");
 					this.hcm.setRequestMethod(HttpConnection.GET);
