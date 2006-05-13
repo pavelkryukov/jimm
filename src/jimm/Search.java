@@ -208,9 +208,9 @@ public class Search
 			this.searchForm.append(this.nickSearchTextBox);
 			this.searchForm.append(this.firstnameSearchTextBox);
 			this.searchForm.append(this.lastnameSearchTextBox);
+			this.searchForm.append(this.citySearchTextBox);
 			this.searchForm.append(this.gender);
 			this.searchForm.append(this.emailSearchTextBox);
-			this.searchForm.append(this.citySearchTextBox);
 			this.searchForm.append(this.keywordSearchTextBox);
 			this.searchForm.append(this.chgrAge);
 			this.searchForm.setCommandListener(this);
