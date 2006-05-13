@@ -37,7 +37,6 @@ import javax.microedition.midlet.MIDletStateChangeException;
 import jimm.comm.Icq;
 import jimm.comm.SearchAction;
 import jimm.comm.Action;
-import jimm.comm.SetOnlineStatusAction;
 import jimm.comm.UpdateContactListAction;
 import jimm.util.ResourceBundle;
 
@@ -517,8 +516,7 @@ public class MainMenu implements CommandListener
 			{
 				try
 				{
-					SetOnlineStatusAction act = new SetOnlineStatusAction(onlineStatus);
-					Icq.requestAction(act);
+					Icq.setOnlineStatus(onlineStatus);
 				}
 				catch (JimmException e)
 				{

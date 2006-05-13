@@ -198,7 +198,8 @@ public class Options
 			
 			//#sijapp cond.if modules_DEBUGLOG is "true"#
 			checkKeys = true;
-			Options.setDefaults();
+			setDefaults();
+			resetLangDependedOpts();
 			checkKeys = false;
 			//#sijapp cond.else#
 			Options.setDefaults();
@@ -209,7 +210,8 @@ public class Options
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
 		{
-			Options.setDefaults();
+			setDefaults();
+			resetLangDependedOpts();
 		}
 		
 		ResourceBundle.setCurrUiLanguage(getString(Options.OPTION_UI_LANGUAGE));
@@ -297,7 +299,6 @@ public class Options
 		setBoolean(Options.OPTION_USER_GROUPS,        false);
 		setBoolean(Options.OPTION_HISTORY,            false);
 		setInt    (Options.OPTION_COLOR_SCHEME,       CLRSCHHEME_BOW);
-        setString (Options.OPTION_STATUS_MESSAGE,     "User is currently unavailable.\n You could leave a message.");
         setBoolean(Options.OPTION_USE_SMILES,         true);
         setBoolean(Options.OPTION_SHOW_LAST_MESS,     false);
         // #sijapp cond.if modules_PROXY is "true" #
@@ -335,6 +336,11 @@ public class Options
 		
 		setInt    (Options.OPTIONS_HOUR_OFFSET,       0);
 		setBoolean(Options.OPTION_NOTIFY, 		      true);
+	}
+	
+	static public void resetLangDependedOpts()
+	{
+		setString (Options.OPTION_STATUS_MESSAGE,     ResourceBundle.getString("status_message_text"));
 	}
 
 	// Load option values from record store
@@ -590,7 +596,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 {
 	private boolean lastGroupsUsed, lastHideOffline;
 	private int lastSortMethod, lastColorScheme;
-	private int currentHour; 
+	private int currentHour;
+	private String lastUILang;
 
 	// Commands
 	private Command backCommand;
@@ -983,6 +990,14 @@ class OptionsForm implements CommandListener, ItemStateListener
 	// Activate options menu
     protected void activate()
 	{
+    	// Store some last values
+    	lastUILang = Options.getString(Options.OPTION_UI_LANGUAGE);
+		lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
+		lastGroupsUsed = Options.getBoolean(Options.OPTION_USER_GROUPS);
+        lastSortMethod = Options.getInt(Options.OPTION_CL_SORT_BY);
+		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
+    		
+    	
 		initOptionsList();
     	optionsMenu.setSelectedIndex(0, true);   // Reset
 		optionsMenu.addCommand(backCommand);
@@ -1042,11 +1057,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 		if (c == List.SELECT_COMMAND)
         // #sijapp cond.end#
 		{
-			lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
-			lastGroupsUsed = Options.getBoolean(Options.OPTION_USER_GROUPS);
-            lastSortMethod = Options.getInt(Options.OPTION_CL_SORT_BY);
-			lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
-
 			// Delete all items
 			clearForm();
 			
@@ -1456,6 +1466,13 @@ class OptionsForm implements CommandListener, ItemStateListener
 					// #sijapp cond.end#
 					
 					VirtualList.setFullScreen( Options.getBoolean(Options.OPTION_FULL_SCREEN) );
+					
+					if ( !lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)) )
+					{
+						System.out.println("Options.resetLangDependedOpts()");
+						Options.resetLangDependedOpts();
+					}
+					
 					break;
                 				
 				case OPTIONS_SIGNALING:

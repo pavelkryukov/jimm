@@ -82,6 +82,8 @@ public class Icq implements Runnable
     // FLAP sequence number
     static int flapSEQ;
     
+    static String lastStatusChangeTime;
+    
     public Icq()
     {
     	_this = this;
@@ -218,6 +220,8 @@ public class Icq implements Runnable
 
         // Start timer
         SplashCanvas.addTimerTask("connecting", act, false);
+        
+        lastStatusChangeTime = Util.getDateString(true);
     }
 
     // Disconnects from the ICQ network
@@ -2522,5 +2526,78 @@ public class Icq implements Runnable
     public int getCurrentStatus()
     {
     	return isConnected() ? (int)Options.getLong(Options.OPTION_ONLINE_STATUS) : ContactList.STATUS_OFFLINE;
+    }
+    
+    static public void setOnlineStatus(int status) throws JimmException
+    {
+    	byte[] CLI_SETSTATUS_DATA = ConnectAction.CLI_SETSTATUS_DATA;
+    	
+		// Convert online status
+		int onlineStatus = Util.translateStatusSend(status);
+
+		int visibilityItemId = Options.getInt(Options.OPTION_VISIBILITY_ID);
+		byte[] buf = new byte[15];
+		byte bCode = 0;
+		if(visibilityItemId != 0)
+		{
+			// Build packet for privacy setting changing
+			int marker = 0;
+
+			if(onlineStatus == Util.SET_STATUS_INVISIBLE)
+				bCode = (status == ContactList.STATUS_INVIS_ALL)?(byte)2:(byte)3;
+			else
+				bCode = (byte)4;
+
+			Util.putWord(buf, marker,    0); marker += 2; // name (null)
+			Util.putWord(buf, marker,    0); marker += 2; // GroupID
+			Util.putWord(buf, marker,  visibilityItemId); marker += 2; // EntryID
+			Util.putWord(buf, marker,    4); marker += 2; // EntryType
+			Util.putWord(buf, marker,    5); marker += 2; // Length in bytes of following TLV
+			Util.putWord(buf, marker, 0xCA); marker += 2; // TLV Type
+			Util.putWord(buf, marker,    1); marker += 2; // TLV Length
+			Util.putByte(buf, marker,bCode);              // TLV Value
+
+			// Change privacy setting according to new status
+			if(onlineStatus == Util.SET_STATUS_INVISIBLE)
+			{
+				SnacPacket reply2pre = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+										   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+										   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+										   new byte[0],
+										   buf);
+				c.sendPacket(reply2pre);
+			}
+		}
+
+		// Send a CLI_SETSTATUS packet
+		Util.putDWord(CLI_SETSTATUS_DATA, 4, 0x10000000+onlineStatus);
+		SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY,
+										   SnacPacket.CLI_SETSTATUS_COMMAND,
+										   0x00000000,
+										   new byte[0],
+										   CLI_SETSTATUS_DATA);
+		c.sendPacket(packet);
+
+		// Change privacy setting according to new status
+		if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
+		{
+			SnacPacket reply2post = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+										SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+										SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+										new byte[0],
+										buf);
+			c.sendPacket(reply2post);
+		}
+		
+		// Save new online status
+		Options.setLong(Options.OPTION_ONLINE_STATUS, status);
+		Options.safe_save();
+		
+		lastStatusChangeTime = Util.getDateString(true); 
+	}
+    
+    public static String getLastStatusChangeTime()
+    {
+    	return lastStatusChangeTime;
     }
 }

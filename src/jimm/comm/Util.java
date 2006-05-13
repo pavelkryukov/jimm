@@ -1978,4 +1978,10 @@ public class Util
 		return result;
 	}
 	
+	static public String replaceStr(String original, String from, String to)
+	{
+		int index = original.indexOf(from);
+		if (index == -1) return original;
+		return original.substring(0, index)+to+original.substring(index+from.length(), original.length());
+	}
 }
