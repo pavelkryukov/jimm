@@ -61,17 +61,11 @@ public class TimerTasks extends TimerTask implements javax.microedition.lcdui.Co
 					try
 					{
 						Icq.c.sendPacket(new jimm.comm.Packet(5, new byte[0]));
-						System.out.println("Ping sent");
 					}
 					catch (JimmException e)
 					{
-						System.out.println("Ping exception - 1!");
 						JimmException.handleException(e);
 						if (e.isCritical()) cancel();
-					}
-					catch (Exception e)
-					{
-						System.out.println("Ping exception - 2!");
 					}
 				}
 				break;
