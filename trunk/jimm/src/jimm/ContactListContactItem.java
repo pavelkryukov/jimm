@@ -937,6 +937,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ContactList.activate();
 		}
 		
+		// Text editor -> "Clear"
+		else if (c == clearTextCommand)
+		{
+			messageTextbox.setString(null);
+		}
+		
 		// Textbox has been closed
 		else if ((c == textboxOkCommand) || (c == textboxSendCommand))
 		{
@@ -1384,6 +1390,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     private static Command replWithQuotaCommand = new Command(ResourceBundle.getString("quote", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
     
     private static Command copyTextCommand = new Command(ResourceBundle.getString("copy_text"), Command.ITEM, 4);
+    
+    private static Command clearTextCommand = new Command(ResourceBundle.getString("clear"), Command.ITEM, 4);
 
 	// Add temporary user to contact list
 	private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 5);
@@ -1612,6 +1620,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		//#sijapp cond.end#
 		
 		messageTextbox.addCommand(textboxCancelCommand);
+		messageTextbox.addCommand(clearTextCommand);
 
 		// Initialize the textfor for entering reasons
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
