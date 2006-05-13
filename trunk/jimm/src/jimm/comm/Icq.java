@@ -1346,6 +1346,7 @@ public class Icq implements Runnable
                 } catch (IOException e)
                 {
                     close();
+                    throw new JimmException(120, 3);
                 }
 
             }
