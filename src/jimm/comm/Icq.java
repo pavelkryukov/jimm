@@ -50,6 +50,7 @@ import jimm.SplashCanvas;
 import jimm.util.ResourceBundle;
 import jimm.ContactList;
 import jimm.RunnableImpl;
+import jimm.TimerTasks;
 
 //#sijapp cond.if modules_TRAFFIC is "true" #
 import jimm.Traffic;
@@ -70,7 +71,7 @@ public class Icq implements Runnable
     private static final int STATE_CONNECTED = 1;
 
     // Current state
-    static private int state = Icq.STATE_NOT_CONNECTED;
+    static private boolean connected = false;
 
     // Requested actions
     static private Vector reqAction = new Vector();
@@ -150,6 +151,17 @@ public class Icq implements Runnable
 		}
 	}
 
+	public static void removeLocalContact(String uin) {
+		byte[] buf = new byte[1 + uin.length()];
+		Util.putByte(buf, 0, uin.length());
+		System.arraycopy(uin.getBytes(), 0, buf, 1, uin.length());
+		try {
+			c.sendPacket(new SnacPacket(0x0003, 0x0005, 0, new byte[0], buf));
+		} catch (JimmException e) {
+			JimmException.handleException(e);
+		}
+	}
+
     // Adds a ContactListContactItem to the server saved contact list
     static public synchronized void addToContactList(ContactListContactItem cItem)
     {
@@ -211,7 +223,7 @@ public class Icq implements Runnable
     // Disconnects from the ICQ network
     static public synchronized void disconnect()
     {
-        if (state != STATE_CONNECTED) return;
+        if (!connected) return;
 
 
         // Disconnect
@@ -241,6 +253,7 @@ public class Icq implements Runnable
         if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
         {
             // Remove this temporary contact item
+			removeLocalContact(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
             ContactList.removeContactItem(cItem);
 
             // Activate contact list
@@ -287,25 +300,25 @@ public class Icq implements Runnable
     // Checks whether the comm. subsystem is in STATE_NOT_CONNECTED
     static public synchronized boolean isNotConnected()
     {
-        return (state == Icq.STATE_NOT_CONNECTED);
+        return !connected;
     }
 
     // Puts the comm. subsystem into STATE_NOT_CONNECTED
     static protected synchronized void setNotConnected()
     {
-        state = Icq.STATE_NOT_CONNECTED;
+        connected = false;
     }
 
     // Checks whether the comm. subsystem is in STATE_CONNECTED
     static public synchronized boolean isConnected()
     {
-        return (state == Icq.STATE_CONNECTED);
+        return connected;
     }
 
     // Puts the comm. subsystem into STATE_CONNECTED
     static protected synchronized void setConnected()
     {
-        state = Icq.STATE_CONNECTED;
+        connected = true;
     }
     
     // Returns and updates sequence nr
@@ -325,7 +338,7 @@ public class Icq implements Runnable
 		synchronized (Icq.wait) { Icq.wait.notify(); }
 
         // Reset all variables
-        state = Icq.STATE_NOT_CONNECTED;
+        connected = false;
         
         // Reset all timer tasks
         Jimm.jimm.cancelTimer();
@@ -355,7 +368,7 @@ public class Icq implements Runnable
     static private Object wait = new Object();
 
     // Connection to the ICQ server
-    static Connection c;
+    public static Connection c;
 
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_FILES is "true"#
@@ -369,9 +382,9 @@ public class Icq implements Runnable
 
     // Action listener
     static private ActionListener actListener;
-
-    // Timer task responsible for keep the connection alive
-    static private KeepAliveTimerTask keepAliveTimerTask;
+    
+    // Keep alive timer task
+    static private TimerTasks keepAliveTimerTask;
 
     // Main loop
     public void run()
@@ -404,11 +417,10 @@ public class Icq implements Runnable
 
         // Instantiate action listener
         actListener = new ActionListener();
-
-        // Instantiate KeepAliveTimerTask
-        keepAliveTimerTask = new KeepAliveTimerTask();
-        keepAliveTimerTask.setIcq(this);
-        Jimm.jimm.getTimerRef().schedule(keepAliveTimerTask, Integer.parseInt(Options.getString(Options.OPTION_CONN_ALIVE_INVTERV))*1000, Integer.parseInt(Options.getString(Options.OPTION_CONN_ALIVE_INVTERV))*1000);
+        
+        keepAliveTimerTask = new TimerTasks(TimerTasks.ICQ_KEEPALIVE);
+        long keepAliveInterv = Integer.parseInt(Options.getString(Options.OPTION_CONN_ALIVE_INVTERV))*1000;
+        Jimm.jimm.getTimerRef().schedule(keepAliveTimerTask, keepAliveInterv, keepAliveInterv);
 
         // Catch JimmExceptions
         try
@@ -662,16 +674,14 @@ public class Icq implements Runnable
 
         // Close connection
         c.close();
-
-        // Cancel KeepAliveTimerTask
-        keepAliveTimerTask.cancel();
+        resetServerCon();
     }
     
     /**************************************************************************/
     /**************************************************************************/
     /**************************************************************************/
     
-    abstract class Connection implements Runnable
+    public abstract class Connection implements Runnable
     {
         // Disconnect flags
         protected volatile boolean inputCloseFlag;

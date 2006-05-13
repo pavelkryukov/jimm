@@ -28,7 +28,7 @@ package jimm.comm;
 import jimm.JimmException;
 
 
-abstract class Packet
+public class Packet
 {
 
 
@@ -43,6 +43,9 @@ abstract class Packet
 	// FLAP sequence number
 	protected int sequence;
 	
+	protected int flapChannel;
+	protected byte[] flapData;
+	
 	// Returns the FLAP sequence number
 	public int getSequence()
 	{
@@ -55,9 +58,23 @@ abstract class Packet
 		this.sequence = sequence;
 	}
 
+	protected Packet() {}
+
+	public Packet(int channel, byte[] data) {
+		flapChannel = channel;
+		flapData = data;
+	}
 
 	// Returns the package as byte array
-	public abstract byte[] toByteArray();
+	public byte[] toByteArray() {
+		byte[] buf = new byte[6 + flapData.length];
+		Util.putByte(buf, 0, 0x2a);
+		Util.putByte(buf, 1, flapChannel);
+		Util.putWord(buf, 2, Icq.getFlapSequence());
+		Util.putWord(buf, 4, flapData.length);
+		System.arraycopy(flapData, 0, buf, 6, flapData.length);
+		return buf;
+	}
 
 	
 	// Parses given byte array and returns a Packet object
@@ -113,14 +130,10 @@ abstract class Packet
 				return (ConnectPacket.parse(buf, off, len));
 			case Packet.CHANNEL_SNAC:
 				return (SnacPacket.parse(buf, off, len));
-			case Packet.CHANNEL_ERROR:
-				return (ErrorPacket.parse(buf, off, len));
 			case Packet.CHANNEL_DISCONNECT:
 				return (DisconnectPacket.parse(buf, off, len));
-			case Packet.CHANNEL_PING:
-				return (PingPacket.parse(buf, off, len));
 			default:
-				throw (new JimmException(131, 0));
+				return null;
 		}
 
 	}

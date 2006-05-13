@@ -185,9 +185,9 @@ public class FileTransfer implements CommandListener, FileBrowserListener
         // Set the splash screen
         SplashCanvas.setProgress(0);
         SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
-        SplashCanvas._this.addCommand(SplashCanvas.cancelCommnad);
-        SplashCanvas._this.setCommandListener(this);
-        Display.getDisplay(Jimm.jimm).setCurrent(SplashCanvas._this);
+        SplashCanvas.addCmd(SplashCanvas.cancelCommnad);
+        SplashCanvas.setCmdListener(this);
+        SplashCanvas.show();
 
         // Send the ft message
         FileTransferMessage ftm = new FileTransferMessage(Options.getString(Options.OPTION_UIN), this.cItem,Message.MESSAGE_TYPE_EXTENDED, filename, description, fis, fsize);
@@ -443,7 +443,7 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 					
 					// Remove video control at SE phones placing it beyond screen border
 					// #sijapp cond.if target is "MIDP2" #
-					if (Jimm.jimm.is_phone_SE()) vc.setDisplayLocation(1000, 1000);
+					if (Jimm.is_phone_SE()) vc.setDisplayLocation(1000, 1000);
 					// #sijapp cond.end #
 				}
 				catch (Exception e)

@@ -343,9 +343,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     static public void activate(Alert alert)
     {
         Jimm.display.setCurrent(alert, ContactList.tree);
-        //#sijapp cond.if target is "MOTOROLA"#
-        LightControl.flash(false);
-        //#sijapp cond.end#
     }
 
     // Request display of the main menu
@@ -363,9 +360,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		sortAll();
 		tree.unlock();
 		Jimm.display.setCurrent(ContactList.tree);
-		//#sijapp cond.if target is "MOTOROLA"#
-		LightControl.flash(false);
-		//#sijapp cond.end#
 
 		// play sound notifications after connecting 
 		if (needPlayOnlineNotif)
@@ -736,7 +730,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	}
 
 	// Returns reference to group with id or null if group not found
-	private static ContactListGroupItem getGroupById(int id)
+	public static ContactListGroupItem getGroupById(int id)
 	{
 		for (int i = gItems.size()-1; i >= 0; i--)
 		{
@@ -757,6 +751,21 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	}
     	return null;
     }
+	
+	static public ContactListContactItem[] getGroupItems(int groupId)
+	{
+		Vector vect = new Vector(); 
+		for (int i = 0; i < cItems.size(); i++)
+		{
+			ContactListContactItem cItem = getCItem(i); 
+			if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == groupId) vect.addElement(cItem);
+		}
+		
+		ContactListContactItem[] result = new ContactListContactItem[vect.size()];
+		vect.copyInto(result);
+		
+		return result;
+	}
     
     // Calculates online/total values for group
     static private void calcGroupData(TreeNode groupNode, ContactListGroupItem group)
@@ -1101,6 +1110,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	// removes existing group 
 	static public synchronized void removeGroup(ContactListGroupItem gItem)
 	{
+		for (int i = cItems.size()-1; i >= 0; i--) {
+			ContactListContactItem cItem = getCItem(i);
+			if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == gItem.getId()) {
+				if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
+					onlineCounter--;
+				cItems.removeElementAt(i);
+			}
+		}
 		Integer groupId = new Integer(gItem.getId());
 		if (Options.getBoolean(Options.OPTION_USER_GROUPS))
 		{
@@ -1480,6 +1497,21 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		int count = cItems.size();
 		int result = 0;
 		for (int i = 0; i < count; i++) result += getCItem(i).getUnreadMessCount();
+		return result;
+	}
+	
+	static public ContactListContactItem[] getItems(ContactListGroupItem group)
+	{
+		Vector data = new Vector();
+		int gid = group.getId();
+		for (int i = 0; i < getSize(); i++)
+		{
+			ContactListContactItem item = getCItem(i);
+			if (item.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == gid)
+				data.addElement(item);
+		}
+		ContactListContactItem[] result = new ContactListContactItem[data.size()];
+		data.copyInto(result);
 		return result;
 	}
 	

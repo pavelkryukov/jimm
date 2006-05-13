@@ -142,8 +142,7 @@ public class Jimm extends MIDlet
 		this.o = new Options();
 		
 		// Create splash canvas object
-		this.sc = new SplashCanvas();
-		SplashCanvas.setMessage(ResourceBundle.getString("loading"));
+		this.sc = new SplashCanvas(ResourceBundle.getString("loading"));
 
 		// Check available heap memory, display warning if less then 250 KB
 		if (Runtime.getRuntime().totalMemory() < 256000)
@@ -188,30 +187,31 @@ public class Jimm extends MIDlet
 
 		// Initialize main menu object (and update progress indicator)
 		this.mm = new MainMenu();
-		SplashCanvas.setProgress(45);
+		SplashCanvas.setProgress(40);
 
 		// #sijapp cond.if modules_TRAFFIC is "true" #
 		// Create traffic Object (and update progress indicator)
 		this.traffic = new Traffic();
-		SplashCanvas.setProgress(60);
+		SplashCanvas.setProgress(50);
 		// #sijapp cond.end#
 		
 		// Create contact list object (and update progress indicator)
 		this.cl = new ContactList();
 		ContactList.beforeConnect();
-		SplashCanvas.setProgress(70);
+		SplashCanvas.setProgress(60);
 		
 		// Create chat hisotry object (and update progress indicator)
 		this.ch = new ChatHistory();
-		SplashCanvas.setProgress(80);
+		SplashCanvas.setProgress(70);
 
 		// Create timer object (and update progress indicator)
 		this.t = new Timer();
-		SplashCanvas.setProgress(90);
+		SplashCanvas.setProgress(80);
 		
 		// Create and load emotion icons
 		//#sijapp cond.if modules_SMILES is "true" #
 		new Emotions();
+		SplashCanvas.setProgress(90);
 		// #sijapp cond.end#
 		
 		new Templates();
@@ -223,15 +223,11 @@ public class Jimm extends MIDlet
 		
 		if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
         {
-            // Remove version string from splash screen
-			SplashCanvas.delVersionString();
 		    // Connect
             ContactList.beforeConnect();
             Icq.connect();
         } else
         {
-            // Remove version string from splash screen
-        	SplashCanvas.delVersionString();
             // Activate main menu
             MainMenu.activate();
         }

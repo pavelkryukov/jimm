@@ -721,52 +721,66 @@ public class Util
 		return Util.byteArrayToString(buffer); 
 	}
 	
-	static public void writeWord(DataOutputStream stream, int value, boolean bigEndian) throws IOException
+	static public void writeWord(ByteArrayOutputStream stream, int value, boolean bigEndian)
 	{
-		if (bigEndian) stream.writeShort(value);
+		if (bigEndian)
+		{
+			stream.write(((value&0xFF00)>>8)&0xFF);
+			stream.write(value&0xFF);
+		}
 		else
 		{
-			stream.writeByte(value&0xFF);
-			stream.writeByte(((value&0xFF00)>>8)&0xFF);
+			stream.write(value&0xFF);
+			stream.write(((value&0xFF00)>>8)&0xFF);
 		}
 	}
 	
-	static public void writeDWord(DataOutputStream stream, int value, boolean bigEndian) throws IOException
+	static public void writeDWord(ByteArrayOutputStream stream, int value, boolean bigEndian)
 	{
-		if (bigEndian) stream.writeInt(value);
+		if (bigEndian)
+		{
+			stream.write(((value&0xFF000000)>>24)&0xFF);
+			stream.write(((value&0xFF0000)>>16)&0xFF);
+			stream.write(((value&0xFF00)>>8)&0xFF);
+			stream.write(value&0xFF);
+		}
 		else
 		{
-			stream.writeByte(value&0xFF);
-			stream.writeByte(((value&0xFF00)>>8)&0xFF);
-			stream.writeByte(((value&0xFF0000)>>16)&0xFF);
-			stream.writeByte(((value&0xFF000000)>>24)&0xFF);
+			stream.write(value&0xFF);
+			stream.write(((value&0xFF00)>>8)&0xFF);
+			stream.write(((value&0xFF0000)>>16)&0xFF);
+			stream.write(((value&0xFF000000)>>24)&0xFF);
 		}
 	}
 	
-	static public void writeAsciiz(DataOutputStream stream, String value) throws IOException
+	static public void writeByte(ByteArrayOutputStream stream, int value)
 	{
-		byte[] raw = Util.stringToByteArray(value);
-		writeWord(stream, raw.length+1, false);
-		stream.write(raw);
-		stream.writeByte(0);
+		stream.write(value);
 	}
 	
-	static public void writeAsciizTLV(int type, DataOutputStream stream, String value) throws IOException
+	static public void writeLenAndString(ByteArrayOutputStream stream, String value, boolean utf8)
+	{
+		byte[] raw = Util.stringToByteArray(value, utf8);
+		writeWord(stream, raw.length, true);
+		stream.write(raw, 0, raw.length);
+	}
+	
+	static public void writeAsciizTLV(int type, ByteArrayOutputStream stream, String value)
 	{
 		writeWord(stream, type, true);
 		byte[] raw = Util.stringToByteArray(value);
 		writeWord(stream, raw.length+3, false);
 		writeWord(stream, raw.length+1, false);
-		stream.write(raw);
-		stream.writeByte(0);
+		stream.write(raw, 0, raw.length);
+		stream.write(0);
 	}
 	
-	
-	static public void writeTLV(int type, DataOutputStream stream, ByteArrayOutputStream data) throws IOException
+	static public void writeTLV(int type, ByteArrayOutputStream stream, ByteArrayOutputStream data)
 	{
+		byte[] raw = data.toByteArray();
 		writeWord(stream, type, true);
-		writeWord(stream, data.size(), false);
-		stream.write(data.toByteArray());
+		writeWord(stream, raw.length, false);
+		stream.write(raw, 0, raw.length);
 	}
 
 	// Extracts the word from the buffer (buf) at position off using big endian byte ordering
