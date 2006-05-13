@@ -24,11 +24,10 @@ Author(s): Andreas Rossbacher
 package jimm.comm;
 
 import jimm.JimmException;
+import jimm.MainMenu;
 import jimm.Options;
 import jimm.Search;
-import jimm.util.ResourceBundle;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 
 
 public class SearchAction extends Action
@@ -42,6 +41,7 @@ public class SearchAction extends Action
     public static final int STATE_FIRSTRESULT_RECEIVED   = 4;
     public static final int STATE_LASTRESULT_RECEIVED    = 5;
     public static final int STATE_SEARCH_FINISHED        = 6;
+    public static final int STATE_SEARCH_CANCELED        = 7;
     
     // TLVs used in LE format
     public static final int TLV_TYPE_UIN                 = 0x3601; // long (4 byte)
@@ -61,7 +61,7 @@ public class SearchAction extends Action
     public static final int CALLED_BY_ADDUSER            = 1;
     
     // Timeout
-    public static final int TIMEOUT = 25 * 1000; // milliseconds
+    public static final int TIMEOUT = 60 * 1000; // milliseconds
     
     /****************************************************************************/
 
@@ -99,13 +99,10 @@ public class SearchAction extends Action
     // Init action
     protected void init() throws JimmException
     {
-    	ByteArrayOutputStream bufferBA = new ByteArrayOutputStream();
-    	DataOutputStream buffer = new DataOutputStream(bufferBA);
+    	ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     	
     	for (int i = search.length-1; i >= 0; i--) if (search[i] == null) search[i] = Options.emptyString;
     	
-    	try
-    	{
     		Util.writeWord(buffer, 0x5f05, true);
     		
     		// UIN
@@ -157,21 +154,15 @@ public class SearchAction extends Action
     		{
     			Util.writeWord(buffer, TLV_TYPE_GENDER, true);
     			Util.writeWord(buffer, 1, false);
-    			buffer.writeByte(gender);
+    			Util.writeByte(buffer, gender);
     		}
     		
     		// Only online
     		Util.writeWord(buffer, TLV_TYPE_ONLYONLINE, true);
     		Util.writeWord(buffer, 1, false);
-    		buffer.writeByte(search[Search.ONLY_ONLINE].equals("1") ? 1 : 0);
-    	}
-    	catch (Exception e)
-    	{
-    		e.printStackTrace();
-    		return;
-    	}
+    		Util.writeByte(buffer, search[Search.ONLY_ONLINE].equals("1") ? 1 : 0);
     	
-    	ToIcqSrvPacket packet = new ToIcqSrvPacket(SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getString(Options.OPTION_UIN),0x07D0,new byte[0], bufferBA.toByteArray());
+    	ToIcqSrvPacket packet = new ToIcqSrvPacket(SnacPacket.CLI_TOICQSRV_COMMAND,0x0002,Options.getString(Options.OPTION_UIN),0x07D0,new byte[0], buffer.toByteArray());
         Icq.c.sendPacket(packet);
         
         this.state = STATE_UIN_SEARCH_SENT;
@@ -224,11 +215,7 @@ public class SearchAction extends Action
                         }
                         
                         // Get auth flag
-                        String auth;
-                        if (Util.getByte(data,marker) == 0)
-                            auth = ResourceBundle.getString("req");
-                        else
-                            auth = ResourceBundle.getString("reqno");
+                        String auth = (Util.getByte(data,marker) == 0) ? "1" : "0";
                         marker += 1;
                         
                         // Get status
@@ -289,18 +276,25 @@ public class SearchAction extends Action
             	JimmException.handleException(new JimmException(159, 1, true));
             }
     		break;
+    		
+    	case ON_CANCEL:
+			MainMenu.activate();
+    		state = STATE_SEARCH_CANCELED;
+    		break;
     	}
     }
     
     // Returns true if the action is completed
     public boolean isCompleted()
     {
-        return (this.state == STATE_SEARCH_FINISHED);
+        return (state == STATE_SEARCH_FINISHED) ||
+               (state == STATE_SEARCH_CANCELED);
     }
 
     // Returns true if an error has occured
     public synchronized boolean isError()
     {
-        return ((this.state == ConnectAction.STATE_ERROR) || ((this.lastActivity+SearchAction.TIMEOUT) < System.currentTimeMillis()));
+        return (state == ConnectAction.STATE_ERROR) || 
+        		((lastActivity+SearchAction.TIMEOUT) < System.currentTimeMillis());
     }
 }

@@ -50,7 +50,6 @@ import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 
-import java.util.Calendar;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -274,6 +273,9 @@ public class Options
 		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  0);
 		setString (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mp3");
 		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
+		setInt	  (Options.OPTION_TYPING_VOL,	 	  50);
+		setString (Options.OPTION_TYPING_FILE,		  "typing.mp3");
+		setInt	  (Options.OPTION_TYPING_MODE,		  0);
 		setInt    (Options.OPTION_LIGHT_TIMEOUT,      5);
 		setBoolean(Options.OPTION_LIGHT_MANUAL,       false);	
 		// #sijapp cond.end#

@@ -44,7 +44,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 {
 	private static final int CM_SENDING_MESSAGE  = 1;
 	private static final int CM_RENAMING_CONTACT = 2;
-	private static int currentMode; 
+	private static int currentMode;
+	private static int[] groupIds;
 	
 	
 	// No capability
@@ -137,10 +138,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_STATUS:        status = value;        return;
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
-		case CONTACTITEM_DC_TYPE:       typeAndClientId = (typeAndClientId&0xff)|(value<<8);        return;
-		case CONTACTITEM_ICQ_PROT:      portAndProt = (portAndProt&0xffff0000)|value;       return;
-		case CONTACTITEM_DC_PORT:       portAndProt = (portAndProt&0xffff)|(value<<16);        return;
-		case CONTACTITEM_CLIENT:     	typeAndClientId = (typeAndClientId&0xff00)|value;      return;
+		case CONTACTITEM_DC_TYPE:       typeAndClientId = (typeAndClientId&0xff)|((value&0xff)<<8);        return;
+		case CONTACTITEM_ICQ_PROT:      portAndProt = (portAndProt&0xffff0000)|(value&0xffff);       return;
+		case CONTACTITEM_DC_PORT:       portAndProt = (portAndProt&0xffff)|((value&0xffff)<<16);        return;
+		case CONTACTITEM_CLIENT:     	typeAndClientId = (typeAndClientId&0xff00)|(value&0xff);      return;
 		case CONTACTITEM_AUTH_COOKIE:   authCookie = value; return;
 		// #sijapp cond.end #
 		// #sijapp cond.end #
@@ -298,7 +299,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//  #sijapp cond.end#
 	
 	public static String currentUin = new String();
-	
+
 	public void init(int id, int group, String uin, String name, boolean noAuth, boolean added)
 	{
 		if (id == -1)
@@ -323,7 +324,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		setIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
 		setIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
 		setIntValue(ContactListContactItem.CONTACTITEM_DC_PORT, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE, -1);
+		setIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE, 0);
 		this.ft = null;
@@ -545,6 +546,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	final public static int MSGBS_DELETECONTACT = 1;
 	final public static int MSGBS_REMOVEME      = 2;
 	final public static int SELECTOR_DEL_CHAT   = 3;
+	final public static int SELECTOR_SELECT_GROUP = 4;
 
 	// Shows new message form 
 	private void writeMessage(String initText)
@@ -619,10 +621,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			Jimm.jimm.getIcqRef().BeginTyping(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),false);
 		}
 		catch (JimmException e){}
-		// #sijapp cond.if target is "MOTOROLA"#
-		//Constantly turn on backlight
-		LightControl.flash(true);
-		// #sijapp cond.end#
 
 		// Return to contact list
 		if (c == backCommand)
@@ -780,6 +778,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			// #sijapp cond.end#
 			// #sijapp cond.end#
 
+			case USER_MENU_MOVE:
+				groupIds = JimmUI.showGroupSelector("group_name", SELECTOR_SELECT_GROUP, this, JimmUI.SHS_TYPE_ALL, getIntValue(CONTACTITEM_GROUP));
+				break;
+
 			case USER_MENU_USER_REMOVE:
 				JimmUI.messageBox
 				(
@@ -841,7 +843,22 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// User wants to add temporary contact
 		else if (c == addUrsCommand)
 		{
-			MainMenu.addUserOrGroupCmd(getStringValue(ContactListContactItem.CONTACTITEM_UIN), true);
+            Search search = new Search(true);
+            String data[] = new String[Search.LAST_INDEX];
+            data[Search.UIN] = String.valueOf(uinLong);
+
+			SearchAction act = new SearchAction(search, data, SearchAction.CALLED_BY_ADDUSER);
+
+			try
+			{
+				Icq.requestAction(act);
+			}
+			catch (JimmException e)
+			{
+				JimmException.handleException(e);
+			}
+
+            SplashCanvas.addTimerTask("wait", act, false);
 		}
 
 		// User adds selected message to history
@@ -888,6 +905,28 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ChatHistory.chatHistoryDelete(uin, delType);
 			ContactList.activate();
 			return;
+		}
+
+		//
+		
+		else if (JimmUI.getCommandType(c, SELECTOR_SELECT_GROUP) == JimmUI.CMD_OK)
+		{
+			int currGroupId = getIntValue(CONTACTITEM_GROUP);
+			int newGroupId = groupIds[JimmUI.getLastSelIndex()];
+			ContactListGroupItem oldGroup = ContactList.getGroupById(currGroupId);
+			ContactListGroupItem newGroup = ContactList.getGroupById(newGroupId);
+			
+			UpdateContactListAction act = new UpdateContactListAction(this, oldGroup, newGroup);
+
+			try
+			{
+				Icq.requestAction(act);
+				SplashCanvas.addTimerTask("wait", act, false);
+			}
+			catch (JimmException e)
+			{
+				JimmException.handleException(e);
+			}
 		}
 
 		// Rename contact -> "OK"
@@ -953,19 +992,20 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 				// Assemble the sysNotAction and request it
 				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
-				UpdateContactListAction updateAct = new UpdateContactListAction(this, UpdateContactListAction.ACTION_ADD);
+				UpdateContactListAction updateAct = new UpdateContactListAction(this, UpdateContactListAction.ACTION_REQ_AUTH);
 
 				try
 				{
 					Icq.requestAction(sysNotAct);
-					if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) Icq.requestAction(updateAct);
+					if (getBooleanValue(CONTACTITEM_IS_TEMP)) Icq.requestAction(updateAct);
 				}
 				catch (JimmException e)
 				{
 					JimmException.handleException(e);
 					if (e.isCritical()) return;
 				}
-				setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
+				setBooleanValue(CONTACTITEM_REQU_REASON, false);
+				if (reqReason) setBooleanValue(CONTACTITEM_IS_TEMP, false);
 				ContactList.activate();
 			}
 		}
@@ -1274,9 +1314,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ChatHistory.getChatHistoryAt( getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat, !currentUin.equals(lastAnsUIN));
 			lastAnsUIN = currentUin;
 				
-			// #sijapp cond.if target is "MOTOROLA"#
-			LightControl.flash(false);
-			// #sijapp cond.end#
 		}
 		// Display menu
 		else
@@ -1286,9 +1323,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			menuList.setSelectedIndex(0, true);
 			menuList.setCommandListener(this);
 			Jimm.display.setCurrent(menuList);
-			// #sijapp cond.if target is "MOTOROLA"#
-			LightControl.flash(true);
-			// #sijapp cond.end#
 		}
 		
 		setStatusImage();
@@ -1319,8 +1353,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     private static final int USER_MENU_LOCAL_INFO       = 11;
     private static final int USER_MENU_USER_INFO        = 12;
     private static final int USER_MENU_QUOTA            = 14;
+	private static final int USER_MENU_MOVE             = 15;
     
-    private static final int USER_MENU_LAST_ITEM        = 15; // YOU NEED TO CHANGE IT!
+    private static final int USER_MENU_LAST_ITEM        = 16; // YOU NEED TO CHANGE IT!
 
     
 	// Menu list
@@ -1440,6 +1475,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// #sijapp cond.end#
 		// #sijapp cond.end#
         
+		if (ContactList.getGroupItems().length > 1)
+			eventList[menuList.append(ResourceBundle.getString("move_to_group", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_MOVE;
+
         eventList[menuList.append(ResourceBundle.getString("remove", ResourceBundle.FLAG_ELLIPSIS), null)]    = USER_MENU_USER_REMOVE;
         eventList[menuList.append(ResourceBundle.getString("remove_me", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_REMOVE_ME;
         eventList[menuList.append(ResourceBundle.getString("rename", ResourceBundle.FLAG_ELLIPSIS), null)]    = USER_MENU_RENAME;

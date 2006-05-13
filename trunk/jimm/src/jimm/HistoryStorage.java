@@ -176,111 +176,142 @@ class HistoryStorageList extends VirtualList
 	
 	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"|target="SIEMENS2"#
 	private boolean cp1251;
+
 	private String exportUin;
+
 	private String directory;
-	public void export(String uin) {
+
+	public void export(String uin)
+	{
 		exportUin = uin;
-		try {
+		try
+		{
 			FileBrowser.setListener(this);
 			FileBrowser.setParameters(true);
 			FileBrowser.activate();
-		} catch (JimmException e) {
+		}
+		catch (JimmException e)
+		{
 			JimmException.handleException(e);
 		}
 	}
-	public void onFileSelect(String s0) {}
-	public void onDirectorySelect(String dir) {
+
+	public void onFileSelect(String s0)
+	{
+	}
+
+	public void onDirectorySelect(String dir)
+	{
 		directory = dir;
 		(new Thread(this)).start();
 	}
-	public void run() {
+
+	public void run()
+	{
 		if (exportUin == null) startExport(null);
-		else startExport(new ContactListContactItem[]{ContactList.getItembyUIN(exportUin)});
+		else startExport(new ContactListContactItem[] { ContactList.getItembyUIN(exportUin) });
 	}
-	private void exportUinToStream(ContactListContactItem item, OutputStream os) throws IOException {
-			CachedRecord record;
+
+	private void exportUinToStream(ContactListContactItem item, OutputStream os) throws IOException
+	{
+		CachedRecord record;
 		String uin = item.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
-			int max = HistoryStorage.getRecordCount(uin);
-		if (max > 0) {
-			String nick = (item.getStringValue(ContactListContactItem.CONTACTITEM_NAME).length() > 0) ?
-				item.getStringValue(ContactListContactItem.CONTACTITEM_NAME) : uin;
+		int max = HistoryStorage.getRecordCount(uin);
+		if (max > 0)
+		{
+			String nick = (item.getStringValue(ContactListContactItem.CONTACTITEM_NAME).length() > 0) ? item
+					.getStringValue(ContactListContactItem.CONTACTITEM_NAME) : uin;
 			SplashCanvas.setMessage(nick);
 			SplashCanvas.setProgress(0);
-			StringBuffer str_buf = new StringBuffer().append("\r\n").
-				append('\t').
-				append(ResourceBundle.getString("message_history_with")).append(nick).append(" (").append(uin).append(")\r\n").
-				append('\t').
-				append(ResourceBundle.getString("export_date")).append(Util.getDateString(false)).append("\r\n\r\n");
+			StringBuffer str_buf = new StringBuffer().append("\r\n").append('\t').append(ResourceBundle.getString("message_history_with")).append(nick)
+					.append(" (").append(uin).append(")\r\n").append('\t').append(ResourceBundle.getString("export_date")).append(Util.getDateString(false))
+					.append("\r\n\r\n");
 			os.write(Util.stringToByteArray(str_buf.toString(), !cp1251));
-			for (int i = 0; i < max; i++) {
+			for (int i = 0; i < max; i++)
+			{
 				record = HistoryStorage.getRecord(uin, i);
-				os.write(Util.stringToByteArray(" " + ((record.type == 0) ? nick : ResourceBundle.getString("me")) +
-					" (" + record.date + "):\r\n", !cp1251));
+				os.write(Util.stringToByteArray(" " + ((record.type == 0) ? nick : ResourceBundle.getString("me")) + " (" + record.date + "):\r\n", !cp1251));
 				String curr_msg_text = record.text.trim();
 				StringBuffer msg_str_buf = new StringBuffer(curr_msg_text.length());
-				for (int k = 0; k < curr_msg_text.length(); k++) {
+				for (int k = 0; k < curr_msg_text.length(); k++)
+				{
 					char cc = curr_msg_text.charAt(k);
 					char nc;
-					switch (cc) {
-						case '\n':
-							nc = curr_msg_text.charAt(k++);
-							msg_str_buf = msg_str_buf.append('\r').append('\n');
-							if ((nc != '\r') & (nc != '\n')) msg_str_buf = msg_str_buf.append(nc);
-							break;
-						case '\r':
-							nc = curr_msg_text.charAt(k++);
-							msg_str_buf = msg_str_buf.append('\r').append('\n');
-							if ((nc != '\n') & (nc != '\r')) msg_str_buf = msg_str_buf.append(nc);
-							break;
-						default:
-							msg_str_buf = msg_str_buf.append(cc);
-			}
-	}
+					switch (cc)
+					{
+					case '\n':
+						nc = curr_msg_text.charAt(k++);
+						msg_str_buf = msg_str_buf.append('\r').append('\n');
+						if ((nc != '\r') & (nc != '\n')) msg_str_buf = msg_str_buf.append(nc);
+						break;
+					case '\r':
+						nc = curr_msg_text.charAt(k++);
+						msg_str_buf = msg_str_buf.append('\r').append('\n');
+						if ((nc != '\n') & (nc != '\r')) msg_str_buf = msg_str_buf.append(nc);
+						break;
+					default:
+						msg_str_buf = msg_str_buf.append(cc);
+					}
+				}
 				msg_str_buf = msg_str_buf.append('\r').append('\n');
 				os.write(Util.stringToByteArray(msg_str_buf.toString(), !cp1251));
 				os.flush();
-				SplashCanvas.setProgress((100*i)/max);
-	}
-				}
+				SplashCanvas.setProgress((100 * i) / max);
 			}
-	private void exportUinToFile(ContactListContactItem item, String filename) {
-		try {
-			if (HistoryStorage.getRecordCount(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) > 0) {
+		}
+	}
+
+	private void exportUinToFile(ContactListContactItem item, String filename)
+	{
+		try
+		{
+			if (HistoryStorage.getRecordCount(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) > 0)
+			{
 				FileSystem file = openFile(filename);
 				OutputStream os = file.openOutputStream();
-				if (!cp1251) os.write(new byte[] {(byte)0xef,(byte)0xbb,(byte)0xbf});
+				if (!cp1251) os.write(new byte[] { (byte) 0xef, (byte) 0xbb, (byte) 0xbf });
 				exportUinToStream(item, os);
 				file.close();
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			JimmException.handleException(new JimmException(191, 0, false));
 		}
-			}
-	public void startExport(ContactListContactItem[] citems) {
+	}
+
+	public void startExport(ContactListContactItem[] citems)
+	{
 		cp1251 = Options.getBoolean(Options.OPTION_CP1251_HACK);
 		SplashCanvas.setMessage(ResourceBundle.getString("exporting", ResourceBundle.FLAG_ELLIPSIS));
 		SplashCanvas.setProgress(0);
 		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
 		if (citems == null) citems = ContactList.getContactItems();
 		for (int i = 0; i < citems.length; i++)
-			exportUinToFile(citems[i], directory+"jimm_hist_"+citems[i].getStringValue(ContactListContactItem.CONTACTITEM_UIN)+".txt");
+			exportUinToFile(citems[i], directory + "jimm_hist_" + citems[i].getStringValue(ContactListContactItem.CONTACTITEM_UIN) + ".txt");
 		ContactList.activate();
 		Alert ok = new Alert("", ResourceBundle.getString("export_complete"), null, AlertType.INFO);
 		ok.setTimeout(Alert.FOREVER);
 		Jimm.display.setCurrent(ok);
 	}
-	public FileSystem openFile(String fileName) {
-		try {
+
+	public FileSystem openFile(String fileName)
+	{
+		try
+		{
 			FileSystem file = FileSystem.getInstance();
 			file.openFile(fileName);
 			return file;
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			JimmException.handleException(new JimmException(191, 0, true));
 			return null;
 		}
 	}
+
 	// #sijapp cond.end#
 
 	//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#

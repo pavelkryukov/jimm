@@ -31,7 +31,8 @@ import DrawControls.ImageList;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
 //#sijapp cond.if target is "MOTOROLA"#
-import DrawControls.LightControl;
+import jimm.Jimm;
+import jimm.Options;
 //#sijapp cond.end#
 
 //! This class is base class of owner draw list controls
@@ -448,7 +449,7 @@ public abstract class VirtualList extends Canvas
 			
 		// #sijapp cond.if target is "MOTOROLA"#
 		case KEY_STAR: 
-			LightControl.changeState();
+			setBkltOn(!bklt_on);
 			break;
 		// #sijapp cond.end#
 		}
@@ -460,12 +461,12 @@ public abstract class VirtualList extends Canvas
 		switch (type)
 		{
 		case KEY_PRESSED:
-			//#sijapp cond.if target is "MOTOROLA"#
-			LightControl.flash(false);
+			//#sijapp cond.if target="MOTOROLA"#
+			if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL))
+				flashBklt(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)*1000);
 			//#sijapp cond.end#
 			keyReaction(keyCode);
 			break;
-			
 		case KEY_REPEATED:
 			keyReaction(keyCode);
 			break;
@@ -924,6 +925,41 @@ public abstract class VirtualList extends Canvas
 		return (forcedWidth == -1) ? getWidth() : forcedWidth;
 	}
 	
+	//#sijapp cond.if target="MOTOROLA"#
+	private static boolean bklt_on = true;
+	private static java.util.Timer switchoffTimer;
+	private static final java.util.TimerTask switchoffTimerTask = new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_BKLT);
 
+	public static void setBkltOn(boolean on)
+	{
+		if (on != bklt_on)
+		{
+			bklt_on = on;
+			Jimm.display.flashBacklight(bklt_on ? Integer.MAX_VALUE : 1);
+		}
+	}
+	public static void flashBklt(int msec)
+	{
+		try
+		{
+			setBkltOn(true);
 	
+			if (switchoffTimer != null)
+			{
+				switchoffTimer.cancel();
+			}
+
+			(switchoffTimer = new java.util.Timer()).schedule(switchoffTimerTask, msec);
+		}
+		catch (Exception e) {}
+	}
+	protected void hideNotify()
+	{
+		if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL) & !(Jimm.display.getCurrent() instanceof Canvas))
+		{
+			if (switchoffTimer != null) switchoffTimer.cancel();
+			setBkltOn(true);
+		}
+	}
+	//#sijapp cond.end#	
 }

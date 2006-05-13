@@ -135,6 +135,16 @@ public class JimmUI implements CommandListener
 			else if ((c == cmdOk) || (c == List.SELECT_COMMAND)) listener.commandAction(c, d);
 			
 			lstSelector = null;
+			
+			actionTag = -1;
+		}
+		
+		// Message box
+		if (d == msgForm)
+		{
+			listener.commandAction(c, d);
+			msgForm = null;
+			actionTag = -1;
 		}
 	}
 	
@@ -173,7 +183,7 @@ public class JimmUI implements CommandListener
 	//                     //
 	/////////////////////////
 	static private Form msgForm;
-	static private int actionTag;
+	static private int actionTag = -1;
 
 	public static int getCommandType(Command testCommand, int testTag)
 	{
@@ -203,7 +213,8 @@ public class JimmUI implements CommandListener
 			break;
 		}
 
-		msgForm.setCommandListener(listener);
+		JimmUI.listener = listener;
+		msgForm.setCommandListener(_this);
 		Jimm.display.setCurrent(msgForm);
 	}
 	
@@ -572,12 +583,8 @@ public class JimmUI implements CommandListener
 	static private int uiBigTextIndex;
 	static private String uiSectName = null;
 	
-	static private void addToTextList(int index, String[] data, String langStr, TextList list)
+	static private void addToTextList(String str, String langStr, TextList list)
 	{
-		String str = data[index];
-		if (str == null) return;
-		if (str.length() == 0) return;
-
 		if (uiSectName != null)
 		{
 			list.addBigText
@@ -596,6 +603,15 @@ public class JimmUI implements CommandListener
 		uiBigTextIndex++;
 	}
 	
+	static private void addToTextList(int index, String[] data, String langStr, TextList list)
+	{
+		String str = data[index];
+		if (str == null) return;
+		if (str.length() == 0) return;
+
+		addToTextList(str, langStr, list);
+	}
+	
 	static public void fillUserInfo(String[] data, TextList list)
 	{
 		uiSectName = "main_info";
@@ -605,7 +621,11 @@ public class JimmUI implements CommandListener
 		addToTextList(UI_GENDER,    data, "gender",     list);
 		addToTextList(UI_AGE,       data, "age",        list);
 		addToTextList(UI_EMAIL,     data, "email",      list);
-		addToTextList(UI_AUTH,      data, "auth",       list);
+		if (data[UI_AUTH] != null) addToTextList
+		(
+			data[UI_AUTH].equals("1") ? ResourceBundle.getString("yes") : ResourceBundle.getString("no"),
+			"auth", list
+		);
 		addToTextList(UI_BDAY,      data, "birth_day",  list);
 		addToTextList(UI_CPHONE,    data, "cell_phone", list);
 		addToTextList(UI_HOME_PAGE, data, "home_page",  list);
@@ -831,7 +851,53 @@ public class JimmUI implements CommandListener
 		int index = getStatusIndex(status);
 		return (index == -1) ? null : ResourceBundle.getString(statusStrings[index]);
 	}
+
 	
+	public static final int SHS_TYPE_ALL   = 1;
+	public static final int SHS_TYPE_EMPTY = 2;
+	
+	public static int[] showGroupSelector(String caption, int tag, CommandListener listener, int type, int excludeGroupId)
+	{
+		ContactListGroupItem[] groups = ContactList.getGroupItems();
+		String[] groupNamesTmp = new String[groups.length];
+		int[] groupIdsTmp = new int[groups.length];
+
+		int index = 0;
+		for (int i = 0; i < groups.length; i++)
+		{
+			int groupId = groups[i].getId();
+			if (groupId == excludeGroupId) continue;
+			switch (type)
+			{
+			case SHS_TYPE_EMPTY:
+				ContactListContactItem[] cItems = ContactList.getGroupItems(groupId);
+				if (cItems.length != 0) continue;
+				break;
+			}
+			
+			groupIdsTmp[index] = groupId;
+			groupNamesTmp[index] = groups[i].getName();
+			index++;
+		}
+		
+		if (index == 0)
+		{
+			Alert alert = new Alert("", ResourceBundle.getString("no_availible_groups"), null, AlertType.INFO );
+			alert.setTimeout(Alert.FOREVER);
+			Jimm.display.setCurrent(alert);
+			return null;
+		}
+		
+		String[] groupNames = new String[index];
+		int[] groupIds = new int[index];
+
+		System.arraycopy(groupIdsTmp, 0, groupIds, 0, index);
+		System.arraycopy(groupNamesTmp, 0, groupNames, 0, index);
+			
+		showSelector(ResourceBundle.getString(caption), groupNames, listener, tag, false);
+		
+		return groupIds;
+	}
 	
 
 }
