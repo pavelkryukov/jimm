@@ -297,6 +297,9 @@ VERSION 0.5.0
     current item, others items or all items)
   * It is possible to select full screen for contact list, chats etc...
   * New Option "Time" to setup time zone
+  * Status of contact are shown in the caption of chat in fullscreen mode
+  * Contacts groups management is extended. It is possible now to rename groups and
+    to move contacts between groups.
   * Traffic Screen is now also using TextList for displaying information
   * Traffic now counts additional GPRS headers to be hopefully more accurate
   * Configurable "User-Agent:" header for HTTP-Connection to make Jimm work with 
