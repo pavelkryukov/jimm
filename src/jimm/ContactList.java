@@ -1362,18 +1362,42 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 
                 if (notType == SOUND_TYPE_MESSAGE)
                 {
+                	// Siemens 65-75 bugfix
+        			// #sijapp cond.if target is "SIEMENS2"#
+        			Player p1 = createPlayer("silence.wav");
+        			setVolume(p1,100);
+        			p1.start();
+        			p1.close();
+        			playerFree = true;
+        			//#sijapp cond.end#
                 	p = createPlayer( Options.getString(Options.OPTION_MESS_NOTIF_FILE) );
                 	if (p == null) return;
                     setVolume(p, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
                 }
                 else if (notType == SOUND_TYPE_ONLINE)
                 {
+                	// Siemens 65-75 bugfix
+        			// #sijapp cond.if target is "SIEMENS2"#
+        			Player p1 = createPlayer("silence.wav");
+        			setVolume(p1,100);
+        			p1.start();
+        			p1.close();
+        			playerFree = true;
+        			//#sijapp cond.end#
                 	p = createPlayer( Options.getString(Options.OPTION_ONLINE_NOTIF_FILE) );
                 	if (p == null) return;
                     setVolume(p, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL)); 
                 }
                 else
                 {
+                	// Siemens 65-75 bugfix
+        			// #sijapp cond.if target is "SIEMENS2"#
+        			Player p1 = createPlayer("silence.wav");
+        			setVolume(p1,100);
+        			p1.start();
+        			p1.close();
+        			playerFree = true;
+        			//#sijapp cond.end#
                 	p = createPlayer( Options.getString(Options.OPTION_TYPING_FILE) );
                 	if (p == null) return;
                     setVolume(p, Options.getInt(Options.OPTION_TYPING_VOL)); 
