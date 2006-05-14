@@ -163,7 +163,6 @@
   "not"                         "not"
   "no_availible_groups"         "No groups availible for this operation!"
   "no_results"                  "No results"
-  "no_not_empty_gr"             "Removing of not empty groups not supported yet"
   "not_implemented"             "Function not yet implemented."
   "noreason"                    "No reason was given."
   "notes"                       "Notes"
