@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-06  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -357,7 +357,7 @@ public class ActionListener
                         // Construct object which encapsulates the received
                         // plain message
 
-                        PlainMessage plainMsg = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(true), text, false);
+                        PlainMessage plainMsg = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(false), text, false);
 						RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, plainMsg);
 						// #sijapp cond.if target is "MIDP2" #
 						Jimm.setMinimized(false);
