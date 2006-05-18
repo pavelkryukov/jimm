@@ -79,7 +79,13 @@ public class Jimm extends MIDlet
 	static private boolean minimized, is_phone_SE;
     // #sijapp cond.end #
 	// #sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
-	static public boolean supports_JSR75;
+	static public final boolean supports_JSR75;
+	// #sijapp cond.end#
+	//#sijapp cond.if target="MOTOROLA"#
+	static public final int funlight_device_type;
+	
+	public static final int FUNLIGHT_DEVICE_E380 = 2;
+	public static final int FUNLIGHT_DEVICE_E390 = 3;
 	// #sijapp cond.end#
 
 	// Timer object
@@ -103,6 +109,48 @@ public class Jimm extends MIDlet
 	
 	private JimmUI ui;
 
+	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"#
+	static
+	{
+		// #sijapp cond.if target is "MIDP2" #
+		String microeditionPlatform = System.getProperty("microedition.platform");
+		if (microeditionPlatform != null)
+			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1);
+		// #sijapp cond.end#
+		// #sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
+		boolean jsr75 = false;
+		try
+		{
+			jsr75 = Class.forName("javax.microedition.io.file.FileConnection") != null;
+		}
+		catch (ClassNotFoundException cnfe)
+		{
+		}
+		finally
+		{
+			supports_JSR75 = jsr75;
+		}
+		// #sijapp cond.end#
+
+		//#sijapp cond.if target="MOTOROLA"#
+		String funlightsProduct = System.getProperty("funlights.product");
+		System.out.println("funlights.product = " + funlightsProduct);
+		if (funlightsProduct == null)
+		{
+			funlight_device_type = -1;
+		}
+		else if (funlightsProduct.equals("E380"))
+		{
+			funlight_device_type = FUNLIGHT_DEVICE_E380;
+		}
+		else
+		{
+			funlight_device_type = FUNLIGHT_DEVICE_E390;
+		}
+		//#sijapp cond.end#
+	}
+	//#sijapp cond.end#
+
 	// Start Jimm
 	public void startApp() throws MIDletStateChangeException
 	{
@@ -113,26 +161,13 @@ public class Jimm extends MIDlet
         {
 		    // #sijapp cond.if target is "MIDP2" #
 		    setMinimized(false);
-		    // #sijapp cond.end #
 		    ContactList.activate();
+		    // #sijapp cond.end #
             return;
         }
 		
 		// Save MIDlet reference
 		Jimm.jimm = this;
-		
-		// #sijapp cond.if target is "MIDP2" #
-		String microeditionPlatform = System.getProperty("microedition.platform");
-		if (microeditionPlatform != null)
-			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1);
-		// #sijapp cond.end#
-		// #sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
-		try {
-			supports_JSR75 = Class.forName("javax.microedition.io.file.FileConnection") != null;
-		} catch (ClassNotFoundException cnfe) {
-			supports_JSR75 = false;
-		}
-		// #sijapp cond.end#
 		
 		// Get Jimm version
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
@@ -176,6 +211,7 @@ public class Jimm extends MIDlet
 
 		// Create ICQ object (and update progress indicator)
 		this.icq = new Icq();
+		SplashCanvas.setStatusToDraw(JimmUI.getStatusImageIndex(Icq.getCurrentStatus()));
 		SplashCanvas.setProgress(20);
 		
 		// Create object for text storage (and update progress indicator)

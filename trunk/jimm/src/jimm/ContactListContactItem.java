@@ -1564,16 +1564,25 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	
 	public void setStatusImage()
 	{
+		if (SplashCanvas.locked())
+		{
+			SplashCanvas.setStatusToDraw(typing ? 8 : JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS)));
+			SplashCanvas.setMessage(getStringValue(CONTACTITEM_NAME));
+			SplashCanvas.Repaint();
+			SplashCanvas.startTimer();
+			return;
+		}
+
     	ChatTextList chat = ChatHistory.getChatHistoryAt(getStringValue(CONTACTITEM_UIN));
     	if (chat != null)
     	{
     		Displayable disp = chat.getDisplayable();
     		if (disp instanceof VirtualList)
     		{
-    			if (typing) 
-    				((VirtualList)disp).setCapImage(ContactList.smallIcons.elementAt(8));
-    			else
-    			((VirtualList)disp).setCapImage(ContactList.smallIcons.elementAt(JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS))));
+    			((VirtualList)disp).setCapImage
+				(
+					ContactList.smallIcons.elementAt(typing ? 8 : JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS)))
+				);
     	}
 		}	 
 	}

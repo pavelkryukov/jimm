@@ -218,6 +218,7 @@ public class Icq implements Runnable
             if (e.isCritical()) return;
         }
 
+		SplashCanvas.setStatusToDraw(jimm.JimmUI.getStatusImageIndex(Options.getLong(Options.OPTION_ONLINE_STATUS)));
         // Start timer
         SplashCanvas.addTimerTask("connecting", act, false);
         
@@ -2523,7 +2524,7 @@ public class Icq implements Runnable
     // #sijapp cond.end#
     // #sijapp cond.end#
     
-    public int getCurrentStatus()
+    public static int getCurrentStatus()
     {
     	return isConnected() ? (int)Options.getLong(Options.OPTION_ONLINE_STATUS) : ContactList.STATUS_OFFLINE;
     }

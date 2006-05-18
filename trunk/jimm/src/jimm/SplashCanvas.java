@@ -132,6 +132,8 @@ public class SplashCanvas extends Canvas
 	// Should the keylock message be drawn to the screen?
 	static protected boolean showKeylock;
 
+	static private int status_index = -1;
+
 	// Constructor
 	public SplashCanvas(String message)
 	{
@@ -164,6 +166,11 @@ public class SplashCanvas extends Canvas
 	{
 		SplashCanvas.message = new String(message);
 		setProgress(0);
+	}
+
+	public static synchronized void setStatusToDraw(int st_index)
+	{
+		status_index = st_index;
 	}
 
 
@@ -241,6 +248,8 @@ public class SplashCanvas extends Canvas
 		//  #sijapp cond.if target is "MOTOROLA"#
 		VirtualList.setBkltOn(false);
 		//  #sijapp cond.end#
+		setMessage(ResourceBundle.getString("keylock_enabled"));
+		setStatusToDraw(JimmUI.getStatusImageIndex(Icq.getCurrentStatus()));
 		Jimm.display.setCurrent(_this);
 		
 		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
@@ -248,7 +257,6 @@ public class SplashCanvas extends Canvas
 			(t2 = new Timer()).schedule(new TimerTasks(TimerTasks.SC_AUTO_REPAINT), 20000, 20000);
 		}
 		
-		setMessage(ResourceBundle.getString("keylock_enabled"));
 	}
 
 
@@ -264,6 +272,7 @@ public class SplashCanvas extends Canvas
         //  #sijapp cond.end#
         	//  #sijapp cond.if target is "MOTOROLA"#
 		if (Options.getBoolean(Options.OPTION_LIGHT_MANUAL)) VirtualList.setBkltOn(true);
+		VirtualList.disableLED();
 		//  #sijapp cond.end#
 		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE) && (t2 != null)) t2.cancel();
 		
@@ -292,7 +301,11 @@ public class SplashCanvas extends Canvas
 	        LED.setState(LED.STATE_BLINKING);
             // #sijapp cond.end#
 			// #sijapp cond.if target is "MOTOROLA"#
-			if (Options.getInt(Options.OPTION_MESS_NOTIF_MODE) == 0)
+			if (Jimm.funlight_device_type != 0)
+			{
+				VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, 1000, 0xFFAA00);
+			}
+			else
 			{
 				VirtualList.flashBklt(1000);
 			}
@@ -316,7 +329,8 @@ public class SplashCanvas extends Canvas
 		        showKeylock = true;
                 this.repaint();
 			//  #sijapp cond.if target is "MOTOROLA"#
-		        VirtualList.flashBklt(2000);
+				VirtualList.flashBklt(2500);
+				VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, 2500, JimmUI.st_colors[JimmUI.getStatusIndex(Icq.getCurrentStatus())]);
 			// #sijapp cond.end#
 		    }
 		}
@@ -431,11 +445,26 @@ public class SplashCanvas extends Canvas
 		g.setColor(255, 255, 255);
 		g.setFont(SplashCanvas.font);
 
+		Image draw_img = null;
+		int im_width = 0;
+		if (status_index != -1)
+		{
+			draw_img = ContactList.smallIcons.elementAt(status_index);
+			im_width = draw_img.getWidth();
+		}
+
 		// Draw the progressbar message
-		g.drawString(message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+		g.drawString(message, (this.getWidth() / 2) + (im_width / 2), this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+
+		if (draw_img != null)
+		{
+			g.drawImage(draw_img, (this.getWidth() / 2) - (font.stringWidth(message) / 2) + (im_width / 2), this.getHeight() - (height / 2), Graphics.VCENTER | Graphics.RIGHT);
+		}
 
 		// Draw current progress
 		int progressPx = this.getWidth() * progress / 100;
+		if (progressPx < 1) return;
+
 		g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
 		g.setColor(255, 255, 255);
 		g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
@@ -443,7 +472,28 @@ public class SplashCanvas extends Canvas
 		g.setColor(0, 0, 0);
 				
 		// Draw the progressbar message
-		g.drawString(message, this.getWidth() / 2, this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+		g.drawString(message, (this.getWidth() / 2) + (im_width / 2), this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+
+		if (draw_img != null)
+		{
+			g.drawImage(draw_img, (this.getWidth() / 2) - (font.stringWidth(message) / 2) + (im_width / 2), this.getHeight() - (height / 2), Graphics.VCENTER | Graphics.RIGHT);
+		}
+
+	}
+
+	public static void startTimer()
+	{
+		if (status_index != 8)
+		{
+			new Timer().schedule(new TimerTasks(TimerTasks.SC_RESET_TEXT_AND_IMG), 3000);
+		//#sijapp cond.if target="MOTOROLA"#
+			VirtualList.setLEDmode(VirtualList.BKLT_TYPE_BLINKING, 3000, JimmUI.st_colors[status_index]);
+		}
+		else
+		{
+			VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, -1, JimmUI.st_colors[9]);
+		//#sijapp cond.end#
+		}
 }
 
 	public static void addTimerTask(String captionLngStr, Action action, boolean canCancel)
