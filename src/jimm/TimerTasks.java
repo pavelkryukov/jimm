@@ -1,20 +1,32 @@
 package jimm;
 
+import jimm.util.ResourceBundle;
 import java.util.TimerTask;
 import jimm.comm.Action;
 import jimm.comm.Icq;
+//#sijapp cond.if target="MOTOROLA"#
+import com.motorola.funlight.*;
+//#sijapp cond.end#
 
 public class TimerTasks extends TimerTask implements javax.microedition.lcdui.CommandListener
 {
 	public static final int SC_AUTO_REPAINT = 1;
 
 	public static final int SC_HIDE_KEYLOCK = 2;
+	public static final int SC_RESET_TEXT_AND_IMG = 3;
 
 	//#sijapp cond.if target="MOTOROLA"#
 	public static final int VL_SWITCHOFF_BKLT = 10;
-
+	public static final int VL_SWITCHOFF_LED    = 11;
+	public static final int VL_LED_CHANGE_STATE = 12;
 	//#sijapp cond.end#
 	public static final int ICQ_KEEPALIVE = 100;
+
+	//#sijapp cond.if target="MOTOROLA"#
+	Region[] regions;
+	int tries;
+	int cmode;
+	//#sijapp cond.end#
 
 	private int type = -1;
 
@@ -32,6 +44,15 @@ public class TimerTasks extends TimerTask implements javax.microedition.lcdui.Co
 		this.type = type;
 	}
 
+	//#sijapp cond.if target="MOTOROLA"#
+	public TimerTasks(int type, Region[] regions, int tries)
+	{
+		this.type = type;
+		this.regions = regions;
+		this.tries = tries;
+	}
+	//#sijapp cond.end#
+
 	public void run()
 	{
 		if (wasError) return;
@@ -42,15 +63,40 @@ public class TimerTasks extends TimerTask implements javax.microedition.lcdui.Co
 			case SC_AUTO_REPAINT:
 				SplashCanvas.Repaint();
 				break;
-				
 			case SC_HIDE_KEYLOCK:
 				SplashCanvas.showKeylock = false;
 				SplashCanvas.Repaint();
 				break;
-			
+			case SC_RESET_TEXT_AND_IMG:
+				SplashCanvas.setMessage(ResourceBundle.getString("keylock_enabled"));
+				SplashCanvas.setStatusToDraw(JimmUI.getStatusImageIndex(Icq.getCurrentStatus()));
+				SplashCanvas.Repaint();
+				break;
 			//#sijapp cond.if target="MOTOROLA"#
 			case VL_SWITCHOFF_BKLT:
 				DrawControls.VirtualList.setBkltOn(false);
+				break;
+			case VL_SWITCHOFF_LED:
+				DrawControls.VirtualList.disableLED();
+				break;
+			case VL_LED_CHANGE_STATE:
+				if (((cmode % 2) == 0) & (tries != 1))
+				{
+					regions[0].getControl();
+					if (regions[1] != null) regions[1].getControl();
+				}
+				else
+				{
+					regions[0].releaseControl();
+					if (regions[1] != null) regions[1].releaseControl();
+				}
+				tries--;
+				cmode = (cmode++ % 2);
+				if (tries < 1)
+				{
+					DrawControls.VirtualList.disableLED();
+					cancel();
+				}
 				break;
 			//#sijapp cond.end#
 				

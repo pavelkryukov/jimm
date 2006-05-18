@@ -31,8 +31,10 @@ import DrawControls.ImageList;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
 //#sijapp cond.if target is "MOTOROLA"#
+import jimm.TimerTasks;
 import jimm.Jimm;
 import jimm.Options;
+import com.motorola.funlight.*;
 //#sijapp cond.end#
 
 //! This class is base class of owner draw list controls
@@ -928,7 +930,6 @@ public abstract class VirtualList extends Canvas
 	//#sijapp cond.if target="MOTOROLA"#
 	private static boolean bklt_on = true;
 	private static java.util.Timer switchoffTimer;
-	private static final java.util.TimerTask switchoffTimerTask = new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_BKLT);
 
 	public static void setBkltOn(boolean on)
 	{
@@ -949,7 +950,7 @@ public abstract class VirtualList extends Canvas
 				switchoffTimer.cancel();
 			}
 
-			(switchoffTimer = new java.util.Timer()).schedule(switchoffTimerTask, msec);
+			(switchoffTimer = new java.util.Timer()).schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_BKLT), msec);
 		}
 		catch (Exception e) {}
 	}
@@ -959,6 +960,78 @@ public abstract class VirtualList extends Canvas
 		{
 			if (switchoffTimer != null) switchoffTimer.cancel();
 			setBkltOn(true);
+		}
+	}
+
+	public static final int BKLT_TYPE_BLINKING = 1;
+	public static final int BKLT_TYPE_LIGHTING = 2;
+
+	private static java.util.Timer ledTimer;
+	private static Region[] currentRegions;
+	public static void setLEDmode(int type, int duration, int color)
+	{
+		int t = Jimm.funlight_device_type;
+		if ((t == -1) | !Options.getBoolean(Options.OPTION_FLASH_BACKLIGHT))
+		{
+			return;
+		}
+		disableLED();
+		Region[] regions = null;
+		switch (t)
+		{
+			case Jimm.FUNLIGHT_DEVICE_E390:
+				regions = new Region[]
+				{
+					FunLight.getRegion(3),
+					FunLight.getRegion(4)
+				};
+				break;
+			case Jimm.FUNLIGHT_DEVICE_E380:
+				regions = new Region[]
+				{
+					FunLight.getRegion(4),
+					null
+				};
+				break;
+		}
+		currentRegions = regions;
+		switch (type)
+		{
+			case BKLT_TYPE_LIGHTING:
+				regions[0].setColor(color);
+				if (regions[1] != null)
+				{
+					regions[1].setColor(color);
+					regions[1].getControl();
+				}
+				regions[0].getControl();
+				if (duration >= 200)
+				{
+					(ledTimer = new java.util.Timer()).schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_LED), duration);
+				}
+				break;
+			default:
+				regions[0].setColor(color);
+				if (regions[1] != null) regions[1].setColor(color);
+				int tries = duration / 250;
+				(ledTimer = new java.util.Timer())
+					.schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_LED_CHANGE_STATE, regions, tries), 0, 250);
+				break;
+		}
+	}
+	public static void disableLED()
+	{
+		if (ledTimer != null)
+		{
+			ledTimer.cancel();
+			ledTimer = null;
+		}
+
+		if (currentRegions != null)
+		{
+			currentRegions[0].releaseControl();
+			if (currentRegions[1] != null) currentRegions[1].releaseControl();
+			currentRegions = null;
 		}
 	}
 	//#sijapp cond.end#	

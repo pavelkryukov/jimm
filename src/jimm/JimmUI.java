@@ -819,7 +819,23 @@ public class JimmUI implements CommandListener
 		ContactList.STATUS_INVIS_ALL,
 	};
 	
-	private final static int[] imageIndexes = { 0, 1, 2, 3, 4, 5, 6, 7, 3 };
+	//#sijapp cond.if target="MOTOROLA"#
+	public final static int[] st_colors =
+	{
+		0x00AACC,
+		0xFFFF00,
+		0xFF8888,
+		0xBBBBBB,
+		0xAA0088,
+		0xFFCC66,
+		0xFF0000,
+		0x00FF00,
+		0x888888,
+		0x0000FF
+	};
+	//#sijapp cond.end#
+	
+	public final static int[] imageIndexes = { 0, 1, 2, 3, 4, 5, 6, 7, 3 };
 	
 	private final static String[] statusStrings = 
 	{
@@ -834,7 +850,7 @@ public class JimmUI implements CommandListener
 		"status_invis_all"
 	};
 	
-	private static int getStatusIndex(long status)
+	public static int getStatusIndex(long status)
 	{
 		for (int i = 0; i < statuses.length; i++) if (statuses[i] == status) return i;
 		return -1;

@@ -28,10 +28,12 @@ package jimm;
 import jimm.util.ResourceBundle;
 import jimm.comm.Icq;
 
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
+import javax.microedition.lcdui.*;
 
 public class JimmException extends Exception
+			//#sijapp cond.if target="MOTOROLA"#
+			implements CommandListener
+			//#sijapp cond.end#
 {
 
 
@@ -155,6 +157,10 @@ public class JimmException extends Exception
 			
 			// Set offline status for all contacts and reset online counters 
 			ContactList.setStatusesOffline();
+			SplashCanvas.setStatusToDraw(JimmUI.getStatusImageIndex(ContactList.STATUS_OFFLINE));
+			//#sijapp cond.if target="MOTOROLA"#
+			DrawControls.VirtualList.setLEDmode(DrawControls.VirtualList.BKLT_TYPE_LIGHTING, -1, 0xFF0000);
+			//#sijapp cond.end#
 			
 			// Unlock splash (if locked)
 			if (SplashCanvas.locked()) SplashCanvas.unlock();
@@ -162,6 +168,9 @@ public class JimmException extends Exception
 			// Display error message
 			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
 			errorMsg.setTimeout(Alert.FOREVER);
+			//#sijapp cond.if target="MOTOROLA"#
+			errorMsg.setCommandListener(e);
+			//#sijapp cond.end#
 			MainMenu.activate(errorMsg);
 			return(errorMsg);
 
@@ -183,6 +192,14 @@ public class JimmException extends Exception
 		}
 
 	}
+
+	//#sijapp cond.if target="MOTOROLA"#
+	public void commandAction(Command c, Displayable d)
+	{
+		DrawControls.VirtualList.disableLED();
+		MainMenu.activate();
+	}
+	//#sijapp cond.end#
 
 
 }

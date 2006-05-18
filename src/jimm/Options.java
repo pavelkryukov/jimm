@@ -126,6 +126,7 @@ public class Options
 	// #sijapp cond.if target is "MOTOROLA"#
 	public static final int OPTION_LIGHT_TIMEOUT       =  74;   /* int     */
 	public static final int OPTION_LIGHT_MANUAL	       = 140;   /* boolean */
+	public static final int OPTION_FLASH_BACKLIGHT     = 147;   /* boolean */
 	// #sijapp cond.end#
 	
 	public static final int OPTION_USE_SMILES		   = 141;   /* boolean */
@@ -336,6 +337,9 @@ public class Options
 		
 		setInt    (Options.OPTIONS_HOUR_OFFSET,       0);
 		setBoolean(Options.OPTION_NOTIFY, 		      true);
+		//#sijapp cond.if target="MOTOROLA"#
+		setBoolean(OPTION_FLASH_BACKLIGHT,            true);
+		//#sijapp cond.end#
 	}
 	
 	static public void resetLangDependedOpts()
@@ -677,6 +681,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	// #sijapp cond.if target is "MOTOROLA"#
     private TextField lightTimeout;
     private ChoiceGroup lightManual;
+	private ChoiceGroup flashBkltChoiceGroup;
 	// #sijapp cond.end#       
     // #sijapp cond.if modules_PROXY is "true"#
     private ChoiceGroup srvProxyType;
@@ -1275,6 +1280,12 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
 	                vibratorChoiceGroup.append(ResourceBundle.getString("when_locked"), null);
 	                vibratorChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_VIBRATOR), true);
+
+					//#sijapp cond.if target="MOTOROLA"#
+					flashBkltChoiceGroup = new ChoiceGroup(ResourceBundle.getString("flash_backight"), Choice.MULTIPLE);
+					flashBkltChoiceGroup.append(ResourceBundle.getString("yes"), null);
+					flashBkltChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_FLASH_BACKLIGHT));
+					//#sijapp cond.end#
 	                // #sijapp cond.end#
 
 	                chrgPopupWin = new ChoiceGroup(ResourceBundle.getString("popup_win"), Choice.EXCLUSIVE);
@@ -1282,7 +1293,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                chrgPopupWin.append(ResourceBundle.getString("pw_forme"), null);
 	                chrgPopupWin.append(ResourceBundle.getString("pw_all"),   null);
 	                chrgPopupWin.setSelectedIndex(Options.getInt(Options.OPTION_POPUP_WIN2), true);
-					
 					
 					// #sijapp cond.if target isnot "DEFAULT"#     
 					optionsForm.append(messageNotificationModeChoiceGroup);
@@ -1293,6 +1303,12 @@ class OptionsForm implements CommandListener, ItemStateListener
                     // #sijapp cond.end#
                                             
 					optionsForm.append(vibratorChoiceGroup);
+					//#sijapp cond.if target="MOTOROLA"#
+					if (Jimm.funlight_device_type != -1)
+					{
+						optionsForm.append(flashBkltChoiceGroup);
+					}
+					//#sijapp cond.end#
 					optionsForm.append(onlineNotificationModeChoiceGroup);
 					
                     // #sijapp cond.if target isnot "RIM"#                          
@@ -1492,6 +1508,10 @@ class OptionsForm implements CommandListener, ItemStateListener
                     // #sijapp cond.end#
 					// #sijapp cond.end# <===
 					Options.setInt(Options.OPTION_POPUP_WIN2, chrgPopupWin.getSelectedIndex()); 
+
+					//#sijapp cond.if target="MOTOROLA"#
+					Options.setBoolean(Options.OPTION_FLASH_BACKLIGHT, flashBkltChoiceGroup.isSelected(0));
+					//#sijapp cond.end#
 					break;
 			    
 				// #sijapp cond.if modules_TRAFFIC is "true"#
