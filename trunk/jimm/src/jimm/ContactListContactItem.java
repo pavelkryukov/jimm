@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-06  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -728,7 +728,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 					else if (status == ContactList.STATUS_NA) msgType = Message.MESSAGE_TYPE_NA;
 					else msgType = Message.MESSAGE_TYPE_AWAY;
 
-					PlainMessage awayReq = new PlainMessage(Options.getString(Options.OPTION_UIN), ContactListContactItem.this, msgType, Util.createCurrentDate(true), "");
+					PlainMessage awayReq = new PlainMessage(Options.getString(Options.OPTION_UIN), ContactListContactItem.this, msgType, Util.createCurrentDate(false), "");
 
 					SendMessageAction act = new SendMessageAction(awayReq);
 					try
@@ -1234,7 +1234,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			    	Options.getString(Options.OPTION_UIN),
 			    	this,
 			    	Message.MESSAGE_TYPE_NORM,
-			    	Util.createCurrentDate(true),
+			    	Util.createCurrentDate(false),
 			    	text
 			    );
 			
