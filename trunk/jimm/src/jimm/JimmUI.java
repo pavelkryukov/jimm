@@ -240,7 +240,7 @@ public class JimmUI implements CommandListener
 		setColorScheme(aboutTextList);
 		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1, 0xffffff);
 		
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		aboutTextList.setFontSize(Font.SIZE_MEDIUM);
 		//#sijapp cond.else#
 		aboutTextList.setFontSize(Font.SIZE_SMALL);
@@ -732,7 +732,7 @@ public class JimmUI implements CommandListener
 	{
 		infoTextList = new TextList(null);
 		
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		infoTextList.setFontSize(Font.SIZE_MEDIUM);
 		// #sijapp cond.else#
 		infoTextList.setFontSize(Font.SIZE_SMALL);
