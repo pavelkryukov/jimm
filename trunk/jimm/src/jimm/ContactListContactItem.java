@@ -601,7 +601,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		messageTextbox.setCommandListener(this);
 		Jimm.display.setCurrent(messageTextbox);
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
-			if ( (Options.getBoolean(Options.OPTION_NOTIFY))&&((caps&Util.CAPF_TYPING)!=0) )
+			if ( (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0) )
 				try
 				{
 				Jimm.jimm.getIcqRef().BeginTyping(getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
@@ -615,7 +615,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Command listener
 	public void commandAction(Command c, Displayable d)
 	{
-		if ( ((c == textboxCancelCommand)||(c == textboxOkCommand)||(c ==textboxSendCommand)) && (Options.getBoolean(Options.OPTION_NOTIFY))&&((caps&Util.CAPF_TYPING)!=0))
+		if ( ((c == textboxCancelCommand)||(c == textboxOkCommand)||(c ==textboxSendCommand)) && (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0))
 		try
 		{
 			Jimm.jimm.getIcqRef().BeginTyping(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),false);

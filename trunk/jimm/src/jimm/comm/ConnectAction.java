@@ -507,7 +507,7 @@ public class ConnectAction extends Action
 						
 						// If typing notify is on, we send full caps..with typing
 						byte[] tmp_packet;
-						if (Options.getBoolean(Options.OPTION_NOTIFY))
+						if (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
 						{
 						    tmp_packet = tmp;
 						}
@@ -525,7 +525,7 @@ public class ConnectAction extends Action
 
 						// Send a CLI_SETICBM packet
 						SnacPacket reply1;
-						if (Options.getBoolean(Options.OPTION_NOTIFY))
+						if (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
 						{
 							reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
 						}

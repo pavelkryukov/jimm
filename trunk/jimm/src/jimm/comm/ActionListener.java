@@ -66,7 +66,7 @@ public class ActionListener
             SnacPacket snacPacket = (SnacPacket) packet;
 
 	    // Typing notify
-	    	if ((snacPacket.getFamily() == 0x0004) && (snacPacket.getCommand() == 0x0014) && Options.getBoolean(Options.OPTION_NOTIFY))
+	    	if ((snacPacket.getFamily() == 0x0004) && (snacPacket.getCommand() == 0x0014) && Options.getInt(Options.OPTION_TYPING_MODE) > 0)
 	    	{
 			    byte[] p = snacPacket.getData();
 			    int uin_len = Util.getByte(p, 10);
