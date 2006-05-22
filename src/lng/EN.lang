@@ -106,6 +106,7 @@
   "hours"						"h"
   "http"						"HTTP"
   "http_user_agent"             "User-Agent String for HTTP-Connection"
+  "http_wap_profile"			"WAP-Profile String for HTTP-Connection"
   "icq_client"                  "ICQ client"
   "info"                        "Info"
   "init_ft"                     "Initializing"

@@ -92,6 +92,7 @@ public class Options
 	public static final int OPTION_SHADOW_CON          = 139;   /* boolean */
     // #sijapp cond.end#
 	public static final int OPTION_HTTP_USER_AGENT     =  17;   /* String  */
+	public static final int OPTION_HTTP_WAP_PROFILE    =  18;   /* String  */
 	public static final int OPTION_UI_LANGUAGE         =   3;   /* String  */
 	public static final int OPTION_DISPLAY_DATE        = 129;   /* boolean */
 	public static final int OPTION_CL_SORT_BY          =  65;   /* int     */
@@ -245,6 +246,7 @@ public class Options
 		setBoolean(Options.OPTION_MD5_LOGIN,          false);
 		setBoolean(Options.OPTION_AUTO_CONNECT,       false);
 		setString (Options.OPTION_HTTP_USER_AGENT,    "unknown");
+		setString (Options.OPTION_HTTP_WAP_PROFILE,   "unknown");
 		setString (Options.OPTION_UI_LANGUAGE,        ResourceBundle.langAvailable[0]);
 		setBoolean(Options.OPTION_DISPLAY_DATE,       false);
 		setInt    (Options.OPTION_CL_SORT_BY,         0);
@@ -643,6 +645,7 @@ class OptionsForm implements CommandListener, ItemStateListener
     private TextField srvHostTextField;
     private TextField srvPortTextField;
     private TextField httpUserAgendTextField;
+    private TextField httpWAPProfileTextField;
     private ChoiceGroup keepConnAliveChoiceGroup;
     private TextField connAliveIntervTextField;
     private ChoiceGroup connPropChoiceGroup;
@@ -1111,6 +1114,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
 	                autoConnectChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_AUTO_CONNECT));
 					httpUserAgendTextField = new TextField(ResourceBundle.getString("http_user_agent"), Options.getString(Options.OPTION_HTTP_USER_AGENT), 256, TextField.ANY);
+					httpWAPProfileTextField = new TextField(ResourceBundle.getString("http_wap_profile"), Options.getString(Options.OPTION_HTTP_WAP_PROFILE), 256, TextField.ANY);
 					optionsForm.append(srvHostTextField);
 					optionsForm.append(srvPortTextField);
 					optionsForm.append(connTypeChoiceGroup);
@@ -1119,6 +1123,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					optionsForm.append(autoConnectChoiceGroup);
 					optionsForm.append(connPropChoiceGroup);
 					optionsForm.append(httpUserAgendTextField);
+					optionsForm.append(httpWAPProfileTextField);
 					break;
                 // #sijapp cond.if modules_PROXY is "true"#
                 case OPTIONS_PROXY:
@@ -1412,6 +1417,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					Options.setBoolean(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(3));
                     // #sijapp cond.end#
 					Options.setString(Options.OPTION_HTTP_USER_AGENT,httpUserAgendTextField.getString());
+					Options.setString(Options.OPTION_HTTP_WAP_PROFILE,httpWAPProfileTextField.getString());
 					
 					break;
                 // #sijapp cond.if modules_PROXY is "true"#
