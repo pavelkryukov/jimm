@@ -175,6 +175,7 @@
 "hours"						"st"
 "http"						"HTTP"
 "http_user_agent"           "User-Agent Wert bei HTTP-Connection"
+"http_wap_profile"			"WAP-Profil bei HTTP-Connection"
 "icq_client"				"ICQ Client"
 "info"						"Info"
 "init_ft"					"Initialisierung"
