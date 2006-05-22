@@ -506,7 +506,7 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		String file = (String) src.getData();
 		dst.text = file;
 		dst.imageIndex = file.endsWith("/") ? 0 : 1;
-		dst.color = 0xFFFFFF;
+		dst.color = tree.getTextColor();
 		dst.fontStyle = javax.microedition.lcdui.Font.STYLE_PLAIN;
 	}
 
