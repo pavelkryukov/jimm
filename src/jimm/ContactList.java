@@ -1331,7 +1331,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			break;
 			
 		case SOUND_TYPE_TYPING:
-		    not_mode = Options.getInt(Options.OPTION_TYPING_MODE);
+		    not_mode = Options.getInt(Options.OPTION_TYPING_MODE) - 1;
 			break;
 		}
             

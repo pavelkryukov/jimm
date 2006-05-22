@@ -153,7 +153,6 @@ public class Options
 	public static final int OPTION_EXT_CLKEYCALL       =  81;   /* int     */
 	public static final int OPTION_EXT_CLKEYPOUND      =  82;   /* int     */
 	public static final int OPTION_VISIBILITY_ID       =  85;   /* int     */
-	public static final int OPTION_NOTIFY			   =  146;	/* boolean */
 	
 	//Hotkey Actions
 	public static final int HOTKEY_NONE     = 0;
@@ -338,7 +337,6 @@ public class Options
 		setBoolean(Options.OPTION_FULL_SCREEN,        false);
 		
 		setInt    (Options.OPTIONS_HOUR_OFFSET,       0);
-		setBoolean(Options.OPTION_NOTIFY, 		      true);
 		//#sijapp cond.if target="MOTOROLA"#
 		setBoolean(OPTION_FLASH_BACKLIGHT,            true);
 		//#sijapp cond.end#
@@ -1097,7 +1095,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                connPropChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_prop"), Choice.MULTIPLE);
 					connPropChoiceGroup.append(ResourceBundle.getString("md5_login"), null);
 	                connPropChoiceGroup.append(ResourceBundle.getString("async"), null);
-	                connPropChoiceGroup.append(ResourceBundle.getString("typing_notify"),null);
 	                // #sijapp cond.if target isnot "MOTOROLA"#
 	                connPropChoiceGroup.append(ResourceBundle.getString("shadow_con"), null);
 	                // #sijapp cond.end#
@@ -1106,9 +1103,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                	connPropChoiceGroup.setSelectedIndex(1, false);
 	                else
 	                	connPropChoiceGroup.setSelectedIndex(1, true);
-	                connPropChoiceGroup.setSelectedIndex(2, Options.getBoolean(Options.OPTION_NOTIFY));
 	                // #sijapp cond.if target isnot "MOTOROLA"#
-	                connPropChoiceGroup.setSelectedIndex(3, Options.getBoolean(Options.OPTION_SHADOW_CON));
+	                connPropChoiceGroup.setSelectedIndex(2, Options.getBoolean(Options.OPTION_SHADOW_CON));
 	                // #sijapp cond.end#
 	                autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
 	                autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
@@ -1275,6 +1271,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                typingNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.getString(Options.OPTION_TYPING_FILE), 32, TextField.ANY);
 	                typingNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("typing_notify"),Choice.EXCLUSIVE);
 	                typingNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
+	                typingNotificationModeChoiceGroup.append(ResourceBundle.getString("typing_display_only"), null);
 	                typingNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
 	                typingNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
 	                typingNotificationModeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_TYPING_MODE), true);
@@ -1412,7 +1409,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 						Options.setInt(Options.OPTION_CONN_PROP,1);
 					else
 						Options.setInt(Options.OPTION_CONN_PROP,0);
-					Options.setBoolean(Options.OPTION_NOTIFY, connPropChoiceGroup.isSelected(2));
                     // #sijapp cond.if target isnot "MOTOROLA"#
 					Options.setBoolean(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(3));
                     // #sijapp cond.end#
