@@ -1410,7 +1410,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					else
 						Options.setInt(Options.OPTION_CONN_PROP,0);
                     // #sijapp cond.if target isnot "MOTOROLA"#
-					Options.setBoolean(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(3));
+					Options.setBoolean(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(2));
                     // #sijapp cond.end#
 					Options.setString(Options.OPTION_HTTP_USER_AGENT,httpUserAgendTextField.getString());
 					Options.setString(Options.OPTION_HTTP_WAP_PROFILE,httpWAPProfileTextField.getString());
