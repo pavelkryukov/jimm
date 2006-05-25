@@ -66,6 +66,7 @@ public class ActionListener
             SnacPacket snacPacket = (SnacPacket) packet;
 
 	    // Typing notify
+            //#sijapp cond.if target isnot "DEFAULT"#
 	    	if ((snacPacket.getFamily() == 0x0004) && (snacPacket.getCommand() == 0x0014) && Options.getInt(Options.OPTION_TYPING_MODE) > 0)
 	    	{
 			    byte[] p = snacPacket.getData();
@@ -80,6 +81,7 @@ public class ActionListener
 			    	//End typing
 			    	RunnableImpl.BeginTyping(uin,false);
 			}
+	    	//#sijapp cond.end#
 	
             // Watch out for SRV_USERONLINE packets
             if ((snacPacket.getFamily() == SnacPacket.SRV_USERONLINE_FAMILY)

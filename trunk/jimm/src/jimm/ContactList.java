@@ -564,7 +564,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	{
     	    ContactListContactItem item = getCItem(i); 
     		item.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
+    		//#sijapp cond.if target isnot "DEFAULT"#
     		item.BeginTyping(false);
+    		//#sijapp cond.end#
     	}
     	
     	for (int i = gItems.size()-1; i >= 0; i--)
@@ -933,7 +935,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         
         if (status == STATUS_OFFLINE)
         	{
+        		//#sijapp cond.if target isnot "DEFAULT"#
         		cItem.BeginTyping(false);
+        		//#sijapp cond.end#
         		cItem.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, 0);
         	}
         
@@ -1267,6 +1271,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	
 	//#sijapp cond.end#
 
+	//#sijapp cond.if target isnot "DEFAULT"#
 	synchronized static private void TypingHelper(String uin, boolean type)
 	{
 		if (type) playSoundNotification(ContactList.SOUND_TYPE_TYPING);
@@ -1296,6 +1301,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			}
 		}
 	}
+	//#sijapp cond.end#
+	
     // Play a sound notification
     synchronized static private void playSoundNotification(int notType)
     {
@@ -1330,9 +1337,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			not_mode = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
 			break;
 			
+		//#sijapp cond.if target isnot "DEFAULT"#
 		case SOUND_TYPE_TYPING:
 		    not_mode = Options.getInt(Options.OPTION_TYPING_MODE) - 1;
 			break;
+		//#sijapp cond.end#
 		}
             
         switch (not_mode)
@@ -1346,7 +1355,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                     Manager.playTone(ToneControl.C4, 500, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
                     break;
                 case SOUND_TYPE_ONLINE:
+                	
+                //#sijapp cond.if target isnot "DEFAULT"#
                 case SOUND_TYPE_TYPING:
+               	//#sijapp cond.end#
                     Manager.playTone(ToneControl.C4+7, 500, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
                 }
 
@@ -1388,6 +1400,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 	if (p == null) return;
                     setVolume(p, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL)); 
                 }
+                //#sijapp cond.if target isnot "DEFAULT"#
                 else
                 {
                 	// Siemens 65-75 bugfix
@@ -1402,6 +1415,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                 	if (p == null) return;
                     setVolume(p, Options.getInt(Options.OPTION_TYPING_VOL)); 
                 }
+                //#sijapp cond.end#
                 
                 p.start();
             }

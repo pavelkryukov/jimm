@@ -275,12 +275,14 @@ class ChatTextList implements VirtualListCommands
 		}
 	}
 	
+	//#sijapp cond.if target isnot "DEFAULT"#
 	private boolean typing = false;
 	public void BeginTyping(boolean type)
 	{
 		typing = type;
 		textList.repaint();
 	}
+	//#sijapp cond.end#
 	
 	void addTextToForm(String from, String message, String url, long time, boolean red, boolean offline)
 	{
