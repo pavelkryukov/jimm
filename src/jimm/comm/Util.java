@@ -1533,11 +1533,13 @@ public class Util
 		               	  calendar.get(Calendar.SECOND)
 		              );
 		
+		//#sijapp cond.if target isnot "SIEMENS2"#
 		if (gmt)
 		{
 			int diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET); 
 			result += (diff*60*60);
 		}
+		//#sijapp cond.end#
 		
 		return result;
 	}

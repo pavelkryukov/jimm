@@ -359,7 +359,7 @@ public class ActionListener
                         // Construct object which encapsulates the received
                         // plain message
 
-                        PlainMessage plainMsg = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(false), text, false);
+                        PlainMessage plainMsg = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(true), text, false);
 						RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, plainMsg);
 						// #sijapp cond.if target is "MIDP2" #
 						Jimm.setMinimized(false);
