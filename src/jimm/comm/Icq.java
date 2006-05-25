@@ -283,6 +283,7 @@ public class Icq implements Runnable
         }
     }
 
+    //#sijapp cond.if target isnot "DEFAULT"#
     public synchronized void BeginTyping(String uin, boolean isTyping) throws JimmException
     {
 		byte[] uinRaw = Util.stringToByteArray(uin);
@@ -301,7 +302,8 @@ public class Icq implements Runnable
 		SnacPacket snacPkt = new SnacPacket(0x0004, 0x0014, 0x00000000, new byte[0], tempBuff);
 		this.c.sendPacket(snacPkt);
     }
-
+    //#sijapp cond.end#
+    
     // Checks whether the comm. subsystem is in STATE_NOT_CONNECTED
     static public synchronized boolean isNotConnected()
     {

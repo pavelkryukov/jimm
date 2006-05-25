@@ -601,12 +601,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		messageTextbox.setCommandListener(this);
 		Jimm.display.setCurrent(messageTextbox);
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		//#sijapp cond.if target isnot "DEFAULT"#
 			if ( (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0) )
 				try
 				{
 				Jimm.jimm.getIcqRef().BeginTyping(getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
 				}
 				catch (JimmException e){}
+		//#sijapp cond.end#
 	}
 
 	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
@@ -615,12 +617,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	// Command listener
 	public void commandAction(Command c, Displayable d)
 	{
+		//#sijapp cond.if target isnot "DEFAULT"#
 		if ( ((c == textboxCancelCommand)||(c == textboxOkCommand)||(c ==textboxSendCommand)) && (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0))
 		try
 		{
 			Jimm.jimm.getIcqRef().BeginTyping(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),false);
 		}
 		catch (JimmException e){}
+		//#sijapp cond.end#
 
 		// Return to contact list
 		if (c == backCommand)

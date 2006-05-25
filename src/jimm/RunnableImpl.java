@@ -68,9 +68,12 @@ public class RunnableImpl implements Runnable
 	{
 		switch (type)
 		{
+		//#sijapp cond.if target isnot "DEFAULT"#
 		case TYPE_USER_IS_TYPING:
 			ContactList.BeginTyping((String)data[0], getBoolean(data,1));
 			break;
+			//#sijapp cond.end#
+			
 		case TYPE_ADD_MSG:
 			ContactList.addMessage((Message)data[0]);
 			break;
@@ -188,6 +191,7 @@ public class RunnableImpl implements Runnable
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
 	}
 	
+	//#sijapp cond.if target isnot "DEFAULT"#
 	static public void BeginTyping(String uin, boolean type)
 	{
 		Object[] args = new Object[2];
@@ -195,6 +199,7 @@ public class RunnableImpl implements Runnable
 		setBoolean(args,1,type);
 		callSerially(TYPE_USER_IS_TYPING, args);
 	}
+	//#sijapp cond.end#
 	
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////

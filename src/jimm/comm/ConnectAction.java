@@ -507,6 +507,8 @@ public class ConnectAction extends Action
 						
 						// If typing notify is on, we send full caps..with typing
 						byte[] tmp_packet;
+						
+						//#sijapp cond.if target isnot "DEFAULT"#
 						if (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
 						{
 						    tmp_packet = tmp;
@@ -515,26 +517,35 @@ public class ConnectAction extends Action
 						// We must remove typing capability
 						else
 						{
+						//#sijapp cond.end#
+							
 						    tmp_packet = new byte[tmp.length-16];
 						    System.arraycopy(tmp,0,tmp_packet,0,tmp.length-16);
 						    
 						    // Length correction
 						    tmp_packet[3] = (byte)0x40;
+                        //#sijapp cond.if target isnot "DEFAULT"#
 						}
+						//#sijapp cond.end#
 					    Icq.c.sendPacket(new SnacPacket(0x0002, 0x0004, 0, new byte[0], tmp_packet));
 
 						// Send a CLI_SETICBM packet
 						SnacPacket reply1;
+						
+						//#sijapp cond.if target isnot "DEFAULT"#
 						if (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
 						{
 							reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
 						}
 						else
 						{
+							//#sijapp cond.end#
 							tmp_packet = ConnectAction.CLI_SETICBM_DATA;
 							tmp_packet[5] = 0x03;
 							reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], tmp_packet);
+							//#sijapp cond.if target isnot "DEFAULT"#
 						}
+						//#sijapp cond.end#
 						Icq.c.sendPacket(reply1);
 
 						// Send a CLI_SETSTATUS packet
