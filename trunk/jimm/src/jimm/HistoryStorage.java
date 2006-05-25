@@ -541,9 +541,6 @@ class HistoryStorageList extends VirtualList
 		if (messText == null)
 		{
 			messText = new TextList(null);
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			messText.setFullScreenMode(false);
-			//#sijapp cond.end#
 			messText.setCursorMode(TextList.SEL_NONE);
 			messText.setCommandListener(this);
 			messText.addCommand(cmdMsgBack);
