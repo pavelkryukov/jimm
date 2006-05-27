@@ -631,7 +631,7 @@ public abstract class VirtualList extends Canvas
 	}
 	
 	// private int drawCaption(Graphics g)
-	private int drawCaption(Graphics g)
+	protected int drawCaption(Graphics g)
 	{
 		if (caption == null) return 0;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
