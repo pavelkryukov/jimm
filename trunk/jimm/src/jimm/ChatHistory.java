@@ -141,6 +141,7 @@ class MessData
 	//#sijapp cond.end#
 }
 
+//#sijapp cond.if target is "SIEMENS2"#
 class TextListEx extends TextList
 {
 	public TextListEx(String cap)
@@ -155,6 +156,7 @@ class TextListEx extends TextList
 			return super.drawCaption(g);
 	}
 }
+//#sijapp cond.end#
 
 class ChatTextList implements VirtualListCommands
                              // #sijapp cond.if target is "SIEMENS2"#
@@ -194,7 +196,11 @@ class ChatTextList implements VirtualListCommands
 	}
 	// #sijapp cond.end# <===
 	
+	//#sijapp cond.if target is "SIEMENS2"#
 	TextListEx textList;
+	//#sijapp cond.else#
+	TextList textList;
+	//#sijapp cond.end#
 	public String ChatName, uin;
 	private Vector messData = new Vector();
 	private int messTotalCounter = 0;
@@ -205,7 +211,11 @@ class ChatTextList implements VirtualListCommands
 		_this = this;
 		// #sijapp cond.end#
 		
+		//#sijapp cond.if target is "SIEMENS2"#
 		textList = new TextListEx(null);
+		//#sijapp cond.else#
+		textList = new TextList(null);
+		//#sijapp cond.end#
 		
 		textList.setCursorMode(TextList.SEL_NONE);
 		textList.setFontSize
@@ -710,7 +720,9 @@ public class ChatHistory
 		// Calculate the title for the chatdisplay.
 		String Title = temp.ChatName+" ("+counter+"/"+historyTable.size()+")";
 		temp.textList.setCaption(Title);
+		//#sijapp cond.if target is "SIEMENS2"#
 		temp.form.setTitle(Title);
+		//#sijapp cond.end#
 	}
 
 	static public void setColorScheme()
