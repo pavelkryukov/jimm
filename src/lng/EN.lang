@@ -117,7 +117,7 @@
   "keep_chat"                   "Keep chat history?"
   "keep_conn_alive"             "Keep connection alive?"
   "keylock"                     "Keylock"
-  "keylock_message"             "Hold \"#\" to disable keylock"
+  "keylock_message"             "Hold # to disable keylock"
   "keylock_enable"              "Enable keylock"
   "keylock_enabled"             "Keylock enabled"
   "keyword"                     "Keyword"
