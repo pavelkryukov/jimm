@@ -191,7 +191,7 @@ class ChatTextList implements VirtualListCommands
 		insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.SCREEN, 3);
 		textLine.addCommand(insertEmotionCommand);
 		//#sijapp cond.end#
-		insertTemplateCommand = new Command(ResourceBundle.getString("insert_template"), Command.SCREEN, 4);
+		insertTemplateCommand = new Command(ResourceBundle.getString("templates"), Command.SCREEN, 4);
 		textLine.addCommand(insertTemplateCommand);
 	}
 	// #sijapp cond.end# <===
