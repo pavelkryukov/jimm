@@ -1022,17 +1022,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	static public void updateTitle(int traffic)
 	{
 		String text = onlineCounter + "/" + cItems.size();
-		String sep = " - ";
+		String sep = "-";
 		if (traffic != 0)
-		{
-			if (text.length() > 4) sep = "-";
 			text += sep + traffic + ResourceBundle.getString("kb") + sep + Util.getDateString(true);
-		}
 		else
-		{
 			text += sep + Util.getDateString(true);
-		}
-
 		tree.setCaption(text);
 	}
 
