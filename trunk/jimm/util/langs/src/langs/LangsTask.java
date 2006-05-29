@@ -18,7 +18,7 @@
  ********************************************************************************
  File: util/langs/src/langs/LangsTask.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Artyomov Denis
+ Author(s): Artyomov Denis, Andreas Rossbacher
  *******************************************************************************/
 
 package langs;
@@ -121,38 +121,18 @@ public class LangsTask extends Task
 		return newKey;
 	}
 
-	static private String[] devideToWords(String text)
+	static private String[] devideToWords(String text) throws Exception
 	{
-		Vector result = new Vector();
-		int curIdx = 0, size, startIdx;
-		char eos = 0;
 		
-		size = text.length();
-		for (;;)
-		{
-			// searching begin of word
-			for (; curIdx < size; curIdx++) if (text.charAt(curIdx) != ' ') break;
-			if (curIdx >= size) break;
-			
-			startIdx = curIdx;
-			curIdx++;
-			
-			// searching end of word
-			if (curIdx < size)
-			{
-				eos = (text.charAt(startIdx) == '\"') ? '\"' : ' ';
-				for (; curIdx < size; curIdx++) if (text.charAt(curIdx) == eos) break;
-			}	
-
-			if (eos == '\"') result.addElement(text.substring(startIdx+1, curIdx));
-			else result.addElement(text.substring(startIdx, curIdx));
-			curIdx++;
-			if (curIdx >= size) break;
+		String[] resultArray = new String[2];
+		try {
+			resultArray[0] = text.substring(1,text.indexOf('"',1));
+			resultArray[1] = text.substring(text.indexOf('"',text.indexOf('"',1)+1)+1,text.lastIndexOf('"'));
+		} catch (Exception e) {
+			throw new Exception();
 		}
-			
-		String[] resultArray = new String[result.size()];
-		for (int i = 0; i < result.size(); i++) resultArray[i] = (String)result.elementAt(i);
-		return resultArray;
+		
+		return resultArray;	
 	}
 	
 	static private Vector readLangFile(String inFile)
@@ -171,7 +151,6 @@ public class LangsTask extends Task
 				line = line.trim();
 				if (line.length() == 0) continue;
 				if (line.charAt(0) == '/') continue;
-				
 				StringBuffer strBuf = new StringBuffer();
 				int lineLen = line.length();
 				for (int i = 0; i < lineLen; i++)
@@ -185,6 +164,7 @@ public class LangsTask extends Task
 						if (chr2 == 'n') addText = "\n";
 						if (chr2 == 'r') addText = "\r";
 						if (chr2 == 't') addText = "\t";
+						if (chr2 == '"') addText = "\"";
 					}
 					
 					if (addText != null)
@@ -196,11 +176,17 @@ public class LangsTask extends Task
 					{
 						if (chr < ' ') chr = ' ';
 						strBuf.append(chr);
-					}	
+					}
 				}
-				
-				String[] words = devideToWords(strBuf.toString());
-				if (words.length < 2) throw new BuildException("Wrong lang line '"+line+"' in file '"+inFile+"'");
+
+				String[] words;
+				try
+				{
+					words = devideToWords(strBuf.toString());
+				} catch (Exception e)
+				{
+					throw new BuildException("Wrong lang line '" + line + "' in file '" + inFile + "'");
+				}
 				data.addElement(words);
 			}
 		}
