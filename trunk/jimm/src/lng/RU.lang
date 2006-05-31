@@ -1,4 +1,4 @@
-﻿  // Labels
+  // Labels
   // MOTOROLA formatted buttons
   // #sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Время подсветки (сек)"
