@@ -252,7 +252,7 @@ Contributors:
   *  Tomas Spal 
   		(Better ContactList title update routine)
   *  Denis Stanishevskiy 
-  		(Offline messages timestamp, new vibra option, remove you fromusers 
+  		(Offline messages timestamp, new vibra option, remove you from users 
   		contact list)
   *  Mattias Stoeneberg
   		Message counter on splash screen, Search for f/m
@@ -262,7 +262,7 @@ Contributors:
   		(Smiles pictures)
   *  Andrey Kazakov
   		(Status for temporary and unauthorized contacts, safe login, file
-  		transfer improvement)
+  		transfer improvement, constacts groups management)
   *  Igor Palkin
   		(Configurable hotkeys, history exporting, client info, open URL feature,
   		text templates)
