@@ -137,11 +137,7 @@ class HistoryStorageList extends VirtualList
 			removeCommand(cmdGotoURL);
 			if ( record.contains_url ) addCommand(cmdGotoURL);
 			//#sijapp cond.end#
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			setTitle(record.from+" "+record.date);
-			//#sijapp cond.else#
 			setCaption(record.from+" "+record.date);
-			//#sijapp cond.end#
 		}
 	}
 	
