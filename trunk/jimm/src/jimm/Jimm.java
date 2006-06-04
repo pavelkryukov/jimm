@@ -36,6 +36,7 @@ import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
+import javax.microedition.lcdui.Displayable;
 
 public class Jimm extends MIDlet
 {
@@ -75,8 +76,7 @@ public class Jimm extends MIDlet
 	private ChatHistory ch;
 	
     // #sijapp cond.if target is "MIDP2" #
-	// Minimized state variable
-	static private boolean minimized, is_phone_SE;
+	static private boolean is_phone_SE;
     // #sijapp cond.end #
 	// #sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
 	static public final boolean supports_JSR75;
@@ -158,13 +158,10 @@ public class Jimm extends MIDlet
 		
 		// Return if MIDlet has already been initialized
 		if (Jimm.jimm != null)
-        {
-		    // #sijapp cond.if target is "MIDP2" #
-		    setMinimized(false);
-		    ContactList.activate();
-		    // #sijapp cond.end #
-            return;
-        }
+		{
+			showWorkScreen();
+			return;
+		}
 		
 		// Save MIDlet reference
 		Jimm.jimm = this;
@@ -199,12 +196,7 @@ public class Jimm extends MIDlet
 		{
 			Display.getDisplay(this).setCurrent(this.sc);
 		}
-		
-	    // #sijapp cond.if target is "MIDP2" #
-		// Set minimized = false
-		setMinimized(false);
-	    // #sijapp cond.end #
-		
+	
 		// Get display object (and update progress indicator)
 		Jimm.display = Display.getDisplay(this);
 		SplashCanvas.setProgress(10);
@@ -374,29 +366,26 @@ public class Jimm extends MIDlet
 		return ui;
 	}
 	
+	static public void showWorkScreen()
+	{
+		if (Icq.isConnected()) ContactList.activate();
+		else MainMenu.activate();
+	}
+	
 	// #sijapp cond.if target is "MIDP2" #
 	// Set the minimize state of midlet
 	static public void setMinimized(boolean mini)
 	{
-		if (mini && !minimized)
+		if (mini)
 		{
 			Jimm.display.setCurrent(null);
+			return;
 		}
-		
-		if (!mini && minimized)
+		else
 		{
-			long status = Options.getLong(Options.OPTION_ONLINE_STATUS); 
-			if ((status == ContactList.STATUS_ONLINE) || 
-			    (status == ContactList.STATUS_CHAT)) ContactList.activate();
+			Displayable disp = Jimm.display.getCurrent();
+			if ((disp == null) || !disp.isShown()) showWorkScreen();
 		}
-		
-	    minimized = mini;
-	}
-	
-	// Return if the app is in minimized state
-	static public boolean minimized()
-	{
-	    return(minimized);
 	}
 	
 	static public boolean is_phone_SE()

@@ -143,7 +143,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     private static Vector gItems;
     
     private static boolean treeBuilt = false, treeSorted = false;
-	
+
     // Contains tree nodes by groip ids
 	private static Hashtable gNodes = new Hashtable();
 	
@@ -968,15 +968,23 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		cItem.setIntValue (ContactListContactItem.CONTACTITEM_IDLE,idle);
 
         // Play sound notice if selected
-        if ((trueStatus == STATUS_ONLINE) && statusChanged)
-        {
-            if ( treeBuilt ) playSoundNotification(SOUND_TYPE_ONLINE);
-            else needPlayOnlineNotif |= true;
-        }
+        if ((trueStatus == STATUS_ONLINE) && statusChanged && !treeBuilt) needPlayOnlineNotif |= true;
         
         // Update visual list
         if (statusChanged) contactChanged(cItem, false, (wasOnline && !nowOnline) || (!wasOnline && nowOnline)); 
     }
+
+
+    static public void checkAndPlayOnlineSound(String uin, int newStatus)
+    {
+        ContactListContactItem cItem = getItembyUIN(uin);
+        if (cItem == null) return;
+        int trueStatus = Util.translateStatusReceived(newStatus);
+        if ((trueStatus == STATUS_ONLINE) && 
+            (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_ONLINE))
+        		playSoundNotification(SOUND_TYPE_ONLINE);  
+    }
+    
 
     // Updates the client-side contact list (called when a contact changes status)
     static public synchronized void update(String uin, int status)
@@ -1167,7 +1175,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         
         // Notify user
         if ( !treeBuilt ) needPlayMessNotif |= true;
-        else playSoundNotification(SOUND_TYPE_MESSAGE);
         
         cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true);
         
@@ -1180,9 +1187,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // Reaction to player events. (Thanks to Alexander Barannik for idea!)
     public void playerUpdate(final Player player, final String event, Object eventData)
     {
-    	// queue a call to updateEvent in the user interface event queue
-    	RunnableImpl.callSerially(RunnableImpl.TYPE_CLOSE_PLAYER, player, event);
-    	playerFree = true;
+    	if ( event.equals(PlayerListener.END_OF_MEDIA) )
+    	{
+        	player.close();
+        	playerFree = true;
+    	}
     }
 
 	// Creates player for file 'source'
@@ -1298,7 +1307,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	//#sijapp cond.end#
 	
     // Play a sound notification
-    synchronized static private void playSoundNotification(int notType)
+    synchronized static public void playSoundNotification(int notType)
     {
     	if (!treeBuilt) return;
     	
@@ -1430,8 +1439,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // #sijapp cond.if target is "RIM"#
         if (Options.getBoolean(Options.OPTION_VIBRATOR))
         {
-						// had to use full path since import already contains another Alert object
-            net.rim.device.api.system.Alert.startVibrate(500);
+			// had to use full path since import already contains another Alert object
+        	net.rim.device.api.system.Alert.startVibrate(500);
         }
         int mode_rim;
         if (notType == SOUND_TYPE_MESSAGE)
