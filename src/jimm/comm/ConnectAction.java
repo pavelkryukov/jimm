@@ -895,7 +895,7 @@ public class ConnectAction extends Action
 							 // Forward message to contact list
 							
 							PlainMessage message = new PlainMessage(uin, this.uin, date, text, true);
-							RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
+							RunnableImpl.addMessageSerially(message);
 						}
 						// URL message
 						else if (type == 0x0004)
@@ -920,7 +920,7 @@ public class ConnectAction extends Action
 
 							// Forward message message to contact list
 							UrlMessage message = new UrlMessage(uin, this.uin, date, url, urlText);
-							RunnableImpl.callSerially(RunnableImpl.TYPE_ADD_MSG, message);
+							RunnableImpl.addMessageSerially(message);
 						}
 
 						// Packet has been consumed

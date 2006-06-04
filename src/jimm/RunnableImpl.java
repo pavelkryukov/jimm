@@ -41,15 +41,14 @@ public class RunnableImpl implements Runnable
 	private Object[] data;
 	private static MIDlet midlet;
 	
-	final static public int TYPE_ADD_MSG             = 1;
-	final static public int TYPE_CLOSE_PLAYER        = 2;
-	final static public int TYPE_SET_CAPTION         = 3;
-	final static public int TYPE_USER_OFFLINE        = 4;
-	final static public int TYPE_UPDATE_CONTACT_LIST = 5;
-	final static public int TYPE_SHOW_USER_INFO      = 6;
-	final static public int TYPE_UPDATE_CL_CAPTION   = 7;
-	final static public int TYPE_ADDCONTACT          = 8;
-	final static public int TYPE_USER_IS_TYPING		 = 9;
+	final static private int TYPE_ADD_MSG             = 1;
+	final static public  int TYPE_SET_CAPTION         = 3;
+	final static public  int TYPE_USER_OFFLINE        = 4;
+	final static public  int TYPE_UPDATE_CONTACT_LIST = 5;
+	final static public  int TYPE_SHOW_USER_INFO      = 6;
+	final static public  int TYPE_UPDATE_CL_CAPTION   = 7;
+	final static public  int TYPE_ADDCONTACT          = 8;
+	final static public  int TYPE_USER_IS_TYPING      = 9;
 	
 	RunnableImpl(int type, Object[] data)
 	{
@@ -77,16 +76,7 @@ public class RunnableImpl implements Runnable
 		case TYPE_ADD_MSG:
 			ContactList.addMessage((Message)data[0]);
 			break;
-			
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		case TYPE_CLOSE_PLAYER:	
-        	if ((String)data[1] == PlayerListener.END_OF_MEDIA)
-        	{
-        		((Player)data[0]).close();
-        	}
-        	break;
-		//#sijapp cond.end#	
-			
+		
 		case TYPE_USER_OFFLINE:
 			ContactList.update((String)data[0], ContactList.STATUS_OFFLINE);
 			break;
@@ -118,6 +108,7 @@ public class RunnableImpl implements Runnable
 				getInt(data,  9),
 				getInt(data, 10)
 			);
+			
 			break;
 			
 		case TYPE_ADDCONTACT:
@@ -146,7 +137,6 @@ public class RunnableImpl implements Runnable
 		callSerially(type, null);
 	}
 	
-	
 	static public void callSerially(int type, Object obj1, Object obj2)
 	{
 		callSerially(type, new Object[] {obj1, obj2});
@@ -157,6 +147,15 @@ public class RunnableImpl implements Runnable
 	static public void updateContactListCaption()
 	{
 		callSerially(TYPE_UPDATE_CL_CAPTION);
+	}
+	
+	static public void addMessageSerially(Object message)
+	{
+		callSerially(TYPE_ADD_MSG, message);
+		ContactList.playSoundNotification(ContactList.SOUND_TYPE_MESSAGE);
+		// #sijapp cond.if target is "MIDP2" #
+		Jimm.setMinimized(false);
+		// #sijapp cond.end #
 	}
 	
 	static public void updateContactList
@@ -189,6 +188,7 @@ public class RunnableImpl implements Runnable
 		setInt(arguments, 10, idle        );  
 		
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
+		ContactList.checkAndPlayOnlineSound(uin, status);
 	}
 	
 	//#sijapp cond.if target isnot "DEFAULT"#
