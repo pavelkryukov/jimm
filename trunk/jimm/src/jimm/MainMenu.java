@@ -585,7 +585,7 @@ public class MainMenu implements CommandListener
 			
 		case 1: // Search for User
 			Search searchf = new Search(false);
-			searchf.getSearchForm().activate(false);
+			searchf.getSearchForm().activate(Search.SearchForm.ACTIV_JUST_SHOW);
 			break;
 			
 		case 2: // Add group

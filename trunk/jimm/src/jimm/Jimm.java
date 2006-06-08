@@ -368,7 +368,8 @@ public class Jimm extends MIDlet
 	
 	static public void showWorkScreen()
 	{
-		if (Icq.isConnected()) ContactList.activate();
+		if (SplashCanvas.locked()) SplashCanvas.show();
+		else if (Icq.isConnected()) ContactList.activate();
 		else MainMenu.activate();
 	}
 	

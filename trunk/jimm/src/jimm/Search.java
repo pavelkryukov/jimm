@@ -224,20 +224,34 @@ public class Search
 			screen.setCursorMode(TextList.SEL_NONE);
 			JimmUI.setColorScheme(screen);
 		}
+		
+		static final public int ACTIV_SHOW_RESULTS   = 1;
+		static final public int ACTIV_JUST_SHOW      = 2;
+		static final public int ACTIV_SHOW_NORESULTS = 3;
 
 		// Activate search form
-		public void activate(boolean result)
+		public void activate(int type)
 		{
-			if (result)
+			switch (type)
 			{
+			case ACTIV_SHOW_RESULTS:
 				drawResultScreen(selectedIndex);
 				Jimm.display.setCurrent(this.screen);
-			}
-			else
-			{
+				break;
+				
+			case ACTIV_JUST_SHOW:
 				this.searchForm.addCommand(this.searchCommand);
 				this.searchForm.addCommand(this.backCommand);
 				Jimm.display.setCurrent(this.searchForm);
+				break;
+				
+			case ACTIV_SHOW_NORESULTS:	
+				this.searchForm.addCommand(this.searchCommand);
+				this.searchForm.addCommand(this.backCommand);
+            	Alert alert = new Alert(null, ResourceBundle.getString("no_results"), null, null);
+            	alert.setTimeout(Alert.FOREVER);
+            	Jimm.display.setCurrent(alert, this.searchForm);
+				break;
 			}
 		}
 
@@ -281,7 +295,7 @@ public class Search
 			if (next)
 			{
 				selectedIndex = (selectedIndex + 1) % Search.this.size();
-				this.activate(true);
+				this.activate(Search.SearchForm.ACTIV_SHOW_RESULTS);
 			}
 			else
 			{
@@ -290,7 +304,7 @@ public class Search
 				{
 					selectedIndex = (selectedIndex - 1) % Search.this.size();
 				}
-				this.activate(true);
+				this.activate(Search.SearchForm.ACTIV_SHOW_RESULTS);
 			}
 
 		}
@@ -326,7 +340,7 @@ public class Search
 			{
 				if ((d == screen) && !liteVersion)
 				{
-					activate(false);
+					activate(Search.SearchForm.ACTIV_JUST_SHOW);
 				}
 				else
 				{

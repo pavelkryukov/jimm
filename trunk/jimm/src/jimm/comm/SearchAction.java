@@ -23,10 +23,15 @@ Author(s): Andreas Rossbacher
 
 package jimm.comm;
 
+import javax.microedition.lcdui.Alert;
+
+import jimm.Jimm;
 import jimm.JimmException;
 import jimm.MainMenu;
 import jimm.Options;
 import jimm.Search;
+import jimm.util.ResourceBundle;
+
 import java.io.ByteArrayOutputStream;
 
 
@@ -252,18 +257,12 @@ public class SearchAction extends Action
         return consumed;
     }
     
-    // Activates the result screen
-    public void activateResult()
-    {
-    	this.cont.getSearchForm().activate(true);
-    }
-    
     public void onEvent(int eventTuype)
     {
     	switch (eventTuype)
     	{
     	case ON_COMPLETE:
-    		cont.getSearchForm().activate(true);
+    		cont.getSearchForm().activate(Search.SearchForm.ACTIV_SHOW_RESULTS);
     		break;
     		
     	case ON_ERROR:
@@ -273,12 +272,12 @@ public class SearchAction extends Action
             }
             else
             {
-            	JimmException.handleException(new JimmException(159, 1, true));
+            	cont.getSearchForm().activate(Search.SearchForm.ACTIV_SHOW_NORESULTS);
             }
     		break;
     		
     	case ON_CANCEL:
-			MainMenu.activate();
+    		cont.getSearchForm().activate(Search.SearchForm.ACTIV_JUST_SHOW);
     		state = STATE_SEARCH_CANCELED;
     		break;
     	}
