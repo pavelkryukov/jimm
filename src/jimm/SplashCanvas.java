@@ -204,7 +204,6 @@ public class SplashCanvas extends Canvas
 			t2 = null;
 		}
 		Jimm.display.setCurrent(_this);
-		isLocked = false;
 	}
 	
 	static public void addCmd(Command cmd)
@@ -256,12 +255,11 @@ public class SplashCanvas extends Canvas
 		{
 			(t2 = new Timer()).schedule(new TimerTasks(TimerTasks.SC_AUTO_REPAINT), 20000, 20000);
 		}
-		
 	}
 
 
 	// Disable keylock
-	static public synchronized void unlock()
+	static public synchronized void unlock(boolean showContactList)
 	{
 		if (!isLocked) return;
 		
@@ -348,7 +346,7 @@ public class SplashCanvas extends Canvas
 	
 		if ((poundPressTime != 0) && ((System.currentTimeMillis()-poundPressTime) > 900))
 		{
-			unlock();
+			unlock(true);
 			poundPressTime = 0;
 		}
 	}
@@ -514,6 +512,10 @@ public class SplashCanvas extends Canvas
 			SplashCanvas._this.addCommand(SplashCanvas.cancelCommnad);
 			SplashCanvas._this.setCommandListener(timerTask);
 		}
+		
+		//  #sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
+		SplashCanvas._this.setFullScreenMode(!canCancel);
+		//#sijapp cond.end#
 		
 		SplashCanvas.setMessage(ResourceBundle.getString(captionLngStr));
 		SplashCanvas.setProgress(0);

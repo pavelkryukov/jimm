@@ -163,7 +163,7 @@ public class JimmException extends Exception
 			//#sijapp cond.end#
 			
 			// Unlock splash (if locked)
-			if (SplashCanvas.locked()) SplashCanvas.unlock();
+			if (SplashCanvas.locked()) SplashCanvas.unlock(true);
 
 			// Display error message
 			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
@@ -184,6 +184,9 @@ public class JimmException extends Exception
 			{
 				Alert errorMsg = new Alert(ResourceBundle.getString("warning"), e.getMessage(), null, AlertType.WARNING);
 				errorMsg.setTimeout(Alert.FOREVER);
+				
+				SplashCanvas.unlock(false);
+				
 				if (Icq.isConnected()) ContactList.activate(errorMsg);
 				else MainMenu.activate(errorMsg);
 				return(errorMsg);
