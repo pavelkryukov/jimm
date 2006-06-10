@@ -145,6 +145,8 @@ public class Options
 	
 	public static final int OPTION_FULL_SCREEN         = 145;   /* boolean */
 	
+	protected static final int OPTIONS_LANG_CHANGED    = 148;
+	
 	public static final int OPTION_POPUP_WIN2          =  84;   /* int     */
 	public static final int OPTION_EXT_CLKEY0          =  77;   /* int     */
 	public static final int OPTION_EXT_CLKEYSTAR       =  78;   /* int     */
@@ -200,13 +202,20 @@ public class Options
 			//#sijapp cond.if modules_DEBUGLOG is "true"#
 			checkKeys = true;
 			setDefaults();
-			resetLangDependedOpts();
 			checkKeys = false;
 			//#sijapp cond.else#
 			Options.setDefaults();
+			resetLangDependedOpts();
 			//#sijapp cond.end #
 			
 			load();
+			
+			if ( getBoolean(OPTIONS_LANG_CHANGED) )
+			{
+				setBoolean(OPTIONS_LANG_CHANGED, false);
+				resetLangDependedOpts();
+				System.out.println("Options.resetLangDependedOpts()");
+			}
 		}
 		// Use default values if loading option values from record store failed
 		catch (Exception e)
@@ -340,6 +349,8 @@ public class Options
 		//#sijapp cond.if target="MOTOROLA"#
 		setBoolean(OPTION_FLASH_BACKLIGHT,            true);
 		//#sijapp cond.end#
+		
+		setBoolean(OPTIONS_LANG_CHANGED,              false);
 	}
 	
 	static public void resetLangDependedOpts()
@@ -1487,8 +1498,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 					
 					if ( !lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)) )
 					{
-						System.out.println("Options.resetLangDependedOpts()");
-						Options.resetLangDependedOpts();
+						
+						Options.setBoolean(Options.OPTIONS_LANG_CHANGED, true);
 					}
 					
 					break;
