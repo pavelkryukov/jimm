@@ -123,6 +123,7 @@
   "hours"						"ч"
   "http"						"HTTP"
   "http_user_agent"             "Строка ''User-Agent'' (только для HTTP подключения)"
+  "http_wap_profile"            "WAP профиль (только для HTTP подключения)"
   "icq_client"                  "ICQ клиент"
   "info"                        "Информация"
   "init_ft"                     "Инициализация..."

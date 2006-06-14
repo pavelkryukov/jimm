@@ -387,7 +387,7 @@ public class Jimm extends MIDlet
 			Displayable disp = Jimm.display.getCurrent();
 			if ((disp == null) || !disp.isShown())
 			{
-				Jimm.display.setCurrent(null);
+				if (is_phone_SE) Jimm.display.setCurrent(null);
 				showWorkScreen();
 			}
 		}
