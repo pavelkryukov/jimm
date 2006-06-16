@@ -235,7 +235,7 @@
   "state"                       "State"
   "status"                      "Status"
   "status_message"              "Status message"
-  "status_message_text"         "User is currently unavailable since %TIME%. You could leave a message."
+  "status_message_text"         "The user's been unavailable since %TIME%. You can leave a message."
   "status_away"                 "Away"
   "status_chat"                 "Free for Chat"
   "status_dnd"                  "Do Not Disturb"
