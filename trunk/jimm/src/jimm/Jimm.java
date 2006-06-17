@@ -368,10 +368,6 @@ public class Jimm extends MIDlet
 	
 	static public void showWorkScreen()
 	{
-		// #sijapp cond.if target is "MIDP2" #
-		if (is_phone_SE) Jimm.display.setCurrent(null);
-		// #sijapp cond.end #
-		
 		if (SplashCanvas.locked()) SplashCanvas.show();
 		else if (Icq.isConnected()) ContactList.activate();
 		else MainMenu.activate();
