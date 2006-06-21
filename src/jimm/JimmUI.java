@@ -507,7 +507,7 @@ public class JimmUI implements CommandListener
 			// #sijapp cond.end#
 				
 			case Options.HOTKEY_CLI_INFO:
-				item.showClientInfo();
+				if (item != null) item.showClientInfo();
 				break;
 				
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
