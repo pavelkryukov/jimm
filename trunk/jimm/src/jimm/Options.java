@@ -860,7 +860,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 		keysMenu.setSelectedIndex(lastItemIndex == -1 ? 0 : lastItemIndex, true);
 		
 		keysMenu.addCommand(saveCommand);
-		keysMenu.addCommand(backCommand);
+		//keysMenu.addCommand(backCommand);
 		Jimm.display.setCurrent(keysMenu);			
 	}
 	
