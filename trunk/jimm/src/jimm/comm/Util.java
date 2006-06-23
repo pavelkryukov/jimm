@@ -76,7 +76,8 @@ public class Util
 	private static final byte[] CAP_JIMM	  = {'J', 'i','m','m',' '};
 	private static final byte[] CAP_AVATAR	  = { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x4C, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
 	private static final byte[] CAP_TYPING	  = { (byte) 0x56, (byte) 0x3f, (byte) 0xc8, (byte) 0x09, (byte) 0x0b, (byte) 0x6f, (byte) 0x41, (byte) 0xbd, (byte) 0x9f, (byte) 0x79, (byte) 0x42, (byte) 0x26, (byte) 0x09, (byte) 0xdf, (byte) 0xa2, (byte) 0xf3};
-
+	private static final byte[] CAP_MCHAT	  = { 'm','C','h','a','t',' ','i','c','q'};
+	
 	// No capability
 	public static final int CAPF_NO_INTERNAL = 0x00000000;
 	// Client unterstands type-2 messages
@@ -113,6 +114,7 @@ public class Util
 	public static final int CAPF_AVATAR = 0x10000000;
 	public static final int CAPF_DIRECT = 0x20000000;
 	public static final int CAPF_TYPING = 0x40000000;
+	public static final int CAPF_MCHAT = 0x80000000;
 
 	// Client IDs
 	public static final byte CLI_NONE = 0;
@@ -154,6 +156,7 @@ public class Util
 	public static final byte CLI_ICQ2GO = 36;
 	public static final byte CLI_ICQPPC = 37;
 	public static final byte CLI_STICQ = 38;
+	public static final byte CLI_MCHAT = 39;
 	
 	private static final String[] clientNames = {
 		"Not detected",
@@ -194,7 +197,8 @@ public class Util
 		"Libicq2000 from Jabber",
 		"ICQ2GO!",
 		"ICQ for Pocket PC",
-		"StIcq"
+		"StIcq",
+		""	//mChat
 	};
 	
 	public static void detectUserClient(String uin, int dwFP1, int dwFP2, int dwFP3, byte[] capabilities, int wVersion, boolean statusChange)
@@ -304,7 +308,12 @@ public class Util
 				else if (Util.byteArrayEquals(capabilities, j * 16, CAP_DIRECT, 0, 16))
 					caps |= CAPF_DIRECT;
 				else if (Util.byteArrayEquals(capabilities, j * 16, CAP_TYPING, 0, 16))
-					caps |= CAPF_TYPING;			      
+					caps |= CAPF_TYPING;
+				else if ( Util.byteArrayEquals(capabilities, j*16, CAP_MCHAT,0,9) )
+				{
+					caps |= CAPF_MCHAT;
+					szVersion = detectClientVersion(uin, capabilities, CAPF_MCHAT,j);
+				}
 		}
 				item.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES,caps);
 			}
@@ -316,6 +325,11 @@ public class Util
 		switch(1)
 		{
 		default:
+			if( (caps&CAPF_MCHAT) != 0 )
+			{
+				client = CLI_MCHAT;
+				break;
+			}
 			if ( (caps&CAPF_JIMM) !=0)
 			{
 				client = CLI_JIMM;
@@ -324,6 +338,8 @@ public class Util
 			if ( (caps&CAPF_QIP) !=0)
 			{
 				client = CLI_QIP;
+				if (((dwFP1>>24)&0xFF) != 0)
+					szVersion += " (" + ((dwFP1>>24)&0xFF) + ((dwFP1>>16)&0xFF) + ((dwFP1>>8)&0xFF) + (dwFP1&0xFF) + ")";
 				break;
 			}
 		
@@ -614,6 +630,8 @@ public class Util
 		    ver = Util.byteArrayToString(buf,5,11);
 	    else if (cli == Util.CAPF_QIP)
 		    ver = Util.byteArrayToString(buf,11,5);
+	    else if ( cli == CAPF_MCHAT )
+	    	ver = byteArrayToString(buf,0,16);
 	    
 	    return ver;
     }
