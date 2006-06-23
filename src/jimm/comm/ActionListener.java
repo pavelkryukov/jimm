@@ -239,7 +239,9 @@ public class ActionListener
                 {
                     // Create an message entry
                     int textLen = Util.getWord(buf,64+uinLen,false);
-                    ContactList.activate(new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf,66+uinLen,textLen, false),null,AlertType.INFO));
+                    Alert status_message = new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf,66+uinLen,textLen, false),null,AlertType.INFO);
+                    status_message.setTimeout(15000);
+                    ContactList.activate(status_message);
                 }
             }
 
