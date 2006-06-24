@@ -348,7 +348,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // Request display of the main menu
     static public void activate()
 	{
-    	tree.setCapImage(smallIcons.elementAt(JimmUI.getStatusImageIndex(Jimm.jimm.getIcqRef().getCurrentStatus())));
+    	tree.setCapImage(smallIcons.elementAt(JimmUI.getStatusImageIndex(Icq.getCurrentStatus())));
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		updateTitle(Traffic.getSessionTraffic());
 		//#sijapp cond.else #
@@ -563,10 +563,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	for (int i = cItems.size()-1; i >= 0; i--)
     	{
     	    ContactListContactItem item = getCItem(i); 
-    		item.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,ContactList.STATUS_OFFLINE);
-    		//#sijapp cond.if target isnot "DEFAULT"#
-    		item.BeginTyping(false);
-    		//#sijapp cond.end#
+    	    item.setOfflineStatus();
     	}
     	
     	for (int i = gItems.size()-1; i >= 0; i--)
