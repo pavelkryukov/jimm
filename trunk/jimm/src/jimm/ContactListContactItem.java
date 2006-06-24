@@ -389,8 +389,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	public int getImageIndex()
 	{
 		int tempIndex = -1;
-		
+//#sijapp cond.if target isnot "DEFAULT"#		
 		if (typing) return 12;
+//#sijapp cond.end#			
 		if (isMessageAvailable(MESSAGE_PLAIN)) tempIndex = 8;
 		else if (isMessageAvailable(MESSAGE_URL)) tempIndex = 9;
 		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST)) tempIndex = 11;
@@ -530,12 +531,15 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		writeMessage(null);
 	} 
 
-	private boolean typing = false; 
+//#sijapp cond.if target isnot "DEFAULT"#
+	private boolean typing = false;
 	public void BeginTyping(boolean type)
 	{
 		typing = type;
 		setStatusImage();
 	}
+	
+//#sijapp cond.end#	
 	/** ************************************************************************* */
 	/** ************************************************************************* */
 	/** ************************************************************************* */
@@ -547,6 +551,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	final public static int MSGBS_REMOVEME      = 2;
 	final public static int SELECTOR_DEL_CHAT   = 3;
 	final public static int SELECTOR_SELECT_GROUP = 4;
+	
+	public void setOfflineStatus()
+	{
+//#sijapp cond.if target isnot "DEFAULT"#
+		typing = false;
+//#sijapp cond.end#
+		setIntValue(CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
+	}
 
 	// Shows new message form 
 	private void writeMessage(String initText)
@@ -1568,9 +1580,17 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	
 	public void setStatusImage()
 	{
+		int imgIndex;
+		
+//#sijapp cond.if target isnot "DEFAULT"#		
+		imgIndex = typing ? 8 : JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
+//#sijapp cond.else#
+		imgIndex = JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
+//#sijapp cond.end#
+		
 		if (SplashCanvas.locked())
 		{
-			SplashCanvas.setStatusToDraw(typing ? 8 : JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS)));
+			SplashCanvas.setStatusToDraw(imgIndex);
 			SplashCanvas.setMessage(getStringValue(CONTACTITEM_NAME));
 			SplashCanvas.Repaint();
 			SplashCanvas.startTimer();
@@ -1583,11 +1603,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     		Displayable disp = chat.getDisplayable();
     		if (disp instanceof VirtualList)
     		{
-    			((VirtualList)disp).setCapImage
-				(
-					ContactList.smallIcons.elementAt(typing ? 8 : JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS)))
-				);
-    	}
+    			((VirtualList)disp).setCapImage( ContactList.smallIcons.elementAt(imgIndex) );
+    		}
 		}	 
 	}
 	
