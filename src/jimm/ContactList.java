@@ -1304,158 +1304,160 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	//#sijapp cond.end#
 	
     // Play a sound notification
-    synchronized static public void playSoundNotification(int notType)
+    static public void playSoundNotification(int notType)
     {
-    	if (!treeBuilt) return;
+    	synchronized (_this)
+    	{
+    		if (!treeBuilt) return;
     	
-        // #sijapp cond.if target is "SIEMENS1" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+//#sijapp cond.if target is "SIEMENS1" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         
-        // #sijapp cond.if target is "SIEMENS1"#
-        Light.setLightOn();
-        // #sijapp cond.end#
+//#sijapp cond.if target is "SIEMENS1"#
+    		Light.setLightOn();
+//#sijapp cond.end#
         
-        int vibraKind = Options.getInt(Options.OPTION_VIBRATOR);
-        if(vibraKind == 2) vibraKind = SplashCanvas.locked()?1:0;
-        if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
-        {
-            // #sijapp cond.if target is "SIEMENS1"#
-            Vibrator.triggerVibrator(500);
-            // #sijapp cond.else#
-            Jimm.display.vibrate(500);
-            // #sijapp cond.end#
-        }
+    		int vibraKind = Options.getInt(Options.OPTION_VIBRATOR);
+    		if(vibraKind == 2) vibraKind = SplashCanvas.locked()?1:0;
+    		if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
+    		{
+//#sijapp cond.if target is "SIEMENS1"#
+    			Vibrator.triggerVibrator(500);
+//#sijapp cond.else#
+    			Jimm.display.vibrate(500);
+//#sijapp cond.end#
+    		}
         
-        int not_mode = 0;
+    		int not_mode = 0;
         
-        switch (notType)
-		{
-		case SOUND_TYPE_MESSAGE:
-			not_mode = Options.getInt(Options.OPTION_MESS_NOTIF_MODE);
-			break;
+    		switch (notType)
+    		{
+    		case SOUND_TYPE_MESSAGE:
+    			not_mode = Options.getInt(Options.OPTION_MESS_NOTIF_MODE);
+    			break;
 			
-		case SOUND_TYPE_ONLINE:
-			not_mode = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
-			break;
+    		case SOUND_TYPE_ONLINE:
+    			not_mode = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
+    			break;
 			
-		//#sijapp cond.if target isnot "DEFAULT"#
-		case SOUND_TYPE_TYPING:
-		    not_mode = Options.getInt(Options.OPTION_TYPING_MODE) - 1;
-			break;
-		//#sijapp cond.end#
-		}
+//#sijapp cond.if target isnot "DEFAULT"#
+    		case SOUND_TYPE_TYPING:
+    			not_mode = Options.getInt(Options.OPTION_TYPING_MODE) - 1;
+    			break;
+//#sijapp cond.end#
+    		}
             
-        switch (not_mode)
-        {
-        case 1:
-            try
-            {
-                switch(notType)
-                {
-                case SOUND_TYPE_MESSAGE:
-                    Manager.playTone(ToneControl.C4, 500, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
-                    break;
-                case SOUND_TYPE_ONLINE:
+    		switch (not_mode)
+    		{
+    		case 1:
+    			try
+    			{
+    				switch(notType)
+    				{
+    				case SOUND_TYPE_MESSAGE:
+    					Manager.playTone(ToneControl.C4, 500, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
+    					break;
+    				case SOUND_TYPE_ONLINE:
                 	
-                //#sijapp cond.if target isnot "DEFAULT"#
-                case SOUND_TYPE_TYPING:
-               	//#sijapp cond.end#
-                    Manager.playTone(ToneControl.C4+7, 500, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
-                }
+//#sijapp cond.if target isnot "DEFAULT"#
+    				case SOUND_TYPE_TYPING:
+//#sijapp cond.end#
+    					Manager.playTone(ToneControl.C4+7, 500, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
+    				}
 
-            } catch (MediaException e)
-            {
-                // Do nothing
-            }
-            break;
-        case 2:
-            try
-            {
-                Player p;
+    			} catch (Exception e)
+    			{
+    				//Do nothing
+    			}
+    			break;
+    			
+    		case 2:
+    			try
+    			{
+    				Player p;
                 
-                if (notType == SOUND_TYPE_MESSAGE)
-                {
-                	// Siemens 65-75 bugfix
-        			// #sijapp cond.if target is "SIEMENS2"#
-        			Player p1 = createPlayer("silence.wav");
-        			setVolume(p1,100);
-        			p1.start();
-        			p1.close();
-        			playerFree = true;
-        			//#sijapp cond.end#
-                	p = createPlayer( Options.getString(Options.OPTION_MESS_NOTIF_FILE) );
-                	if (p == null) return;
-                    setVolume(p, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
-                }
-                else if (notType == SOUND_TYPE_ONLINE)
-                {
-                	// Siemens 65-75 bugfix
-        			// #sijapp cond.if target is "SIEMENS2"#
-        			Player p1 = createPlayer("silence.wav");
-        			setVolume(p1,100);
-        			p1.start();
-        			p1.close();
-        			playerFree = true;
-        			//#sijapp cond.end#
-                	p = createPlayer( Options.getString(Options.OPTION_ONLINE_NOTIF_FILE) );
-                	if (p == null) return;
-                    setVolume(p, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL)); 
-                }
-                //#sijapp cond.if target isnot "DEFAULT"#
-                else
-                {
-                	// Siemens 65-75 bugfix
-        			// #sijapp cond.if target is "SIEMENS2"#
-        			Player p1 = createPlayer("silence.wav");
-        			setVolume(p1,100);
-        			p1.start();
-        			p1.close();
-        			playerFree = true;
-        			//#sijapp cond.end#
-                	p = createPlayer( Options.getString(Options.OPTION_TYPING_FILE) );
-                	if (p == null) return;
-                    setVolume(p, Options.getInt(Options.OPTION_TYPING_VOL)); 
-                }
-                //#sijapp cond.end#
+    				if (notType == SOUND_TYPE_MESSAGE)
+    				{
+                	//Siemens 65-75 bugfix
+// #sijapp cond.if target is "SIEMENS2"#
+	        			Player p1 = createPlayer("silence.wav");
+        				setVolume(p1,100);
+        				p1.start();
+        				p1.close();
+        				playerFree = true;
+//#sijapp cond.end#
+	                	p = createPlayer( Options.getString(Options.OPTION_MESS_NOTIF_FILE) );
+    	            	if (p == null) return;
+        	            setVolume(p, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
+            	    }
+	                else if (notType == SOUND_TYPE_ONLINE)
+                	{
+	                	// Siemens 65-75 bugfix
+// #sijapp cond.if target is "SIEMENS2"#
+        				Player p1 = createPlayer("silence.wav");
+        				setVolume(p1,100);
+        				p1.start();
+	        			p1.close();
+    	    			playerFree = true;
+//#sijapp cond.end#
+	                	p = createPlayer( Options.getString(Options.OPTION_ONLINE_NOTIF_FILE) );
+    	            	if (p == null) return;
+        	            setVolume(p, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL)); 
+            	    }
+//#sijapp cond.if target isnot "DEFAULT"#
+	                else
+    	            {
+        	        	// Siemens 65-75 bugfix
+// #sijapp cond.if target is "SIEMENS2"#
+        				Player p1 = createPlayer("silence.wav");
+        				setVolume(p1,100);
+        				p1.start();
+        				p1.close();
+        				playerFree = true;
+//#sijapp cond.end#
+                		p = createPlayer( Options.getString(Options.OPTION_TYPING_FILE) );
+                		if (p == null) return;
+                    	setVolume(p, Options.getInt(Options.OPTION_TYPING_VOL)); 
+                	}
+//#sijapp cond.end#
                 
-                p.start();
-            }
-            catch (Exception me)
-            {
-                // Do nothing
-            }
+                	p.start();
+            	}
+            	catch (Exception me)
+            	{
+	                // Do nothing
+            	}
 
-            break;
+            	break;
 
-        }
-        // #sijapp cond.if target is "SIEMENS1"#
-        Light.setLightOff();
-        // #sijapp cond.end#
+        	}
+// #sijapp cond.if target is "SIEMENS1"#
+	        Light.setLightOff();
+// #sijapp cond.end#
         
-        // #sijapp cond.end#
+// #sijapp cond.end#
         
-        // #sijapp cond.if target is "RIM"#
-        if (Options.getBoolean(Options.OPTION_VIBRATOR))
-        {
-			// had to use full path since import already contains another Alert object
-        	net.rim.device.api.system.Alert.startVibrate(500);
-        }
-        int mode_rim;
-        if (notType == SOUND_TYPE_MESSAGE)
-            mode_rim = Options.getInt(Options.OPTION_MESS_NOTIF_MODE);
-        else
-            mode_rim = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
-        switch (mode_rim)
-        {
-        case 1:
-            // array is note in Hz, duration in ms.
-			short[] tune = new short[] { 349, 250, 0, 10, 523, 250 };
-            net.rim.device.api.system.Alert.startAudio(tune, 50);
-            net.rim.device.api.system.Alert.startBuzzer(tune, 50);
-            break;
-				}
-        // net.rim.device.api.system.Alert.stopAudio();
-        // net.rim.device.api.system.Alert.stopBuzzer();
-        // #sijapp cond.end#
+// #sijapp cond.if target is "RIM"#
+	        if (Options.getBoolean(Options.OPTION_VIBRATOR))
+    	    {
+				// had to use full path since import already contains another Alert object
+        		net.rim.device.api.system.Alert.startVibrate(500);
+        	}
+        	int mode_rim;
+        	if (notType == SOUND_TYPE_MESSAGE)
+            	mode_rim = Options.getInt(Options.OPTION_MESS_NOTIF_MODE);
+        	else
+            	mode_rim = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
+	        switch (mode_rim)
+        	{
+        	case 1:
+	            // array is note in Hz, duration in ms.
+				final short[] tune = new short[] { 349, 250, 0, 10, 523, 250 };
+            	net.rim.device.api.system.Alert.startAudio(tune, 50);
+            	net.rim.device.api.system.Alert.startBuzzer(tune, 50);
+            	break;
+			}
+// #sijapp cond.end#
+    	}
 
     }
     
