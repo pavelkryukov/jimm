@@ -996,9 +996,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 			int minutes = currDateTime[Util.TIME_MINUTE];
 			int diff = timeZoneGauge.getValue()-12;
 			if (diff < 0)
-				timeStringItem.setText(currentHour+diff+":"+Util.makeTwo(minutes)+" ("+diff+")");
+				timeStringItem.setText((24+currentHour+diff)%24+":"+Util.makeTwo(minutes)+" ("+(diff)+")");
 			else
-				timeStringItem.setText(currentHour+diff+":"+Util.makeTwo(minutes)+" (+"+diff+")");
+				timeStringItem.setText((currentHour+diff)%24+":"+Util.makeTwo(minutes)+" (+"+diff+")");
 		}
 	}
 	
