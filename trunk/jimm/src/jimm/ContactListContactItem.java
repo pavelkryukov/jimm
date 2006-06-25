@@ -39,7 +39,7 @@ import jimm.SplashCanvas;
 import DrawControls.*;
 
 
-// TODO: remove UI code to ChatHistory 
+/* TODO: remove UI code to ChatHistory */ 
 public class ContactListContactItem implements CommandListener, ContactListItem
 {
 	private static final int CM_SENDING_MESSAGE  = 1;
@@ -48,10 +48,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	private static int[] groupIds;
 	
 	
-	// No capability
+	/* No capability */
 	public static final int CAP_NO_INTERNAL = 0x00000000;
 
-	// Message types
+	/* Message types */
 	public static final int MESSAGE_PLAIN		 = 1;
 	public static final int MESSAGE_URL		     = 2;
 	public static final int MESSAGE_SYS_NOTICE   = 3;
@@ -136,7 +136,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_IDLE:          idle = value;          return;
 		case CONTACTITEM_CAPABILITIES:  caps = value;          return;
 		case CONTACTITEM_STATUS:        status = value;        return;
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
 		case CONTACTITEM_DC_TYPE:       typeAndClientId = (typeAndClientId&0xff)|((value&0xff)<<8);        return;
 		case CONTACTITEM_ICQ_PROT:      portAndProt = (portAndProt&0xffff0000)|(value&0xffff);       return;
@@ -255,7 +255,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		name = stream.readUTF();
 	}
 	
-	// Variable keys
+	/* Variable keys */
 	public static final int CONTACTITEM_UIN           = 0;      /* String */
 	public static final int CONTACTITEM_NAME          = 1;      /* String */
 	public static final int CONTACTITEM_ID            = 64;     /* Integer */
@@ -292,7 +292,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 	// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// #sijapp cond.if modules_FILES is "true"#
-	// DC values
+	/* DC values */
 	private FileTransferMessage ftm;
 	private FileTransfer ft;
 	//  #sijapp cond.end#
@@ -338,7 +338,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, "");
 	}
 	
-	// Constructor for an existing contact item
+	/* Constructor for an existing contact item */
 	public ContactListContactItem(int id, int group, String uin, String name, boolean noAuth, boolean added)
 	{
 	    this.init(id,group,uin,name,noAuth,added);
@@ -348,7 +348,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 	}
 	
-	// Returns true if client supports given capability
+	/* Returns true if client supports given capability */
 	public boolean hasCapability(int capability)
 	{
 		return ((capability & this.caps) != 0x00000000);
@@ -364,7 +364,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return lowerText;
 	}
 	
-	// Returns color for contact name
+	/* Returns color for contact name */
 	public int getTextColor()
 	{
 		if (getBooleanValue(CONTACTITEM_IS_TEMP)) return 0x808080;
@@ -374,7 +374,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return color;
 	}
 	
-	// Returns font style for contact name 
+	/* Returns font style for contact name */ 
 	public int getFontStyle()
 	{
 		return getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) ? Font.STYLE_BOLD : Font.STYLE_PLAIN;
@@ -385,7 +385,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return uinLong;
 	}
 
-	// Returns imaghe index for contact
+	/* Returns image index for contact */
 	public int getImageIndex()
 	{
 		int tempIndex = -1;
@@ -410,19 +410,19 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
     // #sijapp cond.if modules_FILES is "true"#  
 	
-	// Returns the fileTransfer Object of this contact
+	/* Returns the fileTransfer Object of this contact */
 	public FileTransfer getFT()
 	{
 		return this.ft;
 	}
 	
-	// Set the FileTransferMessage of this contact
+	/* Set the FileTransferMessage of this contact */
 	public void setFTM(FileTransferMessage _ftm)
 	{
 		this.ftm = _ftm;
 	}
 
-	// Returns the FileTransferMessage of this contact
+	/* Returns the FileTransferMessage of this contact */
 	public FileTransferMessage getFTM()
 	{
 		return this.ftm;
@@ -430,8 +430,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//  #sijapp cond.end# 
 	//  #sijapp cond.end# 
 	
-	// Returns true if contact must be shown even user offline
-	// and "hide offline" is on
+	/* Returns true if contact must be shown even user offline
+	   and "hide offline" is on */
 	protected boolean mustBeShownAnyWay()
 	{
 		return (getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0) ||
@@ -441,7 +441,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			   getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP); 
 	}
 
-	// Returns total count of all unread messages (messages, sys notices, urls, auths)
+	/* Returns total count of all unread messages (messages, sys notices, urls, auths) */
 	protected int getUnreadMessCount()
 	{
 		return getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES)+
@@ -450,34 +450,34 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS);
 	}
 
-	// Returns true if the next available message is a message of given type
-	// Returns false if no message at all is available, or if the next available
-	// message is of another type
+	/* Returns true if the next available message is a message of given type
+	   Returns false if no message at all is available, or if the next available
+	   message is of another type */
 	protected synchronized boolean isMessageAvailable(int type)
 	{
 		switch (type)
 		{
-			case MESSAGE_PLAIN:		return (this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
-			case MESSAGE_URL:		  return (this.getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES) > 0); 
+			case MESSAGE_PLAIN:		   return (this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
+			case MESSAGE_URL:		   return (this.getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES) > 0); 
 			case MESSAGE_SYS_NOTICE:   return (this.getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES) > 0);
 			case MESSAGE_AUTH_REQUEST: return (this.getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) > 0); 
 		}
 		return (this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
 	}
 	
-	// Increases the mesage count
+	/* Increases the mesage count */
 	protected synchronized void increaseMessageCount(int type)
 	{ 
 		switch (type)
 		{
-			case MESSAGE_PLAIN:		this.setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES,this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES)+1); break;
-			case MESSAGE_URL:		  this.setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES,this.getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES)+1); break;
+			case MESSAGE_PLAIN:		   this.setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES,this.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES)+1); break;
+			case MESSAGE_URL:		   this.setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES,this.getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES)+1); break;
 			case MESSAGE_SYS_NOTICE:   this.setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES,this.getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES)+1); break;
 			case MESSAGE_AUTH_REQUEST: this.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS,this.getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS)+1);
 		}
 	}
 
-	// Adds a message to the message display
+	/* Adds a message to the message display */
 	protected synchronized void addMessage(Message message)
 	{
 		ChatHistory.addMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN), message,this);
@@ -490,13 +490,13 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES,0);
 	}
 
-	// Activates the contact item menu
+	/* Activates the contact item menu */
 	public void activateMenu()
 	{
 		this.activate(true);
 	}
 
-	// Checks whether some other object is equal to this one
+	/* Checks whether some other object is equal to this one */
 	public boolean equals(Object obj)
 	{
 		if (!(obj instanceof ContactListContactItem)) return (false);
@@ -560,12 +560,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		setIntValue(CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
 	}
 
-	// Shows new message form 
+	/* Shows new message form */ 
 	private void writeMessage(String initText)
 	{
 		currentMode = CM_SENDING_MESSAGE;
 		
-		// If user want reply with quotation 
+		/* If user want reply with quotation */ 
 		if (initText != null)
 		{
 			boolean wasError = false;
@@ -580,7 +580,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			
 			wasError = (messageTextbox.getString() == null) || (messageTextbox.getString().length() == 0);
 			
-			// Creates new TextBox with larger buffer
+			/* Creates new TextBox with larger buffer */
 			if (wasError)
 			{
 				System.out.println("initText: wasError");
@@ -598,10 +598,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			}
 		}
 
-		// Keep old text if press "cancel" while last edit 
+		/* Keep old text if press "cancel" while last edit */ 
 		else if (!lastAnsUIN.equals(getStringValue(ContactListContactItem.CONTACTITEM_UIN))) messageTextbox.setString(null);
 
-		// Display textbox for entering messages
+		/* Display textbox for entering messages */
 		messageTextbox.setTitle(ResourceBundle.getString("message") + " " + name);
 		clearMessBoxCommands();
 		//#sijapp cond.if modules_SMILES is "true" #
@@ -615,22 +615,24 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		//#sijapp cond.if target isnot "DEFAULT"#
 			if ( (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0) )
-				try
-				{
+			try
+			{
 				Jimm.jimm.getIcqRef().BeginTyping(getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
-				}
-				catch (JimmException e){}
+			}
+			catch (JimmException e){}
 		//#sijapp cond.end#
 	}
 
 	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
 	static private TextList URLList;
 	//#sijapp cond.end#
-	// Command listener
+	
+	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
 		//#sijapp cond.if target isnot "DEFAULT"#
-		if ( ((c == textboxCancelCommand)||(c == textboxOkCommand)||(c ==textboxSendCommand)) && (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0))
+		if ( ((c == textboxCancelCommand)||(c == textboxOkCommand)||(c ==textboxSendCommand)) && 
+			 (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0))
 		try
 		{
 			Jimm.jimm.getIcqRef().BeginTyping(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),false);
@@ -638,7 +640,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		catch (JimmException e){}
 		//#sijapp cond.end#
 
-		// Return to contact list
+		/* Return to contact list */
 		if (c == backCommand)
 		{
 			ContactListContactItem.this.resetUnreadMessages();
@@ -687,12 +689,13 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		}
 		//#sijapp cond.end#
 		
-		// Message has been closed
+		/* Message has been closed */
 		else if (c == msgCloseCommand)
 		{
 			ContactList.activate();
 		}
-		// User wants to send a reply
+		
+		/* User wants to send a reply */
 		else if ((c == msgReplyCommand) || (c == replWithQuotaCommand))
 		{
 			repliedWithQuota = (c == replWithQuotaCommand);
@@ -710,7 +713,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			}
 		}
 		
-		// Menu item has been selected
+		/* Menu item has been selected */
 		else if (((c == List.SELECT_COMMAND) || (c == selectCommand)) && (d == menuList))
 		{
 			String uin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
@@ -718,25 +721,22 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			
 			switch (eventList[menuList.getSelectedIndex()])
 			{
-			case USER_MENU_MESSAGE:
-				// Send plain message
+			case USER_MENU_MESSAGE: /* Send plain message */
 				writeMessage(null);
 				break;
 
-			case USER_MENU_QUOTA:
-				// Send plain message with quotation
+			case USER_MENU_QUOTA: /* Send plain message with quotation */
 				repliedWithQuota = true;
 				writeMessage(JimmUI.getClipBoardText());
 				break;
 
-			case USER_MENU_STATUS_MESSAGE:
-				// Send a status message request message
+			case USER_MENU_STATUS_MESSAGE: /* Send a status message request message */
 				if (!((status == ContactList.STATUS_ONLINE)
 						|| (status== ContactList.STATUS_OFFLINE) 
 						|| (status == ContactList.STATUS_INVISIBLE)))
 				{
 					int msgType;
-					// Send a status message request message
+					/* Send a status message request message */
 					if (status == ContactList.STATUS_AWAY) msgType = Message.MESSAGE_TYPE_AWAY;
 					else if (status == ContactList.STATUS_OCCUPIED) msgType = Message.MESSAGE_TYPE_OCC;
 					else if (status == ContactList.STATUS_DND) msgType = Message.MESSAGE_TYPE_DND;
@@ -763,8 +763,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			// #sijapp cond.if modules_FILES is "true"#                    
 			case USER_MENU_FILE_TRANS:
-				// Send a filetransfer with a file given by path
-				// We can only make file transfers with ICQ clients prot V8 and up
+				/* Send a filetransfer with a file given by path
+				   We can only make file transfers with ICQ clients prot V8 and up */
 				if (getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
 				{
 					JimmException.handleException(new JimmException(190, 0, true));
@@ -778,8 +778,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 			// #sijapp cond.if target isnot "MOTOROLA" #
 			case USER_MENU_CAM_TRANS:
-				// Send a filetransfer with a camera image
-				// We can only make file transfers with ICQ clients prot V8 and up
+				/* Send a filetransfer with a camera image
+				   We can only make file transfers with ICQ clients prot V8 and up */
 				if (getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
 				{
 					JimmException.handleException(new JimmException(190, 0, true));
@@ -810,7 +810,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				break;
 
 			case USER_MENU_REMOVE_ME:
-				// Remove me from other users contact list
+				/* Remove me from other users contact list */
 				JimmUI.messageBox
 				(
 					ResourceBundle.getString("remove_me") + "?",
@@ -822,8 +822,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				break;
 
 			case USER_MENU_RENAME:
-				// Rename the contact local and on the server
-				// Reset and display textbox for entering name
+				/* Rename the contact local and on the server
+				   Reset and display textbox for entering name */
 				currentMode = CM_RENAMING_CONTACT;
 				messageTextbox.setTitle(ResourceBundle.getString("rename"));
 				messageTextbox.setString(name);
@@ -834,8 +834,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				break;
 
 			// #sijapp cond.if modules_HISTORY is "true" #                    
-			case USER_MENU_HISTORY:
-				// Stored history
+			case USER_MENU_HISTORY: /* Stored history */
 				HistoryStorage.showHistoryList(uin, name);
 				break;
 			// #sijapp cond.end#
@@ -843,20 +842,18 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			case USER_MENU_USER_INFO:
 				JimmUI.requiestUserInfo(uin, name);
 				break;
-
-			// Show Timeing info and DC info 
-			case USER_MENU_LOCAL_INFO:
+			 
+			case USER_MENU_LOCAL_INFO: /* Show Timeing info and DC info */
 				showClientInfo();
 				break;
-
-			// Request auth
-			case USER_MENU_REQU_AUTH:
+			
+			case USER_MENU_REQU_AUTH: /* Request auth */
 				reqAuth();
 				break;
 			}
 		}
 
-		// User wants to add temporary contact
+		/* User wants to add temporary contact */
 		else if (c == addUrsCommand)
 		{
             Search search = new Search(true);
@@ -877,7 +874,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
             SplashCanvas.addTimerTask("wait", act, false);
 		}
 
-		// User adds selected message to history
+		/* User adds selected message to history */
 		//#sijapp cond.if modules_HISTORY is "true" #
 		else if (c == addToHistoryCommand)
 		{
@@ -885,14 +882,14 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		}
 		//#sijapp cond.end#
 
-		// "Copy text" command selected
+		/* "Copy text" command selected */
 		else if (c == copyTextCommand)
 		{
 			ChatHistory.copyText(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 			getCurrDisplay().addCommand(replWithQuotaCommand);
 		}
 		
-		// Delete chat history
+		/* Delete chat history */
 		else if (c == deleteChatCommand)
 		{
 			JimmUI.showSelector
@@ -905,7 +902,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			);
 		}
 		
-		// Delete chat history -> "Current", "Others", "All"
+		/* Delete chat history -> "Current", "Others", "All" */
 		else if (JimmUI.getCommandType(c, SELECTOR_DEL_CHAT) == JimmUI.CMD_OK)
 		{
 			String uin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
@@ -945,7 +942,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			}
 		}
 
-		// Rename contact -> "OK"
+		/* Rename contact -> "OK" */
 		else if (c == renameOkCommand)
 		{
 			rename( messageTextbox.getString() );
@@ -953,50 +950,50 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ContactList.activate();
 		}
 		
-		// Text editor -> "Clear"
+		/* Text editor -> "Clear" */
 		else if (c == clearTextCommand)
 		{
 			messageTextbox.setString(null);
 		}
 		
-		// Textbox has been closed
+		/* Textbox has been closed */
 		else if ((c == textboxOkCommand) || (c == textboxSendCommand))
 		{
-			// Message has been entered
+			/* Message has been entered */
 			if (d == messageTextbox)
 			{
 				String messText = messageTextbox.getString();
 				
-				// Abort if nothing has been entered
+				/* Abort if nothing has been entered */
 				if (messText.length() == 0) this.activate(true);
 
-				// Send plain message
+				/* Send plain message */
 				if ((currentMode == CM_SENDING_MESSAGE) && (messText.length() != 0))
 				{
-					// Send message via icq
+					/* Send message via icq */
 					sendMessage(messText);
 					
-					// Clear text in messageTextbox
+					/* Clear text in messageTextbox */
 					messageTextbox.setString(null);
 					
-					// Return to chat or menu
+					/* Return to chat or menu */
 					this.activate(true);
 				}
 
 			}
-			// Reason has been entered
+			/* Reason has been entered */
 			else if (d == reasonTextbox)
 			{
 
 				SystemNotice notice;
 				boolean reqReason = getBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON); 
 
-				// Decrease the number of handled auth requests by one
+				/* Decrease the number of handled auth requests by one */
 				if (!reqReason) setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) - 1);
 
-				// If or if not a reason was entered
-				// Though this box is used twice (reason for auth request and auth repley)
-				// we have to distinguish what we wanna do requReason is used for that
+				/* If or if not a reason was entered
+				   Though this box is used twice (reason for auth request and auth repley)
+				   we have to distinguish what we wanna do requReason is used for that */
 				if (reasonTextbox.getString().length() < 1)
 				{
 					if (reqReason) 
@@ -1012,7 +1009,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 						notice = new SystemNotice(SystemNotice.SYS_NOTICE_AUTHORISE, getStringValue(ContactListContactItem.CONTACTITEM_UIN), false, reasonTextbox.getString());
 				}
 
-				// Assemble the sysNotAction and request it
+				/* Assemble the sysNotAction and request it */
 				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
 				UpdateContactListAction updateAct = new UpdateContactListAction(this, UpdateContactListAction.ACTION_REQ_AUTH);
 
@@ -1032,24 +1029,24 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			}
 		}
 
-		// user select Ok in delete contact message box
+		/* user select Ok in delete contact message box */
 		else if (JimmUI.getCommandType(c, MSGBS_DELETECONTACT) == JimmUI.CMD_OK)
 		{
 			String uin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 			ChatHistory.chatHistoryDelete(uin);
 			Icq.delFromContactList(ContactListContactItem.this);
-			//#sijapp cond.if modules_HISTORY is "true" #
+//#sijapp cond.if modules_HISTORY is "true" #
 			HistoryStorage.clearHistory(uin);
-			//#sijapp cond.end#
+//#sijapp cond.end#
 		}
 
-		// user select CANCEL in delete contact message box
+		/* user select CANCEL in delete contact message box */
 		else if (JimmUI.getCommandType(c, MSGBS_DELETECONTACT) == JimmUI.CMD_CANCEL)
 		{
 			this.activate(true);
 		}
 
-		// user select Ok in delete me message box
+		/* user select Ok in delete me message box */
 		else if (JimmUI.getCommandType(c, MSGBS_REMOVEME) == JimmUI.CMD_OK)
 		{
 			RemoveMeAction remAct = new RemoveMeAction(getStringValue(ContactListContactItem.CONTACTITEM_UIN));
@@ -1066,19 +1063,20 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			ContactList.activate();
 		}
 
-		// user select CANCEL in delete contact message box
+		/* user select CANCEL in delete contact message box */
 		else if (JimmUI.getCommandType(c, MSGBS_REMOVEME) == JimmUI.CMD_CANCEL)
 		{
 			this.activate(true);
 		}
 
-		// Textbox has been canceled
+		/* Textbox has been canceled */
 		else if (c == textboxCancelCommand)
 		{
 			if (currentMode == CM_RENAMING_CONTACT) messageTextbox.setString(null);
 			this.activate(true);
 		}
-		// Menu should be activated
+		
+		/* Menu should be activated */
 		else if (c == addMenuCommand)
 		{
 			menuList.setTitle(name);
@@ -1087,7 +1085,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			Jimm.display.setCurrent(menuList);
 		}
 
-		//Grant authorisation
+		/* Grant authorisation */
 		else if (c == grantAuthCommand)
 		{
 			setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) - 1);
@@ -1105,14 +1103,15 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			this.activate(true);
 		}
 		
-		// Request auth
+		/* Request auth */
 		else if (c == reqAuthCommand) reqAuth();
 		
-		//Deny authorisation OR request authorisation
+		/* Deny authorisation OR request authorisation */
 		else if (c == denyAuthCommand)
 		{
-			// Reset and display textbox for entering deney reason
+			/* Reset and display textbox for entering deney reason */
 			reasonTextbox.setString(null);
+			
 			reasonTextbox.removeCommand(textboxOkCommand);
 			reasonTextbox.addCommand(textboxSendCommand);
 			reasonTextbox.setCommandListener(this);
@@ -1132,7 +1131,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				messageTextbox.insert(Templates.getSelectedTemplate(), caretPos);
 		}
 		
-		// User wants to insert emotion in text
+		/* User wants to insert emotion in text */
 		//#sijapp cond.if modules_SMILES is "true" # 
 		else if (c == insertEmotionCommand)
 		{
@@ -1140,7 +1139,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			Emotions.selectEmotion(this, messageTextbox);
 		}
 
-		// User select a emotion
+		/* User select a emotion */
 		else if (Emotions.isMyOkCommand(c))
 		{
 			// #sijapp cond.if target is "MOTOROLA"#
@@ -1152,7 +1151,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// #sijapp cond.end#
 	}
 
-	// Requests authorization
+	/* Requests authorization */
 	private void reqAuth()
 	{
 		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, true);
@@ -1168,34 +1167,34 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		TextList tlist = JimmUI.getInfoTextList(getStringValue(ContactListContactItem.CONTACTITEM_UIN), true);
 		String[] clInfoData = new String[JimmUI.UI_LAST_ID];
 		
-		// sign on time
+		/* sign on time */
 		long signonTime = getIntValue(ContactListContactItem.CONTACTITEM_SIGNON); 
 		if (signonTime > 0) clInfoData[JimmUI.UI_SIGNON] = Util.getDateString(false, signonTime);
 		
-		// online time
+		/* online time */
 		long onlineTime = getIntValue(ContactListContactItem.CONTACTITEM_ONLINE);
 		if (onlineTime > 0) clInfoData[JimmUI.UI_ONLINETIME] = Util.longitudeToString(onlineTime);
 		
-		// idle time
+		/* idle time */
 		int idleTime = getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
 		if (idleTime > 0) clInfoData[JimmUI.UI_IDLE_TIME] = Util.longitudeToString(idleTime);
 		
 		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
 		
-		// Client version
+		/* Client version */
 		int clientVers = getIntValue(CONTACTITEM_CLIENT);
 		if (clientVers != Util.CLI_NONE) clInfoData[JimmUI.UI_ICQ_CLIENT] = Util.getClientString((byte)clientVers)+ " " + getStringValue(CONTACTITEM_CLIVERSION);
 		
-		// ICQ protocol version
+		/* ICQ protocol version */
 		clInfoData[JimmUI.UI_ICQ_VERS] = Integer.toString(getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT));
 		
-		// Internal IP
+		/* Internal IP */
 		clInfoData[JimmUI.UI_INT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP));
 		
-		// External IP
+		/* External IP */
 		clInfoData[JimmUI.UI_EXT_IP] = Util.ipToString(getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP));
 		
-		// Port
+		/* Port */
 		int port = getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT);
 		if (port != 0) clInfoData[JimmUI.UI_PORT] = Integer.toString(port);
 		
@@ -1205,6 +1204,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		JimmUI.showInfoTextList(tlist);
 	}
 	
+	/* Sets new contact name */ 
 	public void rename(String newName)
 	{
 		if ((newName == null) || (newName.length() == 0)) return;
@@ -1212,10 +1212,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		lowerText = null;
 		try
 		{
-			// Save ContactList
+			/* Save ContactList */
 			ContactList.save();
 
-			// Try to save ContactList to server
+			/* Try to save ContactList to server */
 			if ( !getBooleanValue(CONTACTITEM_IS_TEMP) )
 			{
 				UpdateContactListAction action = new UpdateContactListAction(this, UpdateContactListAction.ACTION_RENAME);
@@ -1228,7 +1228,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		}
 		catch (Exception e)
 		{
-			// Do nothing
+			/* Do nothing */
 		}
 
 		ContactList.contactChanged(this, true, true);
@@ -1238,8 +1238,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		
 	public void sendMessage(String text)
 	{
-		// Construct plain message object and request new SendMessageAction
-		// Add the new message to the chat history
+		/* Construct plain message object and request new SendMessageAction
+		   Add the new message to the chat history */
 
 		if (text == null) return;
 		if (text.length() == 0) return;
@@ -1278,7 +1278,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return ChatHistory.getChatHistoryAt(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN)).getDisplayable();
 	}
 		
-	// Activates the contact item menu
+	/* Activates the contact item menu */
 	public void activate(boolean initChat)
 	{
 		currentUin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
@@ -1287,7 +1287,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		ChatHistory.fillFormHistory(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
 		//#sijapp cond.end#
 			
-		// Display chat history
+		/* Display chat history */
 		if (getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
 		{
 			initList(getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
@@ -1331,14 +1331,13 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			
 			ChatHistory.UpdateCaption(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
 			
-			// Display history
+			/* Display history */
 			resetUnreadMessages();
 			ChatHistory.getChatHistoryAt( getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat, !currentUin.equals(lastAnsUIN));
 			lastAnsUIN = currentUin;
 				
 		}
-		// Display menu
-		else
+		else /* Display menu */
 		{
 			initList(getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH), this);
 			menuList.setTitle(name);
@@ -1380,27 +1379,27 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     private static final int USER_MENU_LAST_ITEM        = 16; // YOU NEED TO CHANGE IT!
 
     
-	// Menu list
+	/* Menu list */
 	private static List menuList;
     
-    // Event list for menu event handler
+    /* Event list for menu event handler */
     private static int[] eventList;
 
-	// Textbox for entering messages
+	/* Textbox for entering messages */
 	private static TextBox messageTextbox;
 
-	// Textbox for entering a reason
+	/* Textbox for entering a reason */
 	private static TextBox reasonTextbox;
 	
-	// Abort command
+	/* Abort command */
 	private static Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
 
 	private static Command selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 2);
 	
-	// Message close command
+	/* Message close command */
     private static Command msgCloseCommand;
     
-    // Message reply command
+    /* Message reply command */
     private static Command msgReplyCommand;
     
     private static Command replWithQuotaCommand = new Command(ResourceBundle.getString("quote", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
@@ -1409,18 +1408,18 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     
     private static Command clearTextCommand = new Command(ResourceBundle.getString("clear"), Command.ITEM, 4);
 
-	// Add temporary user to contact list
+	/* Add temporary user to contact list */
 	private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 5);
 	
-	// Add selected message to history 
+	/* Add selected message to history */ 
 	//#sijapp cond.if modules_HISTORY is "true" #
 	private static Command addToHistoryCommand  = new Command(ResourceBundle.getString("add_to_history"), Command.ITEM, 6);
 	//#sijapp cond.end#
 
-	//Show the message menu
+	/* Show the message menu */
 	private static Command addMenuCommand = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 7);
 
-	//Delete Chat History
+	/* Delete Chat History */
 	private static Command deleteChatCommand = new Command(ResourceBundle.getString("delete_chat", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 8);
 
 	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
@@ -1431,39 +1430,38 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	
 	private static Command selecturlCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
 	
-	// Textbox OK command
+	/* Textbox OK command */
 	private static Command textboxOkCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 2);
 
-	// Textbox Send command
+	/* Textbox Send command */
 	private static Command textboxSendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
-	// Textbox cancel command
+	/* Textbox cancel command */
 	private static Command textboxCancelCommand = new Command(ResourceBundle.getString("cancel"), Command.BACK, 3);
 
-	// Grand authorisation a for authorisation asking contact
+	/* Grand authorisation a for authorisation asking contact */
 	private static Command grantAuthCommand = new Command(ResourceBundle.getString("grant"), Command.OK, 1);
 
-	// Deny authorisation a for authorisation asking contact
+	/* Deny authorisation a for authorisation asking contact */
 	private static Command denyAuthCommand = new Command(ResourceBundle.getString("deny"), Command.CANCEL, 1);
 
-	// Request authorisation from a contact
+	/* Request authorisation from a contact */
 	private static Command reqAuthCommand = new Command(ResourceBundle.getString("requauth"), Command.ITEM, 1);
 
-	// Insert imotion (smile) in text
-	
+	/* Insert imotion (smile) in text */
 	//#sijapp cond.if modules_SMILES is "true" #
 	private static Command insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.ITEM, 3);
 	// #sijapp cond.end#
 	private static Command insertTemplateCommand = new Command(ResourceBundle.getString("templates"), Command.ITEM, 4);
     
-    // Rename a contact
+    /* Rename a contact */
     private static Command renameOkCommand;
     
 	static void initList(boolean showAuthItem, ContactListContactItem item)
 	{
 		long status = item.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
 		
-        // Size of the event list equals last entry number
+        /* Size of the event list equals last entry number */
         eventList = new int[USER_MENU_LAST_ITEM];
         menuList = new List("", List.IMPLICIT);
         
@@ -1472,7 +1470,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
         // #sijapp cond.end#
         menuList.addCommand(backCommand);
         
-        // Add the needed elements to the event list
+        /* Add the needed elements to the event list */
         if (showAuthItem)
             eventList[menuList.append(ResourceBundle.getString("requauth", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_REQU_AUTH;
         
@@ -1522,7 +1520,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return vis;
 	}
 	
-	// Shows popup window with text of received message
+	/* Shows popup window with text of received message */
 	static public void showPopupWindow(String uin, String name, String text)
 	{
 		if (SplashCanvas.locked()) return;
@@ -1569,7 +1567,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	}
 
 
-	// flashs form caption when current contact have changed status
+	/* flashs form caption when current contact have changed status */
 	static synchronized public void statusChanged(String uin, long status)
 	{
 		if (currentUin.equals(uin))
@@ -1608,7 +1606,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		}	 
 	}
 	
-	//	 Timer task for flashing form caption
+	/* Timer task for flashing form caption */
 	private static FlashCapClass lastFlashTask = null;
 	
 	static void showTopLine(String uin, String text, int counter, int type)
@@ -1626,38 +1624,38 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		}
 	}
 	
-	// Initializer
+	/* Initializer */
 	static
 	{
-		// Initialize the textbox for entering messages
+		/* Initialize the textbox for entering messages */
 		
 		
-	    //#sijapp cond.if target is "MOTOROLA"#
+//#sijapp cond.if target is "MOTOROLA"#
 		msgCloseCommand = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
 		msgReplyCommand = new Command(ResourceBundle.getString("reply", ResourceBundle.FLAG_ELLIPSIS),Command.OK, 2);
 		renameOkCommand = new Command(ResourceBundle.getString("ok"),Command.OK, 2);
-	    //#sijapp cond.else#
+//#sijapp cond.else#
 		msgCloseCommand = new Command(ResourceBundle.getString("close"),Command.BACK, 2);
 		msgReplyCommand = new Command(ResourceBundle.getString("reply", ResourceBundle.FLAG_ELLIPSIS),Command.OK, 1);
 		renameOkCommand = new Command(ResourceBundle.getString("rename"),Command.OK, 2);
-	    //#sijapp cond.end#
+//#sijapp cond.end#
 	
 		
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#		
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#		
 		messageTextbox = new TextBox(ResourceBundle.getString("message"), null, 1000, TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
-		//#sijapp cond.else#
+//#sijapp cond.else#
 		messageTextbox = new TextBox(ResourceBundle.getString("message"), null, 1000, TextField.ANY);
-		//#sijapp cond.end#
+//#sijapp cond.end#
 		
 		messageTextbox.addCommand(textboxCancelCommand);
 		messageTextbox.addCommand(clearTextCommand);
 
-		// Initialize the textfor for entering reasons
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		/* Initialize the textfor for entering reasons */
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 500, TextField.ANY|TextField.INITIAL_CAPS_SENTENCE);
-		//#sijapp cond.else#
+//#sijapp cond.else#
 		reasonTextbox = new TextBox(ResourceBundle.getString("reason"), null, 500, TextField.ANY);
-		//#sijapp cond.end#
+//#sijapp cond.end#
 		
 		reasonTextbox.addCommand(textboxCancelCommand);
 		reasonTextbox.addCommand(textboxSendCommand);
