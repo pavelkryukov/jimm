@@ -230,12 +230,12 @@ public class SplashCanvas extends Canvas
 	static public synchronized void setProgress(int progress)
 	{
 		if (SplashCanvas.progress == progress) return;
+		int previousProgress = SplashCanvas.progress;
 		SplashCanvas.progress = progress;
-		//#sijapp cond.if target is "MIDP2"#
-		_this.repaint();
-		//#sijapp cond.else#
-		_this.repaint(0, _this.getHeight() - SplashCanvas.height - 2, _this.getWidth(), SplashCanvas.height + 2);
-		//#sijapp cond.end#
+		if( progress < previousProgress )
+			_this.repaint();
+		else
+			_this.repaint(0, _this.getHeight() - SplashCanvas.height - 2, _this.getWidth(), SplashCanvas.height + 2);
 	}
 	
 	// Enable keylock
