@@ -56,13 +56,13 @@ public class RunnableImpl implements Runnable
 		this.data = data;
 	}
 	
-	// Method run contains operations which have to be synchronized
-	// with main events queue (in main thread)
-	// If you want your code run in main thread, make new constant 
-	// beginning of TYPE_ and write your source to switch block of 
-	// RunnableImpl.run method.
-	// To run you source call RunnableImpl.callSerially()
-	// Note RunnableImpl.callSerially NEVER blocks calling thread
+	/* Method run contains operations which have to be synchronized
+	   with main events queue (in main thread)
+	   If you want your code run in main thread, make new constant 
+	   beginning of TYPE_ and write your source to switch block of 
+	   RunnableImpl.run method.
+	   To run you source call RunnableImpl.callSerially()
+	   Note RunnableImpl.callSerially NEVER blocks calling thread */
 	public void run()
 	{
 		switch (type)
@@ -74,7 +74,7 @@ public class RunnableImpl implements Runnable
 			//#sijapp cond.end#
 			
 		case TYPE_ADD_MSG:
-			ContactList.addMessage((Message)data[0]);
+			ContactList.addMessage((Message)data[0], getBoolean(data, 1));
 			break;
 		
 		case TYPE_USER_OFFLINE:
@@ -151,11 +151,19 @@ public class RunnableImpl implements Runnable
 	
 	static public void addMessageSerially(Object message)
 	{
-		callSerially(TYPE_ADD_MSG, message);
-		ContactList.playSoundNotification(ContactList.SOUND_TYPE_MESSAGE);
-		// #sijapp cond.if target is "MIDP2" #
+		boolean haveToBeepNow;
+		
+//#sijapp cond.if target is "MIDP2" #
+		haveToBeepNow = Jimm.is_phone_SE();
+//#sijapp cond.else#
+		haveToBeepNow = false;
+//#sijapp cond.end #
+		
+		callSerially(TYPE_ADD_MSG, message, new Boolean(!haveToBeepNow));
+		if (haveToBeepNow) ContactList.playSoundNotification(ContactList.SOUND_TYPE_MESSAGE);
+// #sijapp cond.if target is "MIDP2" #
 		Jimm.setMinimized(false);
-		// #sijapp cond.end #
+// #sijapp cond.end #
 	}
 	
 	static public void updateContactList
