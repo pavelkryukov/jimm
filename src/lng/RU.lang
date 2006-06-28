@@ -5,6 +5,7 @@
   "backlight_manual"            "Ручная подсветка (*)"
   "exit_button"                 "Выход"
   "menu_button"                 "Меню"
+  "flash_backlight"             "Мигать светодиодами"
   // #sijapp cond.end#
   "reply"                       "Ответ"
   "close"                       "Закрыть"

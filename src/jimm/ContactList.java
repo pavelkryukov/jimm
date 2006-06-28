@@ -1152,7 +1152,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     
     // Adds the given message to the message queue of the contact item
     // identified by the given UIN
-    static public synchronized void addMessage(Message message)
+    static public synchronized void addMessage(Message message, boolean haveToBeep)
     {
         ContactListContactItem cItem = getItembyUIN(message.getSndrUin());
         
@@ -1172,6 +1172,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         
         // Notify user
         if ( !treeBuilt ) needPlayMessNotif |= true;
+        else if (haveToBeep) playSoundNotification(SOUND_TYPE_MESSAGE);
         
         cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true);
         

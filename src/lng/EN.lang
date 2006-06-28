@@ -282,6 +282,7 @@
   "backlight_manual"            "Manual backlight (* key)"
   "exit_button"                 "Exit"
   "menu_button"                 "Menu"
+  "flash_backlight"             "Flash LEDs"
   // #sijapp cond.end#
 
   //#sijapp cond.if modules_PROXY is "true" #
