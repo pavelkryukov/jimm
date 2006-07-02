@@ -5,6 +5,7 @@
 "backlight_manual"			"Hintergrundlicht manuell(*)"
 "exit_button"				"      Beenden"
 "menu_button"				"      Menü"
+"flash_backlight"			"Blinkende LEDs"
 //#sijapp cond.end#
 
 // PROXY module strings
@@ -319,6 +320,7 @@
 "title"						"Titel"
 "traffic_lng"				"Traffic"
 "typing_notify"				"Tippbenachrichtigung"
+"typing_display_only"		"Nur anzeigen"
 "total_mem"					"Gesamter Speicher"
 "uin"						"UIN"
 "use_history"				"Speichere History"
