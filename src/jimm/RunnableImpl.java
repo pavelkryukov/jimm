@@ -192,8 +192,8 @@ public class RunnableImpl implements Runnable
 		setInt(arguments,  6, icqProt     );
 		setInt(arguments,  7, authCookie  );
 		setInt(arguments,  8, signon      ); 
-		setInt(arguments, 9, online      );
-		setInt(arguments, 10, idle        );  
+		setInt(arguments,  9, online      );
+		setInt(arguments,  10, idle       );  
 		
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
 		ContactList.checkAndPlayOnlineSound(uin, status);
