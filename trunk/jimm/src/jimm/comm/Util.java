@@ -1550,15 +1550,6 @@ public class Util
 		               	  calendar.get(Calendar.MINUTE),
 		               	  calendar.get(Calendar.SECOND)
 		              );
-		
-		//#sijapp cond.if target isnot "SIEMENS2"#
-		if (gmt)
-		{
-			int diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET); 
-			result += (diff*60*60);
-		}
-		//#sijapp cond.end#
-		
 		return result;
 	}
 	
@@ -1567,7 +1558,7 @@ public class Util
 	{
 		if (date == 0) return error_str;
 		
-		int[] loclaDate = createDate(correctDateForTimerZone(date));
+		int[] loclaDate = createDate(date);
 		
 		StringBuffer sb = new StringBuffer();
 		
@@ -1652,14 +1643,20 @@ public class Util
 	
 	public static String getDateString(boolean onlyTime)
 	{
-		return getDateString(onlyTime, createCurrentDate(true));
+		return getDateString(onlyTime, correctDateForTimerZone(createCurrentDate(true),false));
 	}
 	
-	public static long correctDateForTimerZone(long date)
-	{
-		int diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET);
-		return date+(diff*60L*60L);
-	}
+    public static long correctDateForTimerZone(long date,boolean correctforDST)
+    {
+    	int diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET);
+       if(correctforDST && Calendar.getInstance().getTimeZone().useDaylightTime())
+    	   diff++;
+       //#sijapp cond.if target isnot "SIEMENS2"#
+       diff += Calendar.getInstance().getTimeZone().getRawOffset() / (1000 * 60 * 60);
+       //#sijapp cond.end#
+       return date+(diff*60L*60L);
+    }	
+
 	
 	public static String longitudeToString(long seconds)
 	{

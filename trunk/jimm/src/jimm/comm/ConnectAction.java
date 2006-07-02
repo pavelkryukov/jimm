@@ -893,8 +893,9 @@ public class ConnectAction extends Action
 						if (type == 0x0001)
 						{
 							 // Forward message to contact list
-							
-							PlainMessage message = new PlainMessage(uin, this.uin, date, text, true);
+							System.out.println("bef");
+							PlainMessage message = new PlainMessage(uin, this.uin, Util.correctDateForTimerZone(date,false), text, true);
+							System.out.println("aft");
 							RunnableImpl.addMessageSerially(message);
 						}
 						// URL message
