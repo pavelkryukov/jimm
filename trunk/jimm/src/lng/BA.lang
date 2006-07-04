@@ -1,4 +1,4 @@
-﻿  // Labels
+// Labels
   // MOTOROLA formatted buttons
   // #sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Trajanje pozadinskog osvjetljenja (sec)"
@@ -44,7 +44,7 @@
   "async"                       "Async"
   "attention"                   "Upozorenje!"
   "auth"                        "Autorizacija"
-  "auto_connect"                "Automatsko konektovanje pri pokretanju ?"
+  "auto_connect"                "Automatsko konektovanje pri pokretanju"
   "beep"                        "Bip"
   "birth_day"                   "Datum rodjenja"
   "black_on_white"              "Crno-Bijelo"
@@ -96,8 +96,8 @@
   "ext_clhotkeypound"           "#"
   "ext_clhotkeystar"            "*"
   "ext_clhotkeycall"            "Poziv"
-  "ext_hotkey_action_none"      "Iskljuciti"
-  "ext_hotkey_action_onoff"     "Prikazi/sakrij neaktivne"
+  "ext_hotkey_action_none"      "Iskljuceno"
+  "ext_hotkey_action_onoff"     "Prikazi/sakrij neaktivne kontakte"
   "fax"                         "Fax"
   "female"                      "Z"
   "female_male"                 "Z/M"
@@ -109,7 +109,7 @@
   "free_heap"                   "Oslobodi memoriju"
   "ft_name"                     "Posalji fajl"  
   "ft_cam"                      "Posalji sliku sa kamere"  
-  "full_screen"                 "Uvecaj / Full screen"
+  "full_screen"                 "Full screen"
   "gender"                      "Spol"
   "goto_url"                    "Idi na URL"
   "grant"                       "Autorizuj"
@@ -153,7 +153,7 @@
   "lang_SR"                     "Srpski"  
   "lang_UA"                     "Ukrajinski"
   "lastname"                    "Prezime"
-  "latest_ver"                  "Posljednja dostupna verzija je:"
+  "latest_ver"                  "Posljednja dostupna verzija je"
   "loading"                     "Pokrecem ..."
   "li_signon_time"				"Login"
   "li_online_time"				"Online"
@@ -167,9 +167,9 @@
   "msg_sound_file_name"         "Fajl sa zvukom za poruku"
   "message"                     "Poruka"
   "message_from"                "Poruka od"
-  "minimize"                    "Umanji / Minimize"
+  "minimize"                    "Minimiziraj"
   "minutes"						"m"
-  "misc"                        "Dodatne opcije"
+  "misc"                        "Dodatne opcije prikaza"
   "name"                        "Ime"
   "new_template"                "Novi predlozak"
   "nick"                        "Nick"
@@ -208,7 +208,7 @@
   "reason"                      "Razlog"
   "remove"                      "Izbrisi sa liste"
   "remove_me"                   "Izbrisi me" 
-  "remove_me_from"              "Izbrisi sebe sa liste od"
+  "remove_me_from"              "Izbrisi sebe sa liste od "
   "remove_group"                "Izbrisi grupu"
   "remove_user"                 "Izbrisi kontakt"
   "rename"                      "Preimenuj"
@@ -224,7 +224,7 @@
   "server"                      "Server"
   "server_host"                 "Server"
   "server_port"                 "Port"
-  "session"                     "Zadnji promet"
+  "session"                     "Posljednji promet"
   "set_status"                  "Odaberi status"
   "shadow_con"                  "Shadow connection"
   "show_user_groups"            "Prikazi kontakt grupe"
@@ -398,6 +398,9 @@
   // HTTP Connection erros
   "error_220"					"Server ne prihvata HTTP zahtjev (#220.EXT)"
   "error_221"					"Konekcija preko HTTP proxy zatvorena, nezahtevana (#221.EXT)"
+
+
+
 
 
 
