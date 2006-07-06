@@ -49,6 +49,7 @@ public class RunnableImpl implements Runnable
 	final static public  int TYPE_UPDATE_CL_CAPTION   = 7;
 	final static public  int TYPE_ADDCONTACT          = 8;
 	final static public  int TYPE_USER_IS_TYPING      = 9;
+	final static public  int TYPE_RESET_CONTACTS      = 10;
 	
 	RunnableImpl(int type, Object[] data)
 	{
@@ -113,6 +114,10 @@ public class RunnableImpl implements Runnable
 			
 		case TYPE_ADDCONTACT:
 			ContactList.addContactItem((ContactListContactItem)data[0]);
+			break;
+		
+		case TYPE_RESET_CONTACTS:
+			ContactList.setStatusesOffline();
 			break;
 		}
 	}
@@ -208,6 +213,11 @@ public class RunnableImpl implements Runnable
 		callSerially(TYPE_USER_IS_TYPING, args);
 	}
 	//#sijapp cond.end#
+	
+	static public void resetContactsOffline()
+	{
+		callSerially(TYPE_RESET_CONTACTS);
+	}
 	
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
