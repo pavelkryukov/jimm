@@ -225,13 +225,12 @@ public class Icq implements Runnable
         lastStatusChangeTime = Util.getDateString(true);
     }
 
-    // Disconnects from the ICQ network
+    /* Disconnects from the ICQ network */
     static public synchronized void disconnect()
     {
         if (!connected) return;
 
-
-        // Disconnect
+        /* Disconnect */
 		c.close();
 		resetServerCon();
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -245,10 +244,12 @@ public class Icq implements Runnable
         {
             Traffic.save();
         } catch (Exception e)
-        { // Do nothing
+        { /* Do nothing */
         }
-        // #sijapp cond.end#        
+        // #sijapp cond.end#
         
+        /* Reset all contacts offine */ 
+        RunnableImpl.resetContactsOffline();
     }
 
     // Dels a ContactListContactItem to the server saved contact list
@@ -682,6 +683,9 @@ public class Icq implements Runnable
         // Close connection
         c.close();
         resetServerCon();
+        
+        /* Reset all contacts offine */ 
+        RunnableImpl.resetContactsOffline();
     }
     
     /**************************************************************************/
