@@ -293,9 +293,7 @@ public class Options
 		setBoolean(Options.OPTION_LIGHT_MANUAL,       false);	
 		// #sijapp cond.end#
 		
-		boolean cp1251hack = false;
-		for (int i = 0; i < ResourceBundle.langAvailable.length; i++) cp1251hack |= (ResourceBundle.langAvailable[i].equals("RU"));
-		setBoolean(Options.OPTION_CP1251_HACK,        cp1251hack);
+		setBoolean(Options.OPTION_CP1251_HACK,        ResourceBundle.langAvailable[0].equals("RU"));
         // #sijapp cond.if target isnot "DEFAULT"#
 		setInt    (Options.OPTION_VIBRATOR,           0);
 		// #sijapp cond.end#		
