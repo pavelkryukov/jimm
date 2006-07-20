@@ -513,7 +513,7 @@ public class SplashCanvas extends Canvas
 			SplashCanvas._this.setCommandListener(timerTask);
 		}
 		
-		//  #sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
+		//  #sijapp cond.if target="MIDP2" | target="MOTOROLA"#
 		SplashCanvas._this.setFullScreenMode(!canCancel);
 		//#sijapp cond.end#
 		
