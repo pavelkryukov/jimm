@@ -152,7 +152,7 @@
 "ext_clhotkeypound"			"Taste #"
 "ext_clhotkeystar"			"Taste *"
 "ext_clhotkeycall"			"Taste Anruf"
-"ext_hotkey_action_none"	"Keine"
+"ext_hotkey_action_none"	"Nicht belegt"
 "ext_hotkey_action_onoff"	"Zeige/Verberge Offline"
 "fax"						"Fax"
 "female"					"W"
