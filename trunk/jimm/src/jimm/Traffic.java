@@ -411,6 +411,8 @@ public class Traffic
 			if (c == this.resetCommand)
 			{
 				Traffic.reset();
+				this.update(true);
+				this.trafficTextList.repaint();
 			}
 			if (c == this.okCommand)
 			{
