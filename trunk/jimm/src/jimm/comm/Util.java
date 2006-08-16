@@ -1643,18 +1643,20 @@ public class Util
 	
 	public static String getDateString(boolean onlyTime)
 	{
-		return getDateString(onlyTime, correctDateForTimerZone(createCurrentDate(true),false));
+		return getDateString(onlyTime, gmtTimeToLocalTime(createCurrentDate(true),false));
 	}
 	
-    public static long correctDateForTimerZone(long date,boolean correctforDST)
+    public static long gmtTimeToLocalTime(long gmtTime, boolean correctforDST)
     {
-    	int diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET);
-       if(correctforDST && Calendar.getInstance().getTimeZone().useDaylightTime())
-    	   diff++;
-       //#sijapp cond.if target isnot "SIEMENS2"#
-       diff += Calendar.getInstance().getTimeZone().getRawOffset() / (1000 * 60 * 60);
-       //#sijapp cond.end#
-       return date+(diff*60L*60L);
+        int diff;
+        //#sijapp cond.if target isnot "SIEMENS2"#
+        diff = Calendar.getInstance().getTimeZone().getRawOffset() / (1000 * 60 * 60);
+        diff += Calendar.getInstance().getTimeZone().useDaylightTime() ? 0 : 1;
+        //#sijapp cond.else#
+        diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET);
+        if(correctforDST && Calendar.getInstance().getTimeZone().useDaylightTime()) diff++;
+        //#sijapp cond.end#
+        return gmtTime+(diff*60L*60L);
     }	
 
 	
