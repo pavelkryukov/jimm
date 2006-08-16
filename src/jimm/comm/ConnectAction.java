@@ -894,7 +894,7 @@ public class ConnectAction extends Action
 						{
 							 // Forward message to contact list
 							System.out.println("bef");
-							PlainMessage message = new PlainMessage(uin, this.uin, Util.correctDateForTimerZone(date,false), text, true);
+							PlainMessage message = new PlainMessage(uin, this.uin, Util.gmtTimeToLocalTime(date,false), text, true);
 							System.out.println("aft");
 							RunnableImpl.addMessageSerially(message);
 						}

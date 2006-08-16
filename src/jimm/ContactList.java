@@ -82,7 +82,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
                                     , PlayerListener
 //#sijapp cond.end#
 {
-    // Status (all are mutual exclusive) TODO: move status to ContactListContactItem
+    /* Status (all are mutual exclusive) TODO: move status to ContactListContactItem */
     public static final int STATUS_AWAY      = 0x00000001;
     public static final int STATUS_CHAT      = 0x00000020;
     public static final int STATUS_DND       = 0x00000002;
@@ -94,7 +94,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     public static final int STATUS_NONE      = 0x10000000;
     public static final int STATUS_ONLINE    = 0x00000000;
 
-    // Sound notification typs
+    /* Sound notification typs */
     public static final int SOUND_TYPE_MESSAGE = 1;
     public static final int SOUND_TYPE_ONLINE  = 2;
     public static final int SOUND_TYPE_TYPING  = 3;
@@ -119,61 +119,61 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     private static ContactList _this;
     
 	
-    // Main menu command
+    /* Main menu command */
     private static Command mainMenuCommand; 
     private static Command selectCommand;
-    //#sijapp cond.if modules_DEBUGLOG is "true" #
+//#sijapp cond.if modules_DEBUGLOG is "true" #
     private static Command debugListCommand = new Command("*Debug list*", Command.ITEM, 2);
-    //#sijapp cond.end#
+//#sijapp cond.end#
     
 
     /** ************************************************************************* */
 
-    // Version id numbers
+    /* Version id numbers */
     static private int ssiListLastChangeTime = -1;
     static private int ssiNumberOfItems = 0;
 
-    // Update help variable
+    /* Update help variable */
     private static boolean haveToBeCleared;
 
-    // Contact items
+    /* Contact items */
     private static Vector cItems;
 
-    // Group items
+    /* Group items */
     private static Vector gItems;
     
     private static boolean treeBuilt = false, treeSorted = false;
 
-    // Contains tree nodes by groip ids
+    /* Contains tree nodes by groip ids */
 	private static Hashtable gNodes = new Hashtable();
 	
-	// Tree object
+	/* Tree object */
 	private static VirtualTree tree;
 
-	// Images for icons
+	/* Images for icons */
 	final public static ImageList imageList;
 	final public static ImageList smallIcons;
 
 	//
 	private static int onlineCounter;
 
-    // Initializer
+    /* Initializer */
     static
     {
-        //#sijapp cond.if target is "MOTOROLA" #
+//#sijapp cond.if target is "MOTOROLA" #
         mainMenuCommand    = new Command(ResourceBundle.getString("menu_button"),  Command.SCREEN, 3);
-        //#sijapp cond.else #    
+//#sijapp cond.else #    
         mainMenuCommand    = new Command(ResourceBundle.getString("menu"),         Command.SCREEN, 3);
-        //#sijapp cond.end #
+//#sijapp cond.end #
         
         selectCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
     	
-        // Construct image objects
+        /* Construct image objects */
         smallIcons = new ImageList();
         imageList = new ImageList();
         try
         {
-        	// reads and divides image "icons.png" to several icons
+        	/* reads and divides image "icons.png" to several icons */
 			imageList.load("/icons.png", -1, -1, -1);
             ContactList.statusAwayImg        = imageList.elementAt(0);
             ContactList.statusChatImg        = imageList.elementAt(1);
@@ -191,11 +191,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         } 
         catch (IOException e)
         {
-            // Do nothing
+            /* Do nothing */
         }
     }
 
-    // Constructor
+    /* Constructor */
     public ContactList()
     {
     	_this = this;
@@ -214,30 +214,30 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		tree.setVTCommands(this);
 		tree.setVLCommands(this);
 		
-        // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		tree.setFullScreenMode(false);
-        // #sijapp cond.end#
+// #sijapp cond.end#
 		
 		tree.setImageList(imageList);
 		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT : VirtualList.MEDIUM_FONT);
 		tree.setStepSize( -tree.getFontHeight()/2 );
 		
-        // #sijapp cond.if modules_TRAFFIC is "true" #
+// #sijapp cond.if modules_TRAFFIC is "true" #
 		updateTitle(Traffic.getSessionTraffic());
-        // #sijapp cond.else #
+// #sijapp cond.else #
         updateTitle(0);
-        // #sijapp cond.end#
+// #sijapp cond.end#
         tree.addCommand(ContactList.mainMenuCommand);
 		tree.addCommand(selectCommand);
 	
-        // #sijapp cond.if modules_DEBUGLOG is "true" #
+// #sijapp cond.if modules_DEBUGLOG is "true" #
 		tree.addCommand(debugListCommand);
-        // #sijapp cond.end#
+// #sijapp cond.end#
 		
         tree.setCommandListener(this);
     }
     
-    ///////////////////////////////////////////////////////////////////////////
+    /* *********************************************************** */
 	final static public int SORT_BY_NAME   = 1;
 	final static public int SORT_BY_STATUS = 0;
 	static private int sortType;
@@ -284,29 +284,30 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		
 		return result;
 	}
-	///////////////////////////////////////////////////////////////////////////
+	
+	/* *********************************************************** */
     
-    // Returns reference to tree 
+    /* Returns reference to tree */ 
     static public Displayable getVisibleContactListRef()
     {
         return tree;
     }
 	
-	// Returns image list with status icons and status icons with red letter "C"  
+	/* Returns image list with status icons and status icons with red letter "C" */  
     static public ImageList getImageList()
 	{
 		return imageList;
 	}
 
-    // Returns the id number #1 which identifies (together with id number #2)
-    // the saved contact list version
+    /* Returns the id number #1 which identifies (together with id number #2)
+       the saved contact list version */
 	static public int getSsiListLastChangeTime()
     {
         return ssiListLastChangeTime;
     }
 
-    // Returns the id number #2 which identifies (together with id number #1)
-    // the saved contact list version
+    /* Returns the id number #2 which identifies (together with id number #1)
+       the saved contact list version */
 	static public int getSsiNumberOfItems()
     {
         return (ssiNumberOfItems);

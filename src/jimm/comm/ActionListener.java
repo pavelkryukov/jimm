@@ -180,7 +180,7 @@ public class ActionListener
                     // #sijapp cond.end#
                     else if (tlvType == 0x0003) // Signon time
                     {
-                    	signon = (int)Util.correctDateForTimerZone(Util.byteArrayToLong(tlvData),false);
+                    	signon = (int)Util.gmtTimeToLocalTime(Util.byteArrayToLong(tlvData),false);
                     	//System.out.println(Util.getDateString(false,signon));
                     }
                     else if (tlvType == 0x0004) // Idle time
