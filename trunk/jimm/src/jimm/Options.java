@@ -50,14 +50,8 @@ import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.io.*;
+import java.util.*;
 
 import javax.microedition.lcdui.*;
 import javax.microedition.rms.RecordStore;
@@ -141,7 +135,8 @@ public class Options
 	public static final int OPTION_PRX_PASS            =  12;   /* String  */
 	// #sijapp cond.end#
 	
-	public static final int OPTIONS_HOUR_OFFSET        =  87;   /* int     */
+	public static final int OPTIONS_GMT_OFFSET         =  87;   /* int     */
+	public static final int OPTIONS_LOCAL_OFFSET       =  90;   /* int     */
 	
 	public static final int OPTION_FULL_SCREEN         = 145;   /* boolean */
 	
@@ -191,8 +186,11 @@ public class Options
 	// Options form
 	static OptionsForm optionsForm;
 	
-	// Constructor
-	public Options()
+	/* Private constructor prevent to create instances of Options class */ 
+	private Options() {}
+	
+	/* Static constructor */
+	static
 	{
 		// Try to load option values from record store and construct options form
 		try
@@ -228,8 +226,8 @@ public class Options
 		VirtualList.setFullScreen( getBoolean(Options.OPTION_FULL_SCREEN) );
 	}
 
-	// Set default values
-	// This is done before loading because older saves may not contain all new values
+	/* Set default values
+	   This is done before loading because older saves may not contain all new values */
 	static private void setDefaults()
 	{
 	    setString (Options.OPTION_UIN1,               emptyString);
@@ -343,7 +341,14 @@ public class Options
 		
 		setBoolean(Options.OPTION_FULL_SCREEN,        false);
 		
-		setInt    (Options.OPTIONS_HOUR_OFFSET,       0);
+		/* Offset (in hours) between GMT time and local zone time 
+		   GMT_time + GMT_offset = Local_time */
+		setInt    (Options.OPTIONS_GMT_OFFSET,        0);
+		
+		/* Offset (in hours) between GMT time and phone clock 
+		   Phone_clock + Local_offset = GMT_time */
+		setInt    (Options.OPTIONS_LOCAL_OFFSET,      0);
+		
 		//#sijapp cond.if target="MOTOROLA"#
 		setBoolean(OPTION_FLASH_BACKLIGHT,            true);
 		//#sijapp cond.end#
@@ -356,24 +361,24 @@ public class Options
 		setString (Options.OPTION_STATUS_MESSAGE,     ResourceBundle.getString("status_message_text"));
 	}
 
-	// Load option values from record store
+	/* Load option values from record store */
 	static public void load() throws IOException, RecordStoreException
 	{
-		// Open record store
+		/* Open record store */
 		RecordStore account = RecordStore.openRecordStore("options", false);
 		
-		// Temporary variables
+		/* Temporary variables */
 		byte[] buf;
 		ByteArrayInputStream bais;
 		DataInputStream dis;
 		
-		// Get version info from record store
+		/* Get version info from record store */
 		buf = account.getRecord(1);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
 	    Options.setDefaults();
 		
-		// Read all option key-value pairs
+		/* Read all option key-value pairs */
 		buf = account.getRecord(2);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
@@ -405,10 +410,10 @@ public class Options
 			}
 		}
 		
-		// Close record store
+		/* Close record store */
 		account.closeRecordStore();
 
-		// Hide offline?
+		/* Hide offline? */
 		if (getBoolean(Options.OPTION_CL_HIDE_OFFLINE))
 		{
 			setInt(Options.OPTION_CL_SORT_BY, 0);
@@ -417,32 +422,32 @@ public class Options
 	}
 
 
-	// Save option values to record store
+	/* Save option values to record store */
 	static public void save() throws IOException, RecordStoreException
 	{
 
-		// Open record store
+		/* Open record store */
 		RecordStore account = RecordStore.openRecordStore("options", true);
 
-		// Add empty records if necessary
+		/* Add empty records if necessary */
 		while (account.getNumRecords() < 3)
 		{
 			account.addRecord(null, 0, 0);
 		}
 
-		// Temporary variables
+		/* Temporary variables */
 		byte[] buf;
 		ByteArrayOutputStream baos;
 		DataOutputStream dos;
 
-		// Add version info to record store
+		/* Add version info to record store */
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
 		dos.writeUTF(Jimm.VERSION);
 		buf = baos.toByteArray();
 		account.setRecord(1, buf, 0, buf.length);
 
-		// Save all option key-value pairs
+		/* Save all option key-value pairs */
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
 		Enumeration optionKeys = options.keys();
@@ -477,7 +482,7 @@ public class Options
 		buf = baos.toByteArray();
 		account.setRecord(2, buf, 0, buf.length);
 
-		// Close record store
+		/* Close record store */
 		account.closeRecordStore();
 	}
 
@@ -493,7 +498,7 @@ public class Options
 		}
 	}
 
-	// Option retrieval methods (no type checking!)
+	/* Option retrieval methods (no type checking!) */
 	static public synchronized String getString(int key)
 	{
 		switch (key)
@@ -519,7 +524,7 @@ public class Options
 	}
 
 
-	// Option setting methods (no type checking!)
+	/* Option setting methods (no type checking!) */
 	static public synchronized void setString(int key, String value)
 	{
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
@@ -560,19 +565,19 @@ public class Options
 
 	/**************************************************************************/
 	
-	// Constants for color scheme
+	/* Constants for color scheme */
 	private static final int CLRSCHHEME_BOW  = 0; // black on white
 	private static final int CLRSCHHEME_WOB  = 1; // white on black
 	private static final int CLRSCHHEME_WOBL = 2; // white on blue
 	
-	// Constants for method getSchemeColor to retrieving color from color scheme 
+	/* Constants for method getSchemeColor to retrieving color from color scheme */ 
 	public static final int  CLRSCHHEME_BACK = 1; // retrieving background color
 	public static final int  CLRSCHHEME_TEXT = 2; // retrieving text color
 	public static final int  CLRSCHHEME_BLUE = 3; // retrieving highlight color
 	public static final int  CLRSCHHEME_CURS = 4; // retrieving curr mess highlight color
 	public static final int  CLRSCHHEME_CAP  = 5; // retrieving caption background color
 	
-	// Constants for connection type
+	/* Constants for connection type */
 	public static final int  CONN_TYPE_SOCKET = 0;
 	public static final int  CONN_TYPE_HTTP   = 1; 
 	public static final int  CONN_TYPE_PROXY  = 2; 
@@ -584,7 +589,7 @@ public class Options
 		0x000080, 0xFFFFFF, 0x00FFFF, 0xFFFFFF, 0x000080
 	};
 	
-	// Retrieves color value from color scheme
+	/* Retrieves color value from color scheme */
 	static public int getSchemeColor(int type)
 	{
 		return (colors[getInt(OPTION_COLOR_SCHEME)*5+type-1]);
@@ -603,7 +608,7 @@ public class Options
 /**************************************************************************/
 
 
-//Form for editing option values
+/* Form for editing option values */
 
 class OptionsForm implements CommandListener, ItemStateListener
 {
@@ -612,20 +617,20 @@ class OptionsForm implements CommandListener, ItemStateListener
 	private int currentHour;
 	private String lastUILang;
 
-	// Commands
+	/* Commands */
 	private Command backCommand;
 	private Command saveCommand;
     //#sijapp cond.if target is "MOTOROLA"#
 	private Command selectCommand;
     //#sijapp cond.end#
 
-	// Options menu
+	/* Options menu */
 	private List optionsMenu;
     
-    // Menu event list
+    /* Menu event list */
 	private int[] eventList;
 
-	// Options form
+	/* Options form */
 	private Form optionsForm;
 	
     // Static constants for menu actios
@@ -666,6 +671,11 @@ class OptionsForm implements CommandListener, ItemStateListener
     private ChoiceGroup vibratorChoiceGroup;
     private ChoiceGroup choiceCurAccount;
     
+    private ChoiceGroup chsTimeZone;
+    private ChoiceGroup chsCurrTime;
+  
+
+    
 	// #sijapp cond.if target isnot "DEFAULT"#
     private ChoiceGroup messageNotificationModeChoiceGroup;
     private ChoiceGroup onlineNotificationModeChoiceGroup;
@@ -701,11 +711,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	private TextField srvProxyPassTextField;
 	private TextField connAutoRetryTextField;
 	// #sijapp cond.end#
-	
-	// Time zone gauge
-	private Gauge timeZoneGauge;
-	private StringItem timeStringItem;
-	
+
 	private List keysMenu;
 	private List actionMenu;
 	
@@ -823,7 +829,7 @@ class OptionsForm implements CommandListener, ItemStateListener
     		if (hotkeyActions[i] == optionValue) 
     			return ResourceBundle.getString(langStr)+": "+ResourceBundle.getString(hotkeyActionNames[i]);  
     	}
-    	return ResourceBundle.getString("ext_clhotkey0")+": <???>";
+    	return ResourceBundle.getString(langStr)+": <???>";
     }
     
 	private void InitHotkeyMenuUI()
@@ -987,22 +993,11 @@ class OptionsForm implements CommandListener, ItemStateListener
 				}
 			}
 		}
-		if (item == timeZoneGauge)
-		{
-			int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
-			currentHour = currDateTime[Util.TIME_HOUR];
-			int minutes = currDateTime[Util.TIME_MINUTE];
-			int diff = timeZoneGauge.getValue()-12;
-			if (diff < 0)
-				timeStringItem.setText((24+currentHour+diff)%24+":"+Util.makeTwo(minutes)+" ("+(diff)+")");
-			else
-				timeStringItem.setText((currentHour+diff)%24+":"+Util.makeTwo(minutes)+" (+"+diff+")");
-		}
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
 	
-	// Activate options menu
+	/* Activate options menu */
     protected void activate()
 	{
     	// Store some last values
@@ -1021,10 +1016,10 @@ class OptionsForm implements CommandListener, ItemStateListener
     
     final private static int TAG_DELETE_ACCOUNT = 1;
     
-	// Command listener
+	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
-		//Command handler for hotkeys list in Options...
+		/* Command handler for hotkeys list in Options... */
 		if (d == keysMenu)
 		{
 			if (c == List.SELECT_COMMAND)
@@ -1337,7 +1332,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 
 				// #sijapp cond.if modules_TRAFFIC is "true"#
 				case OPTIONS_TRAFFIC:
-	                // Initialize elements (cost section)
+	                /* Initialize elements (cost section) */
 	                costPerPacketTextField = new TextField(ResourceBundle.getString("cpp"), Util.intToDecimal(Options.getInt(Options.OPTION_COST_PER_PACKET)), 6, TextField.ANY);
 	                costPerDayTextField = new TextField(ResourceBundle.getString("cpd"), Util.intToDecimal(Options.getInt(Options.OPTION_COST_PER_DAY)), 6, TextField.ANY);
 	                costPacketLengthTextField = new TextField(ResourceBundle.getString("plength"), String.valueOf(Options.getInt(Options.OPTION_COST_PACKET_LENGTH) / 1024), 4, TextField.NUMERIC);
@@ -1352,26 +1347,41 @@ class OptionsForm implements CommandListener, ItemStateListener
 					
 				case OPTIONS_TIMEZONE:
 				{
-					int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
-					currentHour = currDateTime[Util.TIME_HOUR];
-					int minutes = currDateTime[Util.TIME_MINUTE];
-					timeZoneGauge = new Gauge(ResourceBundle.getString("time_zone"),true,23,Options.getInt(Options.OPTIONS_HOUR_OFFSET)+12);
-					if (Options.getInt(Options.OPTIONS_HOUR_OFFSET) < 0)
-						timeStringItem = new StringItem(null,(currentHour+Options.getInt(Options.OPTIONS_HOUR_OFFSET))+":"+Util.makeTwo(minutes)+" ("+Options.getInt(Options.OPTIONS_HOUR_OFFSET)+")");
-					else
-						timeStringItem = new StringItem(null,(currentHour+Options.getInt(Options.OPTIONS_HOUR_OFFSET))+":"+Util.makeTwo(minutes)+" (+"+Options.getInt(Options.OPTIONS_HOUR_OFFSET)+")");
+					int choiceType;
 					
-					optionsForm.append(timeZoneGauge);
-					optionsForm.append(timeStringItem);
+					// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+					choiceType = Choice.POPUP;
+					// #sijapp cond.else#
+					choiceType = Choice.EXCLUSIVE;
+					// #sijapp cond.end#
+					
+					chsTimeZone = new ChoiceGroup(ResourceBundle.getString("time_zone"), choiceType);
+					for (int i = -12; i <= 13; i++)
+						chsTimeZone.append("GMT" + (i<0 ? "" : "+") + i + ":00", null);
+					chsTimeZone.setSelectedIndex(Options.getInt(Options.OPTIONS_GMT_OFFSET)+12, true);
+					
+					int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
+					chsCurrTime = new ChoiceGroup(ResourceBundle.getString("local_time"), choiceType);
+					int minutes = currDateTime[Util.TIME_MINUTE];
+					int hour = currDateTime[Util.TIME_HOUR];
+					for (int i = 0; i < 24; i++) chsCurrTime.append(i+":"+minutes, null);
+					chsCurrTime.setSelectedIndex(hour, true);
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime( new Date() );
+					currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+					
+					optionsForm.append(chsTimeZone);
+					optionsForm.append(chsCurrTime);
+		
 					break;
 				}
 			}
 
-			// Activate options form
+			/* Activate options form */
 			Jimm.display.setCurrent(optionsForm);
 		}
 
-		// Look for back command
+		/* Look for back command */
 		else if (c == backCommand)
 		{
 			if (d == optionsForm || d == keysMenu)
@@ -1382,8 +1392,8 @@ class OptionsForm implements CommandListener, ItemStateListener
            else
            {
         	   Options.optionsForm = null;
-        	   System.gc();
-               // Active MM/CL
+
+               /* Active MM/CL */
                if (Icq.isConnected())
                {
                    ContactList.activate();
@@ -1537,20 +1547,31 @@ class OptionsForm implements CommandListener, ItemStateListener
 				// #sijapp cond.end#
 					
 				case OPTIONS_TIMEZONE:
-					System.out.println("Save Timezone");
-					int diff = timeZoneGauge.getValue() - 12;
-
-					System.out.println("diff=" + diff);
-
-					Options.setInt(Options.OPTIONS_HOUR_OFFSET, diff);
+				{
+					/* Set up time zone*/
+					int timeZone = chsTimeZone.getSelectedIndex()-12;
+					Options.setInt(Options.OPTIONS_GMT_OFFSET, timeZone);
+					
+					/* Translate selected time to GMT */
+					int selHour = chsCurrTime.getSelectedIndex()-timeZone;
+					if (selHour < 0) selHour += 24;
+					if (selHour >= 24) selHour -= 24;
+					
+					/* Calculate diff. between selected GMT time and phone time */ 
+					int localOffset = selHour-currentHour;
+					while (localOffset >= 24) localOffset -= 24;
+					while (localOffset < 0) localOffset += 24;
+					Options.setInt(Options.OPTIONS_LOCAL_OFFSET, localOffset);
+					
 					break;
+				}
 										
 			}
 
-			// Save options
+			/* Save options */
 			Options.safe_save();
 
-			// Activate MM/CL
+			/* Activate MM/CL */
 			if (Icq.isConnected())
 			{
 				Options.optionsForm = null;
@@ -1562,7 +1583,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 			}
 		} 
 		
-		// Accounts
+		/* Accounts */
 		else if (c == cmdAddNewAccount)
 		{
 			readAccontsControls();

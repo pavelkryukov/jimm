@@ -61,10 +61,6 @@ public class Jimm extends MIDlet
 	private Icq icq;
 
 
-	// Options container
-	private Options o;
-
-
 	// Main menu object
 	private MainMenu mm;
 
@@ -170,9 +166,6 @@ public class Jimm extends MIDlet
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
 		if (Jimm.VERSION == null) Jimm.VERSION = "###VERSION###";
 
-		// Create options container
-		this.o = new Options();
-		
 		// Create splash canvas object
 		this.sc = new SplashCanvas(ResourceBundle.getString("loading"));
 
@@ -296,14 +289,6 @@ public class Jimm extends MIDlet
 	{
 		return (this.icq);
 	}
-
-
-	// Returns a reference to options container
-	public Options getOptionsRef()
-	{
-		return (this.o);
-	}
-
 
 	// Returns a reference to the main menu object
 	public MainMenu getMainMenuRef()
