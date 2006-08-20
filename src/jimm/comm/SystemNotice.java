@@ -48,7 +48,7 @@ public class SystemNotice extends Message {
 	// Constructs system notice
 	public SystemNotice(int _sysnotetype, String _uin, boolean _AUTH_granted, String _reason) 
 	{
-		super(Util.createCurrentDate(true), Options.getString(Options.OPTION_UIN), _uin, MESSAGE_TYPE_AUTO);
+		super(Util.createCurrentDate(false), Options.getString(Options.OPTION_UIN), _uin, MESSAGE_TYPE_AUTO);
 		sysnotetype = _sysnotetype;
 		AUTH_granted = _AUTH_granted;
 		reason = _reason;

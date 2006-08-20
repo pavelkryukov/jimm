@@ -28,10 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
-import java.util.Vector;
+import java.util.*;
 import java.io.IOException;
 
 import jimm.ContactListContactItem;
@@ -1503,11 +1500,11 @@ public class Util
 	
 	
 	
-	///////////////////////////////////////////////////////////////////////////
+	/*/////////////////////////////////////////////////////////////////////////
 	//                                                                       //
 	//                 METHODS FOR DATE AND TIME PROCESSING                  //
 	//                                                                       //	
-	///////////////////////////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////////////*/
 
 	private final static String error_str = "***error***";
 	final public static int TIME_SECOND = 0;
@@ -1536,12 +1533,11 @@ public class Util
 		return -1;
 	}
 	
-	// Creates current date (GMT)
+	/* Creates current date (GMT or local) */
 	public static long createCurrentDate(boolean gmt)
 	{
-		Date date = new Date();
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
+		calendar.setTime( new Date() );
 		long result = createLongTime(
 		               	  calendar.get(Calendar.YEAR),
 		               	  convertDateMonToSimpleMon(calendar.get(Calendar.MONTH)),
@@ -1550,10 +1546,16 @@ public class Util
 		               	  calendar.get(Calendar.MINUTE),
 		               	  calendar.get(Calendar.SECOND)
 		              );
-		return result;
+
+		/* convert result to GMT time */
+		long diff = Options.getInt(Options.OPTIONS_LOCAL_OFFSET);
+		result += (diff*3600);
+		
+		/* returns GMT or local time */
+		return gmt ? result : gmtTimeToLocalTime(result);
 	}
 	
-	// Show date string. Date is corrected to local date before
+	/* Show date string */
 	public static String getDateString(boolean onlyTime, long date)
 	{
 		if (date == 0) return error_str;
@@ -1579,7 +1581,7 @@ public class Util
 		return sb.toString();
 	}
 	
-	// Creates seconds count from 1st Jan 1970 till mentioned date 
+	/* Generates seconds count from 1st Jan 1970 till mentioned date */ 
 	public static long createLongTime(int year, int mon, int day, int hour, int min, int sec)
 	{
 		int day_count, i, febCount;
@@ -1643,22 +1645,14 @@ public class Util
 	
 	public static String getDateString(boolean onlyTime)
 	{
-		return getDateString(onlyTime, gmtTimeToLocalTime(createCurrentDate(true),false));
+		return getDateString( onlyTime, createCurrentDate(false) );
 	}
 	
-    public static long gmtTimeToLocalTime(long gmtTime, boolean correctforDST)
+    public static long gmtTimeToLocalTime(long gmtTime)
     {
-        int diff;
-        //#sijapp cond.if target isnot "SIEMENS2"#
-        diff = Calendar.getInstance().getTimeZone().getRawOffset() / (1000 * 60 * 60);
-        diff += Calendar.getInstance().getTimeZone().useDaylightTime() ? 0 : 1;
-        //#sijapp cond.else#
-        diff = Options.getInt(Options.OPTIONS_HOUR_OFFSET);
-        if(correctforDST && Calendar.getInstance().getTimeZone().useDaylightTime()) diff++;
-        //#sijapp cond.end#
-        return gmtTime+(diff*60L*60L);
+    	long diff = Options.getInt(Options.OPTIONS_GMT_OFFSET);
+        return gmtTime+diff*3600L;
     }	
-
 	
 	public static String longitudeToString(long seconds)
 	{
@@ -1676,9 +1670,11 @@ public class Util
 		return buf.toString();
 	}
 
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
+	/*====================================================*/
+	/*                                                    */
+	/*                     MD5 stuff                      */
+	/*                                                    */
+	/*====================================================*/
 
 	static final byte[] AIM_MD5_STRING = new byte[] {'A','O','L',' ','I','n','s','t','a','n','t',' ',
 		'M','e','s','s','e','n','g','e','r',' ','(','S','M',')'};

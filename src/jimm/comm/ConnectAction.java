@@ -876,6 +876,11 @@ public class ConnectAction extends Action
 											Util.getByte(buf, 9),
 											0
 									   );
+						
+						System.out.println("Offline mess:");
+						System.out.println("hour="+(int)Util.getByte(buf, 8));
+						System.out.println("min="+(int)Util.getByte(buf, 9));
+						System.out.println();
 
 						// Get type
 						int type = Util.getWord(buf, 10, false);
@@ -894,7 +899,7 @@ public class ConnectAction extends Action
 						{
 							 // Forward message to contact list
 							System.out.println("bef");
-							PlainMessage message = new PlainMessage(uin, this.uin, Util.gmtTimeToLocalTime(date,false), text, true);
+							PlainMessage message = new PlainMessage(uin, this.uin, Util.gmtTimeToLocalTime(date), text, true);
 							System.out.println("aft");
 							RunnableImpl.addMessageSerially(message);
 						}
@@ -920,7 +925,7 @@ public class ConnectAction extends Action
 							}
 
 							// Forward message message to contact list
-							UrlMessage message = new UrlMessage(uin, this.uin, date, url, urlText);
+							UrlMessage message = new UrlMessage(uin, this.uin, Util.gmtTimeToLocalTime(date), url, urlText);
 							RunnableImpl.addMessageSerially(message);
 						}
 

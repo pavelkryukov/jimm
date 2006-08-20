@@ -180,7 +180,7 @@ public class ActionListener
                     // #sijapp cond.end#
                     else if (tlvType == 0x0003) // Signon time
                     {
-                    	signon = (int)Util.gmtTimeToLocalTime(Util.byteArrayToLong(tlvData),false);
+                    	signon = (int)Util.gmtTimeToLocalTime( Util.byteArrayToLong(tlvData) );
                     	//System.out.println(Util.getDateString(false,signon));
                     }
                     else if (tlvType == 0x0004) // Idle time
@@ -362,7 +362,7 @@ public class ActionListener
                         // Construct object which encapsulates the received
                         // plain message
 
-                        PlainMessage plainMsg = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(true), text, false);
+                        PlainMessage plainMsg = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(false), text, false);
 						RunnableImpl.addMessageSerially(plainMsg);
                     }
 
@@ -497,7 +497,7 @@ public class ActionListener
                             String text = Util.removeCr(Util.byteArrayToString(rawText, isUtf8));
 
                             // Instantiate message object
-                            message = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(true), text, false);
+                            message = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(false), text, false);
 
                         } else
                         {
@@ -528,7 +528,7 @@ public class ActionListener
                             }
 
                             // Instantiate UrlMessage object
-                            message = new UrlMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(true), url, urlText);
+                            message = new UrlMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(false), url, urlText);
                         }
 
                         // Forward message object to contact list
@@ -685,7 +685,7 @@ public class ActionListener
                             }
 
                             // Forward message message to contact list
-                            UrlMessage message = new UrlMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(true), url, urlText);
+                            UrlMessage message = new UrlMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(false), url, urlText);
                             RunnableImpl.addMessageSerially(message);
 
                             // Acknowledge message
@@ -797,7 +797,7 @@ public class ActionListener
                     if (msgType == 0x0001)
                     {
                         // Forward message to contact list
-                        PlainMessage plainMsg = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(true), text, false);
+                        PlainMessage plainMsg = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(false), text, false);
                         RunnableImpl.addMessageSerially(plainMsg);
                     }
                     // URL message
@@ -821,7 +821,7 @@ public class ActionListener
                         }
 
                         // Forward message message to contact list
-                        UrlMessage urlMsg = new UrlMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(true), url, urlText);
+                        UrlMessage urlMsg = new UrlMessage(uin, Options.getString(Options.OPTION_UIN), Util.createCurrentDate(false), url, urlText);
 						RunnableImpl.addMessageSerially(urlMsg);
                     }
 
