@@ -387,6 +387,18 @@ public class TextList extends VirtualList
 		return getWidthInternal()-scrollerWidth-3;
 	}
 	
+	private static String replace(String text, String from, String to)
+	{
+		int fromSize = from.length();
+		for (;;)
+		{
+			int pos = text.indexOf(from); 
+			if (pos == -1) break;
+			text = text.substring(0, pos)+to+text.substring(pos+fromSize, text.length());
+		}
+		return text;
+	}
+	
 	private void addBigTextInternal
 	(
 		String text,  
@@ -397,18 +409,16 @@ public class TextList extends VirtualList
 	)
 	{
 		Font font;
-		int i, textLen, curPos, lastWordEnd, startPos, width, testStringWidth = 0;
+		int textLen, curPos, lastWordEnd, startPos, width, testStringWidth = 0;
 		char curChar;
 		boolean lineBreak, wordEnd, textEnd, divideLineToWords;
 		String testString = null;
 		
-		// Remove '\r' charaster
-		for (;;)
-		{
-			int pos = text.indexOf('\r'); 
-			if (pos == -1) break;
-			text = text.substring(0, pos)+text.substring(pos+1, text.length());
-		}
+		// Replase '\r\n' charasters with '\n'
+		text = replace(text, "\r\n", "\n");
+		
+		// Replase '\r' charasters with '\n'
+		text = replace(text, "\r\n", "\n");
 
 		font = getQuickFont(fontStyle);
 		
@@ -428,7 +438,7 @@ public class TextList extends VirtualList
 		{
 			curChar = text.charAt(curPos);
 			wordEnd = (curChar == ' ');
-			lineBreak = (curChar == '\n') || (curChar == '\r');
+			lineBreak = (curChar == '\n');
 			textEnd = (curPos == (textLen - 1));
 			divideLineToWords = false;
 			if (textEnd && (!lineBreak)) curPos++;
