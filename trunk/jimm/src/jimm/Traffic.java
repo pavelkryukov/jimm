@@ -217,12 +217,12 @@ public class Traffic
 		costString = costString+afterDot;
 		return costString;
 		}
-		else return new String("0.0");
+		else return new String("0.00");
 	
 	  }
 	  catch (Exception e)
 	  {
-		return new String("0.0");
+		return new String("0.00");
 	  }
 	}
 
