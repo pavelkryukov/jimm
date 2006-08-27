@@ -72,9 +72,6 @@ public class Traffic
 	// Date of the last use of the connection
 	static private Date lastTimeUsed;
 
-	// Number of traffic changes since last save
-	static private byte savedCounter;
-
 	// Amount of money for all
 	static private int savedCost;
 
@@ -104,7 +101,6 @@ public class Traffic
 		}
 		// Construct traffic scrren
 		trafficScreen = new TrafficScreen();
-		savedCounter = 0;
 	}
 
 	//Loads traffic from file
@@ -282,19 +278,7 @@ public class Traffic
 	// Adds to session traffic
 	static public void addTraffic(int bytes)
 	{
-		session_traffic = session_traffic + bytes;
-		if (savedCounter == 10)
-		{
-			savedCounter = 0;
-			try
-			{
-				save();
-			}
-			catch (Exception e)
-			{ // Do nothing
-			}
-		}
-		savedCounter++;
+		session_traffic+=bytes;
 	}
 
 	// Reset the saved value
