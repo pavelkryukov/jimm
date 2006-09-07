@@ -1,0 +1,321 @@
+<!--
+********************************************************************************
+Jimm - Mobile Messaging - J2ME ICQ clone
+Copyright (C) 2003-05  Jimm Project
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+********************************************************************************
+File: util/build-nightly/build.xml
+Version: ###VERSION###  Date: ###DATE###
+Author(s): Manuel Linsmayer, Andreas Rossbacher
+********************************************************************************
+-->
+
+<project name="Jimm" default="nightly-release">
+
+	<!-- ******************************************************************* -->
+	<!-- CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT   -->
+	<!-- ******************************************************************* -->
+	<property name="DEFAULT/midp"      value="CHANGE ME"                      />
+	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar"/>
+	<property name="MIDP2/midp"        value="CHANGE ME"                      />
+	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar"/>
+	<property name="RIM/midp"          value="CHANGE ME"                      />
+	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
+	<property name="SIEMENS1/midp"     value="CHANGE ME"                      />
+	<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp}/emulators/S55/lib/api.jar"     />
+	<property name="SIEMENS2/midp"     value="CHANGE ME"                      />
+	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/emulators/EL71/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
+	<property name="MOTOROLA/midp"     value="CHANGE ME"                        />
+	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar:res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />
+    <property name="proguard"          value="CHANGE ME"                      />
+	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"   />
+	<property name="7z/exec"           value="7za"                            />
+	<!--  ****************************************************************** -->
+
+	<!-- ******************************************************************* -->
+	<!-- NIGHTLY VERSION SECTION - EVERY NIGHTLY HAS A UNIQUE VERSION NUMBER -->
+	<!-- ******************************************************************* -->
+	<tstamp>
+		<format property="date" pattern="yyyy/MM/dd" timezone="GMT+00:00" />
+	</tstamp>
+	<property name="version/jimm"      value="0.5.0_${DSTAMP}"            />
+	<property name="version/java"      value="0.5.0"                      />
+	<!-- ******************************************************************* -->
+	
+	<!-- ******************************************************************* -->
+	<!-- PATH SECTION - PATH TO THE NIGHTLY DIR ON THE WEBSERVER             -->
+	<!-- ******************************************************************* -->
+	<property name="nightly/path"      value="CHANGE ME"                      />
+	<!-- ******************************************************************* -->		
+		
+	<!-- ******************************************************************* -->
+	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
+	<!-- ******************************************************************* -->
+
+
+	<!-- Buildfile description -->
+	<description>This buildfile is used to build a Jimm nightly build.</description>
+
+
+	<!-- Set global properties for this build -->
+	<property name="cvsroot" value=":pserver:anonymous@jimm.cvs.sourceforge.net:/cvsroot/jimm"/>
+	
+	<property name="cvsdir" location="nightly-cvs"/>
+	<property name="package" value="jimm"/>
+	<property name="bin" value="bin"/>
+	
+	<property name="midp1-targetlist"  value="DEFAULT;SIEMENS1"/>
+	<property name="midp2-targetlist"  value="MIDP2;SIEMENS2;MOTOROLA"/>
+	<property name="midp1-moduleslist-full" value="TRAFFIC,HISTORY,SMILES"/>
+	<property name="midp2-moduleslist-full" value="TRAFFIC,HISTORY,FILES,SMILES,PROXY"/>
+	<property name="modulelist-light" value="NO_MODULES"/>
+
+	<property name="langlist" value="DE,EN,RU"/>
+	
+    <!-- Auxiliary property -->
+	<property name="3ns" value="###"/>
+
+	<!-- Include Ant-Contrib Tasks -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+
+	<!-- Internal target: init -->
+	<target name="init">
+		<tstamp>
+			<format property="webpagedate"
+				pattern="dd.MM.yyyy"
+				timezone="GMT+00:00"/>
+		</tstamp>
+		<available file="${nightly/path}/current-nightly" property="nightly-file-available"/>
+		<if>
+	 		<equals arg1="${nightly-file-available}" arg2="true"/>
+			<then>
+				<loadfile srcfile="${nightly/path}/current-nightly" property="last-nightly-version">
+					<filterchain>
+				  		<headfilter lines="1"/>
+						<striplinebreaks/>
+					</filterchain>
+				</loadfile>					
+			</then>
+			<else>
+				<property name="last-nightly-version" value="NONE"/>
+			</else>
+		</if>
+		<echo message="${version/jimm}"/>
+	<echo message="${last-nightly-version}"/>
+		<echo file="current-nightly">${version/jimm}
+${webpagedate}
+${midp2-moduleslist-full}
+${midp1-moduleslist-full}
+${modulelist-light}
+		</echo>
+		<tstamp>
+			<format property="date"
+				pattern="yyyy/MM/dd"
+				timezone="GMT+00:00"/>
+		</tstamp>
+		<tstamp>
+			<format property="touchdate"
+				pattern="MM/dd/yyyy"
+				timezone="GMT+00:00"/>
+		</tstamp>
+	</target>
+
+	<!-- Internal target: export -->
+	<target name="export" depends="init">
+		<mkdir dir="${cvsdir}"/>
+		<cvs command="checkout"
+			cvsRoot="${cvsroot}"
+			dest="${cvsdir}"
+	        package="${package}"
+			date="tomorrow"			
+			failonerror="true"/>
+	</target>
+
+	<!-- Internal targets: build/build-target/build-target-connection/build-target-connection-lang -->
+	<target name="build" depends="export">
+		<foreach list="${midp1-targetlist}"
+			target="midp1-build-target"
+			param="target"
+			delimiter=";"
+			inheritall="true"/>
+		<foreach list="${midp2-targetlist}"
+			target="midp2-build-target"
+			param="target"
+			delimiter=";"
+			inheritall="true"/>
+	</target>
+	<target name="midp1-build-target">
+		<foreach list="${langlist}"
+			target="midp1-build-target-modules"
+			param="lang"
+			delimiter=";"
+			inheritall="true"/>
+	</target>
+	<target name="midp2-build-target">
+		<foreach list="${langlist}"
+			target="midp2-build-target-modules"
+			param="lang"
+			delimiter=";"
+			inheritall="true"/>
+	</target>
+	<target name="midp1-build-target-modules">
+		<foreach list="${midp1-moduleslist-full}"
+			target="build-target-lang"
+			param="modules"
+			delimiter=";"
+			inheritall="true"/>
+		<foreach list="${modulelist-light}"
+			target="build-target-lang"
+			param="modules"
+			delimiter=";"
+			inheritall="true"/>		
+	</target>
+	<target name="midp2-build-target-modules">
+		<foreach list="${midp2-moduleslist-full}"
+			target="build-target-lang"
+			param="modules"
+			delimiter=";"
+			inheritall="true"/>
+		<foreach list="${modulelist-light}"
+			target="build-target-lang"
+			param="modules"
+			delimiter=";"
+			inheritall="true"/>				
+	</target>
+	<target name="build-target-lang">
+		<echo message="Building: Target:${target} Modules:${modules} Languages:${lang}"/>
+		<antcall target="dist"/>
+	</target>
+
+	<!-- Internal target: dist -->
+	<target name="dist">
+		<propertycopy name="midp" from="${target}/midp"/>
+		<propertycopy name="midp/lib" from="${target}/midp/lib"/>
+		<ant dir="${cvsdir}/${package}"
+			inheritAll="false">
+			<property name="DEFAULT/midp"      value="${DEFAULT/midp}"/>
+			<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp/lib}"/>
+			<property name="MIDP2/midp"        value="${MIDP2/midp}"/>
+			<property name="MIDP2/midp/lib"    value="${MIDP2/midp/lib}"/>
+			<property name="RIM/midp"          value="${RIM/midp}"/>
+			<property name="RIM/midp/lib"      value="${RIM/midp/lib}"/>
+			<property name="SIEMENS1/midp"     value="${SIEMENS1/midp}"/>
+			<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp/lib}"/>
+			<property name="SIEMENS2/midp"     value="${SIEMENS2/midp}"/>
+			<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp/lib}"/>
+			<property name="MOTOROLA/midp"     value="${MOTOROLA/midp}"/>
+			<property name="MOTOROLA/midp/lib" value="${MOTOROLA/midp/lib}"/>
+			<property name="proguard"          value="${proguard}"/>
+			<property name="proguard/lib"      value="${proguard/lib}"/>
+			<property name="target"            value="${target}"/>
+			<property name="modules"           value="${modules}"/>
+			<property name="lang"              value="${lang}"/>
+			<property name="version/jimm"      value="${version/jimm}"/>
+			<property name="version/java"      value="${version/java}"/>
+		</ant>
+		<mkdir dir="${version/jimm}/${target}/${modules}"/>
+		<copy file="${cvsdir}/${package}/dist/bin/Jimm.jad"
+			todir="${version/jimm}/${target}/${modules}"/>
+		<copy file="${cvsdir}/${package}/dist/bin/Jimm.jar"
+			todir="${version/jimm}/${target}/${modules}"/>
+		<echo message="${modules}"/>
+		<if>
+			<equals arg1="${modules}" arg2="NO_MODULES" />
+			<then>
+				<zip destfile="${version/jimm}/${package}-${target}-light.zip"
+					basedir="${version/jimm}/${target}/${modules}"/>
+			</then>
+			<else>
+				<zip destfile="${version/jimm}/${package}-${target}-full.zip"
+					basedir="${version/jimm}/${target}/${modules}"/>
+			</else>
+		</if>				
+		<ant dir="${cvsdir}/${package}"
+			target="clean"
+			inheritAll="false">
+			<property name="DEFAULT/midp"      value="${DEFAULT/midp}"/>
+			<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp/lib}"/>
+			<property name="MIDP2/midp"        value="${MIDP2/midp}"/>
+			<property name="MIDP2/midp/lib"    value="${MIDP2/midp/lib}"/>
+			<property name="RIM/midp"          value="${RIM/midp}"/>
+			<property name="RIM/midp/lib"      value="${RIM/midp/lib}"/>
+			<property name="SIEMENS1/midp"     value="${SIEMENS1/midp}"/>
+			<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp/lib}"/>
+			<property name="proguard"          value="${proguard}"/>
+			<property name="proguard/lib"      value="${proguard/lib}"/>
+			<property name="target"            value="${target}"/>
+			<property name="lang"              value="${lang}"/>
+			<property name="version/jimm"      value="${version/jimm}"/>
+			<property name="version/java"      value="${version/java}"/>
+		</ant>
+	</target>
+
+
+	<!-- Target: nightly-release -->
+	<target name="nightly-release" description="Generates a nightly release" depends="build">
+		<ant dir="${cvsdir}/${package}" target="clean-all"
+			inheritAll="false">
+			<property name="proguard"          value="${proguard}"/>
+			<property name="proguard/lib"      value="${proguard/lib}"/>
+		</ant>
+		<replace dir="${cvsdir}/${package}"
+			encoding="UTF-8">
+			<replacefilter token="${3ns}VERSION${3ns}"
+				value="${version/jimm}"/>
+			<replacefilter token="${3ns}VERSION-JAVA${3ns}"
+				value="${version/java}"/>
+			<replacefilter token="${3ns}DATE${3ns}"
+				value="${date}"/>
+		</replace>
+		<exec dir="." executable="${7z/exec}">
+			<arg line="a ${version/jimm}/${package}-src.7z  ${cvsdir}/* -r"/>
+		</exec>
+		<mkdir dir="${nightly/path}/${version/jimm}"/>			
+		<copy todir="${nightly/path}/${version/jimm}">
+			<fileset dir="${version/jimm}"/>
+		</copy>
+		<copy file="current-nightly" todir="${nightly/path}"/>			
+		<echo message="${last-nightly-version}"/>
+		<if>
+			<equals arg1="${last-nightly-version}" arg2="${version/jimm}"/>
+				<then>
+					<echo message="Same day build. Nothing to delete"/>
+				</then>
+				<else>
+					<if>
+						<equals arg1="${last-nightly-version}" arg2="NONE" />
+						<then>
+							<echo message="No last nightly version found. Nothing to delete"/>
+						</then>
+						<else>
+							<delete>
+								<fileset dir="${nightly/path}/${last-nightly-version}"/>
+							</delete>
+						</else>
+					</if>
+				</else>
+		</if>
+		<echo message="Finished building nightly release!"/>
+	</target>
+
+			
+	<!-- Target: clean -->
+	<target name="clean" description="Delete the release">
+		<delete dir="${cvsdir}"/>
+		<delete dir="${version/jimm}"/>
+	</target>
+	
+</project>
