@@ -190,13 +190,18 @@ public class ActionListener
                     else if (tlvType == 0x000F) // Online time
                     {
                     	online = (int)Util.byteArrayToLong(tlvData);
-                    }                    
+                    }
+                    
+                    
                     marker += 2 + 2 + tlvData.length;
+                    
+                    
                 }
 
                 // Update contact list
                 // #sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
                 Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt,statusChange);
+                
                	RunnableImpl.updateContactList(uin, status, internalIP, externalIP, dcPort, dcType, icqProt,authCookie, signon, online, idle);
                	// #sijapp cond.else#
                	RunnableImpl.updateContactList(uin, status, null, null, 0, 0, 0, 0, signon, online,idle);
@@ -554,7 +559,7 @@ public class ActionListener
                         ackMarker += 1;
                         SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                         SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
-                        Jimm.jimm.getIcqRef().c.sendPacket(ackPacket);
+                        Icq.c.sendPacket(ackPacket);
 
                     }
                     // Extended message
@@ -711,7 +716,7 @@ public class ActionListener
                                     + 4 + textLen);
                             SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                                     SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
-                            Jimm.jimm.getIcqRef().c.sendPacket(ackPacket);
+                            Icq.c.sendPacket(ackPacket);
 
                         }
                         // Other messages
@@ -759,7 +764,7 @@ public class ActionListener
                         SnacPacket ackPacket = new SnacPacket(SnacPacket.CLI_ACKMSG_FAMILY,
                                 SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0], ackBuf);
                         
-                        Jimm.jimm.getIcqRef().c.sendPacket(ackPacket);
+                        Icq.c.sendPacket(ackPacket);
                     }
 
                 }
