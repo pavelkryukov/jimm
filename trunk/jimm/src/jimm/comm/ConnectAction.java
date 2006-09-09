@@ -23,8 +23,8 @@
 
 package jimm.comm;
 
-import java.util.Date;
-import java.util.Vector;
+import java.util.*;
+import java.io.*;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
@@ -612,7 +612,6 @@ public class ConnectAction extends Action
 					// packet
 					else if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYROSTER_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYROSTER_COMMAND))
 					{
-
 						if (snacPacket.getFlags() != 1) this.srvReplyRosterRcvd = true;
 
 						// System.out.println("Flag:
@@ -637,6 +636,8 @@ public class ConnectAction extends Action
 						// items
 						int count = Util.getWord(buf, marker);
 						marker += 2;
+				
+						
 						// System.out.println("elemente in serverlist: "+count);
 						for (int i = 0; i < count; i++)
 						{
@@ -671,10 +672,11 @@ public class ConnectAction extends Action
 							// Normal contact
 							if (type == 0x0000)
 							{
-
+								// ByteArrayOutputStream serverData = new ByteArrayOutputStream();
+								
 								// Get nick
 								String nick = new String(name);
-								//System.out.println("c "+i+": "+name);
+								
 								boolean noAuth = false;
 								while (len > 0)
 								{
@@ -689,6 +691,16 @@ public class ConnectAction extends Action
 									{
 										noAuth = true;
 									}
+									
+									//else if (tlvType == 0x006D) /* Server-side additional data */
+									//{
+									//	Util.writeWord(serverData, tlvType, true);
+									//	Util.writeWord(serverData, tlvData.length, true);
+									//	Util.writeByteArray(serverData, tlvData);
+									//	
+									//	Util.showBytes(serverData.toByteArray());
+									//}
+									
 									len -= 4;
 									len -= tlvData.length;
 									marker += 4 + tlvData.length;
@@ -698,7 +710,9 @@ public class ConnectAction extends Action
 								// Add this contact item to the vector
 								try
 								{
-									items.addElement(new ContactListContactItem(id, group, name, nick, noAuth, true));
+									ContactListContactItem item = new ContactListContactItem(id, group, name, nick, noAuth, true);
+									// if (serverData.size() != 0) item.ssData = serverData.toByteArray();
+									items.addElement(item);
 								}
 								catch (Exception e)
 								{

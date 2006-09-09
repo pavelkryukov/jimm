@@ -80,6 +80,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	               clientVersion,
 	               lowerText;
 	
+	// public byte[] ssData;
+	
+
 ///////////////////////////////////////////////////////////////////////////
 	
 	synchronized public void setStringValue(int key, String value)
@@ -1497,7 +1500,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// #sijapp cond.end#
 		// #sijapp cond.end#
         
-		if (ContactList.getGroupItems().length > 1)
+		if ((ContactList.getGroupItems().length > 1) && 
+				(!item.getBooleanValue(CONTACTITEM_NO_AUTH)) &&
+				(!item.getBooleanValue(CONTACTITEM_IS_TEMP)) )
 			eventList[menuList.append(ResourceBundle.getString("move_to_group", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_MOVE;
 
         eventList[menuList.append(ResourceBundle.getString("remove", ResourceBundle.FLAG_ELLIPSIS), null)]    = USER_MENU_USER_REMOVE;

@@ -750,6 +750,18 @@ public class Util
 		}
 	}
 	
+	static public void writeByteArray(ByteArrayOutputStream stream, byte[] array)
+	{
+		try
+		{
+			stream.write(array);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Util.writeByteArray: "+e.toString());
+		}
+	}
+	
 	static public void writeDWord(ByteArrayOutputStream stream, int value, boolean bigEndian)
 	{
 		if (bigEndian)
@@ -1071,6 +1083,32 @@ public class Util
 	{
 		return (Util.ucs2beByteArrayToString(buf, 0, buf.length));
 	}
+	
+	public static void showBytes(byte[] data)
+	{
+		StringBuffer buffer1 = new StringBuffer(), buffer2 = new StringBuffer(); 
+		
+		for (int i = 0; i < data.length; i++)
+		{
+			int charaster = ((int)data[i])&0xFF; 
+			buffer1.append(charaster < ' ' || charaster >= 128 ? '.' : (char)charaster);
+			String hex = Integer.toHexString(((int)data[i])&0xFF);
+			buffer2.append(hex.length() == 1 ? "0"+hex : hex);
+			buffer2.append(" ");
+			
+			if (((i%16) == 15) || (i == (data.length-1))) 
+			{
+				while (buffer2.length() < 16*3) buffer2.append(' ');
+				System.out.print(buffer2.toString());
+				System.out.println(buffer1.toString());
+				
+				buffer1.setLength(0);
+				buffer2.setLength(0);
+			}
+		}
+		System.out.println();
+	}
+	
 	
 	// Removes all CR occurences
 	public static String removeCr(String val)
