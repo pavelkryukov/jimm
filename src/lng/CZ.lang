@@ -5,6 +5,7 @@
 "backlight_manual"			"Manual backlight (* key)"
 "exit_button"				"Konec"
 "menu_button"				"Menu"
+"flash_backlight"			"Rozsvítit displej"
 //#sijapp cond.end#
 
 // HISTORY module strings
@@ -204,6 +205,7 @@
 "latest_ver"				"Poslední dostupná verze"
 "li_signon_time"			"Přihlásit"
 "li_online_time"			"Onlinef"
+"local_time"				"Místní čas"
 "li_idle_time"				"Pauza"
 "main_info"					"O uživateli"
 "lastname"					"Příjmení"
@@ -309,7 +311,7 @@
 "status_occupied"			"Mám práci"
 "templates"					"Vzory"
 "text_too_long"				"Text je moc dlouhý"
-"time_zone"					"Čas"
+"time_zone"					"Časové pásmo"
 "timeout_interv"			"Interval udržovacích paketů"
 "title"						"Titulek"
 "total_mem"					"Celková paměť"
@@ -319,6 +321,7 @@
 "successful"				"úspěšný"
 "sysnotice"					"Systémové oznámení"
 "traffic_lng"				"Provoz"
+"typing_display_only"		"Jen zobrazit"
 "uin"						"UIN"
 "use_history"				"Uložit historii"
 "use_smiles"				"Ukázat smajlíky"
