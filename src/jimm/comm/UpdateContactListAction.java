@@ -46,8 +46,9 @@ public class UpdateContactListAction extends Action
 	private static final int STATE_MOVE2 = 5;
 	private static final int STATE_MOVE3 = 6;
 	private static final int STATE_MOVE4 = 14;
-	private static final int STATE_MOVE5 = 15;
-	private static final int STATE_MOVE6 = 16;
+	
+	private static final int STATE_ADD1 = 17;
+	private static final int STATE_ADD2 = 18;
 	
 	private static final int STATE_DELETE_CONTACT1 = 7;
 	private static final int STATE_DELETE_CONTACT2 = 8;
@@ -147,8 +148,13 @@ public class UpdateContactListAction extends Action
 		case ACTION_REQ_AUTH:
 			if (cItem != null)
 			{
-				buf = packRosterItem(cItem, 0);
-				state = STATE_CLI_ROSTERMODIFY_SENT;
+				int groupId = cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
+				gItem = ContactList.getGroupById(groupId);
+				cItem.setIntValue(ContactListContactItem.CONTACTITEM_ID, Util.createRandomId());
+				ContactList.addContactItem(cItem);
+				buf = packRosterItem(cItem, groupId);
+				if (action == ACTION_REQ_AUTH) state = STATE_ADD1;
+				else state = STATE_ADD2;
 			}
 			else
 			{
@@ -183,12 +189,16 @@ public class UpdateContactListAction extends Action
 				new SnacPacket
 				(
 					SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+					SnacPacket.CLI_ROSTERDELETE_COMMAND,
 					Util.getCounter(),
 					new byte[0],
-					packRosterItem(gItem)
+					packRosterItem(cItem, gItem.getId())
 				)
 			);
+
+			cItem.setIntValue(ContactListContactItem.CONTACTITEM_GROUP, newGItem.getId());
+			cItem.setIntValue(ContactListContactItem.CONTACTITEM_ID, Util.createRandomId());
+			
 			this.state = STATE_MOVE1;
 			break;
 		}
@@ -207,7 +217,8 @@ public class UpdateContactListAction extends Action
 			if ((snacPacket.getFamily() == SnacPacket.SRV_UPDATEACK_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_UPDATEACK_COMMAND))
 			{
 				// Check error code, see ICQv8 specification
-				switch (Util.getWord(snacPacket.getData(), 0))
+				int retCode = Util.getWord(snacPacket.getData(), 0); 
+				switch (retCode)
 				{
 				case 0x002:
 					errorCode = 154;
@@ -228,16 +239,6 @@ public class UpdateContactListAction extends Action
 				case 0x00D:
 					errorCode = 158;
 					break;
-
-				case 0x00E:
-					if (action != ACTION_MOVE)
-					{
-						cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH, true);
-						RunnableImpl.callSerially(RunnableImpl.TYPE_ADDCONTACT, this.cItem);
-						this.state = STATE_COMPLETED;
-						sendCLI_ADDEND();
-					}
-					break;
 				}
 
 				if (errorCode != 0)
@@ -248,6 +249,7 @@ public class UpdateContactListAction extends Action
 				
 				switch(state)
 				{
+				/* STATE_DELETE_GROUP */
 				case STATE_DELETE_GROUP1:
 					sendGroupsList();
 					this.state = STATE_DELETE_GROUP2;
@@ -259,6 +261,7 @@ public class UpdateContactListAction extends Action
 					sendCLI_ADDEND();
 					break;
 					
+				/* STATE_ADD_GROUP */
 				case STATE_ADD_GROUP1:
 					sendGroupsList();
 					this.state = STATE_ADD_GROUP2;
@@ -269,28 +272,9 @@ public class UpdateContactListAction extends Action
 					sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
-				
-				/* Аdd contact or group item from internal list */
-				case STATE_CLI_ROSTERMODIFY_SENT: 
 					
-					if ((cItem != null) & (gItem == null))
-					{
-						if (action == ACTION_ADD)
-						{
-							cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
-							cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH, false);
-							RunnableImpl.callSerially(RunnableImpl.TYPE_ADDCONTACT, this.cItem);
-						}
-					}
-
-					/* Send a CLI_ADDEND packet */
-					if (this.action != ACTION_RENAME) sendCLI_ADDEND();
-
-					/* Move to next state */
-					this.state = STATE_COMPLETED;
-					break;
-					
-				case STATE_MOVE1:
+				/* STATE_ADD */
+				case STATE_ADD1:
 					Icq.c.sendPacket
 					(
 						new SnacPacket
@@ -299,37 +283,32 @@ public class UpdateContactListAction extends Action
 							SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 							Util.getCounter(),
 							new byte[0],
-							packRosterItem(newGItem)
+							packRosterItem(gItem)
 						)
 					);
+					this.state = STATE_ADD2;
+					break;
+					
+				case STATE_ADD2:
+					if ((retCode == 0) && (action != ACTION_REQ_AUTH))
+					{
+						cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
+						cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH, false);
+					}
+					
 					sendCLI_ADDEND();
-					
-					this.state = STATE_MOVE2;
+					this.state = STATE_COMPLETED;
 					break;
-					
-				case STATE_MOVE2:
-					
-					sendCLI_ADDSTART();
-					
-					Icq.c.sendPacket
-					(
-						new SnacPacket
-						(
-							SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-							SnacPacket.CLI_ROSTERDELETE_COMMAND,
-							Util.getCounter(),
-							new byte[0],
-							packRosterItem(cItem, gItem.getId())
-						)
-					);
+				
+				/* STATE_CLI_ROSTERMODIFY_SENT */
+				case STATE_CLI_ROSTERMODIFY_SENT: 
+					if (this.action != ACTION_RENAME) sendCLI_ADDEND();
 
-					cItem.setIntValue(ContactListContactItem.CONTACTITEM_GROUP, newGItem.getId());
-					cItem.setIntValue(ContactListContactItem.CONTACTITEM_ID, Util.createRandomId());
-					
-					this.state = STATE_MOVE3;
+					this.state = STATE_COMPLETED;
 					break;
 					
-				case STATE_MOVE3:
+				/* STATE_MOVE */
+				case STATE_MOVE1:
 					
 					Icq.c.sendPacket
 					(
@@ -343,10 +322,10 @@ public class UpdateContactListAction extends Action
 						)
 					);
 					
-					this.state = STATE_MOVE4;
+					this.state = STATE_MOVE2;
 					break;
 					
-				case STATE_MOVE4:
+				case STATE_MOVE2:
 					Icq.c.sendPacket
 					(
 						new SnacPacket
@@ -358,10 +337,10 @@ public class UpdateContactListAction extends Action
 							packRosterItem(cItem, newGItem.getId())
 						)
 					);
-					this.state = STATE_MOVE5;
+					this.state = STATE_MOVE3;
 					break;
 					
-				case STATE_MOVE5:
+				case STATE_MOVE3:
 					Icq.c.sendPacket
 					(
 						new SnacPacket
@@ -373,14 +352,15 @@ public class UpdateContactListAction extends Action
 							packRosterItem(newGItem)
 						)
 					);
-					this.state = STATE_MOVE6;
+					this.state = STATE_MOVE4;
 					break;
 					
-				case STATE_MOVE6:
+				case STATE_MOVE4:
 					sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
 					
+				/* STATE_DELETE_CONTACT */
 				case STATE_DELETE_CONTACT1:
 					ContactListGroupItem group = ContactList.getGroupById(cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
 					ContactList.removeContactItem(this.cItem);
@@ -540,15 +520,14 @@ public class UpdateContactListAction extends Action
 			Util.writeLenAndString(addData, cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME), true);
 		}
 		
-		/* Server-side additional data
-		
-		if (cItem.ssData != null)
-		{
-			Util.writeByteArray(addData, cItem.ssData);
-		} */
+		// /* Server-side additional data */
+		//if (cItem.ssData != null)
+		//{
+		//	Util.writeByteArray(addData, cItem.ssData);
+		//}
 		
 		/* TLV(0x0066) - you are awaiting authorization for this buddy */
-		if ((action == ACTION_REQ_AUTH)/* || (action == ACTION_MOVE) */)
+		if (action == ACTION_REQ_AUTH)
 		{
 			Util.writeWord(addData, 0x0066, true);
 			Util.writeWord(addData, 0x0000, true);
@@ -590,7 +569,8 @@ public class UpdateContactListAction extends Action
 			/* TLV(0x00C8) */
 			Util.writeWord(stream, 0xc8, true);
 			Util.writeWord(stream, items.length*2, true);
-			for (int i = 0; i < items.length; i++) Util.writeWord(stream, items.length*2, true);
+			for (int i = 0; i < items.length; i++)
+				Util.writeWord(stream, items[i].getIntValue(ContactListContactItem.CONTACTITEM_ID), true);
 		}
 		else Util.writeWord(stream, 0, true);
 		

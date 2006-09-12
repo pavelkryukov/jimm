@@ -1546,7 +1546,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	{
 		Vector data = new Vector();
 		int gid = group.getId();
-		for (int i = 0; i < getSize(); i++)
+		int size = getSize();
+		for (int i = 0; i < size; i++)
 		{
 			ContactListContactItem item = getCItem(i);
 			if (item.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == gid)
