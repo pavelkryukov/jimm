@@ -28,6 +28,7 @@ import javax.microedition.lcdui.AlertType;
 
 import jimm.ContactList;
 import jimm.ContactListContactItem;
+import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.RunnableImpl;
 import jimm.JimmException;
@@ -73,7 +74,7 @@ public class ActionListener
 			    int uin_len = Util.getByte(p, 10);
 			    String uin = Util.byteArrayToString(p,11,uin_len);
 			    int flag = Util.getWord(p, 11+uin_len);
-			    System.out.println("Typing notify: "+flag);
+			    DebugLog.addText("Typing notify: "+flag);
 			    if ( flag == 0x0002)
 			    	//Begin typing
 				    RunnableImpl.BeginTyping(uin,true);
@@ -103,7 +104,8 @@ public class ActionListener
             	boolean statusChange = true;
                 int dwFT1=0, dwFT2=0, dwFT3=0;
                 int wVersion=0;
-                byte[] capabilities=null;
+                byte[] capabilities_old = null; // Buffer for old style capabilities (TLV 0x000D)
+                byte[] capabilities_new = null; // Buffer for new style capabilities (TLV 0x0019)
                 
                 // Time variables
                 int idle = -1;
@@ -117,7 +119,6 @@ public class ActionListener
                 // Get UIN of the contact changing status
                 int uinLen = Util.getByte(buf, 0);
                 String uin = Util.byteArrayToString(buf, 1, uinLen);
-
                 // Get new status and client capabilities
                 int status = ContactList.STATUS_ONLINE;
                 int marker = 1 + uinLen + 2;
@@ -130,10 +131,15 @@ public class ActionListener
                     if (tlvType == 0x0006) // STATUS
                     {
                         status = (int)Util.getDWord(tlvData, 0);
-                    } else if (tlvType == 0x000D) // CAPABILITIES
+                    } else if (tlvType == 0x000D) // Old style CAPABILITIES
                     {
-                    	capabilities = tlvData;
-                    } 
+                    	DebugLog.addText("Old caps");
+                    	capabilities_old = tlvData;
+                    } else if (tlvType == 0x0019) // New style CAPABILITIES
+                    {
+                    	DebugLog.addText("New caps");
+                    	capabilities_new = tlvData;
+                    }
                     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
                     // #sijapp cond.if modules_FILES is "true"#
                     
@@ -200,13 +206,12 @@ public class ActionListener
 
                 // Update contact list
                 // #sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
-                Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,capabilities,icqProt,statusChange);
-                
+                Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3,Util.mergeCapabilities(capabilities_old,capabilities_new),icqProt,statusChange);
+               
                	RunnableImpl.updateContactList(uin, status, internalIP, externalIP, dcPort, dcType, icqProt,authCookie, signon, online, idle);
                	// #sijapp cond.else#
                	RunnableImpl.updateContactList(uin, status, null, null, 0, 0, 0, 0, signon, online,idle);
                	// #sijapp cond.end#
-
             }
 
             /** ********************************************************************* */
