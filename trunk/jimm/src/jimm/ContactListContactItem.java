@@ -357,6 +357,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return ((capability & this.caps) != 0x00000000);
 	}
 	
+	/* Adds a capability by its CAPF value */
+	public void addCapability(int capability)
+	{
+		this.caps |= capability;
+	}
+	
 	public String getLowerText()
 	{
 		if (lowerText == null)
@@ -617,10 +623,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		Jimm.display.setCurrent(messageTextbox);
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		//#sijapp cond.if target isnot "DEFAULT"#
-			if ( (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0) )
+		if ( (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0) )
 			try
 			{
-				Jimm.jimm.getIcqRef().BeginTyping(getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
+				Jimm.jimm.getIcqRef().beginTyping(getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
 			}
 			catch (JimmException e){}
 		//#sijapp cond.end#
@@ -638,7 +644,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			 (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0))
 		try
 		{
-			Jimm.jimm.getIcqRef().BeginTyping(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),false);
+			Jimm.jimm.getIcqRef().beginTyping(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),false);
 		}
 		catch (JimmException e){}
 		//#sijapp cond.end#

@@ -288,7 +288,7 @@ public class Icq implements Runnable
     }
 
     //#sijapp cond.if target isnot "DEFAULT"#
-    public synchronized void BeginTyping(String uin, boolean isTyping) throws JimmException
+    public synchronized void beginTyping(String uin, boolean isTyping) throws JimmException
     {
 		byte[] uinRaw = Util.stringToByteArray(uin);
 		int tempBuffLen = Icq.MTN_PACKET_BEGIN.length + 1 + uinRaw.length + 2;
@@ -305,6 +305,7 @@ public class Icq implements Runnable
 		// Send packet
 		SnacPacket snacPkt = new SnacPacket(0x0004, 0x0014, 0x00000000, new byte[0], tempBuff);
 		this.c.sendPacket(snacPkt);
+		System.out.println("Sent typing notify");
     }
     //#sijapp cond.end#
     
