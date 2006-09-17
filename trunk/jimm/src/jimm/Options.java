@@ -795,7 +795,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 		optionsForm.addCommand(backCommand);
 		optionsForm.setCommandListener(this);
 		optionsForm.setItemStateListener(this);
-	
+		
+		
+		//System.out.println("OPTIONS_GMT_OFFSET="+Options.getInt(Options.OPTIONS_GMT_OFFSET));
+		//System.out.println("OPTIONS_LOCAL_OFFSET="+Options.getInt(Options.OPTIONS_LOCAL_OFFSET));
 	}
 
 	
@@ -1560,9 +1563,12 @@ class OptionsForm implements CommandListener, ItemStateListener
 					
 					/* Calculate diff. between selected GMT time and phone time */ 
 					int localOffset = selHour-currentHour;
-					while (localOffset >= 24) localOffset -= 24;
-					while (localOffset < 0) localOffset += 24;
+					while (localOffset >= 12) localOffset -= 24;
+					while (localOffset < -12) localOffset += 24;
 					Options.setInt(Options.OPTIONS_LOCAL_OFFSET, localOffset);
+					
+					//System.out.println("timeZone="+timeZone);
+					//System.out.println("localOffset="+localOffset);
 					
 					break;
 				}
