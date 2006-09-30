@@ -28,7 +28,6 @@ import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
 import jimm.JimmException;
-import jimm.RunnableImpl;
 
 import java.io.ByteArrayOutputStream;
 
@@ -275,23 +274,15 @@ public class UpdateContactListAction extends Action
 					
 				/* STATE_ADD */
 				case STATE_ADD1:
-					Icq.c.sendPacket
-					(
-						new SnacPacket
-						(
-							SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-							SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-							Util.getCounter(),
-							new byte[0],
-							packRosterItem(gItem)
-						)
-					);
-					this.state = STATE_ADD2;
+					sendGroup(gItem);
+					sendCLI_ADDEND();
+					this.state = STATE_COMPLETED;
 					break;
 					
 				case STATE_ADD2:
-					if ((retCode == 0) && (action != ACTION_REQ_AUTH))
+					if (retCode == 0)
 					{
+						sendGroup(gItem);
 						cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
 						cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH, false);
 					}
@@ -309,19 +300,8 @@ public class UpdateContactListAction extends Action
 					
 				/* STATE_MOVE */
 				case STATE_MOVE1:
-					
-					Icq.c.sendPacket
-					(
-						new SnacPacket
-						(
-							SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-							SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-							Util.getCounter(),
-							new byte[0],
-							packRosterItem(gItem)
-						)
-					);
-					
+					sendGroup(gItem);
+			
 					this.state = STATE_MOVE2;
 					break;
 					
@@ -341,17 +321,7 @@ public class UpdateContactListAction extends Action
 					break;
 					
 				case STATE_MOVE3:
-					Icq.c.sendPacket
-					(
-						new SnacPacket
-						(
-							SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-							SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-							Util.getCounter(),
-							new byte[0],
-							packRosterItem(newGItem)
-						)
-					);
+					sendGroup(newGItem);
 					this.state = STATE_MOVE4;
 					break;
 					
@@ -429,8 +399,24 @@ public class UpdateContactListAction extends Action
 				SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 				Util.getCounter(),
 				new byte[0],
-				packGroups())
-			);
+				packGroups()
+			)
+		);
+	}
+	
+	static private void sendGroup(ContactListGroupItem group) throws JimmException 
+	{
+		Icq.c.sendPacket
+		(
+			new SnacPacket
+			(
+				SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+				SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+				Util.getCounter(),
+				new byte[0],
+				packRosterItem(group)
+			)
+		);
 	}
 
 	/* Forwards received packet, returns true if packet was consumed */
@@ -542,7 +528,7 @@ public class UpdateContactListAction extends Action
 		return stream.toByteArray();
 	}
 	
-	private byte[] packRosterItem(ContactListGroupItem gItem)
+	static private byte[] packRosterItem(ContactListGroupItem gItem)
 	{
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		
