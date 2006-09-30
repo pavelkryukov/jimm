@@ -1488,21 +1488,49 @@ public class Util
 		for(int i = 0; i < s.length(); i++)
 		{
 			char c = s.charAt(i);
-			switch(c)
+			switch (c)
 			{
-				case 1025:
-					abyte0[i] = -88;
-					break;
-				case 1105:
-					abyte0[i] = -72;
-					break;
-				default:
-					char c1 = c;
-					if(c1 >= '\u0410' && c1 <= '\u044F')
-					{
-						abyte0[i] = (byte)((c1 - 1040) + 192);
-					}
-					break;
+			case 1025:
+				abyte0[i] = -88;
+				break;
+			case 1105:
+				abyte0[i] = -72;
+				break;
+
+			/* Ukrainian CP1251 chars section */
+			case 1168:
+				abyte0[i] = -91;
+				break;
+			case 1028:
+				abyte0[i] = -86;
+				break;
+			case 1031:
+				abyte0[i] = -81;
+				break;
+			case 1030:
+				abyte0[i] = -78;
+				break;
+			case 1110:
+				abyte0[i] = -77;
+				break;
+			case 1169:
+				abyte0[i] = -76;
+				break;
+			case 1108:
+				abyte0[i] = -70;
+				break;
+			case 1111:
+				abyte0[i] = -65;
+				break;
+			/* end of section */
+
+			default:
+				char c1 = c;
+				if (c1 >= '\u0410' && c1 <= '\u044F')
+				{
+					abyte0[i] = (byte) ((c1 - 1040) + 192);
+				}
+				break;
 			}
 		}
 		return abyte0;
@@ -1517,7 +1545,7 @@ public class Util
 		for(int k = 0; k < j; k++)
 		{
 			int l = abyte0[k + i] & 0xff;
-			switch(l)
+			switch (l)
 			{
 			case 168:
 				stringbuffer.append('\u0401');
@@ -1525,10 +1553,38 @@ public class Util
 			case 184:
 				stringbuffer.append('\u0451');
 				break;
+
+			/* Ukrainian CP1251 chars section */
+			case 165:
+				stringbuffer.append('\u0490');
+				break;
+			case 170:
+				stringbuffer.append('\u0404');
+				break;
+			case 175:
+				stringbuffer.append('\u0407');
+				break;
+			case 178:
+				stringbuffer.append('\u0406');
+				break;
+			case 179:
+				stringbuffer.append('\u0456');
+				break;
+			case 180:
+				stringbuffer.append('\u0491');
+				break;
+			case 186:
+				stringbuffer.append('\u0454');
+				break;
+			case 191:
+				stringbuffer.append('\u0457');
+				break;
+			/* end of section */
+
 			default:
-				if(l >= 192 && l <= 255)
+				if (l >= 192 && l <= 255)
 				{
-					stringbuffer.append((char)((1040 + l) - 192));
+					stringbuffer.append((char) ((1040 + l) - 192));
 				}
 				else
 				{
