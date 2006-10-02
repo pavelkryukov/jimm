@@ -23,19 +23,28 @@
 
 package jimm;
 
+import java.io.DataInputStream;
+import java.util.Hashtable;
+import java.util.TimerTask;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.ContentConnection;
-import javax.microedition.lcdui.*;
+import javax.microedition.lcdui.Alert;
+import javax.microedition.lcdui.AlertType;
+import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.CommandListener;
+import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.List;
 
-import java.io.DataInputStream;
-import java.util.*;
-
-import DrawControls.*;
 import jimm.comm.Icq;
 import jimm.comm.RequestInfoAction;
 import jimm.util.ResourceBundle;
-import jimm.ContactListContactItem;
-import jimm.ContactList;
+import DrawControls.TextList;
+import DrawControls.VirtualList;
 
 public class JimmUI implements CommandListener
 {
@@ -53,9 +62,9 @@ public class JimmUI implements CommandListener
 	final private static Command cmdYes      = new Command(ResourceBundle.getString("yes"),           Command.OK,     1);
 	final private static Command cmdNo       = new Command(ResourceBundle.getString("no"),            Command.CANCEL, 2);
 	final private static Command cmdFind     = new Command(ResourceBundle.getString("find"),          Command.OK,     1);
-	final private static Command cmdBack     = new Command(ResourceBundle.getString("back"),          Command.BACK,   2);
-	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"),     Command.ITEM,   2);
-	final private static Command cmdCopyAll  = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM,   3);  
+	final private static Command cmdBack     = new Command(ResourceBundle.getString("back"),          Command.OK,     2);
+	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"),     Command.ITEM,   3);
+	final private static Command cmdCopyAll  = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM,   4);  
 
 	static private CommandListener listener;
 	static private Hashtable commands = new Hashtable();
