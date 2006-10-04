@@ -41,14 +41,9 @@ public class JimmException extends Exception
 	public static String getErrDesc(int errCode, int extErrCode)
 	{
 		String errDesc = ResourceBundle.getString("error_" + errCode);
-		//if (errDesc.endsWith("EXT"))
-		//{
-			if (errDesc == null) errDesc = ResourceBundle.getString("error_100");
-			int ext = errDesc.indexOf("EXT");
-			return (errDesc.substring(0, ext) + extErrCode + errDesc.substring(ext + 3));
-		//}
-		//else
-		//	return errDesc;
+		int ext = errDesc.indexOf("EXT");
+		if (ext != -1) return (errDesc.substring(0, ext) + extErrCode + errDesc.substring(ext + 3));
+		return errDesc;
 	}
 
 
