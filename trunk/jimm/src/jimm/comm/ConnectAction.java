@@ -873,7 +873,8 @@ public class ConnectAction extends Action
 						byte[] buf = fromIcqSrvPacket.getData();
 
 						// Check length
-						if (buf.length < 14) { throw (new JimmException(116, 0)); }
+						if (buf.length < 14) return false;
+							
 
 						// Extract UIN
 						long uinRaw = Util.getDWord(buf, 0, false);
@@ -891,10 +892,10 @@ public class ConnectAction extends Action
 											0
 									   );
 						
-						System.out.println("Offline mess:");
-						System.out.println("hour="+(int)Util.getByte(buf, 8));
-						System.out.println("min="+(int)Util.getByte(buf, 9));
-						System.out.println();
+						//System.out.println("Offline mess:");
+						//System.out.println("hour="+(int)Util.getByte(buf, 8));
+						//System.out.println("min="+(int)Util.getByte(buf, 9));
+						//System.out.println();
 
 						// Get type
 						int type = Util.getWord(buf, 10, false);

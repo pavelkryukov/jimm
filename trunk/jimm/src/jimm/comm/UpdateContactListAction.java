@@ -300,12 +300,6 @@ public class UpdateContactListAction extends Action
 					
 				/* STATE_MOVE */
 				case STATE_MOVE1:
-					sendGroup(gItem);
-			
-					this.state = STATE_MOVE2;
-					break;
-					
-				case STATE_MOVE2:
 					Icq.c.sendPacket
 					(
 						new SnacPacket
@@ -317,6 +311,12 @@ public class UpdateContactListAction extends Action
 							packRosterItem(cItem, newGItem.getId())
 						)
 					);
+			
+					this.state = STATE_MOVE2;
+					break;
+					
+				case STATE_MOVE2:
+					sendGroup(gItem);
 					this.state = STATE_MOVE3;
 					break;
 					
@@ -334,8 +334,7 @@ public class UpdateContactListAction extends Action
 				case STATE_DELETE_CONTACT1:
 					ContactListGroupItem group = ContactList.getGroupById(cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
 					ContactList.removeContactItem(this.cItem);
-					Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY, SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(),
-							new byte[0], packRosterItem(group)));
+					sendGroup(group);
 					state = STATE_DELETE_CONTACT2;
 					break;
 					
