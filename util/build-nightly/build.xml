@@ -1,7 +1,7 @@
 <!--
 ********************************************************************************
 Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-05  Jimm Project
+Copyright (C) 2003-06  Jimm Project
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ********************************************************************************
-File: util/build-nightly/build.xml
+File: util/build-release/build.xml
 Version: ###VERSION###  Date: ###DATE###
 Author(s): Manuel Linsmayer, Andreas Rossbacher
 ********************************************************************************
@@ -281,7 +281,7 @@ ${modulelist-light}
 				value="${date}"/>
 		</replace>
 		<exec dir="." executable="${7z/exec}">
-			<arg line="a ${version/jimm}/${package}-src.7z  ${cvsdir}/* -r"/>
+			<arg line="a ${version/jimm}/${package}_src.7z  ${cvsdir}/* -r"/>
 		</exec>
 		<mkdir dir="${nightly/path}/${version/jimm}"/>			
 		<copy todir="${nightly/path}/${version/jimm}">
