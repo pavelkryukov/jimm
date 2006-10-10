@@ -803,9 +803,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			// #sijapp cond.end#
 			// #sijapp cond.end#
 
+			/*
 			case USER_MENU_MOVE:
 				groupIds = JimmUI.showGroupSelector("group_name", SELECTOR_SELECT_GROUP, this, JimmUI.SHS_TYPE_ALL, getIntValue(CONTACTITEM_GROUP));
 				break;
+			*/
 
 			case USER_MENU_USER_REMOVE:
 				JimmUI.messageBox
@@ -929,8 +931,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			return;
 		}
 
-		//
 		
+		/*
 		else if (JimmUI.getCommandType(c, SELECTOR_SELECT_GROUP) == JimmUI.CMD_OK)
 		{
 			int currGroupId = getIntValue(CONTACTITEM_GROUP);
@@ -950,6 +952,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 				JimmException.handleException(e);
 			}
 		}
+		*/
 
 		/* Rename contact -> "OK" */
 		else if (c == renameOkCommand)
@@ -1383,7 +1386,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     private static final int USER_MENU_LOCAL_INFO       = 11;
     private static final int USER_MENU_USER_INFO        = 12;
     private static final int USER_MENU_QUOTA            = 14;
-	private static final int USER_MENU_MOVE             = 15;
+	/* private static final int USER_MENU_MOVE             = 15; */
     
     private static final int USER_MENU_LAST_ITEM        = 16; // YOU NEED TO CHANGE IT!
 
@@ -1506,10 +1509,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		// #sijapp cond.end#
 		// #sijapp cond.end#
         
+		/*
 		if ((ContactList.getGroupItems().length > 1) && 
 				(!item.getBooleanValue(CONTACTITEM_NO_AUTH)) &&
 				(!item.getBooleanValue(CONTACTITEM_IS_TEMP)) )
 			eventList[menuList.append(ResourceBundle.getString("move_to_group", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_MOVE;
+		*/
 
         eventList[menuList.append(ResourceBundle.getString("remove", ResourceBundle.FLAG_ELLIPSIS), null)]    = USER_MENU_USER_REMOVE;
         eventList[menuList.append(ResourceBundle.getString("remove_me", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_REMOVE_ME;

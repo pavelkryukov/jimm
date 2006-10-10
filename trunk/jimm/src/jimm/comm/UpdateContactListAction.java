@@ -41,10 +41,12 @@ public class UpdateContactListAction extends Action
 
 	private static final int STATE_COMPLETED = 3;
 	
+	/*
 	private static final int STATE_MOVE1 = 4;
 	private static final int STATE_MOVE2 = 5;
 	private static final int STATE_MOVE3 = 6;
 	private static final int STATE_MOVE4 = 14;
+	*/
 	
 	private static final int STATE_ADD1 = 17;
 	private static final int STATE_ADD2 = 18;
@@ -65,7 +67,9 @@ public class UpdateContactListAction extends Action
 
 	public static final int ACTION_RENAME = 3;
 	
+	/*
 	public static final int ACTION_MOVE   = 4;
+	*/
 	
 	public static final int ACTION_REQ_AUTH = 5;
 
@@ -109,6 +113,7 @@ public class UpdateContactListAction extends Action
 		}
 	}
 	
+	/*
 	public UpdateContactListAction(ContactListContactItem cItem, ContactListGroupItem oldGroup, ContactListGroupItem newGroup)
 	{
 		super(false, true);
@@ -117,6 +122,7 @@ public class UpdateContactListAction extends Action
 		this.newGItem = newGroup;
 		action = ACTION_MOVE;
 	}
+	*/
 	
 	/* Init action */
 	protected void init() throws JimmException
@@ -182,6 +188,7 @@ public class UpdateContactListAction extends Action
 			break;
 			
 		/* Move contact between groups (like Miranda does) */
+		/*
 		case ACTION_MOVE:
 			Icq.c.sendPacket
 			(
@@ -200,6 +207,7 @@ public class UpdateContactListAction extends Action
 			
 			this.state = STATE_MOVE1;
 			break;
+		*/
 		}
 	}
 
@@ -299,6 +307,7 @@ public class UpdateContactListAction extends Action
 					break;
 					
 				/* STATE_MOVE */
+				/*
 				case STATE_MOVE1:
 					Icq.c.sendPacket
 					(
@@ -329,6 +338,7 @@ public class UpdateContactListAction extends Action
 					sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
+				*/
 					
 				/* STATE_DELETE_CONTACT */
 				case STATE_DELETE_CONTACT1:
@@ -426,7 +436,7 @@ public class UpdateContactListAction extends Action
 		if (result && (errorCode != 0))
 		{
 			/* Send a CLI_ADDEND packet */
-			if ((action != ACTION_MOVE) && (action != ACTION_RENAME)) sendCLI_ADDEND();
+			if (/*(action != ACTION_MOVE) && */(action != ACTION_RENAME)) sendCLI_ADDEND();
 
 			/* Update activity timestamp */
 			lastActivity = System.currentTimeMillis();
@@ -450,7 +460,7 @@ public class UpdateContactListAction extends Action
 			{
 			case ACTION_ADD:
 			case ACTION_DEL:
-			case ACTION_MOVE:
+			/* case ACTION_MOVE: */
 				ContactList.optionsChanged(true, true);
 				break;
 			}
