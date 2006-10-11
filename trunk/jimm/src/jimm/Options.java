@@ -188,7 +188,7 @@ public class Options
 	static OptionsForm optionsForm;
 	
 	/* Private constructor prevent to create instances of Options class */ 
-	private Options() {}
+	public Options() {}
 	
 	/* Static constructor */
 	static

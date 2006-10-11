@@ -165,6 +165,9 @@ public class Jimm extends MIDlet
 		// Get Jimm version
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
 		if (Jimm.VERSION == null) Jimm.VERSION = "###VERSION###";
+		
+		// Create options  
+		new Options();
 
 		// Create splash canvas object
 		this.sc = new SplashCanvas(ResourceBundle.getString("loading"));
