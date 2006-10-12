@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 import java.io.IOException;
 
@@ -201,9 +202,27 @@ public class Util
 		"StIcq",
 		""	//mChat
 	};
+
+	public static void PrintCapabilities(String caption, byte[] caps)
+	{
+		for( int n = 0; n < caps.length; n+=16 )
+		{
+			if( caps.length - n < 15)
+				continue;
+			byte[] b = new byte[16];
+			System.arraycopy(caps, n, b, 0, 16);
+			
+			String bytes = new String();
+			for( int i = 0; i < b.length; i++)
+				bytes += Integer.toHexString(b[i]);
+			System.out.println(caption + bytes);
+		}
+	}
 	
 	public static void detectUserClient(String uin, int dwFP1, int dwFP2, int dwFP3, byte[] capabilities, int wVersion, boolean statusChange)
 	{
+		System.out.println("uin - " + uin + " found capabilities count:" + capabilities.length/16);
+		PrintCapabilities("cap - ", capabilities);
 		int client = CLI_NONE;
 		String szVersion = "";
 		int caps = CAPF_NO_INTERNAL;
@@ -2122,13 +2141,14 @@ public class Util
 			byte[] tmp_old = new byte[16];
 			System.arraycopy(capabilities_old,i,tmp_old,0,16);
 			for (int j=0;j<extended_new.length;j+=16)
-			{	
+			{
+				//System.out.println(j + " " + i + " " + extended_new.length);
 				byte[] tmp_new = new byte[16];
-				System.arraycopy(extended_new,i,tmp_new,0,16);
+				System.arraycopy(extended_new,j,tmp_new,0,16);
 				if (tmp_old == tmp_new)
 					found = true;
 			}
-			if (found)
+			if (!found)
 			{
 				System.out.println("Merge capability");
 				byte[] merged = new byte[extended_new.length+16];
@@ -2138,7 +2158,6 @@ public class Util
 				found = false;
 			}
 		}
-		System.out.println("3");
 	return extended_new;
 	}
 }
