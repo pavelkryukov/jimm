@@ -214,7 +214,7 @@ public class Util
 			
 			String bytes = new String();
 			for( int i = 0; i < b.length; i++)
-				bytes += Integer.toHexString(b[i]);
+				bytes += Integer.toHexString(b[i] & 0xFF);
 			System.out.println(caption + bytes);
 		}
 	}
