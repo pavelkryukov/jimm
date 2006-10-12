@@ -1138,7 +1138,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	ContactListContactItem cItem = null;
     	try
     	{
-        cItem = new ContactListContactItem(0, 0, uin, uin, false, true);
+    		cItem = new ContactListContactItem(0, 0, uin, uin, false, true);
     	}
     	catch (Exception e)
     	{
@@ -1291,6 +1291,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		if( item == null )
 			item = createTempContact(uin);
 		
+		if( item == null )
+		{
+			System.out.println("Unable to create temp ContactItem!");
+			return;
+		}
+			
 	    // If the user does not have it add the typing capability
 		if( !item.hasCapability(Util.CAPF_TYPING) )
 			item.addCapability(Util.CAPF_TYPING);
