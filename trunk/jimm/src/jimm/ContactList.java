@@ -1288,20 +1288,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	synchronized static public void BeginTyping(String uin, boolean type)
 	{
 		ContactListContactItem item = getItembyUIN(uin);
-		if (item != null)
-		{
-				item.BeginTyping(type);
-				TypingHelper(uin,type);
-		}
-		else
-		{
+		if( item == null )
 			item = createTempContact(uin);
-			if ( item!=null ) 
-			{
-					item.BeginTyping(type);
-					TypingHelper(uin,type);
-			}
-		}
+		
+	    // If the user does not have it add the typing capability
+		if( !item.hasCapability(Util.CAPF_TYPING) )
+			item.addCapability(Util.CAPF_TYPING);
+		item.BeginTyping(type);
+		TypingHelper(uin,type);
 	}
 	//#sijapp cond.end#
 	
