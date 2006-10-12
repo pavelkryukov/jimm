@@ -76,10 +76,6 @@ public class ActionListener
 			    int flag = Util.getWord(p, 11+uin_len);
 			    DebugLog.addText("Typing notify: "+flag);
 			    
-			    // If the user does not have it add the typing capability
-			    if (!ContactList.getItembyUIN(uin).hasCapability(Util.CAPF_TYPING))
-			    	ContactList.getItembyUIN(uin).addCapability(Util.CAPF_TYPING);
-			    
 			    if ( flag == 0x0002)
 			    	//Begin typing
 				    RunnableImpl.BeginTyping(uin,true);

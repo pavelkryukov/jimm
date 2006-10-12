@@ -2146,7 +2146,10 @@ public class Util
 				byte[] tmp_new = new byte[16];
 				System.arraycopy(extended_new,j,tmp_new,0,16);
 				if (tmp_old == tmp_new)
+				{
 					found = true;
+					break;
+				}
 			}
 			if (!found)
 			{
