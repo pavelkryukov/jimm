@@ -859,8 +859,7 @@ public class ConnectAction extends Action
 
 						// Send to server sequence of unuthoruzed contacts to see their statuses 
 						String[] noauth = ContactList.getUnauthAndTempContacts();
-						if (noauth.length > 0)
-							Icq.addLocalContacts(noauth);
+						if (noauth.length > 0) Icq.addLocalContacts(noauth);
 
 						// Change privacy setting according to new status
 						if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)

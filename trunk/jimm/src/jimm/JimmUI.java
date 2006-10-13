@@ -62,7 +62,8 @@ public class JimmUI implements CommandListener
 	final private static Command cmdYes      = new Command(ResourceBundle.getString("yes"),           Command.OK,     1);
 	final private static Command cmdNo       = new Command(ResourceBundle.getString("no"),            Command.CANCEL, 2);
 	final private static Command cmdFind     = new Command(ResourceBundle.getString("find"),          Command.OK,     1);
-	final private static Command cmdBack     = new Command(ResourceBundle.getString("back"),          Command.OK,     2);
+	final private static Command cmdBack     = new Command(ResourceBundle.getString("back"),          Command.BACK,   2);
+	final private static Command cmdBack2    = new Command(ResourceBundle.getString("back"),          Command.ITEM,   10); /* Back button to fix Symbian bug */
 	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"),     Command.ITEM,   3);
 	final private static Command cmdCopyAll  = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM,   4);  
 
@@ -735,6 +736,7 @@ public class JimmUI implements CommandListener
 		infoTextList.addCommand(cmdBack);
 		infoTextList.addCommand(cmdCopyText);
 		infoTextList.addCommand(cmdCopyAll);
+		infoTextList.addCommand(cmdBack2);
 	}
 	
 	static public TextList getInfoTextList(String caption, boolean addCommands)
@@ -757,6 +759,7 @@ public class JimmUI implements CommandListener
 			infoTextList.addCommand(cmdBack);
 			infoTextList.addCommand(cmdCopyText);
 			infoTextList.addCommand(cmdCopyAll);
+			infoTextList.addCommand(cmdBack2);
 			infoTextList.setCommandListener(_this);
 		}
 		
