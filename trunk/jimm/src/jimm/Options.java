@@ -188,16 +188,13 @@ public class Options
 	static OptionsForm optionsForm;
 	
 	/* Private constructor prevent to create instances of Options class */ 
-	public Options() {}
-	
-	/* Static constructor */
-	static
+	public Options()
 	{
 		// Try to load option values from record store and construct options form
 		try
 		{
 			options = new Hashtable();
-			
+
 			//#sijapp cond.if modules_DEBUGLOG is "true"#
 			checkKeys = true;
 			setDefaults();
@@ -206,10 +203,10 @@ public class Options
 			Options.setDefaults();
 			resetLangDependedOpts();
 			//#sijapp cond.end #
-			
+
 			load();
-			
-			if ( getBoolean(OPTIONS_LANG_CHANGED) )
+
+			if (getBoolean(OPTIONS_LANG_CHANGED))
 			{
 				setBoolean(OPTIONS_LANG_CHANGED, false);
 				resetLangDependedOpts();
@@ -222,9 +219,9 @@ public class Options
 			setDefaults();
 			resetLangDependedOpts();
 		}
-		
+
 		ResourceBundle.setCurrUiLanguage(getString(Options.OPTION_UI_LANGUAGE));
-		VirtualList.setFullScreen( getBoolean(Options.OPTION_FULL_SCREEN) );
+		VirtualList.setFullScreen(getBoolean(Options.OPTION_FULL_SCREEN));
 	}
 
 	/* Set default values
