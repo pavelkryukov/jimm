@@ -221,8 +221,8 @@ public class Util
 	
 	public static void detectUserClient(String uin, int dwFP1, int dwFP2, int dwFP3, byte[] capabilities, int wVersion, boolean statusChange)
 	{
-		System.out.println("uin - " + uin + " found capabilities count:" + capabilities.length/16);
-		PrintCapabilities("cap - ", capabilities);
+//		System.out.println("uin - " + uin + " found capabilities count:" + capabilities.length/16);
+//		PrintCapabilities("cap - ", capabilities);
 		int client = CLI_NONE;
 		String szVersion = "";
 		int caps = CAPF_NO_INTERNAL;
@@ -2153,7 +2153,7 @@ public class Util
 			}
 			if (!found)
 			{
-				System.out.println("Merge capability");
+				//System.out.println("Merge capability");
 				byte[] merged = new byte[extended_new.length+16];
 				System.arraycopy(extended_new,0,merged,0,extended_new.length);
 				System.arraycopy(tmp_old,0,merged,extended_new.length,tmp_old.length);

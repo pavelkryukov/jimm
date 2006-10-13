@@ -134,11 +134,11 @@ public class ActionListener
                         status = (int)Util.getDWord(tlvData, 0);
                     } else if (tlvType == 0x000D) // Old style CAPABILITIES
                     {
-                    	DebugLog.addText("Old caps");
+                    	//DebugLog.addText("Old caps");
                     	capabilities_old = tlvData;
                     } else if (tlvType == 0x0019) // New style CAPABILITIES
                     {
-                    	DebugLog.addText("New caps");
+                    	//DebugLog.addText("New caps");
                     	capabilities_new = tlvData;
                     }
                     // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
