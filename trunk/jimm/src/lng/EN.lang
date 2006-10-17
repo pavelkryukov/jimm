@@ -122,6 +122,7 @@
   "keylock_enabled"             "Keylock enabled"
   "keyword"                     "Keyword"
   "language"                    "Language"
+  "lang_BA"						"Bosnian"
   "lang_BG"                     "Bulgarian"
   "lang_BR"                     "Portuguese (Brazil)"
   "lang_CZ"                     "Czech"
