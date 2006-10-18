@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-06  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -18,17 +18,18 @@
  ********************************************************************************
  File: src/jimm/JimmUI.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Artyomov Denis, Igor Palkin
+ Author(s): Artyomov Denis, Igor Palkin, Andreas Rossbacher
  *******************************************************************************/
 
 package jimm;
 
-import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.TimerTask;
 
 import javax.microedition.io.Connector;
-import javax.microedition.io.ContentConnection;
+import javax.microedition.io.HttpConnection;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Canvas;
@@ -380,26 +381,27 @@ public class JimmUI implements CommandListener
     {
 
         // Try to get current Jimm version from Jimm server
-        ContentConnection ctemp;
-        DataInputStream istemp;
-        byte[] version_;
+        HttpConnection httemp;
+        InputStream istemp;
+        
+        String version;
 
         // Timer routine
         public void run()
         {
             try
             {
-                String url = "http://www.jimm.org/en/current_ver";
-                ctemp = (ContentConnection) Connector.open(url);
-
-                istemp = ctemp.openDataInputStream();
-                version_ = new byte[istemp.available()];
-                istemp.readFully(version_);
+                httemp = (HttpConnection) Connector.open("http://www.jimm.org/en/current_ver");
+                if (httemp.getResponseCode() != HttpConnection.HTTP_OK) throw new IOException();
+                istemp = httemp.openInputStream();
+                byte[] version_ = new byte[(int)httemp.getLength()];
+                istemp.read(version_,0,version_.length);
                 version = new String(version_);
                 versionLoaded = true;
             } catch (Exception e)
             {
-                version = ResourceBundle.getString("no_recent_ver");
+                e.printStackTrace();
+            	version = ResourceBundle.getString("");
             }
             
             synchronized(_this)
