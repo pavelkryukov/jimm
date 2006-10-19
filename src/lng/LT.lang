@@ -188,6 +188,7 @@
 "keylock_enabled"			"Klaviatūra užrakinta"
 "keyword"					"raktažodis"
 "language"					"Kalba"
+"lang_BA"					"Bosni"
 "lang_BG"					"Bulgarų"
 "lang_BR"					"Portugalų (Brazilija)"
 "lang_CZ"					"Čekų"
@@ -406,4 +407,3 @@
  // HTTP Connection errors
 "error_220"					"Serveris neaptarnauja užklausų HTTP būdu (#220.EXT)"
 "error_221"					"Prisijungimas HTTP būdu netikėtai nutrūko (#221.EXT)"
-
