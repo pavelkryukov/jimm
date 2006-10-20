@@ -5,7 +5,7 @@
 "backlight_manual"			"Ручне пiдсвiчування (*)"
 "exit_button"				"      Вихiд"
 "menu_button"				"      Меню"
-"flash_backlight"			"Підсвідка екрану"
+"flash_backlight"			"Моргання св-діодів"
 //#sijapp cond.end#
 
 // PROXY module strings
@@ -188,6 +188,7 @@
 "keylock_enabled"			"Блокування увiмкнене"
 "keyword"					"Ключевое слово"
 "language"					"Мова"
+"lang_BA"					"Боснійська"
 "lang_BG"					"Болгарська"
 "lang_BR"					"Португальска (Бразилiя)"
 "lang_CZ"					"Чеська"
