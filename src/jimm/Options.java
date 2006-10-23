@@ -247,7 +247,7 @@ public class Options
         // #sijapp cond.if target isnot "MOTOROLA"#
 		setBoolean(Options.OPTION_SHADOW_CON,         false);
         // #sijapp cond.end#
-		setBoolean(Options.OPTION_MD5_LOGIN,          false);
+		setBoolean(Options.OPTION_MD5_LOGIN,          true);
 		setBoolean(Options.OPTION_AUTO_CONNECT,       false);
 		setString (Options.OPTION_HTTP_USER_AGENT,    "unknown");
 		setString (Options.OPTION_HTTP_WAP_PROFILE,   "unknown");
