@@ -339,8 +339,7 @@ public class DisconnectPacket extends Packet
 				case 0x000B:   // description
 					description = Util.byteArrayToString(tlvValue);
 					break;
-				default:
-					throw (new JimmException(135, 1));
+				default: 		// Do nothing on default (ignore all unknown TLVs)
 			}
 
 		}
