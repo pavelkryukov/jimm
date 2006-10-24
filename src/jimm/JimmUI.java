@@ -83,6 +83,7 @@ public class JimmUI implements CommandListener
 		commands.put(cmdNo,               new Integer(CMD_NO)    );
 		commands.put(cmdFind,             new Integer(CMD_FIND)  );
 		commands.put(cmdBack,             new Integer(CMD_BACK)  );
+		commands.put(cmdBack2,            new Integer(CMD_BACK)  );
 	}
 	
 	JimmUI()
@@ -121,7 +122,7 @@ public class JimmUI implements CommandListener
 		if (d == infoTextList)
 		{
 			// "User info" -> "Cancel, Back"
-			if ((c == cmdCancel) || (c == cmdBack)) cancelUserInfo();
+			if ((c == cmdCancel) || (c == cmdBack) || (c == cmdBack2)) cancelUserInfo();
 			
 			// "User info" -> "Copy text, Copy all"
 			else if ((c == cmdCopyText) || (c == cmdCopyAll))
