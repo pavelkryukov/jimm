@@ -1418,7 +1418,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
     
     private static Command copyTextCommand = new Command(ResourceBundle.getString("copy_text"), Command.ITEM, 4);
     
-    private static Command clearTextCommand = new Command(ResourceBundle.getString("clear"), Command.ITEM, 4);
+    private static Command clearTextCommand = new Command(ResourceBundle.getString("clear"), Command.ITEM, 5);
 
 	/* Add temporary user to contact list */
 	private static Command addUrsCommand = new Command(ResourceBundle.getString("add_user", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 5);
@@ -1443,13 +1443,13 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	private static Command selecturlCommand = new Command(ResourceBundle.getString("select"), Command.OK, 1);
 	
 	/* Textbox OK command */
-	private static Command textboxOkCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 2);
+	private static Command textboxOkCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
 
 	/* Textbox Send command */
 	private static Command textboxSendCommand = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 
 	/* Textbox cancel command */
-	private static Command textboxCancelCommand = new Command(ResourceBundle.getString("cancel"), Command.BACK, 3);
+	private static Command textboxCancelCommand = new Command(ResourceBundle.getString("cancel"), Command.BACK, 2);
 
 	/* Grand authorisation a for authorisation asking contact */
 	private static Command grantAuthCommand = new Command(ResourceBundle.getString("grant"), Command.OK, 1);

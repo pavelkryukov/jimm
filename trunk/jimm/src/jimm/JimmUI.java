@@ -259,18 +259,25 @@ public class JimmUI implements CommandListener
 		//#sijapp cond.end#
 
 		aboutTextList.setCaption(ResourceBundle.getString("about"));
+		
+		String commaAndSpace = ", "; 
 	    
 		StringBuffer str = new StringBuffer();
-		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n")
+		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n\n")
+		
+		   .append(ResourceBundle.getString("cell_phone")).append(": ")
+		   .append(Jimm.microeditionPlatform).append(commaAndSpace).append(Jimm.microeditionProfiles).append(commaAndSpace)
+		   .append(System.getProperty("microedition.locale")).append("\n\n")
+		   
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
-		   .append(freeMem)
-		   .append("kb\n")
+		   .append(freeMem).append("kb\n")
 		   .append(ResourceBundle.getString("total_mem")).append(": ")
 		   .append(Runtime.getRuntime().totalMemory()/1024)
 		   .append("kb\n\n")
-		   .append(ResourceBundle.getString("latest_ver")).append(":");
+		   
+		   .append(ResourceBundle.getString("latest_ver")).append(':');
 		
-		if (versionLoaded) str.append(" ").append(version);
+		if (versionLoaded) str.append(' ').append(version);
 		else str.append(" ...");
 		
 		try
