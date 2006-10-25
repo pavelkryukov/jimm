@@ -106,12 +106,14 @@ public class Jimm extends MIDlet
 
 	
 	private JimmUI ui;
+	
+	public static final String microeditionPlatform = System.getProperty("microedition.platform");
+	public static final String microeditionProfiles = System.getProperty("microedition.profiles");
 
 	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"#
 	static
 	{
 		// #sijapp cond.if target is "MIDP2" #
-		String microeditionPlatform = System.getProperty("microedition.platform");
 		if (microeditionPlatform != null)
 			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1);
 		// #sijapp cond.end#
