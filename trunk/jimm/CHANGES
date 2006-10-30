@@ -310,4 +310,5 @@ VERSION 0.5.0
 _______________________________________________________________________________
 VERSION 0.5.1
 
-  * BUGFIX: Normal login was not working anymore (ICQ protocol change) (MD5 login did work)  
+  * BUGFIX: Normal login was not working anymore (ICQ protocol change) (MD5 login did work)
+  * Platform information is shown on about screen
