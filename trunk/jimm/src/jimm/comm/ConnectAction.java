@@ -555,7 +555,7 @@ public class ConnectAction extends Action
 						    System.arraycopy(tmp,0,tmp_packet,0,tmp.length-16);
 						    
 						    // Length correction
-						    tmp_packet[3] = (byte)0x40;
+						    tmp_packet[3] = (byte)(tmp_packet.length - 4);//(byte)0x40;
                         //#sijapp cond.if target isnot "DEFAULT"#
 						}
 						//#sijapp cond.end#
