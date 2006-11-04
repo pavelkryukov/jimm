@@ -438,15 +438,30 @@ public class Emotions implements VirtualListCommands, CommandListener
 			if (type == VirtualList.KEY_PRESSED)
 			{
 			int lastCol = curCol;
+			int curRow = getCurrIndex();
+			int rowCount = getSize();
 			switch (getGameAction(keyCode))
 			{
 			case LEFT:
 				if (curCol != 0) curCol--;
+				else if (curRow != 0)
+				{
+					curCol = cols-1;
+					curRow--;
+				}
 				break;
+				
 			case RIGHT:	
 				if (curCol < (cols-1)) curCol++;
+				else if (curRow <= rowCount)
+				{
+					curCol = 0;
+					curRow++;
+				}
 				break;
 			}
+			
+			setCurrentItem(curRow);
 			
 			int index = curCol+getCurrIndex()*cols;
 			if (index >= selEmotionsIndexes.length) curCol = (selEmotionsIndexes.length-1)%cols; 
