@@ -32,7 +32,7 @@
 
   "point"                       "."
   "about"                       "О программе"
-  "about_info"                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\nУстройство: ###TARGET###\nМодули: ###MODULES###\n\nhttp://www.jimm.org/"
+  "about_info"                  "Jimm - Мобильный ICQ\n\nICQ Клиент для J2ME\nВерсия ###VERSION###\nСборка: ###TARGET###\nМодули: ###MODULES###\n\nhttp://www.jimm.org/"
   "account"                     "Учетная запись"
   "add_new"                     "Новый"
   "add_group"                   "Добавить группу"
@@ -153,7 +153,7 @@
   "lang_PL"                     "Польский"
   "lang_RU"                     "Русский"
   "lang_SE"                     "Шведский"
-  "lang_SR"                     "Српски"
+  "lang_SR"                     "Сербски"
   "lang_UA"                     "Украинский"
   "lastname"                    "Фамилия"
   "latest_ver"                  "Самая последняя доступная версия"
