@@ -1133,9 +1133,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		safeSave();
 	}
 
-    static private synchronized ContactListContactItem createTempContact(String uin)
+    static public synchronized ContactListContactItem createTempContact(String uin)
     {
-    	ContactListContactItem cItem = null;
+    	ContactListContactItem cItem = getItembyUIN(uin);
+    	
+    	if (cItem != null) return cItem;  
+    	
     	try
     	{
     		cItem = new ContactListContactItem(0, 0, uin, uin, false, true);
@@ -1165,7 +1168,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         else
         {
         	cItem = createTempContact( message.getSndrUin() );
-            if ( cItem!=null ) cItem.addMessage(message);
+            if (cItem != null) cItem.addMessage(message);
         }
 
         // Notify splash canvas

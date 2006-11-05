@@ -266,15 +266,19 @@ public class JimmUI implements CommandListener
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n\n")
 		
 		   .append(ResourceBundle.getString("cell_phone")).append(": ")
-		   .append(Jimm.microeditionPlatform).append(commaAndSpace).append(Jimm.microeditionProfiles).append(commaAndSpace)
-		   .append(System.getProperty("microedition.locale")).append("\n\n")
-		   
+		   .append(Jimm.microeditionPlatform);
+		
+		if (Jimm.microeditionProfiles != null) str.append(commaAndSpace).append(Jimm.microeditionProfiles);
+		
+		String locale = System.getProperty("microedition.locale");
+		if (locale != null) str.append(commaAndSpace).append(locale);
+		
+		str.append("\n\n")
 		   .append(ResourceBundle.getString("free_heap")).append(": ")
 		   .append(freeMem).append("kb\n")
 		   .append(ResourceBundle.getString("total_mem")).append(": ")
 		   .append(Runtime.getRuntime().totalMemory()/1024)
 		   .append("kb\n\n")
-		   
 		   .append(ResourceBundle.getString("latest_ver")).append(':');
 		
 		if (versionLoaded) str.append(' ').append(version);
