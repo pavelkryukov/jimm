@@ -312,3 +312,7 @@ VERSION 0.5.1
 
   * BUGFIX: Normal login was not working anymore (ICQ protocol change) (MD5 login did work)
   * Platform information is shown on about screen
+  
+_______________________________________________________________________________
+VERSION 0.5.1
+  * It is possible to send messages to contact without adding it to contact list

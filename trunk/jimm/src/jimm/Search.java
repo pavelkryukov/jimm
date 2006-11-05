@@ -128,14 +128,11 @@ public class Search
 	{
 		// Commands
 		private Command backCommand;
-
 		private Command searchCommand;
-
 		private Command addCommand;
-
 		private Command previousCommand;
-
 		private Command nextCommand;
+		private Command cmdSendMessage;
 
 		// Forms for results and query
 		private Form searchForm;
@@ -176,9 +173,10 @@ public class Search
 			// Commands
 			this.searchCommand = new Command(ResourceBundle.getString("search_user"), Command.OK, 1);
 			this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
-			this.addCommand = new Command(ResourceBundle.getString("add_to_list"), Command.ITEM, 3);
-			this.previousCommand = new Command(ResourceBundle.getString("prev"), Command.ITEM, 2);
-			this.nextCommand = new Command(ResourceBundle.getString("next"), Command.ITEM, 1);
+			this.addCommand = new Command(ResourceBundle.getString("add_to_list"), Command.ITEM, 1);
+			this.previousCommand = new Command(ResourceBundle.getString("prev"), Command.ITEM, 4);
+			this.nextCommand = new Command(ResourceBundle.getString("next"), Command.ITEM, 5);
+			this.cmdSendMessage = new Command(ResourceBundle.getString("send_message"), Command.ITEM, 6);
 
 			// Form
 			this.searchForm = new Form(ResourceBundle.getString("search_user"));
@@ -221,6 +219,7 @@ public class Search
 			screen.addCommand(this.previousCommand);
 			screen.addCommand(this.nextCommand);
 			screen.addCommand(this.addCommand);
+			screen.addCommand(this.cmdSendMessage);
 			screen.setCursorMode(TextList.SEL_NONE);
 			JimmUI.setColorScheme(screen);
 		}
@@ -383,7 +382,11 @@ public class Search
 				// Start timer 
 				SplashCanvas.addTimerTask("wait", act, true);
 			}
+			
+			/* "Next" command */
 			else if (c == this.nextCommand) nextOrPrev(true);
+			
+			/* "Previous" command */
 			else if (c == this.previousCommand) nextOrPrev(false);
 			else if (c == this.addCommand && d == screen)
 			{
@@ -418,7 +421,20 @@ public class Search
 				cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
 				Icq.addToContactList(cItem);
 			}
+			
+			/* Command "Send message" */
+			else if (c == this.cmdSendMessage)
+			{
+				String[] resultData = getResult(selectedIndex);
+			
+				ContactListContactItem cItem = ContactList.createTempContact(resultData[JimmUI.UI_UIN_LIST]);
+				//ContactListContactItem.CONTACTITEM_HAS_CHAT
+				cItem.setStringValue(ContactListContactItem.CONTACTITEM_NAME, resultData[JimmUI.UI_NICK]);
+				cItem.newMessage();
+			}
 		}
-	}
-
+		
+	
+	} /* end "class SearchForm" */
+	
 }
