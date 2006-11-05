@@ -127,7 +127,6 @@ public class Icq implements Runnable
 	// Sends to server client-side contacts
 	public static void addLocalContacts(String[] uins)
 	{
-		/*
 		if ( uins == null || uins.length == 0) return;
 		
 		int len = 0, i;
@@ -152,12 +151,10 @@ public class Icq implements Runnable
 		{
 			JimmException.handleException(e);
 		}
-		*/
 	}
 
 	public static void removeLocalContact(String uin) 
 	{
-		/*
 		byte[] buf = new byte[1 + uin.length()];
 		Util.putByte(buf, 0, uin.length());
 		System.arraycopy(uin.getBytes(), 0, buf, 1, uin.length());
@@ -166,7 +163,6 @@ public class Icq implements Runnable
 		} catch (JimmException e) {
 			JimmException.handleException(e);
 		}
-		*/
 	}
 
     // Adds a ContactListContactItem to the server saved contact list
