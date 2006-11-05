@@ -235,7 +235,6 @@ public class JimmUI implements CommandListener
     
     // String for recent version
     static private String version;
-    static private boolean versionLoaded = false;
     
 	static public void about(Displayable lastDisplayable_)
 	{
@@ -281,7 +280,7 @@ public class JimmUI implements CommandListener
 		   .append("kb\n\n")
 		   .append(ResourceBundle.getString("latest_ver")).append(':');
 		
-		if (versionLoaded) str.append(' ').append(version);
+		if (version != null) str.append(' ').append(version);
 		else str.append(" ...");
 		
 		try
@@ -289,6 +288,7 @@ public class JimmUI implements CommandListener
 			Image image = SplashCanvas.getSplashImage();
 			aboutTextList.addBigText("\n", 0xffffff, Font.STYLE_PLAIN, -1)
 				.addImage(image, null, image.getWidth(), image.getHeight(), -1)
+				.doCRLF(-1)
 				.addBigText(str.toString(), 0xffffff, Font.STYLE_PLAIN, -1);
 		
 			aboutTextList.addCommand(cmdBack);
@@ -301,7 +301,7 @@ public class JimmUI implements CommandListener
 		
 		aboutTextList.unlock();
         
-		if (!versionLoaded) Jimm.jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
+		if (version == null) Jimm.jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
 	}
     	
 	//////////////////////
@@ -391,13 +391,10 @@ public class JimmUI implements CommandListener
     // Waits until contact listupdate is completed
     public static class GetVersionInfoTimerTask extends TimerTask
     {
-
         // Try to get current Jimm version from Jimm server
         HttpConnection httemp;
         InputStream istemp;
         
-        String version;
-
         // Timer routine
         public void run()
         {
@@ -409,11 +406,11 @@ public class JimmUI implements CommandListener
                 byte[] version_ = new byte[(int)httemp.getLength()];
                 istemp.read(version_,0,version_.length);
                 version = new String(version_);
-                versionLoaded = true;
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 e.printStackTrace();
-            	version = ResourceBundle.getString("");
+            	version = "Error: "+e.getMessage();
             }
             
             synchronized(_this)
