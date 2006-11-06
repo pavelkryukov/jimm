@@ -316,3 +316,4 @@ VERSION 0.5.1
 _______________________________________________________________________________
 VERSION 0.5.2
   * It is possible to send messages to contact without adding it to contact list
+  * New test status icons were added (from Miranda set)
