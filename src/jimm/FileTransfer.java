@@ -165,7 +165,11 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 			// Set the file data in file transfer
 			setData(fis, size);
 			// Create filename and ask for name and description
+			//#sijapp cond.if target is "SIEMENS2"#
+			askForNameDesc(file.getName(), "");
+			//#sijapp cond.else
 			askForNameDesc(fileName, "");
+			//#sijapp cond.end#
 		} catch (Exception e) {
 			e.printStackTrace();
 			JimmException.handleException(new JimmException(191,0,true));

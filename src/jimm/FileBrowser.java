@@ -63,6 +63,10 @@ abstract class FileSystem
 	public abstract void close();
 
 	public abstract long fileSize() throws Exception;
+	
+	//#sijapp cond.if target is "SIEMENS2"#
+	public abstract String getName();
+	//#sijapp cond.end#
 }
 
 //#sijapp cond.if target="MOTOROLA"#
@@ -283,6 +287,16 @@ class JSR75FileSystem extends FileSystem
 		if (fileConnection != null) return fileConnection.fileSize();
 		else return -1;
 	}
+	
+	//#sijapp cond.if target is "SIEMENS2"#
+	public String getName()
+	{
+		if( fileConnection != null )
+			return fileConnection.getName();
+		
+		return null;
+	}
+	//#sijapp cond.end#
 }
 
 interface FileBrowserListener
