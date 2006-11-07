@@ -64,7 +64,7 @@ abstract class FileSystem
 
 	public abstract long fileSize() throws Exception;
 	
-	//#sijapp cond.if target is "SIEMENS2"#
+	//#sijapp cond.if target is "SIEMENS2"|target is "MIDP2"#
 	public abstract String getName();
 	//#sijapp cond.end#
 }
@@ -288,7 +288,7 @@ class JSR75FileSystem extends FileSystem
 		else return -1;
 	}
 	
-	//#sijapp cond.if target is "SIEMENS2"#
+	//#sijapp cond.if target is "SIEMENS2"|target is "MIDP2"#
 	public String getName()
 	{
 		if( fileConnection != null )
