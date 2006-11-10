@@ -232,7 +232,6 @@ public class Icq implements Runnable
     /* Disconnects from the ICQ network */
     static public synchronized void disconnect()
     {
-    	_this.aborted = true;
     	System.out.println("disconnect - BEGIN");
 
         /* Disconnect */
@@ -417,7 +416,6 @@ public class Icq implements Runnable
     	System.out.println("[" + Thread.currentThread().toString()+"] " + msg);
 	}
     
-    volatile boolean aborted = false;
     public static int reconnect_attempts;
     
     // Main loop
@@ -463,7 +461,7 @@ public class Icq implements Runnable
         {
         	_ToLog("run - Entering main loop");
             // Abort only in error state
-            while (Icq.thread == thread || !aborted)
+            while (Icq.thread == thread)
             {
             	_ToLog("run - Main loop begin");
                 // Get next action
@@ -748,7 +746,7 @@ public class Icq implements Runnable
     }
     
     public static volatile boolean connecting = false;
-	private synchronized static boolean reconnect(JimmException e) 
+	public synchronized static boolean reconnect(JimmException e) 
 	{
 		int errCode = e.getErrCode();
     	if
@@ -1418,7 +1416,12 @@ public class Icq implements Runnable
         {
 
             // Throw exception if output stream is not ready
-            if (os == null) { throw (new JimmException(123, 0)); }
+            if (os == null) 
+            {
+            	JimmException e = new JimmException(123, 0);
+            	if( !Icq.reconnect(e) )
+            		throw e;
+            }
 
             // Request lock on output stream
             synchronized (os)
@@ -1447,7 +1450,9 @@ public class Icq implements Runnable
                 } catch (IOException e)
                 {
                     close();
-                    throw new JimmException(120, 3);
+                    JimmException ex = new JimmException(120, 3);
+                    if( !Icq.reconnect(ex) )
+                    	throw ex;
                 }
 
             }
