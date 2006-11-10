@@ -369,6 +369,7 @@ public class MainMenu implements CommandListener
 			{
 			case MENU_CONNECT:
 				/* Connect */
+				Icq.reconnect_attempts = Options.getInt(Options.OPTION_RECONNECT_NUMBER);
 				ContactList.beforeConnect();
 				Icq.connect();
 				break;

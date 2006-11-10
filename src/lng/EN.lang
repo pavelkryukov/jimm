@@ -197,6 +197,8 @@
   "pw_all"                      "All"
   "quote"                       "Quote"                        
   "reason"                      "Reason"
+  "reconnect"                   "Reconnect"
+  "reconnect_number"            "Number of connect attempts"
   "remove"                      "Remove from List"
   "remove_me"                   "Remove me" 
   "remove_me_from"              "Remove yourself from contact list of "

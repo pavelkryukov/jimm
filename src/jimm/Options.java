@@ -86,6 +86,8 @@ public class Options
     // #sijapp cond.if target isnot  "MOTOROLA"#
 	public static final int OPTION_SHADOW_CON          = 139;   /* boolean */
     // #sijapp cond.end#
+	public static final int OPTION_RECONNECT           = 149;   /* boolean */
+	public static final int OPTION_RECONNECT_NUMBER    = 91;   	/* int */
 	public static final int OPTION_HTTP_USER_AGENT     =  17;   /* String  */
 	public static final int OPTION_HTTP_WAP_PROFILE    =  18;   /* String  */
 	public static final int OPTION_UI_LANGUAGE         =   3;   /* String  */
@@ -100,8 +102,8 @@ public class Options
 	public static final int OPTION_ONLINE_NOTIF_FILE   =   5;   /* String  */
 	public static final int OPTION_ONLINE_NOTIF_VOL    =  69;   /* int     */
 	public static final int OPTION_VIBRATOR            =  75;   /* integer */
-	public static final int OPTION_TYPING_MODE		   =  88;
-	public static final int OPTION_TYPING_FILE		   =  16;   /* Striong */
+	public static final int OPTION_TYPING_MODE		   =  88;   /* integer */
+	public static final int OPTION_TYPING_FILE		   =  16;   /* String */
 	public static final int OPTION_TYPING_VOL		   =  89;
     // #sijapp cond.end #	
 	public static final int OPTION_CP1251_HACK         = 133;   /* boolean */
@@ -241,6 +243,8 @@ public class Options
 		// #sijapp cond.end# <===
 		setString (Options.OPTION_SRV_PORT,           "5190");
 		setBoolean(Options.OPTION_KEEP_CONN_ALIVE,    true);
+		setBoolean(Options.OPTION_RECONNECT,    true);
+		setInt	  (Options.OPTION_RECONNECT_NUMBER, 10);
         setString (Options.OPTION_CONN_ALIVE_INVTERV, "120");
 		setInt    (Options.OPTION_CONN_PROP,          0);
 		setInt    (Options.OPTION_CONN_TYPE,          0);
@@ -661,6 +665,7 @@ class OptionsForm implements CommandListener, ItemStateListener
     private ChoiceGroup connPropChoiceGroup;
     private ChoiceGroup connTypeChoiceGroup;
     private ChoiceGroup autoConnectChoiceGroup;
+    private TextField reconnectNumberTextField;
     private ChoiceGroup uiLanguageChoiceGroup;
     private ChoiceGroup choiceInterfaceMisc;
     private ChoiceGroup clSortByChoiceGroup;
@@ -1100,6 +1105,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                connPropChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_prop"), Choice.MULTIPLE);
 					connPropChoiceGroup.append(ResourceBundle.getString("md5_login"), null);
 	                connPropChoiceGroup.append(ResourceBundle.getString("async"), null);
+	                connPropChoiceGroup.append(ResourceBundle.getString("reconnect"), null);
 	                // #sijapp cond.if target isnot "MOTOROLA"#
 	                connPropChoiceGroup.append(ResourceBundle.getString("shadow_con"), null);
 	                // #sijapp cond.end#
@@ -1108,14 +1114,16 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                	connPropChoiceGroup.setSelectedIndex(1, false);
 	                else
 	                	connPropChoiceGroup.setSelectedIndex(1, true);
+	                connPropChoiceGroup.setSelectedIndex(2, Options.getBoolean(Options.OPTION_RECONNECT));
 	                // #sijapp cond.if target isnot "MOTOROLA"#
-	                connPropChoiceGroup.setSelectedIndex(2, Options.getBoolean(Options.OPTION_SHADOW_CON));
+	                connPropChoiceGroup.setSelectedIndex(3, Options.getBoolean(Options.OPTION_SHADOW_CON));
 	                // #sijapp cond.end#
 	                autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
 	                autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
 	                autoConnectChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_AUTO_CONNECT));
 					httpUserAgendTextField = new TextField(ResourceBundle.getString("http_user_agent"), Options.getString(Options.OPTION_HTTP_USER_AGENT), 256, TextField.ANY);
 					httpWAPProfileTextField = new TextField(ResourceBundle.getString("http_wap_profile"), Options.getString(Options.OPTION_HTTP_WAP_PROFILE), 256, TextField.ANY);
+					reconnectNumberTextField = new TextField(ResourceBundle.getString("reconnect_number"), String.valueOf(Options.getInt(Options.OPTION_RECONNECT_NUMBER)), 2, TextField.NUMERIC);
 					optionsForm.append(srvHostTextField);
 					optionsForm.append(srvPortTextField);
 					optionsForm.append(connTypeChoiceGroup);
@@ -1125,6 +1133,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					optionsForm.append(connPropChoiceGroup);
 					optionsForm.append(httpUserAgendTextField);
 					optionsForm.append(httpWAPProfileTextField);
+					optionsForm.append(reconnectNumberTextField);
 					break;
                 // #sijapp cond.if modules_PROXY is "true"#
                 case OPTIONS_PROXY:
@@ -1429,12 +1438,13 @@ class OptionsForm implements CommandListener, ItemStateListener
 						Options.setInt(Options.OPTION_CONN_PROP,1);
 					else
 						Options.setInt(Options.OPTION_CONN_PROP,0);
+					Options.setBoolean(Options.OPTION_RECONNECT,connPropChoiceGroup.isSelected(2));
                     // #sijapp cond.if target isnot "MOTOROLA"#
-					Options.setBoolean(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(2));
+					Options.setBoolean(Options.OPTION_SHADOW_CON,connPropChoiceGroup.isSelected(3));
                     // #sijapp cond.end#
 					Options.setString(Options.OPTION_HTTP_USER_AGENT,httpUserAgendTextField.getString());
 					Options.setString(Options.OPTION_HTTP_WAP_PROFILE,httpWAPProfileTextField.getString());
-					
+					Options.setInt(Options.OPTION_RECONNECT_NUMBER, Integer.parseInt(reconnectNumberTextField.getString()));
 					break;
                 // #sijapp cond.if modules_PROXY is "true"#
                 case OPTIONS_PROXY:

@@ -62,11 +62,18 @@ public class JimmException extends Exception
 	protected boolean peer;
 	//  #sijapp cond.end#
 
+	private int _ErrCode;
 
+	public int getErrCode()
+	{
+		return _ErrCode;
+	}
+	
 	// Constructs a critical JimmException
 	public JimmException(int errCode, int extErrCode)
 	{
 		super(JimmException.getErrDesc(errCode, extErrCode));
+		this._ErrCode = errCode;
 		this.critical = true;
 		this.displayMsg = true;
 		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -81,6 +88,7 @@ public class JimmException extends Exception
 	public JimmException(int errCode, int extErrCode, boolean displayMsg)
 	{
 		super(JimmException.getErrDesc(errCode, extErrCode));
+		this._ErrCode = errCode;
 		this.critical = false;
 		this.displayMsg = displayMsg;
 		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -96,6 +104,7 @@ public class JimmException extends Exception
 	public JimmException(int errCode, int extErrCode, boolean displayMsg, boolean _peer)
 	{
 		super(JimmException.getErrDesc(errCode, extErrCode));
+		this._ErrCode = errCode;
 		this.critical = false;
 		this.displayMsg = displayMsg;
 		this.peer = _peer;
