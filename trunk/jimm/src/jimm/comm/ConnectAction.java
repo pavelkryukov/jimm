@@ -1039,7 +1039,9 @@ public class ConnectAction extends Action
     {
     	if ((this.state != ConnectAction.STATE_ERROR) && !this.active && (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
         {
-            JimmException.handleException(new JimmException(118, 0));
+    		JimmException e = new JimmException(118, 0);
+    		if( !Icq.reconnect(e) )
+    			JimmException.handleException(e);
             this.state = ConnectAction.STATE_ERROR;
         }
         return (this.state == ConnectAction.STATE_ERROR);

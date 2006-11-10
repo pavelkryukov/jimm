@@ -146,7 +146,11 @@ public abstract class VirtualList extends Canvas
 	{
 		super();
 		setCaption(capt);
-		this.fontSize = Font.SIZE_MEDIUM; 
+		//#sijapp cond.if target is "SIEMENS2"# 
+		this.fontSize = Font.SIZE_SMALL;
+		//#sijapp cond.else#
+		this.fontSize = Font.SIZE_MEDIUM;
+		//#sijapp cond.end#
 		createSetOfFonts(this.fontSize);
 		this.cursorMode = SEL_DOTTED;
 	}

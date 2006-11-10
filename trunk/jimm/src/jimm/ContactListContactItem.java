@@ -1499,7 +1499,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
-		if (item.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8)
+		if ( item.status != ContactList.STATUS_OFFLINE && item.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8)
 		{
 			eventList[menuList.append(ResourceBundle.getString("ft_name", ResourceBundle.FLAG_ELLIPSIS), null)] = USER_MENU_FILE_TRANS;
 			// #sijapp cond.if target isnot "MOTOROLA"#
