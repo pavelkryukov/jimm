@@ -252,6 +252,7 @@ public class Jimm extends MIDlet
 		if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
         {
 		    // Connect
+			Icq.reconnect_attempts = Options.getInt(Options.OPTION_RECONNECT_NUMBER);
             ContactList.beforeConnect();
             Icq.connect();
         } else
@@ -339,7 +340,11 @@ public class Jimm extends MIDlet
 	// Cancels the timer and makes a new one
 	public void cancelTimer()
 	{
-		this.t.cancel();
+		try
+		{
+			this.t.cancel();
+		}
+		catch(IllegalStateException e){}
 		this.t = new Timer();
 	}
 
