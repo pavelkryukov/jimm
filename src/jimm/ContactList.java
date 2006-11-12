@@ -1202,6 +1202,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	Player player = createPlayer(source);
     	boolean ok = (player != null);
     	if (player != null) player.close();
+    	playerFree = true;
     	return ok;
     }
 
@@ -1445,6 +1446,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             	break;
 
         	}
+    		
 // #sijapp cond.if target is "SIEMENS1"#
 	        Light.setLightOff();
 // #sijapp cond.end#
