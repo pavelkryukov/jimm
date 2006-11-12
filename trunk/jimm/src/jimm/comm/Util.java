@@ -160,48 +160,15 @@ public class Util
 	public static final byte CLI_STICQ = 38;
 	public static final byte CLI_MCHAT = 39;
 	
-	private static final String[] clientNames = {
-		"Not detected",
-		"QIP",
-		"Miranda",
-		"LIcq",
-		"Trillian",
-		"SIM",
-		"Kopete",
-		"MICQ",
-		"&RQ",
-		"IM2",
-		"ICQ for MAC",
-		"AIM",
-		"UIM",
-		"WebICQ",
-		"Gaim",
-		"Alicq",
-		"StrICQ",
-		"YSM",
-		"vICQ",
-		"Libicq2000",
-		"Jimm",
-		"SmartICQ",
-		"ICQ Lite v4",
-		"ICQ Lite v5",
-		"ICQ 98",
-		"ICQ 99",
-		"ICQ 2001b",
-		"ICQ 2002a/2003a",
-		"ICQ 2000",
-		"ICQ 2003b",
-		"ICQ Lite",
-		"Gnome ICQ",
-		"Agile Messenger",
-		"SPAM:)",
-		"CenterICQ",
-		"Libicq2000 from Jabber",
-		"ICQ2GO!",
-		"ICQ for Pocket PC",
-		"StIcq",
-		""	//mChat
-	};
+	private static final String[] clientNames = explode(
+		"Not detected|QIP|Miranda|LIcq|Trillian|SIM|Kopete|MICQ|&RQ|IM2|ICQ for MAC|AIM|UIM|WebICQ|Gaim|Alicq|StrICQ|"+
+		"YSM|vICQ|Libicq2000|Jimm|SmartICQ|ICQ Lite v4|ICQ Lite v5|ICQ 98|ICQ 99|ICQ 2001b|ICQ 2002a/2003a|ICQ 2000|"+
+		"ICQ 2003b|ICQ Lite|Gnome ICQ|Agile Messenger|SPAM:)|CenterICQ|Libicq2000 from Jabber|ICQ2GO!|ICQ for Pocket PC|"+
+		"StIcq|"+
+		"|"+ //mChat
+		"",
+		'|'
+	);
 
 	public static void PrintCapabilities(String caption, byte[] caps)
 	{
