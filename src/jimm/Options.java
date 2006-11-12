@@ -357,7 +357,6 @@ public class Options
 		
 		setBoolean(OPTIONS_LANG_CHANGED,              false);
 		
-		// Options.OPTION_ONLINE_NOTIF_FILE,  "online.wav"
 		selectSoundType("online.",  OPTION_ONLINE_NOTIF_FILE);
 		selectSoundType("message.", OPTION_MESS_NOTIF_FILE);
 		selectSoundType("typing.",  OPTION_TYPING_FILE);

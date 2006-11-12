@@ -389,9 +389,9 @@ public class Util
 							if ( ((caps&CAPF_AVATAR)!=0) && ((caps&CAPF_XTRAZ)!=0) )
 							{
 								if ( (caps&CAPF_AIMFILE)!=0 ) // TODO: add more
-									client = client = CLI_ICQLITE5;
+									client = CLI_ICQLITE5;
 								else
-									client = client = CLI_ICQLITE4;
+									client = CLI_ICQLITE4;
 							}
 						}
 						else
@@ -2085,7 +2085,8 @@ public class Util
 		return original.substring(0, index)+to+original.substring(index+from.length(), original.length());
 	}
 	
-	static public String[] explode(String text, char seperator)
+	/* Divide text to array of parts using serparator charaster */
+	static public String[] explode(String text, char serparator)
 	{
 		Vector tmp = new Vector();
 		StringBuffer strBuf = new StringBuffer();
@@ -2093,7 +2094,7 @@ public class Util
 		for (int i = 0; i < len; i++)
 		{
 			char chr = text.charAt(i);
-			if (chr == seperator)
+			if (chr == serparator)
 			{
 				tmp.addElement(strBuf.toString());
 				strBuf.delete(0, strBuf.length());
