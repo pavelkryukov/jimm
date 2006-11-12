@@ -320,3 +320,4 @@ VERSION 0.5.2
   * New test status icons were added (from Miranda set)
   * MIDP2 build contains mp3 sounds now. Jimm automatically select sound type
     on startup
+  * Is possible fast to swicth sound off and on

@@ -1317,6 +1317,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // Play a sound notification
     static public void playSoundNotification(int notType)
     {
+//#sijapp cond.if target isnot "DEFAULT"#
+    	if (Options.getBoolean(Options.OPTION_SILENT_MODE) == true) return;
+//#sijapp cond.end#    	
+    	
     	synchronized (_this)
     	{
     		if (!treeBuilt) return;
@@ -1471,6 +1475,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	}
 
     }
+    
+// #sijapp cond.if target isnot "DEFAULT"#    
+    static public boolean changeSoundMode(boolean activate)
+    {
+    	boolean newValue = !Options.getBoolean(Options.OPTION_SILENT_MODE);
+    	Options.setBoolean(Options.OPTION_SILENT_MODE, newValue);
+    	Options.safe_save();
+		Alert alert = new Alert(null, ResourceBundle.getString(newValue ? "#sound_is_off" : "#sound_is_on"), null, null);
+		alert.setTimeout(1500);
+		Jimm.display.setCurrent(alert, activate ? tree : Jimm.display.getCurrent());
+    	return newValue;
+    }
+    
+// #sijapp cond.end#
     
     static ContactListContactItem lastChatItem = null;
     

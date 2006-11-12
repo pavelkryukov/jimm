@@ -51,31 +51,17 @@ public class MainMenu implements CommandListener
 
 	/* Static constants for menu actios */
 	private static final int MENU_CONNECT = 1;
-
 	private static final int MENU_DISCONNECT = 2;
-
 	private static final int MENU_LIST = 3;
-
 	private static final int MENU_OPTIONS = 4;
-
-	// #sijapp cond.if modules_TRAFFIC is "true" #
 	private static final int MENU_TRAFFIC = 5;
-	// #sijapp cond.end #
-	
 	private static final int MENU_KEYLOCK = 6;
-
 	private static final int MENU_STATUS = 7;
-
 	private static final int MENU_GROUPS = 8;
-
 	private static final int MENU_ABOUT = 9;
-
-	// #sijapp cond.if target is "MIDP2" # 
 	private static final int MENU_MINIMIZE = 10;
-
-	// #sijapp cond.end #
-	/* Exit has to be biggest element cause it also marks the size */
-	private static final int MENU_EXIT = 11;
+	private static final int MENU_SOUND = 11;
+	private static final int MENU_EXIT = 12; /* Exit has to be biggest element cause it also marks the size */
 
 	/* Abort command */
 	private static Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
@@ -188,6 +174,12 @@ public class MainMenu implements CommandListener
 				MainMenu.list.addCommand(MainMenu.selectCommand);
 				// #sijapp cond.end#
 			}
+
+//#sijapp cond.if target isnot "DEFAULT"#
+			boolean isSilent = Options.getBoolean(Options.OPTION_SILENT_MODE);
+			MainMenu.eventList[MainMenu.list.append(getSoundValue(isSilent), null)] = MENU_SOUND;
+//#sijapp cond.end#    	
+			
 			MainMenu.list.setCommandListener(_this);
 
 			// #sijapp cond.if modules_TRAFFIC is "true" #
@@ -262,18 +254,25 @@ public class MainMenu implements CommandListener
 			}
 		}
 	}
+	
+// #sijapp cond.if target isnot "DEFAULT" #	
+	static private String getSoundValue(boolean value)
+	{
+		 return ResourceBundle.getString(value ? "#sound_on" : "#sound_off");
+	}
+// #sijapp cond.end#	
 
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
-		// #sijapp cond.if target is "MOTOROLA" #
+// #sijapp cond.if target is "MOTOROLA" #
 		/* Exit by soft button */
 		if (c == MainMenu.exitCommand)
 		{
 			doExit(false);
 			return;
 		}
-		// #sijapp cond.end#
+// #sijapp cond.end#
 		
 		if (d == groupActList)
 		{
@@ -365,7 +364,8 @@ public class MainMenu implements CommandListener
 
 		else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand)) && (d == MainMenu.list))
 		{
-			switch (MainMenu.eventList[MainMenu.list.getSelectedIndex()])
+			int selectedIndex = MainMenu.list.getSelectedIndex();
+			switch (MainMenu.eventList[selectedIndex])
 			{
 			case MENU_CONNECT:
 				/* Connect */
@@ -471,6 +471,13 @@ public class MainMenu implements CommandListener
 				Jimm.setMinimized(true);
 				break;
 			//#sijapp cond.end#
+				
+// #sijapp cond.if target isnot "DEFAULT" #
+			case MENU_SOUND:
+				boolean soundValue = ContactList.changeSoundMode( Icq.isConnected() );
+				MainMenu.list.set(selectedIndex, getSoundValue(soundValue), null);
+				break;
+//#sijapp cond.end#				
 
 			case MENU_EXIT:
 				/* Exit */
