@@ -1195,38 +1195,44 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         	playerFree = true;
     	}
     }
+    
+    public static boolean testSoundFile(String source)
+    {
+    	playerFree = true;
+    	Player player = createPlayer(source);
+    	boolean ok = (player != null);
+    	if (player != null) player.close();
+    	return ok;
+    }
 
-	// Creates player for file 'source'
+	/* Creates player for file 'source' */
     static private Player createPlayer(String source)
 	{
+    	if (!playerFree) return null;
+    	
 		String ext, mediaType;
 		Player p;
 		
-		// What is file extention?
+		/* What is file extention? */
 		int point = source.lastIndexOf('.');
 		if (point != -1) ext = source.substring(point+1, source.length()).toLowerCase();
 		else ext = "wav";
 		
-		// What is media type?
+		/* What is media type? */
 		if (ext.equals("mp3")) mediaType = "audio/mpeg";
 		else if (ext.equals("mid") || ext.equals("midi")) mediaType = "audio/midi";
 		else if (ext.equals("amr"))  mediaType = "audio/amr";
 		else mediaType = "audio/X-wav";
-	
+		
 		try
 		{
-			InputStream is = _this.getClass().getResourceAsStream(source);
-			if (is == null) is = _this.getClass().getResourceAsStream("/"+source);
+			Class cls = new Object().getClass();
+			InputStream is = cls.getResourceAsStream(source);
+			if (is == null) is = cls.getResourceAsStream("/"+source);
 			if (is == null) return null;
-			if (playerFree)
-			{
-				p = Manager.createPlayer(is, mediaType);
-				playerFree = false;
-				p.addPlayerListener(_this);
-			}
-			else
-			return null;
-		
+			p = Manager.createPlayer(is, mediaType);
+			playerFree = false;
+			p.addPlayerListener(_this);
 		}
 		catch (Exception e)
 		{

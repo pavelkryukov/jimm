@@ -356,6 +356,11 @@ public class Options
 		//#sijapp cond.end#
 		
 		setBoolean(OPTIONS_LANG_CHANGED,              false);
+		
+		// Options.OPTION_ONLINE_NOTIF_FILE,  "online.wav"
+		selectSoundType("online.",  OPTION_ONLINE_NOTIF_FILE);
+		selectSoundType("message.", OPTION_MESS_NOTIF_FILE);
+		selectSoundType("typing.",  OPTION_TYPING_FILE);
 	}
 	
 	static public void resetLangDependedOpts()
@@ -602,6 +607,28 @@ public class Options
 		// Construct option form
 		optionsForm = new OptionsForm();
 		optionsForm.activate();
+	}
+	
+	private static void selectSoundType(String name, int option)
+	{
+		boolean ok;
+		
+		/* Test existsing option */
+		ok = ContactList.testSoundFile( getString(option) );
+		if (ok) return;
+
+		/* Test other extensions */
+		String[] exts = Util.explode("wav|mp3", '|');
+		for (int i = 0; i < exts.length; i++)
+		{
+			String testFile = name+exts[i];
+			ok = ContactList.testSoundFile(testFile);
+			if (ok)
+			{
+				setString(option, testFile);
+				break;
+			}
+		}
 	}
 	
 }

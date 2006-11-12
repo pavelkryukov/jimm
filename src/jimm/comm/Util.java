@@ -2117,6 +2117,28 @@ public class Util
 		if (index == -1) return original;
 		return original.substring(0, index)+to+original.substring(index+from.length(), original.length());
 	}
+	
+	static public String[] explode(String text, char seperator)
+	{
+		Vector tmp = new Vector();
+		StringBuffer strBuf = new StringBuffer();
+		int len = text.length();
+		for (int i = 0; i < len; i++)
+		{
+			char chr = text.charAt(i);
+			if (chr == seperator)
+			{
+				tmp.addElement(strBuf.toString());
+				strBuf.delete(0, strBuf.length());
+			}
+			else strBuf.append(chr);
+		}
+		tmp.addElement(strBuf.toString());
+		String[] result = new String[tmp.size()];
+		tmp.copyInto(result);
+		return result; 
+	}
+	
 
 	// Merge two received capabilities into one byte array
 	public static byte[] mergeCapabilities(byte[] capabilities_old, byte[] capabilities_new)
