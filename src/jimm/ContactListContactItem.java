@@ -45,8 +45,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	private static final int CM_SENDING_MESSAGE  = 1;
 	private static final int CM_RENAMING_CONTACT = 2;
 	private static int currentMode;
-	private static int[] groupIds;
-	
 	
 	/* No capability */
 	public static final int CAP_NO_INTERNAL = 0x00000000;

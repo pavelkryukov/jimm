@@ -40,7 +40,8 @@ import javax.microedition.lcdui.TextField;
 
 import jimm.comm.SearchAction;
 import jimm.comm.Icq;
-import jimm.util.ResourceBundle;
+import jimm.comm.Util;
+import jimm.util.*;
 import DrawControls.*;
 
 public class Search
@@ -71,19 +72,17 @@ public class Search
 
 	final public static int LAST_INDEX = 10;
 
-	final public static String DEFAULT_AGE = "0-99";
-
-	// Results
+	/* Results */
 	private Vector results;
 
-	// Constructor
+	/* Constructor */
 	public Search(boolean liteVersion)
 	{
 		this.results = new Vector();
 		this.liteVersion = liteVersion;
 	}
 
-	// Add a result to the results vector
+	/* Add a result to the results vector */
 	public void addResult(String uin, String nick, String name, String email, String auth, int status, String gender, int age)
 	{
 		String[] resultData = new String[JimmUI.UI_LAST_ID];
@@ -100,19 +99,19 @@ public class Search
 		this.results.addElement(resultData);
 	}
 
-	// Return a result object by given Nr
+	/* Return a result object by given Nr */
 	public String[] getResult(int nr)
 	{
 		return (String[]) results.elementAt(nr);
 	}
 
-	// Return size of search results
+	/* Return size of search results */
 	public int size()
 	{
 		return results.size();
 	}
 
-	// Return the SearchForm object
+	/* Return the SearchForm object */
 	public SearchForm getSearchForm()
 	{
 		if (searchForm == null) searchForm = new SearchForm();
@@ -123,26 +122,27 @@ public class Search
 	/** ************************************************************************* */
 	/** ************************************************************************* */
 
-	// Class for the search forms
+	/* Class for the search forms */
 	public class SearchForm implements CommandListener, VirtualListCommands
 	{
-		// Commands
+		/* Commands */
 		private Command backCommand;
 		private Command searchCommand;
 		private Command addCommand;
 		private Command previousCommand;
 		private Command nextCommand;
 		private Command cmdSendMessage;
+		private Command cmdShowInfo;
 
-		// Forms for results and query
+		/* Forms for results and query */
 		private Form searchForm;
 
 		private TextList screen;
 
-		// List for group selection
+		/* List for group selection */
 		private List groupList;
 
-		// Textboxes for search
+		/* Textboxes for search */
 		private TextField uinSearchTextBox;
 
 		private TextField nickSearchTextBox;
@@ -159,29 +159,30 @@ public class Search
 
 		private ChoiceGroup chgrAge;
 
-		// Choice boxes for gender and online choice
+		/* Choice boxes for gender and online choice */
 		private ChoiceGroup gender;
 
 		private ChoiceGroup onlyOnline;
 
-		// Selectet index in result screen
+		/* Selectet index in result screen */
 		int selectedIndex;
 
-		// constructor for search form
+		/* constructor for search form */
 		public SearchForm()
 		{
-			// Commands
+			/* Commands */
 			this.searchCommand = new Command(ResourceBundle.getString("search_user"), Command.OK, 1);
 			this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
 			this.addCommand = new Command(ResourceBundle.getString("add_to_list"), Command.ITEM, 1);
 			this.previousCommand = new Command(ResourceBundle.getString("prev"), Command.ITEM, 4);
 			this.nextCommand = new Command(ResourceBundle.getString("next"), Command.ITEM, 5);
 			this.cmdSendMessage = new Command(ResourceBundle.getString("send_message"), Command.ITEM, 6);
+			this.cmdShowInfo = new Command(ResourceBundle.getString("info"), Command.ITEM, 7);
 
-			// Form
+			/* Form */
 			this.searchForm = new Form(ResourceBundle.getString("search_user"));
 
-			// TextFields
+			/* TextFields */
 			this.uinSearchTextBox = new TextField(ResourceBundle.getString("uin"), "", 32, TextField.NUMERIC);
 			this.nickSearchTextBox = new TextField(ResourceBundle.getString("nick"), "", 32, TextField.ANY);
 			this.firstnameSearchTextBox = new TextField(ResourceBundle.getString("firstname"), "", 32, TextField.ANY);
@@ -190,10 +191,9 @@ public class Search
 			this.citySearchTextBox = new TextField(ResourceBundle.getString("city"), "", 32, TextField.ANY);
 			this.keywordSearchTextBox = new TextField(ResourceBundle.getString("keyword"), "", 32, TextField.ANY);
 
-			chgrAge = new ChoiceGroup(ResourceBundle.getString("age"), ChoiceGroup.EXCLUSIVE, new String[] { "-", "18-22", "23-29", "30-39", "40-49", "50-59",
-					">60" }, null);
+			chgrAge = new ChoiceGroup(ResourceBundle.getString("age"), ChoiceGroup.EXCLUSIVE, Util.explode("-|18-22|23-29|30-39|40-49|50-59|>60", '|'), null);
 
-			// Choice Groups
+			/* Choice Groups */
 			this.gender = new ChoiceGroup(ResourceBundle.getString("gender"), Choice.EXCLUSIVE);
 			this.gender.append(ResourceBundle.getString("female_male"), null);
 			this.gender.append(ResourceBundle.getString("female"), null);
@@ -213,13 +213,14 @@ public class Search
 			this.searchForm.append(this.chgrAge);
 			this.searchForm.setCommandListener(this);
 
-			// Result Screen
+			/* Result Screen */
 			screen = new TextList(null);
 			screen.setVLCommands(this);
 			screen.addCommand(this.previousCommand);
 			screen.addCommand(this.nextCommand);
 			screen.addCommand(this.addCommand);
 			screen.addCommand(this.cmdSendMessage);
+			screen.addCommand(this.cmdShowInfo);
 			screen.setCursorMode(TextList.SEL_NONE);
 			JimmUI.setColorScheme(screen);
 		}
@@ -228,7 +229,7 @@ public class Search
 		static final public int ACTIV_JUST_SHOW      = 2;
 		static final public int ACTIV_SHOW_NORESULTS = 3;
 
-		// Activate search form
+		/* Activate search form */
 		public void activate(int type)
 		{
 			switch (type)
@@ -256,7 +257,7 @@ public class Search
 
 		public void drawResultScreen(int n)
 		{
-			// Remove the older entrys here
+			/* Remove the older entrys here */
 			screen.clear();
 
 			if (Search.this.size() > 0)
@@ -276,7 +277,7 @@ public class Search
 			}
 			else
 			{
-				// Show a result entry
+				/* Show a result entry */
 
 				screen.lock();
 				screen.setCaption(ResourceBundle.getString("results") + " 0/0");
@@ -376,10 +377,10 @@ public class Search
 					if (e.isCritical()) return;
 				}
 
-				// Clear results
+				/* Clear results */
 				results.removeAllElements();
 
-				// Start timer 
+				/* Start timer */ 
 				SplashCanvas.addTimerTask("wait", act, true);
 			}
 			
@@ -399,7 +400,7 @@ public class Search
 				}
 				else
 				{
-					// Show list of groups to select which group to add to
+					/* Show list of groups to select which group to add to */
 					groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
 					for (int i = 0; i < ContactList.getGroupItems().length; i++)
 					{
@@ -431,6 +432,13 @@ public class Search
 				//ContactListContactItem.CONTACTITEM_HAS_CHAT
 				cItem.setStringValue(ContactListContactItem.CONTACTITEM_NAME, resultData[JimmUI.UI_NICK]);
 				cItem.newMessage();
+			}
+			
+			/* Command "Show info" */ 
+			else if (c == this.cmdShowInfo)
+			{
+				String[] resultData = getResult(selectedIndex);
+				JimmUI.requiestUserInfo(resultData[JimmUI.UI_UIN_LIST], resultData[JimmUI.UI_NICK]);
 			}
 		}
 		
