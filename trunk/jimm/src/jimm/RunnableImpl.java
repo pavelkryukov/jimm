@@ -164,15 +164,11 @@ public class RunnableImpl implements Runnable
 		haveToBeepNow = false;
 //#sijapp cond.end #
 		
-		System.out.println("as - 1");
 		callSerially(TYPE_ADD_MSG, message, new Boolean(!haveToBeepNow));
-		System.out.println("as - 2");
 		if (haveToBeepNow) ContactList.playSoundNotification(ContactList.SOUND_TYPE_MESSAGE);
-		System.out.println("as - 3");
 // #sijapp cond.if target is "MIDP2" #
 		Jimm.setMinimized(false);
 // #sijapp cond.end #
-		System.out.println("as - 4");
 	}
 	
 	static public void updateContactList
