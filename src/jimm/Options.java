@@ -142,6 +142,7 @@ public class Options
 	public static final int OPTIONS_LOCAL_OFFSET       =  90;   /* int     */
 	
 	public static final int OPTION_FULL_SCREEN         = 145;   /* boolean */
+	public static final int OPTION_SILENT_MODE         = 150;   /* boolean */	
 	
 	protected static final int OPTIONS_LANG_CHANGED    = 148;
 	
@@ -166,6 +167,7 @@ public class Options
 	public static final int HOTKEY_MINIMIZE = 9;
 	public static final int HOTKEY_CLI_INFO = 10;
 	public static final int HOTKEY_FULLSCR  = 11;
+	public static final int HOTKEY_SOUNDOFF = 12;
 	
 	//#sijapp cond.if modules_DEBUGLOG is "true" #
 	private static boolean checkKeys = false;
@@ -327,6 +329,9 @@ public class Options
 		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);
 		//#sijapp cond.end #
 		
+		// #sijapp cond.if target isnot "DEFAULT" #
+		setBoolean(Options.OPTION_SILENT_MODE,        false);
+		// #sijapp cond.end #
 		
 		setInt    (Options.OPTION_EXT_CLKEY4,         0);
 		setInt    (Options.OPTION_EXT_CLKEY6,         0);
@@ -357,9 +362,12 @@ public class Options
 		
 		setBoolean(OPTIONS_LANG_CHANGED,              false);
 		
+		
+// #sijapp cond.if target isnot "DEFAULT" #
 		selectSoundType("online.",  OPTION_ONLINE_NOTIF_FILE);
 		selectSoundType("message.", OPTION_MESS_NOTIF_FILE);
 		selectSoundType("typing.",  OPTION_TYPING_FILE);
+//#sijapp cond.end#
 	}
 	
 	static public void resetLangDependedOpts()
@@ -608,6 +616,7 @@ public class Options
 		optionsForm.activate();
 	}
 	
+// #sijapp cond.if target isnot "DEFAULT" #
 	private static void selectSoundType(String name, int option)
 	{
 		boolean ok;
@@ -629,7 +638,7 @@ public class Options
 			}
 		}
 	}
-	
+//#sijapp cond.end#	
 }
 
 /**************************************************************************/
@@ -764,6 +773,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		"full_screen",
 		// #sijapp cond.end#
+		
+		// #sijapp cond.if target isnot "DEFAULT" #
+		"#sound_off",
+		// #sijapp cond.end#
 	};
 	
 	final private int [] hotkeyActions = 
@@ -785,6 +798,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 		
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		Options.HOTKEY_FULLSCR,
+		// #sijapp cond.end#
+		
+		// #sijapp cond.if target isnot "DEFAULT" #
+		Options.HOTKEY_SOUNDOFF,
 		// #sijapp cond.end#
 	};
 	

@@ -539,6 +539,12 @@ public class JimmUI implements CommandListener
 				Options.safe_save();
 				break;
 			//#sijapp cond.end#
+				
+			// #sijapp cond.if target isnot "DEFAULT" #
+			case Options.HOTKEY_SOUNDOFF:
+				ContactList.changeSoundMode(false);
+				break;
+			//#sijapp cond.end#
 			}
 		}
 
