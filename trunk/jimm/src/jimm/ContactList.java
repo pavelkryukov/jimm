@@ -1183,9 +1183,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         // Update tree
         contactChanged(cItem, true, false);
     }
-
-    //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#    
+ 
+    //#sijapp cond.if target isnot "DEFAULT" #    
+    public static boolean testSoundFile(String source)
+    {
+    	playerFree = true;
+    	Player player = createPlayer(source);
+    	boolean ok = (player != null);
+    	if (player != null) player.close();
+    	playerFree = true;
+    	return ok;
+    }
+	//#sijapp cond.end#    
     
+    //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#       
     // Reaction to player events. (Thanks to Alexander Barannik for idea!)
     public void playerUpdate(final Player player, final String event, Object eventData)
     {
@@ -1196,15 +1207,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	}
     }
     
-    public static boolean testSoundFile(String source)
-    {
-    	playerFree = true;
-    	Player player = createPlayer(source);
-    	boolean ok = (player != null);
-    	if (player != null) player.close();
-    	playerFree = true;
-    	return ok;
-    }
+
 
 	/* Creates player for file 'source' */
     static private Player createPlayer(String source)
