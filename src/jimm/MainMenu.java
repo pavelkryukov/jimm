@@ -123,7 +123,7 @@ public class MainMenu implements CommandListener
 	static private TextBox statusMessage;
 
 	/* Connected */
-	static private boolean isConnected;
+	static private boolean isConnected, haveToRebuild;
 
 	public MainMenu()
 	{
@@ -145,7 +145,7 @@ public class MainMenu implements CommandListener
 	/* Builds the main menu (visual list) */
 	static private void build()
 	{
-		if ((Icq.isConnected() != isConnected) || (MainMenu.list == null))
+		if ((Icq.isConnected() != isConnected) || (MainMenu.list == null) || haveToRebuild)
 		{
 			MainMenu.eventList = new int[MENU_EXIT];
 			MainMenu.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
@@ -197,7 +197,14 @@ public class MainMenu implements CommandListener
 		{
 			if ((MainMenu.list != null) && (!Icq.isNotConnected())) MainMenu.list.set(2, ResourceBundle.getString("set_status"), getStatusImage());
 		}
+		
+		haveToRebuild = false;
 		MainMenu.list.setSelectedIndex(0, true);
+	}
+	
+	static public void rebuild()
+	{
+		haveToRebuild = true;
 	}
 
 	/* Displays the given alert and activates the main menu afterwards */
