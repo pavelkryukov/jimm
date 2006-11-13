@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ********************************************************************************
-File: util/build-release/build.xml
+File: util/build-nightly/build.xml
 Version: ###VERSION###  Date: ###DATE###
 Author(s): Manuel Linsmayer, Andreas Rossbacher
 ********************************************************************************
@@ -49,10 +49,10 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- NIGHTLY VERSION SECTION - EVERY NIGHTLY HAS A UNIQUE VERSION NUMBER -->
 	<!-- ******************************************************************* -->
 	<tstamp>
-		<format property="date" pattern="yyyy/MM/dd" timezone="GMT+00:00" />
+		<format property="date" pattern="yyMMdd" timezone="GMT+00:00" />
 	</tstamp>
-	<property name="version/jimm"      value="0.5.0_${DSTAMP}"            />
-	<property name="version/java"      value="0.5.0"                      />
+	<property name="version/jimm"      value="0.5.2_${date}"            />
+	<property name="version/java"      value="0.5.2"                      />
 	<!-- ******************************************************************* -->
 	
 	<!-- ******************************************************************* -->
@@ -64,6 +64,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ******************************************************************* -->
 	<!-- CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING   -->
 	<!-- ******************************************************************* -->
+
 
 
 	<!-- Buildfile description -->
@@ -83,7 +84,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="midp2-moduleslist-full" value="TRAFFIC,HISTORY,FILES,SMILES,PROXY"/>
 	<property name="modulelist-light" value="NO_MODULES"/>
 
-	<property name="langlist" value="DE,EN,RU"/>
+	<property name="langlist" value="EN,DE,RU"/>
 	
     <!-- Auxiliary property -->
 	<property name="3ns" value="###"/>
@@ -113,8 +114,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 				<property name="last-nightly-version" value="NONE"/>
 			</else>
 		</if>
-		<echo message="${version/jimm}"/>
-	<echo message="${last-nightly-version}"/>
+		<echo message="Building version: ${version/jimm}"/>
+		<echo message="Current version : ${last-nightly-version}"/>
 		<echo file="current-nightly">${version/jimm}
 ${webpagedate}
 ${midp2-moduleslist-full}
@@ -271,7 +272,11 @@ ${modulelist-light}
 			<property name="proguard"          value="${proguard}"/>
 			<property name="proguard/lib"      value="${proguard/lib}"/>
 		</ant>
-		<replace dir="${cvsdir}/${package}"
+		<mkdir dir="${version/jimm}_src"/>
+		<copy todir="${version/jimm}_src">
+			<fileset dir="${cvsdir}"/>
+		</copy>
+		<replace dir="${version/jimm}_src"
 			encoding="UTF-8">
 			<replacefilter token="${3ns}VERSION${3ns}"
 				value="${version/jimm}"/>
@@ -281,7 +286,7 @@ ${modulelist-light}
 				value="${date}"/>
 		</replace>
 		<exec dir="." executable="${7z/exec}">
-			<arg line="a ${version/jimm}/${package}_src.7z  ${cvsdir}/* -r"/>
+			<arg line="a ${version/jimm}/${package}_src.7z  ${version/jimm}_src/* -r"/>
 		</exec>
 		<mkdir dir="${nightly/path}/${version/jimm}"/>			
 		<copy todir="${nightly/path}/${version/jimm}">
@@ -316,6 +321,7 @@ ${modulelist-light}
 	<target name="clean" description="Delete the release">
 		<delete dir="${cvsdir}"/>
 		<delete dir="${version/jimm}"/>
+		<delete dir="${version/jimm}_src"/>
 	</target>
 	
 </project>
