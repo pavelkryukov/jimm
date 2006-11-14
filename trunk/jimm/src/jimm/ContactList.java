@@ -1033,7 +1033,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			text += sep + traffic + ResourceBundle.getString("kb") + sep + Util.getDateString(true);
 		else
 			text += sep + Util.getDateString(true);
+		//#sijapp cond.if target is "SIEMENS2"#
+		if( !Options.getBoolean(Options.OPTION_FULL_SCREEN) )
+			return;
+		String accuLevel = System.getProperty("MPJC_CAP");
+		if( accuLevel != null )
+			text += "-" + accuLevel + "%";
 		tree.setCaption(text);
+		//#sijapp cond.end#
 	}
 
 	// Removes a contact list item

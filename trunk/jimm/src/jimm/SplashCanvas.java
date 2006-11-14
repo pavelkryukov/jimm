@@ -76,7 +76,26 @@ public class SplashCanvas extends Canvas
 
 	// Location of the notice image (inside the JAR file)
 	private static final String NOTICE_IMG = "/notice.png";
+	
+	//#sijapp cond.if target is "SIEMENS2"#
+	private static final String BATT_IMG = "/batt.png";
+	private static Image battImg = null;
+	
+	private static Image getBattImg() 
+	{
+		if( battImg == null )
+		{
+			try
+			{
+				battImg = Image.createImage(SplashCanvas.BATT_IMG);
+			}
+			catch(IOException e){}
+		}
+		return battImg;
+	}
 
+	//#sijapp cond.end#
+	
 	// Image object, holds the notice image
 	private static Image notice;
 
@@ -90,7 +109,6 @@ public class SplashCanvas extends Canvas
 	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 	private static int height = font.getHeight();
 	
-
 	// Initializer block
 	static
 	{
@@ -241,6 +259,7 @@ public class SplashCanvas extends Canvas
 	// Enable keylock
 	static public synchronized void lock()
 	{
+		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommnad);
 		if (isLocked) return;
 		
 		isLocked = true;
@@ -401,7 +420,19 @@ public class SplashCanvas extends Canvas
 				g.drawString("# " + availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
 			}
             
-
+			//#sijapp cond.if target is "SIEMENS2"#
+			String accuLevel = System.getProperty("MPJC_CAP");
+			if( accuLevel != null && isLocked )
+			{
+				accuLevel += "%";
+				int fontX = getWidth() -  SplashCanvas.font.stringWidth(accuLevel) - 1;
+				if( getBattImg() != null )
+					g.drawImage(getBattImg(), fontX - getBattImg().getWidth() - 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
+				g.setColor(255, 255, 255);
+				g.setFont(SplashCanvas.font);
+				g.drawString(accuLevel, fontX, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
+			}
+			//#sijapp cond.end#
 
 			// Draw the date bellow notice if set up to do so
 			if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
