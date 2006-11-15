@@ -1328,20 +1328,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     // Play a sound notification
     static public void playSoundNotification(int notType)
     {
-//#sijapp cond.if target isnot "DEFAULT"#
-    	if (Options.getBoolean(Options.OPTION_SILENT_MODE) == true) return;
-//#sijapp cond.end#    	
-    	
     	synchronized (_this)
     	{
     		if (!treeBuilt) return;
     	
-//#sijapp cond.if target is "SIEMENS1" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-        
-//#sijapp cond.if target is "SIEMENS1"#
-    		Light.setLightOn();
-//#sijapp cond.end#
-        
     		int vibraKind = Options.getInt(Options.OPTION_VIBRATOR);
     		if(vibraKind == 2) vibraKind = SplashCanvas.locked()?1:0;
     		if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
@@ -1352,7 +1342,17 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     			Jimm.display.vibrate(500);
 //#sijapp cond.end#
     		}
-        
+
+    		//#sijapp cond.if target isnot "DEFAULT"#
+        	if (Options.getBoolean(Options.OPTION_SILENT_MODE) == true) return;
+        	//#sijapp cond.end#
+
+//        	#sijapp cond.if target is "SIEMENS1" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+            
+//    #sijapp cond.if target is "SIEMENS1"#
+       		Light.setLightOn();
+//    #sijapp cond.end#
+
     		int not_mode = 0;
         
     		switch (notType)
