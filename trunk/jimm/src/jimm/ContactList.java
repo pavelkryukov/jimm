@@ -1039,8 +1039,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		String accuLevel = System.getProperty("MPJC_CAP");
 		if( accuLevel != null )
 			text += "-" + accuLevel + "%";
-		tree.setCaption(text);
 		//#sijapp cond.end#
+		tree.setCaption(text);
 	}
 
 	// Removes a contact list item
