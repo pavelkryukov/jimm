@@ -537,6 +537,13 @@ public class JimmUI implements CommandListener
 				VirtualList.setFullScreen(fsValue);
 				Options.setBoolean(Options.OPTION_FULL_SCREEN, fsValue);
 				Options.safe_save();
+				//#sijapp cond.if target is "SIEMENS2"#
+				//#sijapp cond.if modules_TRAFFIC is "true" #
+				ContactList.updateTitle(Traffic.getSessionTraffic());
+				//#sijapp cond.else #
+				ContactList.updateTitle(0);
+				//#sijapp cond.end#
+				//#sijapp cond.end#
 				break;
 			//#sijapp cond.end#
 				

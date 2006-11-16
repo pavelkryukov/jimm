@@ -1034,11 +1034,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		else
 			text += sep + Util.getDateString(true);
 		//#sijapp cond.if target is "SIEMENS2"#
-		if( !Options.getBoolean(Options.OPTION_FULL_SCREEN) )
-			return;
-		String accuLevel = System.getProperty("MPJC_CAP");
-		if( accuLevel != null )
-			text += "-" + accuLevel + "%";
+		if( Options.getBoolean(Options.OPTION_FULL_SCREEN) )
+		{
+			String accuLevel = System.getProperty("MPJC_CAP");
+			if( accuLevel != null )
+				text += "-" + accuLevel + "%";
+		}
 		//#sijapp cond.end#
 		tree.setCaption(text);
 	}
