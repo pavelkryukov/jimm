@@ -363,11 +363,11 @@ public class Options
 		setBoolean(OPTIONS_LANG_CHANGED,              false);
 		
 		
-// #sijapp cond.if target isnot "DEFAULT" #
+		// #sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 		selectSoundType("online.",  OPTION_ONLINE_NOTIF_FILE);
 		selectSoundType("message.", OPTION_MESS_NOTIF_FILE);
 		selectSoundType("typing.",  OPTION_TYPING_FILE);
-//#sijapp cond.end#
+		//#sijapp cond.end#
 	}
 	
 	static public void resetLangDependedOpts()
@@ -616,7 +616,7 @@ public class Options
 		optionsForm.activate();
 	}
 	
-// #sijapp cond.if target isnot "DEFAULT" #
+// #sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 	private static void selectSoundType(String name, int option)
 	{
 		boolean ok;

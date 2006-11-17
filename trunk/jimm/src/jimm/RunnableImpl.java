@@ -158,17 +158,19 @@ public class RunnableImpl implements Runnable
 	{
 		boolean haveToBeepNow;
 		
-//#sijapp cond.if target is "MIDP2" #
+		//#sijapp cond.if target is "MIDP2" #
 		haveToBeepNow = Jimm.is_phone_SE();
-//#sijapp cond.else#
+		//#sijapp cond.else#
 		haveToBeepNow = false;
-//#sijapp cond.end #
+		//#sijapp cond.end #
 		
 		callSerially(TYPE_ADD_MSG, message, new Boolean(!haveToBeepNow));
+		// #sijapp cond.if target isnot "DEFAULT"#		
 		if (haveToBeepNow) ContactList.playSoundNotification(ContactList.SOUND_TYPE_MESSAGE);
-// #sijapp cond.if target is "MIDP2" #
+		// #sijapp cond.end #
+		// #sijapp cond.if target is "MIDP2" #
 		Jimm.setMinimized(false);
-// #sijapp cond.end #
+		// #sijapp cond.end #
 	}
 	
 	static public void updateContactList
@@ -201,7 +203,9 @@ public class RunnableImpl implements Runnable
 		setInt(arguments,  10, idle       );  
 		
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
+		// #sijapp cond.if target isnot "DEFAULT" #		
 		ContactList.checkAndPlayOnlineSound(uin, status);
+		// #sijapp cond.end #		
 	}
 	
 	//#sijapp cond.if target isnot "DEFAULT"#
