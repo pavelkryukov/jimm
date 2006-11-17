@@ -362,6 +362,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		tree.unlock();
 		Jimm.display.setCurrent(ContactList.tree);
 
+		// #sijapp cond.if target isnot "DEFAULT" #
 		// play sound notifications after connecting 
 		if (needPlayOnlineNotif)
 		{
@@ -374,6 +375,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 			needPlayMessNotif = false;
 			playSoundNotification(SOUND_TYPE_MESSAGE);
 		}
+		//#sijapp cond.end#		
 	}
     
     // is called by options form when options changed
@@ -972,7 +974,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         if (statusChanged) contactChanged(cItem, false, (wasOnline && !nowOnline) || (!wasOnline && nowOnline)); 
     }
 
-
+	// #sijapp cond.if target isnot "DEFAULT" #
     static public void checkAndPlayOnlineSound(String uin, int newStatus)
     {
         ContactListContactItem cItem = getItembyUIN(uin);
@@ -982,6 +984,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_ONLINE))
         		playSoundNotification(SOUND_TYPE_ONLINE);  
     }
+	// #sijapp cond.end#    
     
 
     // Updates the client-side contact list (called when a contact changes status)
@@ -1184,7 +1187,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         
         // Notify user
         if ( !treeBuilt ) needPlayMessNotif |= true;
+		// #sijapp cond.if target isnot "DEFAULT" #
         else if (haveToBeep) playSoundNotification(SOUND_TYPE_MESSAGE);
+		// #sijapp cond.end #
         
         cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true);
         
@@ -1192,7 +1197,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         contactChanged(cItem, true, false);
     }
  
-    //#sijapp cond.if target isnot "DEFAULT" #    
+    //#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
+    
     public static boolean testSoundFile(String source)
     {
     	playerFree = true;
@@ -1326,6 +1332,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	}
 	//#sijapp cond.end#
 	
+	//#sijapp cond.if target isnot  "DEFAULT"#		
     // Play a sound notification
     static public void playSoundNotification(int notType)
     {
@@ -1337,22 +1344,19 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     		if(vibraKind == 2) vibraKind = SplashCanvas.locked()?1:0;
     		if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
     		{
-//#sijapp cond.if target is "SIEMENS1"#
+    			//#sijapp cond.if target is "SIEMENS1"#
     			Vibrator.triggerVibrator(500);
-//#sijapp cond.else#
+    			//#sijapp cond.else#
     			Jimm.display.vibrate(500);
-//#sijapp cond.end#
+    			//#sijapp cond.end#
     		}
 
-    		//#sijapp cond.if target isnot "DEFAULT"#
         	if (Options.getBoolean(Options.OPTION_SILENT_MODE) == true) return;
-        	//#sijapp cond.end#
-
-//        	#sijapp cond.if target is "SIEMENS1" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
             
-//    #sijapp cond.if target is "SIEMENS1"#
+        	//#sijapp cond.if target is "SIEMENS1" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+        	//#sijapp cond.if target is "SIEMENS1"#
        		Light.setLightOn();
-//    #sijapp cond.end#
+       		//#sijapp cond.end#
 
     		int not_mode = 0;
         
@@ -1366,11 +1370,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     			not_mode = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
     			break;
 			
-//#sijapp cond.if target isnot "DEFAULT"#
     		case SOUND_TYPE_TYPING:
     			not_mode = Options.getInt(Options.OPTION_TYPING_MODE) - 1;
     			break;
-//#sijapp cond.end#
     		}
             
     		switch (not_mode)
@@ -1385,9 +1387,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     					break;
     				case SOUND_TYPE_ONLINE:
                 	
-//#sijapp cond.if target isnot "DEFAULT"#
     				case SOUND_TYPE_TYPING:
-//#sijapp cond.end#
     					Manager.playTone(ToneControl.C4+7, 500, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
     				}
 
@@ -1405,13 +1405,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     				if (notType == SOUND_TYPE_MESSAGE)
     				{
                 	//Siemens 65-75 bugfix
-// #sijapp cond.if target is "SIEMENS2"#
+    					// #sijapp cond.if target is "SIEMENS2"#
 	        			Player p1 = createPlayer("silence.wav");
         				setVolume(p1,100);
         				p1.start();
         				p1.close();
         				playerFree = true;
-//#sijapp cond.end#
+        				//#sijapp cond.end#
 	                	p = createPlayer( Options.getString(Options.OPTION_MESS_NOTIF_FILE) );
     	            	if (p == null) return;
         	            setVolume(p, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
@@ -1419,33 +1419,31 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	                else if (notType == SOUND_TYPE_ONLINE)
                 	{
 	                	// Siemens 65-75 bugfix
-// #sijapp cond.if target is "SIEMENS2"#
+	                	// #sijapp cond.if target is "SIEMENS2"#
         				Player p1 = createPlayer("silence.wav");
         				setVolume(p1,100);
         				p1.start();
 	        			p1.close();
     	    			playerFree = true;
-//#sijapp cond.end#
+    	    			//#sijapp cond.end#
 	                	p = createPlayer( Options.getString(Options.OPTION_ONLINE_NOTIF_FILE) );
     	            	if (p == null) return;
         	            setVolume(p, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL)); 
             	    }
-//#sijapp cond.if target isnot "DEFAULT"#
 	                else
     	            {
         	        	// Siemens 65-75 bugfix
-// #sijapp cond.if target is "SIEMENS2"#
+	                	// #sijapp cond.if target is "SIEMENS2"#
         				Player p1 = createPlayer("silence.wav");
         				setVolume(p1,100);
         				p1.start();
         				p1.close();
         				playerFree = true;
-//#sijapp cond.end#
+        				//#sijapp cond.end#
                 		p = createPlayer( Options.getString(Options.OPTION_TYPING_FILE) );
                 		if (p == null) return;
                     	setVolume(p, Options.getInt(Options.OPTION_TYPING_VOL)); 
                 	}
-//#sijapp cond.end#
                 
                 	p.start();
             	}
@@ -1458,13 +1456,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 
         	}
     		
-// #sijapp cond.if target is "SIEMENS1"#
+    		// #sijapp cond.if target is "SIEMENS1"#
 	        Light.setLightOff();
-// #sijapp cond.end#
+	        // #sijapp cond.end#
+	        
+	        // #sijapp cond.end#
         
-// #sijapp cond.end#
-        
-// #sijapp cond.if target is "RIM"#
+	        // #sijapp cond.if target is "RIM"#
 	        if (Options.getBoolean(Options.OPTION_VIBRATOR))
     	    {
 				// had to use full path since import already contains another Alert object
@@ -1484,12 +1482,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
             	net.rim.device.api.system.Alert.startBuzzer(tune, 50);
             	break;
 			}
-// #sijapp cond.end#
+	        // #sijapp cond.end#
     	}
 
     }
+    // #sijapp cond.end#
     
-// #sijapp cond.if target isnot "DEFAULT"#    
+    // #sijapp cond.if target isnot "DEFAULT"#    
     static public boolean changeSoundMode(boolean activate)
     {
     	boolean newValue = !Options.getBoolean(Options.OPTION_SILENT_MODE);
@@ -1500,8 +1499,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 		Jimm.display.setCurrent(alert, activate ? tree : Jimm.display.getCurrent());
     	return newValue;
     }
-    
-// #sijapp cond.end#
+    // #sijapp cond.end#
     
     static ContactListContactItem lastChatItem = null;
     
