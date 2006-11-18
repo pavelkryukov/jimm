@@ -1071,6 +1071,21 @@ class OptionsForm implements CommandListener, ItemStateListener
     
     final private static int TAG_DELETE_ACCOUNT = 1;
     
+    /* Helpers for options UI: */
+    static private void addStr(ChoiceGroup chs, String lngStr)
+    {
+    	String[] strings = Util.explode(lngStr, '|');
+    	for (int i = 0; i < strings.length; i++) chs.append(ResourceBundle.getString(strings[i]), null);
+    }
+    
+    static private ChoiceGroup createSelector(String cap, String items, int optValue)
+    {
+    	ChoiceGroup chs = new ChoiceGroup(ResourceBundle.getString(cap), Choice.EXCLUSIVE);
+    	addStr(chs, items);
+    	chs.setSelectedIndex(Options.getInt(optValue), true);
+    	return chs;
+    }
+    
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
@@ -1139,10 +1154,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                srvPortTextField = new TextField(ResourceBundle.getString("server_port"), Options.getString(Options.OPTION_SRV_PORT), 5, TextField.NUMERIC);
 	                
 	                connTypeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_type"), Choice.EXCLUSIVE);
-	                connTypeChoiceGroup.append(ResourceBundle.getString("socket"), null);
-	                connTypeChoiceGroup.append(ResourceBundle.getString("http"), null);
+	                addStr(connTypeChoiceGroup, "socket"+"|"+"http");
 	                // #sijapp cond.if modules_PROXY is "true"#
-	                connTypeChoiceGroup.append(ResourceBundle.getString("proxy"), null);
+	                addStr(connTypeChoiceGroup, "proxy");
 	                connTypeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_CONN_TYPE),true);
 	                // #sijapp cond.else#
 	                connTypeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_CONN_TYPE)%2,true);
@@ -1152,11 +1166,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                keepConnAliveChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_KEEP_CONN_ALIVE));
 	                connAliveIntervTextField = new TextField(ResourceBundle.getString("timeout_interv"), Options.getString(Options.OPTION_CONN_ALIVE_INVTERV), 3, TextField.NUMERIC);
 	                connPropChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_prop"), Choice.MULTIPLE);
-					connPropChoiceGroup.append(ResourceBundle.getString("md5_login"), null);
-	                connPropChoiceGroup.append(ResourceBundle.getString("async"), null);
-	                connPropChoiceGroup.append(ResourceBundle.getString("reconnect"), null);
+	                addStr(connPropChoiceGroup, "md5_login"+"|"+"async"+"|"+"reconnect");
 	                // #sijapp cond.if target isnot "MOTOROLA"#
-	                connPropChoiceGroup.append(ResourceBundle.getString("shadow_con"), null);
+	                addStr(connPropChoiceGroup, "shadow_con");
 	                // #sijapp cond.end#
 					connPropChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_MD5_LOGIN));
 	                if (Options.getInt(Options.OPTION_CONN_PROP) == 0)
@@ -1168,7 +1180,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                connPropChoiceGroup.setSelectedIndex(3, Options.getBoolean(Options.OPTION_SHADOW_CON));
 	                // #sijapp cond.end#
 	                autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
-	                autoConnectChoiceGroup.append(ResourceBundle.getString("yes"), null);
+	                addStr(autoConnectChoiceGroup, "yes");
 	                autoConnectChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_AUTO_CONNECT));
 					httpUserAgendTextField = new TextField(ResourceBundle.getString("http_user_agent"), Options.getString(Options.OPTION_HTTP_USER_AGENT), 256, TextField.ANY);
 					httpWAPProfileTextField = new TextField(ResourceBundle.getString("http_wap_profile"), Options.getString(Options.OPTION_HTTP_WAP_PROFILE), 256, TextField.ANY);
@@ -1187,9 +1199,7 @@ class OptionsForm implements CommandListener, ItemStateListener
                 // #sijapp cond.if modules_PROXY is "true"#
                 case OPTIONS_PROXY:
                     srvProxyType = new ChoiceGroup(ResourceBundle.getString("proxy_type"), Choice.EXCLUSIVE);
-                    srvProxyType.append(ResourceBundle.getString("proxy_socks4"), null);
-                    srvProxyType.append(ResourceBundle.getString("proxy_socks5"), null);
-                    srvProxyType.append(ResourceBundle.getString("proxy_guess"), null);
+                    addStr(srvProxyType, "proxy_socks4"+"|"+"proxy_socks5"+"|"+"proxy_guess");
                     // srvProxyType.append(ResourceBundle.getString("http"), null);
                     srvProxyType.setSelectedIndex(Options.getInt(Options.OPTION_PRX_TYPE), true);
                     
@@ -1236,42 +1246,35 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                choiceInterfaceMisc.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_FULL_SCREEN));
 	                //#sijapp cond.end#
 	                
-	                clSortByChoiceGroup = new ChoiceGroup(ResourceBundle.getString("sort_by"), Choice.EXCLUSIVE);
-	                clSortByChoiceGroup.append(ResourceBundle.getString("sort_by_status"), null);
-	                clSortByChoiceGroup.append(ResourceBundle.getString("sort_by_name"), null);
-	                clSortByChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_CL_SORT_BY), true);
+	                
+	                clSortByChoiceGroup = createSelector("sort_by", "sort_by_status"+"|"+"sort_by_name", Options.OPTION_CL_SORT_BY); 
 
 	                choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
-	                choiceContactList.append(ResourceBundle.getString("show_user_groups"), null);
-	                choiceContactList.append(ResourceBundle.getString("hide_offline"), null);
+	                addStr(choiceContactList, "show_user_groups"+"|"+"hide_offline");
 	                choiceContactList.setSelectedIndex(0, Options.getBoolean(Options.OPTION_USER_GROUPS));
 	                choiceContactList.setSelectedIndex(1, Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE));
-
-	                colorScheme = new ChoiceGroup(ResourceBundle.getString("color_scheme"), Choice.EXCLUSIVE);
-	                colorScheme.append(ResourceBundle.getString("black_on_white"), null);
-	                colorScheme.append(ResourceBundle.getString("white_on_black"), null);
-	                colorScheme.append(ResourceBundle.getString("white_on_blue"), null);
-	                colorScheme.setSelectedIndex(Options.getInt(Options.OPTION_COLOR_SCHEME), true);
+	                
+	                colorScheme = createSelector("color_scheme", "black_on_white"+"|"+"white_on_black"+"|"+"white_on_blue", Options.OPTION_COLOR_SCHEME); 
+	                	
 	                
 	                idx1 = 0;
 	                chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"), Choice.MULTIPLE);
-	                chrgChat.append(ResourceBundle.getString("chat_small_font"), null);
+	                addStr(chrgChat, "chat_small_font");
 	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT));
 	                
 	                // #sijapp cond.if modules_SMILES is "true"#
-	                chrgChat.append(ResourceBundle.getString("use_smiles"), null);
+	                addStr(chrgChat, "use_smiles");
 	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_USE_SMILES));
 	                // #sijapp cond.end#
 	                
 					//#sijapp cond.if modules_HISTORY is "true"#
-	                chrgChat.append(ResourceBundle.getString("use_history"), null);
+	                addStr(chrgChat, "use_history"+"|"+"show_prev_mess");
 	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_HISTORY));
-	                chrgChat.append(ResourceBundle.getString("show_prev_mess"), null);
 	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_SHOW_LAST_MESS));
 	                //#sijapp cond.end#
 	                
 	                // #sijapp cond.if target is "SIEMENS2"#
-	                chrgChat.append(ResourceBundle.getString("cl_chat"), null);
+	                addStr(chrgChat, "cl_chat");
 	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_CLASSIC_CHAT));
 	                // #sijapp cond.end#
 	                
@@ -1282,7 +1285,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					// #sijapp cond.if target is "MOTOROLA"#
 					lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
 					lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
-					lightManual.append(ResourceBundle.getString("yes"), null);
+					addStr(lightManual, "yes");
 					lightManual.setSelectedIndex(0, Options.getBoolean(Options.OPTION_LIGHT_MANUAL));
 					// #sijapp cond.end#
 					
@@ -1306,58 +1309,53 @@ class OptionsForm implements CommandListener, ItemStateListener
 					return;
                                        
 				case OPTIONS_SIGNALING:
-	            	// Initialize elements (Signaling section)
+	            	/* Initialize elements (Signaling section) */
 
 	            	// #sijapp cond.if target isnot "DEFAULT"#
-	                onlineNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("onl_notification"), Choice.EXCLUSIVE);
-	                onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
-	                onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-	                // #sijapp cond.if target isnot "RIM"#        
-	                onlineNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);               
-	                // #sijapp cond.end#                  
-	                onlineNotificationModeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE),true);
+	                onlineNotificationModeChoiceGroup = 
+	                	createSelector
+	                	(
+	                		"onl_notification",
+		                	"no"+"|"+"beep"
+		                	// #sijapp cond.if target isnot "RIM"#
+		                	+"|"+"sound"
+		                	// #sijapp cond.end#
+	                		,Options.OPTION_ONLINE_NOTIF_MODE
+	                	);
+	                
 	                // #sijapp cond.if target isnot "RIM"#                 
 	                onlineNotificationSoundfileTextField = new TextField(ResourceBundle.getString("onl_sound_file_name"), Options.getString(Options.OPTION_ONLINE_NOTIF_FILE), 32, TextField.ANY);
 	                // #sijapp cond.end#                 
-	                messageNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("message_notification"),Choice.EXCLUSIVE);
-	                messageNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
-	                messageNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-	                // #sijapp cond.if target isnot "RIM"#                 
-	                messageNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
-	                // #sijapp cond.end#                  
-	                messageNotificationModeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_MESS_NOTIF_MODE), true);
+	                messageNotificationModeChoiceGroup =
+	                	createSelector
+	                	(
+	                			"message_notification",
+	    	                	"no"+"|"+"beep"
+	    	                	// #sijapp cond.if target isnot "RIM"#
+	    	                	+"|"+"sound"
+	    	                	// #sijapp cond.end#
+	    	                	,Options.OPTION_MESS_NOTIF_MODE
+	                	);
+	                
 	                // #sijapp cond.if target isnot "RIM"#                  
 	                messageNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.getString(Options.OPTION_MESS_NOTIF_FILE), 32, TextField.ANY);
 	                messageNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.getInt(Options.OPTION_MESS_NOTIF_VOL) / 10);
 	                onlineNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL) / 10);
 	                typingNotificationSoundVolume = new Gauge(ResourceBundle.getString("volume"), true, 10, Options.getInt(Options.OPTION_TYPING_VOL) / 10);
 	                typingNotificationSoundfileTextField = new TextField(ResourceBundle.getString("msg_sound_file_name"), Options.getString(Options.OPTION_TYPING_FILE), 32, TextField.ANY);
-	                typingNotificationModeChoiceGroup = new ChoiceGroup(ResourceBundle.getString("typing_notify"),Choice.EXCLUSIVE);
-	                typingNotificationModeChoiceGroup.append(ResourceBundle.getString("no"), null);
-	                typingNotificationModeChoiceGroup.append(ResourceBundle.getString("typing_display_only"), null);
-	                typingNotificationModeChoiceGroup.append(ResourceBundle.getString("beep"), null);
-	                typingNotificationModeChoiceGroup.append(ResourceBundle.getString("sound"), null);
-	                typingNotificationModeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_TYPING_MODE), true);
+	                typingNotificationModeChoiceGroup = createSelector("typing_notify", "no"+"|"+"typing_display_only"+"|"+"beep"+"|"+"sound", Options.OPTION_TYPING_MODE); 
 	                // #sijapp cond.end#
 	                
-	                vibratorChoiceGroup = new ChoiceGroup(ResourceBundle.getString("vibration"), Choice.EXCLUSIVE);
-	                vibratorChoiceGroup.append(ResourceBundle.getString("no"), null);
-	                vibratorChoiceGroup.append(ResourceBundle.getString("yes"), null);
-	                vibratorChoiceGroup.append(ResourceBundle.getString("when_locked"), null);
-	                vibratorChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_VIBRATOR), true);
+	                vibratorChoiceGroup = createSelector("vibration", "no"+"|"+"yes"+"|"+"when_locked", Options.OPTION_VIBRATOR);
 
 					//#sijapp cond.if target="MOTOROLA"#
 					flashBkltChoiceGroup = new ChoiceGroup(ResourceBundle.getString("flash_backight"), Choice.MULTIPLE);
-					flashBkltChoiceGroup.append(ResourceBundle.getString("yes"), null);
+					addStr(flashBkltChoiceGroup, "yes");
 					flashBkltChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_FLASH_BACKLIGHT));
 					//#sijapp cond.end#
 	                // #sijapp cond.end#
 
-	                chrgPopupWin = new ChoiceGroup(ResourceBundle.getString("popup_win"), Choice.EXCLUSIVE);
-	                chrgPopupWin.append(ResourceBundle.getString("no"),       null);
-	                chrgPopupWin.append(ResourceBundle.getString("pw_forme"), null);
-	                chrgPopupWin.append(ResourceBundle.getString("pw_all"),   null);
-	                chrgPopupWin.setSelectedIndex(Options.getInt(Options.OPTION_POPUP_WIN2), true);
+	                chrgPopupWin = createSelector("popup_win", "no"+"|"+"pw_forme"+"|"+"pw_all", Options.OPTION_POPUP_WIN2);
 					
 					// #sijapp cond.if target isnot "DEFAULT"#     
 					optionsForm.append(messageNotificationModeChoiceGroup);
