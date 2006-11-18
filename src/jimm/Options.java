@@ -1086,6 +1086,12 @@ class OptionsForm implements CommandListener, ItemStateListener
     	return chs;
     }
     
+    static private void setChecked(ChoiceGroup chs, String lngStr, int optValue)
+    {
+    	addStr(chs, lngStr);
+    	chs.setSelectedIndex(chs.size()-1, Options.getBoolean(optValue));
+    }
+    
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
@@ -1161,30 +1167,33 @@ class OptionsForm implements CommandListener, ItemStateListener
 	                // #sijapp cond.else#
 	                connTypeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_CONN_TYPE)%2,true);
 	                // #sijapp cond.end#
+	                
 	                keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle.getString("keep_conn_alive"), Choice.MULTIPLE);
-	                keepConnAliveChoiceGroup.append(ResourceBundle.getString("yes"), null);
-	                keepConnAliveChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_KEEP_CONN_ALIVE));
+	                setChecked(keepConnAliveChoiceGroup, "yes", Options.OPTION_KEEP_CONN_ALIVE);
+	                
 	                connAliveIntervTextField = new TextField(ResourceBundle.getString("timeout_interv"), Options.getString(Options.OPTION_CONN_ALIVE_INVTERV), 3, TextField.NUMERIC);
+	                
 	                connPropChoiceGroup = new ChoiceGroup(ResourceBundle.getString("conn_prop"), Choice.MULTIPLE);
 	                addStr(connPropChoiceGroup, "md5_login"+"|"+"async"+"|"+"reconnect");
 	                // #sijapp cond.if target isnot "MOTOROLA"#
 	                addStr(connPropChoiceGroup, "shadow_con");
 	                // #sijapp cond.end#
 					connPropChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_MD5_LOGIN));
-	                if (Options.getInt(Options.OPTION_CONN_PROP) == 0)
-	                	connPropChoiceGroup.setSelectedIndex(1, false);
-	                else
-	                	connPropChoiceGroup.setSelectedIndex(1, true);
+                	connPropChoiceGroup.setSelectedIndex(1, Options.getInt(Options.OPTION_CONN_PROP) != 0);
 	                connPropChoiceGroup.setSelectedIndex(2, Options.getBoolean(Options.OPTION_RECONNECT));
 	                // #sijapp cond.if target isnot "MOTOROLA"#
 	                connPropChoiceGroup.setSelectedIndex(3, Options.getBoolean(Options.OPTION_SHADOW_CON));
 	                // #sijapp cond.end#
+	                
 	                autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle.getString("auto_connect") + "?", Choice.MULTIPLE);
-	                addStr(autoConnectChoiceGroup, "yes");
-	                autoConnectChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_AUTO_CONNECT));
+	                setChecked(autoConnectChoiceGroup, "yes", Options.OPTION_AUTO_CONNECT);
+	                
 					httpUserAgendTextField = new TextField(ResourceBundle.getString("http_user_agent"), Options.getString(Options.OPTION_HTTP_USER_AGENT), 256, TextField.ANY);
+					
 					httpWAPProfileTextField = new TextField(ResourceBundle.getString("http_wap_profile"), Options.getString(Options.OPTION_HTTP_WAP_PROFILE), 256, TextField.ANY);
+					
 					reconnectNumberTextField = new TextField(ResourceBundle.getString("reconnect_number"), String.valueOf(Options.getInt(Options.OPTION_RECONNECT_NUMBER)), 2, TextField.NUMERIC);
+					
 					optionsForm.append(srvHostTextField);
 					optionsForm.append(srvPortTextField);
 					optionsForm.append(connTypeChoiceGroup);
@@ -1196,12 +1205,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 					optionsForm.append(httpWAPProfileTextField);
 					optionsForm.append(reconnectNumberTextField);
 					break;
+					
                 // #sijapp cond.if modules_PROXY is "true"#
                 case OPTIONS_PROXY:
-                    srvProxyType = new ChoiceGroup(ResourceBundle.getString("proxy_type"), Choice.EXCLUSIVE);
-                    addStr(srvProxyType, "proxy_socks4"+"|"+"proxy_socks5"+"|"+"proxy_guess");
-                    // srvProxyType.append(ResourceBundle.getString("http"), null);
-                    srvProxyType.setSelectedIndex(Options.getInt(Options.OPTION_PRX_TYPE), true);
+                    srvProxyType = createSelector("proxy_type", "proxy_socks4"+"|"+"proxy_socks5"+"|"+"proxy_guess", Options.OPTION_PRX_TYPE);
                     
                     srvProxyHostTextField = new TextField(ResourceBundle.getString("proxy_server_host"), Options.getString(Options.OPTION_PRX_SERV), 32, TextField.ANY);
                     srvProxyPortTextField = new TextField(ResourceBundle.getString("proxy_server_port"), Options.getString(Options.OPTION_PRX_PORT), 5, TextField.NUMERIC);
@@ -1234,59 +1241,39 @@ class OptionsForm implements CommandListener, ItemStateListener
 						}
 					}
 					
-					int idx1 = 0;
-					
 	                choiceInterfaceMisc = new ChoiceGroup(ResourceBundle.getString("misc"), Choice.MULTIPLE);
-	                
-	                choiceInterfaceMisc.append(ResourceBundle.getString("display_date"), null);
-	                choiceInterfaceMisc.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_DISPLAY_DATE));
-	                
+	                setChecked(choiceInterfaceMisc, "display_date", Options.OPTION_DISPLAY_DATE);
 	                //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-	                choiceInterfaceMisc.append(ResourceBundle.getString("full_screen"), null);
-	                choiceInterfaceMisc.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_FULL_SCREEN));
+	                setChecked(choiceInterfaceMisc, "full_screen", Options.OPTION_FULL_SCREEN);
 	                //#sijapp cond.end#
 	                
 	                
 	                clSortByChoiceGroup = createSelector("sort_by", "sort_by_status"+"|"+"sort_by_name", Options.OPTION_CL_SORT_BY); 
 
 	                choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
-	                addStr(choiceContactList, "show_user_groups"+"|"+"hide_offline");
-	                choiceContactList.setSelectedIndex(0, Options.getBoolean(Options.OPTION_USER_GROUPS));
-	                choiceContactList.setSelectedIndex(1, Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE));
+	                setChecked(choiceContactList, "show_user_groups", Options.OPTION_USER_GROUPS);
+	                setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
 	                
 	                colorScheme = createSelector("color_scheme", "black_on_white"+"|"+"white_on_black"+"|"+"white_on_blue", Options.OPTION_COLOR_SCHEME); 
 	                	
-	                
-	                idx1 = 0;
 	                chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"), Choice.MULTIPLE);
-	                addStr(chrgChat, "chat_small_font");
-	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT));
-	                
+	                setChecked(chrgChat, "chat_small_font", Options.OPTION_CHAT_SMALL_FONT);
 	                // #sijapp cond.if modules_SMILES is "true"#
-	                addStr(chrgChat, "use_smiles");
-	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_USE_SMILES));
+	                setChecked(chrgChat, "use_smiles", Options.OPTION_USE_SMILES);
 	                // #sijapp cond.end#
-	                
 					//#sijapp cond.if modules_HISTORY is "true"#
-	                addStr(chrgChat, "use_history"+"|"+"show_prev_mess");
-	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_HISTORY));
-	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_SHOW_LAST_MESS));
+	                setChecked(chrgChat, "use_history", Options.OPTION_HISTORY);
+	                setChecked(chrgChat, "show_prev_mess", Options.OPTION_SHOW_LAST_MESS);
 	                //#sijapp cond.end#
-	                
 	                // #sijapp cond.if target is "SIEMENS2"#
-	                addStr(chrgChat, "cl_chat");
-	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_CLASSIC_CHAT));
+	                setChecked(chrgChat, "cl_chat", Options.OPTION_CLASSIC_CHAT);
 	                // #sijapp cond.end#
-	                
-	                chrgChat.append(ResourceBundle.getString("cp1251"), null);
-	                chrgChat.setSelectedIndex(idx1++, Options.getBoolean(Options.OPTION_CP1251_HACK));
-	                
+	                setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
 	               
 					// #sijapp cond.if target is "MOTOROLA"#
 					lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
 					lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
-					addStr(lightManual, "yes");
-					lightManual.setSelectedIndex(0, Options.getBoolean(Options.OPTION_LIGHT_MANUAL));
+					setChecked(lightManual, "yes", Options.OPTION_LIGHT_MANUAL);
 					// #sijapp cond.end#
 					
 					if (uiLanguageChoiceGroup != null) optionsForm.append(uiLanguageChoiceGroup);
@@ -1350,8 +1337,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 
 					//#sijapp cond.if target="MOTOROLA"#
 					flashBkltChoiceGroup = new ChoiceGroup(ResourceBundle.getString("flash_backight"), Choice.MULTIPLE);
-					addStr(flashBkltChoiceGroup, "yes");
-					flashBkltChoiceGroup.setSelectedIndex(0, Options.getBoolean(Options.OPTION_FLASH_BACKLIGHT));
+					setChecked(flashBkltChoiceGroup, "yes", Options.OPTION_FLASH_BACKLIGHT);
 					//#sijapp cond.end#
 	                // #sijapp cond.end#
 
@@ -1387,8 +1373,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					
 					// #sijapp cond.if target="MIDP2"#
 					chsBringUp = new ChoiceGroup(ResourceBundle.getString("bring_up"), Choice.MULTIPLE);
-					chsBringUp.append(ResourceBundle.getString("yes"), null);
-					chsBringUp.setSelectedIndex(0, Options.getBoolean(Options.OPTION_BRING_UP));
+					setChecked(chsBringUp, "yes", Options.OPTION_BRING_UP);
 					optionsForm.append(chsBringUp);
 					// #sijapp cond.end#
 					
