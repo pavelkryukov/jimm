@@ -43,6 +43,7 @@ import javax.microedition.lcdui.List;
 
 import jimm.comm.Icq;
 import jimm.comm.RequestInfoAction;
+import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
@@ -801,7 +802,7 @@ public class JimmUI implements CommandListener
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	
-	static public String[] stdSelector = {"currect_contact", "all_contact_except_this", "all_contacts" };
+	static public String[] stdSelector = Util.explode("currect_contact"+"|"+"all_contact_except_this"+"|"+"all_contacts", '|');
 	
 	static private List lstSelector;
 	
