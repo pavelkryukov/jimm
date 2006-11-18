@@ -142,7 +142,8 @@ public class Options
 	public static final int OPTIONS_LOCAL_OFFSET       =  90;   /* int     */
 	
 	public static final int OPTION_FULL_SCREEN         = 145;   /* boolean */
-	public static final int OPTION_SILENT_MODE         = 150;   /* boolean */	
+	public static final int OPTION_SILENT_MODE         = 150;   /* boolean */
+	public static final int OPTION_BRING_UP            = 151;   /* boolean */
 	
 	protected static final int OPTIONS_LANG_CHANGED    = 148;
 	
@@ -347,6 +348,10 @@ public class Options
 		setInt    (Options.OPTIONS_CURR_ACCOUNT,      0);
 		
 		setBoolean(Options.OPTION_FULL_SCREEN,        false);
+		
+		//#sijapp cond.if target="MIDP2"#
+		setBoolean(Options.OPTION_BRING_UP,           true);
+		//#sijapp cond.end#
 		
 		/* Offset (in hours) between GMT time and local zone time 
 		   GMT_time + GMT_offset = Local_time */
@@ -707,6 +712,7 @@ class OptionsForm implements CommandListener, ItemStateListener
     private ChoiceGroup chrgChat;
     private ChoiceGroup chrgPopupWin;
     private ChoiceGroup vibratorChoiceGroup;
+    private ChoiceGroup chsBringUp;
     private ChoiceGroup choiceCurAccount;
     
     private ChoiceGroup chsTimeZone;
@@ -1380,6 +1386,14 @@ class OptionsForm implements CommandListener, ItemStateListener
 					
                     // #sijapp cond.end#
 					optionsForm.append(chrgPopupWin);
+					
+					// #sijapp cond.if target="MIDP2"#
+					chsBringUp = new ChoiceGroup(ResourceBundle.getString("bring_up"), Choice.MULTIPLE);
+					chsBringUp.append(ResourceBundle.getString("yes"), null);
+					chsBringUp.setSelectedIndex(0, Options.getBoolean(Options.OPTION_BRING_UP));
+					optionsForm.append(chsBringUp);
+					// #sijapp cond.end#
+					
 					break;
 		        
 
@@ -1587,6 +1601,11 @@ class OptionsForm implements CommandListener, ItemStateListener
 					//#sijapp cond.if target="MOTOROLA"#
 					Options.setBoolean(Options.OPTION_FLASH_BACKLIGHT, flashBkltChoiceGroup.isSelected(0));
 					//#sijapp cond.end#
+					
+					// #sijapp cond.if target="MIDP2"#
+					Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp.isSelected(0));
+					// #sijapp cond.end#
+					
 					break;
 			    
 				// #sijapp cond.if modules_TRAFFIC is "true"#
@@ -1616,10 +1635,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 					while (localOffset >= 12) localOffset -= 24;
 					while (localOffset < -12) localOffset += 24;
 					Options.setInt(Options.OPTIONS_LOCAL_OFFSET, localOffset);
-					
-					//System.out.println("timeZone="+timeZone);
-					//System.out.println("localOffset="+localOffset);
-					
 					break;
 				}
 										
