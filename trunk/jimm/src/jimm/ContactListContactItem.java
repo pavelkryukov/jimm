@@ -621,7 +621,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		Jimm.display.setCurrent(messageTextbox);
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		//#sijapp cond.if target isnot "DEFAULT"#
-		if ( (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0) )
+		if ( (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0) && ((Options.getLong(Options.OPTION_ONLINE_STATUS)  != ContactList.STATUS_INVISIBLE) && (Options.getLong(Options.OPTION_ONLINE_STATUS)  != ContactList.STATUS_INVIS_ALL)))
 			try
 			{
 				Jimm.jimm.getIcqRef().beginTyping(getStringValue(ContactListContactItem.CONTACTITEM_UIN),true);
@@ -639,7 +639,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	{
 		//#sijapp cond.if target isnot "DEFAULT"#
 		if ( ((c == textboxCancelCommand)||(c == textboxOkCommand)||(c ==textboxSendCommand)) && 
-			 (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0))
+			 (Options.getInt(Options.OPTION_TYPING_MODE) > 0)&&((caps&Util.CAPF_TYPING)!=0) && 
+			 ((Options.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVISIBLE) && (Options.getLong(Options.OPTION_ONLINE_STATUS)  != ContactList.STATUS_INVIS_ALL)))
 		try
 		{
 			Jimm.jimm.getIcqRef().beginTyping(ContactListContactItem.this.getStringValue(ContactListContactItem.CONTACTITEM_UIN),false);
