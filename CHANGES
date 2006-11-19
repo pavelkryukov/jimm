@@ -321,3 +321,4 @@ VERSION 0.5.2
   * MIDP2 build contains mp3 sounds now. Jimm automatically select sound type
     on startup
   * Is possible fast to swicth sound off and on
+  * BUGFIX: When invisible Jimm is no longer sending out typing notify
