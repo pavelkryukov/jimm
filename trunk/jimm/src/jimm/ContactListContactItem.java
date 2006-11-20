@@ -441,11 +441,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	   and "hide offline" is on */
 	protected boolean mustBeShownAnyWay()
 	{
-		return (getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0) ||
-			   (getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES) > 0)   || 
-			   (getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES) > 0)	||
-			   (getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) > 0)   || 
-			   getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP); 
+		return getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) || 
+			   getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP);
 	}
 
 	/* Returns total count of all unread messages (messages, sys notices, urls, auths) */
