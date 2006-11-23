@@ -155,6 +155,7 @@
   "msg_sound_file_name"         "Message Sound File"
   "message"                     "Message"
   "message_from"                "Message from"
+  "midp_info"					"MIDP info"
   "minimize"                    "Minimize"
   "minutes"						"m"
   "misc"                        "Misc"
