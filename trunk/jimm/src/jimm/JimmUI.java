@@ -265,7 +265,7 @@ public class JimmUI implements CommandListener
 		StringBuffer str = new StringBuffer();
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n\n")
 		
-		   .append(ResourceBundle.getString("cell_phone")).append(": ")
+		   .append(ResourceBundle.getString("midp_info")).append(": ")
 		   .append(Jimm.microeditionPlatform);
 		
 		if (Jimm.microeditionProfiles != null) str.append(commaAndSpace).append(Jimm.microeditionProfiles);
