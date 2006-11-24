@@ -718,8 +718,6 @@ class OptionsForm implements CommandListener, ItemStateListener
     private ChoiceGroup chsTimeZone;
     private ChoiceGroup chsCurrTime;
   
-
-    
 	// #sijapp cond.if target isnot "DEFAULT"#
     private ChoiceGroup messageNotificationModeChoiceGroup;
     private ChoiceGroup onlineNotificationModeChoiceGroup;
@@ -761,27 +759,27 @@ class OptionsForm implements CommandListener, ItemStateListener
 	
 	final private String[] hotkeyActionNames = Util.explode
 	(
-		"ext_hotkey_action_none"+
-		"|"+"info"+
-		"|"+"send_message"+
+		"ext_hotkey_action_none"
+		+"|"+"info"
+		+"|"+"send_message"
 		//#sijapp cond.if modules_HISTORY is "true"#
-		"|"+"history"+
+		+"|"+"history"
 		// #sijapp cond.end#
-		"|"+"ext_hotkey_action_onoff"+
-		"|"+"options_lng"+
-		"|"+"menu"+
-		"|"+"keylock"+
+		+"|"+"ext_hotkey_action_onoff"
+		+"|"+"options_lng"
+		+"|"+"menu"
+		+"|"+"keylock"
 		// #sijapp cond.if target is "MIDP2"#
-		"|"+"minimize"+
+		+"|"+"minimize"
 		// #sijapp cond.end#,
-		"|"+"dc_info"+
+		+"|"+"dc_info"
 			
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		"|"+"full_screen"+
+		+"|"+"full_screen"
 		// #sijapp cond.end#
 			
 		// #sijapp cond.if target isnot "DEFAULT" #
-		"|"+"#sound_off"
+		+"|"+"#sound_off"
 		// #sijapp cond.end#
 			
 		, '|'
