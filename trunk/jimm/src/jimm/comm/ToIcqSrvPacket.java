@@ -44,6 +44,7 @@ public class ToIcqSrvPacket extends SnacPacket
 	public static final int CLI_META_SUBCMD = 0x07D0;
 	public static final int CLI_META_REQINFO_TYPE = 0x04D0;   // doesn't work
 	public static final int CLI_META_REQMOREINFO_TYPE = 0x04B2;
+	public static final int CLI_SET_FULLINFO = 0x0C3A;
 
 
 	/****************************************************************************/
@@ -61,7 +62,6 @@ public class ToIcqSrvPacket extends SnacPacket
 
 	// Subcommand
 	protected int subcommand;
-
 
 	// Constructor
 	public ToIcqSrvPacket(int sequence, long reference, int snacFlags, int icqSequence, String uin, int subcommand, byte[] extData, byte[] data)

@@ -43,7 +43,7 @@ public class FromIcqSrvPacket extends SnacPacket
 	// SRV_META packet subcommand and types
 	public static final int SRV_META_SUBCMD = 0x07DA;
 	public static final int SRV_META_GENERAL_TYPE = 0x00C8;
-
+	public static final int META_SET_FULLINFO_ACK = 0x0C3F;
 
 	/****************************************************************************/
 	/****************************************************************************/

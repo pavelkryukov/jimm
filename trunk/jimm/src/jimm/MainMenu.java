@@ -61,7 +61,8 @@ public class MainMenu implements CommandListener
 	private static final int MENU_ABOUT = 9;
 	private static final int MENU_MINIMIZE = 10;
 	private static final int MENU_SOUND = 11;
-	private static final int MENU_EXIT = 12; /* Exit has to be biggest element cause it also marks the size */
+	private static final int MENU_MYSELF = 12;
+	private static final int MENU_EXIT = 13; /* Exit has to be biggest element cause it also marks the size */
 
 	/* Abort command */
 	private static Command backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
@@ -168,6 +169,7 @@ public class MainMenu implements CommandListener
 				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("disconnect"), null)] = MENU_DISCONNECT;
 				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("set_status"), getStatusImage())] = MENU_STATUS;
 				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("manage_contact_list"), null)] = MENU_GROUPS;
+				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("myself"), null)] = MENU_MYSELF;
 				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options_lng"), null)] = MENU_OPTIONS;
 				MainMenu.list.addCommand(MainMenu.backCommand);
 				// #sijapp cond.if target is "MOTOROLA" #
@@ -486,6 +488,10 @@ public class MainMenu implements CommandListener
 				break;
 //#sijapp cond.end#				
 
+			case MENU_MYSELF:
+				JimmUI.requiestUserInfo(Options.getString(Options.OPTION_UIN), "");
+				break;
+				
 			case MENU_EXIT:
 				/* Exit */
 				doExit(false);
