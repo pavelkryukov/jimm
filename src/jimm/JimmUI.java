@@ -67,7 +67,8 @@ public class JimmUI implements CommandListener
 	final private static Command cmdBack     = new Command(ResourceBundle.getString("back"),          Command.BACK,   2);
 	final private static Command cmdBack2    = new Command(ResourceBundle.getString("back"),          Command.ITEM,   10); /* Back button to fix Symbian bug */
 	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"),     Command.ITEM,   3);
-	final private static Command cmdCopyAll  = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM,   4);  
+	final private static Command cmdCopyAll  = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM,   4);
+	final private static Command cmdEdit   = new Command(ResourceBundle.getString("edit"),        Command.ITEM,   1);
 
 	static private CommandListener listener;
 	static private Hashtable commands = new Hashtable();
@@ -123,7 +124,13 @@ public class JimmUI implements CommandListener
 		if (d == infoTextList)
 		{
 			// "User info" -> "Cancel, Back"
-			if ((c == cmdCancel) || (c == cmdBack) || (c == cmdBack2)) cancelUserInfo();
+			if ((c == cmdCancel) || (c == cmdBack) || (c == cmdBack2)) 
+				cancelUserInfo();
+			
+			if( c == cmdEdit )
+			{
+				EditInfo.showEditForm( Util.getLastUserInfo(), Jimm.display.getCurrent() );
+			}
 			
 			// "User info" -> "Copy text, Copy all"
 			else if ((c == cmdCopyText) || (c == cmdCopyAll))
@@ -612,9 +619,10 @@ public class JimmUI implements CommandListener
 	final public static int UI_EXT_IP     = 33;
 	final public static int UI_PORT       = 34;
 	final public static int UI_UIN_LIST   = 35;
-	
+	final public static int UI_FIRST_NAME = 36;
+	final public static int UI_LAST_NAME  = 37;
 	//////
-	final public static int UI_LAST_ID    = 36;
+	final public static int UI_LAST_ID    = 38;
 	
 	static private int uiBigTextIndex;
 	static private String uiSectName = null;
@@ -730,6 +738,9 @@ public class JimmUI implements CommandListener
 		RequestInfoAction act = new RequestInfoAction(uin, name);
 		
 		infoTextList = getInfoTextList(uin, false);
+		if( uin == Options.getString(Options.OPTION_UIN) )
+			infoTextList.addCommand(cmdEdit);
+		
 		infoTextList.addCommand(cmdCancel);
 		infoTextList.setCommandListener(_this);
 		

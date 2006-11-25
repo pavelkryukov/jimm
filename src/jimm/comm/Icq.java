@@ -42,6 +42,7 @@ import javax.microedition.io.StreamConnection;
 // #sijapp cond.end#
 
 import jimm.ContactListContactItem;
+import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.JimmException;
 import jimm.MainMenu;
@@ -411,7 +412,7 @@ public class Icq implements Runnable
     // Keep alive timer task
     static private TimerTasks keepAliveTimerTask;
 
-    static synchronized void _ToLog(String msg)
+    public static synchronized void _ToLog(String msg)
 	{
     	System.out.println("[" + Thread.currentThread().toString()+"] " + msg);
 	}
@@ -761,16 +762,11 @@ public class Icq implements Runnable
     	{
     		_ToLog(e.getMessage() + reconnect_attempts);
     		disconnect();
-    		try
-			{
-    			//Thread.sleep(1000);
-			}
-    		catch(Exception ex){}
     		ContactList.beforeConnect();
     		connect();
     		return true;
     	}
-    	_ToLog("false");
+    	_ToLog("reconnect - false");
     	return false;
 	}
 
@@ -1376,6 +1372,7 @@ public class Icq implements Runnable
         // Sets the reconnect flag and closes the connection
         public synchronized void close()
         {
+        	DebugLog.addText("socket closed");
 			inputCloseFlag = true;
 			try
 			{
@@ -1512,7 +1509,6 @@ public class Icq implements Runnable
                 // Check abort condition
                 while (!inputCloseFlag)
                 {
-
                     // Read flap header
                     bReadSum = 0;
                     if (Options.getInt(Options.OPTION_CONN_PROP) == 1)
@@ -1524,7 +1520,9 @@ public class Icq implements Runnable
                     }
                     do
                     {
+                    	DebugLog.addText("1");
                         bRead = is.read(flapHeader, bReadSum, flapHeader.length - bReadSum);
+                        DebugLog.addText("1.1");
                         if (bRead == -1) break;
                         bReadSum += bRead;
                     } while (bReadSum < flapHeader.length);
@@ -1540,7 +1538,9 @@ public class Icq implements Runnable
                     bReadSum = 0;
                     do
                     {
+                    	DebugLog.addText("2");
                         bRead = is.read(flapData, bReadSum, flapData.length - bReadSum);
+                        DebugLog.addText("2.2");
                         if (bRead == -1) break;
                         bReadSum += bRead;
                     } while (bReadSum < flapData.length);
@@ -1605,6 +1605,8 @@ public class Icq implements Runnable
             	// Construct and handle exception (only if input close flag has not been set)
                 if (!inputCloseFlag)
                 {
+                	DebugLog.addText("Exception: " + e.getMessage());
+                	e.printStackTrace();
                 	JimmException f = new JimmException(120, 1);
                 	if( !Icq.reconnect(f) )
 	                    JimmException.handleException(f);

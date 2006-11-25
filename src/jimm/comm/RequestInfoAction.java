@@ -29,6 +29,7 @@ import java.util.Date;
 import java.io.DataInputStream;
 
 import jimm.comm.Util;
+import jimm.DebugLog;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.JimmUI;
@@ -44,6 +45,8 @@ public class RequestInfoAction extends Action
 	private static final int TIMEOUT = 10 * 1000; // milliseconds
 
 	private boolean infoShown;
+	
+	private boolean showInfoText = true;
 
 	/****************************************************************************/
 	
@@ -53,7 +56,6 @@ public class RequestInfoAction extends Action
 	private Date init;
 	private int packetCounter;
 	private String existingNick;
-
 
 	// Constructor
 	public RequestInfoAction(String uin, String nick)
@@ -73,7 +75,7 @@ public class RequestInfoAction extends Action
 		byte[] buf = new byte[6];
 		Util.putWord(buf, 0, ToIcqSrvPacket.CLI_META_REQMOREINFO_TYPE, false);
 		Util.putDWord(buf, 2, Long.parseLong(strData[JimmUI.UI_UIN]), false);
-		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options.getString(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
+		ToIcqSrvPacket packet = new ToIcqSrvPacket(0,Options.getString(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], buf);
 		Icq.c.sendPacket(packet);
 
 		// Save date
@@ -112,6 +114,8 @@ public class RequestInfoAction extends Action
 						// first name + last name
 						String fistName = Util.readAsciiz(stream);
 						String lastName = Util.readAsciiz(stream);
+						strData[JimmUI.UI_FIRST_NAME] = fistName;
+						strData[JimmUI.UI_LAST_NAME] = lastName;
 						if ((fistName.length() != 0) || (lastName.length() != 0)) strData[JimmUI.UI_NAME] = fistName+" "+lastName;
 						strData[JimmUI.UI_EMAIL]  = Util.readAsciiz(stream);     // email
 						strData[JimmUI.UI_CITY]   = Util.readAsciiz(stream);     // home city
@@ -189,7 +193,8 @@ public class RequestInfoAction extends Action
 			// is completed?
 			if (isCompleted())
 			{
-				if (!infoShown)
+				Util.storeLastUserInfo( strData );
+				if (!infoShown && showInfoText)
 				{
 					RunnableImpl.callSerially(RunnableImpl.TYPE_SHOW_USER_INFO, (Object)strData);
 					tryToChangeName();

@@ -781,10 +781,18 @@ public class Util
 		writeWord(stream, raw.length, true);
 		stream.write(raw, 0, raw.length);
 	}
-	
-	static public void writeAsciizTLV(int type, ByteArrayOutputStream stream, String value)
+
+	static public void writeLenLEAndStringAsciiz(ByteArrayOutputStream stream, String value)
 	{
-		writeWord(stream, type, true);
+		byte[] raw = Util.stringToByteArray(value, false);
+		writeWord(stream, raw.length+1, false);
+		writeByteArray(stream, raw);
+		writeByte(stream,0);
+	}
+	
+	static public void writeAsciizTLV(int type, ByteArrayOutputStream stream, String value, boolean bigEndian)
+	{
+		writeWord(stream, type, bigEndian);
 		byte[] raw = Util.stringToByteArray(value);
 		writeWord(stream, raw.length+3, false);
 		writeWord(stream, raw.length+1, false);
@@ -792,10 +800,19 @@ public class Util
 		stream.write(0);
 	}
 	
+	static public void writeAsciizTLV(int type, ByteArrayOutputStream stream, String value)
+	{
+		writeAsciizTLV(type, stream, value, true);
+	}
+	
 	static public void writeTLV(int type, ByteArrayOutputStream stream, ByteArrayOutputStream data)
 	{
+		writeTLV(type, stream, data, true);
+	}
+	static public void writeTLV(int type, ByteArrayOutputStream stream, ByteArrayOutputStream data, boolean bigEndian)
+	{
 		byte[] raw = data.toByteArray();
-		writeWord(stream, type, true);
+		writeWord(stream, type, bigEndian);
 		writeWord(stream, raw.length, false);
 		stream.write(raw, 0, raw.length);
 	}
@@ -1466,6 +1483,15 @@ public class Util
         }
         return new String();
 	}
+
+	static public int stringToGender(String gender)
+	{
+		if( gender == ResourceBundle.getString("female") )
+			return 1;
+		else
+			return 2;
+	}
+
 	
 	// Converts an Unicode string into CP1251 byte array
 	public static byte[] stringToByteArray1251(String s)
@@ -2152,5 +2178,16 @@ public class Util
 			}
 		}
 	return extended_new;
+	}
+	
+	private static String[] lastUserInfo;
+	public static void storeLastUserInfo(String[] userInfo )
+	{
+		lastUserInfo = userInfo;
+	}
+	
+	public static String[] getLastUserInfo()
+	{
+		return lastUserInfo;
 	}
 }
