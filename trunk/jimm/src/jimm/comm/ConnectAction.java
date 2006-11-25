@@ -534,8 +534,12 @@ public class ConnectAction extends Action
 						// Set version information to this packet in our capability
 						byte[] tmp = ConnectAction.CLI_SETUSERINFO_DATA;
 						byte[] ver = Util.stringToByteArray("###VERSION###");
-						if (ver.length <=10)
-							System.arraycopy(ver,0,tmp,tmp.length-11-16,ver.length);
+						System.arraycopy(
+								ver,
+								0,
+								tmp,
+								tmp.length-11-16,
+								ver.length <=10 ? ver.length : 10);
 						
 						// If typing notify is on, we send full caps..with typing
 						byte[] tmp_packet;
