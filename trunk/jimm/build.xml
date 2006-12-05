@@ -42,11 +42,11 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
 	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar"/>
-	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar"/>
+	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar"/>
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
 	<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp}/lib/API.jar"     />
 	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
-	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />
+	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />
 	<!--  *******************************************************************   -->
 	<!--  Change this to the directory where ProGuard is installed. You can     -->
 	<!--  use both the slash and the backslash for separating path components.  -->
@@ -60,7 +60,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  *******************************************************************   -->
 	<!--  Build target. Currently there are the following build available:      -->
 	<!--      DEFAULT  - Standard MIDP1                                         -->
-	<!--      SIEMENS1  - For Siemens MIDP1-devices (like the x55 series         -->
+	<!--      SIEMENS1 - For Siemens MIDP1-devices (like the x55 series         -->
 	<!--      SIEMENS2 - For Siemens MIDP2-devices (like the x65 series         -->
 	<!--      MIDP2    - Standard MIDP2                                         -->
 	<!--      RIM      - For RIM Blackberry devices                             -->
@@ -69,11 +69,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of modules which should be       -->
 	<!--  included in the build. Realised modules are:                          -->
-	<!--      TRAFFIC - module for traffic calculation                          -->
-	<!--      HISTORY - module for storing history of text messages             -->
-	<!--      FILES   - module for transferring files                           -->
-	<!--      SMILES  - module for using emotions int messages text             --> 
-	<!--      PROXY   - module for connecting via a socks proxy                 --> 
+	<!--      TRAFFIC  - module for traffic calculation                         -->
+	<!--      HISTORY  - module for storing history of text messages            -->
+	<!--      FILES    - module for transferring files                          -->
+	<!--      SMILES   - module for using emotions int messages text            --> 
+	<!--      PROXY    - module for connecting via a socks proxy                --> 
+	<!--      LOCATION - module for location aware functionality                -->  
 	<property name="modules"           value="SMILES,TRAFFIC,HISTORY,FILES,PROXY" />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of languages packs which         -->
@@ -89,7 +90,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="version/jimm"      value="###VERSION###"                     />
 	<!--  *******************************************************************   -->
 	<!--  Version number of the build in the standardized format                -->
-	<!--  <major>[.<minor>[.<micro>]] (e.g. 0.2). This value should             -->
+	<!--  <major>[.<minor>[.<micro>]] (e.g. 0.2.1). This value should           -->
 	<!--  correspond to the version property (see above).                       -->
 	<property name="version/java"      value="###VERSION-JAVA###"                />
 	<!--  *******************************************************************   -->
@@ -224,7 +225,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 				</OR>
 			</and>
 		</condition>
-
 		<condition property="modules/SMILES" value="true">
 			<contains string="${modules}" substring="SMILES" />
 		</condition>
@@ -252,7 +252,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 				<contains string="${modules}" substring="SMILES" />
 			</not>
 		</condition>
-		
+		<condition property="modules/LOCATION" value="true">
+			<contains string="${modules}" substring="LOCATION" />
+		</condition>
 		<mkdir dir="${build}/init/src" />
 		<sijapp srcdir="${src}" destdir="${build}/init/src">
 			<define name="target" value="${target}" />
@@ -262,6 +264,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="modules_PROXY" value="${modules/PROXY}" />
 			<define name="modules_FILES" value="${modules/FILES}" />
 			<define name="modules_SMILES" value="${modules/SMILES}" />
+			<define name="modules_LOCATION" value="${modules/LOCATION}" />
 		</sijapp>
 		<replace dir="${build}/init/src" encoding="UTF-8">
 			<replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" />
@@ -278,7 +281,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<target name="compile" depends="preprocess-source">
 		<ant dir="${util/jlft}" inheritAll="false" />
 		<mkdir dir="${build}/compile/classes" />
-		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" debug="off" />
+		<javac srcdir="${build}/init/src" destdir="${build}/compile/classes" bootclasspath="${midp/lib}" encoding="utf-8" target="1.1" source="1.2" debug="off" />
 	</target>
 	
 	<!--  Internal target: obfuscate -->
@@ -378,12 +381,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<delete dir="${build}" />
 	</target>
 	
-	<!--  Internal target: del_dist  -->
+	<!--  Target: del_dist  -->
 	<target name="del_dist" description="Delete the dist dir">
 		<delete dir="${dist}" />
 	</target>
 	
-	<!--  Internal target: del_utils  -->
+	<!--  Target: del_utils  -->
 	<target name="del_utils" description="Delete the utils dist and build dirs">
 		<ant dir="${util/sijapp}" inheritAll="false" target="clean" />
 		<ant dir="${util/jarsizetask}" inheritAll="false" target="clean" />
