@@ -45,8 +45,6 @@ import jimm.util.ResourceBundle;
 
 public class EditInfo extends Form implements CommandListener
 {
-	private static WeakReference _FormRef = new WeakReference(null);
-	
 	private TextField _UINItem = new TextField( ResourceBundle.getString("uin"), null, 15, TextField.UNEDITABLE );
 	private TextField _NickNameItem = new TextField( ResourceBundle.getString("nick"), null, 15, TextField.ANY );
 	private TextField _FirstNameItem = new TextField( ResourceBundle.getString("firstname"), null, 15, TextField.ANY );
@@ -81,12 +79,7 @@ public class EditInfo extends Form implements CommandListener
 	
 	public static void showEditForm(String[] userInfo, Displayable previousForm)
 	{
-		EditInfo editInfoForm = (EditInfo)_FormRef.get();
-		if( editInfoForm == null )
-		{
-			editInfoForm = new EditInfo(previousForm);
-			_FormRef = new WeakReference(editInfoForm);
-		}
+		EditInfo editInfoForm = new EditInfo(previousForm);
 		editInfoForm._SexItem.setSelectedIndex( Util.stringToGender(userInfo[JimmUI.UI_GENDER])-1, true );
 		editInfoForm._UINItem.setString( userInfo[JimmUI.UI_UIN] );
 		editInfoForm._NickNameItem.setString(userInfo[JimmUI.UI_NICK]);
