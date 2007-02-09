@@ -43,7 +43,7 @@ public class DebugLog
         list.addCommand(backCommand);
         list.setCommandListener(new DebugLog());
         list.setFontSize(TextList.SMALL_FONT);
-	list.setCaption("Debug log");
+        list.setCaption("Debug log");
         list.setCursorMode(TextList.SEL_NONE);
     }
 
