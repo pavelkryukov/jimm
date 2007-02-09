@@ -41,6 +41,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 	private static boolean used;
 	private static int[] selEmotionsIndexes, textCorrIndexes;
 	private static String[] selEmotionsWord, selEmotionsSmileNames, textCorrWords;
+	private static boolean[] emoFinded; 
 	
 	public Emotions()
 	{
@@ -132,6 +133,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		size = textCorr.size();
 		textCorrWords = new String[size];
 		textCorrIndexes = new int[size];
+		emoFinded = new boolean[size];
 		for (int i = 0; i < size; i++)
 		{
 			Object[] data = (Object[])textCorr.elementAt(i);
@@ -189,12 +191,16 @@ public class Emotions implements VirtualListCommands, CommandListener
 		return (chr == '\n');
 	}
 	
-	static private void findEmotionInText(String text, String emotion, int index, int startIndex)
+	static private void findEmotionInText(String text, String emotion, int index, int startIndex, int recIndex)
 	{
+		if ( !emoFinded[recIndex] ) return;
 		int findedIndex, len = emotion.length();
-		
 		findedIndex = text.indexOf(emotion, startIndex);
-		if (findedIndex == -1) return;
+		if (findedIndex == -1)
+		{
+			emoFinded[recIndex] = false;
+			return;
+		}
 		findedEmotions.addElement( new int[] {findedIndex, len, index} );
 	}
 	
@@ -205,6 +211,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 			textList.addBigText(text, textColor, fontStyle, bigTextIndex);
 			return;
 		}
+		
+		for (int i = emoFinded.length-1; i >= 0; i--) emoFinded[i] = true;
 		
 		int startIndex = 0;
 		for (;;)
@@ -219,7 +227,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 					text,
 					textCorrWords[i],
 					textCorrIndexes[i],
-					startIndex
+					startIndex,
+					i
 				);  
 			}
 			
