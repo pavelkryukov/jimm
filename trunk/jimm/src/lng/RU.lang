@@ -177,6 +177,7 @@
   "minutes"						"мин"
   "misc"                        "Разное"
   "move_to_group"               "Перен. в группу"
+  "myself"                      "Мои данные"
   "name"                        "Имя"
   "new_template"                "Новый шаблон"
   "nick"                        "Ник"
