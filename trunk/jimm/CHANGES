@@ -317,6 +317,8 @@ _______________________________________________________________________________
 VERSION 0.5.2
   * It is possible to send messages to contact and view information about 
     contact at search form without adding it to contact list
+  * It is possible to see short contact info withowt connecting to server
+  * Speed of parsing message text for smiles (emotions) is increased
   * New test status icons were added (from Miranda set)
   * MIDP2 build contains mp3 sounds now. Jimm automatically select sound type
     on startup
