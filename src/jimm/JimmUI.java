@@ -735,27 +735,39 @@ public class JimmUI implements CommandListener
 	
 	static public void requiestUserInfo(String uin, String name)
 	{
-		RequestInfoAction act = new RequestInfoAction(uin, name);
-		
 		infoTextList = getInfoTextList(uin, false);
-		if( uin == Options.getString(Options.OPTION_UIN) )
-			infoTextList.addCommand(cmdEdit);
-		
-		infoTextList.addCommand(cmdCancel);
 		infoTextList.setCommandListener(_this);
 		
-		try
+		if (Icq.isConnected())
 		{
-			Icq.requestAction(act);
+			if( uin == Options.getString(Options.OPTION_UIN) ) infoTextList.addCommand(cmdEdit);
+			
+			RequestInfoAction act = new RequestInfoAction(uin, name);
+			
+			infoTextList.addCommand(cmdCancel);
+			
+			try
+			{
+				Icq.requestAction(act);
+			}
+			catch (JimmException e)
+			{
+				JimmException.handleException(e);
+				if (e.isCritical()) return;
+			}
+			
+			infoTextList.add(ResourceBundle.getString("wait"));
+			
+			showInfoTextList(infoTextList);
 		}
-		catch (JimmException e)
+		else
 		{
-			JimmException.handleException(e);
-			if (e.isCritical()) return;
+			String[] data = new String[JimmUI.UI_LAST_ID];
+			data[JimmUI.UI_NICK] = name;
+			data[JimmUI.UI_UIN_LIST] = uin;
+			showUserInfo(data);
+			showInfoTextList(infoTextList);
 		}
-		
-		infoTextList.add(ResourceBundle.getString("wait"));
-		showInfoTextList(infoTextList);
 	}
 	
 	static private void cancelUserInfo()
