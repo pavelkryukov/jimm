@@ -43,9 +43,8 @@ import jimm.ContactList;
 
 public class SaveInfoAction extends Action
 {
-
 	// Receive timeout
-	private static final int TIMEOUT = 3 * 1000; // milliseconds
+	private static final int TIMEOUT = 5 * 1000; // milliseconds
 	
 	//TLVs
 	private static final int NICK_TLV_ID = 0x0154;
@@ -55,10 +54,6 @@ public class SaveInfoAction extends Action
 	private static final int BDAY_TLV_ID = 0x023A;
 	private static final int CITY_TLV_ID = 0x0190;
 	private static final int GENDER_TLV_ID = 0x017C;
-	
-	private boolean infoShown;
-	
-	private boolean showInfoText = true;
 
 	/****************************************************************************/
 	
@@ -79,34 +74,53 @@ public class SaveInfoAction extends Action
 	// Init action
 	protected synchronized void init() throws JimmException
 	{
-		
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		
+		/* 0x0C3A */
 		Util.writeWord(stream ,ToIcqSrvPacket.CLI_SET_FULLINFO, false);
 
+		/* Nick */
 		Util.writeAsciizTLV(NICK_TLV_ID, stream, strData[JimmUI.UI_NICK], false);
 		
+		/* First name */ 
 		Util.writeAsciizTLV(FIRSTNAME_TLV_ID, stream, strData[JimmUI.UI_FIRST_NAME], false);
+		
+		/* Last name */
 		Util.writeAsciizTLV(LASTNAME_TLV_ID, stream, strData[JimmUI.UI_LAST_NAME], false);
-		Util.writeAsciizTLV(EMAIL_TLV_ID, stream, strData[JimmUI.UI_EMAIL], false);
+		
+		/* Sity */
 		Util.writeAsciizTLV(CITY_TLV_ID, stream, strData[JimmUI.UI_CITY], false);
+		
+		/* Email */
+		String email = strData[JimmUI.UI_EMAIL];
+		if ((email != null) && (email.length() != 0))
+			Util.writeAsciizTLV(EMAIL_TLV_ID, stream, strData[JimmUI.UI_EMAIL], false);
 
-		//Bug, birthday date can not be saved now
-//		String[] bDate =  Util.explode(strData[JimmUI.UI_BDAY], '.');
-//		ByteArrayOutputStream bdayStream = new ByteArrayOutputStream();
-//		Util.writeWord( bdayStream, Integer.parseInt(bDate[2]), false );
-//		Util.writeWord( bdayStream, Integer.parseInt(bDate[1]), false );
-//		Util.writeWord( bdayStream, Integer.parseInt(bDate[0]), false );
-//		Util.writeTLV(BDAY_TLV_ID, stream, bdayStream, false);
+		/* Birsday */
+		String birthday = strData[JimmUI.UI_BDAY];
+		if (birthday != null)
+		{
+			String[] bDate =  Util.explode(birthday, '.');
+			if (bDate.length == 3)
+			{
+				Util.writeWord(stream, BDAY_TLV_ID, false);
+				Util.writeWord(stream, 6, false);
+				Util.writeWord(stream, Integer.parseInt(bDate[2]), false);
+				Util.writeWord(stream, Integer.parseInt(bDate[1]), false);
+				Util.writeWord(stream, Integer.parseInt(bDate[0]), false);
+			}
+		}
 		
-		ByteArrayOutputStream sexStream = new ByteArrayOutputStream();
-		Util.writeByte( sexStream, Util.stringToGender(strData[JimmUI.UI_GENDER]) );
-		Util.writeTLV( GENDER_TLV_ID, stream, sexStream, false );
+		/* Gender */
+		Util.writeWord(stream, GENDER_TLV_ID, false);
+		Util.writeWord(stream, 1, false);
+		Util.writeByte(stream, Util.stringToGender(strData[JimmUI.UI_GENDER]));
 		
+		/* Send packet */
 		ToIcqSrvPacket packet = new ToIcqSrvPacket(0,Options.getString(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], stream.toByteArray());
 		Icq.c.sendPacket(packet);
-		DebugLog.addText( Util.toHexString(packet.toByteArray()) );
 		
-		// Save date
+		/* Save date */
 		this.init = new Date();
 	}
 	

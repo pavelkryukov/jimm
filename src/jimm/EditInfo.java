@@ -50,7 +50,7 @@ public class EditInfo extends Form implements CommandListener
 	private TextField _FirstNameItem = new TextField( ResourceBundle.getString("firstname"), null, 15, TextField.ANY );
 	private TextField _LastNameItem = new TextField( ResourceBundle.getString("lastname"), null, 15, TextField.ANY );
 	private TextField _EmailItem = new TextField( ResourceBundle.getString("email"), null, 50, TextField.EMAILADDR );
-	private DateField _BdayItem = new DateField( ResourceBundle.getString("age"), DateField.DATE, TimeZone.getTimeZone("GMT") );
+	private TextField _BdayItem = new TextField( ResourceBundle.getString("birth_day"), null, 15, TextField.ANY );
 	private TextField _CityItem = new TextField( ResourceBundle.getString("city"), null, 15, TextField.ANY );
 	private ChoiceGroup _SexItem = new ChoiceGroup(ResourceBundle.getString("gender"), ChoiceGroup.EXCLUSIVE);
 	
@@ -84,14 +84,7 @@ public class EditInfo extends Form implements CommandListener
 		editInfoForm._UINItem.setString( userInfo[JimmUI.UI_UIN] );
 		editInfoForm._NickNameItem.setString(userInfo[JimmUI.UI_NICK]);
 		editInfoForm._EmailItem.setString(userInfo[JimmUI.UI_EMAIL]);
-		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-		DebugLog.addText(userInfo[JimmUI.UI_BDAY]);
-		String[] date = Util.explode( userInfo[JimmUI.UI_BDAY], '.' );
-		c.set( Calendar.DAY_OF_MONTH, Integer.parseInt(date[0]) );
-		c.set( Calendar.MONTH, Integer.parseInt(date[1]) );
-		c.set( Calendar.YEAR, Integer.parseInt(date[2]) );
-		editInfoForm._BdayItem.setDate(c.getTime() );
-		DebugLog.addText("showEditForm - 4");
+		editInfoForm._BdayItem.setString(userInfo[JimmUI.UI_BDAY]);
 		editInfoForm._FirstNameItem.setString(userInfo[JimmUI.UI_FIRST_NAME]);
 		editInfoForm._LastNameItem.setString(userInfo[JimmUI.UI_LAST_NAME]);
 		editInfoForm._CityItem.setString( userInfo[JimmUI.UI_CITY] );
@@ -107,31 +100,31 @@ public class EditInfo extends Form implements CommandListener
 		if( c == _CmdSave )
 		{
 			String[] lastInfo = Util.getLastUserInfo();
-			lastInfo[JimmUI.UI_NICK] = _NickNameItem.getString();
-			lastInfo[JimmUI.UI_EMAIL] = _EmailItem.getString();
-			Date bDate = _BdayItem.getDate();
-			Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-			calendar.setTime(bDate);
-			lastInfo[JimmUI.UI_BDAY] = calendar.get(Calendar.DAY_OF_MONTH) + "." + calendar.get(Calendar.MONTH) + "." + calendar.get(Calendar.YEAR);
+			lastInfo[JimmUI.UI_NICK]       = _NickNameItem.getString();
+			lastInfo[JimmUI.UI_EMAIL]      = _EmailItem.getString();
+			lastInfo[JimmUI.UI_BDAY]       = _BdayItem.getString();
 			lastInfo[JimmUI.UI_FIRST_NAME] = _FirstNameItem.getString();
-			lastInfo[JimmUI.UI_LAST_NAME] = _LastNameItem.getString();
-			lastInfo[JimmUI.UI_CITY] = _CityItem.getString();
-			lastInfo[JimmUI.UI_GENDER] = Util.genderToString(_SexItem.getSelectedIndex()+1);
+			lastInfo[JimmUI.UI_LAST_NAME]  = _LastNameItem.getString();
+			lastInfo[JimmUI.UI_CITY]       = _CityItem.getString();
+			lastInfo[JimmUI.UI_GENDER]     = Util.genderToString(_SexItem.getSelectedIndex()+1);
 			
 			//
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			Util.writeWord(stream ,ToIcqSrvPacket.CLI_SET_FULLINFO, false);
 
 			Util.writeAsciizTLV(SaveInfoAction.FIRSTNAME_TLV_ID, stream, lastInfo[JimmUI.UI_FIRST_NAME], false);
-			
-			ToIcqSrvPacket packet = new ToIcqSrvPacket(0,Options.getString(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], stream.toByteArray());
-			
+		
 			SaveInfoAction action = new SaveInfoAction(lastInfo);
 			try
 			{
 				Icq.requestAction(action);
 			}
-			catch(Exception e){}
+			catch (JimmException e)
+			{
+				JimmException.handleException(e);
+				if (e.isCritical()) return;
+			}
+			
 			SplashCanvas.addTimerTask("saveinfo", action, false);
 		}
 	}
