@@ -22,20 +22,8 @@ Author(s): Igor Palkin
 *******************************************************************************/
 package jimm;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
 import java.io.ByteArrayOutputStream;
-import java.lang.ref.WeakReference;
-
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.DateField;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.TextField;
-import javax.microedition.lcdui.ChoiceGroup;
+import javax.microedition.lcdui.*;
 
 import jimm.comm.Icq;
 import jimm.comm.SaveInfoAction;
@@ -45,7 +33,6 @@ import jimm.util.ResourceBundle;
 
 public class EditInfo extends Form implements CommandListener
 {
-	private TextField _UINItem = new TextField( ResourceBundle.getString("uin"), null, 15, TextField.UNEDITABLE );
 	private TextField _NickNameItem = new TextField( ResourceBundle.getString("nick"), null, 15, TextField.ANY );
 	private TextField _FirstNameItem = new TextField( ResourceBundle.getString("firstname"), null, 15, TextField.ANY );
 	private TextField _LastNameItem = new TextField( ResourceBundle.getString("lastname"), null, 15, TextField.ANY );
@@ -64,7 +51,6 @@ public class EditInfo extends Form implements CommandListener
 		_PreviousForm = currentForm;
 		_SexItem.append(ResourceBundle.getString("female"), null);
 		_SexItem.append(ResourceBundle.getString("male"), null);
-		append(_UINItem);
 		append(_NickNameItem);
 		append(_FirstNameItem);
 		append(_LastNameItem);
@@ -81,7 +67,6 @@ public class EditInfo extends Form implements CommandListener
 	{
 		EditInfo editInfoForm = new EditInfo(previousForm);
 		editInfoForm._SexItem.setSelectedIndex( Util.stringToGender(userInfo[JimmUI.UI_GENDER])-1, true );
-		editInfoForm._UINItem.setString( userInfo[JimmUI.UI_UIN] );
 		editInfoForm._NickNameItem.setString(userInfo[JimmUI.UI_NICK]);
 		editInfoForm._EmailItem.setString(userInfo[JimmUI.UI_EMAIL]);
 		editInfoForm._BdayItem.setString(userInfo[JimmUI.UI_BDAY]);
