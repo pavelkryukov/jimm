@@ -24,20 +24,14 @@ Author(s): Igor Palkin
 
 package jimm.comm;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 
 import jimm.comm.Util;
-import jimm.DebugLog;
-import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.JimmUI;
-import jimm.RunnableImpl;
-import jimm.ContactListContactItem;
 import jimm.ContactList;
 
 

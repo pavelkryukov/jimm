@@ -37,15 +37,11 @@ public class ContactListGroupItem implements ContactListItem
 {
 	// Persistent variables
 	private int id;
+	private int messCount;
+	private int onlineCount;
+	private int totalCount;
 	private String name;
-	
-	private int
-		// Counter for online users
-		onlineCount,
-		
-		// counter for total users in group
-		totalCount;
-	
+
 	// Constructor for an existing group item
 	public ContactListGroupItem(int id, String name)
 	{
@@ -57,6 +53,17 @@ public class ContactListGroupItem implements ContactListItem
 	public ContactListGroupItem()
 	{
 		
+	}
+	
+	public int getMessCount()
+	{
+		return messCount;
+	}
+	
+	public void changeMessCount(int inc)
+	{
+		messCount += inc;
+		if (messCount < 0) messCount = 0;
 	}
 	
 	// Constructor for a new group item
@@ -91,9 +98,9 @@ public class ContactListGroupItem implements ContactListItem
         return result;
     }
 
-    public int getImageIndex()
+    public int getImageIndex(boolean expanded)
     {
-        return -1;
+        return (messCount == 0) ? -1 : (expanded ? -1 : 8);
     }
     
     public int getTextColor()

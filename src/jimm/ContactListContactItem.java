@@ -393,7 +393,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	}
 
 	/* Returns image index for contact */
-	public int getImageIndex()
+	public int getImageIndex(boolean expanded)
 	{
 		int tempIndex = -1;
 //#sijapp cond.if target isnot "DEFAULT"#		
@@ -1343,7 +1343,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			resetUnreadMessages();
 			ChatHistory.getChatHistoryAt( getStringValue(ContactListContactItem.CONTACTITEM_UIN) ).activate(initChat, !currentUin.equals(lastAnsUIN));
 			lastAnsUIN = currentUin;
-				
+	
+			/* Decrease messages count for group */
+			ContactListGroupItem gItem = ContactList.getGroupById(getIntValue(CONTACTITEM_GROUP));
+			if (gItem != null) gItem.changeMessCount(-1);
 		}
 		else /* Display menu */
 		{
