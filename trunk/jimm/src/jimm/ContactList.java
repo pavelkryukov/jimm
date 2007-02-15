@@ -1165,36 +1165,42 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         return cItem;
     }
     
-    // Adds the given message to the message queue of the contact item
-    // identified by the given UIN
+    /* Adds the given message to the message queue of the contact item
+       identified by the given UIN */
     static public synchronized void addMessage(Message message, boolean haveToBeep)
     {
         ContactListContactItem cItem = getItembyUIN(message.getSndrUin());
         
-        // Add message to contact
+        /* Add message to contact */
         if (cItem != null) cItem.addMessage(message);
         
-        // Create a temporary contact entry if no contact entry could be found
-        // do we have a new temp contact
+        /* Create a temporary contact entry if no contact entry could be found
+           do we have a new temp contact */
         else
         {
         	cItem = createTempContact( message.getSndrUin() );
             if (cItem != null) cItem.addMessage(message);
         }
 
-        // Notify splash canvas
+        /* Notify splash canvas */
         SplashCanvas.messageAvailable();
         
-        // Notify user
+        /* Notify user */
         if ( !treeBuilt ) needPlayMessNotif |= true;
 		// #sijapp cond.if target isnot "DEFAULT" #
         else if (haveToBeep) playSoundNotification(SOUND_TYPE_MESSAGE);
 		// #sijapp cond.end #
         
-        cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,true);
+        /* Flag contact as having chat */
+        cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, true);
         
-        // Update tree
+        /* Increment messages count for group */
+        ContactListGroupItem gItem = getGroupById(cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
+        if (gItem != null) gItem.changeMessCount(+1);
+        
+        /* Update tree */
         contactChanged(cItem, true, false);
+        
     }
  
     //#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
@@ -1507,7 +1513,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
 	{
 		ContactListItem item = (ContactListItem)src.getData();
 		dst.text       = item.getText();
-		dst.imageIndex = item.getImageIndex();
+		dst.imageIndex = item.getImageIndex(src.getExpanded());
 		dst.color      = item.getTextColor();
 		dst.fontStyle  = item.getFontStyle(); 
 	}
