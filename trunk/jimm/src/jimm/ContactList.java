@@ -1169,18 +1169,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
        identified by the given UIN */
     static public synchronized void addMessage(Message message, boolean haveToBeep)
     {
-        ContactListContactItem cItem = getItembyUIN(message.getSndrUin());
-        
-        /* Add message to contact */
-        if (cItem != null) cItem.addMessage(message);
+    	String uin = message.getSndrUin();
+    	
+        ContactListContactItem cItem = getItembyUIN(uin);
         
         /* Create a temporary contact entry if no contact entry could be found
            do we have a new temp contact */
-        else
-        {
-        	cItem = createTempContact( message.getSndrUin() );
-            if (cItem != null) cItem.addMessage(message);
-        }
+        if (cItem == null) cItem = createTempContact(uin);
+        
+        /* Add message to chat */
+        ChatHistory.addMessage(uin, message, cItem);
 
         /* Notify splash canvas */
         SplashCanvas.messageAvailable();
@@ -1200,7 +1198,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         
         /* Update tree */
         contactChanged(cItem, true, false);
-        
     }
  
     //#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
@@ -1226,8 +1223,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
         	playerFree = true;
     	}
     }
-    
-
 
 	/* Creates player for file 'source' */
     static private Player createPlayer(String source)

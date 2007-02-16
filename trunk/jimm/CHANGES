@@ -324,3 +324,4 @@ VERSION 0.5.2
     on startup
   * Is possible fast to swicth sound off and on
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
+  * Creeping text line is returned back again

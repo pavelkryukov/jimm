@@ -52,6 +52,7 @@
   "cp1251"                      "Use Win1251 coding"
   "cpd"                         "Cost per day (cent)"
   "cpp"                         "Cost per packet (cent)"
+  "creeping_line"               "Creeping line"
   "currect_contact"             "Current contact"
   "currency"                    "Currency"
   "days"						"d"      

@@ -233,11 +233,8 @@ public class Icq implements Runnable
     /* Disconnects from the ICQ network */
     static public synchronized void disconnect()
     {
-    	System.out.println("disconnect - BEGIN");
-
         /* Disconnect */
-        if( c != null )
-        	c.close();
+        if( c != null ) c.close();
 		resetServerCon();
 		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		// #sijapp cond.if modules_FILES is "true"#
@@ -256,7 +253,6 @@ public class Icq implements Runnable
         
         /* Reset all contacts offine */ 
         RunnableImpl.resetContactsOffline();
-        System.out.println("disconnect - END");
     }
 
     // Dels a ContactListContactItem to the server saved contact list
@@ -308,8 +304,7 @@ public class Icq implements Runnable
 		marker += 2;
 		// Send packet
 		SnacPacket snacPkt = new SnacPacket(0x0004, 0x0014, 0x00000000, new byte[0], tempBuff);
-		this.c.sendPacket(snacPkt);
-		System.out.println("Sent typing notify");
+		c.sendPacket(snacPkt);
     }
     //#sijapp cond.end#
     
@@ -351,10 +346,9 @@ public class Icq implements Runnable
     	// Stop thread
         thread = null;
         
-        System.out.println("resetServerCon - 1");
         // Wake up thread in order to complete
 		synchronized (Icq.wait) { Icq.wait.notify(); }
-		System.out.println("resetServerCon - 2");
+
         // Reset all variables
         connected = false;
         
@@ -364,12 +358,10 @@ public class Icq implements Runnable
         // Delete all actions
         if (actAction != null) 
         {
-        	System.out.println("Removing " + actAction.size() + " active actions.");
         	actAction.removeAllElements();
         }
         if (reqAction != null) 
         {
-        	System.out.println("Removing " + reqAction.size() + " requested actions.");
         	reqAction.removeAllElements();
         }
        
@@ -412,17 +404,11 @@ public class Icq implements Runnable
     // Keep alive timer task
     static private TimerTasks keepAliveTimerTask;
 
-    public static synchronized void _ToLog(String msg)
-	{
-    	System.out.println("[" + Thread.currentThread().toString()+"] " + msg);
-	}
-    
     public static int reconnect_attempts;
     
     // Main loop
     public void run()
     {
-    	_ToLog("run - BEGIN");
         // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
         // #sijapp cond.if modules_FILES is "true"#
         // Is a DC packet Available
@@ -435,7 +421,6 @@ public class Icq implements Runnable
         // Required variables
         Action newAction = null;
 
-        _ToLog("run - Preparing connection");
         // Instantiate connections
         if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_SOCKET)
         	c = new SOCKETConnection();
@@ -452,25 +437,19 @@ public class Icq implements Runnable
         // Instantiate action listener
         actListener = new ActionListener();
         
-        _ToLog("run - Starting keepalive");
         keepAliveTimerTask = new TimerTasks(TimerTasks.ICQ_KEEPALIVE);
         long keepAliveInterv = Integer.parseInt(Options.getString(Options.OPTION_CONN_ALIVE_INVTERV))*1000;
-        Jimm.jimm.getTimerRef().schedule(keepAliveTimerTask, keepAliveInterv, keepAliveInterv);
+        Jimm.getTimerRef().schedule(keepAliveTimerTask, keepAliveInterv, keepAliveInterv);
 
         // Catch JimmExceptions
         try
         {
-        	_ToLog("run - Entering main loop");
             // Abort only in error state
             while (Icq.thread == thread)
             {
-            	_ToLog("run - Main loop begin");
                 // Get next action
                 synchronized (this)
                 {
-                	_ToLog("run - Main loop - 1");
-                	_ToLog("run - Main loop - reqAction size = " + reqAction.size());
-                	_ToLog("run - Main loop - actAction size = " + actAction.size());
                     if (reqAction.size() > 0 )
                     {
                         if ((actAction.size() == 1) && ((Action) actAction.elementAt(0)).isExclusive())
@@ -498,7 +477,6 @@ public class Icq implements Runnable
                     }
                 }
 
-                _ToLog("run - Main loop - 2");
                 // Wait if a new action does not exist
                 if ((newAction == null) && (c.available() == 0))
                 {
@@ -506,7 +484,6 @@ public class Icq implements Runnable
                     {
                         synchronized (wait)
                         {
-                        	_ToLog("Icq.STANDBY");
                             wait.wait(/*Icq.STANDBY*/);
                         }
                     } catch (InterruptedException e)
@@ -521,8 +498,6 @@ public class Icq implements Runnable
                     {
                         try
                         {
-                        	_ToLog("run - Main loop - begin execution of action: " + newAction.getClass().toString());
-                        	_ToLog("run - Main loop - calling Action.init()");
                             newAction.init();
                             actAction.addElement(newAction);
                         } catch (JimmException e)
@@ -533,7 +508,6 @@ public class Icq implements Runnable
                         }
                     }
 
-                _ToLog("run - Main loop - 3");
                 // Set dcPacketAvailable to true if the peerC is not null and
                 // there is an packet waiting
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -549,7 +523,7 @@ public class Icq implements Runnable
                     dcPacketAvailable = false;
                 // #sijapp cond.end#
                 // #sijapp cond.end#
-                _ToLog("run - Main loop - 4");
+
                 // Read next packet, if available
                 // #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
                 // #sijapp cond.if modules_FILES is "true"#
@@ -569,7 +543,7 @@ public class Icq implements Runnable
                             JimmException.handleException(e);
                         if (e.isCritical()) throw (e);
                     }
-                    _ToLog("run - Main loop - 5");
+
                     // Forward received packet to all active actions and to the
                     // action listener
                     boolean consumed = false;
@@ -601,7 +575,7 @@ public class Icq implements Runnable
                             if (e.isCritical()) throw (e);
                         }
                     }
-                    _ToLog("run - Main loop - 6");
+
                     // Set dcPacketAvailable to true if the peerC is not null
                     // and there is an packet waiting
                     if (peerC != null)
@@ -616,7 +590,7 @@ public class Icq implements Runnable
                 }
 
                 // #sijapp cond.else#
-                _ToLog("run - Main loop - 7");
+
                 while ((c.available() > 0))
                 {
                     // Try to get packet
@@ -630,7 +604,7 @@ public class Icq implements Runnable
                             JimmException.handleException(e);
                         if (e.isCritical()) throw (e);
                     }
-                    _ToLog("run - Main loop - 8");
+
                     // Forward received packet to all active actions and to the
                     // action listener
                     boolean consumed = false;
@@ -663,7 +637,7 @@ public class Icq implements Runnable
                         }
                     }
                 }
-                _ToLog("run - Main loop - 9");
+
                 // #sijapp cond.end#
                 // #sijapp cond.else#
                 while ((c.available() > 0))
@@ -679,7 +653,7 @@ public class Icq implements Runnable
                             JimmException.handleException(e);
                         if (e.isCritical()) throw (e);
                     }
-                    _ToLog("run - Main loop - 10");
+
                     // Forward received packet to all active actions and to the
                     // action listener
                     boolean consumed = false;
@@ -699,7 +673,7 @@ public class Icq implements Runnable
                             if (e.isCritical()) throw (e);
                         }
                     }
-                    _ToLog("run - Main loop - 11");
+
                     if (!consumed)
                     {
                         try
@@ -714,7 +688,7 @@ public class Icq implements Runnable
                     }
                 }
                 // #sijapp cond.end#
-                _ToLog("run - Main loop - 12");
+
                 // Remove completed actions
                 for (int i = 0; i < actAction.size(); i++)
                 {
@@ -730,20 +704,20 @@ public class Icq implements Runnable
         catch (JimmException e)
         {
             // Do nothing, already handled
-        	_ToLog("dubl: " + e.getMessage());
+
         }
-        _ToLog("run - exiting");
+
         if( !Options.getBoolean(Options.OPTION_RECONNECT) )
         {
 	        // Close connection
 	        c.close();
-	        _ToLog("run - resetServerCon");
+
 	        resetServerCon();
 	        
 	        /* Reset all contacts offine */ 
 	        RunnableImpl.resetContactsOffline();
         }
-        _ToLog("run - END");
+
     }
     
     public static volatile boolean connecting = false;
@@ -760,13 +734,12 @@ public class Icq implements Runnable
 				errCode != 127
     		)
     	{
-    		_ToLog(e.getMessage() + reconnect_attempts);
     		disconnect();
     		ContactList.beforeConnect();
     		connect();
     		return true;
     	}
-    	_ToLog("reconnect - false");
+
     	return false;
 	}
 
@@ -1372,7 +1345,6 @@ public class Icq implements Runnable
         // Sets the reconnect flag and closes the connection
         public synchronized void close()
         {
-        	DebugLog.addText("socket closed");
 			inputCloseFlag = true;
 			try
 			{
@@ -1520,9 +1492,7 @@ public class Icq implements Runnable
                     }
                     do
                     {
-                    	DebugLog.addText("1");
                         bRead = is.read(flapHeader, bReadSum, flapHeader.length - bReadSum);
-                        DebugLog.addText("1.1");
                         if (bRead == -1) break;
                         bReadSum += bRead;
                     } while (bReadSum < flapHeader.length);
@@ -1538,9 +1508,7 @@ public class Icq implements Runnable
                     bReadSum = 0;
                     do
                     {
-                    	DebugLog.addText("2");
                         bRead = is.read(flapData, bReadSum, flapData.length - bReadSum);
-                        DebugLog.addText("2.2");
                         if (bRead == -1) break;
                         bReadSum += bRead;
                     } while (bReadSum < flapData.length);
@@ -1605,8 +1573,6 @@ public class Icq implements Runnable
             	// Construct and handle exception (only if input close flag has not been set)
                 if (!inputCloseFlag)
                 {
-                	DebugLog.addText("Exception: " + e.getMessage());
-                	e.printStackTrace();
                 	JimmException f = new JimmException(120, 1);
                 	if( !Icq.reconnect(f) )
 	                    JimmException.handleException(f);
