@@ -309,7 +309,7 @@ public class JimmUI implements CommandListener
 		
 		aboutTextList.unlock();
         
-		if (version == null) Jimm.jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
+		if (version == null) Jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
 	}
     	
 	//////////////////////

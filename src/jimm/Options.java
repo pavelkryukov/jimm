@@ -144,6 +144,7 @@ public class Options
 	public static final int OPTION_FULL_SCREEN         = 145;   /* boolean */
 	public static final int OPTION_SILENT_MODE         = 150;   /* boolean */
 	public static final int OPTION_BRING_UP            = 151;   /* boolean */
+	public static final int OPTION_CREEPING_LINE       = 152;   /* boolean */
 	
 	protected static final int OPTIONS_LANG_CHANGED    = 148;
 	
@@ -366,6 +367,7 @@ public class Options
 		//#sijapp cond.end#
 		
 		setBoolean(OPTIONS_LANG_CHANGED,              false);
+		setBoolean(OPTION_CREEPING_LINE,              true);
 		
 		
 		// #sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
@@ -1372,8 +1374,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 					optionsForm.append(chrgPopupWin);
 					
 					// #sijapp cond.if target="MIDP2"#
-					chsBringUp = new ChoiceGroup(ResourceBundle.getString("bring_up"), Choice.MULTIPLE);
-					setChecked(chsBringUp, "yes", Options.OPTION_BRING_UP);
+					chsBringUp = new ChoiceGroup(ResourceBundle.getString("misc"), Choice.MULTIPLE);
+					setChecked(chsBringUp, "bring_up", Options.OPTION_BRING_UP);
+					setChecked(chsBringUp, "creeping_line", Options.OPTION_CREEPING_LINE);
 					optionsForm.append(chsBringUp);
 					// #sijapp cond.end#
 					
@@ -1587,6 +1590,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 					
 					// #sijapp cond.if target="MIDP2"#
 					Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp.isSelected(0));
+					Options.setBoolean(Options.OPTION_CREEPING_LINE, chsBringUp.isSelected(1));
 					// #sijapp cond.end#
 					
 					break;

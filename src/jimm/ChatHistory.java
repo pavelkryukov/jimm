@@ -23,7 +23,6 @@
 
 package jimm;
 
-import java.util.Enumeration;
 import java.util.*;
 import javax.microedition.lcdui.*;
 
@@ -479,7 +478,7 @@ public class ChatHistory
 		counter = 1;
 	}
 
-	// Adds a message to the message display
+	/* Adds a message to the message display */
 	static protected synchronized void addMessage(String uin,Message message,ContactListContactItem contact)
 	{
 		if (!historyTable.containsKey(uin))
@@ -502,16 +501,22 @@ public class ChatHistory
 				HistoryStorage.addText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), plainMsg.getText(), (byte)0, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getNewDate());
 			// #sijapp cond.end#
 			
-			if ( !message.getOffline() )
+			if (!offline)
+			{
+				/* Popup window */
 				ContactListContactItem.showPopupWindow(uin, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText());
+				
+		        /* Show creeping line */
+		        ContactListContactItem.showCreepingLine(uin, plainMsg.getText());
+			}
 		}
-		if (message instanceof UrlMessage)
+		else if (message instanceof UrlMessage)
 		{
 			UrlMessage urlMsg = (UrlMessage) message;
 			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_URL);
 			addTextToForm(uin,contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME), urlMsg.getText(), urlMsg.getUrl(), urlMsg.getNewDate(), false, offline);
 		}
-		if (message instanceof SystemNotice)
+		else if (message instanceof SystemNotice)
 		{
 			SystemNotice notice = (SystemNotice) message;
 			if (!chat.getDisplayable().isShown()) contact.increaseMessageCount(ContactListContactItem.MESSAGE_SYS_NOTICE);

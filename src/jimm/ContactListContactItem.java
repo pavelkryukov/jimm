@@ -481,12 +481,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		}
 	}
 
-	/* Adds a message to the message display */
-	protected synchronized void addMessage(Message message)
-	{
-		ChatHistory.addMessage(getStringValue(ContactListContactItem.CONTACTITEM_UIN), message,this);
-	}
-
 	public synchronized void resetUnreadMessages()
 	{
 		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES,0);
@@ -1586,9 +1580,16 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	static synchronized public void statusChanged(String uin, long status)
 	{
 		if (currentUin.equals(uin))
-		{
 			showTopLine(uin, JimmUI.getStatusString(status), 8, FlashCapClass.TYPE_FLASH);
-		}	 
+	}
+	
+	/* Shows creeping line whan user is typing text and message has received */ 
+	static synchronized public void showCreepingLine(String uin, String text)
+	{
+		if (Options.getBoolean(Options.OPTION_CREEPING_LINE) && 
+				currentUin.equals(uin) && 
+				messageTextbox.isShown())
+			showTopLine(uin, text, 0, FlashCapClass.TYPE_CREEPING);
 	}
 	
 	public void setStatusImage()
@@ -1624,18 +1625,24 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	/* Timer task for flashing form caption */
 	private static FlashCapClass lastFlashTask = null;
 	
+	static private void cancelFlashTask()
+	{
+		if (lastFlashTask != null)
+		{
+			lastFlashTask.restoreCaption();
+			lastFlashTask.cancel();
+			lastFlashTask = null;
+		}
+	}
+	
 	static void showTopLine(String uin, String text, int counter, int type)
 	{
 		Displayable disp = getCurrDisplayable(uin);
 		if (disp != null)
 		{
-			if (lastFlashTask != null)
-			{
-				lastFlashTask.restoreCaption();
-				lastFlashTask.cancel();
-			}
+			cancelFlashTask();
 			lastFlashTask = new FlashCapClass(disp, text, counter, type);
-			Jimm.jimm.getTimerRef().scheduleAtFixedRate(lastFlashTask, 0, 500);
+			Jimm.getTimerRef().scheduleAtFixedRate(lastFlashTask, 0, 500);
 		}
 	}
 	
@@ -1684,7 +1691,7 @@ class FlashCapClass extends TimerTask
 	
 	private Displayable displ;
 	private String text, oldText;
-	private int counter, counter2;
+	private int counter;
 	private int type;
 	
 	public FlashCapClass(Displayable displ, String text, int counter, int type)
@@ -1692,30 +1699,31 @@ class FlashCapClass extends TimerTask
 		this.displ   = displ;
 		this.text    = text;
 		this.oldText = JimmUI.getCaption(displ);
-		this.counter = counter;
+		this.counter = (type == TYPE_FLASH) ? counter : 0;
 		this.type    = type;
-		counter2 = 0;
 	}
 	
 	public void run()
 	{
-		if ((counter != 0) && displ.isShown())
-		{
-			switch (type)
-			{
-			case TYPE_FLASH:
-				JimmUI.setCaption(displ, ((counter&1) == 0) ? text : " ");
-				break;
-
-			case TYPE_CREEPING:
-				break;
-			}
-			counter--;
-		}
-		else
+		if (((type == TYPE_FLASH) && (counter == 0)) || (!displ.isShown()))
 		{
 			JimmUI.setCaption(displ, oldText);
 			cancel();
+			return;
+		}
+		
+		switch (type)
+		{
+		case TYPE_FLASH:
+			JimmUI.setCaption(displ, ((counter&1) == 0) ? text : " ");
+			counter--;
+			break;
+
+		case TYPE_CREEPING:
+			JimmUI.setCaption(displ, text.substring(counter));
+			counter++;
+			if (counter > text.length()-5) counter = 0;
+			break;
 		}
 	}
 	

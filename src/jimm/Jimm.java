@@ -87,7 +87,7 @@ public class Jimm extends MIDlet
 	// #sijapp cond.end#
 
 	// Timer object
-	private Timer t;
+	private static Timer timer = new Timer();
 
 
 	// #sijapp cond.if modules_TRAFFIC is "true" #
@@ -232,10 +232,6 @@ public class Jimm extends MIDlet
 		this.ch = new ChatHistory();
 		SplashCanvas.setProgress(70);
 
-		// Create timer object (and update progress indicator)
-		this.t = new Timer();
-		SplashCanvas.setProgress(80);
-		
 		// Create and load emotion icons
 		//#sijapp cond.if modules_SMILES is "true" #
 		new Emotions();
@@ -332,9 +328,9 @@ public class Jimm extends MIDlet
 	// #sijapp cond.end#
 
 	// Returns a reference to the timer object
-	public Timer getTimerRef()
+	static public Timer getTimerRef()
 	{
-		return (this.t);
+		return timer;
 	}
 	
 	// Cancels the timer and makes a new one
@@ -342,10 +338,10 @@ public class Jimm extends MIDlet
 	{
 		try
 		{
-			this.t.cancel();
+			timer.cancel();
 		}
 		catch(IllegalStateException e){}
-		this.t = new Timer();
+		timer = new Timer();
 	}
 
 

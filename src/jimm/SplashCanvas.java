@@ -552,6 +552,6 @@ public class SplashCanvas extends Canvas
 		SplashCanvas.setProgress(0);
 		Jimm.display.setCurrent(SplashCanvas._this);
 		
-		Jimm.jimm.getTimerRef().schedule(timerTask, 1000, 1000);
+		Jimm.getTimerRef().schedule(timerTask, 1000, 1000);
 	}
 }
