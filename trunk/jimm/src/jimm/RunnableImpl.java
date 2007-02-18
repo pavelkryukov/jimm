@@ -25,12 +25,6 @@ package jimm;
 
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.*;
-
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-import javax.microedition.media.PlayerListener;
-import javax.microedition.media.Player;
-//#sijapp cond.end#
-
 import jimm.comm.Message;
 import jimm.ContactListContactItem;
 

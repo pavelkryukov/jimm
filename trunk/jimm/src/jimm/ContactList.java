@@ -897,6 +897,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands, Virtua
     	item.setStatusImage();
     }
     
+    /* lastUnknownStatus is used for adding contact item as sometimes online messages
+       is received before contact is added to internal list */
     private static int lastUnknownStatus = STATUS_NONE;
     
     // Updates the client-side contact list (called when a contact changes status)
