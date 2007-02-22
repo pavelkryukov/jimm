@@ -137,7 +137,7 @@ public class ConnectPacket extends Packet
 	{
 		if (this.getType() == ConnectPacket.CLI_IDENT)
 		{
-			return (new String(this.uin));
+			return this.uin;
 		}
 		else
 		{
@@ -151,7 +151,7 @@ public class ConnectPacket extends Packet
 	{
 		if (this.getType() == ConnectPacket.CLI_IDENT)
 		{
-			return (new String(this.password));
+			return this.password;
 		}
 		else
 		{

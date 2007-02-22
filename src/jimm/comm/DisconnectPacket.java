@@ -62,8 +62,8 @@ public class DisconnectPacket extends Packet
 	public DisconnectPacket(int sequence, String uin, String server, byte[] cookie)
 	{
 		this.sequence = sequence;
-		this.uin = new String(uin);
-		this.server = new String(server);
+		this.uin = uin;
+		this.server = server;
 		this.cookie = new byte[cookie.length];
 		System.arraycopy(cookie, 0, this.cookie, 0, cookie.length);
 		this.error = -1;
@@ -132,7 +132,7 @@ public class DisconnectPacket extends Packet
 	{
 		if (this.getType() == DisconnectPacket.TYPE_SRV_COOKIE)
 		{
-			return (new String(this.uin));
+			return this.uin;
 		}
 		else
 		{
@@ -146,7 +146,7 @@ public class DisconnectPacket extends Packet
 	{
 		if (this.getType() == DisconnectPacket.TYPE_SRV_COOKIE)
 		{
-			return (new String(this.server));
+			return this.server;
 		}
 		else
 		{
@@ -190,7 +190,7 @@ public class DisconnectPacket extends Packet
 	{
 		if (this.getType() == DisconnectPacket.TYPE_SRV_GOODBYE)
 		{
-			return (new String(this.description));
+			return this.description;
 		}
 		else
 		{

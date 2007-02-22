@@ -67,7 +67,7 @@ public class FromIcqSrvPacket extends SnacPacket
 	{
 		super(sequence,SnacPacket.SRV_FROMICQSRV_FAMILY, SnacPacket.SRV_FROMICQSRV_COMMAND, snacFlags, reference, extData, data);
 		this.icqSequence = icqSequence;
-		this.uin = new String(uin);
+		this.uin = uin;
 		this.subcommand = subcommand;
 	}
 
@@ -89,7 +89,7 @@ public class FromIcqSrvPacket extends SnacPacket
 	// Returns the UIN
 	public String getUin()
 	{
-		return (new String(this.uin));
+		return this.uin;
 	}
 
 

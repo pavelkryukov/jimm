@@ -68,7 +68,7 @@ public abstract class Message
     // Returns the senders UIN
     public String getSndrUin()
     {
-        return (new String(this.sndrUin));
+        return this.sndrUin;
     }
 
     // Returns the receivers UIN
@@ -76,7 +76,7 @@ public abstract class Message
     {
         if (this.rcvrUin != null)
         {
-            return (new String(this.rcvrUin));
+            return this.rcvrUin;
         }
         else
         {
