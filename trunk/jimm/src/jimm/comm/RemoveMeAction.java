@@ -38,7 +38,7 @@ public class RemoveMeAction extends Action
 	public RemoveMeAction(String uin)
 	{
 		super(false, true);
-		this.uin = new String(uin);
+		this.uin = uin;
 	}
 
 	// Init action

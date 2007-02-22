@@ -187,34 +187,34 @@ public class ConnectAction extends Action
     public ConnectAction(String uin, String password, String srvHost, String srvPort)
     {
     	super(true, false);
-        this.uin = new String(uin);
-        this.password = new String(password);
-        this.srvHost = new String(srvHost);
-        this.srvPort = new String(srvPort);
+        this.uin = uin;
+        this.password = password;
+        this.srvHost = srvHost;
+        this.srvPort = srvPort;
     }
 
     // Returns the UID
     public String getUin()
     {
-        return (new String(this.uin));
+        return this.uin;
     }
 
     // Returns the password
     public String getPassword()
     {
-        return (new String(this.password));
+        return this.password;
     }
 
     // Returns the server host
     public String getSrvHost()
     {
-        return (new String(this.srvHost));
+        return this.srvHost;
     }
 
     // Returns the server port
     public String getSrvPort()
     {
-        return (new String(this.srvPort));
+        return this.srvPort;
     }
 
     // Init action
