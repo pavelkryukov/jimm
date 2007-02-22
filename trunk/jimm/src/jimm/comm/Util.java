@@ -1258,23 +1258,9 @@ public class Util
     public static byte[] ipToByteArray(String ip)
     {
         byte[] arrIP = new byte[4];
-        int i;
-
-        for (int j = 0; j < 3; j++)
-        {
-
-            for (i = 0; i < 3; i++)
-            {
-                if (ip.charAt(i) == '.') break;
-            }
-	
-            arrIP[j] = (byte)Integer.parseInt(ip.substring(0, i));
-            ip = ip.substring(i + 1);
-            
-        }
-        
-        arrIP[3] = (byte)Integer.parseInt(ip);
-
+        String[] strings = explode(ip, '.');
+        if (strings.length != 4) return null;
+        for (int i = 0; i < 4; i++) arrIP[i] = (byte)Integer.parseInt(strings[i]);
         return arrIP;
     }
     
@@ -1282,28 +1268,16 @@ public class Util
     // Try to parse string IP
     public static boolean isIP(String ip)
     {
-        int i;
+    	boolean isTrueIp = false;
         try
         {
-            for (int j = 0; j < 3; j++)
-            {
-
-                for (i = 0; i < 3; i++)
-                {
-                    if (ip.charAt(i) == '.') break;
-                }
-
-                Integer.parseInt(ip.substring(0, i));
-                ip = ip.substring(i + 1);
-            }
-
-            Integer.parseInt(ip);
-
-            return true;
-        } catch (NumberFormatException e)
+        	isTrueIp = (ipToByteArray(ip) != null);
+        } 
+        catch (NumberFormatException e)
         {
             return false;
         }
+        return isTrueIp;
     }
 
     // #sijapp cond.end #
