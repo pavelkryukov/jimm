@@ -1603,34 +1603,11 @@ public class Util
 	{
 		31,28,31,30,31,30,31,31,30,31,30,31
 	};
-	
-	final private static int[] monthIndexes = 
-	{ 
-		Calendar.JANUARY,
-		Calendar.FEBRUARY, Calendar.MARCH, Calendar.APRIL, Calendar.MAY,
-		Calendar.JUNE, Calendar.JULY, Calendar.AUGUST, Calendar.SEPTEMBER,
-		Calendar.OCTOBER, Calendar.NOVEMBER, Calendar.DECEMBER 
-	};
-	
-	static private int convertDateMonToSimpleMon(int dateMon)
-	{
-		for (int i = 0; i < monthIndexes.length; i++) if (monthIndexes[i] == dateMon) return i+1;
-		return -1;
-	}
-	
+
 	/* Creates current date (GMT or local) */
 	public static long createCurrentDate(boolean gmt)
 	{
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime( new Date() );
-		long result = createLongTime(
-		               	  calendar.get(Calendar.YEAR),
-		               	  convertDateMonToSimpleMon(calendar.get(Calendar.MONTH)),
-		               	  calendar.get(Calendar.DAY_OF_MONTH),
-		               	  calendar.get(Calendar.HOUR_OF_DAY),
-		               	  calendar.get(Calendar.MINUTE),
-		               	  calendar.get(Calendar.SECOND)
-		              );
+		long result = new Date().getTime()/1000;
 
 		/* convert result to GMT time */
 		long diff = Options.getInt(Options.OPTIONS_LOCAL_OFFSET);
