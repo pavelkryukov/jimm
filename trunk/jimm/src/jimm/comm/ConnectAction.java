@@ -50,86 +50,88 @@ public class ConnectAction extends Action
     public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 7;
 
     // CLI_SETUSERINFO packet data
-    public static final byte[] CLI_SETUSERINFO_DATA =
-	{
-		(byte) 0x00, (byte) 0x05, (byte) 0x00, (byte) 0x60,   // 5 capabilities follow
-
-		(byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x49, // CAP_AIM_SERVERRELAY
-		(byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
-		(byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
-		(byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00,
-		
-		(byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x44,   // CAP_AIM_ISICQ
-		(byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
-		(byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
-		(byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00,		
-		
-		(byte) 0x09, (byte) 0x46, (byte) 0x00, (byte) 0x00,   //CAP_UNKNOWN
-		(byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
-		(byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
-		(byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00,
-		
-		(byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x4E,   //CAP_UTF8
-		(byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, 
-		(byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, 
-		(byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00,
-		
-		/* Jimm */ 'J', 'i', 'm', 'm', 						//Jimm version
-		(byte) 0x20, (byte) 0x00, (byte) 0x00, (byte) 0x00,	//Place for string & raw version
-		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, //Place for string & raw version
-		(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, //Last byte - target
-		
-		(byte) 0x56, (byte) 0x3f, (byte) 0xc8, (byte) 0x09,      // CAP_MTN
-		(byte) 0x0b, (byte) 0x6f, (byte) 0x41, (byte) 0xbd,
-		(byte) 0x9f, (byte) 0x79, (byte) 0x42, (byte) 0x26,
-		(byte) 0x09, (byte) 0xdf, (byte) 0xa2, (byte) 0xf3
-	};
+    public static final byte[] CLI_SETUSERINFO_DATA = 
+    	Util.explodeToBytes
+    	(
+    		"00,05,00,60,"+ // 5 capabilities follow
+    		
+    		"09,46,13,49,"+ // CAP_AIM_SERVERRELAY
+    		"4C,7F,11,D1,"+
+    		"82,22,44,45,"+
+    		"53,54,00,00,"+
+    		
+    		"09,46,13,44,"+ //CAP_UNKNOWN
+    		"4C,7F,11,D1,"+
+    		"82,22,44,45,"+
+    		"53,54,00,00,"+
+    		
+    		"09,46,13,4E,"+ //CAP_UTF8
+    		"4C,7F,11,D1,"+
+    		"82,22,44,45,"+
+    		"53,54,00,00,"+
+    		
+    		"*Jimm,"+ //Jimm version
+    		"20,00,00,00,"+ //Place for string & raw version
+    		"00,00,00,00,"+ //Place for string & raw version
+    		"00,00,00,00,"+ //Last byte - target
+    		
+    		"56,3f,c8,09,"+ // CAP_MTN
+    		"0b,6f,41,bd,"+
+    		"9f,79,42,26,"+
+    		"09,df,a2,f3",
+    		',', 16
+    	);
 
     // CLI_SETICBM packet data
-    public static final byte[] CLI_SETICBM_DATA =
-    { 0, 0, 0, 0, 0, 0x0B, 0x1F,  0x40, 3, (byte)0xE7, 3, (byte)0xE7, 0, 0, 0, 0};
-
+    public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,0,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
+    
     // CLI_SETSTATUS packet data
     public static final byte[] CLI_SETSTATUS_DATA =
-    { (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x04, 
-	  (byte) 0x11, (byte) 0x00, (byte) 0x00, (byte) 0x00, // Online status
-      (byte) 0x00, (byte) 0x0C, (byte) 0x00, (byte) 0x25, // TLV(C)
-      (byte) 0xC0, (byte) 0xA8, (byte) 0x00, (byte) 0x01, // 192.168.0.1, cannot get own IP address
-      (byte) 0x00, (byte) 0x00, (byte) 0xAB, (byte) 0xCD, // Port 43981
-      (byte) 0x00, // Firewall
-      (byte) 0x00, (byte) 0x08, // Support protocol version 8
-      (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, 
-      (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x50, 
-      (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x03, // 3                                                                                                                                                                 // follow
-      (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE, // Timestamp 1
-      (byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x00, // Timestamp 2
-      (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFE, // Timestamp 3
-      (byte) 0x00, (byte) 0x00};
+    	Util.explodeToBytes
+    	(
+    		"00,06,00,04,"+
+    		"11,00,00,00,"+ // Online status
+    		"00,0C,00,25,"+ // TLV(C)
+    		"C0,A8,00,01,"+ // 192.168.0.1, cannot get own IP address
+    		"00,00,AB,CD,"+ // Port 43981
+    		"00,"+          // Firewall
+    		"00,08,"+       // Support protocol version 8
+    		"00,00,00,00,"+
+    		"00,00,00,50,"+
+    		"00,00,00,03,"+
+    		"FF,FF,FF,FE,"+ // Timestamp 1
+    		"00,01,00,00,"+ // Timestamp 2
+    		"FF,FF,FF,FE,"+ // Timestamp 3
+    		"00,00",
+    		',', 16
+    	);
 
     // CLI_READY packet data
     public static final byte[] CLI_READY_DATA =
-    {
-    		(byte)0x00, (byte)0x01, (byte)0x00, (byte)0x04, 
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4, 
-			(byte)0x00, (byte)0x13, (byte)0x00, (byte)0x04,
-			(byte)0x01,(byte)0x10, (byte)0x08, (byte)0xe4,
-			(byte)0x00, (byte)0x02, (byte)0x00, (byte)0x01,
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4,
-			(byte)0x00, (byte)0x03, (byte)0x00, (byte)0x01,
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4,
-			(byte)0x00, (byte)0x15, (byte)0x00, (byte)0x01, 
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4,
-			(byte)0x00, (byte)0x04, (byte)0x00, (byte)0x01,
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4,
-			(byte)0x00, (byte)0x06, (byte)0x00, (byte)0x01,
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4,
-			(byte)0x00, (byte)0x09, (byte)0x00, (byte)0x01,
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4,
-			(byte)0x00, (byte)0x0a, (byte)0x00, (byte)0x01,
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4,
-			(byte)0x00, (byte)0x0b, (byte)0x00, (byte)0x01,
-			(byte)0x01, (byte)0x10, (byte)0x08, (byte)0xe4
-    };
+    	Util.explodeToBytes
+    	(
+    		"00,01,00,04,"+ 
+			"01,10,08,e4,"+ 
+			"00,13,00,04,"+
+			"01,10,08,e4,"+
+			"00,02,00,01,"+
+			"01,10,08,e4,"+
+			"00,03,00,01,"+
+			"01,10,08,e4,"+
+			"00,15,00,01,"+ 
+			"01,10,08,e4,"+
+			"00,04,00,01,"+
+			"01,10,08,e4,"+
+			"00,06,00,01,"+
+			"01,10,08,e4,"+
+			"00,09,00,01,"+
+			"01,10,08,e4,"+
+			"00,0a,00,01,"+
+			"01,10,08,e4,"+
+			"00,0b,00,01,"+
+			"01,10,08,e4",
+			',', 16
+    	);
 //    {(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x03,
 //	 (byte) 0x01, (byte) 0x10, (byte) 0x04,	(byte) 0x7B,
 //	 (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x02,
