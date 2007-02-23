@@ -24,13 +24,8 @@
 
 package jimm.comm;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
-import java.io.IOException;
 
 import jimm.ContactListContactItem;
 import jimm.ContactListGroupItem;
@@ -2135,16 +2130,5 @@ public class Util
 			}
 		}
 	return extended_new;
-	}
-	
-	private static String[] lastUserInfo;
-	public static void storeLastUserInfo(String[] userInfo )
-	{
-		lastUserInfo = userInfo;
-	}
-	
-	public static String[] getLastUserInfo()
-	{
-		return lastUserInfo;
 	}
 }

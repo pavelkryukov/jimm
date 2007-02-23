@@ -193,7 +193,6 @@ public class RequestInfoAction extends Action
 			// is completed?
 			if (isCompleted())
 			{
-				Util.storeLastUserInfo( strData );
 				if (!infoShown && showInfoText)
 				{
 					RunnableImpl.callSerially(RunnableImpl.TYPE_SHOW_USER_INFO, (Object)strData);

@@ -129,7 +129,7 @@ public class JimmUI implements CommandListener
 			
 			if( c == cmdEdit )
 			{
-				EditInfo.showEditForm( Util.getLastUserInfo(), Jimm.display.getCurrent() );
+				EditInfo.showEditForm( last_user_info, Jimm.display.getCurrent() );
 			}
 			
 			// "User info" -> "Copy text, Copy all"
@@ -776,8 +776,16 @@ public class JimmUI implements CommandListener
 		Jimm.display.setCurrent(lastDisplayable);
 	}
 	
+	static private String[] last_user_info;
+	
+	static public String[] getLastUserInfo()
+	{
+		return last_user_info;
+	}
+	
 	static public void showUserInfo(String[] data)
 	{
+		last_user_info = data;
 		if (infoTextList == null) return;
 		infoTextList.clear();
 		JimmUI.fillUserInfo(data, infoTextList);
@@ -899,17 +907,19 @@ public class JimmUI implements CommandListener
 	public final static int[] imageIndexes = { 0, 1, 2, 3, 4, 5, 6, 7, 3 };
 	
 	private final static String[] statusStrings = 
-	{
-		"status_away",
-		"status_chat",
-		"status_dnd",
-		"status_invisible",
-		"status_na",
-		"status_occupied",
-		"status_offline",
-		"status_online",
-		"status_invis_all"
-	};
+		Util.explode
+		(
+			"status_away"     +"|"+
+			"status_chat"     +"|"+
+			"status_dnd"      +"|"+
+			"status_invisible"+"|"+
+			"status_na"       +"|"+
+			"status_occupied" +"|"+
+			"status_offline"  +"|"+
+			"status_online"   +"|"+
+			"status_invis_all"
+			, '|'
+		);
 	
 	public static int getStatusIndex(long status)
 	{

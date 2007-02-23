@@ -84,7 +84,7 @@ public class EditInfo extends Form implements CommandListener
 		
 		if( c == _CmdSave )
 		{
-			String[] lastInfo = Util.getLastUserInfo();
+			String[] lastInfo = JimmUI.getLastUserInfo();
 			lastInfo[JimmUI.UI_NICK]       = _NickNameItem.getString();
 			lastInfo[JimmUI.UI_EMAIL]      = _EmailItem.getString();
 			lastInfo[JimmUI.UI_BDAY]       = _BdayItem.getString();
