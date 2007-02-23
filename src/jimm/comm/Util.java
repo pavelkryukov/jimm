@@ -42,43 +42,43 @@ import jimm.util.ResourceBundle;
 public class Util
 {
 	// Client CAPS
-	public static final byte[] CAP_AIM_SERVERRELAY 	= { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x49, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
-	public static final byte[] CAP_UTF8 	  		= { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x4E, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
-	public static final byte[] CAP_UTF8_GUID  		= { (byte) 0x7b, (byte) 0x30, (byte) 0x39, (byte) 0x34, (byte) 0x36, (byte) 0x31, (byte) 0x33, (byte) 0x34, (byte) 0x45, (byte) 0x2D, (byte) 0x34, (byte) 0x43, (byte) 0x37, (byte) 0x46, (byte) 0x2D, (byte) 0x31, (byte) 0x31, (byte) 0x44, (byte) 0x31, (byte) 0x2D, (byte) 0x38, (byte) 0x32, (byte) 0x32, (byte) 0x32, (byte) 0x2D, (byte) 0x34, (byte) 0x34, (byte) 0x34, (byte) 0x35, (byte) 0x35, (byte) 0x33, (byte) 0x35, (byte) 0x34, (byte) 0x30, (byte) 0x30, (byte) 0x30, (byte) 0x30, (byte) 0x7D};
-	private static final byte[] CAP_MIRANDAIM 		= { (byte) 0x4D, (byte) 0x69, (byte) 0x72, (byte) 0x61, (byte) 0x6E, (byte) 0x64, (byte) 0x61, (byte) 0x4D, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00};
-	private static final byte[] CAP_TRILLIAN  		= { (byte) 0x97, (byte) 0xb1, (byte) 0x27, (byte) 0x51, (byte) 0x24, (byte) 0x3c, (byte) 0x43, (byte) 0x34, (byte) 0xad, (byte) 0x22, (byte) 0xd6, (byte) 0xab, (byte) 0xf7, (byte) 0x3f, (byte) 0x14, (byte) 0x09};
-	private static final byte[] CAP_TRILCRYPT 		= { (byte) 0xf2, (byte) 0xe7, (byte) 0xc7, (byte) 0xf4, (byte) 0xfe, (byte) 0xad, (byte) 0x4d, (byte) 0xfb, (byte) 0xb2, (byte) 0x35, (byte) 0x36, (byte) 0x79, (byte) 0x8b, (byte) 0xdf, (byte) 0x00, (byte) 0x00};
-	private static final byte[] CAP_SIM       		= {'S', 'I', 'M', ' ', 'c', 'l', 'i', 'e', 'n', 't', ' ', ' ', (byte) 0, (byte) 0, (byte) 0, (byte) 0};
-	private static final byte[] CAP_SIMOLD    		= { (byte) 0x97, (byte) 0xb1, (byte) 0x27, (byte) 0x51, (byte) 0x24, (byte) 0x3c, (byte) 0x43, (byte) 0x34, (byte) 0xad, (byte) 0x22, (byte) 0xd6, (byte) 0xab, (byte) 0xf7, (byte) 0x3f, (byte) 0x14, (byte) 0x00};
-	private static final byte[] CAP_LICQ      		= {'L', 'i', 'c', 'q', ' ', 'c', 'l', 'i', 'e', 'n', 't', ' ', (byte) 0, (byte) 0, (byte) 0, (byte) 0};
-	private static final byte[] CAP_KOPETE    		= {'K', 'o', 'p', 'e', 't', 'e', ' ', 'I', 'C', 'Q', ' ', ' ', (byte) 0, (byte) 0, (byte) 0, (byte) 0};
-	private static final byte[] CAP_MICQ      		= {'m', 'I', 'C', 'Q', ' ', (byte) 0xA9, ' ', 'R', '.', 'K', '.', ' ', (byte) 0, (byte) 0, (byte) 0, (byte) 0};
-	private static final byte[] CAP_ANDRQ     		= {'&', 'R', 'Q', 'i', 'n', 's', 'i', 'd', 'e', (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
-	private static final byte[] CAP_QIP       		= { (byte) 0x56, (byte) 0x3F, (byte) 0xC8, (byte) 0x09, (byte) 0x0B, (byte) 0x6F, (byte) 0x41, 'Q', 'I', 'P', ' ', '2', '0', '0', '5', 'a'};
-	private static final byte[] CAP_IM2       		= { (byte) 0x74, (byte) 0xED, (byte) 0xC3, (byte) 0x36, (byte) 0x44, (byte) 0xDF, (byte) 0x48, (byte) 0x5B, (byte) 0x8B, (byte) 0x1C, (byte) 0x67, (byte) 0x1A, (byte) 0x1F, (byte) 0x86, (byte) 0x09, (byte) 0x9F}; // IM2 Ext Msg
-	private static final byte[] CAP_MACICQ    		= { (byte) 0xdd, (byte) 0x16, (byte) 0xf2, (byte) 0x02, (byte) 0x84, (byte) 0xe6, (byte) 0x11, (byte) 0xd4, (byte) 0x90, (byte) 0xdb, (byte) 0x00, (byte) 0x10, (byte) 0x4b, (byte) 0x9b, (byte) 0x4b, (byte) 0x7d};
-	private static final byte[] CAP_RICHTEXT  		= { (byte) 0x97, (byte) 0xb1, (byte) 0x27, (byte) 0x51, (byte) 0x24, (byte) 0x3c, (byte) 0x43, (byte) 0x34, (byte) 0xad, (byte) 0x22, (byte) 0xd6, (byte) 0xab, (byte) 0xf7, (byte) 0x3f, (byte) 0x14, (byte) 0x92};
-	private static final byte[] CAP_IS2001    		= { (byte) 0x2e, (byte) 0x7a, (byte) 0x64, (byte) 0x75, (byte) 0xfa, (byte) 0xdf, (byte) 0x4d, (byte) 0xc8, (byte) 0x88, (byte) 0x6f, (byte) 0xea, (byte) 0x35, (byte) 0x95, (byte) 0xfd, (byte) 0xb6, (byte) 0xdf};
-	private static final byte[] CAP_IS2002    		= { (byte) 0x10, (byte) 0xcf, (byte) 0x40, (byte) 0xd1, (byte) 0x4c, (byte) 0x7f, (byte) 0x11, (byte) 0xd1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
-	private static final byte[] CAP_STR20012  		= { (byte) 0xa0, (byte) 0xe9, (byte) 0x3f, (byte) 0x37, (byte) 0x4f, (byte) 0xe9, (byte) 0xd3, (byte) 0x11, (byte) 0xbc, (byte) 0xd2, (byte) 0x00, (byte) 0x04, (byte) 0xac, (byte) 0x96, (byte) 0xdd, (byte) 0x96};
-	private static final byte[] CAP_AIMICON   		= { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x46, (byte) 0x4c, (byte) 0x7f, (byte) 0x11, (byte) 0xd1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00}; // CAP_AIM_BUDDYICON
-	private static final byte[] CAP_AIMIMIMAGE		= { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x45, (byte) 0x4c, (byte) 0x7f, (byte) 0x11, (byte) 0xd1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00}; // CAP_AIM_BUDDYICON	
-	private static final byte[] CAP_AIMCHAT   		= { (byte) 0x74, (byte) 0x8F, (byte) 0x24, (byte) 0x20, (byte) 0x62, (byte) 0x87, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
-	private static final byte[] CAP_UIM       		= { (byte) 0xA7, (byte) 0xE4, (byte) 0x0A, (byte) 0x96, (byte) 0xB3, (byte) 0xA0, (byte) 0x47, (byte) 0x9A, (byte) 0xB8, (byte) 0x45, (byte) 0xC9, (byte) 0xE4, (byte) 0x67, (byte) 0xC5, (byte) 0x6B, (byte) 0x1F};
-	private static final byte[] CAP_RAMBLER   		= { (byte) 0x7E, (byte) 0x11, (byte) 0xB7, (byte) 0x78, (byte) 0xA3, (byte) 0x53, (byte) 0x49, (byte) 0x26, (byte) 0xA8, (byte) 0x02, (byte) 0x44, (byte) 0x73, (byte) 0x52, (byte) 0x08, (byte) 0xC4, (byte) 0x2A};
-	private static final byte[] CAP_ABV       		= { (byte) 0x00, (byte) 0xE7, (byte) 0xE0, (byte) 0xDF, (byte) 0xA9, (byte) 0xD0, (byte) 0x4F, (byte) 0xe1, (byte) 0x91, (byte) 0x62, (byte) 0xC8, (byte) 0x90, (byte) 0x9A, (byte) 0x13, (byte) 0x2A, (byte) 0x1B};
-	private static final byte[] CAP_NETVIGATOR		= { (byte) 0x4C, (byte) 0x6B, (byte) 0x90, (byte) 0xA3, (byte) 0x3D, (byte) 0x2D, (byte) 0x48, (byte) 0x0E, (byte) 0x89, (byte) 0xD6, (byte) 0x2E, (byte) 0x4B, (byte) 0x2C, (byte) 0x10, (byte) 0xD9, (byte) 0x9F};
-	private static final byte[] CAP_XTRAZ	  		= { (byte) 0x1A, (byte) 0x09, (byte) 0x3C, (byte) 0x6C, (byte) 0xD7, (byte) 0xFD, (byte) 0x4E, (byte) 0xC5, (byte) 0x9D, (byte) 0x51, (byte) 0xA6, (byte) 0x47, (byte) 0x4E, (byte) 0x34, (byte) 0xF5, (byte) 0xA0};
-	private static final byte[] CAP_AIMFILE	  		= { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x43, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
-	private static final byte[] CAP_DIRECT	  		= { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x44, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};	
-	private static final byte[] CAP_JIMM	  		= {'J', 'i','m','m',' '};
-	private static final byte[] CAP_AVATAR	  		= { (byte) 0x09, (byte) 0x46, (byte) 0x13, (byte) 0x4C, (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
-	private static final byte[] CAP_TYPING	  		= { (byte) 0x56, (byte) 0x3f, (byte) 0xc8, (byte) 0x09, (byte) 0x0b, (byte) 0x6f, (byte) 0x41, (byte) 0xbd, (byte) 0x9f, (byte) 0x79, (byte) 0x42, (byte) 0x26, (byte) 0x09, (byte) 0xdf, (byte) 0xa2, (byte) 0xf3};
-	private static final byte[] CAP_MCHAT	  		= { 'm','C','h','a','t',' ','i','c','q'};
+	public static final byte[] CAP_AIM_SERVERRELAY 	= explodeToBytes("09,46,13,49,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	public static final byte[] CAP_UTF8 	  		= explodeToBytes("09,46,13,4E,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	public static final byte[] CAP_UTF8_GUID  		= explodeToBytes("7b,30,39,34,36,31,33,34,45,2D,34,43,37,46,2D,31,31,44,31,2D,38,32,32,32,2D,34,34,34,35,35,33,35,34,30,30,30,30,7D", ',', 16);
+	private static final byte[] CAP_MIRANDAIM 		= explodeToBytes("4D,69,72,61,6E,64,61,4D,00,00,00,00,00,00,00,00", ',', 16);
+	private static final byte[] CAP_TRILLIAN  		= explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,09", ',', 16);
+	private static final byte[] CAP_TRILCRYPT 		= explodeToBytes("f2,e7,c7,f4,fe,ad,4d,fb,b2,35,36,79,8b,df,00,00", ',', 16);
+	private static final byte[] CAP_SIM       		= explodeToBytes("*SIM client  ,0,0,0,0", ',', 16);
+	private static final byte[] CAP_SIMOLD    		= explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,00", ',', 16);
+	private static final byte[] CAP_LICQ      		= explodeToBytes("*Licq client ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_KOPETE    		= explodeToBytes("*Kopete ICQ  ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_MICQ      		= explodeToBytes("*mICQ ,A9,* R.K. ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_ANDRQ     		= explodeToBytes("*&RQinside,0,0,0,0,0,0,0", ',', 16);
+	private static final byte[] CAP_QIP       		= explodeToBytes("56,3F,C8,09,0B,6F,41,*QIP 2005a", ',', 16);
+	private static final byte[] CAP_IM2       		= explodeToBytes("74,ED,C3,36,44,DF,48,5B,8B,1C,67,1A,1F,86,09,9F", ',', 16);
+	private static final byte[] CAP_MACICQ    		= explodeToBytes("dd,16,f2,02,84,e6,11,d4,90,db,00,10,4b,9b,4b,7d", ',', 16);
+	private static final byte[] CAP_RICHTEXT  		= explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,92", ',', 16);
+	private static final byte[] CAP_IS2001    		= explodeToBytes("2e,7a,64,75,fa,df,4d,c8,88,6f,ea,35,95,fd,b6,df", ',', 16);
+	private static final byte[] CAP_IS2002    		= explodeToBytes("10,cf,40,d1,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_STR20012  		= explodeToBytes("a0,e9,3f,37,4f,e9,d3,11,bc,d2,00,04,ac,96,dd,96", ',', 16);
+	private static final byte[] CAP_AIMICON   		= explodeToBytes("09,46,13,46,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_AIMIMIMAGE		= explodeToBytes("09,46,13,45,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);	
+	private static final byte[] CAP_AIMCHAT   		= explodeToBytes("74,8F,24,20,62,87,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_UIM       		= explodeToBytes("A7,E4,0A,96,B3,A0,47,9A,B8,45,C9,E4,67,C5,6B,1F", ',', 16);
+	private static final byte[] CAP_RAMBLER   		= explodeToBytes("7E,11,B7,78,A3,53,49,26,A8,02,44,73,52,08,C4,2A", ',', 16);
+	private static final byte[] CAP_ABV       		= explodeToBytes("00,E7,E0,DF,A9,D0,4F,e1,91,62,C8,90,9A,13,2A,1B", ',', 16);
+	private static final byte[] CAP_NETVIGATOR		= explodeToBytes("4C,6B,90,A3,3D,2D,48,0E,89,D6,2E,4B,2C,10,D9,9F", ',', 16);
+	private static final byte[] CAP_XTRAZ	  		= explodeToBytes("1A,09,3C,6C,D7,FD,4E,C5,9D,51,A6,47,4E,34,F5,A0", ',', 16);
+	private static final byte[] CAP_AIMFILE	  		= explodeToBytes("09,46,13,43,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_DIRECT	  		= explodeToBytes("09,46,13,44,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);	
+	private static final byte[] CAP_JIMM	  		= explodeToBytes("*Jimm ", ',', 16);
+	private static final byte[] CAP_AVATAR	  		= explodeToBytes("09,46,13,4C,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_TYPING	  		= explodeToBytes("56,3f,c8,09,0b,6f,41,bd,9f,79,42,26,09,df,a2,f3", ',', 16);
+	private static final byte[] CAP_MCHAT	  		= explodeToBytes("*mChat icq", ',', 16);
 	
 	// Arrays for new capability blowup
 	private static final byte[] CAP_OLD_HEAD  		= { (byte) 0x09, (byte) 0x46}; 
-	private static final byte[] CAP_OLD_TAIL  		= { (byte) 0x4C, (byte) 0x7F, (byte) 0x11, (byte) 0xD1, (byte) 0x82, (byte) 0x22, (byte) 0x44, (byte) 0x45, (byte) 0x53, (byte) 0x54, (byte) 0x00, (byte) 0x00};
+	private static final byte[] CAP_OLD_TAIL  		= explodeToBytes("4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
 	
 	// No capability
 	public static final int CAPF_NO_INTERNAL = 0x00000000;
@@ -625,10 +625,7 @@ public class Util
     }
     
 	// Password encryption key
-	public static final byte[] PASSENC_KEY = {(byte) 0xF3, (byte) 0x26, (byte) 0x81, (byte) 0xC4,
-	                                          (byte) 0x39, (byte) 0x86, (byte) 0xDB, (byte) 0x92,
-	                                          (byte) 0x71, (byte) 0xA3, (byte) 0xB9, (byte) 0xE6,
-	                                          (byte) 0x53, (byte) 0x7A, (byte) 0x95, (byte) 0x7C};
+	public static final byte[] PASSENC_KEY = explodeToBytes("F3,26,81,C4,39,86,DB,92,71,A3,B9,E6,53,7A,95,7C", ',', 16);
 
 
 	// Online status (set values)
@@ -1257,11 +1254,8 @@ public class Util
 	// String IP to byte array
     public static byte[] ipToByteArray(String ip)
     {
-        byte[] arrIP = new byte[4];
-        String[] strings = explode(ip, '.');
-        if (strings.length != 4) return null;
-        for (int i = 0; i < 4; i++) arrIP[i] = (byte)Integer.parseInt(strings[i]);
-        return arrIP;
+        byte[] arrIP = explodeToBytes(ip, '.', 10);
+        return ((arrIP == null) || (arrIP.length != 4)) ? null : arrIP;
     }
     
     // #sijapp cond.if modules_PROXY is "true"#
@@ -1599,10 +1593,7 @@ public class Util
 	final public static int TIME_MON    = 4;
 	final public static int TIME_YEAR   = 5;
 	
-	final private static byte[] dayCounts = 
-	{
-		31,28,31,30,31,30,31,31,30,31,30,31
-	};
+	final private static byte[] dayCounts = explodeToBytes("31,28,31,30,31,30,31,31,30,31,30,31", ',', 10);
 
 	/* Creates current date (GMT or local) */
 	public static long createCurrentDate(boolean gmt)
@@ -1738,8 +1729,7 @@ public class Util
 	/*                                                    */
 	/*====================================================*/
 
-	static final byte[] AIM_MD5_STRING = new byte[] {'A','O','L',' ','I','n','s','t','a','n','t',' ',
-		'M','e','s','s','e','n','g','e','r',' ','(','S','M',')'};
+	static final byte[] AIM_MD5_STRING = explodeToBytes("*AOL Instant Messenger (SM)", ',', 16);
 	static final int S11 = 7;
 	static final int S12 = 12;
 	static final int S13 = 17;
@@ -1756,10 +1746,8 @@ public class Util
 	static final int S42 = 10;
 	static final int S43 = 15;
 	static final int S44 = 21;
-	static final byte[] PADDING = { -128, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	static final byte[] PADDING = explodeToBytes("-128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"+
+			"0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0", ',', 10);
 	static private long[] state = new long[4];
 	static private long[] count = new long[2];
 	static private byte[] buffer = new byte[64];
@@ -2061,6 +2049,23 @@ public class Util
 		int index = original.indexOf(from);
 		if (index == -1) return original;
 		return original.substring(0, index)+to+original.substring(index+from.length(), original.length());
+	}
+	
+	static public byte[] explodeToBytes(String text, char serparator, int radix)
+	{
+		String[] strings = explode(text, serparator);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream(); 
+		
+		for (int i = 0; i < strings.length; i++)
+		{
+			String item = strings[i];
+			if (item.charAt(0) == '*') 
+				for (int j = 1; j < item.length(); j++) bytes.write((byte)item.charAt(j));
+			else 
+				bytes.write(Integer.parseInt(item, radix));
+			
+		}
+		return bytes.toByteArray();
 	}
 	
 	/* Divide text to array of parts using serparator charaster */
