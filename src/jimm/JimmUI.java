@@ -778,11 +778,6 @@ public class JimmUI implements CommandListener
 	
 	static private String[] last_user_info;
 	
-	static public String[] getLastUserInfo()
-	{
-		return last_user_info;
-	}
-	
 	static public void showUserInfo(String[] data)
 	{
 		last_user_info = data;

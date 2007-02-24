@@ -44,6 +44,7 @@ public class EditInfo extends Form implements CommandListener
 	private Command _CmdCancel = new Command(ResourceBundle.getString("cancel"), Command.CANCEL, 0);
 	private Command _CmdSave = new Command(ResourceBundle.getString("save"), Command.OK, 1);
 	private Displayable _PreviousForm;
+	private static String[] userInfo;
 	
 	public EditInfo(Displayable currentForm) 
 	{
@@ -65,6 +66,7 @@ public class EditInfo extends Form implements CommandListener
 	
 	public static void showEditForm(String[] userInfo, Displayable previousForm)
 	{
+		EditInfo.userInfo = userInfo;
 		EditInfo editInfoForm = new EditInfo(previousForm);
 		editInfoForm._SexItem.setSelectedIndex( Util.stringToGender(userInfo[JimmUI.UI_GENDER])-1, true );
 		editInfoForm._NickNameItem.setString(userInfo[JimmUI.UI_NICK]);
@@ -84,22 +86,21 @@ public class EditInfo extends Form implements CommandListener
 		
 		if( c == _CmdSave )
 		{
-			String[] lastInfo = JimmUI.getLastUserInfo();
-			lastInfo[JimmUI.UI_NICK]       = _NickNameItem.getString();
-			lastInfo[JimmUI.UI_EMAIL]      = _EmailItem.getString();
-			lastInfo[JimmUI.UI_BDAY]       = _BdayItem.getString();
-			lastInfo[JimmUI.UI_FIRST_NAME] = _FirstNameItem.getString();
-			lastInfo[JimmUI.UI_LAST_NAME]  = _LastNameItem.getString();
-			lastInfo[JimmUI.UI_CITY]       = _CityItem.getString();
-			lastInfo[JimmUI.UI_GENDER]     = Util.genderToString(_SexItem.getSelectedIndex()+1);
+			userInfo[JimmUI.UI_NICK]       = _NickNameItem.getString();
+			userInfo[JimmUI.UI_EMAIL]      = _EmailItem.getString();
+			userInfo[JimmUI.UI_BDAY]       = _BdayItem.getString();
+			userInfo[JimmUI.UI_FIRST_NAME] = _FirstNameItem.getString();
+			userInfo[JimmUI.UI_LAST_NAME]  = _LastNameItem.getString();
+			userInfo[JimmUI.UI_CITY]       = _CityItem.getString();
+			userInfo[JimmUI.UI_GENDER]     = Util.genderToString(_SexItem.getSelectedIndex()+1);
 			
 			//
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			Util.writeWord(stream ,ToIcqSrvPacket.CLI_SET_FULLINFO, false);
 
-			Util.writeAsciizTLV(SaveInfoAction.FIRSTNAME_TLV_ID, stream, lastInfo[JimmUI.UI_FIRST_NAME], false);
+			Util.writeAsciizTLV(SaveInfoAction.FIRSTNAME_TLV_ID, stream, userInfo[JimmUI.UI_FIRST_NAME], false);
 		
-			SaveInfoAction action = new SaveInfoAction(lastInfo);
+			SaveInfoAction action = new SaveInfoAction(userInfo);
 			try
 			{
 				Icq.requestAction(action);
