@@ -1419,9 +1419,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 					int hour = currDateTime[Util.TIME_HOUR];
 					for (int i = 0; i < 24; i++) chsCurrTime.append(i+":"+minutes, null);
 					chsCurrTime.setSelectedIndex(hour, true);
-					Calendar calendar = Calendar.getInstance();
-					calendar.setTime( new Date() );
-					currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+					
+					/* Store current hour (GMT) to calculate diff. later */ 
+					currentHour = Util.createDate( Util.createCurrentDate(true) )[Util.TIME_HOUR];
 					
 					optionsForm.append(chsTimeZone);
 					optionsForm.append(chsCurrTime);

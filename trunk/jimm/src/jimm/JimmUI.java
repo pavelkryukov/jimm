@@ -68,7 +68,7 @@ public class JimmUI implements CommandListener
 	final private static Command cmdBack2    = new Command(ResourceBundle.getString("back"),          Command.ITEM,   10); /* Back button to fix Symbian bug */
 	final private static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"),     Command.ITEM,   3);
 	final private static Command cmdCopyAll  = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM,   4);
-	final private static Command cmdEdit   = new Command(ResourceBundle.getString("edit"),        Command.ITEM,   1);
+	final private static Command cmdEdit     = new Command(ResourceBundle.getString("edit"),        Command.ITEM,   1);
 
 	static private CommandListener listener;
 	static private Hashtable commands = new Hashtable();
