@@ -21,45 +21,38 @@
  Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
-
 package jimm.comm;
 
-
 import jimm.JimmException;
-
 
 public class DisconnectPacket extends Packet
 {
 
-
 	// Packet types
 	public static final int TYPE_SRV_COOKIE = 1;
-	public static final int TYPE_SRV_GOODBYE = 2;
-	public static final int TYPE_CLI_GOODBYE = 3;
 
+	public static final int TYPE_SRV_GOODBYE = 2;
+
+	public static final int TYPE_CLI_GOODBYE = 3;
 
 	// UIN as string (== null for CLI_GOODBYE packets)
 	protected String uin;
 
-
 	// Server (!= null only for SRV_COOKIE packets)
 	protected String server;
-
 
 	// Cookie (!= null only for SRV_COOKIE packets)
 	protected byte[] cookie;
 
-
 	// Reason for disconnect as an error code (>= 0 only for SRV_DISCONNECT packets)
 	protected int error;
-
 
 	// Reason for disconnect as a string (!= null only for SRV_DISCONNECT packets)
 	protected String description;
 
-
 	// Constructs a SRV_COOKIE packet
-	public DisconnectPacket(int sequence, String uin, String server, byte[] cookie)
+	public DisconnectPacket(int sequence, String uin, String server,
+			byte[] cookie)
 	{
 		this.sequence = sequence;
 		this.uin = uin;
@@ -69,7 +62,6 @@ public class DisconnectPacket extends Packet
 		this.error = -1;
 		this.description = null;
 	}
-
 
 	// Constructs a SRV_GOODBYE packet
 	public DisconnectPacket(int sequence, int error, String description)
@@ -82,13 +74,11 @@ public class DisconnectPacket extends Packet
 		this.description = new String(description);
 	}
 
-
 	// Constructs a SRV_GOODBYE packet
 	public DisconnectPacket(int error, String description)
 	{
 		this(-1, error, description);
 	}
-
 
 	// Constructs a CLI_GOODBYE packet
 	public DisconnectPacket(int sequence)
@@ -101,13 +91,11 @@ public class DisconnectPacket extends Packet
 		this.description = null;
 	}
 
-
 	// Constructs a CLI_GOODBYE packet
 	public DisconnectPacket()
 	{
 		this(-1);
 	}
-
 
 	// Returns the packet type
 	public int getType()
@@ -115,17 +103,14 @@ public class DisconnectPacket extends Packet
 		if (this.uin != null)
 		{
 			return (DisconnectPacket.TYPE_SRV_COOKIE);
-		}
-		else if (this.error >= 0)
+		} else if (this.error >= 0)
 		{
 			return (DisconnectPacket.TYPE_SRV_GOODBYE);
-		}
-		else
+		} else
 		{
 			return (DisconnectPacket.TYPE_CLI_GOODBYE);
 		}
 	}
-
 
 	// Returns the uin, or null if packet type is not SRV_COOKIE
 	public String getUin()
@@ -133,13 +118,11 @@ public class DisconnectPacket extends Packet
 		if (this.getType() == DisconnectPacket.TYPE_SRV_COOKIE)
 		{
 			return this.uin;
-		}
-		else
+		} else
 		{
 			return (null);
 		}
 	}
-
 
 	// Returns the server, or null if packet type is not SRV_COOKIE
 	public String getServer()
@@ -147,13 +130,11 @@ public class DisconnectPacket extends Packet
 		if (this.getType() == DisconnectPacket.TYPE_SRV_COOKIE)
 		{
 			return this.server;
-		}
-		else
+		} else
 		{
 			return (null);
 		}
 	}
-
 
 	// Returns the cookie, or null if packet type is not SRV_COOKIE
 	public byte[] getCookie()
@@ -163,13 +144,11 @@ public class DisconnectPacket extends Packet
 			byte[] cookie = new byte[this.cookie.length];
 			System.arraycopy(this.cookie, 0, cookie, 0, this.cookie.length);
 			return (cookie);
-		}
-		else
+		} else
 		{
 			return (null);
 		}
 	}
-
 
 	// Returns the error as an error code, or -1 if packet type is not SRV_GOODBYE
 	public int getError()
@@ -177,13 +156,11 @@ public class DisconnectPacket extends Packet
 		if (this.getType() == DisconnectPacket.TYPE_SRV_GOODBYE)
 		{
 			return (this.error);
-		}
-		else
+		} else
 		{
 			return (-1);
 		}
 	}
-
 
 	// Returns the reason for disconnect as a string, or null if packet type is not SRV_GOODBYE
 	public String getDescription()
@@ -191,13 +168,11 @@ public class DisconnectPacket extends Packet
 		if (this.getType() == DisconnectPacket.TYPE_SRV_GOODBYE)
 		{
 			return this.description;
-		}
-		else
+		} else
 		{
 			return (null);
 		}
 	}
-
 
 	// Returns the package as byte array
 	public byte[] toByteArray()
@@ -210,8 +185,7 @@ public class DisconnectPacket extends Packet
 			length += 4 + this.uin.length();
 			length += 4 + this.server.length();
 			length += 4 + this.cookie.length;
-		}
-		else if (this.getType() == DisconnectPacket.TYPE_SRV_GOODBYE)
+		} else if (this.getType() == DisconnectPacket.TYPE_SRV_GOODBYE)
 		{
 			length += 4 + 2;
 			length += 4 + this.description.length();
@@ -221,10 +195,10 @@ public class DisconnectPacket extends Packet
 		byte[] buf = new byte[length];
 
 		// Assemble FLAP header
-		Util.putByte(buf, 0, 0x2A);   // FLAP.ID
-		Util.putByte(buf, 1, 0x04);   // FLAP.CHANNEL
-		Util.putWord(buf, 2, Icq.getFlapSequence());   // FLAP.SEQUENCE
-		Util.putWord(buf, 4, length - 6);   // FLAP.LENGTH
+		Util.putByte(buf, 0, 0x2A); // FLAP.ID
+		Util.putByte(buf, 1, 0x04); // FLAP.CHANNEL
+		Util.putWord(buf, 2, Icq.getFlapSequence()); // FLAP.SEQUENCE
+		Util.putWord(buf, 4, length - 6); // FLAP.LENGTH
 
 		// Marker
 		int pos = 6;
@@ -268,7 +242,8 @@ public class DisconnectPacket extends Packet
 			Util.putWord(buf, pos, 0x0004);
 			Util.putWord(buf, pos + 2, this.description.length());
 			byte[] descriptionRaw = Util.stringToByteArray(this.description);
-			System.arraycopy(descriptionRaw, 0, buf, pos + 4, descriptionRaw.length);
+			System.arraycopy(descriptionRaw, 0, buf, pos + 4,
+					descriptionRaw.length);
 
 			// DISCONNECT.ERROR
 			Util.putWord(buf, pos, 0x0008);
@@ -283,9 +258,9 @@ public class DisconnectPacket extends Packet
 
 	}
 
-
 	// Parses given byte array and returns a Packet object
-	public static Packet parse(byte[] buf, int off, int len) throws JimmException
+	public static Packet parse(byte[] buf, int off, int len)
+			throws JimmException
 	{
 
 		// Get FLAP sequence number
@@ -322,40 +297,43 @@ public class DisconnectPacket extends Packet
 			// Save value
 			switch (tlvType)
 			{
-				case 0x0001:   // uin
-					uin = Util.byteArrayToString(tlvValue);
-					break;
-				case 0x0005:   // server
-					server = Util.byteArrayToString(tlvValue);
-					break;
-				case 0x0006:   // cookie
-					cookie = tlvValue;
-					break;
-				case 0x0008:   // error
-				case 0x0009:   // error
-					error = Util.getWord(tlvValue, 0);
-					break;
-				case 0x0004:   // description
-				case 0x000B:   // description
-					description = Util.byteArrayToString(tlvValue);
-					break;
-				default: 		// Do nothing on default (ignore all unknown TLVs)
+			case 0x0001: // uin
+				uin = Util.byteArrayToString(tlvValue);
+				break;
+			case 0x0005: // server
+				server = Util.byteArrayToString(tlvValue);
+				break;
+			case 0x0006: // cookie
+				cookie = tlvValue;
+				break;
+			case 0x0008: // error
+			case 0x0009: // error
+				error = Util.getWord(tlvValue, 0);
+				break;
+			case 0x0004: // description
+			case 0x000B: // description
+				description = Util.byteArrayToString(tlvValue);
+				break;
+			default: // Do nothing on default (ignore all unknown TLVs)
 			}
 
 		}
 
 		// CLI_GOODBYE
-		if ((uin == null) && (server == null) && (cookie == null) && (error == -1) && (description == null))
+		if ((uin == null) && (server == null) && (cookie == null)
+				&& (error == -1) && (description == null))
 		{
 			return (new DisconnectPacket(flapSequence));
 		}
 		// SRV_COOKIE
-		else if ((uin != null) && (server != null) && (cookie != null) && (error == -1) && (description == null))
+		else if ((uin != null) && (server != null) && (cookie != null)
+				&& (error == -1) && (description == null))
 		{
 			return (new DisconnectPacket(flapSequence, uin, server, cookie));
 		}
 		// SRV_GOODBYYE
-		else if ((server == null) && (cookie == null) && (error != -1) && (description != null))
+		else if ((server == null) && (cookie == null) && (error != -1)
+				&& (description != null))
 		{
 			return (new DisconnectPacket(flapSequence, error, description));
 		}
@@ -367,12 +345,10 @@ public class DisconnectPacket extends Packet
 
 	}
 
-
 	// Parses given byte array and returns a Packet object
 	public static Packet parse(byte[] buf) throws JimmException
 	{
 		return (DisconnectPacket.parse(buf, 0, buf.length));
 	}
-
 
 }

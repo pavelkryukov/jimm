@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-07  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -26,6 +26,8 @@ package DrawControls;
 public interface VirtualTreeCommands
 {
 	public void VTGetItemDrawData(TreeNode src, ListItem dst);
+
 	public void VTnodeClicked(TreeNode node);
+
 	public int compareNodes(TreeNode node1, TreeNode node2);
 }

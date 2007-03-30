@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-07  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -28,6 +28,8 @@ import DrawControls.VirtualList;
 public interface VirtualListCommands
 {
 	public void onKeyPress(VirtualList sender, int keyCode, int type);
+
 	public void onCursorMove(VirtualList sender);
+
 	public void onItemSelected(VirtualList sender);
 }

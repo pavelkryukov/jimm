@@ -21,25 +21,23 @@
  Author(s): Manuel Linsmayer
  *******************************************************************************/
 
-
 package jimm.comm;
 
-
 import jimm.JimmException;
-
 
 public abstract class Action
 {
 	final static public int ON_COMPLETE = 1;
-	final static public int ON_CANCEL   = 2;
-	final static public int ON_ERROR    = 3;
-	
+
+	final static public int ON_CANCEL = 2;
+
+	final static public int ON_ERROR = 3;
+
 	// ICQ object
 	protected Icq icq;
-	
+
 	private boolean exclusive, executableConnected;
 
-	
 	protected Action(boolean exclusive, boolean executableConnected)
 	{
 		this.exclusive = exclusive;
@@ -55,10 +53,10 @@ public abstract class Action
 	// Returns true if the action can be performed
 	final public boolean isExecutable()
 	{
-		if (executableConnected) return Icq.isConnected();
+		if (executableConnected)
+			return Icq.isConnected();
 		return Icq.isNotConnected();
 	}
-
 
 	// Returns true if this is an exclusive command
 	final public boolean isExclusive()
@@ -66,18 +64,14 @@ public abstract class Action
 		return exclusive;
 	}
 
-
 	// Init action
 	protected abstract void init() throws JimmException;
-
 
 	// Forwards received packet, returns true if packet was consumed
 	protected abstract boolean forward(Packet packet) throws JimmException;
 
-
 	// Returns true if the action is completed
 	public abstract boolean isCompleted();
-
 
 	// Returns ture if an error has occured
 	public abstract boolean isError();
@@ -90,6 +84,8 @@ public abstract class Action
 		else
 			return (0);
 	}
-	
-	public void onEvent(int eventType) {}
+
+	public void onEvent(int eventType)
+	{
+	}
 }

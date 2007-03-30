@@ -5,8 +5,8 @@ package jimm;
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.io.file.FileConnection;
 //#sijapp cond.elseif target="SIEMENS2"#
-import com.siemens.mp.io.file.FileConnection;
-import com.siemens.mp.io.file.FileSystemRegistry;
+//#import com.siemens.mp.io.file.FileConnection;
+//#import com.siemens.mp.io.file.FileSystemRegistry;
 //#sijapp cond.end#
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.CommandListener;
@@ -28,8 +28,8 @@ abstract class FileSystem
 	public static FileSystem getInstance()
 	{
 		//#sijapp cond.if target="MOTOROLA"#
-		if (!Jimm.supports_JSR75) return new MotorolaFileSystem();
-		else
+		//#		if (!Jimm.supports_JSR75) return new MotorolaFileSystem();
+		//#		else
 		//#sijapp cond.end#
 		return new JSR75FileSystem();
 	}
@@ -38,9 +38,9 @@ abstract class FileSystem
 			throws JimmException
 	{
 		//#sijapp cond.if target="MOTOROLA"#
-		if (!Jimm.supports_JSR75) return MotorolaFileSystem
-				.getDirectoryContents(dir, only_dirs);
-		else
+		//#		if (!Jimm.supports_JSR75) return MotorolaFileSystem
+		//#				.getDirectoryContents(dir, only_dirs);
+		//#		else
 		//#sijapp cond.end#
 		return JSR75FileSystem.getDirectoryContents(dir, only_dirs);
 	}
@@ -48,8 +48,8 @@ abstract class FileSystem
 	public static long totalSize(String root) throws Exception
 	{
 		//#sijapp cond.if target="MOTOROLA"#
-		if (!Jimm.supports_JSR75) return MotorolaFileSystem.totalSize(root);
-		else
+		//#		if (!Jimm.supports_JSR75) return MotorolaFileSystem.totalSize(root);
+		//#		else
 		//#sijapp cond.end#
 		return JSR75FileSystem.totalSize(root);
 	}
@@ -63,122 +63,121 @@ abstract class FileSystem
 	public abstract void close();
 
 	public abstract long fileSize() throws Exception;
-	
+
 	//#sijapp cond.if target is "SIEMENS2"|target is "MIDP2"#
 	public abstract String getName();
 	//#sijapp cond.end#
 }
 
 //#sijapp cond.if target="MOTOROLA"#
-class MotorolaFileSystem extends FileSystem
-{
-	private com.motorola.io.FileConnection fileConnection;
+//#class MotorolaFileSystem extends FileSystem
+//#{
+//#	private com.motorola.io.FileConnection fileConnection;
 
-	public static String[] getDirectoryContents(
-		String currDir,
-		boolean only_dirs) throws JimmException
-	{
-		String[] items = null;
-		try
-		{
-			if (currDir.equals(FileBrowser.ROOT_DIRECTORY))
-			{
-				String[] roots = com.motorola.io.FileSystemRegistry.listRoots();
-				items = new String[roots.length];
-				for (int i = 0; i < roots.length; i++)
-					items[i] = roots[i].substring(1);
-			}
-			else
-			{
-				com.motorola.io.FileConnection fileconn = (com.motorola.io.FileConnection) Connector
-						.open("file://" + currDir);
-				String[] list = fileconn.list();
-				fileconn.close();
-				Vector list_vect = new Vector(list.length + 1);
-				list_vect.addElement(FileBrowser.PARENT_DIRECTORY);
-				for (int i = 0; i < list.length; i++)
-				{
-					if (only_dirs & !list[i].endsWith("/")) continue;
-					list_vect.addElement(list[i].substring(currDir.length()));
-				}
-				items = new String[list_vect.size()];
-				list_vect.copyInto(items);
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			throw new JimmException(191, 0, true);
-		}
-		return items;
-	}
+//#	public static String[] getDirectoryContents(
+//#		String currDir,
+//#		boolean only_dirs) throws JimmException
+//#	{
+//#		String[] items = null;
+//#		try
+//#		{
+//#			if (currDir.equals(FileBrowser.ROOT_DIRECTORY))
+//#			{
+//#				String[] roots = com.motorola.io.FileSystemRegistry.listRoots();
+//#				items = new String[roots.length];
+//#				for (int i = 0; i < roots.length; i++)
+//#					items[i] = roots[i].substring(1);
+//#			}
+//#			else
+//#			{
+//#				com.motorola.io.FileConnection fileconn = (com.motorola.io.FileConnection) Connector
+//#						.open("file://" + currDir);
+//#			String[] list = fileconn.list();
+//#				fileconn.close();
+//#				Vector list_vect = new Vector(list.length + 1);
+//#				list_vect.addElement(FileBrowser.PARENT_DIRECTORY);
+//#				for (int i = 0; i < list.length; i++)
+//#				{
+//#					if (only_dirs & !list[i].endsWith("/")) continue;
+//#					list_vect.addElement(list[i].substring(currDir.length()));
+//#				}
+//#				items = new String[list_vect.size()];
+//#				list_vect.copyInto(items);
+//#			}
+//#		}
+//#		catch (Exception e)
+//#		{
+//#			e.printStackTrace();
+//#			throw new JimmException(191, 0, true);
+//#		}
+//#		return items;
+//#	}
 
-	public static long totalSize(String name) throws Exception
-	{
-		long total_size = 0;
-		com.motorola.io.FileConnection fileconn = (com.motorola.io.FileConnection) Connector
-				.open("file:///" + name);
-		total_size = fileconn.totalSize();
-		fileconn.close();
-		return total_size;
-	}
+//#	public static long totalSize(String name) throws Exception
+//#	{
+//#		long total_size = 0;
+//#		com.motorola.io.FileConnection fileconn = (com.motorola.io.FileConnection) Connector
+//#				.open("file:///" + name);
+//#		total_size = fileconn.totalSize();
+//#		fileconn.close();
+//#		return total_size;
+//#	}
 
-	public void openFile(String file) throws Exception
-	{
-		fileConnection = (com.motorola.io.FileConnection) Connector
-				.open("file://" + file);
-	}
+//#	public void openFile(String file) throws Exception
+//#	{
+//#		fileConnection = (com.motorola.io.FileConnection) Connector
+//#				.open("file://" + file);
+//#	}
 
-	public OutputStream openOutputStream() throws Exception
-	{
-		if (!fileConnection.exists())
-		{
-			fileConnection.create();
-		}
-		else if (fileConnection.exists() & (fileOutputStream == null))
-		{
-			fileConnection.delete();
-			fileConnection.create();
-		}
-		return (fileOutputStream != null) ? fileOutputStream : fileConnection
-				.openOutputStream();
-	}
+//#	public OutputStream openOutputStream() throws Exception
+//#	{
+//#		if (!fileConnection.exists())
+//#		{
+//#			fileConnection.create();
+//#		}
+//#		else if (fileConnection.exists() & (fileOutputStream == null))
+//#		{
+//#			fileConnection.delete();
+//#			fileConnection.create();
+//#		}
+//#		return (fileOutputStream != null) ? fileOutputStream : fileConnection
+//#				.openOutputStream();
+//#	}
 
-	public InputStream openInputStream() throws Exception
-	{
-		return (fileInputStream != null) ? fileInputStream : fileConnection
-				.openInputStream();
-	}
+//#	public InputStream openInputStream() throws Exception
+//#	{
+//#		return (fileInputStream != null) ? fileInputStream : fileConnection
+//#				.openInputStream();
+//#	}
 
-	public void close()
-	{
-		try
-		{
-			if (fileInputStream != null) fileInputStream.close();
-			if (fileOutputStream != null) fileOutputStream.close();
-			if (fileConnection != null) fileConnection.close();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+//#	public void close()
+//#	{
+//#		try
+//#		{
+//#			if (fileInputStream != null) fileInputStream.close();
+//#			if (fileOutputStream != null) fileOutputStream.close();
+//#			if (fileConnection != null) fileConnection.close();
+//#		}
+//#		catch (Exception e)
+//#		{
+//#			e.printStackTrace();
+//#		}
+//#	}
 
-	public long fileSize() throws Exception
-	{
-		if (fileConnection != null) return fileConnection.fileSize();
-		else return -1;
-	}
-}
+//#	public long fileSize() throws Exception
+//#	{
+//#		if (fileConnection != null) return fileConnection.fileSize();
+//#		else return -1;
+//#	}
+//#}
 
 //#sijapp cond.end#
 class JSR75FileSystem extends FileSystem
 {
 	private FileConnection fileConnection;
 
-	public static String[] getDirectoryContents(
-		String currDir,
-		boolean only_dirs) throws JimmException
+	public static String[] getDirectoryContents(String currDir,
+			boolean only_dirs) throws JimmException
 	{
 		System.out.println("getDirectoryContents.currDir=" + currDir);
 
@@ -187,19 +186,19 @@ class JSR75FileSystem extends FileSystem
 		{
 			if (currDir.equals(FileBrowser.ROOT_DIRECTORY))
 			{
-				System.out.println("currDir.equals(FileBrowser.ROOT_DIRECTORY)");
+				System.out
+						.println("currDir.equals(FileBrowser.ROOT_DIRECTORY)");
 				Vector roots_vect = new Vector();
 				Enumeration roots = FileSystemRegistry.listRoots();
 				while (roots.hasMoreElements())
 					roots_vect.addElement(((String) roots.nextElement()));
 				items = new String[roots_vect.size()];
 				roots_vect.copyInto(items);
-			}
-			else
+			} else
 			{
 				FileConnection fileconn;
 				//#sijapp cond.if target="SIEMENS2"#
-				fileconn = (FileConnection) Connector.open("file://" + currDir);
+				//#				fileconn = (FileConnection) Connector.open("file://" + currDir);
 				//#sijapp cond.else#
 				fileconn = (FileConnection) Connector.open("file://localhost"
 						+ currDir);
@@ -212,14 +211,14 @@ class JSR75FileSystem extends FileSystem
 				while (list.hasMoreElements())
 				{
 					String filename = (String) list.nextElement();
-					if (only_dirs & !filename.endsWith("/")) continue;
+					if (only_dirs & !filename.endsWith("/"))
+						continue;
 					list_vect.addElement(filename);
 				}
 				items = new String[list_vect.size()];
 				list_vect.copyInto(items);
 			}
-		}
-		catch (Exception e)
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 			throw new JimmException(191, 0, true);
@@ -232,7 +231,7 @@ class JSR75FileSystem extends FileSystem
 		long total_size = 0;
 		FileConnection fileconn;
 		//#sijapp cond.if target="SIEMENS2"#
-		fileconn = (FileConnection) Connector.open("file:///" + name);
+		//#		fileconn = (FileConnection) Connector.open("file:///" + name);
 		//#sijapp cond.else#
 		fileconn = (FileConnection) Connector.open("file://localhost/" + name);
 		//#sijapp cond.end#
@@ -252,8 +251,7 @@ class JSR75FileSystem extends FileSystem
 		if (!fileConnection.exists())
 		{
 			fileConnection.create();
-		}
-		else if (fileConnection.exists() & (fileOutputStream == null))
+		} else if (fileConnection.exists() & (fileOutputStream == null))
 		{
 			fileConnection.delete();
 			fileConnection.create();
@@ -272,11 +270,13 @@ class JSR75FileSystem extends FileSystem
 	{
 		try
 		{
-			if (fileInputStream != null) fileInputStream.close();
-			if (fileOutputStream != null) fileOutputStream.close();
-			if (fileConnection != null) fileConnection.close();
-		}
-		catch (Exception e)
+			if (fileInputStream != null)
+				fileInputStream.close();
+			if (fileOutputStream != null)
+				fileOutputStream.close();
+			if (fileConnection != null)
+				fileConnection.close();
+		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -284,16 +284,18 @@ class JSR75FileSystem extends FileSystem
 
 	public long fileSize() throws Exception
 	{
-		if (fileConnection != null) return fileConnection.fileSize();
-		else return -1;
+		if (fileConnection != null)
+			return fileConnection.fileSize();
+		else
+			return -1;
 	}
-	
+
 	//#sijapp cond.if target is "SIEMENS2"|target is "MIDP2"#
 	public String getName()
 	{
-		if( fileConnection != null )
+		if (fileConnection != null)
 			return fileConnection.getName();
-		
+
 		return null;
 	}
 	//#sijapp cond.end#
@@ -306,6 +308,12 @@ interface FileBrowserListener
 	public void onDirectorySelect(String directory);
 }
 
+/**
+ * @author andreas
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
 public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		VirtualListCommands
 {
@@ -343,15 +351,15 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		try
 		{
 			imageList.load("/fs.png", -1, -1, -1);
-		}
-		catch (java.io.IOException e)
+		} catch (java.io.IOException e)
 		{
 		}
 		tree = new VirtualTree(null, false);
 		tree.setVTCommands(this);
 		tree.setVLCommands(this);
 		tree.setImageList(imageList);
-		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT : VirtualList.MEDIUM_FONT);
+		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
+				: VirtualList.MEDIUM_FONT);
 		tree.setStepSize(-tree.getFontHeight() / 2);
 		tree.setCapImage(imageList.elementAt(0));
 		JimmUI.setColorScheme(tree);
@@ -370,8 +378,10 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 
 	private static int getNodeWeight(String filename)
 	{
-		if (filename.equals(PARENT_DIRECTORY)) return 0;
-		if (filename.endsWith("/")) return 10;
+		if (filename.equals(PARENT_DIRECTORY))
+			return 0;
+		if (filename.endsWith("/"))
+			return 10;
 		return 20;
 	}
 
@@ -382,9 +392,10 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		String name2 = (String) node2.getData();
 		int weight1 = getNodeWeight(name1);
 		int weight2 = getNodeWeight(name2);
-		if (weight1 == weight2) result = name1.toLowerCase().compareTo(name2
-				.toLowerCase());
-		else result = (weight1 < weight2) ? -1 : 1;
+		if (weight1 == weight2)
+			result = name1.toLowerCase().compareTo(name2.toLowerCase());
+		else
+			result = (weight1 < weight2) ? -1 : 1;
 		return result;
 	}
 
@@ -412,7 +423,7 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 	public void VTnodeClicked(TreeNode node)
 	{
 		String file = (String) node.getData();
-		
+
 		if (file.equals(PARENT_DIRECTORY))
 		{
 			int d = currDir.lastIndexOf('/', currDir.length() - 2);
@@ -420,34 +431,31 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 			reset();
 			try
 			{
-				items = FileSystem.getDirectoryContents(currDir, needToSelectDirectory);
-			}
-			catch (JimmException e)
+				items = FileSystem.getDirectoryContents(currDir,
+						needToSelectDirectory);
+			} catch (JimmException e)
 			{
 				JimmException.handleException(e);
 			}
 			rebuildTree();
-		}
-		else if (file.endsWith("/"))
+		} else if (file.endsWith("/"))
 		{
 			currDir += file;
 			reset();
 			try
 			{
-				items = FileSystem
-						.getDirectoryContents(currDir, needToSelectDirectory);
-			}
-			catch (JimmException e)
+				items = FileSystem.getDirectoryContents(currDir,
+						needToSelectDirectory);
+			} catch (JimmException e)
 			{
 				JimmException.handleException(e);
 			}
-//			if (needToSelectDirectory & !openCommandSelected
-//					& (items.length <= 1)) listener.onDirectorySelect(currDir);
-//			else 
-			    rebuildTree();
+			//			if (needToSelectDirectory & !openCommandSelected
+			//					& (items.length <= 1)) listener.onDirectorySelect(currDir);
+			//			else 
+			rebuildTree();
 			openCommandSelected = false;
-		}
-		else
+		} else
 		{
 			listener.onFileSelect(currDir + file);
 		}
@@ -461,31 +469,30 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		{
 			int d = currDir.lastIndexOf('/', currDir.length() - 2);
 			tree.addCommand(openCommand);
-			tree.setCaption((d != -1) ? currDir.substring(0, d + 1) : ROOT_DIRECTORY);
-		}
-		else if (name.endsWith("/") & currDir.equals(ROOT_DIRECTORY))
+			tree.setCaption((d != -1) ? currDir.substring(0, d + 1)
+					: ROOT_DIRECTORY);
+		} else if (name.endsWith("/") & currDir.equals(ROOT_DIRECTORY))
 		{
 			try
 			{
 				tree.setCaption(ResourceBundle.getString("total_mem") + ": "
 						+ (FileSystem.totalSize(name) >> 10)
 						+ ResourceBundle.getString("kb"));
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				e.printStackTrace();
 				tree.setTitle("???");
 			}
-			if (needToSelectDirectory) tree.addCommand(selectCommand);
+			if (needToSelectDirectory)
+				tree.addCommand(selectCommand);
 			tree.addCommand(openCommand);
-		}
-		else if (name.endsWith("/") & !currDir.equals(ROOT_DIRECTORY))
+		} else if (name.endsWith("/") & !currDir.equals(ROOT_DIRECTORY))
 		{
-			if (needToSelectDirectory) tree.addCommand(selectCommand);
+			if (needToSelectDirectory)
+				tree.addCommand(selectCommand);
 			tree.addCommand(openCommand);
 			tree.setCaption(currDir + name);
-		}
-		else
+		} else
 		{
 			tree.addCommand(selectCommand);
 			try
@@ -497,13 +504,13 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 				file.close();
 				int ext = name.lastIndexOf('.');
 				StringBuffer str_buf = new StringBuffer();
-				if (ext != -1) str_buf = str_buf.append(name.substring(ext + 1)
-						.toUpperCase()).append(", ");
-				str_buf = str_buf.append(file_size).append(ResourceBundle
-						.getString("kb"));
+				if (ext != -1)
+					str_buf = str_buf.append(
+							name.substring(ext + 1).toUpperCase()).append(", ");
+				str_buf = str_buf.append(file_size).append(
+						ResourceBundle.getString("kb"));
 				tree.setCaption(str_buf.toString());
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 			}
 		}
@@ -511,8 +518,9 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 
 	public void onCursorMove(VirtualList sender)
 	{
-		if (sender == tree) updateTreeCaptionAndCommands((String) tree
-				.getCurrentItem().getData());
+		if (sender == tree)
+			updateTreeCaptionAndCommands((String) tree.getCurrentItem()
+					.getData());
 	}
 
 	public void VTGetItemDrawData(TreeNode src, ListItem dst)
@@ -534,7 +542,8 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 
 	public static void activate() throws JimmException
 	{
-		if (_this == null) new FileBrowser();
+		if (_this == null)
+			new FileBrowser();
 		reset();
 		currDir = ROOT_DIRECTORY;
 		items = FileSystem.getDirectoryContents(currDir, needToSelectDirectory);
@@ -550,15 +559,14 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 			{
 				openCommandSelected = needToSelectDirectory;
 				VTnodeClicked(tree.getCurrentItem());
-			}
-			else if (c == selectCommand)
+			} else if (c == selectCommand)
 			{
 				String filename = (String) tree.getCurrentItem().getData();
-				if (filename.endsWith("/")) listener.onDirectorySelect(currDir
-						+ filename);
-				else listener.onFileSelect(currDir + filename);
-			}
-			else if (c == backCommand)
+				if (filename.endsWith("/"))
+					listener.onDirectorySelect(currDir + filename);
+				else
+					listener.onFileSelect(currDir + filename);
+			} else if (c == backCommand)
 			{
 				ContactList.activate();
 			}

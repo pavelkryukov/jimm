@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-07  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -21,9 +21,7 @@
  Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
-
 package jimm;
-
 
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
@@ -41,137 +39,137 @@ import javax.microedition.lcdui.Displayable;
 public class Jimm extends MIDlet
 {
 
-
 	// Version
 	public static String VERSION;
-
 
 	// Application main object
 	public static Jimm jimm;
 
-
 	// Display object
 	public static Display display;
 
-
 	/****************************************************************************/
-
 
 	// ICQ object
 	private Icq icq;
 
 	// Options container 	 
-    private Options o;
+	private Options o;
 
 	// Main menu object
 	private MainMenu mm;
-
 
 	// Contact list object
 	private ContactList cl;
 
 	// Chat history object
 	private ChatHistory ch;
-	
-    // #sijapp cond.if target is "MIDP2" #
+
+	//#sijapp cond.if target is "MIDP2" #
 	static private boolean is_phone_SE;
-    // #sijapp cond.end #
-	// #sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
-	static public final boolean supports_JSR75;
-	// #sijapp cond.end#
+
+	//#sijapp cond.end #
+	//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
+	//#	static public final boolean supports_JSR75;
+	//#sijapp cond.end#
 	//#sijapp cond.if target="MOTOROLA"#
-	static public final int funlight_device_type;
-	
-	public static final int FUNLIGHT_DEVICE_E380 = 2;
-	public static final int FUNLIGHT_DEVICE_E390 = 3;
-	// #sijapp cond.end#
+	//#	static public final int funlight_device_type;
+	//#	
+	//#	public static final int FUNLIGHT_DEVICE_E380 = 2;
+	//#	public static final int FUNLIGHT_DEVICE_E390 = 3;
+	//#sijapp cond.end#
 
 	// Timer object
 	private static Timer timer = new Timer();
 
-
-	// #sijapp cond.if modules_TRAFFIC is "true" #
+	//#sijapp cond.if modules_TRAFFIC is "true" #
 	// Traffic counter
 	private Traffic traffic;
-	// #sijapp cond.end#
 
+	//#sijapp cond.end#
 
 	// Splash canvas object
 	private SplashCanvas sc;
-	
-	// Storage for messages
-	// #sijapp cond.if modules_HISTORY is "true" #
-	private HistoryStorage history;
-	// #sijapp cond.end#
 
-	
+	// Storage for messages
+	//#sijapp cond.if modules_HISTORY is "true" #
+	private HistoryStorage history;
+
+	//#sijapp cond.end#
+
 	private JimmUI ui;
-	
-	public static final String microeditionPlatform = System.getProperty("microedition.platform");
-	public static final String microeditionProfiles = System.getProperty("microedition.profiles");
+
+	public static final String microeditionPlatform = System
+			.getProperty("microedition.platform");
+
+	public static final String microeditionProfiles = System
+			.getProperty("microedition.profiles");
 
 	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"#
 	static
 	{
-		// #sijapp cond.if target is "MIDP2" #
+		//#sijapp cond.if target is "MIDP2" #
 		if (microeditionPlatform != null)
-			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf("ericsson") != -1);
-		// #sijapp cond.end#
-		// #sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
-		boolean jsr75 = false;
-		try
-		{
-			jsr75 = Class.forName("javax.microedition.io.file.FileConnection") != null;
-		}
-		catch (ClassNotFoundException cnfe)
-		{
-		}
-		finally
-		{
-			supports_JSR75 = jsr75;
-		}
-		// #sijapp cond.end#
+			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf(
+					"ericsson") != -1);
+		//#sijapp cond.end#
+		//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
+		//#		boolean jsr75 = false;
+		//#		try
+		//#		{
+		//#			jsr75 = Class.forName("javax.microedition.io.file.FileConnection") != null;
+		//#		}
+		//#		catch (ClassNotFoundException cnfe)
+		//#		{
+		//#		}
+		//#		finally
+		//#		{
+		//#			supports_JSR75 = jsr75;
+		//#		}
+		//#sijapp cond.end#
 
 		//#sijapp cond.if target="MOTOROLA"#
-		String funlightsProduct = System.getProperty("funlights.product");
-		System.out.println("funlights.product = " + funlightsProduct);
-		if (funlightsProduct == null)
-		{
-			funlight_device_type = -1;
-		}
-		else if (funlightsProduct.equals("E380"))
-		{
-			funlight_device_type = FUNLIGHT_DEVICE_E380;
-		}
-		else
-		{
-			funlight_device_type = FUNLIGHT_DEVICE_E390;
-		}
+		//#		String funlightsProduct = System.getProperty("funlights.product");
+		//#		System.out.println("funlights.product = " + funlightsProduct);
+		//#		if (funlightsProduct == null)
+		//#		{
+		//#			funlight_device_type = -1;
+		//#		}
+		//#		else if (funlightsProduct.equals("E380"))
+		//#		{
+		//#			funlight_device_type = FUNLIGHT_DEVICE_E380;
+		//#		}
+		//#		else
+		//#		{
+		//#			funlight_device_type = FUNLIGHT_DEVICE_E390;
+		//#		}
 		//#sijapp cond.end#
 	}
+
 	//#sijapp cond.end#
 
 	// Start Jimm
 	public void startApp() throws MIDletStateChangeException
 	{
 		RunnableImpl.setMidlet(this);
-		
+
 		// Return if MIDlet has already been initialized
 		if (Jimm.jimm != null)
 		{
 			showWorkScreen();
 			return;
 		}
-		
+
 		// Save MIDlet reference
 		Jimm.jimm = this;
-		
+
 		// Get Jimm version
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
-		if (Jimm.VERSION == null) Jimm.VERSION = "###VERSION###";
-		
+		if (Jimm.VERSION == null)
+			Jimm.VERSION = "###VERSION###";
+
 		// Create options container 	 
-        this.o = new Options();
+		this.o = new Options();
 
 		// Create splash canvas object
 		this.sc = new SplashCanvas(ResourceBundle.getString("loading"));
@@ -179,14 +177,14 @@ public class Jimm extends MIDlet
 		// Check available heap memory, display warning if less then 250 KB
 		if (Runtime.getRuntime().totalMemory() < 256000)
 		{
-			Alert errorMsg = new Alert(ResourceBundle.getString("warning"), JimmException.getErrDesc(170, 0), null, AlertType.WARNING);
+			Alert errorMsg = new Alert(ResourceBundle.getString("warning"),
+					JimmException.getErrDesc(170, 0), null, AlertType.WARNING);
 			errorMsg.setTimeout(Alert.FOREVER);
 			Display.getDisplay(this).setCurrent(errorMsg, this.sc);
 			try
 			{
 				Thread.sleep(3000);
-			}
-			catch (InterruptedException e)
+			} catch (InterruptedException e)
 			{
 				// Do nothing
 			}
@@ -196,38 +194,38 @@ public class Jimm extends MIDlet
 		{
 			Display.getDisplay(this).setCurrent(this.sc);
 		}
-	
+
 		// Get display object (and update progress indicator)
 		Jimm.display = Display.getDisplay(this);
 		SplashCanvas.setProgress(10);
 
 		// Create ICQ object (and update progress indicator)
 		this.icq = new Icq();
-		SplashCanvas.setStatusToDraw(JimmUI.getStatusImageIndex(Icq.getCurrentStatus()));
+		SplashCanvas.setStatusToDraw(JimmUI.getStatusImageIndex(Icq
+				.getCurrentStatus()));
 		SplashCanvas.setProgress(20);
-		
+
 		// Create object for text storage (and update progress indicator)
-		// #sijapp cond.if modules_HISTORY is "true" #
+		//#sijapp cond.if modules_HISTORY is "true" #
 		history = new HistoryStorage();
 		SplashCanvas.setProgress(30);
-		// #sijapp cond.end#
-
+		//#sijapp cond.end#
 
 		// Initialize main menu object (and update progress indicator)
 		this.mm = new MainMenu();
 		SplashCanvas.setProgress(40);
 
-		// #sijapp cond.if modules_TRAFFIC is "true" #
+		//#sijapp cond.if modules_TRAFFIC is "true" #
 		// Create traffic Object (and update progress indicator)
 		this.traffic = new Traffic();
 		SplashCanvas.setProgress(50);
-		// #sijapp cond.end#
-		
+		//#sijapp cond.end#
+
 		// Create contact list object (and update progress indicator)
 		this.cl = new ContactList();
 		ContactList.beforeConnect();
 		SplashCanvas.setProgress(60);
-		
+
 		// Create chat hisotry object (and update progress indicator)
 		this.ch = new ChatHistory();
 		SplashCanvas.setProgress(70);
@@ -236,28 +234,28 @@ public class Jimm extends MIDlet
 		//#sijapp cond.if modules_SMILES is "true" #
 		new Emotions();
 		SplashCanvas.setProgress(90);
-		// #sijapp cond.end#
-		
+		//#sijapp cond.end#
+
 		new Templates();
-		
+
 		ui = new JimmUI();
-		
+
 		// set color scheme for all forms
 		JimmUI.setColorScheme();
-		
-		if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
-        {
-		    // Connect
-			Icq.reconnect_attempts = Options.getInt(Options.OPTION_RECONNECT_NUMBER);
-            ContactList.beforeConnect();
-            Icq.connect();
-        } else
-        {
-            // Activate main menu
-            MainMenu.activate();
-        }
-	}
 
+		if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
+		{
+			// Connect
+			Icq.reconnect_attempts = Options
+					.getInt(Options.OPTION_RECONNECT_NUMBER);
+			ContactList.beforeConnect();
+			Icq.connect();
+		} else
+		{
+			// Activate main menu
+			MainMenu.activate();
+		}
+	}
 
 	// Pause
 	public void pauseApp()
@@ -265,40 +263,38 @@ public class Jimm extends MIDlet
 		// Do nothing
 	}
 
-
 	// Destroy Jimm
-	public void destroyApp(boolean unconditional) throws MIDletStateChangeException
+	public void destroyApp(boolean unconditional)
+			throws MIDletStateChangeException
 	{
-        // Disconnect
-        Icq.disconnect();       
-        
-        // Save traffic
-        //#sijapp cond.if modules_TRAFFIC is "true" #
-		try 
+		// Disconnect
+		Icq.disconnect();
+
+		// Save traffic
+		//#sijapp cond.if modules_TRAFFIC is "true" #
+		try
 		{
 			Traffic.save();
-		} 
-		catch (Exception e) 
+		} catch (Exception e)
 		{ // Do nothing
-		} 
+		}
 		//#sijapp cond.end#
-		
+
 		Jimm.display.setCurrent(null);
 		this.notifyDestroyed();
 	}
-
 
 	// Returns a reference to ICQ object
 	public Icq getIcqRef()
 	{
 		return (this.icq);
 	}
-	
-    // Returns a reference to options container 	 
-    public Options getOptionsRef() 	 
-    { 	 
-            return (this.o); 	 
-    }
+
+	// Returns a reference to options container 	 
+	public Options getOptionsRef()
+	{
+		return (this.o);
+	}
 
 	// Returns a reference to the main menu object
 	public MainMenu getMainMenuRef()
@@ -306,44 +302,44 @@ public class Jimm extends MIDlet
 		return (this.mm);
 	}
 
-
 	// Returns a reference to the contact list object
 	public ContactList getContactListRef()
 	{
 		return (this.cl);
 	}
-	
+
 	// Returns a reference to the chat history list object
 	public ChatHistory getChatHistoryRef()
 	{
 		return (this.ch);
 	}
 
-	// #sijapp cond.if modules_HISTORY is "true" #
+	//#sijapp cond.if modules_HISTORY is "true" #
 	// Returns a reference to the stored history object
 	public HistoryStorage getHistory()
 	{
 		return (this.history);
 	}
-	// #sijapp cond.end#
+
+	//#sijapp cond.end#
 
 	// Returns a reference to the timer object
 	static public Timer getTimerRef()
 	{
 		return timer;
 	}
-	
+
 	// Cancels the timer and makes a new one
 	public void cancelTimer()
 	{
 		try
 		{
 			timer.cancel();
+		} catch (IllegalStateException e)
+		{
 		}
-		catch(IllegalStateException e){}
 		timer = new Timer();
 	}
-
 
 	// Returns a reference to splash canvas object
 	public SplashCanvas getSplashCanvasRef()
@@ -351,47 +347,49 @@ public class Jimm extends MIDlet
 		return (this.sc);
 	}
 
-
-	// #sijapp cond.if modules_TRAFFIC is "true" #
+	//#sijapp cond.if modules_TRAFFIC is "true" #
 	// Return a reference to traffic object
 	public Traffic getTrafficRef()
 	{
 		return (this.traffic);
 	}
-	// #sijapp cond.end#
-	
+
+	//#sijapp cond.end#
+
 	public JimmUI getUIRef()
 	{
 		return ui;
 	}
-	
+
 	static public void showWorkScreen()
 	{
-		if (SplashCanvas.locked()) SplashCanvas.show();
-		else if (Icq.isConnected()) ContactList.activate();
-		else MainMenu.activate();
+		if (SplashCanvas.locked())
+			SplashCanvas.show();
+		else if (Icq.isConnected())
+			ContactList.activate();
+		else
+			MainMenu.activate();
 	}
-	
-	// #sijapp cond.if target is "MIDP2" #
+
+	//#sijapp cond.if target is "MIDP2" #
 	// Set the minimize state of midlet
 	static public void setMinimized(boolean mini)
 	{
 		if (mini)
 		{
 			Jimm.display.setCurrent(null);
-		}
-		else
+		} else
 		{
 			Displayable disp = Jimm.display.getCurrent();
-			if ((disp == null) || !disp.isShown()) showWorkScreen();
+			if ((disp == null) || !disp.isShown())
+				showWorkScreen();
 		}
 	}
-	
+
 	static public boolean is_phone_SE()
 	{
 		return is_phone_SE;
-	}	
-	
-    // #sijapp cond.end #
-}
+	}
 
+	//#sijapp cond.end #
+}

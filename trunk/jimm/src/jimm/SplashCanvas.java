@@ -21,12 +21,11 @@
  Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
-
 package jimm;
 
 import DrawControls.TextList;
 //  #sijapp cond.if target is "MOTOROLA"#
-import DrawControls.VirtualList;
+//# import DrawControls.VirtualList;
 //  #sijapp cond.end#
 import jimm.comm.ConnectAction;
 //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -55,18 +54,18 @@ import java.util.TimerTask;
 import java.util.Timer;
 
 //#sijapp cond.if target is "RIM"#
-import net.rim.device.api.system.LED;
+//# import net.rim.device.api.system.LED;
 //#sijapp cond.end#
-
 
 public class SplashCanvas extends Canvas
 {
 	static private SplashCanvas _this;
-	
-	public final static Command cancelCommnad = new Command(ResourceBundle.getString("cancel"), Command.BACK, 1);
-	
+
+	public final static Command cancelCommnad = new Command(ResourceBundle
+			.getString("cancel"), Command.BACK, 1);
+
 	//Timer for repaint
-	static private Timer t1,t2;
+	static private Timer t1, t2;
 
 	// Location of the splash image (inside the JAR file)
 	private static final String SPLASH_IMG = "/logo.png";
@@ -76,39 +75,43 @@ public class SplashCanvas extends Canvas
 
 	// Location of the notice image (inside the JAR file)
 	private static final String NOTICE_IMG = "/notice.png";
-	
+
 	//#sijapp cond.if target is "SIEMENS2"#
-	private static final String BATT_IMG = "/batt.png";
-	private static Image battImg = null;
-	
-	private static Image getBattImg() 
-	{
-		if( battImg == null )
-		{
-			try
-			{
-				battImg = Image.createImage(SplashCanvas.BATT_IMG);
-			}
-			catch(IOException e){}
-		}
-		return battImg;
-	}
+	//#	private static final String BATT_IMG = "/batt.png";
+	//#	private static Image battImg = null;
+	//#	
+	//#	private static Image getBattImg() 
+	//#	{
+	//#		if( battImg == null )
+	//#		{
+	//#			try
+	//#			{
+	//#				battImg = Image.createImage(SplashCanvas.BATT_IMG);
+	//#			}
+	//#			catch(IOException e){}
+	//#		}
+	//#		return battImg;
+	//#	}
 
 	//#sijapp cond.end#
-	
+
 	// Image object, holds the notice image
 	private static Image notice;
 
 	// Font used to display the logo (if image is not available)
-	private static Font logoFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_LARGE);
-	
+	private static Font logoFont = Font.getFont(Font.FACE_SYSTEM,
+			Font.STYLE_BOLD, Font.SIZE_LARGE);
+
 	// Font used to display the version nr
-	private static Font versionFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+	private static Font versionFont = Font.getFont(Font.FACE_SYSTEM,
+			Font.STYLE_PLAIN, Font.SIZE_SMALL);
 
 	// Font (and font height in pixels) used to display informational messages
-	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
+			Font.SIZE_SMALL);
+
 	private static int height = font.getHeight();
-	
+
 	// Initializer block
 	static
 	{
@@ -117,33 +120,27 @@ public class SplashCanvas extends Canvas
 		try
 		{
 			SplashCanvas.notice = Image.createImage(SplashCanvas.NOTICE_IMG);
-		}
-		catch (IOException e)
+		} catch (IOException e)
 		{
 			// Do nothing
 		}
 
 	}
 
-
 	/*****************************************************************************/
-
 
 	// Message to display beneath the splash image
 	static private String message;
 
-
 	// Progress in percent
 	static private int progress; // = 0
-
 
 	// True if keylock has been enabled
 	static private boolean isLocked;
 
-
 	// Number of available messages
 	static private int availableMessages;
-	
+
 	// Time since last key # pressed 
 	static private long poundPressTime;
 
@@ -156,11 +153,11 @@ public class SplashCanvas extends Canvas
 	public SplashCanvas(String message)
 	{
 		_this = this;
-	    //  #sijapp cond.if target is "MIDP2"#
+		//  #sijapp cond.if target is "MIDP2"#
 		setFullScreenMode(!Jimm.is_phone_SE());
 		//  #sijapp cond.end#
-	    //  #sijapp cond.if target is "MOTOROLA" | target is "SIEMENS2"#
-		setFullScreenMode(true);
+		//  #sijapp cond.if target is "MOTOROLA" | target is "SIEMENS2"#
+		//#		setFullScreenMode(true);
 		//  #sijapp cond.end#
 		setMessage(message);
 		showKeylock = false;
@@ -178,7 +175,6 @@ public class SplashCanvas extends Canvas
 		return (message);
 	}
 
-
 	// Sets the informational message
 	static public synchronized void setMessage(String message)
 	{
@@ -191,29 +187,28 @@ public class SplashCanvas extends Canvas
 		status_index = st_index;
 	}
 
-
 	// Returns the current progress in percent
 	static public synchronized int getProgress()
 	{
 		return (progress);
 	}
-	
+
 	static public Image getSplashImage()
 	{
 		if (SplashCanvas.splash == null)
 		{
 			try
 			{
-				SplashCanvas.splash = Image.createImage(SplashCanvas.SPLASH_IMG);
-			}
-			catch (Exception e)
+				SplashCanvas.splash = Image
+						.createImage(SplashCanvas.SPLASH_IMG);
+			} catch (Exception e)
 			{
 				SplashCanvas.splash = null;
 			}
 		}
 		return SplashCanvas.splash;
 	}
-	
+
 	static public void show()
 	{
 		if (t2 != null)
@@ -223,22 +218,22 @@ public class SplashCanvas extends Canvas
 		}
 		Jimm.display.setCurrent(_this);
 	}
-	
+
 	static public void addCmd(Command cmd)
 	{
 		_this.addCommand(cmd);
 	}
-	
+
 	static public void removeCmd(Command cmd)
 	{
 		_this.removeCommand(cmd);
 	}
-	
+
 	static public void setCmdListener(CommandListener l)
 	{
 		_this.setCommandListener(l);
 	}
-	
+
 	static public void Repaint()
 	{
 		_this.repaint();
@@ -247,123 +242,130 @@ public class SplashCanvas extends Canvas
 	// Sets the current progress in percent (and request screen refresh)
 	static public synchronized void setProgress(int progress)
 	{
-		if (SplashCanvas.progress == progress) return;
+		if (SplashCanvas.progress == progress)
+			return;
 		int previousProgress = SplashCanvas.progress;
 		SplashCanvas.progress = progress;
-		if( progress < previousProgress )
+		if (progress < previousProgress)
 			_this.repaint();
 		else
-			_this.repaint(0, _this.getHeight() - SplashCanvas.height - 2, _this.getWidth(), SplashCanvas.height + 2);
+			_this.repaint(0, _this.getHeight() - SplashCanvas.height - 2, _this
+					.getWidth(), SplashCanvas.height + 2);
 	}
-	
+
 	// Enable keylock
 	static public synchronized void lock()
 	{
 		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommnad);
-		if (isLocked) return;
-		
+		if (isLocked)
+			return;
+
 		isLocked = true;
 		//  #sijapp cond.if target is "MOTOROLA"#
-		VirtualList.setBkltOn(false);
+		//#		VirtualList.setBkltOn(false);
 		//  #sijapp cond.end#
 		setMessage(ResourceBundle.getString("keylock_enabled"));
 		setStatusToDraw(JimmUI.getStatusImageIndex(Icq.getCurrentStatus()));
 		Jimm.display.setCurrent(_this);
-		
+
 		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
 		{
-			(t2 = new Timer()).schedule(new TimerTasks(TimerTasks.SC_AUTO_REPAINT), 20000, 20000);
+			(t2 = new Timer()).schedule(new TimerTasks(
+					TimerTasks.SC_AUTO_REPAINT), 20000, 20000);
 		}
 	}
-
 
 	// Disable keylock
 	static public synchronized void unlock(boolean showContactList)
 	{
-		if (!isLocked) return;
-		
+		if (!isLocked)
+			return;
+
 		isLocked = false;
 		availableMessages = 0;
-        // #sijapp cond.if target is "RIM"#
-        LED.setState(LED.STATE_OFF);
-        //  #sijapp cond.end#
-        	//  #sijapp cond.if target is "MOTOROLA"#
-		if (Options.getBoolean(Options.OPTION_LIGHT_MANUAL)) VirtualList.setBkltOn(true);
-		VirtualList.disableLED();
+		//#sijapp cond.if target is "RIM"#
+		//#        LED.setState(LED.STATE_OFF);
 		//  #sijapp cond.end#
-		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE) && (t2 != null)) t2.cancel();
-		
-		if (_this.isShown()) ContactList.activate();
+		//  #sijapp cond.if target is "MOTOROLA"#
+		//#		if (Options.getBoolean(Options.OPTION_LIGHT_MANUAL)) VirtualList.setBkltOn(true);
+		//#		VirtualList.disableLED();
+		//  #sijapp cond.end#
+		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE) && (t2 != null))
+			t2.cancel();
+
+		if (_this.isShown())
+			ContactList.activate();
 	}
-    
-    // Is the screen locked?
+
+	// Is the screen locked?
 	static public boolean locked()
-    {
-        return (isLocked);
-    }
+	{
+		return (isLocked);
+	}
 
 	protected void hideNotify()
 	{
 		SplashCanvas.splash = null;
 	}
-	
+
 	// Called when message has been received
 	static public synchronized void messageAvailable()
 	{
 		if (isLocked)
 		{
 			++availableMessages;
-			// #sijapp cond.if target is "RIM"#
-	        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
-	        LED.setState(LED.STATE_BLINKING);
-            // #sijapp cond.end#
-			// #sijapp cond.if target is "MOTOROLA"#
-			if (Jimm.funlight_device_type != 0)
-			{
-				VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, 1000, 0xFFAA00);
-			}
-			else
-			{
-				VirtualList.flashBklt(1000);
-			}
-			// #sijapp cond.end#
+			//#sijapp cond.if target is "RIM"#
+			//#	        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
+			//#	        LED.setState(LED.STATE_BLINKING);
+			//#sijapp cond.end#
+			//#sijapp cond.if target is "MOTOROLA"#
+			//#			if (Jimm.funlight_device_type != 0)
+			//#			{
+			//#				VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, 1000, 0xFFAA00);
+			//#			}
+			//#			else
+			//#			{
+			//#				VirtualList.flashBklt(1000);
+			//#			}
+			//#sijapp cond.end#
 			_this.repaint();
 		}
 	}
-	
+
 	// Called when a key is pressed
 	protected void keyPressed(int keyCode)
 	{
 		if (isLocked)
 		{
-		    if (keyCode == Canvas.KEY_POUND)
+			if (keyCode == Canvas.KEY_POUND)
 			{
-		        poundPressTime = System.currentTimeMillis();
-		    }
-			else
-		    {
-				if (t1 != null) t1.cancel();
-		        showKeylock = true;
-                this.repaint();
-			//  #sijapp cond.if target is "MOTOROLA"#
-				VirtualList.flashBklt(2500);
-				VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, 2500, JimmUI.st_colors[JimmUI.getStatusIndex(Icq.getCurrentStatus())]);
-			// #sijapp cond.end#
-		    }
+				poundPressTime = System.currentTimeMillis();
+			} else
+			{
+				if (t1 != null)
+					t1.cancel();
+				showKeylock = true;
+				this.repaint();
+				//#sijapp cond.if target is "MOTOROLA"#
+				//#				VirtualList.flashBklt(2500);
+				//#				VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, 2500, JimmUI.st_colors[JimmUI.getStatusIndex(Icq.getCurrentStatus())]);
+				//#sijapp cond.end#
+			}
 		}
 	}
-	
+
 	private void tryToUnlock(int keyCode)
 	{
-		if (!isLocked) return;
+		if (!isLocked)
+			return;
 		if (keyCode != Canvas.KEY_POUND)
 		{
 			poundPressTime = 0;
 			return;
 		}
-		
-	
-		if ((poundPressTime != 0) && ((System.currentTimeMillis()-poundPressTime) > 900))
+
+		if ((poundPressTime != 0)
+				&& ((System.currentTimeMillis() - poundPressTime) > 900))
 		{
 			unlock(true);
 			poundPressTime = 0;
@@ -375,7 +377,7 @@ public class SplashCanvas extends Canvas
 	{
 		tryToUnlock(keyCode);
 	}
-	
+
 	protected void keyRepeated(int keyCode)
 	{
 		tryToUnlock(keyCode);
@@ -383,55 +385,65 @@ public class SplashCanvas extends Canvas
 
 	// Render the splash image
 	protected void paint(Graphics g)
-	{	
-        // Do we need to draw the splash image?
+	{
+		// Do we need to draw the splash image?
 		if (g.getClipY() < this.getHeight() - SplashCanvas.height - 2)
 		{
 			// Draw background
-			g.setColor(0,111,177);
-			g.fillRect(0,0,this.getWidth(),this.getHeight());
+			g.setColor(0, 111, 177);
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
 			// Display splash image (or text)
 			Image image = getSplashImage();
 			if (image != null)
 			{
-				g.drawImage(image, this.getWidth() / 2, this.getHeight() / 2, Graphics.HCENTER | Graphics.VCENTER);
-			}
-			else
+				g.drawImage(image, this.getWidth() / 2, this.getHeight() / 2,
+						Graphics.HCENTER | Graphics.VCENTER);
+			} else
 			{
 				g.setColor(255, 255, 255);
 				g.setFont(SplashCanvas.logoFont);
-				g.drawString("jimm", this.getWidth() / 2, this.getHeight() / 2 + 5, Graphics.HCENTER | Graphics.BASELINE);
+				g.drawString("jimm", this.getWidth() / 2,
+						this.getHeight() / 2 + 5, Graphics.HCENTER
+								| Graphics.BASELINE);
 				g.setFont(SplashCanvas.font);
 			}
 
 			// Display notice image (or nothing)
 			if (SplashCanvas.notice != null)
 			{
-				g.drawImage(SplashCanvas.notice, this.getWidth() / 2, 2, Graphics.HCENTER | Graphics.TOP);
+				g.drawImage(SplashCanvas.notice, this.getWidth() / 2, 2,
+						Graphics.HCENTER | Graphics.TOP);
 			}
 
 			// Display message icon, if keylock is enabled
 			if (isLocked && availableMessages > 0)
 			{
-				g.drawImage(ContactList.eventPlainMessageImg, 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
+				g.drawImage(ContactList.eventPlainMessageImg, 1, this
+						.getHeight()
+						- (2 * SplashCanvas.height) - 9, Graphics.LEFT
+						| Graphics.TOP);
 				g.setColor(255, 255, 255);
 				g.setFont(SplashCanvas.font);
-				g.drawString("# " + availableMessages, ContactList.eventPlainMessageImg.getWidth() + 4, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
+				g.drawString("# " + availableMessages,
+						ContactList.eventPlainMessageImg.getWidth() + 4, this
+								.getHeight()
+								- (2 * SplashCanvas.height) - 5, Graphics.LEFT
+								| Graphics.TOP);
 			}
-            
+
 			//#sijapp cond.if target is "SIEMENS2"#
-			String accuLevel = System.getProperty("MPJC_CAP");
-			if( accuLevel != null && isLocked )
-			{
-				accuLevel += "%";
-				int fontX = getWidth() -  SplashCanvas.font.stringWidth(accuLevel) - 1;
-				if( getBattImg() != null )
-					g.drawImage(getBattImg(), fontX - getBattImg().getWidth() - 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
-				g.setColor(255, 255, 255);
-				g.setFont(SplashCanvas.font);
-				g.drawString(accuLevel, fontX, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
-			}
+			//#			String accuLevel = System.getProperty("MPJC_CAP");
+			//#			if( accuLevel != null && isLocked )
+			//#			{
+			//#				accuLevel += "%";
+			//#				int fontX = getWidth() -  SplashCanvas.font.stringWidth(accuLevel) - 1;
+			//#				if( getBattImg() != null )
+			//#					g.drawImage(getBattImg(), fontX - getBattImg().getWidth() - 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
+			//#				g.setColor(255, 255, 255);
+			//#				g.setFont(SplashCanvas.font);
+			//#				g.drawString(accuLevel, fontX, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
+			//#			}
 			//#sijapp cond.end#
 
 			// Draw the date bellow notice if set up to do so
@@ -439,37 +451,47 @@ public class SplashCanvas extends Canvas
 			{
 				g.setColor(255, 255, 255);
 				g.setFont(SplashCanvas.font);
-				g.drawString(Util.getDateString(false), this.getWidth() / 2, 12, Graphics.TOP | Graphics.HCENTER);
-				g.drawString(Util.getCurrentDay(), this.getWidth() / 2, 13+SplashCanvas.font.getHeight(), Graphics.TOP | Graphics.HCENTER);
+				g.drawString(Util.getDateString(false), this.getWidth() / 2,
+						12, Graphics.TOP | Graphics.HCENTER);
+				g.drawString(Util.getCurrentDay(), this.getWidth() / 2,
+						13 + SplashCanvas.font.getHeight(), Graphics.TOP
+								| Graphics.HCENTER);
 			}
-            // Display the keylock message if someone hit the wrong key
-            if (showKeylock)
-            {
-                
-                // Init the dimensions
-                int x,y,size_x,size_y;
-                size_x = this.getWidth()/10*8;
-                size_y = Font.getFont(Font.FACE_SYSTEM,Font.STYLE_PLAIN,Font.SIZE_MEDIUM).getHeight()*TextList.getLineNumbers(ResourceBundle.getString("keylock_message"),size_x-8,0,0,0)+8;
-                x = this.getWidth()/2-(this.getWidth()/10*4);
-                y = this.getHeight()/2-(size_y/2);
-                
-                
-                g.setColor(255, 255, 255);
-                g.fillRect(x,y,size_x,size_y);
-                g.setColor(0,0,0);
-                g.drawRect(x+2,y+2,size_x-5,size_y-5);
-                TextList.showText(g,ResourceBundle.getString("keylock_message"),x+4,y+4,size_x-8,size_y-8,TextList.MEDIUM_FONT,0,0);
-                
-				(t1 = new Timer()).schedule(new TimerTasks(TimerTasks.SC_HIDE_KEYLOCK), 2000);
+			// Display the keylock message if someone hit the wrong key
+			if (showKeylock)
+			{
 
-            }
+				// Init the dimensions
+				int x, y, size_x, size_y;
+				size_x = this.getWidth() / 10 * 8;
+				size_y = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
+						Font.SIZE_MEDIUM).getHeight()
+						* TextList.getLineNumbers(ResourceBundle
+								.getString("keylock_message"), size_x - 8, 0,
+								0, 0) + 8;
+				x = this.getWidth() / 2 - (this.getWidth() / 10 * 4);
+				y = this.getHeight() / 2 - (size_y / 2);
+
+				g.setColor(255, 255, 255);
+				g.fillRect(x, y, size_x, size_y);
+				g.setColor(0, 0, 0);
+				g.drawRect(x + 2, y + 2, size_x - 5, size_y - 5);
+				TextList.showText(g, ResourceBundle
+						.getString("keylock_message"), x + 4, y + 4,
+						size_x - 8, size_y - 8, TextList.MEDIUM_FONT, 0, 0);
+
+				(t1 = new Timer()).schedule(new TimerTasks(
+						TimerTasks.SC_HIDE_KEYLOCK), 2000);
+
+			}
 
 		}
 
 		// Draw white bottom bar
 		g.setColor(255, 255, 255);
 		g.setStrokeStyle(Graphics.DOTTED);
-		g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this.getWidth(), this.getHeight() - SplashCanvas.height - 3);
+		g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this
+				.getWidth(), this.getHeight() - SplashCanvas.height - 3);
 
 		g.setColor(255, 255, 255);
 		g.setFont(SplashCanvas.font);
@@ -483,29 +505,40 @@ public class SplashCanvas extends Canvas
 		}
 
 		// Draw the progressbar message
-		g.drawString(message, (this.getWidth() / 2) + (im_width / 2), this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+		g.drawString(message, (this.getWidth() / 2) + (im_width / 2), this
+				.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 
 		if (draw_img != null)
 		{
-			g.drawImage(draw_img, (this.getWidth() / 2) - (font.stringWidth(message) / 2) + (im_width / 2), this.getHeight() - (height / 2), Graphics.VCENTER | Graphics.RIGHT);
+			g.drawImage(draw_img, (this.getWidth() / 2)
+					- (font.stringWidth(message) / 2) + (im_width / 2), this
+					.getHeight()
+					- (height / 2), Graphics.VCENTER | Graphics.RIGHT);
 		}
 
 		// Draw current progress
 		int progressPx = this.getWidth() * progress / 100;
-		if (progressPx < 1) return;
+		if (progressPx < 1)
+			return;
 
-		g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
+		g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx,
+				SplashCanvas.height + 2);
 		g.setColor(255, 255, 255);
-		g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx, SplashCanvas.height + 2);
+		g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx,
+				SplashCanvas.height + 2);
 
 		g.setColor(0, 0, 0);
-				
+
 		// Draw the progressbar message
-		g.drawString(message, (this.getWidth() / 2) + (im_width / 2), this.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
+		g.drawString(message, (this.getWidth() / 2) + (im_width / 2), this
+				.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
 
 		if (draw_img != null)
 		{
-			g.drawImage(draw_img, (this.getWidth() / 2) - (font.stringWidth(message) / 2) + (im_width / 2), this.getHeight() - (height / 2), Graphics.VCENTER | Graphics.RIGHT);
+			g.drawImage(draw_img, (this.getWidth() / 2)
+					- (font.stringWidth(message) / 2) + (im_width / 2), this
+					.getHeight()
+					- (height / 2), Graphics.VCENTER | Graphics.RIGHT);
 		}
 
 	}
@@ -514,44 +547,46 @@ public class SplashCanvas extends Canvas
 	{
 		if (status_index != 8)
 		{
-			new Timer().schedule(new TimerTasks(TimerTasks.SC_RESET_TEXT_AND_IMG), 3000);
-		//#sijapp cond.if target="MOTOROLA"#
-			VirtualList.setLEDmode(VirtualList.BKLT_TYPE_BLINKING, 3000, JimmUI.st_colors[status_index]);
+			new Timer().schedule(new TimerTasks(
+					TimerTasks.SC_RESET_TEXT_AND_IMG), 3000);
+			//#sijapp cond.if target="MOTOROLA"#
+			//#			VirtualList.setLEDmode(VirtualList.BKLT_TYPE_BLINKING, 3000, JimmUI.st_colors[status_index]);
+			//#		}
+			//#		else
+			//#		{
+			//#			VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, -1, JimmUI.st_colors[9]);
+			//#sijapp cond.end#
 		}
-		else
-		{
-			VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, -1, JimmUI.st_colors[9]);
-		//#sijapp cond.end#
-		}
-}
+	}
 
-	public static void addTimerTask(String captionLngStr, Action action, boolean canCancel)
+	public static void addTimerTask(String captionLngStr, Action action,
+			boolean canCancel)
 	{
 		if (t2 != null)
 		{
 			t2.cancel();
 			t2 = null;
 		}
-		
+
 		isLocked = false;
-		
-		TimerTasks timerTask = new TimerTasks(action); 
-		
+
+		TimerTasks timerTask = new TimerTasks(action);
+
 		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommnad);
 		if (canCancel)
 		{
 			SplashCanvas._this.addCommand(SplashCanvas.cancelCommnad);
 			SplashCanvas._this.setCommandListener(timerTask);
 		}
-		
+
 		//  #sijapp cond.if target="MIDP2" | target="MOTOROLA"#
 		SplashCanvas._this.setFullScreenMode(!canCancel);
 		//#sijapp cond.end#
-		
+
 		SplashCanvas.setMessage(ResourceBundle.getString(captionLngStr));
 		SplashCanvas.setProgress(0);
 		Jimm.display.setCurrent(SplashCanvas._this);
-		
+
 		Jimm.getTimerRef().schedule(timerTask, 1000, 1000);
 	}
 }
