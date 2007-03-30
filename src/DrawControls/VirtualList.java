@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-07  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
  *******************************************************************************/
 
 package DrawControls;
+
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
@@ -30,20 +31,21 @@ import javax.microedition.lcdui.Font;
 import DrawControls.ImageList;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
+
 //#sijapp cond.if target is "MOTOROLA"#
-import jimm.TimerTasks;
-import jimm.Jimm;
-import jimm.Options;
-import com.motorola.funlight.*;
+//# import jimm.TimerTasks;
+//# import jimm.Jimm;
+//# import jimm.Options;
+//# import com.motorola.funlight.*;
 //#sijapp cond.end#
 
 //! This class is base class of owner draw list controls
 /*!
-    It allows you to create list with different colors and images. 
-    Base class of VirtualDrawList if Canvas, so it draw itself when
-    paint event is heppen. VirtualList have cursor controlled of
-    user
-*/
+ It allows you to create list with different colors and images. 
+ Base class of VirtualDrawList if Canvas, so it draw itself when
+ paint event is heppen. VirtualList have cursor controlled of
+ user
+ */
 
 public abstract class VirtualList extends Canvas
 {
@@ -62,27 +64,29 @@ public abstract class VirtualList extends Canvas
 
 	/*! Constant for small sized font of caption and item text */
 	public final static int SMALL_FONT = Font.SIZE_SMALL;
-	
+
 	// Key event type
 	public final static int KEY_PRESSED = 1;
+
 	public final static int KEY_REPEATED = 2;
+
 	public final static int KEY_RELEASED = 3;
-	
+
 	// Set of fonts for quick selecting
 	private Font normalFont, boldFont, italicFont;
-	
+
 	// Width of scroller line
 	protected final static int scrollerWidth;
-	
+
 	// Font for drawing caption
 	private static Font capFont;
-	
+
 	// Commands to react to VL events
 	private VirtualListCommands vlCommands;
 
 	// Caption of VL
 	private String caption;
-	
+
 	// Used by "Invalidate" method to prevent invalidate when locked 
 	private boolean dontRepaint = false;
 
@@ -91,63 +95,63 @@ public abstract class VirtualList extends Canvas
 
 	// Index for current item of VL
 	protected int currItem = 0;
-	
+
 	// Used for passing params of items whan painting 
 	final static protected ListItem paintedItem;
-	
+
 	// Used to catch changes to repaint data
 	private int lastCurrItem = 0, lastTopItem = 0;
 
 	private static VirtualList current;
+
 	private static boolean fullScreen = false;
-	
+
 	private Image capImage;
-	
-	private int 
-		topItem     = 0,            // Index of top visilbe item 
-		fontSize    = MEDIUM_FONT,  // Current font size of VL
-		bkgrndColor = 0xFFFFFF,     // bk color of VL
-		cursorColor = 0x808080,     // Used when drawing focus rect.
-		textColor   = 0x000000,     // Default text color.
-		capBkCOlor  = 0xC0C0C0,
-		capTxtColor = 0x00,     // Color of caprion text
-		cursorMode  = SEL_DOTTED;   // Cursor mode
-	
+
+	private int topItem = 0, // Index of top visilbe item 
+			fontSize = MEDIUM_FONT, // Current font size of VL
+			bkgrndColor = 0xFFFFFF, // bk color of VL
+			cursorColor = 0x808080, // Used when drawing focus rect.
+			textColor = 0x000000, // Default text color.
+			capBkCOlor = 0xC0C0C0, capTxtColor = 0x00, // Color of caprion text
+			cursorMode = SEL_DOTTED; // Cursor mode
+
 	static
 	{
 		//#sijapp cond.if target="MIDP2"#
-		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
+		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD,
+				Font.SIZE_SMALL);
 		//#sijapp cond.else#
-		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
+		//# 		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
 		//#sijapp cond.end#
 		int width = capFont.getHeight() / 4;
 		scrollerWidth = width > 4 ? width : 4;
 		paintedItem = new ListItem();
 	}
-	
+
 	static public void setFullScreen(boolean value)
 	{
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (fullScreen == value) return;
+		if (fullScreen == value)
+			return;
 		fullScreen = value;
 		if (current != null)
 		{
 			current.setFullScreenMode(fullScreen);
-			if (!fullScreen) current.setTitle(current.caption); 
+			if (!fullScreen)
+				current.setTitle(current.caption);
 		}
 		//#sijapp cond.end#
 	}
-	
+
 	//! Create new virtual list with default values  
-	public VirtualList
-	(
-		String capt //!< Caption text of new virtual list
+	public VirtualList(String capt //!< Caption text of new virtual list
 	)
 	{
 		super();
 		setCaption(capt);
 		//#sijapp cond.if target is "SIEMENS2"# 
-		this.fontSize = Font.SIZE_SMALL;
+		//#		this.fontSize = Font.SIZE_SMALL;
 		//#sijapp cond.else#
 		this.fontSize = Font.SIZE_MEDIUM;
 		//#sijapp cond.end#
@@ -156,96 +160,99 @@ public abstract class VirtualList extends Canvas
 	}
 
 	// public VirtualList
-	public VirtualList
-	(
-		String capt,      //!< Caption text of new virtual list
-		int capTextColor, //!< Caption text color
-		int backColor,    //!< Control back color
-		int fontSize,     /*!< Control font size. This font size if used both for caption and text in tree nodes */
-		int cursorMode    /*!< Cursor mode. Can be VirtualList.SEL_DOTTED or VirtualList.SEL_INVERTED */
+	public VirtualList(String capt, //!< Caption text of new virtual list
+			int capTextColor, //!< Caption text color
+			int backColor, //!< Control back color
+			int fontSize, /*!< Control font size. This font size if used both for caption and text in tree nodes */
+			int cursorMode /*!< Cursor mode. Can be VirtualList.SEL_DOTTED or VirtualList.SEL_INVERTED */
 	)
 	{
 		super();
 		setCaption(capt);
 		this.capTxtColor = capTextColor;
 		this.bkgrndColor = backColor;
-		
-		this.fontSize = fontSize; 
+
+		this.fontSize = fontSize;
 		createSetOfFonts(this.fontSize);
 		this.cursorMode = cursorMode;
 	}
 
 	//! Request number of list elements to be shown in list
 	/*! You must return number of list elements in successtor of
-	    VirtualList. Class calls method "getSize" each time before it drawn */
+	 VirtualList. Class calls method "getSize" each time before it drawn */
 	abstract protected int getSize();
 
 	//! Request of data of one list item
 	/*! You have to reload this method. With help of method "get" class finds out
-	    data of each item. Method "get" is called each time when list item 
-	    is drawn */
-	abstract protected void get
-	(
-		int index,    //!< Number of requested list item 
-		ListItem item //!< Data of list item. Fill this object with item data.
+	 data of each item. Method "get" is called each time when list item 
+	 is drawn */
+	abstract protected void get(int index, //!< Number of requested list item 
+			ListItem item //!< Data of list item. Fill this object with item data.
 	);
 
 	Font getQuickFont(int style)
 	{
 		switch (style)
 		{
-		case Font.STYLE_BOLD:   return boldFont;
-		case Font.STYLE_PLAIN:  return normalFont;
-		case Font.STYLE_ITALIC: return italicFont;
+		case Font.STYLE_BOLD:
+			return boldFont;
+		case Font.STYLE_PLAIN:
+			return normalFont;
+		case Font.STYLE_ITALIC:
+			return italicFont;
 		}
 		return Font.getFont(Font.FACE_SYSTEM, style, fontSize);
 	}
-	
+
 	// returns height of draw area in pixels  
 	protected int getDrawHeight()
 	{
-		return getHeightInternal()-getCapHeight();
+		return getHeightInternal() - getCapHeight();
 	}
 
 	//! Sets new font size and invalidates items
 	public void setFontSize(int value)
 	{
-		if (fontSize == value) return;
+		if (fontSize == value)
+			return;
 		fontSize = value;
 		createSetOfFonts(fontSize);
 		checkTopItem();
 		invalidate();
 	}
-	
+
 	public void setCapImage(Image image)
 	{
-		if (capImage == image) return;
+		if (capImage == image)
+			return;
 		capImage = image;
 		invalidate();
 	}
-	
+
 	public void setVLCommands(VirtualListCommands vlCommands)
 	{
 		this.vlCommands = vlCommands;
 	}
-	
-	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text)
+
+	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor,
+			int text)
 	{
-		capBkCOlor  = capbk;
+		capBkCOlor = capbk;
 		capTxtColor = capTxt;
 		bkgrndColor = bkgrnd;
 		cursorColor = cursor;
-		textColor   = text;
+		textColor = text;
 		repaint();
 	}
-	
+
 	private void createSetOfFonts(int size)
 	{
-		normalFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,  fontSize); 
-		boldFont   = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD,   fontSize);
-		italicFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, fontSize);
+		normalFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, fontSize);
+		boldFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, fontSize);
+		italicFont = Font
+				.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, fontSize);
 	}
-	
+
 	public int getFontSize()
 	{
 		return fontSize;
@@ -264,50 +271,57 @@ public abstract class VirtualList extends Canvas
 		int counter = 0, i;
 		int height = getDrawHeight();
 		int topItem = this.topItem;
-		
-		if (size == 0) return 0;
-		
-		if (topItem < 0) topItem = 0;
-		if (topItem >= size) topItem = size-1;
-		
-		for (i = topItem; i < (size-1); i++)
+
+		if (size == 0)
+			return 0;
+
+		if (topItem < 0)
+			topItem = 0;
+		if (topItem >= size)
+			topItem = size - 1;
+
+		for (i = topItem; i < (size - 1); i++)
 		{
 			y += getItemHeight(i);
-			if (y > height) return counter;
+			if (y > height)
+				return counter;
 			counter++;
 		}
-		
+
 		y = height;
 		counter = 0;
-		for (i = size-1; i >= 0; i--)
+		for (i = size - 1; i >= 0; i--)
 		{
 			y -= getItemHeight(i);
-			if (y < 0) break;
+			if (y < 0)
+				break;
 			counter++;
 		}
-		
+
 		return counter;
 	}
 
 	//TODO: brief text
 	public void setCursorMode(int value)
 	{
-		if (cursorMode == value) return;
+		if (cursorMode == value)
+			return;
 		cursorMode = value;
 		invalidate();
 	}
-	
+
 	public int getCursorMode()
 	{
 		return cursorMode;
 	}
-	
+
 	protected void showNotify()
 	{
 		current = this;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		setFullScreenMode(fullScreen);
-		if (!fullScreen) setTitle(caption);
+		if (!fullScreen)
+			setTitle(caption);
 		//#sijapp cond.end #
 		forcedHeight = forcedWidth = -1;
 	}
@@ -316,15 +330,18 @@ public abstract class VirtualList extends Canvas
 	public int getItemHeight(int itemIndex)
 	{
 		int imgHeight, fontHeight = getFontHeight();
-		if (imageList != null) imgHeight = imageList.getHeight() + 1;
-		else imgHeight = 0;
+		if (imageList != null)
+			imgHeight = imageList.getHeight() + 1;
+		else
+			imgHeight = 0;
 		return (fontHeight > imgHeight) ? fontHeight : imgHeight;
 	}
 
 	// protected void invalidate()  
 	protected void invalidate()
 	{
-		if (dontRepaint) return;
+		if (dontRepaint)
+			return;
 		repaint();
 	}
 
@@ -345,28 +362,34 @@ public abstract class VirtualList extends Canvas
 	// protected void checkCurrItem()
 	protected void checkCurrItem()
 	{
-		if (currItem < 0) currItem = 0;
-		if (currItem >= getSize() - 1) currItem = getSize() - 1;
+		if (currItem < 0)
+			currItem = 0;
+		if (currItem >= getSize() - 1)
+			currItem = getSize() - 1;
 	}
-	
+
 	// protected void checkTopItem() - internal
 	// check for position of top element of list and change it, if nesessary
 	protected void checkTopItem()
 	{
 		int size = getSize();
 		int visCount = getVisCount();
-		
+
 		if (size == 0)
 		{
 			topItem = 0;
 			return;
 		}
-		
-		if (currItem >= (topItem + visCount - 1)) topItem = currItem - visCount + 1;
-		if (currItem < topItem) topItem = currItem;
-		
-		if ((size - topItem) <= visCount) topItem = (size > visCount) ? (size - visCount) : 0;
-		if (topItem < 0) topItem = 0;
+
+		if (currItem >= (topItem + visCount - 1))
+			topItem = currItem - visCount + 1;
+		if (currItem < topItem)
+			topItem = currItem;
+
+		if ((size - topItem) <= visCount)
+			topItem = (size > visCount) ? (size - visCount) : 0;
+		if (topItem < 0)
+			topItem = 0;
 	}
 
 	// Check does item with index visible
@@ -388,7 +411,8 @@ public abstract class VirtualList extends Canvas
 		if ((lastCurrItem != currItem) || (lastTopItem != topItem))
 		{
 			invalidate();
-			if (vlCommands != null) vlCommands.onCursorMove(this);
+			if (vlCommands != null)
+				vlCommands.onCursorMove(this);
 		}
 	}
 
@@ -396,15 +420,18 @@ public abstract class VirtualList extends Canvas
 	protected void moveCursor(int step, boolean moveTop)
 	{
 		storelastItemIndexes();
-		if (moveTop && (cursorMode == SEL_NONE)) topItem += step;
+		if (moveTop && (cursorMode == SEL_NONE))
+			topItem += step;
 		currItem += step;
 		checkCurrItem();
 		checkTopItem();
 		repaintIfLastIndexesChanged();
 	}
 
-	protected void itemSelected() {}
-	
+	protected void itemSelected()
+	{
+	}
+
 	// private keyReaction(int keyCode)
 	private void keyReaction(int keyCode)
 	{
@@ -420,12 +447,12 @@ public abstract class VirtualList extends Canvas
 				break;
 			case Canvas.FIRE:
 				itemSelected();
-				if (vlCommands != null) vlCommands.onItemSelected(this);
+				if (vlCommands != null)
+					vlCommands.onItemSelected(this);
 				break;
 			}
-		}
-		catch (Exception e) // getGameAction throws exception on motorola
-		{                   // when opening flipper
+		} catch (Exception e) // getGameAction throws exception on motorola
+		{ // when opening flipper
 			return;
 		}
 
@@ -436,7 +463,7 @@ public abstract class VirtualList extends Canvas
 			currItem = topItem = 0;
 			repaintIfLastIndexesChanged();
 			break;
-			
+
 		case KEY_NUM7:
 			storelastItemIndexes();
 			int endIndex = getSize() - 1;
@@ -448,28 +475,28 @@ public abstract class VirtualList extends Canvas
 		case KEY_NUM3:
 			moveCursor(-getVisCount(), false);
 			break;
-			
+
 		case KEY_NUM9:
 			moveCursor(getVisCount(), false);
 			break;
-			
-		// #sijapp cond.if target is "MOTOROLA"#
-		case KEY_STAR: 
-			setBkltOn(!bklt_on);
-			break;
-		// #sijapp cond.end#
+
+		//#sijapp cond.if target is "MOTOROLA"#
+		//#		case KEY_STAR: 
+		//#		setBkltOn(!bklt_on);
+		//#		break;
+		//#sijapp cond.end#
 		}
 
 	}
-	
+
 	public void doKeyreaction(int keyCode, int type)
 	{
 		switch (type)
 		{
 		case KEY_PRESSED:
 			//#sijapp cond.if target="MOTOROLA"#
-			if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL))
-				flashBklt(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)*1000);
+			//#			if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL))
+			//#				flashBklt(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)*1000);
 			//#sijapp cond.end#
 			keyReaction(keyCode);
 			break;
@@ -477,8 +504,9 @@ public abstract class VirtualList extends Canvas
 			keyReaction(keyCode);
 			break;
 		}
-		
-		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode, type);
+
+		if (vlCommands != null)
+			vlCommands.onKeyPress(this, keyCode, type);
 	}
 
 	protected void keyPressed(int keyCode)
@@ -490,48 +518,56 @@ public abstract class VirtualList extends Canvas
 	{
 		doKeyreaction(keyCode, KEY_REPEATED);
 	}
-	
+
 	protected void keyReleased(int keyCode)
 	{
 		doKeyreaction(keyCode, KEY_RELEASED);
 	}
-	
+
 	//#sijapp cond.if target is "MIDP2"#
 	private static long lastPointerTime = 0;
+
 	private static int lastPointerYCrd = -1;
+
 	private static int lastPointerXCrd = -1;
+
 	private static int lastPointerTopItem = -1;
-	
+
 	protected void pointerDragged(int x, int y)
 	{
-		if (lastPointerTopItem == -1) return;
-		int height = getHeightInternal()-getCapHeight();
+		if (lastPointerTopItem == -1)
+			return;
+		int height = getHeightInternal() - getCapHeight();
 		int itemCount = getSize();
 		int visCount = getVisCount();
-		if (itemCount == visCount) return;
+		if (itemCount == visCount)
+			return;
 		storelastItemIndexes();
-		topItem = lastPointerTopItem+(itemCount)*(y-lastPointerYCrd)/height;
-		if (topItem < 0) topItem = 0;
-		if (topItem > (itemCount-visCount)) topItem = itemCount-visCount; 
+		topItem = lastPointerTopItem + (itemCount) * (y - lastPointerYCrd)
+				/ height;
+		if (topItem < 0)
+			topItem = 0;
+		if (topItem > (itemCount - visCount))
+			topItem = itemCount - visCount;
 		repaintIfLastIndexesChanged();
 	}
-	
+
 	protected boolean pointerPressedOnUtem(int index, int x, int y)
 	{
 		return false;
 	}
-	
+
 	static int abs(int value)
 	{
 		return (value < 0) ? -value : value;
 	}
-	
+
 	protected void pointerPressed(int x, int y)
 	{
 		int itemY1 = getCapHeight();
-		
+
 		// is pointing on scroller
-		if (x >= (getWidthInternal()-3*scrollerWidth))
+		if (x >= (getWidthInternal() - 3 * scrollerWidth))
 		{
 			if ((srcollerY1 <= y) && (y < srcollerY2))
 			{
@@ -540,28 +576,29 @@ public abstract class VirtualList extends Canvas
 			}
 			return;
 		}
-		
+
 		// is pointing on data area
 		lastPointerTopItem = -1;
-		
+
 		int size = getSize();
 		for (int i = topItem; i < size; i++)
 		{
 			int height = getItemHeight(i);
-			int itemY2 = itemY1+height;
+			int itemY2 = itemY1 + height;
 			if ((itemY1 <= y) && (y < itemY2))
 			{
 				setCurrentItem(i);
-				
+
 				if (pointerPressedOnUtem(i, x, y) == false)
 				{
 					long time = System.currentTimeMillis();
-					if (((time-lastPointerTime) < 500) && 
-					     (abs(x-lastPointerXCrd) < 10) &&
-					     (abs(y-lastPointerYCrd) < 10))
+					if (((time - lastPointerTime) < 500)
+							&& (abs(x - lastPointerXCrd) < 10)
+							&& (abs(y - lastPointerYCrd) < 10))
 					{
 						itemSelected();
-						if (vlCommands != null) vlCommands.onItemSelected(this);
+						if (vlCommands != null)
+							vlCommands.onItemSelected(this);
 					}
 					lastPointerTime = time;
 				}
@@ -569,29 +606,34 @@ public abstract class VirtualList extends Canvas
 			}
 			itemY1 = itemY2;
 		}
-		
+
 		lastPointerXCrd = x;
 		lastPointerYCrd = y;
 	}
+
 	//#sijapp cond.end#
 
 	//! Set caption text for list
 	public void setCaption(String capt)
 	{
-		if (caption != null) if (caption.equals(capt)) return;
+		if (caption != null)
+			if (caption.equals(capt))
+				return;
 		caption = capt;
-		
+
 		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
-		if (fullScreen) invalidate();
-		else setTitle(capt);
+		if (fullScreen)
+			invalidate();
+		else
+			setTitle(capt);
 		//#sijapp cond.else#
-		invalidate();
+		//# 	invalidate();
 		//#sijapp cond.end#
 	}
-	
+
 	public String getCaption()
 	{
-		return caption; 
+		return caption;
 	}
 
 	public void setTopItem(int index)
@@ -616,83 +658,90 @@ public abstract class VirtualList extends Canvas
 	{
 		return currItem;
 	}
-	
+
 	// Return height of caption in pixels
 	private int getCapHeight()
 	{
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (!fullScreen) return 0;
+		if (!fullScreen)
+			return 0;
 		//#sijapp cond.end#
 		int capHeight = 0;
-		if (caption != null) capHeight = capFont.getHeight()+2;
+		if (caption != null)
+			capHeight = capFont.getHeight() + 2;
 		if (capImage != null)
 		{
-			int imgHeight = capImage.getHeight()+2; 
-			if (imgHeight > capHeight) capHeight = imgHeight;
+			int imgHeight = capImage.getHeight() + 2;
+			if (imgHeight > capHeight)
+				capHeight = imgHeight;
 		}
-			 
-		return capHeight+1;
+
+		return capHeight + 1;
 	}
-	
+
 	// private int drawCaption(Graphics g)
 	protected int drawCaption(Graphics g)
 	{
-		if (caption == null) return 0;
+		if (caption == null)
+			return 0;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (!fullScreen) return 0;
+		if (!fullScreen)
+			return 0;
 		//#sijapp cond.end#
-		
+
 		int width = getWidthInternal();
 		g.setFont(capFont);
 		int height = getCapHeight();
-		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -32), 0, 0, width, height-2);
-		
+		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -32), 0, 0,
+				width, height - 2);
+
 		g.setColor(transformColorLight(capBkCOlor, -128));
-		g.drawLine(0, height-1, width, height-1);
-		
+		g.drawLine(0, height - 1, width, height - 1);
+
 		int x = 2;
-		
+
 		if (capImage != null)
 		{
-			g.drawImage(capImage, x, (height-capImage.getHeight())/2, Graphics.TOP | Graphics.LEFT);
-			x += capImage.getWidth()+1;
+			g.drawImage(capImage, x, (height - capImage.getHeight()) / 2,
+					Graphics.TOP | Graphics.LEFT);
+			x += capImage.getWidth() + 1;
 		}
-		
+
 		g.setColor(capTxtColor);
-		g.drawString(caption, x, (height-capFont.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+		g.drawString(caption, x, (height - capFont.getHeight()) / 2,
+				Graphics.TOP | Graphics.LEFT);
 		return height;
 	}
-	
+
 	protected boolean isItemSelected(int index)
 	{
 		return ((currItem == index) && (cursorMode != SEL_NONE));
 	}
 
 	// private int drawItem(int index, Graphics g, int top_y, int th, ListItem item)
-	private int drawItem(
-		int index,
-		Graphics g,
-		int yCrd,
-		int itemWidth,
-		int itemHeight,
-		int fontHeight)
+	private int drawItem(int index, Graphics g, int yCrd, int itemWidth,
+			int itemHeight, int fontHeight)
 	{
-		drawItemData(g, (currItem == index), index, 2, yCrd, itemWidth-itemHeight/3, yCrd+itemHeight, fontHeight);
+		drawItemData(g, (currItem == index), index, 2, yCrd, itemWidth
+				- itemHeight / 3, yCrd + itemHeight, fontHeight);
 		return yCrd + itemHeight;
 	}
-	
+
 	private static int srcollerY1 = -1;
+
 	private static int srcollerY2 = -1;
 
 	// Draw scroller is items doesn't fit in VL area 
 	private void drawScroller(Graphics g, int topY, int visCount)
 	{
-		int width = getWidthInternal()-scrollerWidth;
+		int width = getWidthInternal() - scrollerWidth;
 		int height = getHeightInternal();
 		int itemCount = getSize();
 		boolean haveToShowScroller = ((itemCount > visCount) && (itemCount > 0));
-		int color = transformColorLight(transformColorLight(bkgrndColor, 32), -32);
-		if (color == 0) color = 0x808080;
+		int color = transformColorLight(transformColorLight(bkgrndColor, 32),
+				-32);
+		if (color == 0)
+			color = 0x808080;
 		g.setStrokeStyle(Graphics.SOLID);
 		g.setColor(color);
 		g.fillRect(width + 1, topY, scrollerWidth - 1, height - topY);
@@ -700,34 +749,41 @@ public abstract class VirtualList extends Canvas
 		g.drawLine(width, topY, width, height);
 		if (haveToShowScroller)
 		{
-			int sliderSize = (height-topY)*visCount/itemCount;
-			if (sliderSize < 7) sliderSize = 7;
-			srcollerY1 = topItem * (height - sliderSize - topY) / (itemCount-visCount) + topY;
+			int sliderSize = (height - topY) * visCount / itemCount;
+			if (sliderSize < 7)
+				sliderSize = 7;
+			srcollerY1 = topItem * (height - sliderSize - topY)
+					/ (itemCount - visCount) + topY;
 			srcollerY2 = srcollerY1 + sliderSize;
 			g.setColor(color);
-			g.fillRect(width + 2, srcollerY1 + 2, scrollerWidth - 3, srcollerY2 - srcollerY1 - 3);
+			g.fillRect(width + 2, srcollerY1 + 2, scrollerWidth - 3, srcollerY2
+					- srcollerY1 - 3);
 			g.setColor(transformColorLight(color, -192));
-			g.drawRect(width, srcollerY1, scrollerWidth - 1, srcollerY2 - srcollerY1 - 1);
+			g.drawRect(width, srcollerY1, scrollerWidth - 1, srcollerY2
+					- srcollerY1 - 1);
 			g.setColor(transformColorLight(color, 96));
 			g.drawLine(width + 1, srcollerY1 + 1, width + 1, srcollerY2 - 2);
-			g.drawLine(width + 1, srcollerY1 + 1, width + scrollerWidth - 2, srcollerY1 + 1);
+			g.drawLine(width + 1, srcollerY1 + 1, width + scrollerWidth - 2,
+					srcollerY1 + 1);
 		}
 	}
-	
-	static private void drawRect(Graphics g, int color1, int color2, int x1, int y1, int x2, int y2)
+
+	static private void drawRect(Graphics g, int color1, int color2, int x1,
+			int y1, int x2, int y2)
 	{
 		int r1 = ((color1 & 0xFF0000) >> 16);
 		int g1 = ((color1 & 0x00FF00) >> 8);
-		int b1 =  (color1 & 0x0000FF);
+		int b1 = (color1 & 0x0000FF);
 		int r2 = ((color2 & 0xFF0000) >> 16);
 		int g2 = ((color2 & 0x00FF00) >> 8);
-		int b2 =  (color2 & 0x0000FF);
-		
+		int b2 = (color2 & 0x0000FF);
+
 		for (int i = 0; i < 8; i++)
 		{
-			int crd1 = i*(y2-y1)/8+y1;
-			int crd2 = (i+1)*(y2-y1)/8+y1;
-			g.setColor(i*(r2-r1)/7+r1, i*(g2-g1)/7+g1, i*(b2-b1)/7+b1);
+			int crd1 = i * (y2 - y1) / 8 + y1;
+			int crd2 = (i + 1) * (y2 - y1) / 8 + y1;
+			g.setColor(i * (r2 - r1) / 7 + r1, i * (g2 - g1) / 7 + g1, i
+					* (b2 - b1) / 7 + b1);
 			g.fillRect(x1, crd1, x2, crd2);
 		}
 	}
@@ -736,21 +792,21 @@ public abstract class VirtualList extends Canvas
 	public int getFontHeight()
 	{
 		return getQuickFont(Font.STYLE_PLAIN).getHeight();
-	}  
+	}
 
 	// private int drawItems(Graphics g, int top_y)
 	private int drawItems(Graphics g, int top_y, int fontHeight)
 	{
-		int grCursorY1 = -1, grCursorY2 = -1; 
+		int grCursorY1 = -1, grCursorY2 = -1;
 		int height = getHeightInternal();
 		int size = getSize();
 		int i, y;
-		int itemWidth = getWidthInternal()-scrollerWidth;
-		
+		int itemWidth = getWidthInternal() - scrollerWidth;
+
 		// Fill background
 		g.setColor(bkgrndColor);
-		g.fillRect(0, top_y, itemWidth, height-top_y);
-		
+		g.fillRect(0, top_y, itemWidth, height - top_y);
+
 		// Draw cursor
 		y = top_y;
 		for (i = topItem; i < size; i++)
@@ -758,24 +814,29 @@ public abstract class VirtualList extends Canvas
 			int itemHeight = getItemHeight(i);
 			if (isItemSelected(i))
 			{
-				if (grCursorY1 == -1) grCursorY1 = y;
-				grCursorY2 = y+itemHeight-1; 
+				if (grCursorY1 == -1)
+					grCursorY1 = y;
+				grCursorY2 = y + itemHeight - 1;
 			}
 			y += itemHeight;
-			if (y >= height) break;
+			if (y >= height)
+				break;
 		}
-		
+
 		if (grCursorY1 != -1)
 		{
 			g.setStrokeStyle(Graphics.DOTTED);
 			g.setColor(cursorColor);
-			boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem-1) : false;  
-			if (!isCursorUpper) g.drawLine(1, grCursorY1, itemWidth-2, grCursorY1);
-			g.drawLine(0, grCursorY1+1, 0, grCursorY2-1);
-			g.drawLine(itemWidth-1, grCursorY1+1, itemWidth-1, grCursorY2-1);
-			g.drawLine(1, grCursorY2, itemWidth-2, grCursorY2);
+			boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1)
+					: false;
+			if (!isCursorUpper)
+				g.drawLine(1, grCursorY1, itemWidth - 2, grCursorY1);
+			g.drawLine(0, grCursorY1 + 1, 0, grCursorY2 - 1);
+			g.drawLine(itemWidth - 1, grCursorY1 + 1, itemWidth - 1,
+					grCursorY2 - 1);
+			g.drawLine(1, grCursorY2, itemWidth - 2, grCursorY2);
 		}
-		
+
 		// Draw items
 		paintedItem.clear();
 		y = top_y;
@@ -784,7 +845,8 @@ public abstract class VirtualList extends Canvas
 			int itemHeight = getItemHeight(i);
 			g.setStrokeStyle(Graphics.SOLID);
 			y = drawItem(i, g, y, itemWidth, itemHeight, fontHeight);
-			if (y >= height) break;
+			if (y >= height)
+				break;
 		}
 
 		return y;
@@ -804,12 +866,18 @@ public abstract class VirtualList extends Canvas
 		int r = (color & 0xFF) + light;
 		int g = ((color & 0xFF00) >> 8) + light;
 		int b = ((color & 0xFF0000) >> 16) + light;
-		if (r < 0) r = 0;
-		if (r > 255) r = 255;
-		if (g < 0) g = 0;
-		if (g > 255) g = 255;
-		if (b < 0) b = 0;
-		if (b > 255) b = 255;
+		if (r < 0)
+			r = 0;
+		if (r > 255)
+			r = 255;
+		if (g < 0)
+			g = 0;
+		if (g > 255)
+			g = 255;
+		if (b < 0)
+			b = 0;
+		if (b > 255)
+			b = 255;
 		return r | (g << 8) | (b << 16);
 	}
 
@@ -826,21 +894,22 @@ public abstract class VirtualList extends Canvas
 	// protected void paint(Graphics g)
 	protected void paint(Graphics g)
 	{
-		if (dontRepaint) return;
+		if (dontRepaint)
+			return;
 
 		if (isDoubleBuffered())
 		{
 			paintAllOnGraphics(g);
-		}
-		else
+		} else
 		{
 			try
 			{
-				if (bDIimage == null) bDIimage = Image.createImage(getWidthInternal(), getHeightInternal());
+				if (bDIimage == null)
+					bDIimage = Image.createImage(getWidthInternal(),
+							getHeightInternal());
 				paintAllOnGraphics(bDIimage.getGraphics());
 				g.drawImage(bDIimage, 0, 0, Graphics.TOP | Graphics.LEFT);
-			}
-			catch (Exception e)
+			} catch (Exception e)
 			{
 				paintAllOnGraphics(g);
 			}
@@ -848,47 +917,30 @@ public abstract class VirtualList extends Canvas
 	}
 
 	// protected void drawItemData
-	protected void drawItemData(
-		Graphics g,
-		boolean isSelected,
-		int index,
-		int x1,
-		int y1,
-		int x2,
-		int y2,
-		int fontHeight)
+	protected void drawItemData(Graphics g, boolean isSelected, int index,
+			int x1, int y1, int x2, int y2, int fontHeight)
 	{
 		int imgWidth;
 
 		get(index, paintedItem);
-		
-	    g.setFont(getQuickFont(paintedItem.fontStyle));
-	    g.setColor(paintedItem.color);
-		
+
+		g.setFont(getQuickFont(paintedItem.fontStyle));
+		g.setColor(paintedItem.color);
+
 		ImageList imageList = getImageList();
-		if ((imageList != null) 
-				&& (paintedItem.imageIndex >= 0)
+		if ((imageList != null) && (paintedItem.imageIndex >= 0)
 				&& (paintedItem.imageIndex < imageList.size()))
 		{
 			imgWidth = imageList.getWidth() + 3;
-			g.drawImage
-			(
-				imageList.elementAt(paintedItem.imageIndex),
-				x1 + 1, 
-				(y1 + y2 - imageList.getHeight()) / 2, 
-				Graphics.TOP | Graphics.LEFT
-			);
-		}
-		else imgWidth = 0;
+			g.drawImage(imageList.elementAt(paintedItem.imageIndex), x1 + 1,
+					(y1 + y2 - imageList.getHeight()) / 2, Graphics.TOP
+							| Graphics.LEFT);
+		} else
+			imgWidth = 0;
 
-		if (paintedItem.text != null) 
-			g.drawString
-			(
-				paintedItem.text, 
-				x1 + imgWidth, 
-				(y1 + y2 - fontHeight) / 2, 
-				Graphics.TOP | Graphics.LEFT
-			);
+		if (paintedItem.text != null)
+			g.drawString(paintedItem.text, x1 + imgWidth,
+					(y1 + y2 - fontHeight) / 2, Graphics.TOP | Graphics.LEFT);
 	}
 
 	public void lock()
@@ -911,132 +963,133 @@ public abstract class VirtualList extends Canvas
 	{
 		return dontRepaint;
 	}
-	
+
 	private int forcedWidth = -1;
+
 	private int forcedHeight = -1;
-	
+
 	public void setForcedSize(int width, int height)
 	{
 		forcedWidth = width;
 		forcedHeight = height;
 	}
-	
+
 	protected int getHeightInternal()
 	{
 		return (forcedHeight == -1) ? getHeight() : forcedHeight;
 	}
-	
+
 	protected int getWidthInternal()
 	{
 		return (forcedWidth == -1) ? getWidth() : forcedWidth;
 	}
-	
+
 	//#sijapp cond.if target="MOTOROLA"#
-	private static boolean bklt_on = true;
-	private static java.util.Timer switchoffTimer;
-
-	public static void setBkltOn(boolean on)
-	{
-		if (on != bklt_on)
-		{
-			bklt_on = on;
-			Jimm.display.flashBacklight(bklt_on ? Integer.MAX_VALUE : 1);
-		}
-	}
-	public static void flashBklt(int msec)
-	{
-		try
-		{
-			setBkltOn(true);
-	
-			if (switchoffTimer != null)
-			{
-				switchoffTimer.cancel();
-			}
-
-			(switchoffTimer = new java.util.Timer()).schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_BKLT), msec);
-		}
-		catch (Exception e) {}
-	}
-	protected void hideNotify()
-	{
-		if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL) & !(Jimm.display.getCurrent() instanceof Canvas))
-		{
-			if (switchoffTimer != null) switchoffTimer.cancel();
-			setBkltOn(true);
-		}
-	}
-
-	public static final int BKLT_TYPE_BLINKING = 1;
-	public static final int BKLT_TYPE_LIGHTING = 2;
-
-	private static java.util.Timer ledTimer;
-	private static Region[] currentRegions;
-	public static void setLEDmode(int type, int duration, int color)
-	{
-		int t = Jimm.funlight_device_type;
-		if ((t == -1) | !Options.getBoolean(Options.OPTION_FLASH_BACKLIGHT))
-		{
-			return;
-		}
-		disableLED();
-		Region[] regions = null;
-		switch (t)
-		{
-			case Jimm.FUNLIGHT_DEVICE_E390:
-				regions = new Region[]
-				{
-					FunLight.getRegion(3),
-					FunLight.getRegion(4)
-				};
-				break;
-			case Jimm.FUNLIGHT_DEVICE_E380:
-				regions = new Region[]
-				{
-					FunLight.getRegion(4),
-					null
-				};
-				break;
-		}
-		currentRegions = regions;
-		switch (type)
-		{
-			case BKLT_TYPE_LIGHTING:
-				regions[0].setColor(color);
-				if (regions[1] != null)
-				{
-					regions[1].setColor(color);
-					regions[1].getControl();
-				}
-				regions[0].getControl();
-				if (duration >= 200)
-				{
-					(ledTimer = new java.util.Timer()).schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_LED), duration);
-				}
-				break;
-			default:
-				regions[0].setColor(color);
-				if (regions[1] != null) regions[1].setColor(color);
-				int tries = duration / 250;
-				(ledTimer = new java.util.Timer())
-					.schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_LED_CHANGE_STATE, regions, tries), 0, 250);
-				break;
-		}
-	}
-	public static void disableLED()
-	{
-		if (ledTimer != null)
-		{
-			ledTimer.cancel();
-			ledTimer = null;
-		}
-
-		if (currentRegions != null)
-		{
-			currentRegions[0].releaseControl();
-			if (currentRegions[1] != null) currentRegions[1].releaseControl();
-			currentRegions = null;
-		}
-	}
+	//#	private static boolean bklt_on = true;
+	//#	private static java.util.Timer switchoffTimer;
+	//#
+	//#	public static void setBkltOn(boolean on)
+	//#	{
+	//#		if (on != bklt_on)
+	//#		{
+	//#			bklt_on = on;
+	//#			Jimm.display.flashBacklight(bklt_on ? Integer.MAX_VALUE : 1);
+	//#		}
+	//#	}
+	//#	public static void flashBklt(int msec)
+	//#	{
+	//#		try
+	//#		{
+	//#			setBkltOn(true);
+	//#	
+	//#			if (switchoffTimer != null)
+	//#			{
+	//#				switchoffTimer.cancel();
+	//#			}
+	//#
+	//#			(switchoffTimer = new java.util.Timer()).schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_BKLT), msec);
+	//#		}
+	//#		catch (Exception e) {}
+	//#	}
+	//#	protected void hideNotify()
+	//#	{
+	//#		if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL) & !(Jimm.display.getCurrent() instanceof Canvas))
+	//#		{
+	//#			if (switchoffTimer != null) switchoffTimer.cancel();
+	//#			setBkltOn(true);
+	//#		}
+	//#	}
+	//#
+	//#	public static final int BKLT_TYPE_BLINKING = 1;
+	//#	public static final int BKLT_TYPE_LIGHTING = 2;
+	//#
+	//#	private static java.util.Timer ledTimer;
+	//#	private static Region[] currentRegions;
+	//#	public static void setLEDmode(int type, int duration, int color)
+	//#	{
+	//#		int t = Jimm.funlight_device_type;
+	//#		if ((t == -1) | !Options.getBoolean(Options.OPTION_FLASH_BACKLIGHT))
+	//#		{
+	//#			return;
+	//#		}
+	//#		disableLED();
+	//#		Region[] regions = null;
+	//#		switch (t)
+	//#		{
+	//#			case Jimm.FUNLIGHT_DEVICE_E390:
+	//#				regions = new Region[]
+	//#				{
+	//#					FunLight.getRegion(3),
+	//#					FunLight.getRegion(4)
+	//#				};
+	//#				break;
+	//#			case Jimm.FUNLIGHT_DEVICE_E380:
+	//#				regions = new Region[]
+	//#				{
+	//#					FunLight.getRegion(4),
+	//#					null
+	//#				};
+	//#				break;
+	//#		}
+	//#		currentRegions = regions;
+	//#		switch (type)
+	//#		{
+	//#			case BKLT_TYPE_LIGHTING:
+	//#				regions[0].setColor(color);
+	//#				if (regions[1] != null)
+	//#				{
+	//#					regions[1].setColor(color);
+	//#					regions[1].getControl();
+	//#				}
+	//#				regions[0].getControl();
+	//#				if (duration >= 200)
+	//#				{
+	//#					(ledTimer = new java.util.Timer()).schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_LED), duration);
+	//#				}
+	//#				break;
+	//#			default:
+	//#				regions[0].setColor(color);
+	//#				if (regions[1] != null) regions[1].setColor(color);
+	//#				int tries = duration / 250;
+	//#				(ledTimer = new java.util.Timer())
+	//#					.schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_LED_CHANGE_STATE, regions, tries), 0, 250);
+	//#				break;
+	//#		}
+	//#	}
+	//#	public static void disableLED()
+	//#	{
+	//#		if (ledTimer != null)
+	//#		{
+	//#			ledTimer.cancel();
+	//#			ledTimer = null;
+	//#		}
+	//#
+	//#		if (currentRegions != null)
+	//#		{
+	//#			currentRegions[0].releaseControl();
+	//#			if (currentRegions[1] != null) currentRegions[1].releaseControl();
+	//#			currentRegions = null;
+	//#		}
+	//#	}
 	//#sijapp cond.end#	
 }

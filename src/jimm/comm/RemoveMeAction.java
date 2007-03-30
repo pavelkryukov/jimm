@@ -21,13 +21,10 @@
  Author(s): Denis Stanishevskiy 
  *******************************************************************************/
 
-
 package jimm.comm;
-
 
 import jimm.Jimm;
 import jimm.JimmException;
-
 
 public class RemoveMeAction extends Action
 {
@@ -42,7 +39,8 @@ public class RemoveMeAction extends Action
 	}
 
 	// Init action
-	protected void init() throws JimmException {
+	protected void init() throws JimmException
+	{
 
 		byte[] buf;
 
@@ -55,33 +53,30 @@ public class RemoveMeAction extends Action
 		// Assemble the packet
 		int marker = 0;
 		Util.putByte(buf, marker, uinRaw.length);
-		System.arraycopy(uinRaw, 0, buf, marker+1, uinRaw.length);
+		System.arraycopy(uinRaw, 0, buf, marker + 1, uinRaw.length);
 
 		// Send a CLI_AUTHORIZE packet
-		SnacPacket packet = new SnacPacket(SnacPacket.CLI_REMOVEME_FAMILY, SnacPacket.CLI_REMOVEME_COMMAND, 0x00000003, new byte[0], buf);
+		SnacPacket packet = new SnacPacket(SnacPacket.CLI_REMOVEME_FAMILY,
+				SnacPacket.CLI_REMOVEME_COMMAND, 0x00000003, new byte[0], buf);
 		Jimm.jimm.getIcqRef().c.sendPacket(packet);
 	}
-
 
 	// Forwards received packet, returns true if packet was consumed
 	protected boolean forward(Packet packet) throws JimmException
 	{
-	return (false);
+		return (false);
 	}
-
 
 	// Returns true if the action is completed
 	public boolean isCompleted()
 	{
-	return (true);
+		return (true);
 	}
-
 
 	// Returns true if an error has occured
 	public boolean isError()
 	{
-	return (false);
+		return (false);
 	}
-
 
 }

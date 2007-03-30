@@ -21,31 +21,31 @@
  Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
-
 package jimm.comm;
 
-
 import jimm.JimmException;
-
 
 public class Packet
 {
 
-
 	// Channel constants
 	public static final int CHANNEL_CONNECT = 0x01;
-	public static final int CHANNEL_SNAC = 0x02;
-	public static final int CHANNEL_ERROR = 0x03;
-	public static final int CHANNEL_DISCONNECT = 0x04;
-	public static final int CHANNEL_PING = 0x05;
 
+	public static final int CHANNEL_SNAC = 0x02;
+
+	public static final int CHANNEL_ERROR = 0x03;
+
+	public static final int CHANNEL_DISCONNECT = 0x04;
+
+	public static final int CHANNEL_PING = 0x05;
 
 	// FLAP sequence number
 	protected int sequence;
-	
+
 	protected int flapChannel;
+
 	protected byte[] flapData;
-	
+
 	// Returns the FLAP sequence number
 	public int getSequence()
 	{
@@ -58,15 +58,19 @@ public class Packet
 		this.sequence = sequence;
 	}
 
-	protected Packet() {}
+	protected Packet()
+	{
+	}
 
-	public Packet(int channel, byte[] data) {
+	public Packet(int channel, byte[] data)
+	{
 		flapChannel = channel;
 		flapData = data;
 	}
 
 	// Returns the package as byte array
-	public byte[] toByteArray() {
+	public byte[] toByteArray()
+	{
 		byte[] buf = new byte[6 + flapData.length];
 		Util.putByte(buf, 0, 0x2a);
 		Util.putByte(buf, 1, flapChannel);
@@ -76,21 +80,21 @@ public class Packet
 		return buf;
 	}
 
-	
 	// Parses given byte array and returns a Packet object
-	public static Packet parse(byte[] buf, int off, int len) throws JimmException
+	public static Packet parse(byte[] buf, int off, int len)
+			throws JimmException
 	{
 
 		// Check length (min. 6 bytes)
-		// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-        // #sijapp cond.if modules_FILES is "true"#
-	    if (len < 2)
-		// #sijapp cond.else#
-		if (len < 6)
-		// #sijapp cond.end#
-        // #sijapp cond.else#
-		if (len < 6)
-	    // #sijapp cond.end#		    
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//#sijapp cond.if modules_FILES is "true"#
+		if (len < 2)
+		//#sijapp cond.else#
+		//#		if (len < 6)
+		//#sijapp cond.end#
+		//#sijapp cond.else#
+		//#		if (len < 6)
+		//#sijapp cond.end#		    
 		{
 			throw (new JimmException(130, 0));
 		}
@@ -98,15 +102,15 @@ public class Packet
 		// Verify FLAP.ID
 		if (Util.getByte(buf, off) != 0x2A)
 		{
-			// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		    // #sijapp cond.if modules_FILES is "true"#
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//#sijapp cond.if modules_FILES is "true"#
 			return (DCPacket.parse(buf, off, len));
-			// #sijapp cond.else#
-			throw (new JimmException(130, 1));
-			// #sijapp cond.end#
-			// #sijapp cond.else#
-			throw (new JimmException(130, 1));
-            // #sijapp cond.end#
+			//#sijapp cond.else#
+			//#			throw (new JimmException(130, 1));
+			//#sijapp cond.end#
+			//#sijapp cond.else#
+			//#			throw (new JimmException(130, 1));
+			//#sijapp cond.end#
 		}
 
 		// Get and verify FLAP.CHANNEL
@@ -126,24 +130,22 @@ public class Packet
 		// Parsing is done by a subclass
 		switch (channel)
 		{
-			case Packet.CHANNEL_CONNECT:
-				return (ConnectPacket.parse(buf, off, len));
-			case Packet.CHANNEL_SNAC:
-				return (SnacPacket.parse(buf, off, len));
-			case Packet.CHANNEL_DISCONNECT:
-				return (DisconnectPacket.parse(buf, off, len));
-			default:
-				return null;
+		case Packet.CHANNEL_CONNECT:
+			return (ConnectPacket.parse(buf, off, len));
+		case Packet.CHANNEL_SNAC:
+			return (SnacPacket.parse(buf, off, len));
+		case Packet.CHANNEL_DISCONNECT:
+			return (DisconnectPacket.parse(buf, off, len));
+		default:
+			return null;
 		}
 
 	}
-
 
 	// Parses given byte array and returns a Packet object
 	public static Packet parse(byte[] buf) throws JimmException
 	{
 		return (Packet.parse(buf, 0, buf.length));
 	}
-
 
 }

@@ -83,7 +83,8 @@ public class Search
 	}
 
 	/* Add a result to the results vector */
-	public void addResult(String uin, String nick, String name, String email, String auth, int status, String gender, int age)
+	public void addResult(String uin, String nick, String name, String email,
+			String auth, int status, String gender, int age)
 	{
 		String[] resultData = new String[JimmUI.UI_LAST_ID];
 
@@ -114,7 +115,8 @@ public class Search
 	/* Return the SearchForm object */
 	public SearchForm getSearchForm()
 	{
-		if (searchForm == null) searchForm = new SearchForm();
+		if (searchForm == null)
+			searchForm = new SearchForm();
 		return searchForm;
 	}
 
@@ -127,11 +129,17 @@ public class Search
 	{
 		/* Commands */
 		private Command backCommand;
+
 		private Command searchCommand;
+
 		private Command addCommand;
+
 		private Command previousCommand;
+
 		private Command nextCommand;
+
 		private Command cmdSendMessage;
+
 		private Command cmdShowInfo;
 
 		/* Forms for results and query */
@@ -171,35 +179,53 @@ public class Search
 		public SearchForm()
 		{
 			/* Commands */
-			this.searchCommand = new Command(ResourceBundle.getString("search_user"), Command.OK, 1);
-			this.backCommand = new Command(ResourceBundle.getString("back"), Command.BACK, 2);
-			this.addCommand = new Command(ResourceBundle.getString("add_to_list"), Command.ITEM, 1);
-			this.previousCommand = new Command(ResourceBundle.getString("prev"), Command.ITEM, 4);
-			this.nextCommand = new Command(ResourceBundle.getString("next"), Command.ITEM, 5);
-			this.cmdSendMessage = new Command(ResourceBundle.getString("send_message"), Command.ITEM, 6);
-			this.cmdShowInfo = new Command(ResourceBundle.getString("info"), Command.ITEM, 7);
+			this.searchCommand = new Command(ResourceBundle
+					.getString("search_user"), Command.OK, 1);
+			this.backCommand = new Command(ResourceBundle.getString("back"),
+					Command.BACK, 2);
+			this.addCommand = new Command(ResourceBundle
+					.getString("add_to_list"), Command.ITEM, 1);
+			this.previousCommand = new Command(
+					ResourceBundle.getString("prev"), Command.ITEM, 4);
+			this.nextCommand = new Command(ResourceBundle.getString("next"),
+					Command.ITEM, 5);
+			this.cmdSendMessage = new Command(ResourceBundle
+					.getString("send_message"), Command.ITEM, 6);
+			this.cmdShowInfo = new Command(ResourceBundle.getString("info"),
+					Command.ITEM, 7);
 
 			/* Form */
 			this.searchForm = new Form(ResourceBundle.getString("search_user"));
 
 			/* TextFields */
-			this.uinSearchTextBox = new TextField(ResourceBundle.getString("uin"), "", 32, TextField.NUMERIC);
-			this.nickSearchTextBox = new TextField(ResourceBundle.getString("nick"), "", 32, TextField.ANY);
-			this.firstnameSearchTextBox = new TextField(ResourceBundle.getString("firstname"), "", 32, TextField.ANY);
-			this.lastnameSearchTextBox = new TextField(ResourceBundle.getString("lastname"), "", 32, TextField.ANY);
-			this.emailSearchTextBox = new TextField(ResourceBundle.getString("email"), "", 32, TextField.EMAILADDR);
-			this.citySearchTextBox = new TextField(ResourceBundle.getString("city"), "", 32, TextField.ANY);
-			this.keywordSearchTextBox = new TextField(ResourceBundle.getString("keyword"), "", 32, TextField.ANY);
+			this.uinSearchTextBox = new TextField(ResourceBundle
+					.getString("uin"), "", 32, TextField.NUMERIC);
+			this.nickSearchTextBox = new TextField(ResourceBundle
+					.getString("nick"), "", 32, TextField.ANY);
+			this.firstnameSearchTextBox = new TextField(ResourceBundle
+					.getString("firstname"), "", 32, TextField.ANY);
+			this.lastnameSearchTextBox = new TextField(ResourceBundle
+					.getString("lastname"), "", 32, TextField.ANY);
+			this.emailSearchTextBox = new TextField(ResourceBundle
+					.getString("email"), "", 32, TextField.EMAILADDR);
+			this.citySearchTextBox = new TextField(ResourceBundle
+					.getString("city"), "", 32, TextField.ANY);
+			this.keywordSearchTextBox = new TextField(ResourceBundle
+					.getString("keyword"), "", 32, TextField.ANY);
 
-			chgrAge = new ChoiceGroup(ResourceBundle.getString("age"), ChoiceGroup.EXCLUSIVE, Util.explode("-|18-22|23-29|30-39|40-49|50-59|>60", '|'), null);
+			chgrAge = new ChoiceGroup(ResourceBundle.getString("age"),
+					ChoiceGroup.EXCLUSIVE, Util.explode(
+							"-|18-22|23-29|30-39|40-49|50-59|>60", '|'), null);
 
 			/* Choice Groups */
-			this.gender = new ChoiceGroup(ResourceBundle.getString("gender"), Choice.EXCLUSIVE);
+			this.gender = new ChoiceGroup(ResourceBundle.getString("gender"),
+					Choice.EXCLUSIVE);
 			this.gender.append(ResourceBundle.getString("female_male"), null);
 			this.gender.append(ResourceBundle.getString("female"), null);
 			this.gender.append(ResourceBundle.getString("male"), null);
 			this.onlyOnline = new ChoiceGroup("", Choice.MULTIPLE);
-			this.onlyOnline.append(ResourceBundle.getString("only_online"), null);
+			this.onlyOnline.append(ResourceBundle.getString("only_online"),
+					null);
 
 			this.searchForm.append(this.onlyOnline);
 			this.searchForm.append(this.uinSearchTextBox);
@@ -224,9 +250,11 @@ public class Search
 			screen.setCursorMode(TextList.SEL_NONE);
 			JimmUI.setColorScheme(screen);
 		}
-		
-		static final public int ACTIV_SHOW_RESULTS   = 1;
-		static final public int ACTIV_JUST_SHOW      = 2;
+
+		static final public int ACTIV_SHOW_RESULTS = 1;
+
+		static final public int ACTIV_JUST_SHOW = 2;
+
 		static final public int ACTIV_SHOW_NORESULTS = 3;
 
 		/* Activate search form */
@@ -238,19 +266,20 @@ public class Search
 				drawResultScreen(selectedIndex);
 				Jimm.display.setCurrent(this.screen);
 				break;
-				
+
 			case ACTIV_JUST_SHOW:
 				this.searchForm.addCommand(this.searchCommand);
 				this.searchForm.addCommand(this.backCommand);
 				Jimm.display.setCurrent(this.searchForm);
 				break;
-				
-			case ACTIV_SHOW_NORESULTS:	
+
+			case ACTIV_SHOW_NORESULTS:
 				this.searchForm.addCommand(this.searchCommand);
 				this.searchForm.addCommand(this.backCommand);
-            	Alert alert = new Alert(null, ResourceBundle.getString("no_results"), null, null);
-            	alert.setTimeout(Alert.FOREVER);
-            	Jimm.display.setCurrent(alert, this.searchForm);
+				Alert alert = new Alert(null, ResourceBundle
+						.getString("no_results"), null, null);
+				alert.setTimeout(Alert.FOREVER);
+				Jimm.display.setCurrent(alert, this.searchForm);
 				break;
 			}
 		}
@@ -272,16 +301,19 @@ public class Search
 				screen.lock();
 
 				JimmUI.fillUserInfo(getResult(n), screen);
-				screen.setCaption(ResourceBundle.getString("results") + " " + Integer.toString(n + 1) + "/" + Integer.toString(Search.this.size()));
+				screen.setCaption(ResourceBundle.getString("results") + " "
+						+ Integer.toString(n + 1) + "/"
+						+ Integer.toString(Search.this.size()));
 				screen.unlock();
-			}
-			else
+			} else
 			{
 				/* Show a result entry */
 
 				screen.lock();
 				screen.setCaption(ResourceBundle.getString("results") + " 0/0");
-				screen.addBigText(ResourceBundle.getString("no_results") + ": ", 0x0, Font.STYLE_BOLD, -1);
+				screen.addBigText(
+						ResourceBundle.getString("no_results") + ": ", 0x0,
+						Font.STYLE_BOLD, -1);
 				screen.unlock();
 			}
 
@@ -296,10 +328,10 @@ public class Search
 			{
 				selectedIndex = (selectedIndex + 1) % Search.this.size();
 				this.activate(Search.SearchForm.ACTIV_SHOW_RESULTS);
-			}
-			else
+			} else
 			{
-				if (selectedIndex == 0) selectedIndex = Search.this.size() - 1;
+				if (selectedIndex == 0)
+					selectedIndex = Search.this.size() - 1;
 				else
 				{
 					selectedIndex = (selectedIndex - 1) % Search.this.size();
@@ -341,14 +373,12 @@ public class Search
 				if ((d == screen) && !liteVersion)
 				{
 					activate(Search.SearchForm.ACTIV_JUST_SHOW);
-				}
-				else
+				} else
 				{
 					searchForm = null;
 					MainMenu.activate();
 				}
-			}
-			else if (c == this.searchCommand)
+			} else if (c == this.searchCommand)
 			{
 				selectedIndex = 0;
 
@@ -356,93 +386,112 @@ public class Search
 
 				data[Search.UIN] = this.uinSearchTextBox.getString();
 				data[Search.NICK] = this.nickSearchTextBox.getString();
-				data[Search.FIRST_NAME] = this.firstnameSearchTextBox.getString();
+				data[Search.FIRST_NAME] = this.firstnameSearchTextBox
+						.getString();
 				data[Search.LAST_NAME] = this.lastnameSearchTextBox.getString();
 				data[Search.EMAIL] = this.emailSearchTextBox.getString();
 				data[Search.CITY] = this.citySearchTextBox.getString();
 				data[Search.KEYWORD] = this.keywordSearchTextBox.getString();
-				data[Search.GENDER] = Integer.toString(this.gender.getSelectedIndex());
-				data[Search.ONLY_ONLINE] = this.onlyOnline.isSelected(0) ? "1" : "0";
-				data[Search.AGE] = Integer.toString(this.chgrAge.getSelectedIndex());
+				data[Search.GENDER] = Integer.toString(this.gender
+						.getSelectedIndex());
+				data[Search.ONLY_ONLINE] = this.onlyOnline.isSelected(0) ? "1"
+						: "0";
+				data[Search.AGE] = Integer.toString(this.chgrAge
+						.getSelectedIndex());
 
-				SearchAction act = new SearchAction(Search.this, data, SearchAction.CALLED_BY_SEARCHUSER);
+				SearchAction act = new SearchAction(Search.this, data,
+						SearchAction.CALLED_BY_SEARCHUSER);
 				try
 				{
 					Icq.requestAction(act);
 
-				}
-				catch (JimmException e)
+				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
-					if (e.isCritical()) return;
+					if (e.isCritical())
+						return;
 				}
 
 				/* Clear results */
 				results.removeAllElements();
 
-				/* Start timer */ 
+				/* Start timer */
 				SplashCanvas.addTimerTask("wait", act, true);
 			}
-			
+
 			/* "Next" command */
-			else if (c == this.nextCommand) nextOrPrev(true);
-			
+			else if (c == this.nextCommand)
+				nextOrPrev(true);
+
 			/* "Previous" command */
-			else if (c == this.previousCommand) nextOrPrev(false);
+			else if (c == this.previousCommand)
+				nextOrPrev(false);
 			else if (c == this.addCommand && d == screen)
 			{
 				searchForm = null;
 				if (ContactList.getGroupItems().length == 0)
 				{
-					Alert errorMsg = new Alert(ResourceBundle.getString("warning"), JimmException.getErrDesc(161, 0), null, AlertType.WARNING);
+					Alert errorMsg = new Alert(ResourceBundle
+							.getString("warning"), JimmException.getErrDesc(
+							161, 0), null, AlertType.WARNING);
 					errorMsg.setTimeout(Alert.FOREVER);
 					ContactList.activate(errorMsg);
-				}
-				else
+				} else
 				{
 					/* Show list of groups to select which group to add to */
-					groupList = new List(ResourceBundle.getString("whichgroup"), List.EXCLUSIVE);
+					groupList = new List(
+							ResourceBundle.getString("whichgroup"),
+							List.EXCLUSIVE);
 					for (int i = 0; i < ContactList.getGroupItems().length; i++)
 					{
-						groupList.append(ContactList.getGroupItems()[i].getName(), null);
+						groupList.append(ContactList.getGroupItems()[i]
+								.getName(), null);
 					}
 					groupList.addCommand(backCommand);
 					groupList.addCommand(addCommand);
 					groupList.setCommandListener(this);
 					Jimm.display.setCurrent(groupList);
 				}
-			}
-			else if (c == this.addCommand && d == this.groupList)
+			} else if (c == this.addCommand && d == this.groupList)
 			{
 				String[] resultData = getResult(selectedIndex);
-				ContactListContactItem cItem = new ContactListContactItem(-1, ContactList.getGroupItems()[groupList.getSelectedIndex()].getId(),
-						resultData[JimmUI.UI_UIN_LIST], resultData[JimmUI.UI_NICK], false, false);
-				cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH, resultData[JimmUI.UI_AUTH].equals("1"));
-				cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, true);
-				cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
+				ContactListContactItem cItem = new ContactListContactItem(-1,
+						ContactList.getGroupItems()[groupList
+								.getSelectedIndex()].getId(),
+						resultData[JimmUI.UI_UIN_LIST],
+						resultData[JimmUI.UI_NICK], false, false);
+				cItem.setBooleanValue(
+						ContactListContactItem.CONTACTITEM_NO_AUTH,
+						resultData[JimmUI.UI_AUTH].equals("1"));
+				cItem.setBooleanValue(
+						ContactListContactItem.CONTACTITEM_IS_TEMP, true);
+				cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
+						ContactList.STATUS_OFFLINE);
 				Icq.addToContactList(cItem);
 			}
-			
+
 			/* Command "Send message" */
 			else if (c == this.cmdSendMessage)
 			{
 				String[] resultData = getResult(selectedIndex);
-			
-				ContactListContactItem cItem = ContactList.createTempContact(resultData[JimmUI.UI_UIN_LIST]);
+
+				ContactListContactItem cItem = ContactList
+						.createTempContact(resultData[JimmUI.UI_UIN_LIST]);
 				//ContactListContactItem.CONTACTITEM_HAS_CHAT
-				cItem.setStringValue(ContactListContactItem.CONTACTITEM_NAME, resultData[JimmUI.UI_NICK]);
+				cItem.setStringValue(ContactListContactItem.CONTACTITEM_NAME,
+						resultData[JimmUI.UI_NICK]);
 				cItem.newMessage();
 			}
-			
-			/* Command "Show info" */ 
+
+			/* Command "Show info" */
 			else if (c == this.cmdShowInfo)
 			{
 				String[] resultData = getResult(selectedIndex);
-				JimmUI.requiestUserInfo(resultData[JimmUI.UI_UIN_LIST], resultData[JimmUI.UI_NICK]);
+				JimmUI.requiestUserInfo(resultData[JimmUI.UI_UIN_LIST],
+						resultData[JimmUI.UI_NICK]);
 			}
 		}
-		
-	
+
 	} /* end "class SearchForm" */
-	
+
 }

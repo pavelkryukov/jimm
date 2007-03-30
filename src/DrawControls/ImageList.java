@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-07  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -32,25 +32,26 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.lcdui.game.Sprite;
+
 //#sijapp cond.end#
 
 //! Class for dividing one big image to several small with equal size
 /*!
-    This class allow you to reduce images number, stored at res folder. 
-    It can be uses only if all images have equal height and width. 
-    For example, if you want use 10 images with size 16 x 16, you can
-    store one 160 x 16 image and divide it with help of this class
-    
-    \par Example
-    \code
-    ImageList images = new ImageList();
-    images.load("/big160x16.png", 16);
-    
-    // now you can retrive second image: 
-    Image img1 = images.elementAt(1);
-    
-    \endcode
-*/
+ This class allow you to reduce images number, stored at res folder. 
+ It can be uses only if all images have equal height and width. 
+ For example, if you want use 10 images with size 16 x 16, you can
+ store one 160 x 16 image and divide it with help of this class
+ 
+ \par Example
+ \code
+ ImageList images = new ImageList();
+ images.load("/big160x16.png", 16);
+ 
+ // now you can retrive second image: 
+ Image img1 = images.elementAt(1);
+ 
+ \endcode
+ */
 
 public class ImageList
 {
@@ -95,19 +96,19 @@ public class ImageList
 	}
 
 	//! Load and divide big image to several small and store it in object
-	public void load
-	(
-		String resName, //!< Name of image in resouce
-		int width,      //!< Width of result images
-		int height,     //!< Height of result images
-		int count) throws IOException
+	public void load(String resName, //!< Name of image in resouce
+			int width, //!< Width of result images
+			int height, //!< Height of result images
+			int count) throws IOException
 	{
 		Image resImage = Image.createImage(resName);
 		int imgHeight = resImage.getHeight();
 		int imgWidth = resImage.getWidth();
 
-		if (width == -1) width = imgHeight;
-		if (height == -1) height = imgHeight;
+		if (width == -1)
+			width = imgHeight;
+		if (height == -1)
+			height = imgHeight;
 
 		this.width = width;
 		this.height = height;
@@ -117,15 +118,14 @@ public class ImageList
 			for (int x = 0; x < imgWidth; x += width)
 			{
 				Image newImage;
-				// #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				newImage = Image
-						.createImage(Image
-								.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
-				// #sijapp cond.else#
-				newImage = Image.createImage(width, height);
-				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP
-						| Graphics.LEFT);
-				// #sijapp cond.end#
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+				newImage = Image.createImage(Image.createImage(resImage, x, y,
+						width, height, Sprite.TRANS_NONE));
+				//#sijapp cond.else#
+				//#				newImage = Image.createImage(width, height);
+				//#				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP
+				//#						| Graphics.LEFT);
+				//#sijapp cond.end#
 				Image imImage = Image.createImage(newImage);
 				items.addElement(imImage);
 			}
@@ -147,8 +147,7 @@ public class ImageList
 		{
 			height = image.getHeight();
 			width = image.getWidth();
-		}
-		else
+		} else
 		{
 			height = width = 0;
 		}

@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-07  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -21,7 +21,6 @@
  Author(s): Artyomov Denis
  *******************************************************************************/
 
-
 package DrawControls;
 
 import javax.microedition.lcdui.Font;
@@ -29,7 +28,7 @@ import javax.microedition.lcdui.Image;
 
 //! Data for list item
 /*! All members of class are made as public 
-    in order to easy access. 
+ in order to easy access. 
  */
 public class ListItem
 {
@@ -40,8 +39,8 @@ public class ListItem
 	private int itemWidth, itemHeigth;
 
 	public int fontStyle, //!< Font style
-			color,        //!< Color of node text
-			imageIndex;   //!< Index of node image. Must be -1 for disabling image
+			color, //!< Color of node text
+			imageIndex; //!< Index of node image. Must be -1 for disabling image
 
 	ListItem()
 	{
@@ -55,7 +54,7 @@ public class ListItem
 		this.color = color;
 		this.imageIndex = imageIndex;
 		this.fontStyle = fontStyle;
-		itemWidth = itemHeigth = -1; 
+		itemWidth = itemHeigth = -1;
 	}
 
 	ListItem(Image image, String text, int itemWidth, int itemHeigth)
@@ -90,8 +89,10 @@ public class ListItem
 
 	int getHeight(int fontSize)
 	{
-		if (image != null) return itemHeigth;
-		if (text == null) return 0;
+		if (image != null)
+			return itemHeigth;
+		if (text == null)
+			return 0;
 		if (itemHeigth == -1)
 		{
 			Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
@@ -102,8 +103,10 @@ public class ListItem
 
 	int getWidth(int fontSize)
 	{
-		if (image != null) return itemWidth;
-		if (text == null) return 0;
+		if (image != null)
+			return itemWidth;
+		if (text == null)
+			return 0;
 		if (itemWidth == -1)
 		{
 			Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);

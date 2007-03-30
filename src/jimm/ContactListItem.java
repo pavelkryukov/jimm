@@ -21,7 +21,6 @@
  Author(s): Manuel Linsmayer, Artyomov Denis
  *******************************************************************************/
 
-
 package jimm;
 
 public interface ContactListItem
@@ -31,15 +30,15 @@ public interface ContactListItem
 
 	// returns image index of tree node. Is used for visual tree
 	public int getImageIndex(boolean expanded);
-	
+
 	public String getText();
-	
+
 	public int getTextColor();
-	
+
 	public int getFontStyle();
-	
+
 	/*
-	void saveToStream(DataOutputStream stream) throws IOException;
-	void loadFromStream(DataInputStream stream) throws IOException;
-	*/
+	 void saveToStream(DataOutputStream stream) throws IOException;
+	 void loadFromStream(DataInputStream stream) throws IOException;
+	 */
 }

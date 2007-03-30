@@ -21,9 +21,7 @@
  Author(s): Manuel Linsmayer, Andreas Rossbacher
  *******************************************************************************/
 
-
 package jimm;
-
 
 import jimm.util.ResourceBundle;
 import jimm.comm.Icq;
@@ -31,35 +29,34 @@ import jimm.comm.Icq;
 import javax.microedition.lcdui.*;
 
 public class JimmException extends Exception
-			//#sijapp cond.if target="MOTOROLA"#
-			implements CommandListener
-			//#sijapp cond.end#
+//#sijapp cond.if target="MOTOROLA"#
+//#			implements CommandListener
+//#sijapp cond.end#
 {
-
 
 	// Returns the error description for the given error code
 	public static String getErrDesc(int errCode, int extErrCode)
 	{
 		String errDesc = ResourceBundle.getString("error_" + errCode);
 		int ext = errDesc.indexOf("EXT");
-		if (ext != -1) return (errDesc.substring(0, ext) + extErrCode + errDesc.substring(ext + 3));
+		if (ext != -1)
+			return (errDesc.substring(0, ext) + extErrCode + errDesc
+					.substring(ext + 3));
 		return errDesc;
 	}
 
-
 	/****************************************************************************/
-
 
 	// True, if this is a critial exception
 	protected boolean critical;
 
-
 	// True, if an error message should be presented to the user
 	protected boolean displayMsg;
-	
+
 	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// True, if this is an exceptuion for an peer connection
 	protected boolean peer;
+
 	//  #sijapp cond.end#
 
 	private int _ErrCode;
@@ -68,7 +65,7 @@ public class JimmException extends Exception
 	{
 		return _ErrCode;
 	}
-	
+
 	// Constructs a critical JimmException
 	public JimmException(int errCode, int extErrCode)
 	{
@@ -83,7 +80,6 @@ public class JimmException extends Exception
 		//  #sijapp cond.end#
 	}
 
-
 	// Constructs a non-critical JimmException
 	public JimmException(int errCode, int extErrCode, boolean displayMsg)
 	{
@@ -97,11 +93,12 @@ public class JimmException extends Exception
 		//  #sijapp cond.end#
 		//  #sijapp cond.end#
 	}
-	
+
 	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	//  #sijapp cond.if modules_FILES is "true"#
 	// Constructs a non-critical JimmException with peer info
-	public JimmException(int errCode, int extErrCode, boolean displayMsg, boolean _peer)
+	public JimmException(int errCode, int extErrCode, boolean displayMsg,
+			boolean _peer)
 	{
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this._ErrCode = errCode;
@@ -109,9 +106,9 @@ public class JimmException extends Exception
 		this.displayMsg = displayMsg;
 		this.peer = _peer;
 	}
-	//  #sijapp cond.end#
-	//  #sijapp cond.end#
 
+	//  #sijapp cond.end#
+	//  #sijapp cond.end#
 
 	// Returns true if an error message should be presented to the user
 	public boolean isDisplayMsg()
@@ -119,13 +116,12 @@ public class JimmException extends Exception
 		return (this.displayMsg);
 	}
 
-
 	// Returns true if this is a critical exception
 	public boolean isCritical()
 	{
 		return (this.critical);
 	}
-	
+
 	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	//  #sijapp cond.if modules_FILES is "true"#
 	// Returns true if this is a peer exception
@@ -133,50 +129,53 @@ public class JimmException extends Exception
 	{
 		return (this.peer);
 	}
-	//  #sijapp cond.end#
-	//  #sijapp cond.end#
 
+	//  #sijapp cond.end#
+	//  #sijapp cond.end#
 
 	// Exception handler
 	public synchronized static Alert handleException(JimmException e)
 	{
 
 		// Critical exception
-	    if (e.isCritical())
+		if (e.isCritical())
 		{
 
 			// Reset comm. subsystem
 			//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-	    	//  #sijapp cond.if modules_FILES is "true"#
+			//  #sijapp cond.if modules_FILES is "true"#
 			if (e.isPeer())
-			    Icq.resetPeerCon();
+				Icq.resetPeerCon();
 			else
-			    Icq.resetServerCon();
+				Icq.resetServerCon();
 			//  #sijapp cond.else#
-			Icq.resetServerCon();
+			//#			Icq.resetServerCon();
 			//  #sijapp cond.end#
 			//  #sijapp cond.else#
-			Icq.resetServerCon();
+			//#			Icq.resetServerCon();
 			//  #sijapp cond.end#
-			
+
 			// Set offline status for all contacts and reset online counters 
 			ContactList.setStatusesOffline();
-			SplashCanvas.setStatusToDraw(JimmUI.getStatusImageIndex(ContactList.STATUS_OFFLINE));
+			SplashCanvas.setStatusToDraw(JimmUI
+					.getStatusImageIndex(ContactList.STATUS_OFFLINE));
 			//#sijapp cond.if target="MOTOROLA"#
-			DrawControls.VirtualList.setLEDmode(DrawControls.VirtualList.BKLT_TYPE_LIGHTING, -1, 0xFF0000);
+			//#			DrawControls.VirtualList.setLEDmode(DrawControls.VirtualList.BKLT_TYPE_LIGHTING, -1, 0xFF0000);
 			//#sijapp cond.end#
-			
+
 			// Unlock splash (if locked)
-			if (SplashCanvas.locked()) SplashCanvas.unlock(true);
+			if (SplashCanvas.locked())
+				SplashCanvas.unlock(true);
 
 			// Display error message
-			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
+			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e
+					.getMessage(), null, AlertType.ERROR);
 			errorMsg.setTimeout(Alert.FOREVER);
 			//#sijapp cond.if target="MOTOROLA"#
-			errorMsg.setCommandListener(e);
+			//#			errorMsg.setCommandListener(e);
 			//#sijapp cond.end#
 			MainMenu.activate(errorMsg);
-			return(errorMsg);
+			return (errorMsg);
 
 		}
 		// Non-critical exception
@@ -186,27 +185,29 @@ public class JimmException extends Exception
 			// Display error message, if required
 			if (e.isDisplayMsg())
 			{
-				Alert errorMsg = new Alert(ResourceBundle.getString("warning"), e.getMessage(), null, AlertType.WARNING);
+				Alert errorMsg = new Alert(ResourceBundle.getString("warning"),
+						e.getMessage(), null, AlertType.WARNING);
 				errorMsg.setTimeout(Alert.FOREVER);
-				
+
 				SplashCanvas.unlock(false);
-				
-				if (Icq.isConnected()) ContactList.activate(errorMsg);
-				else MainMenu.activate(errorMsg);
-				return(errorMsg);
+
+				if (Icq.isConnected())
+					ContactList.activate(errorMsg);
+				else
+					MainMenu.activate(errorMsg);
+				return (errorMsg);
 			}
-			return(null);
+			return (null);
 		}
 
 	}
 
 	//#sijapp cond.if target="MOTOROLA"#
-	public void commandAction(Command c, Displayable d)
-	{
-		DrawControls.VirtualList.disableLED();
-		MainMenu.activate();
-	}
+	//#	public void commandAction(Command c, Displayable d)
+	//#	{
+	//#		DrawControls.VirtualList.disableLED();
+	//#		MainMenu.activate();
+	//#	}
 	//#sijapp cond.end#
-
 
 }
