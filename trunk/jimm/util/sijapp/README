@@ -20,6 +20,10 @@ Currently the following commands are available:
      cond.[else|end]
        With these commands it is possible to include/exclude code sections
        based on whether certain conditions hold or not.
+       Code is excluded by commenting it out. Special SiJaPP comments (lines
+       that start with //#) are removed before the line is processed. You can
+       use this to exclude areas of conditional code from normal Java 
+       compilation (e.g. in IDE).
 
   *  echo <STRING>
        Prints the specified string.

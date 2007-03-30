@@ -537,16 +537,26 @@ public class Preprocessor {
         // Scan read line for s SiJaPP statement
         Scanner.Token[] tokens = Scanner.scan(line);
 
+        // Get rid of special sijapp comments //# if inside an sijapp statement 
+        if (tokens.length == 0 && line.trim().startsWith("//#") && this.doneStack.size() > 0)
+        	line = line.trim().substring(3);
         // No statement has been found
         if (tokens.length == 0) {
           if (!skip) {
             this.writer.write(line, 0, line.length());
             this.writer.newLine();
           }
+          else
+          {
+              this.writer.write("//# "+line, 0, line.length()+4);
+              this.writer.newLine();
+          }
         }
         // A statement has been found
         else {
           this.eval(tokens);
+          this.writer.write(line, 0, line.length());
+          this.writer.newLine();
           if (this.stop) {
             return;
           }
