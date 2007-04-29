@@ -32,6 +32,8 @@ public abstract class Message
 	public static final int MESSAGE_TYPE_AUTO = 0x0000;
 
 	public static final int MESSAGE_TYPE_NORM = 0x0001;
+	
+	public static final int MESSAGE_TYPE_URL  = 0x0004;
 
 	public static final int MESSAGE_TYPE_EXTENDED = 0x001a;
 
