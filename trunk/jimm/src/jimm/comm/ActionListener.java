@@ -248,14 +248,36 @@ public class ActionListener
 
 				// Get message type
 				int msgType = Util.getWord(buf, 58 + uinLen, false);
-				if ((msgType >= Message.MESSAGE_TYPE_AWAY)
-						&& (msgType <= Message.MESSAGE_TYPE_FFC))
+				boolean gotStausMsg = false;
+				int skip = 0;
+				if ((msgType >= Message.MESSAGE_TYPE_AWAY)	&& (msgType <= Message.MESSAGE_TYPE_FFC))
+				{
+					skip = 64;
+					gotStausMsg = true;
+				} else if (msgType == Message.MESSAGE_TYPE_EXTENDED)
+				{
+					// Handle ICQ6 status message reply
+					skip = 111;
+					gotStausMsg = true;
+				}
+				if (gotStausMsg)
 				{
 					// Create an message entry
-					int textLen = Util.getWord(buf, 64 + uinLen, false);
+					long textLen = 0;
+					int lenSkip = 0;
+					if (msgType == Message.MESSAGE_TYPE_EXTENDED)
+					{
+						textLen = Util.getDWord(buf, skip + uinLen, false);
+						lenSkip = 4;
+					}
+					else
+					{
+						textLen = Util.getWord(buf, skip + uinLen, false);
+						lenSkip = 2;
+					}
 					Alert status_message = new Alert(ResourceBundle
 							.getString("status_message"),
-							Util.byteArrayToString(buf, 66 + uinLen, textLen,
+							Util.byteArrayToString(buf, skip + lenSkip + uinLen, (int)textLen,
 									false), null, AlertType.INFO);
 					status_message.setTimeout(15000);
 					ContactList.activate(status_message);
@@ -497,8 +519,8 @@ public class ActionListener
 					// Get and validate message type
 					int msgType = Util.getWord(msg2Buf, msg2Marker, false);
 					msg2Marker += 2;
-					if (!((msgType == 0x0001) || (msgType == 0x0004)
-							|| (msgType == 0x001A) || ((msgType >= 1000) && (msgType <= 1004))))
+					if (!((msgType == Message.MESSAGE_TYPE_NORM) || (msgType == Message.MESSAGE_TYPE_URL)
+							|| (msgType == Message.MESSAGE_TYPE_EXTENDED) || ((msgType >= Message.MESSAGE_TYPE_AWAY) && (msgType <= Message.MESSAGE_TYPE_FFC))))
 						return;
 
 					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
