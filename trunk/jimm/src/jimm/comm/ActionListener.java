@@ -106,7 +106,7 @@ public class ActionListener
 
 				boolean statusChange = true;
 				int dwFT1 = 0, dwFT2 = 0, dwFT3 = 0;
-				int wVersion = 0;
+				// int wVersion = 0;
 				byte[] capabilities_old = null; // Buffer for old style capabilities (TLV 0x000D)
 				byte[] capabilities_new = null; // Buffer for new style capabilities (TLV 0x0019)
 
@@ -254,7 +254,8 @@ public class ActionListener
 				{
 					skip = 64;
 					gotStausMsg = true;
-				} else if (msgType == Message.MESSAGE_TYPE_EXTENDED)
+				} 
+				if (msgType == Message.MESSAGE_TYPE_EXTENDED)
 				{
 					// Handle ICQ6 status message reply
 					skip = 111;
@@ -275,15 +276,13 @@ public class ActionListener
 						textLen = Util.getWord(buf, skip + uinLen, false);
 						lenSkip = 2;
 					}
-					Alert status_message = new Alert(ResourceBundle
-							.getString("status_message"),
-							Util.byteArrayToString(buf, skip + lenSkip + uinLen, (int)textLen,
-									false), null, AlertType.INFO);
+
+					Alert status_message = new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf, skip + lenSkip + uinLen, (int)textLen,false), null, AlertType.INFO);
 					status_message.setTimeout(15000);
 					ContactList.activate(status_message);
 				}
 			}
-
+		
 			/** ********************************************************************* */
 
 			// Watch out for SRV_RECVMSG
@@ -806,6 +805,61 @@ public class ActionListener
 						// URL message
 						else
 						//#sijapp cond.end#
+							//#sijapp cond.if modules_LOCATION is "true"#
+							// File transfer message
+							if (plugin.equals("Loc"))
+							{
+								System.out.println("Received location packet");
+	
+								// Location data
+								long course;
+								long speed;
+								long time;
+								long method;
+								int valid;
+								long horr_acc, vert_acc;
+								long lat, lgt;
+								
+								// Get course
+								course = Util.getDWord(msg2Buf, msg2Marker);
+								msg2Marker += 4;
+								
+								// Get speed
+								speed = Util.getDWord(msg2Buf, msg2Marker);
+								msg2Marker += 4;
+								
+								// Get timestamp
+								time = Util.getQWord(msg2Buf, msg2Marker, true);
+								msg2Marker += 8;
+								
+								// Get method
+								method = Util.getDWord(msg2Buf, msg2Marker);
+								msg2Marker += 4;
+								
+								// Get validity tag
+								valid = Util.getByte(msg2Buf, msg2Marker);	
+								msg2Marker += 1;
+								
+								horr_acc = Util.getDWord(msg2Buf, msg2Marker);
+								msg2Marker += 4;
+								
+								vert_acc = Util.getDWord(msg2Buf, msg2Marker);
+								msg2Marker += 4;
+								
+								lat = Util.getQWord(msg2Buf, msg2Marker, true);
+								msg2Marker += 8;
+								
+								lgt = Util.getQWord(msg2Buf, msg2Marker, true);
+								msg2Marker += 8;
+								
+								ContactListContactItem sender = Jimm.jimm.getContactListRef().getItembyUIN(uin);
+								if (valid == 1)
+									sender.setLocation(course,speed,time,method,horr_acc,vert_acc,lat,lgt);
+								
+							}
+							// URL message
+							else
+						//#sijapp cond.end#							
 						//#sijapp cond.end#
 						if (plugin.equals("Send Web Page Address (URL)"))
 						{
