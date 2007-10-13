@@ -250,7 +250,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		tree.setImageList(imageList);
 		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
 				: VirtualList.MEDIUM_FONT);
-		tree.setStepSize(-tree.getFontHeight() / 2);
+		tree.setStepSize(0);
 
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		updateTitle(Traffic.getSessionTraffic());
@@ -778,8 +778,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 			if (use_groups)
 			{
-				ContactListGroupItem group = getGroupById(cItem
-						.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
 				TreeNode groupNode = (TreeNode) gNodes
 						.get(new Integer(
 								cItem
@@ -879,9 +877,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 		// which group id ?
 		groupId = item.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
-
-		// which group ?
-		ContactListGroupItem group = getGroupById(groupId);
 
 		boolean only_online = Options
 				.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
@@ -1656,7 +1651,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		ContactListItem item = (ContactListItem) src.getData();
 		dst.text = item.getText();
-		dst.imageIndex = item.getImageIndex(src.getExpanded());
+		dst.leftImage = imageList.elementAt(item.getImageIndex(src.getExpanded()));
+		
 		dst.color = item.getTextColor();
 		dst.fontStyle = item.getFontStyle();
 	}

@@ -32,86 +32,28 @@ import javax.microedition.lcdui.Image;
  */
 public class ListItem
 {
-	public String text; //!< Text of node
-
-	Image image; // Used for TextList in SEL_NONE mode
-
-	private int itemWidth, itemHeigth;
-
-	public int fontStyle, //!< Font style
-			color, //!< Color of node text
-			imageIndex; //!< Index of node image. Must be -1 for disabling image
+	public String text;
+	public Image leftImage;
+	public Image secondLeftImage;
+	public Image rightImage;
+	public int fontStyle;
+	public int color;
+	public int horizOffset;
 
 	ListItem()
 	{
-		color = imageIndex = 0;
 		fontStyle = Font.STYLE_PLAIN;
-	}
-
-	ListItem(String text, int color, int imageIndex, int fontStyle)
-	{
-		this.text = text;
-		this.color = color;
-		this.imageIndex = imageIndex;
-		this.fontStyle = fontStyle;
-		itemWidth = itemHeigth = -1;
-	}
-
-	ListItem(Image image, String text, int itemWidth, int itemHeigth)
-	{
-		this.image = image;
-		this.text = text;
-		this.itemWidth = itemWidth;
-		this.itemHeigth = itemHeigth;
 	}
 
 	//! Set all member to default values
 	public void clear()
 	{
-		text = "";
-		image = null;
+		leftImage = null;
+		secondLeftImage = null;
+		rightImage = null;
+		text = null;
 		color = 0;
-		imageIndex = -1;
+		horizOffset = 0;
 		fontStyle = Font.STYLE_PLAIN;
-	}
-
-	//! Copy data of class to another object
-	public void assignTo(ListItem dest //!< Destination object to copy data
-	)
-	{
-		dest.text = text;
-		dest.color = color;
-		dest.imageIndex = imageIndex;
-		dest.fontStyle = fontStyle;
-		dest.itemWidth = itemWidth;
-		dest.itemHeigth = itemHeigth;
-	}
-
-	int getHeight(int fontSize)
-	{
-		if (image != null)
-			return itemHeigth;
-		if (text == null)
-			return 0;
-		if (itemHeigth == -1)
-		{
-			Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
-			itemHeigth = font.getHeight();
-		}
-		return itemHeigth;
-	}
-
-	int getWidth(int fontSize)
-	{
-		if (image != null)
-			return itemWidth;
-		if (text == null)
-			return 0;
-		if (itemWidth == -1)
-		{
-			Font font = Font.getFont(Font.FACE_SYSTEM, fontStyle, fontSize);
-			itemWidth = font.stringWidth(text);
-		}
-		return itemWidth;
 	}
 }
