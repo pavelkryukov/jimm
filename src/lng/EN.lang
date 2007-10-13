@@ -154,6 +154,7 @@
   "md5_login"                   "Safe login"
   "me"                          "me"
   "menu"                        "Menu"
+  "mess_colored_text"           "Colored text"
   "mess_format"                 "Message format"
   "message_notification"        "Message Notice"
   "msg_sound_file_name"         "Message Sound File"

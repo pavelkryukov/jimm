@@ -357,7 +357,7 @@ public class TextList extends VirtualList
 		for (int i = 0; i < size; i++)
 		{
 			TextLine line = getLine(i);
-			if (wholeText || (line.bigTextIndex == textIndex))
+			if (wholeText || (textIndex == -1) || (line.bigTextIndex == textIndex))
 			{
 				line.readText(result);
 				if (line.last_charaster != '\0')
