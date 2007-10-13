@@ -176,6 +176,7 @@
   "msg_sound_file_name"         "Файл звука сообщения"
   "message"                     "Сообщение"
   "message_from"                "Сообщение от"
+  "mess_colored_text"           "Раскрашивать текст"
   "minimize"                    "Свернуть приложение"
   "minutes"						"мин"
   "misc"                        "Разное"
