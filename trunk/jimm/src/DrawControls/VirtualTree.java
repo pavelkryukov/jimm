@@ -50,7 +50,9 @@ public class VirtualTree extends VirtualList
 	private int stepSize = 6;
 
 	private boolean showButtons = true, autoExpand = true;
-
+	
+	private int currFontHeight;
+	
 	private VirtualTreeCommands commands;
 
 	{
@@ -66,11 +68,11 @@ public class VirtualTree extends VirtualList
 
 	//! Constructor
 	public VirtualTree(String capt, //!< Caption shown at the top of control
-			int capTextColor, //!< Caption text color
-			int backColor, //!< Control back color
-			int fontSize, /*!< Control font size. This font size if used both 
-			 for caption and text in tree nodes */
-			boolean autoExpand)
+		int capTextColor, //!< Caption text color
+		int backColor, //!< Control back color
+		int fontSize, /*!< Control font size. This font size if used both 
+					 for caption and text in tree nodes */
+		boolean autoExpand)
 	{
 		super(capt, capTextColor, backColor, fontSize, VirtualList.SEL_DOTTED);
 		this.autoExpand = autoExpand;
@@ -112,8 +114,7 @@ public class VirtualTree extends VirtualList
 
 	public void setShowButtons(boolean value)
 	{
-		if (value == showButtons)
-			return;
+		if (value == showButtons) return;
 		showButtons = value;
 		invalidate();
 	}
@@ -126,8 +127,7 @@ public class VirtualTree extends VirtualList
 	//! Returns current selected node
 	public TreeNode getCurrentItem()
 	{
-		if ((getCurrIndex() < 0) || (getCurrIndex() >= drawItems.size()))
-			return null;
+		if ((getCurrIndex() < 0) || (getCurrIndex() >= drawItems.size())) return null;
 		return getDrawItem(getCurrIndex());
 	}
 
@@ -144,15 +144,13 @@ public class VirtualTree extends VirtualList
 
 		checkToRebuildTree();
 
-		if (getCurrentItem() == node)
-			return;
+		if (getCurrentItem() == node) return;
 
 		// finding at visible nodes
 		count = drawItems.size();
 		for (i = 0; i < count; i++)
 		{
-			if (getDrawItem(i) != node)
-				continue;
+			if (getDrawItem(i) != node) continue;
 			setCurrentItem(i);
 			return;
 		}
@@ -184,8 +182,7 @@ public class VirtualTree extends VirtualList
 		for (int i = 0; i < count; i++)
 		{
 			TreeNode childNode = root.elementAt(i);
-			if (childNode == node)
-				return true;
+			if (childNode == node) return true;
 			if (buildNodePath(path, childNode, node))
 			{
 				path.addElement(childNode);
@@ -206,8 +203,7 @@ public class VirtualTree extends VirtualList
 	protected void itemSelected()
 	{
 		TreeNode currItem = getCurrentItem();
-		if (currItem == null)
-			return;
+		if (currItem == null) return;
 		if (autoExpand)
 		{
 			if (currItem.size() != 0)
@@ -224,10 +220,8 @@ public class VirtualTree extends VirtualList
 	protected boolean pointerPressedOnUtem(int index, int x, int y)
 	{
 		TreeNode currItem = getCurrentItem();
-		if (currItem == null)
-			return false;
-		if ((currItem.size() > 0)
-				&& (x < (3 * getFontHeight() / 2 + currItem.level * stepSize)))
+		if (currItem == null) return false;
+		if ((currItem.size() > 0) && (x < (3 * getFontHeight() / 2 + currItem.level * stepSize)))
 		{
 			itemSelected();
 			return true;
@@ -248,8 +242,7 @@ public class VirtualTree extends VirtualList
 	private void rebuildTreeIntItems()
 	{
 		isChanged = false;
-		if (drawItems == null)
-			drawItems = new Vector();
+		if (drawItems == null) drawItems = new Vector();
 		drawItems.removeAllElements();
 		int count = root.size();
 		for (int i = 0; i < count; i++)
@@ -265,8 +258,7 @@ public class VirtualTree extends VirtualList
 		if (top.getExpanded() == true)
 		{
 			int count = top.size();
-			for (int i = 0; i < count; i++)
-				fillTreeIntItems(top.elementAt(i), level + 1);
+			for (int i = 0; i < count; i++) fillTreeIntItems(top.elementAt(i), level + 1);
 		}
 	}
 
@@ -274,19 +266,19 @@ public class VirtualTree extends VirtualList
 	protected void get(int index, ListItem item)
 	{
 		checkToRebuildTree();
-		commands.VTGetItemDrawData(getDrawItem(index), item);
+		TreeNode treeItem = getDrawItem(index);
+		commands.VTGetItemDrawData(treeItem, item);
+		item.horizOffset = treeItem.level * stepSize;
+		if ((showButtons) && (treeItem.size() != 0)) item.horizOffset += 3*currFontHeight/4;
 	}
 
 	// private static int drawNodeRect(Graphics g, TreeNode item, int x, int y1, int y2) - 
 	// draw + or - before node text
-	private static int drawNodeRect(Graphics g, TreeNode item, int x, int y1,
-			int y2, int fontHeight)
+	private static int drawNodeRect(Graphics g, TreeNode item, int x, int y1, int y2, int fontHeight)
 	{
 		int height = 2 * fontHeight / 3;
-		if (height < 7)
-			height = 7;
-		if (height % 2 == 0)
-			height--;
+		if (height < 7) height = 7;
+		if (height % 2 == 0) height--;
 		if (item.size() != 0)
 		{
 			int y = (y1 + y2 - height) / 2;
@@ -297,8 +289,7 @@ public class VirtualTree extends VirtualList
 			int mx = x + height / 2;
 			int my = y + height / 2;
 			g.drawLine(x + 2, my, x + height - 3, my);
-			if (!item.getExpanded())
-				g.drawLine(mx, y + 2, mx, y + height - 3);
+			if (!item.getExpanded()) g.drawLine(mx, y + 2, mx, y + height - 3);
 			g.setColor(oldColor);
 		}
 		return height + 1;
@@ -306,48 +297,29 @@ public class VirtualTree extends VirtualList
 
 	//! For internal use only
 	/*! Draw a tree node. Called by base class DrawControls#VirtualDrawList */
-	protected void drawItemData(Graphics g, boolean isSelected, int index,
-			int x1, int y1, int x2, int y2, int fontHeight)
+	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight)
 	{
-		int x, rectWidth, imgWidth;
+		currFontHeight = fontHeight;
 		checkToRebuildTree();
-
-		TreeNode node = (TreeNode) drawItems.elementAt(index);
-
-		commands.VTGetItemDrawData(node, paintedItem);
-
-		g.setFont(getQuickFont(paintedItem.fontStyle));
-		g.setColor(paintedItem.color);
-
-		TreeNode treeItem = getDrawItem(index);
-		x = x1 + treeItem.level * stepSize;
-		rectWidth = showButtons ? drawNodeRect(g, treeItem, x, y1, y2,
-				fontHeight) : 0;
-
-		ImageList imageList = getImageList();
-		if ((imageList != null) && (paintedItem.imageIndex >= 0)
-				&& (paintedItem.imageIndex < imageList.size()))
+		
+		super.drawItemData(g, index, x1, y1, x2, y2, fontHeight);
+		
+		if (showButtons)
 		{
-			imgWidth = imageList.getWidth() + 3;
-			g.drawImage(imageList.elementAt(paintedItem.imageIndex), x
-					+ rectWidth + 1, (y1 + y2 - imageList.getHeight()) / 2,
-					Graphics.TOP | Graphics.LEFT);
-		} else
-			imgWidth = 0;
-		if (paintedItem.text != null)
-			g.drawString(paintedItem.text, x + rectWidth + imgWidth,
-					(y1 + y2 - fontHeight) / 2, Graphics.TOP | Graphics.LEFT);
+			TreeNode treeItem = getDrawItem(index);
+			int x = x1 + treeItem.level * stepSize;
+			drawNodeRect(g, treeItem, x, y1, y2, fontHeight);
+		}
 	}
 
 	//! Add new node
 	/*! Method "addNode" insert new item at node root. Function return 
 	 reference to new node. */
 	public TreeNode addNode(TreeNode node, //!< root for item to be inserted
-			Object obj //!< object be stored at new tree node
+		Object obj //!< object be stored at new tree node
 	)
 	{
-		if (node == null)
-			node = this.root;
+		if (node == null) node = this.root;
 		TreeNode result = new TreeNode(obj);
 		node.addItem(result);
 		wasChanged();
@@ -358,14 +330,12 @@ public class VirtualTree extends VirtualList
 	// private TreeNode findParent(TreeNodeInternal root, TreeNode node)
 	private TreeNode findParent(TreeNode root, TreeNode node)
 	{
-		if (root.findItem(node) != -1)
-			return root;
+		if (root.findItem(node) != -1) return root;
 		int count = root.size();
 		for (int i = 0; i < count; i++)
 		{
 			TreeNode result = findParent(root.elementAt(i), node);
-			if (result != null)
-				return result;
+			if (result != null) return result;
 		}
 		return null;
 	}
@@ -376,11 +346,9 @@ public class VirtualTree extends VirtualList
 	{
 		storeLastNode();
 		TreeNode parent = findParent(root, node);
-		if (parent == null)
-			return false;
+		if (parent == null) return false;
 		int index = parent.findItem(node);
-		if (index == -1)
-			return false;
+		if (index == -1) return false;
 		parent.removeItem(index);
 		checkCurrItem();
 		wasChanged();
@@ -391,15 +359,12 @@ public class VirtualTree extends VirtualList
 
 	//! Move one tree node to another. Returns true if moving is successful.
 	public boolean moveNode(TreeNode node, //!< Node to move
-			TreeNode dst //!< destination for node
+		TreeNode dst //!< destination for node
 	)
 	{
-		if (node == dst)
-			return false;
-		if (!removeNode(node))
-			return false;
-		if (dst == null)
-			dst = root;
+		if (node == dst) return false;
+		if (!removeNode(node)) return false;
+		if (dst == null) dst = root;
 		dst.addItem(node);
 		checkCurrItem();
 		wasChanged();
@@ -415,8 +380,7 @@ public class VirtualTree extends VirtualList
 	public void sortNode(TreeNode node)
 	{
 		storeLastNode();
-		if (node == null)
-			node = getRoot();
+		if (node == null) node = getRoot();
 		node.sort(commands);
 		if (node.getExpanded())
 		{
@@ -428,8 +392,7 @@ public class VirtualTree extends VirtualList
 
 	public void insertChild(TreeNode root, TreeNode element, int index)
 	{
-		if (root == null)
-			root = getRoot();
+		if (root == null) root = getRoot();
 		storeLastNode();
 		root.insertChild(element, index);
 		if (root.getExpanded())
@@ -442,8 +405,7 @@ public class VirtualTree extends VirtualList
 
 	public void deleteChild(TreeNode root, int index)
 	{
-		if (root == null)
-			root = getRoot();
+		if (root == null) root = getRoot();
 		storeLastNode();
 		root.items.removeElementAt(index);
 		if (root.getExpanded())
@@ -456,14 +418,13 @@ public class VirtualTree extends VirtualList
 
 	public int getIndexOfChild(TreeNode root, TreeNode element)
 	{
-		if (root.items == null)
-			return -1;
+		if (root.items == null) return -1;
 		return root.items.indexOf(element);
 	}
 
 	//! Expand or collapse tree node. NOTE: this is not recursive operation!
 	public void setExpandFlag(TreeNode node, //!< Tree node
-			boolean value /*!< expand/collapse flag. True - node is expanded, 
+		boolean value /*!< expand/collapse flag. True - node is expanded, 
 	 false - node is collapsed */
 	)
 	{
@@ -497,8 +458,7 @@ public class VirtualTree extends VirtualList
 
 	private void restoreLastNode()
 	{
-		if (getLocked())
-			return;
+		if (getLocked()) return;
 		setCurrentItem(lastNode);
 		lastNode = null;
 	}

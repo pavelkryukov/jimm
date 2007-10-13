@@ -29,8 +29,7 @@ import java.lang.Integer;
 import java.io.IOException;
 
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.Graphics;
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+import javax.microedition.lcdui.Graphics; //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.lcdui.game.Sprite;
 
 //#sijapp cond.end#
@@ -60,10 +59,9 @@ public class ImageList
 	private int width = 0, height = 0;
 
 	//! Return image by index
-	public Image elementAt(int index //!< Index of requested image in the list
-	)
+	public Image elementAt(int index)
 	{
-		return (Image) items.elementAt(index);
+		return ((index < 0) || (index >= items.size())) ? null : (Image) items.elementAt(index);
 	}
 
 	public void setImage(Image image, int index)
@@ -97,18 +95,16 @@ public class ImageList
 
 	//! Load and divide big image to several small and store it in object
 	public void load(String resName, //!< Name of image in resouce
-			int width, //!< Width of result images
-			int height, //!< Height of result images
-			int count) throws IOException
+		int width, //!< Width of result images
+		int height, //!< Height of result images
+		int count) throws IOException
 	{
 		Image resImage = Image.createImage(resName);
 		int imgHeight = resImage.getHeight();
 		int imgWidth = resImage.getWidth();
 
-		if (width == -1)
-			width = imgHeight;
-		if (height == -1)
-			height = imgHeight;
+		if (width == -1) width = imgHeight;
+		if (height == -1) height = imgHeight;
 
 		this.width = width;
 		this.height = height;
@@ -119,8 +115,7 @@ public class ImageList
 			{
 				Image newImage;
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				newImage = Image.createImage(Image.createImage(resImage, x, y,
-						width, height, Sprite.TRANS_NONE));
+				newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
 				//#sijapp cond.else#
 				//#				newImage = Image.createImage(width, height);
 				//#				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP
@@ -132,22 +127,21 @@ public class ImageList
 		}
 	}
 
-	public void load(String firstLine, String extention, int from, int to)
-			throws IOException
+	public void load(String firstLine, String extention, int from, int to) throws IOException
 	{
 		Image image = null;
 
 		for (int i = from; i <= to; i++)
 		{
-			image = Image.createImage(firstLine + Integer.toString(i) + "."
-					+ extention);
+			image = Image.createImage(firstLine + Integer.toString(i) + "." + extention);
 			items.addElement(image);
 		}
 		if (image != null)
 		{
 			height = image.getHeight();
 			width = image.getWidth();
-		} else
+		}
+		else
 		{
 			height = width = 0;
 		}
