@@ -166,11 +166,7 @@ class TextLine
 	
 	void readText(StringBuffer buffer)
 	{
-		for (int i = 0; i < items.size(); i++)
-		{
-			if (i != 0) buffer.append(' ');
-			buffer.append(elementAt(i).text);
-		}
+		for (int i = 0; i < items.size(); i++) buffer.append(elementAt(i).text);
 	}
 	
 }
@@ -351,30 +347,19 @@ public class TextList extends VirtualList
 			return;
 		}
 	}
-
-	// Returns lines of text which were added by 
-	// methon addBigText in current selection
-	public String getCurrText(int offset, boolean wholeText)
+	
+	public String getTextByIndex(int offset, boolean wholeText, int textIndex)
 	{
-		int offsetCounter = 0;
 		StringBuffer result = new StringBuffer();
-		int currTextIndex = getCurrTextIndex();
-
+		
 		// Fills the lines
 		int size = lines.size();
 		for (int i = 0; i < size; i++)
 		{
 			TextLine line = getLine(i);
-			if (wholeText || (line.bigTextIndex == currTextIndex))
+			if (wholeText || (line.bigTextIndex == textIndex))
 			{
-				if (offset != offsetCounter)
-				{
-					offsetCounter++;
-					continue;
-				}
-				
 				line.readText(result);
-				
 				if (line.last_charaster != '\0')
 				{
 					if (line.last_charaster == '\n') result.append("\n");
@@ -382,8 +367,19 @@ public class TextList extends VirtualList
 				}
 			}
 		}
+		
+		if (result.length() == 0) return null;
+		String resultText = result.toString();
+		int len = resultText.length();
+		if (offset > len) return null;
+		return resultText.substring(offset, len);
+	}
 
-		return (result.length() == 0) ? null : result.toString().trim();
+	// Returns lines of text which were added by 
+	// methon addBigText in current selection
+	public String getCurrText(int offset, boolean wholeText)
+	{
+		return getTextByIndex(offset, wholeText, getCurrTextIndex());
 	}
 
 	public int getCurrTextIndex()
@@ -423,13 +419,13 @@ public class TextList extends VirtualList
 		return this;
 	}
 
-	public TextList addImage(Image image, String altarnateText, int imageWidth, int imageHeight, int blockTextIndex)
+	public TextList addImage(Image image, String altarnateText, int blockTextIndex)
 	{
 		if (lines.isEmpty()) lines.addElement(new TextLine());
 		TextLine textLine = (TextLine) lines.lastElement();
 		textLine.bigTextIndex = blockTextIndex;
-
-		if ((textLine.getWidth(getFontSize()) + imageWidth) > getTrueWidth())
+		
+		if ((textLine.getWidth(getFontSize()) + image.getWidth()) > getTrueWidth())
 		{
 			doCRLF(blockTextIndex);
 			textLine = (TextLine) lines.lastElement();
