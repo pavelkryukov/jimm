@@ -267,8 +267,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 						textColor, fontStyle, bigTextIndex);
 
 			textList.addImage(images.elementAt(minArray[2]), text.substring(
-					minIndex, minIndex + minArray[1]), images.getWidth(),
-					images.getHeight(), bigTextIndex);
+					minIndex, minIndex + minArray[1]), bigTextIndex);
 
 			startIndex = minIndex + minArray[1];
 		}

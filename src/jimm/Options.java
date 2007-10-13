@@ -200,6 +200,19 @@ public class Options
 	public static final int OPTION_BRING_UP = 151; /* boolean */
 
 	public static final int OPTION_CREEPING_LINE = 152; /* boolean */
+	
+	// Show icon "message" at start of message 
+	public static final int OPTION_SHOW_MESS_ICON = 153; /* boolean */
+	
+	// Show nick in message
+	public static final int OPTION_SHOW_NICK = 154; /* boolean */
+	
+	// Show date of message at message text
+	public static final int OPTION_SHOW_MESS_DATE = 155; /* boolean */
+	
+	public static final int OPTION_SHOW_MESS_CLRF = 156; /* boolean */
+	
+	public static final int OPTION_MESS_COLORED_TEXT = 157; /* boolean */
 
 	protected static final int OPTIONS_LANG_CHANGED = 148;
 
@@ -440,6 +453,11 @@ public class Options
 
 		setBoolean(OPTIONS_LANG_CHANGED, false);
 		setBoolean(OPTION_CREEPING_LINE, true);
+		setBoolean(OPTION_SHOW_MESS_ICON, true);
+		setBoolean(OPTION_SHOW_NICK, true);
+		setBoolean(OPTION_SHOW_MESS_DATE, true);
+		setBoolean(OPTION_SHOW_MESS_CLRF, true);
+		setBoolean(OPTION_MESS_COLORED_TEXT, false);
 
 		//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 		selectSoundType("online.", OPTION_ONLINE_NOTIF_FILE);
@@ -815,6 +833,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 	private ChoiceGroup clSortByChoiceGroup;
 
 	private ChoiceGroup chrgChat;
+	
+	private ChoiceGroup chrgMessFormat;
 
 	private ChoiceGroup chrgPopupWin;
 
@@ -1481,15 +1501,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 
 				chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
 						Choice.MULTIPLE);
-				setChecked(chrgChat, "chat_small_font",
-						Options.OPTION_CHAT_SMALL_FONT);
-				//#sijapp cond.if modules_SMILES is "true"#
-				setChecked(chrgChat, "use_smiles", Options.OPTION_USE_SMILES);
-				//#sijapp cond.end#
+				
 				//#sijapp cond.if modules_HISTORY is "true"#
 				setChecked(chrgChat, "use_history", Options.OPTION_HISTORY);
-				setChecked(chrgChat, "show_prev_mess",
-						Options.OPTION_SHOW_LAST_MESS);
+				setChecked(chrgChat, "show_prev_mess", Options.OPTION_SHOW_LAST_MESS);
 				//#sijapp cond.end#
 				//#sijapp cond.if target is "SIEMENS2"#
 				//#	                setChecked(chrgChat, "cl_chat", Options.OPTION_CLASSIC_CHAT);
@@ -1501,6 +1516,18 @@ class OptionsForm implements CommandListener, ItemStateListener
 				//#					lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
 				//#					setChecked(lightManual, "yes", Options.OPTION_LIGHT_MANUAL);
 				//#sijapp cond.end#
+				
+				// OPTION_SHOW_MESS_ICON
+				chrgMessFormat = new ChoiceGroup(ResourceBundle.getString("mess_format"), Choice.MULTIPLE);
+				setChecked(chrgMessFormat, "chat_small_font", Options.OPTION_CHAT_SMALL_FONT);
+				setChecked(chrgMessFormat, "show_mess_icon", Options.OPTION_SHOW_MESS_ICON);
+				setChecked(chrgMessFormat, "show_mess_nick", Options.OPTION_SHOW_NICK);
+				setChecked(chrgMessFormat, "show_mess_date", Options.OPTION_SHOW_MESS_DATE);
+				setChecked(chrgMessFormat, "show_mess_clrf", Options.OPTION_SHOW_MESS_CLRF);
+				//#sijapp cond.if modules_SMILES is "true"#
+				setChecked(chrgMessFormat, "use_smiles", Options.OPTION_USE_SMILES);
+				//#sijapp cond.end#
+				setChecked(chrgMessFormat, "mess_colored_text", Options.OPTION_MESS_COLORED_TEXT);
 
 				if (uiLanguageChoiceGroup != null)
 					optionsForm.append(uiLanguageChoiceGroup);
@@ -1508,7 +1535,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 				optionsForm.append(choiceContactList);
 				optionsForm.append(clSortByChoiceGroup);
 
-				optionsForm.append(chrgChat);
+				if (chrgChat.size() != 0) optionsForm.append(chrgChat);
+				optionsForm.append(chrgMessFormat);
 
 				optionsForm.append(colorScheme);
 				//#sijapp cond.if target is "MOTOROLA"#
@@ -1797,14 +1825,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 						newHideOffline);
 
 				idx = 0;
-				Options.setBoolean(Options.OPTION_CHAT_SMALL_FONT, chrgChat
-						.isSelected(idx++));
-
-				//#sijapp cond.if modules_SMILES is "true"#
-				Options.setBoolean(Options.OPTION_USE_SMILES, chrgChat
-						.isSelected(idx++));
-				//#sijapp cond.end#
-
 				//#sijapp cond.if modules_HISTORY is "true"#
 				Options.setBoolean(Options.OPTION_HISTORY, chrgChat
 						.isSelected(idx++));
@@ -1818,11 +1838,24 @@ class OptionsForm implements CommandListener, ItemStateListener
 
 				Options.setBoolean(Options.OPTION_CP1251_HACK, chrgChat
 						.isSelected(idx++));
+				
+				idx = 0;
+				Options.setBoolean(Options.OPTION_CHAT_SMALL_FONT, chrgMessFormat.isSelected(idx++));
+				Options.setBoolean(Options.OPTION_SHOW_MESS_ICON, chrgMessFormat.isSelected(idx++));
+				Options.setBoolean(Options.OPTION_SHOW_NICK, chrgMessFormat.isSelected(idx++));
+				Options.setBoolean(Options.OPTION_SHOW_MESS_DATE, chrgMessFormat.isSelected(idx++));
+				Options.setBoolean(Options.OPTION_SHOW_MESS_CLRF, chrgMessFormat.isSelected(idx++));
+				//#sijapp cond.if modules_SMILES is "true"#
+				Options.setBoolean(Options.OPTION_USE_SMILES, chrgMessFormat.isSelected(idx++));
+				//#sijapp cond.end#
+				Options.setBoolean(Options.OPTION_MESS_COLORED_TEXT, chrgMessFormat.isSelected(idx++));
+				
+				
 
 				Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
 				Options.setInt(Options.OPTION_COLOR_SCHEME, newColorScheme);
 
-				// Set UI options for real controls
+				// Set UI options for existing controls
 				ContactList.optionsChanged((newUseGroups != lastGroupsUsed)
 						|| (newHideOffline != lastHideOffline),
 						(newSortMethod != lastSortMethod));

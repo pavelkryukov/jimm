@@ -337,10 +337,39 @@ class ChatTextList implements VirtualListCommands
 		int texOffset;
 
 		textList.lock();
+	
 		int lastSize = textList.getSize();
-		textList.addBigText(from + " (" + Util.getDateString(!offline, time)
-				+ "): ", getInOutColor(red), Font.STYLE_BOLD, messTotalCounter);
-		textList.doCRLF(messTotalCounter);
+		
+		StringBuffer messHeader = new StringBuffer();
+		
+		if (Options.getBoolean(Options.OPTION_SHOW_MESS_ICON))
+		{
+			textList.addImage(ContactList.imageList.elementAt(8), "", messTotalCounter);
+			messHeader.append(' ');
+		}
+		
+		if (Options.getBoolean(Options.OPTION_SHOW_NICK))
+		{
+			messHeader.append(from);
+			messHeader.append(' ');
+		}
+		
+		if (Options.getBoolean(Options.OPTION_SHOW_MESS_DATE))
+		{
+			messHeader.append('(');
+			messHeader.append(Util.getDateString(!offline, time));
+			messHeader.append(')');
+		}
+		
+		if (messHeader.length() != 0) messHeader.append(": ");
+		
+		textList.addBigText(messHeader.toString(), getInOutColor(red), Font.STYLE_BOLD, messTotalCounter);
+		
+		if (offline || Options.getBoolean(Options.OPTION_SHOW_MESS_CLRF)) 
+			textList.doCRLF(messTotalCounter);
+		
+		String restoredHeadText = textList.getTextByIndex(0, false, messTotalCounter);
+		texOffset = restoredHeadText.length();
 
 		if (url.length() > 0)
 		{
@@ -348,9 +377,8 @@ class ChatTextList implements VirtualListCommands
 					0x00FF00, Font.STYLE_PLAIN, messTotalCounter);
 		}
 
-		texOffset = textList.getSize() - lastSize;
-
-		JimmUI.addMessageText(textList, message, messTotalCounter);
+		int textColor = Options.getBoolean(Options.OPTION_MESS_COLORED_TEXT) ? getInOutColor(red) : textList.getTextColor(); 
+		JimmUI.addMessageText(textList, message, textColor, messTotalCounter);
 
 		boolean contains_url = false;
 		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
@@ -635,8 +663,7 @@ public class ChatHistory
 
 	static public String getCurrentMessage(String uin)
 	{
-		return getChatHistoryAt(uin).textList.getCurrText(getCurrentMessData(
-				uin).getOffset(), false);
+		return getChatHistoryAt(uin).textList.getCurrText(getCurrentMessData(uin).getOffset(), false);
 	}
 
 	static public void copyText(String uin, String from)

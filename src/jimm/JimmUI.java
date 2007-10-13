@@ -334,8 +334,7 @@ public class JimmUI implements CommandListener
 		{
 			Image image = SplashCanvas.getSplashImage();
 			aboutTextList.addBigText("\n", 0xffffff, Font.STYLE_PLAIN, -1)
-					.addImage(image, null, image.getWidth(), image.getHeight(),
-							-1).doCRLF(-1).addBigText(str.toString(), 0xffffff,
+					.addImage(image, null, -1).doCRLF(-1).addBigText(str.toString(), 0xffffff,
 							Font.STYLE_PLAIN, -1);
 
 			aboutTextList.addCommand(cmdBack);
@@ -776,9 +775,7 @@ public class JimmUI implements CommandListener
 			list.addBigText(ResourceBundle.getString("status") + ": ",
 					list.getTextColor(), Font.STYLE_PLAIN, uiBigTextIndex)
 					.addImage(ContactList.getImageList().elementAt(imgIndex),
-							null, ContactList.getImageList().getWidth(),
-							ContactList.getImageList().getHeight(),
-							uiBigTextIndex).doCRLF(uiBigTextIndex);
+							null, uiBigTextIndex).doCRLF(uiBigTextIndex);
 			uiBigTextIndex++;
 		}
 
@@ -947,12 +944,11 @@ public class JimmUI implements CommandListener
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-	static public void addMessageText(TextList textList, String text,
+	static public void addMessageText(TextList textList, String text, int color,
 			int messTotalCounter)
 	{
 		//#sijapp cond.if modules_SMILES is "true" #
-		Emotions.addTextWithEmotions(textList, text, Font.STYLE_PLAIN, textList
-				.getTextColor(), messTotalCounter);
+		Emotions.addTextWithEmotions(textList, text, Font.STYLE_PLAIN, color, messTotalCounter);
 		//#sijapp cond.else#
 		//#		textList.addBigText(text, textList.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
 		//#sijapp cond.end#
