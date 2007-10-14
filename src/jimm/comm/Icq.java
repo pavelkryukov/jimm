@@ -240,7 +240,7 @@ public class Icq implements Runnable
 		SplashCanvas.setStatusToDraw(jimm.JimmUI.getStatusImageIndex(Options
 				.getLong(Options.OPTION_ONLINE_STATUS)));
 		// Start timer
-		SplashCanvas.addTimerTask("connecting", act, false);
+		SplashCanvas.addTimerTask("connecting", act, true);
 
 		lastStatusChangeTime = Util.getDateString(true);
 	}
