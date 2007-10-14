@@ -675,7 +675,7 @@ public abstract class VirtualList extends Canvas
 	// private int drawItem(int index, Graphics g, int top_y, int th, ListItem item)
 	private int drawItem(int index, Graphics g, int yCrd, int itemWidth, int itemHeight, int fontHeight)
 	{
-		drawItemData(g, index, 2, yCrd, itemWidth - itemHeight / 3, yCrd + itemHeight, fontHeight);
+		drawItemData(g, index, 1, yCrd, itemWidth-2, yCrd + itemHeight, fontHeight);
 		return yCrd + itemHeight;
 	}
 
@@ -852,8 +852,7 @@ public abstract class VirtualList extends Canvas
 		paintedItem.clear();
 		get(index, paintedItem);
 		
-		int layer = 1;
-		int x = paintedItem.horizOffset+x1+layer;
+		int x = paintedItem.horizOffset+x1;
 		
 		// Draw first left image
 		if (paintedItem.leftImage != null)
@@ -879,7 +878,6 @@ public abstract class VirtualList extends Canvas
 				Graphics.TOP | Graphics.LEFT
 			);
 			x += (paintedItem.secondLeftImage.getWidth()+1);
-		
 		}
 
 		// Draw text of item
@@ -887,7 +885,7 @@ public abstract class VirtualList extends Canvas
 		{
 			g.setFont(getQuickFont(paintedItem.fontStyle));
 			g.setColor(paintedItem.color);
-			g.drawString(paintedItem.text, x, (y1 + y2 - fontHeight) / 2, Graphics.TOP | Graphics.LEFT);
+			g.drawString(paintedItem.text, x+1, (y1 + y2 - fontHeight) / 2, Graphics.TOP | Graphics.LEFT);
 		}
 		
 		// Draw right image
@@ -896,7 +894,7 @@ public abstract class VirtualList extends Canvas
 			g.drawImage
 			(
 				paintedItem.rightImage, 
-				x2-layer-paintedItem.rightImage.getWidth(), 
+				x2-paintedItem.rightImage.getWidth(), 
 				(y1 + y2 - paintedItem.rightImage.getHeight()) / 2, 
 				Graphics.TOP | Graphics.LEFT
 			);

@@ -489,6 +489,12 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 					.getStatusImageIndex(getIntValue(ContactListContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
+	
+	/* Returns image index client */
+	public int getRightImageIndex()
+	{
+		return Util.getClientImageID(getIntValue(CONTACTITEM_CLIENT)); 
+	}
 
 	public String getText()
 	{

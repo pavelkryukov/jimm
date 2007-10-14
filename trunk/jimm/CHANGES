@@ -314,7 +314,9 @@ VERSION 0.5.1
   * Platform information is shown on about screen
   
 _______________________________________________________________________________
-VERSION 0.5.2
+VERSION 0.5.2beta
+  * NEW FEATURE: Client icon is shown in contact list
+  * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * It is possible to send messages to contact and view information about 
     contact at search form without adding it to contact list
   * It is possible to see short contact info withowt connecting to server
@@ -323,5 +325,8 @@ VERSION 0.5.2
   * MIDP2 build contains mp3 sounds now. Jimm automatically select sound type
     on startup
   * Is possible fast to swicth sound off and on
-  * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * Creeping text line is returned back again
+  * Another optimization for lower memory usage in chat
+  * More options added to customize chat
+  
+  

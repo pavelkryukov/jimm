@@ -213,6 +213,8 @@ public class Options
 	public static final int OPTION_SHOW_MESS_CLRF = 156; /* boolean */
 	
 	public static final int OPTION_MESS_COLORED_TEXT = 157; /* boolean */
+	
+	public static final int OPTION_CL_CLIENTS = 158; /* boolean */
 
 	protected static final int OPTIONS_LANG_CHANGED = 148;
 
@@ -458,6 +460,7 @@ public class Options
 		setBoolean(OPTION_SHOW_MESS_DATE, true);
 		setBoolean(OPTION_SHOW_MESS_CLRF, true);
 		setBoolean(OPTION_MESS_COLORED_TEXT, false);
+		setBoolean(OPTION_CL_CLIENTS, true);
 
 		//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 		selectSoundType("online.", OPTION_ONLINE_NOTIF_FILE);
@@ -750,7 +753,7 @@ public class Options
 
 class OptionsForm implements CommandListener, ItemStateListener
 {
-	private boolean lastGroupsUsed, lastHideOffline;
+	private boolean lastGroupsUsed, lastHideOffline, lastShowClients;
 
 	private int lastSortMethod, lastColorScheme;
 
@@ -1243,6 +1246,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 		lastGroupsUsed = Options.getBoolean(Options.OPTION_USER_GROUPS);
 		lastSortMethod = Options.getInt(Options.OPTION_CL_SORT_BY);
 		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
+		lastShowClients = Options.getBoolean(Options.OPTION_CL_CLIENTS);
 
 		initOptionsList();
 		optionsMenu.setSelectedIndex(0, true); // Reset
@@ -1488,12 +1492,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 						"sort_by_status" + "|" + "sort_by_name",
 						Options.OPTION_CL_SORT_BY);
 
-				choiceContactList = new ChoiceGroup(ResourceBundle
-						.getString("contact_list"), Choice.MULTIPLE);
-				setChecked(choiceContactList, "show_user_groups",
-						Options.OPTION_USER_GROUPS);
-				setChecked(choiceContactList, "hide_offline",
-						Options.OPTION_CL_HIDE_OFFLINE);
+				choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
+				setChecked(choiceContactList, "show_user_groups", Options.OPTION_USER_GROUPS);
+				setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
+				setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
 
 				colorScheme = createSelector("color_scheme", "black_on_white"
 						+ "|" + "white_on_black" + "|" + "white_on_blue",
@@ -1816,13 +1818,16 @@ class OptionsForm implements CommandListener, ItemStateListener
 				//#sijapp cond.end#
 
 				int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
-				boolean newHideOffline = choiceContactList.isSelected(1);
-				boolean newUseGroups = choiceContactList.isSelected(0);
 				int newColorScheme = colorScheme.getSelectedIndex();
+				
+				idx = 0;
+				boolean newUseGroups = choiceContactList.isSelected(idx++);
+				boolean newHideOffline = choiceContactList.isSelected(idx++);
+				boolean newShowClients = choiceContactList.isSelected(idx++);
 
 				Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
-				Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE,
-						newHideOffline);
+				Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
+				Options.setBoolean(Options.OPTION_CL_CLIENTS, newShowClients); 
 
 				idx = 0;
 				//#sijapp cond.if modules_HISTORY is "true"#
@@ -1849,16 +1854,16 @@ class OptionsForm implements CommandListener, ItemStateListener
 				Options.setBoolean(Options.OPTION_USE_SMILES, chrgMessFormat.isSelected(idx++));
 				//#sijapp cond.end#
 				Options.setBoolean(Options.OPTION_MESS_COLORED_TEXT, chrgMessFormat.isSelected(idx++));
-				
-				
 
 				Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
 				Options.setInt(Options.OPTION_COLOR_SCHEME, newColorScheme);
 
 				// Set UI options for existing controls
-				ContactList.optionsChanged((newUseGroups != lastGroupsUsed)
-						|| (newHideOffline != lastHideOffline),
-						(newSortMethod != lastSortMethod));
+				ContactList.optionsChanged
+				(
+					(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline) || (newShowClients != lastShowClients),
+					(newSortMethod != lastSortMethod)
+				);
 
 				if (lastColorScheme != newColorScheme)
 					JimmUI.setColorScheme();
@@ -1867,13 +1872,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 				//#					Options.setBoolean(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
 				//#sijapp cond.end#
 
-				VirtualList.setFullScreen(Options
-						.getBoolean(Options.OPTION_FULL_SCREEN));
+				VirtualList.setFullScreen(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 
-				if (!lastUILang.equals(Options
-						.getString(Options.OPTION_UI_LANGUAGE)))
+				if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
 				{
-
 					Options.setBoolean(Options.OPTIONS_LANG_CHANGED, true);
 				}
 
