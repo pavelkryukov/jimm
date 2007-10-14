@@ -161,5 +161,10 @@ public class ContactListGroupItem implements ContactListItem
 		id = stream.readInt();
 		name = stream.readUTF();
 	}
+	
+	public int getRightImageIndex()
+	{
+		return -1;
+	}
 
 }

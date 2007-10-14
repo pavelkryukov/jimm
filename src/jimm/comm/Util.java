@@ -18,7 +18,8 @@
  ********************************************************************************
  File: src/jimm/comm/Util.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher, Sergey Chernov, Andrey B. Ivlev
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Sergey Chernov, Andrey B. Ivlev,
+            Artyomov Denis, Igor Palkin
  *******************************************************************************/
 
 package jimm.comm;
@@ -213,91 +214,88 @@ public class Util
 
 	// Client IDs
 	public static final byte CLI_NONE = 0;
-
 	public static final byte CLI_QIP = 1;
-
 	public static final byte CLI_MIRANDA = 2;
-
 	public static final byte CLI_LICQ = 3;
-
 	public static final byte CLI_TRILLIAN = 4;
-
 	public static final byte CLI_SIM = 5;
-
 	public static final byte CLI_KOPETE = 6;
-
 	public static final byte CLI_MICQ = 7;
-
 	public static final byte CLI_ANDRQ = 8;
-
 	public static final byte CLI_IM2 = 9;
-
 	public static final byte CLI_MACICQ = 10;
-
 	public static final byte CLI_AIM = 11;
-
 	public static final byte CLI_UIM = 12;
-
 	public static final byte CLI_WEBICQ = 13;
-
 	public static final byte CLI_GAIM = 14;
-
 	public static final byte CLI_ALICQ = 15;
-
 	public static final byte CLI_STRICQ = 16;
-
 	public static final byte CLI_YSM = 17;
-
 	public static final byte CLI_VICQ = 18;
-
 	public static final byte CLI_LIBICQ2000 = 19;
-
 	public static final byte CLI_JIMM = 20;
-
 	public static final byte CLI_SMARTICQ = 21;
-
 	public static final byte CLI_ICQLITE4 = 22;
-
 	public static final byte CLI_ICQLITE5 = 23;
-
 	public static final byte CLI_ICQ98 = 24;
-
 	public static final byte CLI_ICQ99 = 25;
-
 	public static final byte CLI_ICQ2001B = 26;
-
 	public static final byte CLI_ICQ2002A2003A = 27;
-
 	public static final byte CLI_ICQ2000 = 28;
-
 	public static final byte CLI_ICQ2003B = 29;
-
 	public static final byte CLI_ICQLITE = 30;
-
 	public static final byte CLI_GNOMEICQ = 31;
-
 	public static final byte CLI_AGILE = 32;
-
 	public static final byte CLI_SPAM = 33;
-
 	public static final byte CLI_CENTERICQ = 34;
-
 	public static final byte CLI_LIBICQJABBER = 35;
-
 	public static final byte CLI_ICQ2GO = 36;
-
 	public static final byte CLI_ICQPPC = 37;
-
 	public static final byte CLI_STICQ = 38;
-
 	public static final byte CLI_MCHAT = 39;
 
 	private static final String[] clientNames = explode(
-			"Not detected|QIP|Miranda|LIcq|Trillian|SIM|Kopete|MICQ|&RQ|IM2|ICQ for MAC|AIM|UIM|WebICQ|Gaim|Alicq|StrICQ|"
-					+ "YSM|vICQ|Libicq2000|Jimm|SmartICQ|ICQ Lite v4|ICQ Lite v5|ICQ 98|ICQ 99|ICQ 2001b|ICQ 2002a/2003a|ICQ 2000|"
-					+ "ICQ 2003b|ICQ Lite|Gnome ICQ|Agile Messenger|SPAM:)|CenterICQ|Libicq2000 from Jabber|ICQ2GO!|ICQ for Pocket PC|"
-					+ "StIcq|" + "|" + //mChat
-					"", '|');
+		"Not detected|-1|"+
+		"QIP|0|"+
+		"Miranda|1|"+
+		"LIcq|2|"+
+		"Trillian|3|"+
+		"SIM|4|"+
+		"Kopete|5|"+
+		"MICQ|6|"+
+		"&RQ|7|"+
+		"IM2|8|"+
+		"ICQ for MAC|9|"+
+		"AIM|10|"+
+		"UIM|11|"+
+		"WebICQ|12|"+
+		"Gaim|13|"+
+		"Alicq|14|"+
+		"StrICQ|15|"+
+		"YSM|16|"+
+		"vICQ|17|"+
+		"Libicq2000|18|"+
+		"Jimm|19|"+
+		"SmartICQ|20|"+
+		"ICQ Lite v4|21|"+
+		"ICQ Lite v5|22|"+
+		"ICQ 98|23|"+
+		"ICQ 99|24|"+
+		"ICQ 2001b|25|"+
+		"ICQ 2002a/2003a|26|"+
+		"ICQ 2000|27|"+
+		"ICQ 2003b|28|"+
+		"ICQ Lite|29|"+
+		"Gnome ICQ|30|"+
+		"Agile Messenger|31|"+
+		"SPAM:)|32|"+
+		"CenterICQ|33|"+
+		"Libicq2000 from Jabber|34|"+
+		"ICQ2GO!|35|"+
+		"ICQ for Pocket PC|36|"+
+		"StIcq|37|"+
+		"|38|" + //mChat
+		"", '|');
 
 	public static void PrintCapabilities(String caption, byte[] caps)
 	{
@@ -785,9 +783,14 @@ public class Util
 		}
 	}
 
-	public static String getClientString(byte cli)
+	public static String getClientString(int cli)
 	{
-		return (clientNames[cli]);
+		return (clientNames[2*cli]);
+	}
+	
+	public static int getClientImageID(int cli)
+	{
+		return Integer.parseInt(clientNames[2*cli+1]);
 	}
 
 	private static String detectClientVersion(String uin, byte[] buf1, int cli,

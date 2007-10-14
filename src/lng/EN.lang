@@ -235,6 +235,7 @@
   "session"                     "Session"
   "set_status"                  "Set status"
   "shadow_con"                  "Shadow connection"
+  "show_clients"                "Client icons"
   "show_mess_clrf"              "Line feed"
   "show_mess_date"              "Time"
   "show_mess_icon"              "Icon"

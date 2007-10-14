@@ -30,6 +30,8 @@ public interface ContactListItem
 
 	// returns image index of tree node. Is used for visual tree
 	public int getImageIndex(boolean expanded);
+	
+	public int getRightImageIndex();
 
 	public String getText();
 

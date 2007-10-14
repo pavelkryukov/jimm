@@ -180,8 +180,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	/* Images for icons */
 	final public static ImageList imageList;
-
 	final public static ImageList smallIcons;
+	final public static ImageList cliImages;
 
 	//
 	private static int onlineCounter;
@@ -202,6 +202,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		/* Construct image objects */
 		smallIcons = new ImageList();
 		imageList = new ImageList();
+		cliImages = new ImageList();
 		try
 		{
 			/* reads and divides image "icons.png" to several icons */
@@ -219,10 +220,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			ContactList.eventSystemNoticeImg = imageList.elementAt(10);
 			ContactList.eventSysActionImg = imageList.elementAt(11);
 			smallIcons.load("/sicons.png", -1, -1, -1);
-		} catch (IOException e)
+		} catch (Exception e) {}
+		
+		try
 		{
-			/* Do nothing */
-		}
+			cliImages.load("/clicons.png", -1, -1, -1);
+		} catch (Exception e) {}
 	}
 
 	/* Constructor */
@@ -1652,6 +1655,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		ContactListItem item = (ContactListItem) src.getData();
 		dst.text = item.getText();
 		dst.leftImage = imageList.elementAt(item.getImageIndex(src.getExpanded()));
+		dst.rightImage = 
+			Options.getBoolean(Options.OPTION_CL_CLIENTS) ? 
+			cliImages.elementAt(item.getRightImageIndex()) : 
+			null;
 		
 		dst.color = item.getTextColor();
 		dst.fontStyle = item.getFontStyle();
