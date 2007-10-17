@@ -67,6 +67,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	//#sijapp cond.end #
 
 	private int uinLong, online, signOn, status;
+	private byte xStatusId;
 
 	private String name, clientVersion, lowerText;
 
@@ -138,9 +139,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_IDLE:
 			idle = value;
 			return;
-		case CONTACTITEM_CAPABILITIES:
-			caps = value;
-			return;
 		case CONTACTITEM_STATUS:
 			status = value;
 			return;
@@ -170,6 +168,10 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		case CONTACTITEM_SIGNON:
 			signOn = value;
 			return;
+			
+		case CONTACTITEM_XSTATUS:
+			xStatusId = (byte)value;
+			return;
 		}
 	}
 
@@ -191,8 +193,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			return (messCounters & 0x000000FF);
 		case CONTACTITEM_IDLE:
 			return idle;
-		case CONTACTITEM_CAPABILITIES:
-			return caps;
 		case CONTACTITEM_STATUS:
 			return status;
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -213,6 +213,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			return online;
 		case CONTACTITEM_SIGNON:
 			return signOn;
+		case CONTACTITEM_XSTATUS:
+			return xStatusId; 
 		}
 		return 0;
 	}
@@ -351,11 +353,11 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 	//#sijapp cond.end#
 	//#sijapp cond.end#
-	public static final int CONTACTITEM_CAPABILITIES = 75; /* Integer */
-
 	public static final int CONTACTITEM_CLIENT = 76; /* Integer */
 
 	public static final int CONTACTITEM_CLIVERSION = 2; /* String */
+	
+	public static final int CONTACTITEM_XSTATUS = 78;
 
 	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	//#sijapp cond.if modules_FILES is "true"#
@@ -386,8 +388,6 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED, added);
 		setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
 				ContactList.STATUS_OFFLINE);
-		setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES,
-				Util.CAPF_NO_INTERNAL);
 		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES, 0);
@@ -407,8 +407,9 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		online = -1;
 		setIntValue(ContactListContactItem.CONTACTITEM_IDLE, -1);
 		setBooleanValue(ContactListContactItem.CONTACTITEM_REQU_REASON, false);
-		setIntValue(ContactListContactItem.CONTACTITEM_CLIENT, Util.CLI_NONE);
+		setIntValue(ContactListContactItem.CONTACTITEM_CLIENT, Icq.CLI_NONE);
 		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, "");
+		xStatusId = -1;
 	}
 
 	/* Constructor for an existing contact item */
@@ -420,6 +421,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 	public ContactListContactItem()
 	{
+		xStatusId = -1;
 	}
 
 	/* Returns true if client supports given capability */
@@ -469,7 +471,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	}
 
 	/* Returns image index for contact */
-	public int getImageIndex(boolean expanded)
+	public int getLeftImageIndex(boolean expanded)
 	{
 		int tempIndex = -1;
 		//#sijapp cond.if target isnot "DEFAULT"#		
@@ -490,10 +492,15 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		return tempIndex;
 	}
 	
+	public int getSecondLeftImageIndex()
+	{
+		return getIntValue(CONTACTITEM_XSTATUS); 
+	}
+	
 	/* Returns image index client */
 	public int getRightImageIndex()
 	{
-		return Util.getClientImageID(getIntValue(CONTACTITEM_CLIENT)); 
+		return Icq.getClientImageID(getIntValue(CONTACTITEM_CLIENT)); 
 	}
 
 	public String getText()
@@ -692,6 +699,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		typing = false;
 		//#sijapp cond.end#
 		setIntValue(CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
+		setIntValue(CONTACTITEM_XSTATUS, -1);
 	}
 
 	/* Shows new message form */
@@ -754,7 +762,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		lastAnsUIN = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		//#sijapp cond.if target isnot "DEFAULT"#
 		if ((Options.getInt(Options.OPTION_TYPING_MODE) > 0)
-				&& ((caps & Util.CAPF_TYPING) != 0)
+				&& ((caps & Icq.CAPF_TYPING) != 0)
 				&& ((Options.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVISIBLE) && (Options
 						.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVIS_ALL)))
 			try
@@ -779,7 +787,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 		//#sijapp cond.if target isnot "DEFAULT"#
 		if (((c == textboxCancelCommand) || (c == textboxOkCommand) || (c == textboxSendCommand))
 				&& (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
-				&& ((caps & Util.CAPF_TYPING) != 0)
+				&& ((caps & Icq.CAPF_TYPING) != 0)
 				&& ((Options.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVISIBLE) && (Options
 						.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVIS_ALL)))
 			try
@@ -1386,9 +1394,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 
 		/* Client version */
 		int clientVers = getIntValue(CONTACTITEM_CLIENT);
-		if (clientVers != Util.CLI_NONE)
-			clInfoData[JimmUI.UI_ICQ_CLIENT] = Util
-					.getClientString((byte) clientVers)
+		if (clientVers != Icq.CLI_NONE)
+			clInfoData[JimmUI.UI_ICQ_CLIENT] = Icq.getClientString((byte) clientVers)
 					+ " " + getStringValue(CONTACTITEM_CLIVERSION);
 
 		/* ICQ protocol version */
@@ -1868,7 +1875,7 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 	/* flashs form caption when current contact have changed status */
 	static synchronized public void statusChanged(String uin, long status)
 	{
-		if (currentUin.equals(uin))
+		if (currentUin.equals(uin)) // TODO: add x-status!
 			showTopLine(uin, JimmUI.getStatusString(status), 8,
 					FlashCapClass.TYPE_FLASH);
 	}

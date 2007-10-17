@@ -49,44 +49,6 @@ public class ConnectAction extends Action
     public static final int STATE_CLI_REQOFFLINEMSGS_SENT = 6;
     public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 7;
 
-    // CLI_SETUSERINFO packet data
-    public static final byte[] CLI_SETUSERINFO_DATA = 
-    	Util.explodeToBytes
-    	(
-    		"00,05,00,60,"+ // 5 capabilities follow
-    		
-    		"09,46,13,49,"+ // CAP_AIM_SERVERRELAY
-    		"4C,7F,11,D1,"+
-    		"82,22,44,45,"+
-    		"53,54,00,00,"+
-    		
-    		"09,46,13,44,"+ // CAP_AIM_ISICQ
-    		"4C,7F,11,D1,"+
-    		"82,22,44,45,"+
-    		"53,54,00,00,"+
-    		
-    		"09,46,00,00,"+ //CAP_UNKNOWN
-    		"4C,7F,11,D1,"+ 
-    		"82,22,44,45,"+ 
-    		"53,54,00,00,"+
-    		
-    		"09,46,13,4E,"+ //CAP_UTF8
-    		"4C,7F,11,D1,"+
-    		"82,22,44,45,"+
-    		"53,54,00,00,"+
-    		
-    		"*Jimm,"+ //Jimm version
-    		"20,00,00,00,"+ //Place for string & raw version
-    		"00,00,00,00,"+ //Place for string & raw version
-    		"00,00,00,00,"+ //Last byte - target
-    		
-    		"56,3f,c8,09,"+ // CAP_MTN
-    		"0b,6f,41,bd,"+
-    		"9f,79,42,26,"+
-    		"09,df,a2,f3",
-    		',', 16
-    	);
-
     // CLI_SETICBM packet data
     public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,0,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
     
@@ -532,45 +494,14 @@ public class ConnectAction extends Action
 					ConnectPacket connectPacket = (ConnectPacket) packet;
 					if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
 					{
-
 						// Send a CLI_COOKIE packet as reply
 						ConnectPacket reply = new ConnectPacket(this.cookie);
 						Icq.c.sendPacket(reply);
-
-						// Send a CLI_SETUSERINFO packet
-						// Set version information to this packet in our capability
-						byte[] tmp = ConnectAction.CLI_SETUSERINFO_DATA;
-						byte[] ver = Util.stringToByteArray("###VERSION###");
-						System.arraycopy(
-								ver,
-								0,
-								tmp,
-								tmp.length-11-16,
-								ver.length <=10 ? ver.length : 10);
 						
-						// If typing notify is on, we send full caps..with typing
+						// Send CLI_SETUSERINFO packet
+						Icq.sendUserUnfoPacket();
+					    
 						byte[] tmp_packet;
-						
-						//#sijapp cond.if target isnot "DEFAULT"#
-						if (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
-						{
-						    tmp_packet = tmp;
-						}
-						// If typing notify option is disabled,
-						// We must remove typing capability
-						else
-						{
-						//#sijapp cond.end#
-							
-						    tmp_packet = new byte[tmp.length-16];
-						    System.arraycopy(tmp,0,tmp_packet,0,tmp.length-16);
-						    
-						    // Length correction
-						    tmp_packet[3] = (byte)(tmp_packet.length - 4);//(byte)0x40;
-                        //#sijapp cond.if target isnot "DEFAULT"#
-						}
-						//#sijapp cond.end#
-					    Icq.c.sendPacket(new SnacPacket(0x0002, 0x0004, 0, new byte[0], tmp_packet));
 
 						// Send a CLI_SETICBM packet
 						SnacPacket reply1;

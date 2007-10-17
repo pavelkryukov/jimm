@@ -98,10 +98,10 @@ public class RunnableImpl implements Runnable
 			break;
 
 		case TYPE_UPDATE_CONTACT_LIST:
-			ContactList.update((String) data[0], getInt(data, 1),
-					(byte[]) data[2], (byte[]) data[3], getInt(data, 4),
-					getInt(data, 5), getInt(data, 6), getInt(data, 7), getInt(
-							data, 8), getInt(data, 9), getInt(data, 10));
+			ContactList.update((String) data[0], getInt(data, 1), getInt(data, 2),
+					(byte[]) data[3], (byte[]) data[4], getInt(data, 5),
+					getInt(data, 6), getInt(data, 7), getInt(data, 8), getInt(
+							data, 9), getInt(data, 10), getInt(data, 11));
 
 			break;
 
@@ -170,23 +170,24 @@ public class RunnableImpl implements Runnable
 		//#sijapp cond.end #
 	}
 
-	static public void updateContactList(String uin, int status,
+	static public void updateContactList(String uin, int status, int xStatus,
 			byte[] internalIP, byte[] externalIP, int dcPort, int dcType,
 			int icqProt, int authCookie, int signon, int online, int idle)
 	{
-		Object[] arguments = new Object[12];
+		Object[] arguments = new Object[13];
 
 		arguments[0] = uin;
 		setInt(arguments, 1, status);
-		arguments[2] = internalIP;
-		arguments[3] = externalIP;
-		setInt(arguments, 4, dcPort);
-		setInt(arguments, 5, dcType);
-		setInt(arguments, 6, icqProt);
-		setInt(arguments, 7, authCookie);
-		setInt(arguments, 8, signon);
-		setInt(arguments, 9, online);
-		setInt(arguments, 10, idle);
+		setInt(arguments, 2, xStatus);
+		arguments[3] = internalIP;
+		arguments[4] = externalIP;
+		setInt(arguments, 5, dcPort);
+		setInt(arguments, 6, dcType);
+		setInt(arguments, 7, icqProt);
+		setInt(arguments, 8, authCookie);
+		setInt(arguments, 9, signon);
+		setInt(arguments, 10, online);
+		setInt(arguments, 11, idle);
 
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
 		//#sijapp cond.if target isnot "DEFAULT" #		

@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Date;
 import java.util.Random;
 import java.util.Vector;
@@ -65,12 +66,7 @@ public class Icq implements Runnable
 	public static final byte[] MTN_PACKET_BEGIN =
 	{ (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
 			(byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x01 };
-
-	// State constants
-	private static final int STATE_NOT_CONNECTED = 0;
-
-	private static final int STATE_CONNECTED = 1;
-
+	
 	// Current state
 	static private boolean connected = false;
 
@@ -91,6 +87,11 @@ public class Icq implements Runnable
 		// Set starting point for seq numbers (not bigger then 0x8000)
 		Random rand = new Random(System.currentTimeMillis());
 		flapSEQ = rand.nextInt() % 0x8000;
+	}
+	
+	static
+	{
+		initClientIndData();
 	}
 
 	// Request an action
@@ -2780,10 +2781,6 @@ public class Icq implements Runnable
 			c.sendPacket(reply2post);
 		}
 
-		// Save new online status
-		Options.setLong(Options.OPTION_ONLINE_STATUS, status);
-		Options.safe_save();
-
 		lastStatusChangeTime = Util.getDateString(true);
 	}
 
@@ -2791,4 +2788,843 @@ public class Icq implements Runnable
 	{
 		return lastStatusChangeTime;
 	}
+	
+	static public void sendUserUnfoPacket() throws JimmException
+	{
+		ByteArrayOutputStream capsStream = new ByteArrayOutputStream();
+		byte[] packet = null;
+		
+		try
+		{
+			byte[] ver = Util.stringToByteArray("###VERSION###");
+			int verLen = ver.length;
+			if (verLen > 10) verLen = 10;
+			for (int i = 0; i < verLen; i++) CAP_VERSION[i+4] = ver[i];    
+			
+			capsStream.write(new byte[] {(byte)0x00, (byte)0x05, (byte)0x00, (byte)0x00});
+			capsStream.write(CAP_AIM_SERVERRELAY);
+			capsStream.write(CAP_AIM_ISICQ);
+			capsStream.write(CAP_UNKNOWN);
+			capsStream.write(CAP_UTF8);
+			capsStream.write(CAP_VERSION);
+			
+			//#sijapp cond.if target isnot  "DEFAULT"#
+			if (Options.getInt(Options.OPTION_TYPING_MODE) > 0) capsStream.write(CAP_MTN);
+			//#sijapp cond.end#
+			
+			int xStatus = Options.getInt(Options.OPTION_XSTATUS);
+			for (int i = 0; i < XSTATUS_CONSTS.length; i += 17)
+			{
+				if (XSTATUS_CONSTS[i] == xStatus)
+				capsStream.write(XSTATUS_CONSTS, i+1, 16);
+			}
+			
+			packet = capsStream.toByteArray();
+			Util.putWord(packet, 2, packet.length-4);
+		}
+		catch (Exception e) {}
+		
+		c.sendPacket(new SnacPacket(0x0002, 0x0004, 0, new byte[0], packet));
+	}
+	
+	////////////////
+	
+	// CAPS
+	public static final byte[] CAP_AIM_ISICQ       = Util.explodeToBytes("09,46,13,44,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	public static final byte[] CAP_UNKNOWN         = Util.explodeToBytes("09,46,00,00,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	public static final byte[] CAP_VERSION         = Util.explodeToBytes("*Jimm,20,00,00,00,00,00,00,00,00,00,00,00", ',', 16);
+	public static final byte[] CAP_MTN             = Util.explodeToBytes("56,3f,c8,09,0b,6f,41,bd,9f,79,42,26,09,df,a2,f3", ',', 16);
+	public static final byte[] CAP_AIM_SERVERRELAY = Util.explodeToBytes("09,46,13,49,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	public static final byte[] CAP_UTF8            = Util.explodeToBytes("09,46,13,4E,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	public static final byte[] CAP_UTF8_GUID       = Util.explodeToBytes("7b,30,39,34,36,31,33,34,45,2D,34,43,37,46,2D,31,31,44,31,2D,38,32,32,32,2D,34,34,34,35,35,33,35,34,30,30,30,30,7D", ',', 16);
+	
+	private static final byte[] CAP_MIRANDAIM = Util.explodeToBytes("4D,69,72,61,6E,64,61,4D,00,00,00,00,00,00,00,00", ',', 16);
+	private static final byte[] CAP_TRILLIAN = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,09", ',', 16);
+	private static final byte[] CAP_TRILCRYPT = Util.explodeToBytes("f2,e7,c7,f4,fe,ad,4d,fb,b2,35,36,79,8b,df,00,00", ',', 16);
+	private static final byte[] CAP_SIM = Util.explodeToBytes("*SIM client  ,0,0,0,0", ',', 16);
+	private static final byte[] CAP_SIMOLD = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,00", ',', 16);
+	private static final byte[] CAP_LICQ = Util.explodeToBytes("*Licq client ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_KOPETE = Util.explodeToBytes("*Kopete ICQ  ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_MICQ = Util.explodeToBytes("*mICQ ,A9,* R.K. ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_ANDRQ = Util.explodeToBytes("*&RQinside,0,0,0,0,0,0,0", ',', 16);
+	private static final byte[] CAP_QIP = Util.explodeToBytes("56,3F,C8,09,0B,6F,41,*QIP 2005a", ',', 16);
+	private static final byte[] CAP_IM2 = Util.explodeToBytes("74,ED,C3,36,44,DF,48,5B,8B,1C,67,1A,1F,86,09,9F", ',', 16);
+	private static final byte[] CAP_MACICQ = Util.explodeToBytes("dd,16,f2,02,84,e6,11,d4,90,db,00,10,4b,9b,4b,7d", ',', 16);
+	private static final byte[] CAP_RICHTEXT = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,92", ',', 16);
+	private static final byte[] CAP_IS2001 = Util.explodeToBytes("2e,7a,64,75,fa,df,4d,c8,88,6f,ea,35,95,fd,b6,df", ',', 16);
+	private static final byte[] CAP_IS2002 = Util.explodeToBytes("10,cf,40,d1,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_STR20012 = Util.explodeToBytes("a0,e9,3f,37,4f,e9,d3,11,bc,d2,00,04,ac,96,dd,96", ',', 16);
+	private static final byte[] CAP_AIMICON = Util.explodeToBytes("09,46,13,46,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_AIMIMIMAGE = Util.explodeToBytes("09,46,13,45,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_AIMCHAT = Util.explodeToBytes("74,8F,24,20,62,87,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_UIM = Util.explodeToBytes("A7,E4,0A,96,B3,A0,47,9A,B8,45,C9,E4,67,C5,6B,1F", ',', 16);
+	private static final byte[] CAP_RAMBLER = Util.explodeToBytes("7E,11,B7,78,A3,53,49,26,A8,02,44,73,52,08,C4,2A", ',', 16);
+	private static final byte[] CAP_ABV = Util.explodeToBytes("00,E7,E0,DF,A9,D0,4F,e1,91,62,C8,90,9A,13,2A,1B", ',', 16);
+	private static final byte[] CAP_NETVIGATOR = Util.explodeToBytes("4C,6B,90,A3,3D,2D,48,0E,89,D6,2E,4B,2C,10,D9,9F", ',', 16);
+	private static final byte[] CAP_XTRAZ = Util.explodeToBytes("1A,09,3C,6C,D7,FD,4E,C5,9D,51,A6,47,4E,34,F5,A0", ',', 16);
+	private static final byte[] CAP_AIMFILE = Util.explodeToBytes("09,46,13,43,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_DIRECT = Util.explodeToBytes("09,46,13,44,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_JIMM = Util.explodeToBytes("*Jimm ", ',', 16);
+	private static final byte[] CAP_AVATAR = Util.explodeToBytes("09,46,13,4C,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_TYPING = Util.explodeToBytes("56,3f,c8,09,0b,6f,41,bd,9f,79,42,26,09,df,a2,f3", ',', 16);
+	private static final byte[] CAP_MCHAT = Util.explodeToBytes("*mChat icq", ',', 16);
+	
+	// Arrays for new capability blowup
+	private static final byte[] CAP_OLD_HEAD = { (byte) 0x09, (byte) 0x46 };
+	private static final byte[] CAP_OLD_TAIL = Util.explodeToBytes("4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	
+	private static final byte[] XSTATUS_CONSTS = Util.explodeToBytes(
+		"00,01,D8,D7,EE,AC,3B,49,2A,A5,8D,D3,D8,77,E6,6B,92,"+ // ANGRY
+		"01,5A,58,1E,A1,E5,80,43,0C,A0,6F,61,22,98,B7,E4,C7,"+ // DUCK
+		"02,83,C9,B7,8E,77,E7,43,78,B2,C5,FB,6C,FC,C3,5B,EC,"+ // TIRED
+		"03,E6,01,E4,1C,33,73,4B,D1,BC,06,81,1D,6C,32,3D,81,"+ // PARTY
+		"04,8C,50,DB,AE,81,ED,47,86,AC,CA,16,CC,32,13,C7,B7,"+ // BEER
+		"05,3F,B0,BD,36,AF,3B,4A,60,9E,EF,CF,19,0F,6A,5A,7F,"+ // THINKING
+		"06,F8,E8,D7,B2,82,C4,41,42,90,F8,10,C6,CE,0A,89,A6,"+ // EATING
+		"07,80,53,7D,E2,A4,67,4A,76,B3,54,6D,FD,07,5F,5E,C6,"+ // TV
+		"08,F1,8A,B5,2E,DC,57,49,1D,99,DC,64,44,50,24,57,AF,"+ // FRIENDS
+		"09,1B,78,AE,31,FA,0B,4D,38,93,D1,99,7E,EE,AF,B2,18,"+ // COFFEE
+		"0A,61,BE,E0,DD,8B,DD,47,5D,8D,EE,5F,4B,AA,CF,19,A7,"+ // MUSIC
+		"0B,48,8E,14,89,8A,CA,4A,08,82,AA,77,CE,7A,16,52,08,"+ // BUSINESS
+		"0C,10,7A,9A,18,12,32,4D,A4,B6,CD,08,79,DB,78,0F,09,"+ // CAMERA
+		"0D,6F,49,30,98,4F,7C,4A,FF,A2,76,34,A0,3B,CE,AE,A7,"+ // FUNNY
+		"0E,12,92,E5,50,1B,64,4F,66,B2,06,B2,9A,F3,78,E4,8D,"+ // PHONE
+		"0F,D4,A6,11,D0,8F,01,4E,C0,92,23,C5,B6,BE,C6,CC,F0,"+ // GAMES
+		"10,60,9D,52,F8,A2,9A,49,A6,B2,A0,25,24,C5,E9,D2,60,"+ // COLLEGE
+		"11,63,62,73,37,A0,3F,49,FF,80,E5,F7,09,CD,E0,A4,EE,"+ // SHOPPING
+		"12,1F,7A,40,71,BF,3B,4E,60,BC,32,4C,57,87,B0,4C,F1,"+ // SICK
+		"13,78,5E,8C,48,40,D3,4C,65,88,6F,04,CF,3F,3F,43,DF,"+ // SLEEPING
+		"14,A6,ED,55,7E,6B,F7,44,D4,A5,D4,D2,E7,D9,5C,E8,1F,"+ // SURFING
+		"15,12,D0,7E,3E,F8,85,48,9E,8E,97,A7,2A,65,51,E5,8D,"+ // INTERNET
+		"16,BA,74,DB,3E,9E,24,43,4B,87,B6,2F,6B,8D,FE,E5,0F,"+ // ENGINEERING
+		"17,63,4F,6B,D8,AD,D2,4A,A1,AA,B9,11,5B,C2,6D,05,A1,"+ // TYPING
+		"18,2C,E0,E4,E5,7C,64,43,70,9C,3A,7A,1C,E8,78,A7,DC,"+ // UNK
+		"19,10,11,17,C9,A3,B0,40,F9,81,AC,49,E1,59,FB,D5,D4,"+ // PPC
+		"1A,16,0C,60,BB,DD,44,43,F3,91,40,05,0F,00,E6,C0,09,"+ // MOBILE
+		"1B,64,43,C6,AF,22,60,45,17,B5,8C,D7,DF,8E,29,03,52,"+ // MAN
+		"1C,16,F5,B7,6F,A9,D2,40,35,8C,C5,C0,84,70,3C,98,FA,"+ // WC
+		"1D,63,14,36,FF,3F,8A,40,D0,A5,CB,7B,66,E0,51,B3,64,"+ // QUESTION
+		"1E,B7,08,67,F5,38,25,43,27,A1,FF,CF,4C,C1,93,97,97,"+ // WAY
+		"1F,DD,CF,0E,A9,71,95,40,48,A9,C6,41,32,06,D6,F2,80,"+ // HEART
+		"20,3F,B0,BD,36,AF,3B,4A,60,9E,EF,CF,19,0F,6A,5A,7E,"+ // CIGARETTE
+		"21,E6,01,E4,1C,33,73,4B,D1,BC,06,81,1D,6C,32,3D,82,"+ // SEX
+		"22,D4,E2,B0,BA,33,4E,4F,A5,98,D0,11,7D,BF,4D,3C,C8,"+ // SEARCH
+		//"1F,CD,56,43,A2,C9,4C,47,24,B5,2C,DC,01,24,A1,D0,CD,"+ // LOVE
+		"24,00,72,D9,08,4A,D1,43,DD,91,99,6F,02,69,66,02,6F",  // DIARY
+		',', 16);
+
+
+	// No capability
+	public static final int CAPF_NO_INTERNAL = 0x00000000;
+
+	// Client unterstands type-2 messages
+	public static final int CAPF_AIM_SERVERRELAY_INTERNAL = 0x00000001;
+
+	// Client unterstands UTF-8 messages
+	public static final int CAPF_UTF8_INTERNAL = 0x00000002;
+
+	// Client capabilities for detection
+	public static final int CAPF_MIRANDAIM = 0x00000004;
+
+	public static final int CAPF_TRILLIAN = 0x00000008;
+
+	public static final int CAPF_TRILCRYPT = 0x00000010;
+
+	public static final int CAPF_SIM = 0x00000020;
+
+	public static final int CAPF_SIMOLD = 0x00000040;
+
+	public static final int CAPF_LICQ = 0x00000080;
+
+	public static final int CAPF_KOPETE = 0x00000100;
+
+	public static final int CAPF_MICQ = 0x00000200;
+
+	public static final int CAPF_ANDRQ = 0x00000400;
+
+	public static final int CAPF_QIP = 0x000000800;
+
+	public static final int CAPF_IM2 = 0x00001000;
+
+	public static final int CAPF_MACICQ = 0x00002000;
+
+	public static final int CAPF_RICHTEXT = 0x00004000;
+
+	public static final int CAPF_IS2001 = 0x00008000;
+
+	public static final int CAPF_IS2002 = 0x00010000;
+
+	public static final int CAPF_STR20012 = 0x00020000;
+
+	public static final int CAPF_AIMICON = 0x00040000;
+
+	public static final int CAPF_AIMCHAT = 0x00080000;
+
+	public static final int CAPF_UIM = 0x00100000;
+
+	public static final int CAPF_RAMBLER = 0x00200000;
+
+	public static final int CAPF_ABV = 0x00400000;
+
+	public static final int CAPF_NETVIGATOR = 0x00800000;
+
+	public static final int CAPF_XTRAZ = 0x01000000;
+
+	public static final int CAPF_AIMFILE = 0x02000000;
+
+	public static final int CAPF_JIMM = 0x04000000;
+
+	public static final int CAPF_AIMIMIMAGE = 0x08000000;
+
+	public static final int CAPF_AVATAR = 0x10000000;
+
+	public static final int CAPF_DIRECT = 0x20000000;
+
+	public static final int CAPF_TYPING = 0x40000000;
+
+	public static final int CAPF_MCHAT = 0x80000000;
+
+	// Client IDs
+	public static final byte CLI_NONE = 0;
+	public static final byte CLI_QIP = 1;
+	public static final byte CLI_MIRANDA = 2;
+	public static final byte CLI_LICQ = 3;
+	public static final byte CLI_TRILLIAN = 4;
+	public static final byte CLI_SIM = 5;
+	public static final byte CLI_KOPETE = 6;
+	public static final byte CLI_MICQ = 7;
+	public static final byte CLI_ANDRQ = 8;
+	public static final byte CLI_IM2 = 9;
+	public static final byte CLI_MACICQ = 10;
+	public static final byte CLI_AIM = 11;
+	public static final byte CLI_UIM = 12;
+	public static final byte CLI_WEBICQ = 13;
+	public static final byte CLI_GAIM = 14;
+	public static final byte CLI_ALICQ = 15;
+	public static final byte CLI_STRICQ = 16;
+	public static final byte CLI_YSM = 17;
+	public static final byte CLI_VICQ = 18;
+	public static final byte CLI_LIBICQ2000 = 19;
+	public static final byte CLI_JIMM = 20;
+	public static final byte CLI_SMARTICQ = 21;
+	public static final byte CLI_ICQLITE4 = 22;
+	public static final byte CLI_ICQLITE5 = 23;
+	public static final byte CLI_ICQ98 = 24;
+	public static final byte CLI_ICQ99 = 25;
+	public static final byte CLI_ICQ2001B = 26;
+	public static final byte CLI_ICQ2002A2003A = 27;
+	public static final byte CLI_ICQ2000 = 28;
+	public static final byte CLI_ICQ2003B = 29;
+	public static final byte CLI_ICQLITE = 30;
+	public static final byte CLI_GNOMEICQ = 31;
+	public static final byte CLI_AGILE = 32;
+	public static final byte CLI_SPAM = 33;
+	public static final byte CLI_CENTERICQ = 34;
+	public static final byte CLI_LIBICQJABBER = 35;
+	public static final byte CLI_ICQ2GO = 36;
+	public static final byte CLI_ICQPPC = 37;
+	public static final byte CLI_STICQ = 38;
+	public static final byte CLI_MCHAT = 39;
+	
+	private static int[] clientIndexes;
+	private static int[] clientImageIndexes;
+	private static String[] clientNames;
+	
+	private static void initClientIndData()
+	{
+		Vector vInd = new Vector();
+		Vector vImg = new Vector();
+		Vector vNames = new Vector();
+		//                    name                      index              image index
+		initClientIndDataItem("Not detected",           CLI_NONE,          -1, vInd, vImg, vNames);
+		initClientIndDataItem("QIP",                    CLI_QIP,           1,  vInd, vImg, vNames);
+		initClientIndDataItem("Miranda",                CLI_MIRANDA,       2,  vInd, vImg, vNames);
+		initClientIndDataItem("LIcq",                   CLI_LICQ,          26, vInd, vImg, vNames);
+		initClientIndDataItem("Trillian",               CLI_TRILLIAN,      5,  vInd, vImg, vNames);
+		initClientIndDataItem("SIM",                    CLI_SIM,           6,  vInd, vImg, vNames);
+		initClientIndDataItem("Kopete",                 CLI_KOPETE,        7,  vInd, vImg, vNames);
+		initClientIndDataItem("MICQ",                   CLI_MICQ,          34, vInd, vImg, vNames);
+		initClientIndDataItem("&RQ",                    CLI_ANDRQ,         3,  vInd, vImg, vNames);
+		initClientIndDataItem("IM2",                    CLI_IM2,           29, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ for MAC",            CLI_MACICQ,        23, vInd, vImg, vNames);
+		initClientIndDataItem("AIM",                    CLI_AIM,           30, vInd, vImg, vNames);
+		initClientIndDataItem("UIM",                    CLI_UIM,           -1, vInd, vImg, vNames);
+		initClientIndDataItem("WebICQ",                 CLI_WEBICQ,        35, vInd, vImg, vNames);
+		initClientIndDataItem("Gaim",                   CLI_GAIM,          24, vInd, vImg, vNames);
+		initClientIndDataItem("Alicq",                  CLI_ALICQ,         39, vInd, vImg, vNames);
+		initClientIndDataItem("StrICQ",                 CLI_STRICQ,        36, vInd, vImg, vNames);
+		initClientIndDataItem("YSM",                    CLI_YSM,           37, vInd, vImg, vNames);
+		initClientIndDataItem("vICQ",                   CLI_VICQ,          38, vInd, vImg, vNames);
+		initClientIndDataItem("Libicq2000",             CLI_LIBICQ2000,    11, vInd, vImg, vNames);
+		initClientIndDataItem("Jimm",                   CLI_JIMM,          8,  vInd, vImg, vNames);
+		initClientIndDataItem("SmartICQ",               CLI_SMARTICQ,      31, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ Lite v4",            CLI_ICQLITE4,      18, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ Lite v5",            CLI_ICQLITE5,      19, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ 98",                 CLI_ICQ98,         -1, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ 99",                 CLI_ICQ99,         -1, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ 2001b",              CLI_ICQ2001B,      -1, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ 2002a/2003a",        CLI_ICQ2002A2003A, -1, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ 2000",               CLI_ICQ2000,       -1, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ 2003b",              CLI_ICQ2003B,      20, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ Lite",               CLI_ICQLITE,       17, vInd, vImg, vNames);
+		initClientIndDataItem("Gnome ICQ",              CLI_GNOMEICQ,      25, vInd, vImg, vNames);
+		initClientIndDataItem("Agile Messenger",        CLI_AGILE,         10, vInd, vImg, vNames);
+		initClientIndDataItem("SPAM:)",                 CLI_SPAM,          32, vInd, vImg, vNames);
+		initClientIndDataItem("CenterICQ",              CLI_CENTERICQ,     40, vInd, vImg, vNames);
+		initClientIndDataItem("Libicq2000 from Jabber", CLI_LIBICQJABBER,  41, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ2GO!",                CLI_ICQ2GO,        21, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ for Pocket PC",      CLI_ICQPPC,        33, vInd, vImg, vNames);
+		initClientIndDataItem("StIcq",                  CLI_STICQ,         9,  vInd, vImg, vNames);
+		initClientIndDataItem("MChat",                  CLI_MCHAT,         22, vInd, vImg, vNames);
+		
+		clientNames = new String[vNames.size()];
+		vNames.copyInto(clientNames);
+		
+		clientIndexes = new int[vInd.size()];
+		for (int i = vInd.size()-1; i >= 0; i--) clientIndexes[i] = ((Integer)vInd.elementAt(i)).intValue();
+		
+		clientImageIndexes = new int[vImg.size()];
+		for (int i = vImg.size()-1; i >= 0; i--) clientImageIndexes[i] = ((Integer)vImg.elementAt(i)).intValue();
+	}
+	
+	private static void initClientIndDataItem(String name, int index, int imageIndex, Vector vIndexes, Vector vImg, Vector vNames)
+	{
+		vNames.addElement(name);
+		vIndexes.addElement(new Integer(index));
+		vImg.addElement(new Integer(imageIndex-1));
+	}
+	
+	public static int detectXStatus(byte[] capabilities)
+	{
+		for (int i = 0; i < capabilities.length; i += 16)
+		{
+			for (int j = 0; j < XSTATUS_CONSTS.length; j += 17)
+			{
+				int counter = 0;
+				for (int k = 0; k < 16; k++, counter++) 
+					if (capabilities[i+k] != XSTATUS_CONSTS[j+k+1]) break;
+				if (counter == 16) return XSTATUS_CONSTS[j];
+			}
+		}
+		return -1;
+	}
+	
+	public static void detectUserClientAndParseCaps(ContactListContactItem item, int dwFP1, int dwFP2, int dwFP3, byte[] capabilities, int wVersion, boolean statusChange)
+	{
+		//System.out.println("uin - " + uin + " found capabilities count:" + capabilities.length/16);
+		//PrintCapabilities("cap - ", capabilities);
+		int client = CLI_NONE;
+		String szVersion = "";
+		int caps = CAPF_NO_INTERNAL;
+
+		if (capabilities != null)
+		{
+			//Caps parsing
+			for (int j = 0; j < capabilities.length / 16; j++)
+			{
+				int j16 = j * 16;
+				if (Util.byteArrayEquals(capabilities, j16, CAP_AIM_SERVERRELAY, 0, 16))
+				{
+					caps |= CAPF_AIM_SERVERRELAY_INTERNAL;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_UTF8, 0, 16))
+				{
+					caps |= CAPF_UTF8_INTERNAL;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_MIRANDAIM, 0, 8))
+				{
+					caps |= CAPF_MIRANDAIM;
+					szVersion = detectClientVersion(capabilities, CAPF_MIRANDAIM, j);
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_TRILLIAN, 0, 16))
+				{
+					caps |= CAPF_TRILLIAN;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_TRILCRYPT, 0, 16))
+				{
+					caps |= CAPF_TRILCRYPT;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_SIM, 0, 0xC))
+				{
+					caps |= CAPF_SIM;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_SIMOLD, 0, 16))
+				{
+					caps |= CAPF_SIMOLD;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_LICQ, 0, 0xC))
+				{
+					caps |= CAPF_LICQ;
+					szVersion = detectClientVersion(capabilities, CAPF_LICQ, j);
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_KOPETE, 0, 0xC))
+				{
+					caps |= CAPF_KOPETE;
+					szVersion = detectClientVersion(capabilities, CAPF_KOPETE, j);
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_MICQ, 0, 16))
+				{
+					caps |= CAPF_MICQ;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_ANDRQ, 0, 9))
+				{
+					caps |= CAPF_ANDRQ;
+					szVersion = detectClientVersion(capabilities, CAPF_ANDRQ, j);
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIP, 0, 11))
+				{
+					caps |= CAPF_QIP;
+					szVersion = detectClientVersion(capabilities, CAPF_QIP, j);
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_IM2, 0, 16))
+				{
+					caps |= CAPF_IM2;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_MACICQ, 0, 16))
+				{
+					caps |= CAPF_MACICQ;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_RICHTEXT, 0, 16))
+				{
+					caps |= CAPF_RICHTEXT;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_IS2001, 0, 16))
+				{
+					caps |= CAPF_IS2001;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_IS2002, 0, 16))
+				{
+					caps |= CAPF_IS2002;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_STR20012, 0, 16))
+				{
+					caps |= CAPF_STR20012;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMICON, 0, 16))
+				{
+					caps |= CAPF_AIMICON;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMCHAT, 0, 16))
+				{
+					caps |= CAPF_AIMCHAT;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_UIM, 0, 16))
+				{
+					caps |= CAPF_UIM;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_RAMBLER, 0, 16))
+				{
+					caps |= CAPF_RAMBLER;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_ABV, 0, 16))
+				{
+					caps |= CAPF_ABV;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_NETVIGATOR, 0, 16))
+				{
+					caps |= CAPF_NETVIGATOR;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_XTRAZ, 0, 16))
+				{
+					caps |= CAPF_XTRAZ;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMFILE, 0, 16))
+				{
+					caps |= CAPF_AIMFILE;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_JIMM, 0, 5))
+				{
+					caps |= CAPF_JIMM;
+					szVersion = detectClientVersion(capabilities, CAPF_JIMM, j);
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMIMIMAGE, 0, 16)) caps |= CAPF_AIMIMIMAGE;
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_AVATAR, 0, 16)) caps |= CAPF_AVATAR;
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_DIRECT, 0, 16)) caps |= CAPF_DIRECT;
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_TYPING, 0, 16)) caps |= CAPF_TYPING;
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_MCHAT, 0, 9))
+				{
+					caps |= CAPF_MCHAT;
+					szVersion = detectClientVersion(capabilities, CAPF_MCHAT, j);
+				}
+			}
+		}
+
+		//Client detection
+		//If this is status change we don`t need to detect client... 
+		if (!statusChange)
+		{
+			switch (1)
+			{
+			default:
+				if ((caps & CAPF_MCHAT) != 0)
+				{
+					client = CLI_MCHAT;
+					break;
+				}
+				if ((caps & CAPF_JIMM) != 0)
+				{
+					client = CLI_JIMM;
+					break;
+				}
+				if ((caps & CAPF_QIP) != 0)
+				{
+					client = CLI_QIP;
+					if (((dwFP1 >> 24) & 0xFF) != 0) szVersion += " (" + ((dwFP1 >> 24) & 0xFF) + ((dwFP1 >> 16) & 0xFF) + ((dwFP1 >> 8) & 0xFF)
+							+ (dwFP1 & 0xFF) + ")";
+					break;
+				}
+
+				if (((caps & (CAPF_TRILLIAN + CAPF_TRILCRYPT)) != 0) && (dwFP1 == 0x3b75ac09))
+				{
+					client = CLI_TRILLIAN;
+					break;
+				}
+
+				if (((caps & CAPF_IM2) != 0) && (dwFP1 == 0x3FF19BEB))
+				{
+					client = CLI_IM2;
+					break;
+				}
+
+				if ((caps & (CAPF_SIM + CAPF_SIMOLD)) != 0)
+				{
+					client = CLI_SIM;
+					break;
+				}
+
+				if ((caps & CAPF_KOPETE) != 0)
+				{
+					client = CLI_KOPETE;
+					break;
+				}
+
+				if ((caps & CAPF_LICQ) != 0)
+				{
+					client = CLI_LICQ;
+					break;
+				}
+
+				if (((caps & CAPF_AIMICON) != 0) && ((caps & CAPF_AIMFILE) != 0) && ((caps & CAPF_AIMIMIMAGE) != 0))
+				{
+					client = CLI_GAIM;
+					break;
+				}
+
+				if ((caps & CAPF_UTF8_INTERNAL) != 0)
+				{
+					switch (wVersion)
+					{
+					case 10:
+						if (((caps & CAPF_TYPING) != 0) && ((caps & CAPF_RICHTEXT) != 0))
+						{
+							client = CLI_ICQ2003B;
+						}
+					case 7:
+						if (((caps & CAPF_AIM_SERVERRELAY_INTERNAL) == 0) && ((caps & CAPF_DIRECT) == 0) && (dwFP1 == 0) && (dwFP2 == 0) && (dwFP3 == 0))
+						{
+							client = CLI_ICQ2GO;
+						}
+						break;
+					default:
+						if ((dwFP1 == 0) && (dwFP2 == 0) && (dwFP3 == 0))
+						{
+							if ((caps & CAPF_RICHTEXT) != 0)
+							{
+								client = CLI_ICQLITE;
+								if (((caps & CAPF_AVATAR) != 0) && ((caps & CAPF_XTRAZ) != 0))
+								{
+									if ((caps & CAPF_AIMFILE) != 0) // TODO: add more
+									client = CLI_ICQLITE5;
+									else client = CLI_ICQLITE4;
+								}
+							}
+							else if ((caps & CAPF_UIM) != 0) client = CLI_UIM;
+							else client = CLI_AGILE;
+						}
+						break;
+					}
+				}
+
+				if ((caps & CAPF_MACICQ) != 0)
+				{
+					client = CLI_MACICQ;
+					break;
+				}
+
+				if ((caps & CAPF_AIMCHAT) != 0)
+				{
+					client = CLI_AIM;
+					break;
+				}
+
+				if ((dwFP1 & 0xFF7F0000) == 0x7D000000)
+				{
+					client = CLI_LICQ;
+					int ver = dwFP1 & 0xFFFF;
+					if (ver % 10 != 0)
+					{
+						szVersion = ver / 1000 + "." + (ver / 10) % 100 + "." + ver % 10;
+					}
+					else
+					{
+						szVersion = ver / 1000 + "." + (ver / 10) % 100;
+					}
+					break;
+				}
+
+				switch (dwFP1)
+				{
+				case 0xFFFFFFFF:
+					if ((dwFP3 == 0xFFFFFFFF) && (dwFP2 == 0xFFFFFFFF))
+					{
+						client = CLI_GAIM;
+						break;
+					}
+					if ((dwFP2 == 0) && (dwFP3 != 0xFFFFFFFF))
+					{
+						if (wVersion == 7)
+						{
+							client = CLI_WEBICQ;
+							break;
+						}
+						if ((dwFP3 == 0x3B7248ED) && ((caps & CAPF_UTF8_INTERNAL) == 0) && ((caps & CAPF_RICHTEXT) == 0))
+						{
+							client = CLI_SPAM;
+							break;
+						}
+					}
+					client = CLI_MIRANDA;
+					szVersion = ((dwFP2 >> 24) & 0x7F) + "." + ((dwFP2 >> 16) & 0xFF) + "." + ((dwFP2 >> 8) & 0xFF) + "." + (dwFP2 & 0xFF);
+					break;
+				case 0xFFFFFFFE:
+					if (dwFP3 == dwFP1)
+					{
+						client = CLI_JIMM;
+					}
+					break;
+				case 0xFFFFFF8F:
+					client = CLI_STRICQ;
+					break;
+				case 0xFFFFFF42:
+					client = CLI_MICQ;
+					break;
+				case 0xFFFFFFBE:
+					client = CLI_ALICQ;
+					break;
+				case 0xFFFFFF7F:
+					client = CLI_ANDRQ;
+					szVersion = ((dwFP2 >> 24) & 0xFF) + "." + ((dwFP2 >> 16) & 0xFF) + "." + ((dwFP2 >> 8) & 0xFF) + "." + (dwFP2 & 0xFF);
+					break;
+				case 0xFFFFFFAB:
+					client = CLI_YSM;
+					break;
+				case 0x04031980:
+					client = CLI_VICQ;
+					break;
+				case 0x3AA773EE:
+					if ((dwFP2 == 0x3AA66380) && (dwFP3 == 0x3A877A42))
+					{
+						if (wVersion == 7)
+						{
+							if (((caps & CAPF_AIM_SERVERRELAY_INTERNAL) != 0) && ((caps & CAPF_DIRECT) != 0))
+							{
+								if ((caps & CAPF_RICHTEXT) != 0)
+								{
+									client = CLI_CENTERICQ;
+									break;
+								}
+								client = CLI_LIBICQJABBER;
+							}
+						}
+						client = CLI_LIBICQ2000;
+					}
+					break;
+				case 0x3b75ac09:
+					client = CLI_TRILLIAN;
+					break;
+				case 0x3BA8DBAF: // FP2: 0x3BEB5373; FP3: 0x3BEB5262;
+					if (wVersion == 2) client = CLI_STICQ;
+					break;
+				case 0x3FF19BEB:
+					if ((wVersion == 8) && (dwFP1 == dwFP3)) //FP2: 0x3FEC05EB; FP3: 0x3FF19BEB;
+					client = CLI_IM2;
+					break;
+				case 0x4201F414:
+					if (((dwFP2 & dwFP3) == dwFP1) && (wVersion == 8)) client = CLI_SPAM;
+					break;
+				default:
+					break;
+				}
+
+				if (client != CLI_NONE) break;
+
+				if ((dwFP1 != 0) && (dwFP1 == dwFP3) && (dwFP3 == dwFP2) && (caps == 0))
+				{
+					client = CLI_VICQ;
+					break;
+				}
+				if (((caps & CAPF_AIM_SERVERRELAY_INTERNAL) != 0) && ((caps & CAPF_DIRECT) != 0) && ((caps & CAPF_UTF8_INTERNAL) != 0)
+						&& ((caps & CAPF_RICHTEXT) != 0))
+				{
+
+					if ((dwFP1 != 0) && (dwFP2 != 0) && (dwFP3 != 0)) client = CLI_ICQ2002A2003A;
+					break;
+				}
+				if (((caps & (CAPF_STR20012 + CAPF_AIM_SERVERRELAY_INTERNAL)) != 0) && ((caps & CAPF_IS2001) != 0))
+				{
+					if ((dwFP1 == 0) && (dwFP2 == 0) && (dwFP3 == 0) && (wVersion == 0)) client = CLI_ICQPPC;
+					else client = CLI_ICQ2001B; //FP1: 1068985885; FP2:0; FP3:1068986138
+					break;
+				}
+				if (wVersion == 7)
+				{
+					if (((caps & CAPF_AIM_SERVERRELAY_INTERNAL) != 0) && ((caps & CAPF_DIRECT) != 0))
+					{
+						if ((dwFP1 == 0) && (dwFP2 == 0) && (dwFP3 == 0)) client = CLI_ANDRQ;
+						else client = CLI_ICQ2000;
+						break;
+					}
+					else if ((caps & CAPF_RICHTEXT) != 0)
+					{
+						client = CLI_GNOMEICQ;
+						break;
+					}
+				}
+				if (dwFP1 > 0x35000000 && dwFP1 < 0x40000000)
+				{
+					switch (wVersion)
+					{
+					case 6:
+						client = CLI_ICQ99;
+						break;
+					case 7:
+						client = CLI_ICQ2000;
+						break;
+					case 8:
+						client = CLI_ICQ2001B;
+						break;
+					case 9:
+						client = CLI_ICQLITE;
+						break;
+					case 10:
+						client = CLI_ICQ2003B;
+						break;
+					}
+					break;
+				}
+			}
+			if (client != CLI_NONE)
+			{
+				item.setIntValue(ContactListContactItem.CONTACTITEM_CLIENT, client);
+				item.setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, szVersion);
+			}
+		}
+	}
+
+	public static String getClientString(int cli)
+	{
+		for (int i = clientIndexes.length-1; i >= 0; i--)
+			if (clientIndexes[i] == cli) return (clientNames[i]);
+		return null;
+	}
+	
+	public static int getClientImageID(int cli)
+	{
+		for (int i = clientIndexes.length-1; i >= 0; i--) 
+			if (clientIndexes[i] == cli) return clientImageIndexes[i]; 
+		return -1; 
+	}
+
+	private static String detectClientVersion(byte[] buf1, int cli,
+			int tlvNum)
+	{
+		byte[] buf = new byte[16];
+		System.arraycopy(buf1, tlvNum * 16, buf, 0, 16);
+		String ver = "";
+		if (cli == CAPF_MIRANDAIM)
+		{
+			if ((buf[0xC] == 0) && (buf[0xD] == 0) && (buf[0xE] == 0)
+					&& (buf[0xF] == 1))
+			{
+				ver = "0.1.2.0";
+			} else if ((buf[0xC] == 0) && (buf[0xD] <= 3) && (buf[0xE] <= 3)
+					&& (buf[0xF] <= 1))
+			{
+				ver = "0." + buf[0xD] + "." + buf[0xE] + "." + buf[0xF];
+			} else
+			{
+				ver = buf[0x8] + "." + buf[0x9] + "." + buf[0xA] + "."
+						+ buf[0xB];
+			}
+		} else if (cli == CAPF_LICQ)
+		{
+			ver = buf[0xC] + "." + (buf[0xD] % 100) + "." + buf[0xE];
+		} else if (cli == CAPF_KOPETE)
+		{
+			ver = buf[0xC] + "." + buf[0xD] + "." + buf[0xE] + "." + buf[0xF];
+		} else if (cli == CAPF_ANDRQ)
+		{
+			ver = (char) buf[0xC] + "." + (char) buf[0xB];// + "." +buf[0xA] + "." +buf[9];
+		} else if (cli == CAPF_JIMM)
+			ver = Util.byteArrayToString(buf, 5, 11);
+		else if (cli == CAPF_QIP)
+			ver = Util.byteArrayToString(buf, 11, 5);
+		else if (cli == CAPF_MCHAT)
+			ver = Util.byteArrayToString(buf, 0, 16);
+
+		return ver;
+	}
+	
+	// Merge two received capabilities into one byte array
+	public static byte[] mergeCapabilities(byte[] capabilities_old,
+			byte[] capabilities_new)
+	{
+		if (capabilities_new == null)
+			return capabilities_old;
+		if (capabilities_old == null)
+			return capabilities_new;
+
+		// Extend new capabilities to match with old ones
+		byte[] extended_new = new byte[capabilities_new.length * 8];
+		for (int i = 0; i < capabilities_new.length; i += 2)
+		{
+			System.arraycopy(CAP_OLD_HEAD, 0, extended_new, (i * 8),
+					CAP_OLD_HEAD.length);
+			System.arraycopy(capabilities_new, i, extended_new,
+					((i * 8) + CAP_OLD_HEAD.length), 2);
+			System.arraycopy(CAP_OLD_TAIL, 0, extended_new, ((i * 8)
+					+ CAP_OLD_HEAD.length + 2), CAP_OLD_TAIL.length);
+		}
+		// Check for coexisting capabilities and merge
+		boolean found = false;
+		for (int i = 0; i < capabilities_old.length; i += 16)
+		{
+			byte[] tmp_old = new byte[16];
+			System.arraycopy(capabilities_old, i, tmp_old, 0, 16);
+			for (int j = 0; j < extended_new.length; j += 16)
+			{
+				//System.out.println(j + " " + i + " " + extended_new.length);
+				byte[] tmp_new = new byte[16];
+				System.arraycopy(extended_new, j, tmp_new, 0, 16);
+				if (tmp_old == tmp_new)
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				//System.out.println("Merge capability");
+				byte[] merged = new byte[extended_new.length + 16];
+				System.arraycopy(extended_new, 0, merged, 0,
+						extended_new.length);
+				System.arraycopy(tmp_old, 0, merged, extended_new.length,
+						tmp_old.length);
+				extended_new = merged;
+				found = false;
+			}
+		}
+		return extended_new;
+	}
+	
 }

@@ -321,11 +321,8 @@ class ChatTextList implements VirtualListCommands
 	}
 
 	//#sijapp cond.if target isnot "DEFAULT"#
-	private boolean typing = false;
-
 	public void BeginTyping(boolean type)
 	{
-		typing = type;
 		textList.repaint();
 	}
 
@@ -334,7 +331,7 @@ class ChatTextList implements VirtualListCommands
 	void addTextToForm(String from, String message, String url, long time,
 			boolean red, boolean offline)
 	{
-		int texOffset;
+		int texOffset = 0;
 
 		textList.lock();
 	
@@ -363,13 +360,14 @@ class ChatTextList implements VirtualListCommands
 		
 		if (messHeader.length() != 0) messHeader.append(": ");
 		
-		textList.addBigText(messHeader.toString(), getInOutColor(red), Font.STYLE_BOLD, messTotalCounter);
-		
-		if (offline || Options.getBoolean(Options.OPTION_SHOW_MESS_CLRF)) 
-			textList.doCRLF(messTotalCounter);
-		
-		String restoredHeadText = textList.getTextByIndex(0, false, messTotalCounter);
-		texOffset = restoredHeadText.length();
+		if (messHeader.length() != 0)
+		{
+			textList.addBigText(messHeader.toString(), getInOutColor(red), Font.STYLE_BOLD, messTotalCounter);
+			if (offline || Options.getBoolean(Options.OPTION_SHOW_MESS_CLRF)) textList.doCRLF(messTotalCounter);
+			String restoredHeadText = textList.getTextByIndex(0, false, messTotalCounter);
+			texOffset = restoredHeadText.length();
+		}
+		else texOffset = 0;
 
 		if (url.length() > 0)
 		{

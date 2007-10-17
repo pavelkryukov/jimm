@@ -203,16 +203,18 @@ public class ActionListener
 				}
 
 				// Update contact list
+				ContactListContactItem item = ContactList.getItembyUIN(uin);
 				//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
-				Util.detectUserClient(uin, dwFT1, dwFT2, dwFT3, Util
-						.mergeCapabilities(capabilities_old, capabilities_new),
-						icqProt, statusChange);
-
-				RunnableImpl.updateContactList(uin, status, internalIP,
-						externalIP, dcPort, dcType, icqProt, authCookie,
-						signon, online, idle);
+				int xStatus = -1;
+				if (item != null)
+				{
+					byte[] capsArray = Icq.mergeCapabilities(capabilities_old, capabilities_new);
+					Icq.detectUserClientAndParseCaps(item, dwFT1, dwFT2, dwFT3, capsArray, icqProt, statusChange);
+					xStatus = Icq.detectXStatus(capsArray);
+				}
+				RunnableImpl.updateContactList(uin, status, xStatus, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle);
 				//#sijapp cond.else#
-				//#            	RunnableImpl.updateContactList(uin, status, null, null, 0, 0, 0, 0, signon, online,idle);
+				RunnableImpl.updateContactList(uin, status, -1, null, null, 0, 0, 0, 0, signon, online,idle);
 				//#sijapp cond.end#
 			}
 
