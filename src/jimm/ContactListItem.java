@@ -29,7 +29,9 @@ public interface ContactListItem
 	public abstract boolean equals(Object obj);
 
 	// returns image index of tree node. Is used for visual tree
-	public int getImageIndex(boolean expanded);
+	public int getLeftImageIndex(boolean expanded);
+	
+	public int getSecondLeftImageIndex();
 	
 	public int getRightImageIndex();
 

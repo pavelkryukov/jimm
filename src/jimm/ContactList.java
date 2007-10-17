@@ -182,6 +182,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	final public static ImageList imageList;
 	final public static ImageList smallIcons;
 	final public static ImageList cliImages;
+	final public static ImageList xStatusImages;
 
 	//
 	private static int onlineCounter;
@@ -203,6 +204,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		smallIcons = new ImageList();
 		imageList = new ImageList();
 		cliImages = new ImageList();
+		xStatusImages = new ImageList();
+		
 		try
 		{
 			/* reads and divides image "icons.png" to several icons */
@@ -225,6 +228,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		try
 		{
 			cliImages.load("/clicons.png", -1, -1, -1);
+		} catch (Exception e) {}
+		
+		try
+		{
+			xStatusImages.load("/xstatus.png", -1, -1, -1);
 		} catch (Exception e) {}
 	}
 
@@ -980,7 +988,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Updates the client-side contact list (called when a contact changes status)
 	// DO NOT CALL THIS DIRECTLY FROM OTHER THREAND THAN MAIN!
 	// USE RunnableImpl.updateContactList INSTEAD!
-	static public synchronized void update(String uin, int status,
+	static public synchronized void update(String uin, int status, int xStatus,
 			byte[] internalIP, byte[] externalIP, int dcPort, int dcType,
 			int icqProt, int authCookie, int signon, int online, int idle)
 	{
@@ -997,7 +1005,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		long oldStatus = cItem
 				.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
 
-		boolean statusChanged = (oldStatus != trueStatus);
+		boolean statusChanged = (oldStatus != trueStatus) || (xStatus != cItem.getIntValue(ContactListContactItem.CONTACTITEM_XSTATUS));
 		boolean wasOnline = (oldStatus != STATUS_OFFLINE);
 		boolean nowOnline = (trueStatus != STATUS_OFFLINE);
 
@@ -1006,17 +1014,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			//#sijapp cond.if target isnot "DEFAULT"#
 			cItem.BeginTyping(false);
 			//#sijapp cond.end#
-			cItem.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES,
-					0);
 		}
 
 		// Online counters
 		statusChanged(cItem, wasOnline, nowOnline, 0);
 
 		// Set Status
-		cItem
-				.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
-						trueStatus);
+		cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, trueStatus);
+		
+		// Set x-status
+		cItem.setIntValue(ContactListContactItem.CONTACTITEM_XSTATUS, xStatus);
 
 		if (treeBuilt && statusChanged)
 			ContactListContactItem.statusChanged(uin, trueStatus);
@@ -1073,7 +1080,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Updates the client-side contact list (called when a contact changes status)
 	static public synchronized void update(String uin, int status)
 	{
-		update(uin, status, null, null, 0, 0, -1, 0, -1, -1, -1);
+		update(uin, status, -1, null, null, 0, 0, -1, 0, -1, -1, -1);
 	}
 
 	static private void statusChanged(ContactListContactItem cItem,
@@ -1456,8 +1463,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 
 		// If the user does not have it add the typing capability
-		if (!item.hasCapability(Util.CAPF_TYPING))
-			item.addCapability(Util.CAPF_TYPING);
+		if (!item.hasCapability(Icq.CAPF_TYPING))
+			item.addCapability(Icq.CAPF_TYPING);
 		item.BeginTyping(type);
 		TypingHelper(uin, type);
 	}
@@ -1654,10 +1661,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		ContactListItem item = (ContactListItem) src.getData();
 		dst.text = item.getText();
-		dst.leftImage = imageList.elementAt(item.getImageIndex(src.getExpanded()));
+		dst.leftImage = imageList.elementAt(item.getLeftImageIndex(src.getExpanded()));
 		dst.rightImage = 
 			Options.getBoolean(Options.OPTION_CL_CLIENTS) ? 
 			cliImages.elementAt(item.getRightImageIndex()) : 
+			null;
+			
+		dst.secondLeftImage =
+			Options.getBoolean(Options.OPTION_XSTATUSES) ? 
+			xStatusImages.elementAt(item.getSecondLeftImageIndex()) :
 			null;
 		
 		dst.color = item.getTextColor();

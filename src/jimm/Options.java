@@ -215,6 +215,7 @@ public class Options
 	public static final int OPTION_MESS_COLORED_TEXT = 157; /* boolean */
 	
 	public static final int OPTION_CL_CLIENTS = 158; /* boolean */
+	public static final int OPTION_XSTATUSES = 159; /* boolean */
 
 	protected static final int OPTIONS_LANG_CHANGED = 148;
 
@@ -233,6 +234,8 @@ public class Options
 	public static final int OPTION_EXT_CLKEYPOUND = 82; /* int     */
 
 	public static final int OPTION_VISIBILITY_ID = 85; /* int     */
+	
+	public static final int OPTION_XSTATUS = 92; /* int     */
 
 	//Hotkey Actions
 	public static final int HOTKEY_NONE = 0;
@@ -461,6 +464,8 @@ public class Options
 		setBoolean(OPTION_SHOW_MESS_CLRF, true);
 		setBoolean(OPTION_MESS_COLORED_TEXT, false);
 		setBoolean(OPTION_CL_CLIENTS, true);
+		setBoolean(OPTION_XSTATUSES, true);
+		setInt(OPTION_XSTATUS, -1);
 
 		//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 		selectSoundType("online.", OPTION_ONLINE_NOTIF_FILE);
@@ -753,7 +758,7 @@ public class Options
 
 class OptionsForm implements CommandListener, ItemStateListener
 {
-	private boolean lastGroupsUsed, lastHideOffline, lastShowClients;
+	private boolean lastGroupsUsed, lastHideOffline, lastShowClients, lastShowXStatuses;
 
 	private int lastSortMethod, lastColorScheme;
 
@@ -1247,6 +1252,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 		lastSortMethod = Options.getInt(Options.OPTION_CL_SORT_BY);
 		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
 		lastShowClients = Options.getBoolean(Options.OPTION_CL_CLIENTS);
+		lastShowXStatuses = Options.getBoolean(Options.OPTION_XSTATUSES);
 
 		initOptionsList();
 		optionsMenu.setSelectedIndex(0, true); // Reset
@@ -1495,8 +1501,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 				choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
 				setChecked(choiceContactList, "show_user_groups", Options.OPTION_USER_GROUPS);
 				setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
+				setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
 				setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
-
+				
 				colorScheme = createSelector("color_scheme", "black_on_white"
 						+ "|" + "white_on_black" + "|" + "white_on_blue",
 						Options.OPTION_COLOR_SCHEME);
@@ -1823,10 +1830,13 @@ class OptionsForm implements CommandListener, ItemStateListener
 				idx = 0;
 				boolean newUseGroups = choiceContactList.isSelected(idx++);
 				boolean newHideOffline = choiceContactList.isSelected(idx++);
+				boolean newShowXStatuses = choiceContactList.isSelected(idx++);
 				boolean newShowClients = choiceContactList.isSelected(idx++);
 
 				Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
 				Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
+				//setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
+				Options.setBoolean(Options.OPTION_XSTATUSES, newShowXStatuses);
 				Options.setBoolean(Options.OPTION_CL_CLIENTS, newShowClients); 
 
 				idx = 0;
@@ -1861,7 +1871,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 				// Set UI options for existing controls
 				ContactList.optionsChanged
 				(
-					(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline) || (newShowClients != lastShowClients),
+					(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline),
 					(newSortMethod != lastSortMethod)
 				);
 

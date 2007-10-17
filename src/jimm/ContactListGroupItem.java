@@ -101,7 +101,7 @@ public class ContactListGroupItem implements ContactListItem
 		return result;
 	}
 
-	public int getImageIndex(boolean expanded)
+	public int getLeftImageIndex(boolean expanded)
 	{
 		return (messCount == 0) ? -1 : (expanded ? -1 : 8);
 	}
@@ -163,6 +163,11 @@ public class ContactListGroupItem implements ContactListItem
 	}
 	
 	public int getRightImageIndex()
+	{
+		return -1;
+	}
+	
+	public int getSecondLeftImageIndex()
 	{
 		return -1;
 	}

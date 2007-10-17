@@ -374,6 +374,20 @@ public class TextList extends VirtualList
 		if (offset > len) return null;
 		return resultText.substring(offset, len);
 	}
+	
+	public void selectTextByIndex(int textIndex)
+	{
+		if (textIndex == -1) return;
+		int size = lines.size();
+		for (int i = 0; i < size; i++)
+		{
+			if (getLine(i).bigTextIndex == textIndex)
+			{
+				setCurrentItem(i);
+				break;
+			}
+		}
+	}
 
 	// Returns lines of text which were added by 
 	// methon addBigText in current selection
