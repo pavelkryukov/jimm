@@ -138,12 +138,13 @@ class TextLine
 
 	void paint(int xpos, int ypos, Graphics g, int fontSize, VirtualList vl)
 	{
-		int count = items.size(), intemHeight = getHeight(fontSize);
+		int count = items.size();
+		int intemHeight = getHeight(fontSize);
 
 		for (int i = 0; i < count; i++)
 		{
 			TextItem item = elementAt(i);
-			int drawYPos = ypos + intemHeight - item.getHeight(fontSize);
+			int drawYPos = ypos + (intemHeight - item.getHeight(fontSize))/2;
 			if (item.image != null)
 			{
 				g.drawImage(item.image, xpos, drawYPos, Graphics.TOP | Graphics.LEFT);
@@ -529,7 +530,7 @@ public class TextList extends VirtualList
 				}
 
 				// Insert new line and try again
-				else if (trueWidth != width)
+				else if ((trueWidth != width) && (lastWordEnd == -1))
 				{
 					doCRLF(textIndex);
 					curPos = startPos;

@@ -605,7 +605,7 @@ public class JimmUI implements CommandListener
 			//#sijapp cond.if target isnot "DEFAULT" #
 			case Options.HOTKEY_SOUNDOFF:
 				ContactList.changeSoundMode(false);
-				MainMenu.rebuild();
+				MainMenu.build();
 				break;
 			//#sijapp cond.end#
 			}
@@ -1063,5 +1063,15 @@ public class JimmUI implements CommandListener
 
 		return groupIds;
 	}
+	
+	///////
+	
+	public static void addTextListItem(TextList list, String text, Image image, int value)
+	{
+		if (image != null) list.addImage(image, null, value);
+		list.addBigText(" "+ResourceBundle.getString(text), list.getTextColor(), Font.STYLE_PLAIN, value);
+		list.doCRLF(value);
+	}
+	
 
 }
