@@ -35,7 +35,7 @@ import DrawControls.TextList;
 import DrawControls.VirtualList;
 import DrawControls.VirtualListCommands;
 
-public class MainMenu implements CommandListener, VirtualListCommands
+public class MainMenu implements CommandListener
 {
 	private static final int TAG_EXIT = 1;
 	private static final int TAG_RENAME_GROUPS = 2;
@@ -113,10 +113,7 @@ public class MainMenu implements CommandListener, VirtualListCommands
 	/** ************************************************************************* */
 
 	/* Visual list */
-	static private List list;
-
-	/* Menu event list */
-	static private int[] eventList;
+	static private TextList list = new TextList(ResourceBundle.getString("menu"));
 
 	/* Groups list */
 	static private int[] groupIds;
@@ -130,9 +127,11 @@ public class MainMenu implements CommandListener, VirtualListCommands
 	/* Textbox for  Status messages */
 	static private TextBox statusMessage;
 
-	/* Connected */
-	static private boolean isConnected, haveToRebuild;
-
+	static
+	{
+		list.setCursorMode(VirtualList.SEL_NONE);
+	}
+	
 	public MainMenu()
 	{
 		_this = this;
@@ -151,73 +150,66 @@ public class MainMenu implements CommandListener, VirtualListCommands
 	}
 
 	/* Builds the main menu (visual list) */
-	static private void build()
+	public static void build()
 	{
-		if ((Icq.isConnected() != isConnected) || (MainMenu.list == null) || haveToRebuild)
+		JimmUI.setColorScheme(list);
+		
+		boolean connected = Icq.isConnected();
+			
+		list.lock();
+		
+		int lastIndex = list.getCurrTextIndex();
+		
+		
+		list.removeCommandEx(backCommand);
+		list.removeCommandEx(selectCommand);
+		
+		list.clear();
+		
+		if (connected)
 		{
-			MainMenu.eventList = new int[MENU_EXIT];
-			MainMenu.list = new List(ResourceBundle.getString("menu"), List.IMPLICIT);
-
-			if (Icq.isNotConnected())
-			{
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("connect"), null)] = MENU_CONNECT;
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("set_status"), getStatusImage())] = MENU_STATUS;
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("set_xstatus"), getStatusImage())] = MENU_XSTATUS;
-
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("contact_list"), null)] = MENU_LIST;
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options_lng"), null)] = MENU_OPTIONS;
-
-				//#sijapp cond.if target is "MOTOROLA" #
-				//#				MainMenu.list.addCommand(MainMenu.selectCommand);
-				//#				MainMenu.list.addCommand(MainMenu.exitCommand);
-				//#sijapp cond.end#
-			}
-			else
-			{
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("keylock_enable"), null)] = MENU_KEYLOCK;
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("disconnect"), null)] = MENU_DISCONNECT;
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("set_status"), getStatusImage())] = MENU_STATUS;
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("set_xstatus"), getStatusImage())] = MENU_XSTATUS;
-
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("manage_contact_list"), null)] = MENU_GROUPS;
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("myself"), null)] = MENU_MYSELF;
-				MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("options_lng"), null)] = MENU_OPTIONS;
-				MainMenu.list.addCommand(MainMenu.backCommand);
-				//#sijapp cond.if target is "MOTOROLA" #
-				//# 			MainMenu.list.addCommand(MainMenu.selectCommand);
-				//#sijapp cond.end#
-			}
-
-			//#sijapp cond.if target isnot "DEFAULT"#
-			boolean isSilent = Options.getBoolean(Options.OPTION_SILENT_MODE);
-			MainMenu.eventList[MainMenu.list.append(getSoundValue(isSilent), null)] = MENU_SOUND;
-			//#sijapp cond.end#    	
-
-			MainMenu.list.setCommandListener(_this);
-
-			//#sijapp cond.if modules_TRAFFIC is "true" #
-			MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("traffic_lng"), null)] = MENU_TRAFFIC;
-			//#sijapp cond.end#
-			MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("about"), null)] = MENU_ABOUT;
-			//#sijapp cond.if target is "MIDP2" #
-			if (Jimm.is_phone_SE()) MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("minimize"), null)] = MENU_MINIMIZE;
-			//#sijapp cond.end#
-			MainMenu.eventList[MainMenu.list.append(ResourceBundle.getString("exit"), null)] = MENU_EXIT;
-
-			MainMenu.isConnected = Icq.isConnected();
+			JimmUI.addTextListItem(list, "keylock_enable", null, MENU_KEYLOCK);
+			JimmUI.addTextListItem(list, "disconnect", null, MENU_DISCONNECT);
 		}
 		else
 		{
-			if ((MainMenu.list != null) && (!Icq.isNotConnected())) MainMenu.list.set(2, ResourceBundle.getString("set_status"), getStatusImage());
+			JimmUI.addTextListItem(list, "connect", null, MENU_CONNECT);
 		}
+		
+		JimmUI.addTextListItem(list, "set_status", getStatusImage(), MENU_STATUS);
+		JimmUI.addTextListItem(list, "set_xstatus", ContactList.xStatusImages.elementAt(Options.getInt(Options.OPTION_XSTATUS)), MENU_XSTATUS);
+		
+		if (connected)
+		{
+			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_GROUPS);
+			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF);
+		}
+		
+		JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST);
+		JimmUI.addTextListItem(list, "options_lng",  null, MENU_OPTIONS);
+		
+		//#sijapp cond.if target isnot "DEFAULT"#
+		JimmUI.addTextListItem(list, getSoundValue(Options.getBoolean(Options.OPTION_SILENT_MODE)), null, MENU_SOUND);
+		//#sijapp cond.end#    	
+			
+		//#sijapp cond.if modules_TRAFFIC is "true" #
+		JimmUI.addTextListItem(list, "traffic_lng", null, MENU_TRAFFIC);
+		//#sijapp cond.end#
+			
+		JimmUI.addTextListItem(list, "about", null, MENU_ABOUT);
+		//#sijapp cond.if target is "MIDP2" #
+		if (Jimm.is_phone_SE()) JimmUI.addTextListItem(list, "minimize", null, MENU_MINIMIZE);
+		//#sijapp cond.end#
+		JimmUI.addTextListItem(list, "exit", null, MENU_EXIT);
 
-		haveToRebuild = false;
-		MainMenu.list.setSelectedIndex(0, true);
-	}
-
-	static public void rebuild()
-	{
-		haveToRebuild = true;
+		list.addCommandEx(selectCommand, VirtualList.MENU_TYPE_LEFT_BAR);
+		if (connected) list.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
+			
+		list.selectTextByIndex(lastIndex);
+			
+		list.unlock();
+			
+		list.setCommandListener(_this);
 	}
 
 	/* Displays the given alert and activates the main menu afterwards */
@@ -290,23 +282,16 @@ public class MainMenu implements CommandListener, VirtualListCommands
 		statusList = new TextList(ResourceBundle.getString("set_status"));
 		statusList.setCursorMode(TextList.SEL_NONE);
 		statusList.lock();
-		addStatusItem("status_online", ContactList.statusOnlineImg,    ContactList.STATUS_ONLINE);
-		addStatusItem("status_chat", ContactList.statusChatImg,      ContactList.STATUS_CHAT);
-		addStatusItem("status_away", ContactList.statusAwayImg,      ContactList.STATUS_AWAY);
-		addStatusItem("status_na", ContactList.statusNaImg,        ContactList.STATUS_NA);
-		addStatusItem("status_occupied", ContactList.statusOccupiedImg,  ContactList.STATUS_OCCUPIED);
-		addStatusItem("status_dnd", ContactList.statusDndImg,       ContactList.STATUS_DND);
-		addStatusItem("status_invisible", ContactList.statusInvisibleImg, ContactList.STATUS_INVISIBLE);
-		addStatusItem("status_invis_all", ContactList.statusInvisibleImg, ContactList.STATUS_INVIS_ALL);
+		JimmUI.addTextListItem(statusList, "status_online", ContactList.statusOnlineImg,    ContactList.STATUS_ONLINE);
+		JimmUI.addTextListItem(statusList, "status_chat", ContactList.statusChatImg,      ContactList.STATUS_CHAT);
+		JimmUI.addTextListItem(statusList, "status_away", ContactList.statusAwayImg,      ContactList.STATUS_AWAY);
+		JimmUI.addTextListItem(statusList, "status_na", ContactList.statusNaImg,        ContactList.STATUS_NA);
+		JimmUI.addTextListItem(statusList, "status_occupied", ContactList.statusOccupiedImg,  ContactList.STATUS_OCCUPIED);
+		JimmUI.addTextListItem(statusList, "status_dnd", ContactList.statusDndImg,       ContactList.STATUS_DND);
+		JimmUI.addTextListItem(statusList, "status_invisible", ContactList.statusInvisibleImg, ContactList.STATUS_INVISIBLE);
+		JimmUI.addTextListItem(statusList, "status_invis_all", ContactList.statusInvisibleImg, ContactList.STATUS_INVIS_ALL);
 		statusList.unlock();
 		statusSelection = SELECT_STATUS;
-	}
-	
-	private static void addStatusItem(String text, Image image, int value)
-	{
-		if (image != null) statusList.addImage(image, null, value);
-		statusList.addBigText(" "+ResourceBundle.getString(text), statusList.getTextColor(), Font.STYLE_PLAIN, value);
-		statusList.doCRLF(value);
 	}
 	
     private static final String[] xstatus = {
@@ -355,19 +340,12 @@ public class MainMenu implements CommandListener, VirtualListCommands
 		statusList.setCursorMode(TextList.SEL_NONE);
 		statusList.lock();
 		for (int i = 0; i < xstatus.length; i++)
-			addStatusItem(xstatus[i], ContactList.xStatusImages.elementAt(i-1), i);
+			JimmUI.addTextListItem(statusList, xstatus[i], ContactList.xStatusImages.elementAt(i-1), i);
 		
 		statusList.unlock();
 		statusSelection = SELECT_XSTATUS;
 	}
-	
-	public void onKeyPress(VirtualList sender, int keyCode, int type) {}
-	public void onCursorMove(VirtualList sender) {}
 
-	public void onItemSelected(VirtualList sender)
-	{
-		if (sender == statusList) userSelectStatus();
-	}
 	
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
@@ -484,8 +462,8 @@ public class MainMenu implements CommandListener, VirtualListCommands
 		else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand))
 				&& (d == MainMenu.list))
 		{
-			int selectedIndex = MainMenu.list.getSelectedIndex();
-			switch (MainMenu.eventList[selectedIndex])
+			int selectedIndex = MainMenu.list.getCurrTextIndex();
+			switch (selectedIndex)
 			{
 			case MENU_CONNECT:
 				/* Connect */
@@ -517,7 +495,7 @@ public class MainMenu implements CommandListener, VirtualListCommands
 			case MENU_XSTATUS: /* Set xstatus */
 				int stValue;
 				
-				if (MainMenu.eventList[selectedIndex] == MENU_STATUS)
+				if (selectedIndex == MENU_STATUS)
 				{
 					initStatusList();
 					stValue = (int)Options.getLong(Options.OPTION_ONLINE_STATUS);
@@ -525,19 +503,16 @@ public class MainMenu implements CommandListener, VirtualListCommands
 				else
 				{
 					initXStatusList();
-					stValue = Options.getInt(Options.OPTION_XSTATUS);
+					stValue = Options.getInt(Options.OPTION_XSTATUS)+1;
 				}
-				
-				System.out.println("stValue="+stValue);
 				
 				MainMenu.statusList.selectTextByIndex(stValue);
 			
 				JimmUI.setColorScheme(statusList);
 				
 				MainMenu.statusList.setCommandListener(_this);
-				MainMenu.statusList.setVLCommands(_this);
-				MainMenu.statusList.addCommand(backCommand);
-				MainMenu.statusList.addCommand(selectCommand);
+				MainMenu.statusList.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
+				MainMenu.statusList.addCommandEx(selectCommand, VirtualList.MENU_TYPE_LEFT_BAR);
 				Jimm.display.setCurrent(MainMenu.statusList);
 			
 				break;
@@ -590,10 +565,7 @@ public class MainMenu implements CommandListener, VirtualListCommands
 
 			//#sijapp cond.if target isnot "DEFAULT" #
 			case MENU_SOUND:
-				boolean soundValue = ContactList.changeSoundMode(Icq
-						.isConnected());
-				MainMenu.list.set(selectedIndex, getSoundValue(soundValue),
-						null);
+				ContactList.changeSoundMode(Icq.isConnected());
 				break;
 			//#sijapp cond.end#				
 

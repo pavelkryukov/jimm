@@ -234,6 +234,7 @@
   "server_port"                 "Port"
   "session"                     "Session"
   "set_status"                  "Set status"
+  "set_xstatus"                 "Set x-status"
   "shadow_con"                  "Shadow connection"
   "show_clients"                "Client icons"
   "show_mess_clrf"              "Line feed"

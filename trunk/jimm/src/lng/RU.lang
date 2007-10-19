@@ -240,6 +240,7 @@
   "server_port"                 "Порт"
   "session"                     "Сессия"
   "set_status"                  "Статус"
+  "set_xstatus"                 "X-статус"
   "shadow_con"                  "Доп. подключение"
   "show_clients"                "Иконки клиетов"
   "show_mess_clrf"              "Перевод строки"

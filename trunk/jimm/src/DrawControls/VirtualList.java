@@ -23,10 +23,8 @@
 
 package DrawControls;
 
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.*;
+import java.util.Vector;
 
 import DrawControls.ImageList;
 import DrawControls.ListItem;
@@ -80,7 +78,7 @@ public abstract class VirtualList extends Canvas
 
 	// Font for drawing caption
 	private static Font capFont;
-
+	
 	// Commands to react to VL events
 	private VirtualListCommands vlCommands;
 
@@ -107,6 +105,11 @@ public abstract class VirtualList extends Canvas
 	private static boolean fullScreen = false;
 
 	private Image capImage;
+	
+	private static int KEY_CODE_LEFT_MENU;
+	private static int KEY_CODE_RIGHT_MENU;
+	private static int KEY_CODE_BACK_BUTTON;
+	
 
 	private int topItem = 0, // Index of top visilbe item 
 			fontSize = MEDIUM_FONT, // Current font size of VL
@@ -126,6 +129,16 @@ public abstract class VirtualList extends Canvas
 		int width = capFont.getHeight() / 4;
 		scrollerWidth = width > 4 ? width : 4;
 		paintedItem = new ListItem();
+		
+		//#sijapp cond.if target="SIEMENS2"#
+		KEY_CODE_LEFT_MENU = -1;
+		KEY_CODE_RIGHT_MENU = -4;
+		KEY_CODE_BACK_BUTTON = -12;
+		//#sijapp cond.else#
+		KEY_CODE_LEFT_MENU = -6;
+		KEY_CODE_RIGHT_MENU = -7;
+		KEY_CODE_BACK_BUTTON = -11;
+		//#sijapp cond.end#
 	}
 
 	static public void setFullScreen(boolean value)
@@ -204,7 +217,7 @@ public abstract class VirtualList extends Canvas
 	// returns height of draw area in pixels  
 	protected int getDrawHeight()
 	{
-		return getHeightInternal() - getCapHeight();
+		return getHeightInternal() - getCapHeight() - getMenuBarHeight();
 	}
 
 	//! Sets new font size and invalidates items
@@ -306,10 +319,16 @@ public abstract class VirtualList extends Canvas
 	{
 		current = this;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		setFullScreenMode(fullScreen);
-		if (!fullScreen) setTitle(caption);
+		
+		if (exMenuExists()) setFullScreenMode(true);
+		else
+		{
+			setFullScreenMode(fullScreen);
+			if (!fullScreen) setTitle(caption);
+		}
 		//#sijapp cond.end #
 		forcedHeight = forcedWidth = -1;
+		uiState = UI_STATE_NORMAL;
 	}
 
 	//! Returns height of each item in list
@@ -421,6 +440,14 @@ public abstract class VirtualList extends Canvas
 				moveCursor(-1, false);
 				break;
 			case Canvas.FIRE:
+				if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return; 
+				Command defaultCommand = findMenuByType(Command.OK); 
+				if (defaultCommand != null)
+				{
+					executeCommand(defaultCommand);
+					return;
+				}
+				
 				itemSelected();
 				if (vlCommands != null) vlCommands.onItemSelected(this);
 				break;
@@ -485,7 +512,63 @@ public abstract class VirtualList extends Canvas
 
 	protected void keyPressed(int keyCode)
 	{
+		int lastUIState = uiState;
+		
+		if (keyCode == KEY_CODE_LEFT_MENU)
+		{
+			if (leftMenu != null)
+			{
+				if (leftMenuItems.size() == 0)
+				{
+					if ( executeCommand(leftMenu) ) return;
+				}
+				else uiState = UI_STATE_LEFT_MENU_VISIBLE;
+			}
+		}
+		else if (keyCode == KEY_CODE_RIGHT_MENU)
+		{
+			if (rightMenu != null)
+			{
+				if (rightMenuItems.size() == 0)
+				{
+					if ( executeCommand(rightMenu) ) return;
+				}
+				else uiState = UI_STATE_RIGHT_MENU_VISIBLE;
+			}
+		}
+		else if (keyCode == KEY_CODE_BACK_BUTTON)
+		{
+			Command backMenu = findMenuByType(Command.BACK);
+			if (backMenu != null)
+			{
+				if ( executeCommand(backMenu) ) return;
+			}
+		}
+			
+		if (lastUIState != uiState)
+		{
+			invalidate();
+			return;
+		}
+		
 		doKeyreaction(keyCode, KEY_PRESSED);
+	}
+	
+	private CommandListener commandListener;
+	public void setCommandListener(CommandListener l)
+	{
+		commandListener = l;
+		super.setCommandListener(l);
+	}
+	
+	private boolean executeCommand(Command command)
+	{
+		if (commandListener != null)
+		{
+			commandListener.commandAction(command, this);
+			return true;
+		}
+		return false;
 	}
 
 	protected void keyRepeated(int keyCode)
@@ -586,7 +669,7 @@ public abstract class VirtualList extends Canvas
 		caption = capt;
 
 		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
-		if (fullScreen) invalidate();
+		if (fullScreen || exMenuExists()) invalidate();
 		else setTitle(capt);
 		//#sijapp cond.else#
 		//# 	invalidate();
@@ -625,7 +708,7 @@ public abstract class VirtualList extends Canvas
 	private int getCapHeight()
 	{
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (!fullScreen) return 0;
+		if (!fullScreen && !exMenuExists()) return 0;
 		//#sijapp cond.end#
 		int capHeight = 0;
 		if (caption != null) capHeight = capFont.getHeight() + 2;
@@ -643,7 +726,7 @@ public abstract class VirtualList extends Canvas
 	{
 		if (caption == null) return 0;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (!fullScreen) return 0;
+		if (!fullScreen && !exMenuExists()) return 0;
 		//#sijapp cond.end#
 
 		int width = getWidthInternal();
@@ -684,10 +767,10 @@ public abstract class VirtualList extends Canvas
 	private static int srcollerY2 = -1;
 
 	// Draw scroller is items doesn't fit in VL area 
-	private void drawScroller(Graphics g, int topY, int visCount)
+	private void drawScroller(Graphics g, int topY, int visCount, int menuBarHeight)
 	{
 		int width = getWidthInternal() - scrollerWidth;
-		int height = getHeightInternal();
+		int height = getHeightInternal()-menuBarHeight;
 		int itemCount = getSize();
 		boolean haveToShowScroller = ((itemCount > visCount) && (itemCount > 0));
 		int color = transformColorLight(transformColorLight(bkgrndColor, 32), -32);
@@ -738,7 +821,7 @@ public abstract class VirtualList extends Canvas
 	}
 
 	// private int drawItems(Graphics g, int top_y)
-	private int drawItems(Graphics g, int top_y, int fontHeight)
+	private int drawItems(Graphics g, int top_y, int fontHeight, int menuBarHeight)
 	{
 		int grCursorY1 = -1, grCursorY2 = -1;
 		int height = getHeightInternal();
@@ -816,8 +899,10 @@ public abstract class VirtualList extends Canvas
 	{
 		int visCount = getVisCount();
 		int y = drawCaption(graphics);
-		drawItems(graphics, y, getFontHeight());
-		drawScroller(graphics, y, visCount);
+		int menuBarHeight = getMenuBarHeight();
+		drawItems(graphics, y, getFontHeight(), menuBarHeight);
+		if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight);
+		drawScroller(graphics, y, visCount, menuBarHeight);
 	}
 
 	static Image bDIimage = null;
@@ -940,6 +1025,154 @@ public abstract class VirtualList extends Canvas
 	protected int getWidthInternal()
 	{
 		return (forcedWidth == -1) ? getWidth() : forcedWidth;
+	}
+	
+	///////////////////////////////
+	//                           //
+	//        EXTENDED UI        //
+    //                           //
+	///////////////////////////////
+	
+	public static final int MENU_TYPE_LEFT_BAR = 1;
+	public static final int MENU_TYPE_RIGHT_BAR = 2;
+	public static final int MENU_TYPE_LEFT = 3;
+	public static final int MENU_TYPE_RIGHT = 4;
+	
+	private static final int UI_STATE_NORMAL = 0;
+	private static final int UI_STATE_LEFT_MENU_VISIBLE = 1;
+	private static final int UI_STATE_RIGHT_MENU_VISIBLE = 1;
+	
+	private int uiState;
+	
+	// Font for painting menu bar
+	private static Font menuBarFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
+	
+	private Command leftMenu;
+	private Command rightMenu;
+	private Vector leftMenuItems = new Vector();
+	private Vector rightMenuItems = new Vector();
+	
+	private void drawMenuBar(Graphics g, int height)
+	{
+		int y1 = getHeightInternal()-height;
+		int y2 = getHeightInternal()-1;
+		int width = getWidthInternal();
+		int layer = height/4;
+		boolean defaultMenu = false;
+		
+		drawRect(g, transformColorLight(capBkCOlor, -32), capBkCOlor, 0, y1, width, y2);
+		
+		g.setColor(capTxtColor);
+		g.setFont(menuBarFont);
+		
+		int textY = (y1+y2-menuBarFont.getHeight())/2+2;
+		
+		if (leftMenu != null)
+		{
+			String text = leftMenu.getLabel();
+			g.drawString(text, layer, textY, Graphics.TOP|Graphics.LEFT);
+			if (leftMenu.getCommandType() == Command.OK) defaultMenu = true;   
+		}
+		
+		if (rightMenu != null)
+		{
+			String text = rightMenu.getLabel();
+			g.drawString
+			(
+				text, 
+				width-layer-menuBarFont.stringWidth(text), 
+				textY, 
+				Graphics.TOP|Graphics.LEFT
+			);
+			if (rightMenu.getCommandType() == Command.OK) defaultMenu = true;
+		}
+		
+		if (defaultMenu)
+		{
+			String text = "v";
+			g.drawString
+			(
+				text, 
+				(width-menuBarFont.stringWidth(text))/2, 
+				textY, 
+				Graphics.TOP|Graphics.LEFT
+			);
+		}
+		
+		g.setColor(transformColorLight(capBkCOlor, -128));
+		g.drawLine(0, y1, width, y1);
+	}
+	
+	private Command findMenuByType(int type)
+	{
+		if ((leftMenu != null) && (leftMenu.getCommandType() == type)) return leftMenu;
+		
+		if ((rightMenu != null) && (rightMenu.getCommandType() == type)) return rightMenu;
+		
+		for (int i = leftMenuItems.size()-1; i >= 0; i--)
+		{
+			Command cmd = (Command)leftMenuItems.elementAt(i); 
+			if (cmd.getCommandType() == type) return cmd; 
+		}
+		
+		for (int i = rightMenuItems.size()-1; i >= 0; i--)
+		{
+			Command cmd = (Command)rightMenuItems.elementAt(i); 
+			if (cmd.getCommandType() == type) return cmd; 
+		}
+		
+		return null; 
+	}
+	
+	private boolean exMenuExists()
+	{
+		return (leftMenu != null) || (rightMenu != null);
+	}
+	
+	private int getMenuBarHeight()
+	{
+		return exMenuExists() ? menuBarFont.getHeight()+3 : 0;
+	}
+	
+	public void addCommandEx(Command cmd, int type)
+	{
+		switch (type)
+		{
+		case MENU_TYPE_LEFT_BAR:
+			leftMenu = cmd;
+			break;
+			
+		case MENU_TYPE_RIGHT_BAR:
+			rightMenu = cmd;
+			break;
+			
+		case MENU_TYPE_LEFT:
+			if (leftMenuItems.indexOf(leftMenuItems) == -1) leftMenuItems.addElement(cmd);
+			break;
+			
+		case MENU_TYPE_RIGHT:
+			if (rightMenuItems.indexOf(rightMenuItems) == -1) rightMenuItems.addElement(cmd);
+			break;
+		}
+		invalidate();
+	}
+	
+	public void removeCommandEx(Command cmd)
+	{
+		if (cmd == leftMenu)
+		{
+			leftMenu = null;
+			leftMenuItems.removeAllElements();
+		}
+		
+		if (cmd == rightMenu)
+		{
+			rightMenu = null;
+			rightMenuItems.removeAllElements();
+		}
+		
+		leftMenuItems.removeElement(cmd);
+		rightMenuItems.removeElement(cmd);
 	}
 
 	//#sijapp cond.if target="MOTOROLA"#
