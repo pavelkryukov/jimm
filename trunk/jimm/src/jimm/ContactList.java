@@ -268,8 +268,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		//#sijapp cond.else #
 		//#        updateTitle(0);
 		//#sijapp cond.end#
-		tree.addCommand(ContactList.mainMenuCommand);
-		tree.addCommand(selectCommand);
+		tree.addCommandEx(ContactList.mainMenuCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tree.addCommandEx(selectCommand, VirtualList.MENU_TYPE_LEFT_BAR);
 
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
 		tree.addCommand(debugListCommand);
@@ -1676,33 +1676,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		dst.fontStyle = item.getFontStyle();
 	}
 
-	public void VTnodeClicked(TreeNode node)
-	{
-		if (node == null)
-			return;
-		ContactListItem item = (ContactListItem) node.getData();
-		if (item instanceof ContactListContactItem)
-		{
-			// Activate the contact item menu
-			//#sijapp cond.if target is "RIM"#
-			//#			LED.setState(LED.STATE_OFF);
-			//#sijapp cond.end#
+	public void VTnodeClicked(TreeNode node) {}
 
-			lastChatItem = (ContactListContactItem) item;
-			lastChatItem.activate(true);
-		} else if (item instanceof ContactListGroupItem)
-		{
-			tree.setExpandFlag(node, !node.getExpanded());
-		}
-	}
+	public void onCursorMove(VirtualList sender) {}
 
-	public void onCursorMove(VirtualList sender)
-	{
-	}
-
-	public void onItemSelected(VirtualList sender)
-	{
-	}
+	public void onItemSelected(VirtualList sender) {}
 
 	public void onKeyPress(VirtualList sender, int keyCode, int type)
 	{
@@ -1783,7 +1761,22 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		// Contact item has been selected
 		else if (c == selectCommand)
 		{
-			VTnodeClicked(tree.getCurrentItem());
+			TreeNode node = tree.getCurrentItem();
+			if (node == null) return;
+			ContactListItem item = (ContactListItem) node.getData();
+			
+			if (item instanceof ContactListContactItem)
+			{
+				// Activate the contact item menu
+				//#sijapp cond.if target is "RIM"#
+				//#			LED.setState(LED.STATE_OFF);
+				//#sijapp cond.end#
+
+				lastChatItem = (ContactListContactItem) item;
+				lastChatItem.activate(true);
+			}
+			
+			if (item instanceof ContactListGroupItem) tree.setExpandFlag(node, !node.getExpanded());
 		}
 
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
