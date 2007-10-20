@@ -110,6 +110,8 @@ public abstract class VirtualList extends Canvas
 	private static int KEY_CODE_RIGHT_MENU;
 	private static int KEY_CODE_BACK_BUTTON;
 	
+	private static int curMenuItemIndex; 
+	
 
 	private int topItem = 0, // Index of top visilbe item 
 			fontSize = MEDIUM_FONT, // Current font size of VL
@@ -429,32 +431,75 @@ public abstract class VirtualList extends Canvas
 	// private keyReaction(int keyCode)
 	private void keyReaction(int keyCode)
 	{
+		boolean menuItemsVisible = false;
+		int lastManuIndex = curMenuItemIndex;
+		Vector menuItemsData = null;
+		switch (uiState)
+		{
+		case UI_STATE_LEFT_MENU_VISIBLE:
+			menuItemsVisible = true;
+			menuItemsData = leftMenuItems;
+			break;
+			
+		case UI_STATE_RIGHT_MENU_VISIBLE:
+			menuItemsVisible = true;
+			menuItemsData = rightMenuItems;
+			break;
+		}
+		
 		try
 		{
 			switch (getGameAction(keyCode))
 			{
 			case Canvas.DOWN:
-				moveCursor(1, false);
-				break;
-			case Canvas.UP:
-				moveCursor(-1, false);
-				break;
-			case Canvas.FIRE:
-				if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return; 
-				Command defaultCommand = findMenuByType(Command.OK); 
-				if (defaultCommand != null)
+				if (menuItemsVisible)
 				{
-					executeCommand(defaultCommand);
-					return;
+					curMenuItemIndex++;
+					if (curMenuItemIndex >= menuItemsData.size()) curMenuItemIndex = menuItemsData.size()-1; 
 				}
+				else moveCursor(1, false);
+				break;
 				
-				itemSelected();
-				if (vlCommands != null) vlCommands.onItemSelected(this);
+			case Canvas.UP:
+				if (menuItemsVisible)
+				{
+					curMenuItemIndex--;
+					if (curMenuItemIndex < 0) curMenuItemIndex = 0; 
+				}
+				else moveCursor(-1, false);
+				break;
+				
+			case Canvas.FIRE:
+				if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return;
+				if (menuItemsVisible)
+				{
+					uiState = UI_STATE_NORMAL;
+					executeCommand((Command)menuItemsData.elementAt(curMenuItemIndex));
+					invalidate();
+				}
+				else
+				{
+					Command defaultCommand = findMenuByType(Command.OK);
+					if (defaultCommand != null)
+					{
+						executeCommand(defaultCommand);
+						return;
+					}
+					
+					itemSelected();
+					if (vlCommands != null) vlCommands.onItemSelected(this);
+				}
 				break;
 			}
 		}
 		catch (Exception e) // getGameAction throws exception on motorola
 		{ // when opening flipper
+			return;
+		}
+		
+		if (menuItemsVisible && (lastManuIndex != curMenuItemIndex))
+		{
+			invalidate();
 			return;
 		}
 
@@ -522,7 +567,11 @@ public abstract class VirtualList extends Canvas
 				{
 					if ( executeCommand(leftMenu) ) return;
 				}
-				else uiState = UI_STATE_LEFT_MENU_VISIBLE;
+				else 
+				{
+					uiState = UI_STATE_LEFT_MENU_VISIBLE;
+					curMenuItemIndex = leftMenuItems.size()-1;
+				}
 			}
 		}
 		else if (keyCode == KEY_CODE_RIGHT_MENU)
@@ -533,15 +582,30 @@ public abstract class VirtualList extends Canvas
 				{
 					if ( executeCommand(rightMenu) ) return;
 				}
-				else uiState = UI_STATE_RIGHT_MENU_VISIBLE;
+				else 
+				{
+					uiState = UI_STATE_RIGHT_MENU_VISIBLE;
+					curMenuItemIndex = rightMenuItems.size()-1;
+				}
 			}
 		}
 		else if (keyCode == KEY_CODE_BACK_BUTTON)
 		{
-			Command backMenu = findMenuByType(Command.BACK);
-			if (backMenu != null)
+			switch (uiState)
 			{
-				if ( executeCommand(backMenu) ) return;
+			case UI_STATE_RIGHT_MENU_VISIBLE:
+			case UI_STATE_LEFT_MENU_VISIBLE:
+				uiState = UI_STATE_NORMAL;
+				invalidate();
+				break;
+
+			default:
+				Command backMenu = findMenuByType(Command.BACK);
+				if (backMenu != null)
+				{
+					if (executeCommand(backMenu)) return;
+				}
+				break;
 			}
 		}
 			
@@ -732,7 +796,7 @@ public abstract class VirtualList extends Canvas
 		int width = getWidthInternal();
 		g.setFont(capFont);
 		int height = getCapHeight();
-		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -32), 0, 0, width, height - 2);
+		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -32), 0, 0, width, height);
 
 		g.setColor(transformColorLight(capBkCOlor, -128));
 		g.drawLine(0, height - 1, width, height - 1);
@@ -804,13 +868,16 @@ public abstract class VirtualList extends Canvas
 		int r2 = ((color2 & 0xFF0000) >> 16);
 		int g2 = ((color2 & 0x00FF00) >> 8);
 		int b2 = (color2 & 0x0000FF);
+		int count = 8;
+		y2++;
+		x2++;
 
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < count; i++)
 		{
-			int crd1 = i * (y2 - y1) / 8 + y1;
-			int crd2 = (i + 1) * (y2 - y1) / 8 + y1;
-			g.setColor(i * (r2 - r1) / 7 + r1, i * (g2 - g1) / 7 + g1, i * (b2 - b1) / 7 + b1);
-			g.fillRect(x1, crd1, x2, crd2);
+			int crd1 = i * (y2 - y1) / count + y1;
+			int crd2 = (i + 1) * (y2 - y1) / count + y1;
+			g.setColor(i * (r2 - r1) / (count-1) + r1, i * (g2 - g1) / (count-1) + g1, i * (b2 - b1) / (count-1) + b1);
+			g.fillRect(x1, crd1, x2-x1, crd2-crd1);
 		}
 	}
 
@@ -894,6 +961,14 @@ public abstract class VirtualList extends Canvas
 		if (b > 255) b = 255;
 		return r | (g << 8) | (b << 16);
 	}
+	
+	static private int getInverseColor(int color)
+	{
+		int r = (color & 0xFF);
+		int g = ((color & 0xFF00) >> 8);
+		int b = ((color & 0xFF0000) >> 16);
+		return ((r+g+b) > 3*127) ? 0 : 0xFFFFFF;
+	}
 
 	public void paintAllOnGraphics(Graphics graphics)
 	{
@@ -903,6 +978,7 @@ public abstract class VirtualList extends Canvas
 		drawItems(graphics, y, getFontHeight(), menuBarHeight);
 		if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight);
 		drawScroller(graphics, y, visCount, menuBarHeight);
+		drawMenuItems(graphics, menuBarHeight);
 	}
 
 	static Image bDIimage = null;
@@ -1040,12 +1116,13 @@ public abstract class VirtualList extends Canvas
 	
 	private static final int UI_STATE_NORMAL = 0;
 	private static final int UI_STATE_LEFT_MENU_VISIBLE = 1;
-	private static final int UI_STATE_RIGHT_MENU_VISIBLE = 1;
+	private static final int UI_STATE_RIGHT_MENU_VISIBLE = 2;
 	
 	private int uiState;
 	
 	// Font for painting menu bar
 	private static Font menuBarFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
+	private static Font menuItemsFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
 	
 	private Command leftMenu;
 	private Command rightMenu;
@@ -1055,21 +1132,27 @@ public abstract class VirtualList extends Canvas
 	private void drawMenuBar(Graphics g, int height)
 	{
 		int y1 = getHeightInternal()-height;
-		int y2 = getHeightInternal()-1;
+		int y2 = getHeightInternal();
 		int width = getWidthInternal();
 		int layer = height/4;
 		boolean defaultMenu = false;
 		
 		drawRect(g, transformColorLight(capBkCOlor, -32), capBkCOlor, 0, y1, width, y2);
 		
-		g.setColor(capTxtColor);
 		g.setFont(menuBarFont);
 		
 		int textY = (y1+y2-menuBarFont.getHeight())/2+2;
 		
+		boolean menuItemsVisible = false;
 		if (leftMenu != null)
 		{
+			if (uiState == UI_STATE_LEFT_MENU_VISIBLE)
+			{
+				menuItemsVisible = true;
+				drawRect(g, transformColorLight(capBkCOlor, -64), transformColorLight(capBkCOlor, -32), 0, y1, width/2, y2);
+			}
 			String text = leftMenu.getLabel();
+			g.setColor(capTxtColor);
 			g.drawString(text, layer, textY, Graphics.TOP|Graphics.LEFT);
 			if (leftMenu.getCommandType() == Command.OK) defaultMenu = true;   
 		}
@@ -1077,6 +1160,13 @@ public abstract class VirtualList extends Canvas
 		if (rightMenu != null)
 		{
 			String text = rightMenu.getLabel();
+			if (uiState == UI_STATE_RIGHT_MENU_VISIBLE)
+			{
+				menuItemsVisible = true;
+				drawRect(g, transformColorLight(capBkCOlor, -64), transformColorLight(capBkCOlor, -32), width/2, y1, width, y2);
+			}
+			
+			g.setColor(capTxtColor);
 			g.drawString
 			(
 				text, 
@@ -1087,9 +1177,10 @@ public abstract class VirtualList extends Canvas
 			if (rightMenu.getCommandType() == Command.OK) defaultMenu = true;
 		}
 		
-		if (defaultMenu)
+		if (defaultMenu && !menuItemsVisible)
 		{
 			String text = "v";
+			g.setColor(capTxtColor);
 			g.drawString
 			(
 				text, 
@@ -1147,11 +1238,11 @@ public abstract class VirtualList extends Canvas
 			break;
 			
 		case MENU_TYPE_LEFT:
-			if (leftMenuItems.indexOf(leftMenuItems) == -1) leftMenuItems.addElement(cmd);
+			leftMenuItems.addElement(cmd);
 			break;
 			
 		case MENU_TYPE_RIGHT:
-			if (rightMenuItems.indexOf(rightMenuItems) == -1) rightMenuItems.addElement(cmd);
+			rightMenuItems.addElement(cmd);
 			break;
 		}
 		invalidate();
@@ -1173,6 +1264,79 @@ public abstract class VirtualList extends Canvas
 		
 		leftMenuItems.removeElement(cmd);
 		rightMenuItems.removeElement(cmd);
+	}
+	
+	private void drawMenuItems(Graphics g, int menuBarHeight)
+	{
+		switch (uiState)
+		{
+		case UI_STATE_LEFT_MENU_VISIBLE:
+			drawManuItems(g, leftMenuItems, getHeightInternal()-menuBarHeight, Graphics.LEFT);
+			break;
+			
+		case UI_STATE_RIGHT_MENU_VISIBLE:
+			drawManuItems(g, rightMenuItems, getHeightInternal()-menuBarHeight, Graphics.RIGHT);
+			break;
+		}
+	}
+	
+	private void drawManuItems(Graphics g, Vector items, int bottom, int horizAlign)
+	{
+		int fontHeight = menuItemsFont.getHeight(); 
+		int layer = fontHeight/3;
+		
+		// calculate width and height
+		int width = 0;
+		int height = layer*2;
+		for (int i = items.size()-1; i >= 0; i--)
+		{
+			Command cmd = (Command)items.elementAt(i);
+			int txtWidth = menuItemsFont.stringWidth(cmd.getLabel());
+			if (txtWidth > width) width = txtWidth;
+			height += fontHeight;
+		}
+		width += layer*2;
+		
+		int y = bottom-height;
+		int x = 0;
+		switch (horizAlign)
+		{
+		case Graphics.LEFT:
+			x = 2;
+			break;
+		case Graphics.RIGHT:
+			x = getWidthInternal()-width-2;
+			break;
+		}
+		
+		// Draw rectangle
+		drawRect(g, transformColorLight(bkgrndColor, -12), transformColorLight(bkgrndColor, -32), x, y, x+width, y+height);
+		g.setColor(transformColorLight(bkgrndColor, -128));
+		g.drawRect(x, y, width, height);
+		
+		// Draw items
+		g.setFont(menuItemsFont);
+		
+		int itemY = y+layer;
+		
+		for (int i = 0; i < items.size(); i++)
+		{
+			if (i == curMenuItemIndex)
+			{
+				g.setColor(capTxtColor);
+				g.fillRect(x, itemY-1, width+1, fontHeight+2);
+			}
+			itemY += fontHeight;
+		}
+		
+		itemY = y+layer;
+		for (int i = 0; i < items.size(); i++)
+		{
+			Command cmd = (Command)items.elementAt(i);
+			g.setColor((i == curMenuItemIndex) ? getInverseColor(capTxtColor) : capTxtColor);
+			g.drawString(cmd.getLabel(), x+layer, itemY, Graphics.LEFT|Graphics.TOP);
+			itemY += fontHeight;
+		}
 	}
 
 	//#sijapp cond.if target="MOTOROLA"#
