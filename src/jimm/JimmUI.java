@@ -82,9 +82,6 @@ public class JimmUI implements CommandListener
 	final private static Command cmdBack = new Command(ResourceBundle
 			.getString("back"), Command.BACK, 2);
 
-	final private static Command cmdBack2 = new Command(ResourceBundle
-			.getString("back"), Command.ITEM, 10); /* Back button to fix Symbian bug */
-
 	final private static Command cmdCopyText = new Command(ResourceBundle
 			.getString("copy_text"), Command.ITEM, 3);
 
@@ -93,6 +90,10 @@ public class JimmUI implements CommandListener
 
 	final private static Command cmdEdit = new Command(ResourceBundle
 			.getString("edit"), Command.ITEM, 1);
+	
+	final private static Command cmdMenu = new Command(ResourceBundle
+			.getString("menu"), Command.ITEM, 1);
+	
 
 	static private CommandListener listener;
 
@@ -112,7 +113,6 @@ public class JimmUI implements CommandListener
 		commands.put(cmdNo, new Integer(CMD_NO));
 		commands.put(cmdFind, new Integer(CMD_FIND));
 		commands.put(cmdBack, new Integer(CMD_BACK));
-		commands.put(cmdBack2, new Integer(CMD_BACK));
 	}
 
 	JimmUI()
@@ -151,8 +151,7 @@ public class JimmUI implements CommandListener
 		if (d == infoTextList)
 		{
 			// "User info" -> "Cancel, Back"
-			if ((c == cmdCancel) || (c == cmdBack) || (c == cmdBack2))
-				cancelUserInfo();
+			if ((c == cmdCancel) || (c == cmdBack)) cancelUserInfo();
 
 			if (c == cmdEdit)
 			{
@@ -823,11 +822,11 @@ public class JimmUI implements CommandListener
 		if (Icq.isConnected())
 		{
 			if (uin == Options.getString(Options.OPTION_UIN))
-				infoTextList.addCommand(cmdEdit);
+				infoTextList.addCommandEx(cmdEdit, VirtualList.MENU_TYPE_RIGHT);
 
 			RequestInfoAction act = new RequestInfoAction(uin, name);
 
-			infoTextList.addCommand(cmdCancel);
+			infoTextList.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
 
 			try
 			{
@@ -863,15 +862,14 @@ public class JimmUI implements CommandListener
 	static public void showUserInfo(String[] data)
 	{
 		last_user_info = data;
-		if (infoTextList == null)
-			return;
+		if (infoTextList == null) return;
 		infoTextList.clear();
 		JimmUI.fillUserInfo(data, infoTextList);
-		infoTextList.removeCommand(cmdCancel);
-		infoTextList.addCommand(cmdBack);
-		infoTextList.addCommand(cmdCopyText);
-		infoTextList.addCommand(cmdCopyAll);
-		infoTextList.addCommand(cmdBack2);
+		infoTextList.removeCommandEx(cmdCancel);
+		infoTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+		infoTextList.addCommandEx(cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+		infoTextList.addCommandEx(cmdCopyText, VirtualList.MENU_TYPE_RIGHT);
+		infoTextList.addCommandEx(cmdCopyAll, VirtualList.MENU_TYPE_RIGHT);
 	}
 
 	static public TextList getInfoTextList(String caption, boolean addCommands)
@@ -891,10 +889,10 @@ public class JimmUI implements CommandListener
 
 		if (addCommands)
 		{
-			infoTextList.addCommand(cmdBack);
-			infoTextList.addCommand(cmdCopyText);
-			infoTextList.addCommand(cmdCopyAll);
-			infoTextList.addCommand(cmdBack2);
+			infoTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+			infoTextList.addCommandEx(cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+			infoTextList.addCommandEx(cmdCopyText, VirtualList.MENU_TYPE_RIGHT);
+			infoTextList.addCommandEx(cmdCopyAll, VirtualList.MENU_TYPE_RIGHT);
 			infoTextList.setCommandListener(_this);
 		}
 

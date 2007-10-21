@@ -826,8 +826,8 @@ public class ContactListContactItem implements CommandListener, ContactListItem
 			{
 				URLList = JimmUI.getInfoTextList(ResourceBundle
 						.getString("goto_url"), false);
-				URLList.addCommand(selecturlCommand);
-				URLList.addCommand(backurlCommand);
+				URLList.addCommandEx(selecturlCommand, VirtualList.MENU_TYPE_RIGHT);
+				URLList.addCommandEx(backurlCommand, VirtualList.MENU_TYPE_RIGHT);
 				URLList.setCommandListener(this);
 				for (int i = 0; i < v.size(); i++)
 				{

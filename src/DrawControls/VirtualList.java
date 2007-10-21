@@ -106,9 +106,9 @@ public abstract class VirtualList extends Canvas
 
 	private Image capImage;
 	
-	private static int KEY_CODE_LEFT_MENU;
-	private static int KEY_CODE_RIGHT_MENU;
-	private static int KEY_CODE_BACK_BUTTON;
+	private static final int KEY_CODE_LEFT_MENU = -1000001;
+	private static final int KEY_CODE_RIGHT_MENU = -1000002;
+	private static final int KEY_CODE_BACK_BUTTON = -1000003;
 	
 	private static int curMenuItemIndex; 
 	
@@ -131,16 +131,6 @@ public abstract class VirtualList extends Canvas
 		int width = capFont.getHeight() / 4;
 		scrollerWidth = width > 4 ? width : 4;
 		paintedItem = new ListItem();
-		
-		//#sijapp cond.if target="SIEMENS2"#
-		KEY_CODE_LEFT_MENU = -1;
-		KEY_CODE_RIGHT_MENU = -4;
-		KEY_CODE_BACK_BUTTON = -12;
-		//#sijapp cond.else#
-		KEY_CODE_LEFT_MENU = -6;
-		KEY_CODE_RIGHT_MENU = -7;
-		KEY_CODE_BACK_BUTTON = -11;
-		//#sijapp cond.end#
 	}
 
 	static public void setFullScreen(boolean value)
@@ -447,10 +437,61 @@ public abstract class VirtualList extends Canvas
 			break;
 		}
 		
+		int lastUIState = uiState;
+		
 		try
 		{
-			switch (getGameAction(keyCode))
+			switch (getExtendedGameAction(keyCode))
 			{
+			case KEY_CODE_LEFT_MENU:
+				if (leftMenu != null)
+				{
+					if (leftMenuItems.size() == 0)
+					{
+						if ( executeCommand(leftMenu) ) return;
+					}
+					else 
+					{
+						uiState = UI_STATE_LEFT_MENU_VISIBLE;
+						curMenuItemIndex = leftMenuItems.size()-1;
+					}
+				}
+				break;
+				
+			case KEY_CODE_RIGHT_MENU:
+				if (rightMenu != null)
+				{
+					if (rightMenuItems.size() == 0)
+					{
+						if (executeCommand(rightMenu)) return;
+					}
+					else
+					{
+						uiState = UI_STATE_RIGHT_MENU_VISIBLE;
+						curMenuItemIndex = rightMenuItems.size() - 1;
+					}
+				}
+				break;
+				
+			case KEY_CODE_BACK_BUTTON:
+				switch (uiState)
+				{
+				case UI_STATE_RIGHT_MENU_VISIBLE:
+				case UI_STATE_LEFT_MENU_VISIBLE:
+					uiState = UI_STATE_NORMAL;
+					invalidate();
+					break;
+
+				default:
+					Command backMenu = findMenuByType(Command.BACK);
+					if (backMenu != null)
+					{
+						if (executeCommand(backMenu)) return;
+					}
+					break;
+				}
+				break;
+
 			case Canvas.DOWN:
 				if (menuItemsVisible)
 				{
@@ -497,7 +538,8 @@ public abstract class VirtualList extends Canvas
 			return;
 		}
 		
-		if (menuItemsVisible && (lastManuIndex != curMenuItemIndex))
+		
+		if ((menuItemsVisible && (lastManuIndex != curMenuItemIndex)) || (lastUIState != uiState))
 		{
 			invalidate();
 			return;
@@ -554,67 +596,56 @@ public abstract class VirtualList extends Canvas
 
 		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode, type);
 	}
+	
+	// Return game action or extended codes
+	// Thanks for Aspro for source examples
+	private int getExtendedGameAction(int keyCode)
+	{
+        String strCode = null;
+        try 
+        {
+            strCode = getKeyName(keyCode).toLowerCase();
+        } 
+        catch(IllegalArgumentException e) 
+        {
+        }
+        
+        if (strCode != null) 
+        {
+            if ("soft1".equals(strCode) || "soft 1".equals(strCode)
+                    || "soft_1".equals(strCode) || "softkey 1".equals(strCode)
+                    || strCode.startsWith("left soft")) 
+            {
+                return KEY_CODE_LEFT_MENU;
+            }
+            if ("soft2".equals(strCode) || "soft 2".equals(strCode)
+                    || "soft_2".equals(strCode) || "softkey 4".equals(strCode)
+                    || strCode.startsWith("right soft")) {
+                return KEY_CODE_RIGHT_MENU;
+            }
+            
+            if ("on/off".equals(strCode) || "back".equals(strCode)) {
+                return KEY_CODE_BACK_BUTTON;
+            }
+        }
+        
+        switch (keyCode)
+        {
+        case -6: case -21: case 21: case 105: case -202: case 113: case 57345:
+        	return KEY_CODE_LEFT_MENU;
+        	
+        case -7: case -22: case 22: case 106: case -203: case 112: case 57346:
+        	return KEY_CODE_RIGHT_MENU;
+        	
+        case -11: 
+        	return KEY_CODE_BACK_BUTTON;
+        }
+        
+        return getGameAction(keyCode);
+	}
 
 	protected void keyPressed(int keyCode)
 	{
-		int lastUIState = uiState;
-		
-		if (keyCode == KEY_CODE_LEFT_MENU)
-		{
-			if (leftMenu != null)
-			{
-				if (leftMenuItems.size() == 0)
-				{
-					if ( executeCommand(leftMenu) ) return;
-				}
-				else 
-				{
-					uiState = UI_STATE_LEFT_MENU_VISIBLE;
-					curMenuItemIndex = leftMenuItems.size()-1;
-				}
-			}
-		}
-		else if (keyCode == KEY_CODE_RIGHT_MENU)
-		{
-			if (rightMenu != null)
-			{
-				if (rightMenuItems.size() == 0)
-				{
-					if ( executeCommand(rightMenu) ) return;
-				}
-				else 
-				{
-					uiState = UI_STATE_RIGHT_MENU_VISIBLE;
-					curMenuItemIndex = rightMenuItems.size()-1;
-				}
-			}
-		}
-		else if (keyCode == KEY_CODE_BACK_BUTTON)
-		{
-			switch (uiState)
-			{
-			case UI_STATE_RIGHT_MENU_VISIBLE:
-			case UI_STATE_LEFT_MENU_VISIBLE:
-				uiState = UI_STATE_NORMAL;
-				invalidate();
-				break;
-
-			default:
-				Command backMenu = findMenuByType(Command.BACK);
-				if (backMenu != null)
-				{
-					if (executeCommand(backMenu)) return;
-				}
-				break;
-			}
-		}
-			
-		if (lastUIState != uiState)
-		{
-			invalidate();
-			return;
-		}
-		
 		doKeyreaction(keyCode, KEY_PRESSED);
 	}
 	
