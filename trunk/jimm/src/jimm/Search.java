@@ -242,11 +242,12 @@ public class Search
 			/* Result Screen */
 			screen = new TextList(null);
 			screen.setVLCommands(this);
-			screen.addCommand(this.previousCommand);
-			screen.addCommand(this.nextCommand);
-			screen.addCommand(this.addCommand);
-			screen.addCommand(this.cmdSendMessage);
-			screen.addCommand(this.cmdShowInfo);
+			screen.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+			screen.addCommandEx(this.previousCommand, VirtualList.MENU_TYPE_RIGHT);
+			screen.addCommandEx(this.nextCommand, VirtualList.MENU_TYPE_RIGHT);
+			screen.addCommandEx(this.addCommand, VirtualList.MENU_TYPE_RIGHT);
+			screen.addCommandEx(this.cmdSendMessage, VirtualList.MENU_TYPE_RIGHT);
+			screen.addCommandEx(this.cmdShowInfo, VirtualList.MENU_TYPE_RIGHT);
 			screen.setCursorMode(TextList.SEL_NONE);
 			JimmUI.setColorScheme(screen);
 		}
@@ -264,7 +265,7 @@ public class Search
 			{
 			case ACTIV_SHOW_RESULTS:
 				drawResultScreen(selectedIndex);
-				Jimm.display.setCurrent(this.screen);
+				this.screen.activate(Jimm.display);
 				break;
 
 			case ACTIV_JUST_SHOW:
@@ -294,8 +295,8 @@ public class Search
 
 				if (Search.this.size() == 1)
 				{
-					screen.removeCommand(this.nextCommand);
-					screen.removeCommand(this.previousCommand);
+					screen.removeCommandEx(this.nextCommand);
+					screen.removeCommandEx(this.previousCommand);
 				}
 
 				screen.lock();
@@ -317,7 +318,7 @@ public class Search
 				screen.unlock();
 			}
 
-			screen.addCommand(this.backCommand);
+			screen.addCommandEx(this.backCommand, VirtualList.MENU_TYPE_LEFT_BAR);
 
 			screen.setCommandListener(this);
 		}
@@ -370,7 +371,7 @@ public class Search
 		{
 			if (c == this.backCommand)
 			{
-				if ((d == screen) && !liteVersion)
+				if (JimmUI.isControlActive(screen) && !liteVersion)
 				{
 					activate(Search.SearchForm.ACTIV_JUST_SHOW);
 				} else
@@ -426,7 +427,7 @@ public class Search
 			/* "Previous" command */
 			else if (c == this.previousCommand)
 				nextOrPrev(false);
-			else if (c == this.addCommand && d == screen)
+			else if ((c == this.addCommand) && JimmUI.isControlActive(screen))
 			{
 				searchForm = null;
 				if (ContactList.getGroupItems().length == 0)
@@ -480,7 +481,7 @@ public class Search
 				//ContactListContactItem.CONTACTITEM_HAS_CHAT
 				cItem.setStringValue(ContactListContactItem.CONTACTITEM_NAME,
 						resultData[JimmUI.UI_NICK]);
-				cItem.newMessage();
+				JimmUI.writeMessage(cItem, new String());
 			}
 
 			/* Command "Show info" */

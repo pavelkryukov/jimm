@@ -41,7 +41,7 @@ public class DebugLog
 	static
 	{
 		list = new TextList(null);
-		list.addCommand(backCommand);
+		list.addCommandEx(backCommand, TextList.MENU_TYPE_RIGHT_BAR);
 		list.setCommandListener(new DebugLog());
 		list.setFontSize(TextList.SMALL_FONT);
 		list.setCaption("Debug log");
@@ -58,7 +58,7 @@ public class DebugLog
 			wasShown = true;
 		}
 
-		Jimm.display.setCurrent(list);
+		list.activate(Jimm.display);
 	}
 
 	static int counter = 0;

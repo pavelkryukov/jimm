@@ -36,7 +36,7 @@ import DrawControls.*;
 public class Emotions implements VirtualListCommands, CommandListener
 {
 	private static Emotions _this;
-
+	
 	final private static ImageList images = new ImageList();
 
 	final private static Vector findedEmotions = new Vector();
@@ -49,6 +49,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 			textCorrWords;
 
 	private static boolean[] emoFinded;
+	
+	private static TextBox textBox;
 
 	public Emotions()
 	{
@@ -285,10 +287,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 	//                               //
 	///////////////////////////////////
 
-	static private Displayable lastDisplay;
-
-	static private CommandListener selectionListener;
-
 	static private Command cmdOk = new Command(ResourceBundle
 			.getString("select"), Command.OK, 1);
 
@@ -298,36 +296,29 @@ public class Emotions implements VirtualListCommands, CommandListener
 	static private String emotionText;
 
 	static private Selector selector;
+	static private int caretPos;
+	static private Object lastScreen;
 
-	static public void selectEmotion(CommandListener selectionListener_,
-			Displayable lastDisplay_)
+	static public void selectEmotion(TextBox textBox, Object screen)
 	{
-		selectionListener = selectionListener_;
-		lastDisplay = lastDisplay_;
+		lastScreen = screen;
+		Emotions.caretPos = textBox.getCaretPosition();
+		Emotions.textBox = textBox;
 		//selList = new TextList(null);
 		selector = new Selector();
 		JimmUI.setColorScheme(selector);
 
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		selector.setFullScreenMode(false);
-		//#sijapp cond.end#
-
-		selector.addCommand(cmdOk);
-		selector.addCommand(cmdCancel);
+		selector.addCommandEx(cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
+		selector.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
 		selector.setCommandListener(_this);
 
-		Jimm.display.setCurrent(selector);
+		selector.activate(Jimm.display);
 	}
 
 	public void commandAction(Command c, Displayable d)
 	{
-		if (c == cmdOk)
-			select();
-		else if (c == cmdCancel)
-		{
-			Jimm.display.setCurrent(lastDisplay);
-			selector = null;
-		}
+		if (c == cmdOk) select();
+		else if (c == cmdCancel) JimmUI.selectScreen(lastScreen);
 	}
 
 	public void onKeyPress(VirtualList sender, int keyCode, int type)
@@ -345,10 +336,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 	static private void select()
 	{
-		Jimm.display.setCurrent(lastDisplay);
-		selector = null;
-		System.gc();
-		selectionListener.commandAction(cmdOk, selector);
+		textBox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
+		JimmUI.selectScreen(lastScreen);
 	}
 
 	static public String getSelectedEmotion()
@@ -395,7 +384,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		}
 
 		//#sijapp cond.if target is "MIDP2"#
-		protected boolean pointerPressedOnUtem(int index, int x, int y)
+		protected boolean pointerPressedOnUtem(int index, int x, int y, int mode)
 		{
 			int lastCol = curCol;
 			curCol = x / itemHeight;
@@ -476,7 +465,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 				int rowCount = getSize();
 				switch (getGameAction(keyCode))
 				{
-				case LEFT:
+				case Canvas.LEFT:
 					if (curCol != 0)
 						curCol--;
 					else if (curRow != 0)
@@ -486,7 +475,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 					}
 					break;
 
-				case RIGHT:
+				case Canvas.RIGHT:
 					if (curCol < (cols - 1))
 						curCol++;
 					else if (curRow <= rowCount)

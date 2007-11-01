@@ -30,6 +30,7 @@ import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.DebugLog;
 import jimm.Jimm;
+import jimm.FileTransfer;
 import jimm.RunnableImpl;
 import jimm.JimmException;
 import jimm.Options;
@@ -788,7 +789,7 @@ public class ActionListener
 								//System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);
 
 								DirectConnectionAction dcAct = new DirectConnectionAction(
-										sender.getFTM());
+										FileTransfer.getFTM());
 								try
 								{
 									Icq.requestAction(dcAct);

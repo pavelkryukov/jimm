@@ -361,19 +361,14 @@ public class Traffic
 					.getString("traffic_lng"));
 			this.trafficTextList.setCursorMode(TextList.SEL_NONE);
 
-			// Set colors
-			JimmUI.setColorScheme(trafficTextList);
-			//this.trafficTextList.setColors(Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Options.getSchemeColor(Options.CLRSCHHEME_CAP), Options.getSchemeColor(Options.CLRSCHHEME_BACK), Options.getSchemeColor(Options.CLRSCHHEME_BLUE), Options
-			//		.getSchemeColor(Options.CLRSCHHEME_TEXT));
-
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			trafficTextList.setFontSize(Font.SIZE_MEDIUM);
 			//#sijapp cond.else#
 			//#			trafficTextList.setFontSize(Font.SIZE_SMALL);
 			//#sijapp cond.end#
 
-			this.trafficTextList.addCommand(this.resetCommand);
-			this.trafficTextList.addCommand(this.okCommand);
+			this.trafficTextList.addCommandEx(this.resetCommand, TextList.MENU_TYPE_RIGHT_BAR);
+			this.trafficTextList.addCommandEx(this.okCommand, TextList.MENU_TYPE_LEFT_BAR);
 			this.trafficTextList.setCommandListener(this);
 		}
 
@@ -381,7 +376,8 @@ public class Traffic
 		public void activate()
 		{
 			this.update(true);
-			Jimm.display.setCurrent(this.trafficTextList);
+			JimmUI.setColorScheme(this.trafficTextList);
+			this.trafficTextList.activate(Jimm.display);
 		}
 
 		// Is the traffic screen active?

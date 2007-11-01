@@ -25,8 +25,7 @@ package jimm;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Hashtable;
-import java.util.TimerTask;
+import java.util.*;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
@@ -40,67 +39,108 @@ import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.TextBox;
+import javax.microedition.lcdui.TextField;
 
-import jimm.comm.Icq;
-import jimm.comm.RequestInfoAction;
-import jimm.comm.Util;
+import jimm.comm.*;
 import jimm.util.ResourceBundle;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 
 public class JimmUI implements CommandListener
 {
+	// Last screen constants
+	static private Object lastScreen;
+	
+	public static void setLastScreen(Object screen)
+	{
+		lastScreen = screen;
+	}
+	
+	public static void backToLastScreen()
+	{
+		selectScreen(lastScreen);
+	}
+	
+	public static void selectScreen(Object screen)
+	{
+		if (screen instanceof VirtualList)
+		{
+			VirtualList vl = (VirtualList)screen;
+			vl.activate(Jimm.display);
+		}
+		else if (screen instanceof Displayable)
+		{
+			Jimm.display.setCurrent((Displayable)screen);
+		}
+		else
+		{
+			MainMenu.activate();
+		}
+	}
+	
 	// Commands codes
 	final public static int CMD_OK = 1;
-
 	final public static int CMD_CANCEL = 2;
-
 	final public static int CMD_YES = 3;
-
 	final public static int CMD_NO = 4;
-
 	final public static int CMD_FIND = 5;
-
 	final public static int CMD_BACK = 6;
 
 	// Commands
-	final private static Command cmdOk = new Command(ResourceBundle
+	final public static Command cmdOk = new Command(ResourceBundle
 			.getString("ok"), Command.OK, 1);
 
-	final private static Command cmdCancel = new Command(ResourceBundle
-			.getString("cancel"), Command.BACK, 2);
+	final public static Command cmdCancel = new Command(ResourceBundle
+			.getString("cancel"), Command.BACK, 1);
 
-	final private static Command cmdYes = new Command(ResourceBundle
+	final public static Command cmdYes = new Command(ResourceBundle
 			.getString("yes"), Command.OK, 1);
 
-	final private static Command cmdNo = new Command(ResourceBundle
+	final public static Command cmdNo = new Command(ResourceBundle
 			.getString("no"), Command.CANCEL, 2);
 
-	final private static Command cmdFind = new Command(ResourceBundle
+	final public static Command cmdFind = new Command(ResourceBundle
 			.getString("find"), Command.OK, 1);
 
-	final private static Command cmdBack = new Command(ResourceBundle
-			.getString("back"), Command.BACK, 2);
+	final public static Command cmdBack = new Command(ResourceBundle
+			.getString("back"), Command.BACK, 1);
 
-	final private static Command cmdCopyText = new Command(ResourceBundle
+	final public static Command cmdCopyText = new Command(ResourceBundle
 			.getString("copy_text"), Command.ITEM, 3);
 
-	final private static Command cmdCopyAll = new Command(ResourceBundle
+	final public static Command cmdCopyAll = new Command(ResourceBundle
 			.getString("copy_all_text"), Command.ITEM, 4);
 
-	final private static Command cmdEdit = new Command(ResourceBundle
+	final public static Command cmdEdit = new Command(ResourceBundle
 			.getString("edit"), Command.ITEM, 1);
 	
-	final private static Command cmdMenu = new Command(ResourceBundle
+	final public static Command cmdMenu = new Command(ResourceBundle
 			.getString("menu"), Command.ITEM, 1);
 	
+	final public static Command cmdSelect = new Command(ResourceBundle
+			.getString("select"), Command.OK, 2);
+	
+	private static Command cmdSend = new Command(ResourceBundle
+			.getString("send"), Command.OK, 1);
+	
+	//#sijapp cond.if modules_SMILES is "true" #
+	private static Command cmdInsertEmo = new Command(ResourceBundle
+			.getString("insert_emotion"), Command.ITEM, 3);
+	//#sijapp cond.end#
+	
+	private static Command cmdInsTemplate = new Command(ResourceBundle
+			.getString("templates"), Command.ITEM, 4);	
+	
+	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
+	public static Command cmdGotoURL = new Command(ResourceBundle.getString("goto_url"), Command.ITEM, 9);
+	//#sijapp cond.end#
+	
+	private static Command cmdClearText = new Command(ResourceBundle
+			.getString("clear"), Command.ITEM, 5);
 
 	static private CommandListener listener;
-
 	static private Hashtable commands = new Hashtable();
-
-	static private Displayable lastDisplayable;
-
 	static private JimmUI _this;
 
 	// Associate commands and commands codes 
@@ -137,26 +177,168 @@ public class JimmUI implements CommandListener
 
 	public void commandAction(Command c, Displayable d)
 	{
+		if (isControlActive(removeContactMessageBox))
+		{
+			if (c == cmdOk) menuRemoveContactSelected();
+			else backToLastScreen();
+			removeContactMessageBox = null;
+		}
+		
+		else if ((renameTextbox != null) && (d == renameTextbox))
+		{
+			if (c == cmdOk) menuRenameSelected();
+			else backToLastScreen();
+			renameTextbox = null;
+		}
+		
+		else if (isControlActive(removeMeMessageBox))
+		{
+			if (c == cmdOk) menuRemoveMeSelected();
+			else backToLastScreen();
+			removeMeMessageBox = null;
+		}
+		
+		else if (isControlActive(tlContactMenu))
+		{
+			if (c == cmdSelect) contactMenuSelected(tlContactMenu.getCurrTextIndex());
+			else backToLastScreen();
+			tlContactMenu = null;
+			clciContactMenu = null;
+		}
+		
+		else if ((authTextbox != null) && (d == authTextbox))
+		{
+			if (c == cmdSend)
+			{
+				SystemNotice notice = null;
+
+				/* If or if not a reason was entered
+				 Though this box is used twice (reason for auth request and auth repley)
+				 we have to distinguish what we wanna do requReason is used for that */
+				String textBoxText = authTextbox.getString();
+				String reasonText = (textBoxText == null || textBoxText.length() < 1) ? "" : textBoxText;
+				
+				switch (authType)
+				{
+				case AUTH_TYPE_DENY:
+					notice = new SystemNotice(
+							SystemNotice.SYS_NOTICE_AUTHORISE,
+							authContactItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+							false, reasonText);
+					break;
+				case AUTH_TYPE_REQ_AUTH:
+					notice = new SystemNotice(
+							SystemNotice.SYS_NOTICE_REQUAUTH,
+							authContactItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+							false, reasonText);
+					break;
+				}
+				
+				/* Assemble the sysNotAction and request it */
+				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
+				UpdateContactListAction updateAct = new UpdateContactListAction(
+						authContactItem, UpdateContactListAction.ACTION_REQ_AUTH);
+
+				try
+				{
+					Icq.requestAction(sysNotAct);
+					if (authContactItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
+						Icq.requestAction(updateAct);
+				} catch (JimmException e)
+				{
+					JimmException.handleException(e);
+					if (e.isCritical())
+						return;
+				}
+				
+				authContactItem.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
+				
+				authChatTextList.buildMenu();
+				authChatTextList.activate(false, false);
+			}
+			else 
+				backToLastScreen();
+			
+			authTextbox = null;
+			authChatTextList = null;
+			authContactItem = null;
+			
+			return;
+		}
+		
+		if (JimmUI.isControlActive(URLList))
+		{
+			if (c == cmdSelect)
+			{
+				try
+				{
+					Jimm.jimm.platformRequest(URLList.getCurrText(0, false));
+				} catch (Exception e) {}
+			}
+			selectScreen(lastScreenBeforeUrlSelect);
+			URLList = null;
+			lastScreenBeforeUrlSelect = null;
+			return;
+		}
+		
+		else if ((messageTextbox != null) && (d == messageTextbox))
+		{
+			if (c == cmdCancel) backToLastScreen();
+			else if (c == cmdSend)
+			{
+				switch (textMessCurMode)
+				{
+				case EDITOR_MODE_MESSAGE:
+					String messText = messageTextbox.getString();
+
+					if (messText.length() != 0)
+					{
+						sendMessage(messText);
+						messageTextbox.setString(null);
+						backToLastScreen();
+					}
+					break;
+				}
+			}
+			
+			else if (c == cmdInsertEmo)
+			{
+				Emotions.selectEmotion(messageTextbox, messageTextbox);
+			}
+			
+			else if (c == cmdInsTemplate)
+			{
+				Templates.selectTemplate(messageTextbox, messageTextbox);
+			}
+			
+			else if (c == cmdClearText)
+			{
+				messageTextbox.setString(new String());
+			}
+		}
+		
 		// "About" -> "Back"
-		if ((d == aboutTextList) && (c == cmdBack))
+		else if (JimmUI.isControlActive(aboutTextList) && (c == cmdBack))
 		{
 			synchronized (_this)
 			{
-				Jimm.display.setCurrent(lastDisplayable);
+				MainMenu.activate();
 				aboutTextList = null;
 			}
 		}
 
 		// "User info"
-		if (d == infoTextList)
+		else if (JimmUI.isControlActive(infoTextList))
 		{
 			// "User info" -> "Cancel, Back"
-			if ((c == cmdCancel) || (c == cmdBack)) cancelUserInfo();
+			if ((c == cmdCancel) || (c == cmdBack))
+			{
+				backToLastScreen();
+			}
 
 			if (c == cmdEdit)
 			{
-				EditInfo
-						.showEditForm(last_user_info, Jimm.display.getCurrent());
+				EditInfo.showEditForm(last_user_info, Jimm.display.getCurrent());
 			}
 
 			// "User info" -> "Copy text, Copy all"
@@ -168,25 +350,28 @@ public class JimmUI implements CommandListener
 		}
 
 		// "Selector"
-		if (d == lstSelector)
+		else if ((lstSelector != null) && (d == lstSelector))
 		{
 			lastSelectedItemIndex = lstSelector.getSelectedIndex();
 
 			// "Selector" -> "Cancel"
 			if (c == cmdCancel)
-				Jimm.display.setCurrent(lastDisplayable);
+			{
+				backToLastScreen();
+			}
 
 			// "Selector" -> "Ok"
 			else if ((c == cmdOk) || (c == List.SELECT_COMMAND))
-				listener.commandAction(c, d);
+				listener.commandAction(cmdOk, d);
 
 			lstSelector = null;
+			listener = null;
 
 			actionTag = -1;
 		}
 
 		// Message box
-		if (d == msgForm)
+		else if ((msgForm != null) && (d == msgForm))
 		{
 			listener.commandAction(c, d);
 			msgForm = null;
@@ -194,7 +379,7 @@ public class JimmUI implements CommandListener
 		}
 	}
 
-	public static void setCaption(Displayable ctrl, String caption)
+	public static void setCaption(Object ctrl, String caption)
 	{
 		if (ctrl instanceof VirtualList)
 		{
@@ -202,12 +387,14 @@ public class JimmUI implements CommandListener
 			vl.setCaption(caption);
 		}
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		else
-			ctrl.setTitle(caption);
+		else if (ctrl instanceof Displayable)
+		{
+			((Displayable)ctrl).setTitle(caption);
+		}
 		//#sijapp cond.end#
 	}
 
-	public static String getCaption(Displayable ctrl)
+	public static String getCaption(Object ctrl)
 	{
 		if (ctrl == null)
 			return null;
@@ -218,8 +405,10 @@ public class JimmUI implements CommandListener
 			result = vl.getCaption();
 		}
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		else
-			result = ctrl.getTitle();
+		else if (ctrl instanceof Displayable)
+		{
+			result = ((Displayable)ctrl).getTitle();
+		}
 		//#sijapp cond.end#
 
 		return result;
@@ -269,6 +458,32 @@ public class JimmUI implements CommandListener
 		msgForm.setCommandListener(_this);
 		Jimm.display.setCurrent(msgForm);
 	}
+	
+	static private TextList showMessageBox(String cap, String text, int type)
+	{
+		TextList list = new TextList(cap);
+		list.setCursorMode(TextList.SEL_NONE);
+		setColorScheme(list);
+		list.setFontSize(Font.SIZE_LARGE);
+		list.addBigText(text, list.getTextColor(), Font.STYLE_PLAIN, -1);
+		
+		switch (type)
+		{
+		case MESBOX_YESNO:
+			list.addCommandEx(cmdYes, TextList.MENU_TYPE_LEFT_BAR);
+			list.addCommandEx(cmdNo, TextList.MENU_TYPE_RIGHT_BAR);
+			break;
+
+		case MESBOX_OKCANCEL:
+			list.addCommandEx(cmdOk, TextList.MENU_TYPE_LEFT_BAR);
+			list.addCommandEx(cmdCancel, TextList.MENU_TYPE_RIGHT_BAR);
+			break;
+		}
+		
+		list.setCommandListener(_this);
+		list.activate(Jimm.display);
+		return list; 
+	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	private static TextList aboutTextList;
@@ -280,9 +495,7 @@ public class JimmUI implements CommandListener
 	{
 		System.gc();
 		long freeMem = Runtime.getRuntime().freeMemory() / 1024;
-
-		if (lastDisplayable_ != null)
-			lastDisplayable = lastDisplayable_;
+		
 		if (aboutTextList == null)
 			aboutTextList = new TextList(null);
 
@@ -336,11 +549,11 @@ public class JimmUI implements CommandListener
 					.addImage(image, null, -1).doCRLF(-1).addBigText(str.toString(), 0xffffff,
 							Font.STYLE_PLAIN, -1);
 
-			aboutTextList.addCommand(cmdBack);
+			aboutTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 			aboutTextList.setCommandListener(_this);
 
 			// Set the color sceme (background would not fit otherwise)
-			Jimm.display.setCurrent(aboutTextList);
+			aboutTextList.activate(Jimm.display);
 		} catch (Exception e)
 		{
 		}
@@ -411,14 +624,16 @@ public class JimmUI implements CommandListener
 
 	static public void setColorScheme(VirtualList vl)
 	{
-		if (vl == null)
-			return;
+		if (vl == null) return;
 
-		vl.setColors(Options.getSchemeColor(Options.CLRSCHHEME_TEXT), Options
-				.getSchemeColor(Options.CLRSCHHEME_CAP), Options
-				.getSchemeColor(Options.CLRSCHHEME_BACK), Options
-				.getSchemeColor(Options.CLRSCHHEME_BLUE), Options
-				.getSchemeColor(Options.CLRSCHHEME_TEXT));
+		vl.setColors
+		(
+			Options.getSchemeColor(Options.CLRSCHHEME_TEXT), 
+			Options.getSchemeColor(Options.CLRSCHHEME_CAP), 
+			Options.getSchemeColor(Options.CLRSCHHEME_BACK), 
+			VirtualList.getInverseColor(Options.getSchemeColor(Options.CLRSCHHEME_BACK)), 
+			Options.getSchemeColor(Options.CLRSCHHEME_TEXT)
+		);
 	}
 
 	static public void setColorScheme()
@@ -428,7 +643,7 @@ public class JimmUI implements CommandListener
 		//#sijapp cond.end#
 
 		ChatHistory.setColorScheme();
-		setColorScheme((VirtualList) ContactList.getVisibleContactListRef());
+		setColorScheme((VirtualList)ContactList.getVisibleContactListRef());
 	}
 
 	/*****************************************************************************/
@@ -464,10 +679,9 @@ public class JimmUI implements CommandListener
 
 			synchronized (_this)
 			{
-				if ((aboutTextList != null) && aboutTextList.isShown())
+				if ((aboutTextList != null) && aboutTextList.isActive())
 				{
-					aboutTextList.addBigText(version, aboutTextList
-							.getTextColor(), Font.STYLE_PLAIN, -1);
+					aboutTextList.addBigText(version, aboutTextList.getTextColor(), Font.STYLE_PLAIN, -1);
 				}
 			}
 		}
@@ -551,8 +765,7 @@ public class JimmUI implements CommandListener
 				break;
 
 			case Options.HOTKEY_NEWMSG:
-				if (item != null)
-					item.newMessage();
+				if (item != null) writeMessage(item, null);
 				break;
 
 			case Options.HOTKEY_ONOFF:
@@ -580,8 +793,7 @@ public class JimmUI implements CommandListener
 			//#sijapp cond.end#
 
 			case Options.HOTKEY_CLI_INFO:
-				if (item != null)
-					item.showClientInfo();
+				if (item != null) showClientInfo(item);
 				break;
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -724,7 +936,7 @@ public class JimmUI implements CommandListener
 		list.addBigText(ResourceBundle.getString(langStr) + ": ",
 				list.getTextColor(), Font.STYLE_PLAIN, uiBigTextIndex)
 				.addBigText(str,
-						Options.getSchemeColor(Options.CLRSCHHEME_BLUE),
+						Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING),
 						Font.STYLE_PLAIN, uiBigTextIndex)
 				.doCRLF(uiBigTextIndex);
 		uiBigTextIndex++;
@@ -851,12 +1063,6 @@ public class JimmUI implements CommandListener
 		}
 	}
 
-	static private void cancelUserInfo()
-	{
-		infoTextList = null;
-		Jimm.display.setCurrent(lastDisplayable);
-	}
-
 	static private String[] last_user_info;
 
 	static public void showUserInfo(String[] data)
@@ -901,8 +1107,7 @@ public class JimmUI implements CommandListener
 
 	static public void showInfoTextList(TextList list)
 	{
-		lastDisplayable = Jimm.display.getCurrent();
-		Jimm.display.setCurrent(list);
+		list.activate(Jimm.display);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -928,7 +1133,6 @@ public class JimmUI implements CommandListener
 		lstSelector.addCommand(cmdOk);
 		lstSelector.addCommand(cmdCancel);
 		lstSelector.setCommandListener(_this);
-		lastDisplayable = Jimm.display.getCurrent();
 		JimmUI.listener = listener;
 		Jimm.display.setCurrent(lstSelector);
 	}
@@ -1043,8 +1247,7 @@ public class JimmUI implements CommandListener
 
 		if (index == 0)
 		{
-			Alert alert = new Alert("", ResourceBundle
-					.getString("no_availible_groups"), null, AlertType.INFO);
+			Alert alert = new Alert("", ResourceBundle.getString("no_availible_groups"), null, AlertType.INFO);
 			alert.setTimeout(Alert.FOREVER);
 			Jimm.display.setCurrent(alert);
 			return null;
@@ -1071,5 +1274,454 @@ public class JimmUI implements CommandListener
 		list.doCRLF(value);
 	}
 	
+	//////
+	
+	static public boolean isControlActive(VirtualList list)
+	{
+		if (list == null) return false;
+		return list.isActive();
+	}
+	
+	//
+	// Text editor for messages
+	//
+	
+	/* Size of text area for entering mesages */
+	final public static int MAX_EDITOR_TEXT_SIZE = 2000;
+	
+	/* Textbox for entering messages */
+	private static TextBox messageTextbox;
+	
+	/* receiver for text message */
+	private static ContactListContactItem textMessReceiver;
+	
+	/* Modes constant for text editor */
+	final private static int EDITOR_MODE_MESSAGE = 200001;
+	
+	/* Current text editor mode */
+	private static int textMessCurMode; 
+	
+	private static void removeTextMessageCommands()
+	{
+		messageTextbox.removeCommand(cmdSend);
+		messageTextbox.removeCommand(cmdCancel);
+	}
+	
+	/* Write message */
+	public static void writeMessage(ContactListContactItem receiver, String initText)
+	{
+		if (messageTextbox == null)
+		{
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			messageTextbox = new TextBox(ResourceBundle.getString("message"), null, MAX_EDITOR_TEXT_SIZE, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
+			//#sijapp cond.else#
+			messageTextbox = new TextBox(ResourceBundle.getString("message"), null, MAX_EDITOR_TEXT_SIZE, TextField.ANY);
+			//#sijapp cond.end#
+		}
+		
+		textMessReceiver = receiver;
+		textMessCurMode = EDITOR_MODE_MESSAGE;
+		
+		removeTextMessageCommands();
+		messageTextbox.addCommand(cmdSend);
+		messageTextbox.addCommand(cmdCancel);
+		messageTextbox.addCommand(cmdInsertEmo);
+		messageTextbox.addCommand(cmdClearText);
+		
+		//#sijapp cond.if modules_SMILES is "true" #
+		messageTextbox.addCommand(cmdInsertEmo);
+		//#sijapp cond.end#
+		
+		messageTextbox.addCommand(cmdInsTemplate);
+		
+		if (initText != null) messageTextbox.setString(initText);
+		messageTextbox.setCommandListener(_this);
+		Jimm.display.setCurrent(messageTextbox);
+	}
 
+	public void sendMessage(String text)
+	{
+		/* Construct plain message object and request new SendMessageAction
+		 Add the new message to the chat history */
+
+		if (text == null)
+			return;
+		if (text.length() == 0)
+			return;
+
+		PlainMessage plainMsg = new PlainMessage(Options.getString(Options.OPTION_UIN), textMessReceiver, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(false), text);
+
+		SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
+		try
+		{
+			Icq.requestAction(sendMsgAct);
+		} catch (JimmException e)
+		{
+			JimmException.handleException(e);
+			if (e.isCritical())
+				return;
+		}
+		ChatHistory.addMyMessage(textMessReceiver, text, plainMsg.getNewDate(), textMessReceiver.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+
+		//#sijapp cond.if modules_HISTORY is "true" #
+		if (Options.getBoolean(Options.OPTION_HISTORY))
+			HistoryStorage.addText(textMessReceiver.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+					text, (byte) 1, ResourceBundle.getString("me"), plainMsg
+							.getNewDate());
+		//#sijapp cond.end#
+	}
+	
+	/////////////////////////////////////////////////////
+	
+	private static TextList URLList;
+	private static Object lastScreenBeforeUrlSelect;
+	
+	public static void gotoURL(String msg, Object lastScreen)
+	{
+		lastScreenBeforeUrlSelect = lastScreen;
+		Vector v = Util.parseMessageForURL(msg);
+		if (v.size() == 1)
+		{
+			try
+			{
+				Jimm.jimm.platformRequest((String) v.elementAt(0));
+			} catch (Exception e) {}
+		}
+		else
+		{
+			URLList = JimmUI.getInfoTextList(ResourceBundle.getString("goto_url"), false);
+			URLList.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT);
+			URLList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT);
+			URLList.setCommandListener(_this);
+			for (int i = 0; i < v.size(); i++)
+			{
+				URLList.addBigText((String) v.elementAt(i), URLList.getTextColor(),
+						Font.STYLE_PLAIN, i).doCRLF(i);
+			}
+			JimmUI.showInfoTextList(URLList);
+		}
+	}
+	
+	///////////////////////////////////////////////////////////
+	
+	private static int authType;
+	private static TextBox authTextbox;
+	private static ChatTextList authChatTextList;
+	private static ContactListContactItem authContactItem;
+
+	public static final int AUTH_TYPE_DENY = 10001;
+	public static final int AUTH_TYPE_REQ_AUTH = 10002;
+	
+	public static void authMessage(int authType, ChatTextList chatTextList, ContactListContactItem contactItem, String caption, String text)
+	{
+		JimmUI.authType = authType;
+		authChatTextList = chatTextList;
+		authContactItem = contactItem;
+		authTextbox = new TextBox(ResourceBundle.getString(caption), ResourceBundle.getString(text), 500, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
+		authTextbox.addCommand(cmdSend);
+		authTextbox.addCommand(cmdCancel);
+		authTextbox.setCommandListener(_this);
+		Jimm.display.setCurrent(authTextbox);
+	}
+	
+	/////////////////////////////////////////////////////////////
+	
+	private static final int USER_MENU_MESSAGE = 1;
+	private static final int USER_MENU_STATUS_MESSAGE = 3;
+	private static final int USER_MENU_REQU_AUTH = 4;
+	private static final int USER_MENU_FILE_TRANS = 5;
+	private static final int USER_MENU_CAM_TRANS = 6;
+	private static final int USER_MENU_USER_REMOVE = 7;
+	private static final int USER_MENU_REMOVE_ME = 8;
+	private static final int USER_MENU_RENAME = 9;
+    private static final int USER_MENU_HISTORY = 10;
+	private static final int USER_MENU_LOCAL_INFO = 11;
+	private static final int USER_MENU_USER_INFO = 12;
+	private static final int USER_MENU_QUOTA = 14;
+	
+	private static TextList tlContactMenu;
+	private static ContactListContactItem clciContactMenu;
+	private static TextList removeContactMessageBox;
+	private static TextList removeMeMessageBox;
+	private static TextBox renameTextbox;
+	
+	public static void showContactMenu(ContactListContactItem contact)
+	{
+		clciContactMenu = contact; 
+		tlContactMenu = new TextList(ResourceBundle.getString("user_menu"));
+		JimmUI.setColorScheme(tlContactMenu);
+		tlContactMenu.setCursorMode(VirtualList.SEL_NONE);
+		tlContactMenu.activate(Jimm.display);
+		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		tlContactMenu.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tlContactMenu.setCommandListener(_this);
+		
+		long status = contact.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+		
+		if (contact.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
+			addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH);
+		
+		addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE);
+		
+		if (JimmUI.getClipBoardText() != null)
+			addTextListItem(tlContactMenu, "quote", null, USER_MENU_QUOTA);
+		
+		addTextListItem(tlContactMenu, "info", null, USER_MENU_USER_INFO);
+		
+		if ((status != ContactList.STATUS_ONLINE)
+				&& (status != ContactList.STATUS_OFFLINE)
+				&& (status != ContactList.STATUS_INVISIBLE))
+			addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE);		
+
+		
+		if ((status != ContactList.STATUS_OFFLINE) 
+				&& contact.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8)
+		{
+			addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS);
+			//#sijapp cond.if target isnot "MOTOROLA"#
+			addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS);
+			//#sijapp cond.end#
+		}
+		
+		addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE);
+		addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME);
+		addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME);
+
+		//#sijapp cond.if modules_HISTORY is "true" #
+		addTextListItem(tlContactMenu, "history", null, USER_MENU_HISTORY);
+		//#sijapp cond.end#
+
+		if (status != ContactList.STATUS_OFFLINE)
+			addTextListItem(tlContactMenu, "dc_info", null, USER_MENU_LOCAL_INFO);
+		
+	}
+	
+	private static void contactMenuSelected(int index)
+	{
+		switch (index)
+		{
+		case USER_MENU_MESSAGE:
+			writeMessage(clciContactMenu, null);
+			break;
+			
+		case USER_MENU_QUOTA:
+			writeMessage(clciContactMenu, JimmUI.getClipBoardText());
+			break;
+			
+		case USER_MENU_STATUS_MESSAGE:
+			long status = clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+			if (!((status == ContactList.STATUS_ONLINE)
+					|| (status == ContactList.STATUS_OFFLINE) || (status == ContactList.STATUS_INVISIBLE)))
+			{
+				int msgType;
+				/* Send a status message request message */
+				if (status == ContactList.STATUS_AWAY)
+					msgType = Message.MESSAGE_TYPE_AWAY;
+				else if (status == ContactList.STATUS_OCCUPIED)
+					msgType = Message.MESSAGE_TYPE_OCC;
+				else if (status == ContactList.STATUS_DND)
+					msgType = Message.MESSAGE_TYPE_DND;
+				else if (status == ContactList.STATUS_CHAT)
+					msgType = Message.MESSAGE_TYPE_FFC;
+				else if (status == ContactList.STATUS_NA)
+					msgType = Message.MESSAGE_TYPE_NA;
+				else
+					msgType = Message.MESSAGE_TYPE_AWAY;
+
+				PlainMessage awayReq = new PlainMessage(Options.getString(Options.OPTION_UIN),
+						clciContactMenu, msgType, Util
+								.createCurrentDate(false), "");
+
+				SendMessageAction act = new SendMessageAction(awayReq);
+				try
+				{
+					Icq.requestAction(act);
+
+				} catch (JimmException e)
+				{
+					JimmException.handleException(e);
+					if (e.isCritical())
+						return;
+				}
+			}
+			break;
+			
+
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//#sijapp cond.if modules_FILES is "true"#                    
+			case USER_MENU_FILE_TRANS:
+				/* Send a filetransfer with a file given by path
+				 We can only make file transfers with ICQ clients prot V8 and up */
+				if (clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
+				{
+					JimmException.handleException(new JimmException(190, 0, true));
+				} else
+				{
+					FileTransfer ft = new FileTransfer(FileTransfer.FT_TYPE_FILE_BY_NAME, clciContactMenu);
+					ft.startFT();
+				}
+				break;
+
+			//#sijapp cond.if target isnot "MOTOROLA" #
+			case USER_MENU_CAM_TRANS:
+				/* Send a filetransfer with a camera image
+				 We can only make file transfers with ICQ clients prot V8 and up */
+				if (clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
+				{
+					JimmException.handleException(new JimmException(190, 0, true));
+				} else
+				{
+					FileTransfer ft = new FileTransfer(FileTransfer.FT_TYPE_CAMERA_SNAPSHOT, clciContactMenu);
+					ft.startFT();
+				}
+				break;
+			//#sijapp cond.end#
+			//#sijapp cond.end#
+			//#sijapp cond.end#
+			
+			case USER_MENU_USER_REMOVE:
+				removeContactMessageBox = showMessageBox
+				(
+					ResourceBundle.getString("remove") + "?", 
+					ResourceBundle.getString("remove") + " " + clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME) + "?", 
+					JimmUI.MESBOX_OKCANCEL
+				);
+				break;
+				
+			case USER_MENU_REMOVE_ME: /* Remove me from other users contact list */
+				removeMeMessageBox = showMessageBox
+				(
+					ResourceBundle.getString("remove_me") + "?",
+					ResourceBundle.getString("remove_me_from") + clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME) + "?", 
+					JimmUI.MESBOX_OKCANCEL
+				); 
+				break;
+				
+			case USER_MENU_RENAME:
+				renameTextbox = new TextBox
+				(
+					ResourceBundle.getString("rename"),
+					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+					64,
+					TextField.ANY
+				);
+				renameTextbox.addCommand(cmdOk);
+				renameTextbox.addCommand(cmdCancel);
+				renameTextbox.setCommandListener(_this);
+				Jimm.display.setCurrent(renameTextbox);
+				break;
+				
+			case USER_MENU_USER_INFO:
+				JimmUI.requiestUserInfo
+				(
+					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN), 
+					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME)
+				);
+				break;
+				
+			case USER_MENU_LOCAL_INFO:
+				showClientInfo(clciContactMenu);
+				break;
+				
+			//#sijapp cond.if modules_HISTORY is "true" #
+			case USER_MENU_HISTORY:
+				HistoryStorage.showHistoryList
+				(
+					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN), 
+					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME)
+				);
+				break;
+			//#sijapp cond.end#	
+		}
+	}
+	
+	public static void showClientInfo(ContactListContactItem cItem)
+	{
+		TextList tlist = JimmUI.getInfoTextList(
+				cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN), true);
+		String[] clInfoData = new String[JimmUI.UI_LAST_ID];
+
+		/* sign on time */
+		long signonTime = cItem.getIntValue(ContactListContactItem.CONTACTITEM_SIGNON);
+		if (signonTime > 0)
+			clInfoData[JimmUI.UI_SIGNON] = Util
+					.getDateString(false, signonTime);
+
+		/* online time */
+		long onlineTime = cItem.getIntValue(ContactListContactItem.CONTACTITEM_ONLINE);
+		if (onlineTime > 0)
+			clInfoData[JimmUI.UI_ONLINETIME] = Util
+					.longitudeToString(onlineTime);
+
+		/* idle time */
+		int idleTime = cItem.getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
+		if (idleTime > 0)
+			clInfoData[JimmUI.UI_IDLE_TIME] = Util.longitudeToString(idleTime);
+		
+		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
+
+		/* Client version */
+		int clientVers = cItem.getIntValue(ContactListContactItem.CONTACTITEM_CLIENT);
+		if (clientVers != Icq.CLI_NONE)
+			clInfoData[JimmUI.UI_ICQ_CLIENT] = Icq.getClientString((byte) clientVers)
+					+ " " + cItem.getStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION);
+
+		/* ICQ protocol version */
+		clInfoData[JimmUI.UI_ICQ_VERS] = Integer
+				.toString(cItem.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT));
+
+		/* Internal IP */
+		clInfoData[JimmUI.UI_INT_IP] = Util
+				.ipToString(cItem.getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP));
+
+		/* External IP */
+		clInfoData[JimmUI.UI_EXT_IP] = Util
+				.ipToString(cItem.getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP));
+
+		/* Port */
+		int port = cItem.getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT);
+		if (port != 0)
+			clInfoData[JimmUI.UI_PORT] = Integer.toString(port);
+		//#sijapp cond.end#
+
+		JimmUI.fillUserInfo(clInfoData, tlist);
+		JimmUI.showInfoTextList(tlist);
+	}
+
+	private static void menuRemoveContactSelected()
+	{
+		String uin = clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		ChatHistory.chatHistoryDelete(uin);
+		boolean ok = Icq.delFromContactList(clciContactMenu);
+		if (ok)
+		{
+			//#sijapp cond.if modules_HISTORY is "true" #
+			HistoryStorage.clearHistory(uin);
+			//#sijapp cond.end#
+		}
+	}
+	
+	private static void menuRemoveMeSelected()
+	{
+		RemoveMeAction remAct = new RemoveMeAction(clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+
+		try
+		{
+			Icq.requestAction(remAct);
+		} 
+		catch (JimmException e)
+		{
+			JimmException.handleException(e);
+			if (e.isCritical()) return;
+		}
+		ContactList.activate();
+	}
+	
+	private static void menuRenameSelected()
+	{
+		String newName = renameTextbox.getString();
+		if ((newName == null) || (newName.length() == 0)) return;
+		clciContactMenu.rename(newName);
+		messageTextbox.setString(null);
+	}
 }
