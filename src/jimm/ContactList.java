@@ -143,11 +143,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	private static ContactList _this;
 
-	/* Main menu command */
-	private static Command mainMenuCommand;
-
-	private static Command selectCommand;
-
 	//#sijapp cond.if modules_DEBUGLOG is "true" #
 	private static Command debugListCommand = new Command("*Debug list*",
 			Command.ITEM, 2);
@@ -190,16 +185,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	/* Initializer */
 	static
 	{
-		//#sijapp cond.if target is "MOTOROLA" #
-		//#        mainMenuCommand    = new Command(ResourceBundle.getString("menu_button"),  Command.SCREEN, 3);
-		//#sijapp cond.else #    
-		mainMenuCommand = new Command(ResourceBundle.getString("menu"),
-				Command.SCREEN, 3);
-		//#sijapp cond.end #
-
-		selectCommand = new Command(ResourceBundle.getString("select"),
-				Command.OK, 1);
-
 		/* Construct image objects */
 		smallIcons = new ImageList();
 		imageList = new ImageList();
@@ -254,11 +239,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		tree.setVTCommands(this);
 		tree.setVLCommands(this);
 
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		tree.setFullScreenMode(false);
-		//#sijapp cond.end#
-
-		tree.setImageList(imageList);
 		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
 				: VirtualList.MEDIUM_FONT);
 		tree.setStepSize(0);
@@ -268,11 +248,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		//#sijapp cond.else #
 		//#        updateTitle(0);
 		//#sijapp cond.end#
-		tree.addCommandEx(ContactList.mainMenuCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
-		tree.addCommandEx(selectCommand, VirtualList.MENU_TYPE_LEFT_BAR);
+		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tree.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
 
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
-		tree.addCommand(debugListCommand);
+		tree.addCommandEx(debugListCommand, VirtualList.MENU_TYPE_RIGHT);
 		//#sijapp cond.end#
 
 		tree.setCommandListener(this);
@@ -334,9 +314,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	}
 
 	/* *********************************************************** */
-
+	
 	/* Returns reference to tree */
-	static public Displayable getVisibleContactListRef()
+	static public VirtualList getVisibleContactListRef()
 	{
 		return tree;
 	}
@@ -392,7 +372,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Request display of the given alert and the main menu afterwards
 	static public void activate(Alert alert)
 	{
-		Jimm.display.setCurrent(alert, ContactList.tree);
+		ContactList.tree.activate(Jimm.display, alert);
 	}
 
 	// Request display of the main menu
@@ -410,7 +390,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		buildTree();
 		sortAll();
 		tree.unlock();
-		Jimm.display.setCurrent(ContactList.tree);
+		ContactList.tree.activate(Jimm.display);
+		JimmUI.setLastScreen(ContactList.tree);
 
 		//#sijapp cond.if target isnot "DEFAULT" #
 		// play sound notifications after connecting 
@@ -1300,7 +1281,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			cItem = createTempContact(uin);
 
 		/* Add message to chat */
-		ChatHistory.addMessage(uin, message, cItem);
+		ChatHistory.addMessage(cItem, message);
 
 		/* Notify splash canvas */
 		SplashCanvas.messageAvailable();
@@ -1648,8 +1629,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				.getString(newValue ? "#sound_is_off" : "#sound_is_on"), null,
 				null);
 		alert.setTimeout(1500);
-		Jimm.display.setCurrent(alert, activate ? tree : Jimm.display
-				.getCurrent());
+		
+		if (activate) tree.activate(Jimm.display, alert);
+		else  Jimm.display.setCurrent(alert, Jimm.display.getCurrent());
 		return newValue;
 	}
 
@@ -1714,9 +1696,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
 			{
 				lastChatItem = cItem;
-				cItem.activate(false);
-				return cItem
-						.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+				cItem.activate();
+				return cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 			}
 		}
 		return null;
@@ -1753,13 +1734,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	public void commandAction(Command c, Displayable d)
 	{
 		// Activate main menu
-		if (c == mainMenuCommand)
+		if (c == JimmUI.cmdMenu)
 		{
 			MainMenu.activate();
 		}
 
 		// Contact item has been selected
-		else if (c == selectCommand)
+		else if (c == JimmUI.cmdSelect)
 		{
 			TreeNode node = tree.getCurrentItem();
 			if (node == null) return;
@@ -1773,10 +1754,22 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				//#sijapp cond.end#
 
 				lastChatItem = (ContactListContactItem) item;
-				lastChatItem.activate(true);
+				lastChatItem.activate();
 			}
 			
-			if (item instanceof ContactListGroupItem) tree.setExpandFlag(node, !node.getExpanded());
+			if (item instanceof ContactListGroupItem)
+			{
+				boolean newExpanded = !node.getExpanded();
+				if (!newExpanded)
+				{
+					ContactListGroupItem gItem = (ContactListGroupItem)item;
+					ContactListContactItem[] cItems = getItems(gItem);
+					int unreadCounter = 0;
+					for (int i = 0; i < cItems.length; i++) unreadCounter += cItems[i].getUnreadMessCount();
+					gItem.setMessCount(unreadCounter);
+				}
+				tree.setExpandFlag(node, newExpanded);
+			}
 		}
 
 		//#sijapp cond.if modules_DEBUGLOG is "true" #

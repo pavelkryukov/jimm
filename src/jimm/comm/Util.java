@@ -80,7 +80,7 @@ public class Util
 		return (counter);
 
 	}
-
+	
 	public static String toHexString(byte[] b)
 	{
 		StringBuffer sb = new StringBuffer(b.length * 2);
@@ -548,7 +548,7 @@ public class Util
 	{
 
 		// Length check
-		if ((off + len > buf.length) || (buf.length % 2 != 0))
+		if ((off + len > buf.length) || (len % 2 != 0))
 		{
 			return (null);
 		}

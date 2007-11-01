@@ -33,6 +33,7 @@ import javax.microedition.lcdui.AlertType;
 import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.Jimm;
+import jimm.FileTransfer;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.util.ResourceBundle;
@@ -328,7 +329,7 @@ public class DirectConnectionAction extends Action
 				Thread.yield();
 				Icq.peerC = null;
 
-				ft.getRcvr().setFTM(null);
+				FileTransfer.clearFTM();
 
 				// Connection closed 
 				// System.out.println("File done/Conn closed");
@@ -398,8 +399,8 @@ public class DirectConnectionAction extends Action
 							+ ResourceBundle.getString("not") + " "
 							+ ResourceBundle.getString("successful") + "!",
 					null, AlertType.WARNING);
-			Jimm.display
-					.setCurrent(err, ContactList.getVisibleContactListRef());
+			
+			ContactList.getVisibleContactListRef().activate(Jimm.display);
 			break;
 
 		case ON_COMPLETE:
@@ -412,7 +413,8 @@ public class DirectConnectionAction extends Action
 							+ ResourceBundle.getString("kbs"), null,
 					AlertType.INFO);
 			ok.setTimeout(2000);
-			Jimm.display.setCurrent(ok, ContactList.getVisibleContactListRef());
+			
+			ContactList.activate(ok);
 			break;
 		}
 	}

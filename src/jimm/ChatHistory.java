@@ -24,10 +24,14 @@
 package jimm;
 
 import java.util.*;
+
 import javax.microedition.lcdui.*;
 
+import jimm.comm.Icq;
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
+import jimm.comm.SearchAction;
+import jimm.comm.SysNoticeAction;
 import jimm.comm.SystemNotice;
 import jimm.comm.UrlMessage;
 import jimm.comm.Util;
@@ -175,11 +179,10 @@ class MessData
 //# }
 //#sijapp cond.end#
 
-class ChatTextList implements VirtualListCommands
+class ChatTextList implements VirtualListCommands, CommandListener
 //#sijapp cond.if target is "SIEMENS2"#
 //#                             ,ItemStateListener
 //#                             ,ItemCommandListener
-//#                             ,CommandListener
 //#sijapp cond.end#
 {
 	//#sijapp cond.if target is "SIEMENS2"# ===>
@@ -216,16 +219,49 @@ class ChatTextList implements VirtualListCommands
 	//#sijapp cond.if target is "SIEMENS2"#
 	//#	TextListEx textList;
 	//#sijapp cond.else#
+
+	// UI modes
+	final public static int UI_MODE_NONE = 0;
+	final public static int UI_MODE_DEL_CHAT = 1;
+	
+	// Chat
 	TextList textList;
 
+	private static final Command cmdMsgReply = new Command(ResourceBundle.getString("reply", ResourceBundle.FLAG_ELLIPSIS), Command.OK, 1);
+	private static final Command cmdCloseChat = new Command(ResourceBundle.getString("close"), Command.BACK, 2);
+	private static final Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"), Command.ITEM, 4);
+	private static final Command cmdReplWithQuota = new Command(ResourceBundle.getString("quote", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
+	private static final Command cmdAddUrs = new Command(ResourceBundle.getString("add_user", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 5);
+	private static final Command cmdDenyAuth = new Command(ResourceBundle.getString("deny"), Command.CANCEL, 1);
+	
+	/* Request authorisation from a contact */
+	private static Command cmdReqAuth = new Command(ResourceBundle.getString("requauth"), Command.ITEM, 1);	
+	
+	/* Grand authorisation a for authorisation asking contact */
+	private static final  Command cmdGrantAuth = new Command(ResourceBundle.getString("grant"), Command.ITEM, 1);
+
+	//#sijapp cond.if modules_HISTORY is "true" #
+	private static final  Command cmdAddToHistory = new Command(ResourceBundle.getString("add_to_history"), Command.ITEM, 6);
 	//#sijapp cond.end#
-	public String ChatName, uin;
+
+	// Delete Chat History
+	private static final  Command cmdDelChat = new Command(ResourceBundle.getString("delete_chat", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 8);
+	
+	/* Show the message menu */
+	private static Command cmdContactMenu = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 7);
+	
+	
+	//#sijapp cond.end#
+	public String ChatName;
+	ContactListContactItem contact;
 
 	private Vector messData = new Vector();
 
 	private int messTotalCounter = 0;
+	
+	private static int currentUiMode; 
 
-	ChatTextList(String name, String uin)
+	ChatTextList(String name, ContactListContactItem contact)
 	{
 		//#sijapp cond.if target is "SIEMENS2"#
 		//#		_this = this;
@@ -238,34 +274,200 @@ class ChatTextList implements VirtualListCommands
 		//#sijapp cond.end#
 
 		textList.setCursorMode(TextList.SEL_NONE);
-		textList
-				.setFontSize(Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT) ? TextList.SMALL_FONT
-						: TextList.MEDIUM_FONT);
+		textList.setFontSize(Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT) ? TextList.SMALL_FONT : TextList.MEDIUM_FONT);
 
-		this.uin = uin;
+		this.contact = contact;
 		ChatName = name;
 		JimmUI.setColorScheme(textList);
 
 		textList.setVLCommands(this);
 	}
-
-	public Displayable getDisplayable()
+	
+	void buildMenu()
 	{
-		Displayable result;
-		//#sijapp cond.if target is "SIEMENS2"#
-		//#		result = Options.getBoolean(Options.OPTION_CLASSIC_CHAT) ? (Displayable)form : (Displayable)textList;
-		//#sijapp cond.else#
-		textList.setForcedSize(textList.getWidth(), textList.getHeight());
-		result = textList;
+		textList.removeAllCommands();
+		textList.addCommandEx(cmdMsgReply, VirtualList.MENU_TYPE_LEFT_BAR);
+		textList.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+		textList.addCommandEx(cmdCloseChat, VirtualList.MENU_TYPE_RIGHT);
+		textList.addCommandEx(cmdDelChat, VirtualList.MENU_TYPE_RIGHT);
+		textList.addCommandEx(cmdCopyText, VirtualList.MENU_TYPE_RIGHT);
+		
+		if (contact.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) 
+			textList.addCommandEx(cmdAddUrs, VirtualList.MENU_TYPE_RIGHT);
+		
+		if (JimmUI.getClipBoardText() != null) textList.addCommandEx(cmdReplWithQuota, VirtualList.MENU_TYPE_RIGHT);
+		
+		//#sijapp cond.if modules_HISTORY is "true" #
+		if (!Options.getBoolean(Options.OPTION_HISTORY)) textList.addCommandEx(cmdAddToHistory, VirtualList.MENU_TYPE_RIGHT);
 		//#sijapp cond.end#
-
-		return result;
+		
+		if (contact.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
+			textList.addCommandEx(cmdReqAuth, VirtualList.MENU_TYPE_RIGHT);
+		
+		textList.addCommandEx(cmdContactMenu, VirtualList.MENU_TYPE_RIGHT);
+		
+		checkTextForURL();
+		checkForAuthReply();
+		
+		textList.setCommandListener(this);
 	}
+	
+	public boolean isVisible()
+	{
+		if (textList != null) return textList.isActive();
+		return false;
+	}
+	
+	private Object getVisibleObject()
+	{
+		return textList;
+	}
+	
+	public void commandAction(Command c, Displayable d)
+	{
+		/* User selected chat to delete */
+		if ((currentUiMode == UI_MODE_DEL_CHAT) && (c == JimmUI.cmdOk))
+		{
+			int delType = -1;
+
+			switch (JimmUI.getLastSelIndex())
+			{
+			case 0:
+				delType = ChatHistory.DEL_TYPE_CURRENT;
+				break;
+			case 1:
+				delType = ChatHistory.DEL_TYPE_ALL_EXCEPT_CUR;
+				break;
+			case 2:
+				delType = ChatHistory.DEL_TYPE_ALL;
+				break;
+			}
+
+			ChatHistory.chatHistoryDelete(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), delType);
+			ContactList.activate();
+			return;
+		}
+		
+		/* Write new message */
+		else if (c == cmdMsgReply)
+		{
+			JimmUI.writeMessage(contact, null);
+		}
+		
+		/* Close current chat */
+		else if (c == cmdCloseChat)
+		{
+			contact.resetUnreadMessages();
+			ContactList.activate();
+		}
+		
+		/* Delete current chat */
+		else if (c == cmdDelChat)
+		{
+			currentUiMode = UI_MODE_DEL_CHAT;
+			JimmUI.showSelector("delete_chat", JimmUI.stdSelector, this, UI_MODE_DEL_CHAT, true);
+		}
+		
+		/* Copy selected text to clipboard */
+		else if (c == cmdCopyText)
+		{
+			ChatHistory.copyText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), ChatName);
+			textList.addCommandEx(cmdReplWithQuota, VirtualList.MENU_TYPE_RIGHT);
+		}
+		
+		/* Reply with quotation */
+		else if (c == cmdReplWithQuota)
+		{
+			JimmUI.writeMessage(contact, JimmUI.getClipBoardText());
+		}
+		
+		/* Open URL in web brouser */
+		else if (c == JimmUI.cmdGotoURL)
+		{
+			JimmUI.gotoURL(textList.getCurrText(0, false), getVisibleObject());
+		}
+		
+		/* Add temporary user to contact list */
+		else if (c == cmdAddUrs)
+		{
+			Search search = new Search(true);
+			String data[] = new String[Search.LAST_INDEX];
+			data[Search.UIN] = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+
+			SearchAction act = new SearchAction(search, data, SearchAction.CALLED_BY_ADDUSER);
+
+			try
+			{
+				Icq.requestAction(act);
+			} catch (JimmException e)
+			{
+				JimmException.handleException(e);
+			}
+
+			SplashCanvas.addTimerTask("wait", act, false);
+		}
+		
+		/* Add selected text to history */
+		else if (c == cmdAddToHistory)
+		{
+			int textIndex = textList.getCurrTextIndex();
+
+			MessData data = (MessData) getMessData().elementAt(textIndex);
+
+			String text = textList.getCurrText(data.getOffset(), false);
+			if (text == null)
+				return;
+
+			String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+			HistoryStorage.addText(uin, text, data.getIncoming() ? (byte) 0
+					: (byte) 1, data.getIncoming() ? ChatName : ResourceBundle
+					.getString("me"), data.getTime());
+		}
+		
+		/* Grant authorization */
+		else if (c == cmdGrantAuth)
+		{
+			contact.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
+			SystemNotice notice = new SystemNotice(
+					SystemNotice.SYS_NOTICE_AUTHORISE,
+					contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+					true, "");
+			SysNoticeAction sysNotAct = new SysNoticeAction(notice);
+			try
+			{
+				Icq.requestAction(sysNotAct);
+			} catch (JimmException e)
+			{
+				JimmException.handleException(e);
+				if (e.isCritical()) return;
+			}
+		}
+		
+		/* Deny authorization */
+		else if (c == cmdDenyAuth)
+		{
+			JimmUI.authMessage(JimmUI.AUTH_TYPE_DENY, this, contact, "reason", null);
+		}
+		
+		/* Request autorization */
+		else if (c == cmdReqAuth)
+		{
+			JimmUI.authMessage(JimmUI.AUTH_TYPE_REQ_AUTH, this, contact, "requauth", "plsauthme");
+		}
+		
+		/* Show contact menu */
+		else if (c == cmdContactMenu)
+		{
+			JimmUI.showContactMenu(contact);
+		}
+	}
+	
 
 	static int getInOutColor(boolean incoming)
 	{
-		return incoming ? 0xFF0000 : Options
-				.getSchemeColor(Options.CLRSCHHEME_BLUE);
+		return incoming 
+			? Options.getSchemeColor(Options.CLRSCHHEME_INCOMING)
+			: Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING);
 	}
 
 	Vector getMessData()
@@ -275,16 +477,34 @@ class ChatTextList implements VirtualListCommands
 
 	public void onCursorMove(VirtualList sender)
 	{
+		checkTextForURL();
+	}
+	
+	void checkTextForURL()
+	{
 		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
-		sender.removeCommand(ContactListContactItem.gotourlCommand);
+		textList.removeCommandEx(JimmUI.cmdGotoURL);
 		int messIndex = textList.getCurrTextIndex();
 		if (messIndex != -1)
 		{
 			MessData md = (MessData) getMessData().elementAt(messIndex);
-			if (md.isURL())
-				sender.addCommand(ContactListContactItem.gotourlCommand);
+			if (md.isURL()) textList.addCommandEx(JimmUI.cmdGotoURL, VirtualList.MENU_TYPE_RIGHT);
 		}
 		//#sijapp cond.end#
+	}
+	
+	void checkForAuthReply()
+	{
+		if (contact.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
+		{
+			textList.addCommandEx(cmdGrantAuth, VirtualList.MENU_TYPE_RIGHT);
+			textList.addCommandEx(cmdDenyAuth, VirtualList.MENU_TYPE_RIGHT);
+		}
+	}
+	
+	public void setImage(Image img)
+	{
+		textList.setCapImage(img);
 	}
 
 	public void onItemSelected(VirtualList sender)
@@ -313,7 +533,7 @@ class ChatTextList implements VirtualListCommands
 				}
 			}
 
-			JimmUI.execHotKey(ContactList.getItembyUIN(uin), keyCode, type);
+			JimmUI.execHotKey(contact, keyCode, type);
 		} catch (Exception e)
 		{
 			// do nothing
@@ -384,7 +604,7 @@ class ChatTextList implements VirtualListCommands
 		{
 			contains_url = true;
 			if (texOffset == 1)
-				textList.addCommand(ContactListContactItem.gotourlCommand);
+				textList.addCommandEx(JimmUI.cmdGotoURL, VirtualList.MENU_TYPE_RIGHT);
 		}
 		//#sijapp cond.end#
 		getMessData().addElement(
@@ -400,6 +620,7 @@ class ChatTextList implements VirtualListCommands
 
 	public void activate(boolean initChat, boolean resetText)
 	{
+		currentUiMode = UI_MODE_NONE;
 		//#sijapp cond.if target is "SIEMENS2"#
 		//#		if ( Options.getBoolean(Options.OPTION_CLASSIC_CHAT) )
 		//#		{
@@ -418,7 +639,8 @@ class ChatTextList implements VirtualListCommands
 		//#			Jimm.display.setCurrent(textList);
 		//#		}
 		//#sijapp cond.else#
-		Jimm.display.setCurrent(textList);
+		textList.activate(Jimm.display);
+		JimmUI.setLastScreen(textList);
 		//#sijapp cond.end#
 	}
 
@@ -495,6 +717,7 @@ public class ChatHistory
 
 	// Adds selected message to history
 	//#sijapp cond.if modules_HISTORY is "true" #
+	/*
 	static public void addTextToHistory(String uin, String from)
 	{
 		ChatTextList list = getChatHistoryAt(uin);
@@ -510,6 +733,7 @@ public class ChatHistory
 				: (byte) 1, data.getIncoming() ? from : ResourceBundle
 				.getString("me"), data.getTime());
 	}
+	*/
 
 	//#sijapp cond.end#
 
@@ -520,63 +744,53 @@ public class ChatHistory
 	}
 
 	/* Adds a message to the message display */
-	static protected synchronized void addMessage(String uin, Message message,
-			ContactListContactItem contact)
+	static protected synchronized void addMessage(ContactListContactItem contact, Message message)
 	{
+		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		if (!historyTable.containsKey(uin))
-			newChatForm(uin, contact
-					.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
-
+			newChatForm(contact, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+		
 		ChatTextList chat = (ChatTextList) historyTable.get(uin);
 
 		boolean offline = message.getOffline();
+		
+		boolean visible = chat.isVisible(); 
 
 		if (message instanceof PlainMessage)
 		{
 			PlainMessage plainMsg = (PlainMessage) message;
 
-			if (!chat.getDisplayable().isShown())
-				contact
-						.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
+			if (!visible) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
 
 			addTextToForm(uin, contact
 					.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
 					plainMsg.getText(), "", plainMsg.getNewDate(), true,
 					offline);
-
+			
 			//#sijapp cond.if modules_HISTORY is "true" #
 			if (Options.getBoolean(Options.OPTION_HISTORY))
 				HistoryStorage
 						.addText(
-								contact
-										.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+								uin,
 								plainMsg.getText(),
 								(byte) 0,
 								contact
 										.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
 								plainMsg.getNewDate());
 			//#sijapp cond.end#
-
+			
 			if (!offline)
 			{
+				// TODO: uncomment!
 				/* Popup window */
-				ContactListContactItem
-						.showPopupWindow(
-								uin,
-								contact
-										.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
-								plainMsg.getText());
-
+				//ContactListContactItem.showPopupWindow(uin, contact .getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText());
 				/* Show creeping line */
-				ContactListContactItem
-						.showCreepingLine(uin, plainMsg.getText());
+				//ContactListContactItem.showCreepingLine(uin, plainMsg.getText());
 			}
 		} else if (message instanceof UrlMessage)
 		{
 			UrlMessage urlMsg = (UrlMessage) message;
-			if (!chat.getDisplayable().isShown())
-				contact
-						.increaseMessageCount(ContactListContactItem.MESSAGE_URL);
+			if (!chat.isVisible()) contact .increaseMessageCount(ContactListContactItem.MESSAGE_URL);
 			addTextToForm(uin, contact
 					.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
 					urlMsg.getText(), urlMsg.getUrl(), urlMsg.getNewDate(),
@@ -584,7 +798,7 @@ public class ChatHistory
 		} else if (message instanceof SystemNotice)
 		{
 			SystemNotice notice = (SystemNotice) message;
-			if (!chat.getDisplayable().isShown())
+			if (!visible)
 				contact
 						.increaseMessageCount(ContactListContactItem.MESSAGE_SYS_NOTICE);
 
@@ -628,16 +842,16 @@ public class ChatHistory
 							notice.getNewDate(), false, offline);
 			}
 		}
+		chat.checkTextForURL();
+		chat.checkForAuthReply();
 	}
 
-	static protected synchronized void addMyMessage(String uin, String message,
+	static protected synchronized void addMyMessage(ContactListContactItem contact, String message,
 			long time, String ChatName)
 	{
-		if (!historyTable.containsKey(uin))
-			newChatForm(uin, ChatName);
-
-		addTextToForm(uin, ResourceBundle.getString("me"), message, "", time,
-				false, false);
+		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		if (!historyTable.containsKey(uin)) newChatForm(contact, ChatName);
+		addTextToForm(uin, ResourceBundle.getString("me"), message, "", time, false, false);
 	}
 
 	// Add text to message form
@@ -668,8 +882,7 @@ public class ChatHistory
 	{
 		ChatTextList list = getChatHistoryAt(uin);
 		int messIndex = list.textList.getCurrTextIndex();
-		if (messIndex == -1)
-			return;
+		if (messIndex == -1) return;
 		MessData md = (MessData) list.getMessData().elementAt(messIndex);
 
 		JimmUI.setClipBoardText(md.getIncoming(), Util.getDateString(false, md
@@ -733,7 +946,7 @@ public class ChatHistory
 		if (historyTable.containsKey(uin))
 		{
 			ChatTextList temp = (ChatTextList) historyTable.get(uin);
-			return temp.getDisplayable().isShown();
+			return temp.isVisible();
 		} else
 			return false;
 	}
@@ -745,15 +958,16 @@ public class ChatHistory
 	}
 
 	// Creates a new chat form
-	static private void newChatForm(String uin, String name)
+	static private void newChatForm(ContactListContactItem contact, String name)
 	{
-		ChatTextList chatForm = new ChatTextList(name, uin);
+		ChatTextList chatForm = new ChatTextList(name, contact);
+		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		historyTable.put(uin, chatForm);
 		UpdateCaption(uin);
 		ContactList.getItembyUIN(uin).setBooleanValue(
 				ContactListContactItem.CONTACTITEM_HAS_CHAT, true); ///
 		//#sijapp cond.if modules_HISTORY is "true" #
-		fillFormHistory(uin, name);
+		fillFormHistory(contact, name);
 		//#sijapp cond.end#
 	}
 
@@ -761,16 +975,16 @@ public class ChatHistory
 	//#sijapp cond.if modules_HISTORY is "true" #
 	final static private int MAX_HIST_LAST_MESS = 5;
 
-	static public void fillFormHistory(String uin, String name)
+	static public void fillFormHistory(ContactListContactItem contact, String name)
 	{
+		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		if (Options.getBoolean(Options.OPTION_SHOW_LAST_MESS))
 		{
 			int recCount = HistoryStorage.getRecordCount(uin);
 			if (recCount == 0)
 				return;
 
-			if (!chatHistoryExists(uin))
-				newChatForm(uin, name);
+			if (!chatHistoryExists(uin)) newChatForm(contact, name);
 			ChatTextList chatForm = (ChatTextList) historyTable.get(uin);
 			if (chatForm.textList.getSize() != 0)
 				return;

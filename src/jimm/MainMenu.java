@@ -77,17 +77,9 @@ public class MainMenu implements CommandListener
 
 	private static final int MENU_EXIT = 14; /* Exit has to be biggest element cause it also marks the size */
 
-	/* Abort command */
-	private static Command backCommand = new Command(ResourceBundle
-			.getString("back"), Command.BACK, 1);
-
 	/* Send command */
 	private static Command sendCommand = new Command(ResourceBundle
 			.getString("send"), Command.OK, 1);
-
-	/* Select command */
-	private static Command selectCommand = new Command(ResourceBundle
-			.getString("select"), Command.OK, 1);
 
 	//#sijapp cond.if target is "MOTOROLA" #
 	//#	private static Command exitCommand = new Command(ResourceBundle.getString("exit_button"), Command.EXIT, 1);
@@ -144,11 +136,6 @@ public class MainMenu implements CommandListener
 		return ContactList.getImageList().elementAt(imageIndex);
 	}
 
-	public static Displayable getDisplayable()
-	{
-		return list;
-	}
-
 	/* Builds the main menu (visual list) */
 	public static void build()
 	{
@@ -161,8 +148,8 @@ public class MainMenu implements CommandListener
 		int lastIndex = list.getCurrTextIndex();
 		
 		
-		list.removeCommandEx(backCommand);
-		list.removeCommandEx(selectCommand);
+		list.removeCommandEx(JimmUI.cmdBack);
+		list.removeCommandEx(JimmUI.cmdSelect);
 		
 		list.clear();
 		
@@ -202,8 +189,8 @@ public class MainMenu implements CommandListener
 		//#sijapp cond.end#
 		JimmUI.addTextListItem(list, "exit", null, MENU_EXIT);
 
-		list.addCommandEx(selectCommand, VirtualList.MENU_TYPE_LEFT_BAR);
-		if (connected) list.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
+		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		if (connected) list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 			
 		list.selectTextByIndex(lastIndex);
 			
@@ -217,14 +204,15 @@ public class MainMenu implements CommandListener
 	{
 		status = STATUS_NONE;
 		MainMenu.build();
-		Jimm.display.setCurrent(alert, MainMenu.list);
+		MainMenu.list.activate(Jimm.display, alert);
 	}
 
 	/* Activates the main menu */
 	static public void activate()
 	{
 		MainMenu.build();
-		Jimm.display.setCurrent(MainMenu.list);
+		MainMenu.list.activate(Jimm.display);
+		JimmUI.setLastScreen(MainMenu.list);
 	}
 
 	/* Show form for adding user */
@@ -237,7 +225,7 @@ public class MainMenu implements CommandListener
 		textBoxForm.append(uinTextField);
 
 		textBoxForm.addCommand(sendCommand);
-		textBoxForm.addCommand(backCommand);
+		textBoxForm.addCommand(JimmUI.cmdBack);
 		textBoxForm.setCommandListener(_this);
 		Jimm.display.setCurrent(textBoxForm);
 	}
@@ -358,11 +346,11 @@ public class MainMenu implements CommandListener
 		//#			return;
 		//#		}
 		//#sijapp cond.end#
-		if (d == groupActList)
+		if ((groupActList != null) && (d == groupActList))
 		{
-			if ((c == selectCommand) || (c == List.SELECT_COMMAND))
+			if ((c == JimmUI.cmdSelect) || (c == List.SELECT_COMMAND))
 				CLManagementItemSelected(groupActList.getSelectedIndex());
-			else if (c == backCommand)
+			else if (c == JimmUI.cmdBack)
 				activate();
 			return;
 		}
@@ -391,15 +379,20 @@ public class MainMenu implements CommandListener
 			}
 		}
 
-		/* Return to contact list */
-		else if (c == MainMenu.backCommand)
+		// Return to works screen after canceling status selection 
+		else if ((c == JimmUI.cmdBack) && JimmUI.isControlActive(statusList))
 		{
-			if ((d == MainMenu.textBoxForm) || (d == statusList))
-				MainMenu.activate();
-			else
-				ContactList.activate();
+			Jimm.showWorkScreen();
 			statusList = null;
-		} else if ((c == sendCommand) && (d == MainMenu.textBoxForm))
+		} 
+		
+		// Activate contact list after pressing "back" menu
+		else if ((c == JimmUI.cmdBack) && JimmUI.isControlActive(list))
+		{
+			ContactList.activate();
+		}
+		
+		else if ((c == sendCommand) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
 		{
 			Action act = null;
 
@@ -459,8 +452,7 @@ public class MainMenu implements CommandListener
 
 		/* Menu item has been selected */
 
-		else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand))
-				&& (d == MainMenu.list))
+		else if (((c == List.SELECT_COMMAND) || (c == JimmUI.cmdSelect)) && JimmUI.isControlActive(list))
 		{
 			int selectedIndex = MainMenu.list.getCurrTextIndex();
 			switch (selectedIndex)
@@ -511,17 +503,17 @@ public class MainMenu implements CommandListener
 				JimmUI.setColorScheme(statusList);
 				
 				MainMenu.statusList.setCommandListener(_this);
-				MainMenu.statusList.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
-				MainMenu.statusList.addCommandEx(selectCommand, VirtualList.MENU_TYPE_LEFT_BAR);
-				Jimm.display.setCurrent(MainMenu.statusList);
+				MainMenu.statusList.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+				MainMenu.statusList.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+				MainMenu.statusList.activate(Jimm.display);
 			
 				break;
 
 			case MENU_GROUPS:
 
-				groupActList = new List(ResourceBundle
-						.getString("manage_contact_list"), List.IMPLICIT);
+				groupActList = new List(ResourceBundle.getString("manage_contact_list"), List.IMPLICIT);
 
+				groupActList.deleteAll();
 				groupActList.append(ResourceBundle.getString("add_user",
 						ResourceBundle.FLAG_ELLIPSIS), null);
 				groupActList.append(ResourceBundle.getString("search_user",
@@ -533,8 +525,8 @@ public class MainMenu implements CommandListener
 				groupActList.append(ResourceBundle.getString("del_group",
 						ResourceBundle.FLAG_ELLIPSIS), null);
 				groupActList.setCommandListener(_this);
-				groupActList.addCommand(backCommand);
-				groupActList.addCommand(selectCommand);
+				groupActList.addCommand(JimmUI.cmdBack);
+				groupActList.addCommand(JimmUI.cmdSelect);
 				Jimm.display.setCurrent(groupActList);
 
 				break;
@@ -553,7 +545,7 @@ public class MainMenu implements CommandListener
 
 			case MENU_ABOUT:
 				// Display an info
-				JimmUI.about(list);
+				JimmUI.about(null);
 				break;
 
 			//#sijapp cond.if target is "MIDP2"#
@@ -582,11 +574,11 @@ public class MainMenu implements CommandListener
 		}
 
 		/* Online status has been selected */
-		else if (((c == List.SELECT_COMMAND) || (c == MainMenu.selectCommand)) && (d == MainMenu.statusList))
+		else if (((c == List.SELECT_COMMAND) || (c == JimmUI.cmdSelect)) && JimmUI.isControlActive(statusList))
 		{
 			userSelectStatus();
 		} 
-		else if ((c == selectCommand) && (d == statusMessage))
+		else if ((c == JimmUI.cmdSelect) && (d == statusMessage))
 		{
 			Options.setString(Options.OPTION_STATUS_MESSAGE, statusMessage.getString());
 			Options.safe_save();
@@ -640,7 +632,7 @@ public class MainMenu implements CommandListener
 				//#				statusMessage = new TextBox(ResourceBundle.getString("status_message"), Options.getString(Options.OPTION_STATUS_MESSAGE), 255, TextField.ANY);
 				//#sijapp cond.end#
 
-				statusMessage.addCommand(selectCommand);
+				statusMessage.addCommand(JimmUI.cmdSelect);
 				statusMessage.setCommandListener(_this);
 				Jimm.display.setCurrent(statusMessage);
 			} 

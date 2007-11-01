@@ -57,12 +57,6 @@ public class Templates implements VirtualListCommands, CommandListener
 
 	private static TextList templateList;
 
-	private static Displayable lastDisplay;
-
-	private static CommandListener selectionListener;
-
-	private static String selectedTemplate;
-
 	private static Templates _this;
 
 	private static RecordStore rms = null;
@@ -72,33 +66,35 @@ public class Templates implements VirtualListCommands, CommandListener
 	private static final int TMPL_DEL = 1;
 
 	private static final int TMPL_CLALL = 2;
+	
+	private static Object lastScreen;
+	private static TextBox textBox;
+	private static int caretPos;
 
 	public Templates()
 	{
 		_this = this;
 	}
 
-	public static void selectTemplate(CommandListener selectionListener_,
-			Displayable lastDisplay_)
+	public static void selectTemplate(TextBox textBox, Object lastScreen)
 	{
-		lastDisplay = lastDisplay_;
-		selectionListener = selectionListener_;
+		Templates.lastScreen = lastScreen;
+		Templates.textBox = textBox;
+		caretPos = textBox.getCaretPosition();
+		
 		templateList = new TextList(null);
 		JimmUI.setColorScheme(templateList);
 		templateList.setCaption(ResourceBundle.getString("templates"));
-		templateList.addCommand(selectTemplateCommand);
-		templateList.addCommand(backCommand);
-		templateList.addCommand(newTemplateCommand);
-		templateList.addCommand(clearCommand);
+		
+		templateList.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+		templateList.addCommandEx(selectTemplateCommand, VirtualList.MENU_TYPE_LEFT_BAR);
+		templateList.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT);
+		templateList.addCommandEx(newTemplateCommand, VirtualList.MENU_TYPE_RIGHT);
+		templateList.addCommandEx(clearCommand, VirtualList.MENU_TYPE_RIGHT);
 		refreshList();
 		templateList.setCommandListener(_this);
 		templateList.setVLCommands(_this);
-		Jimm.display.setCurrent(templateList);
-	}
-
-	public static String getSelectedTemplate()
-	{
-		return selectedTemplate;
+		templateList.activate(Jimm.display);
 	}
 
 	public static boolean isMyOkCommand(Command c)
@@ -123,7 +119,7 @@ public class Templates implements VirtualListCommands, CommandListener
 	{
 		if (c == backCommand)
 		{
-			Jimm.display.setCurrent(lastDisplay);
+			JimmUI.selectScreen(lastScreen);
 			templateList = null;
 		}
 
@@ -146,13 +142,13 @@ public class Templates implements VirtualListCommands, CommandListener
 		{
 			addRecord(templateTextbox.getString());
 			refreshList();
-			Jimm.display.setCurrent(templateList);
+			templateList.activate(Jimm.display);
 			templateTextbox = null;
 		}
 
 		if (c == cancelCommand)
 		{
-			Jimm.display.setCurrent(templateList);
+			templateList.activate(Jimm.display);
 			templateTextbox = null;
 		}
 
@@ -174,25 +170,23 @@ public class Templates implements VirtualListCommands, CommandListener
 			} catch (Exception e)
 			{
 			}
-			Jimm.display.setCurrent(lastDisplay);
+			JimmUI.selectScreen(lastScreen);
 			templateList = null;
 		}
 
 		if (JimmUI.getCommandType(c, TMPL_CLALL) == JimmUI.CMD_NO)
 		{
-			Jimm.display.setCurrent(templateList);
+			templateList.activate(Jimm.display);
 		}
 	}
 
 	static private void select()
 	{
-		if (templateList.getSize() == 0)
-			selectedTemplate = null;
-		else
-			selectedTemplate = getRecord(templateList.getCurrIndex());
-		Jimm.display.setCurrent(lastDisplay);
+		String selectedTemplate = null;
+		if (templateList.getSize() != 0) selectedTemplate = getRecord(templateList.getCurrIndex());
 		templateList = null;
-		selectionListener.commandAction(selectTemplateCommand, templateList);
+		JimmUI.selectScreen(lastScreen);
+		if (selectedTemplate != null) textBox.insert(selectedTemplate, caretPos);
 	}
 
 	private static void refreshList()

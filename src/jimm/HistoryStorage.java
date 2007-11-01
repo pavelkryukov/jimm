@@ -143,14 +143,15 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	public HistoryStorageList()
 	{
 		super(null);
-		addCommand(cmdSelect);
-		addCommand(cmdBack);
-		addCommand(cmdClear);
-		addCommand(cmdFind);
-		addCommand(cmdInfo);
-		addCommand(cmdCopytext);
-		addCommand(cmdExport);
-		addCommand(cmdExportAll);
+		addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+		addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT);
+		addCommandEx(cmdClear, VirtualList.MENU_TYPE_RIGHT);
+		addCommandEx(cmdFind, VirtualList.MENU_TYPE_RIGHT);
+		addCommandEx(cmdInfo, VirtualList.MENU_TYPE_RIGHT);
+		addCommandEx(cmdCopytext, VirtualList.MENU_TYPE_RIGHT);
+		addCommandEx(cmdExport, VirtualList.MENU_TYPE_RIGHT);
+		addCommandEx(cmdExportAll, VirtualList.MENU_TYPE_RIGHT);
 		//addCommand(cmdGotoURL);
 		setCommandListener(this);
 		setVLCommands(this);
@@ -169,9 +170,9 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			if (record == null)
 				return;
 			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
-			removeCommand(cmdGotoURL);
+			removeCommandEx(cmdGotoURL);
 			if (record.contains_url)
-				addCommand(cmdGotoURL);
+				addCommandEx(cmdGotoURL, VirtualList.MENU_TYPE_RIGHT);
 			//#sijapp cond.end#
 			setCaption(record.from + " " + record.date);
 		}
@@ -483,7 +484,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 				HistoryStorage.clear_all(null);
 				break;
 			}
-			Jimm.display.setCurrent(this);
+			activate(Jimm.display);
 			invalidate();
 		}
 
@@ -504,7 +505,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		// back to messages list
 		else if (c == cmdMsgBack)
 		{
-			Jimm.display.setCurrent(this);
+			activate(Jimm.display);
 		}
 
 		// next message command
@@ -559,7 +560,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 
 		else if (c == cmdFindCancel)
 		{
-			Jimm.display.setCurrent(this);
+			activate(Jimm.display);
 		}
 
 		// commands info
@@ -596,10 +597,11 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			messText = new TextList(null);
 			messText.setCursorMode(TextList.SEL_NONE);
 			messText.setCommandListener(this);
-			messText.addCommand(cmdMsgBack);
-			messText.addCommand(cmdMsgNext);
-			messText.addCommand(cmdMsgPrev);
-			messText.addCommand(cmdMsgCopyText);
+			messText.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+			messText.addCommandEx(cmdMsgBack, VirtualList.MENU_TYPE_RIGHT);
+			messText.addCommandEx(cmdMsgNext, VirtualList.MENU_TYPE_RIGHT);
+			messText.addCommandEx(cmdMsgPrev, VirtualList.MENU_TYPE_RIGHT);
+			messText.addCommandEx(cmdMsgCopyText, VirtualList.MENU_TYPE_RIGHT);
 			messText.setVLCommands(this);
 			JimmUI.setColorScheme(messText);
 		}
@@ -620,15 +622,15 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		//#sijapp cond.end#
 
 		//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
-		messText.removeCommand(cmdGotoURL);
+		messText.removeCommandEx(cmdGotoURL);
 		if (record.contains_url)
-			messText.addCommand(cmdGotoURL);
+			messText.addCommandEx(cmdGotoURL, VirtualList.MENU_TYPE_RIGHT);
 		//#sijapp cond.end#
 
 		messText.doCRLF(-1);
 		messText.setCaption(record.from);
 
-		Jimm.display.setCurrent(messText);
+		messText.activate(Jimm.display);
 		messText.repaint();
 	}
 
@@ -659,7 +661,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			return;
 		item.text = record.shortText;
 		item.color = (record.type == 0) ? getTextColor() : Options
-				.getSchemeColor(Options.CLRSCHHEME_BLUE);
+				.getSchemeColor(Options.CLRSCHHEME_OUTGOING);
 	}
 }
 
@@ -895,7 +897,7 @@ public class HistoryStorage
 		if (list.getSize() != 0)
 			list.setCurrentItem(list.getSize() - 1);
 		list.unlock();
-		Jimm.display.setCurrent(list);
+		list.activate(Jimm.display);
 	}
 
 	// Clears messages history for UIN
@@ -962,7 +964,7 @@ public class HistoryStorage
 
 			{
 				list.setCurrentItem(index);
-				Jimm.display.setCurrent(list);
+				list.activate(Jimm.display);
 				return true;
 			}
 
@@ -989,7 +991,7 @@ public class HistoryStorage
 				null, AlertType.INFO);
 
 		alert.setTimeout(Alert.FOREVER);
-		Jimm.display.setCurrent(alert, list);
+		list.activate(Jimm.display, alert);
 	}
 
 	// Clears all records for all uins

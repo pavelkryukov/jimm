@@ -357,14 +357,14 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		tree = new VirtualTree(null, false);
 		tree.setVTCommands(this);
 		tree.setVLCommands(this);
-		tree.setImageList(imageList);
+
 		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
 				: VirtualList.MEDIUM_FONT);
 		tree.setStepSize(-tree.getFontHeight() / 2);
 		tree.setCapImage(imageList.elementAt(0));
 		JimmUI.setColorScheme(tree);
 		tree.setShowButtons(false);
-		tree.addCommand(backCommand);
+		tree.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT);
 		tree.setCommandListener(this);
 	}
 
@@ -463,12 +463,13 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 
 	private static void updateTreeCaptionAndCommands(String name)
 	{
-		tree.removeCommand(openCommand);
-		tree.removeCommand(selectCommand);
+		tree.removeCommandEx(openCommand);
+		tree.removeCommandEx(selectCommand);
+		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
 		if (name.equals(PARENT_DIRECTORY))
 		{
 			int d = currDir.lastIndexOf('/', currDir.length() - 2);
-			tree.addCommand(openCommand);
+			tree.addCommandEx(openCommand, VirtualList.MENU_TYPE_LEFT_BAR);
 			tree.setCaption((d != -1) ? currDir.substring(0, d + 1)
 					: ROOT_DIRECTORY);
 		} else if (name.endsWith("/") & currDir.equals(ROOT_DIRECTORY))
@@ -481,20 +482,20 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 			} catch (Exception e)
 			{
 				e.printStackTrace();
-				tree.setTitle("???");
+				tree.setCaption("???");
 			}
 			if (needToSelectDirectory)
-				tree.addCommand(selectCommand);
-			tree.addCommand(openCommand);
+				tree.addCommandEx(selectCommand, VirtualList.MENU_TYPE_RIGHT);
+			tree.addCommandEx(openCommand, VirtualList.MENU_TYPE_LEFT_BAR);
 		} else if (name.endsWith("/") & !currDir.equals(ROOT_DIRECTORY))
 		{
 			if (needToSelectDirectory)
-				tree.addCommand(selectCommand);
-			tree.addCommand(openCommand);
+				tree.addCommandEx(selectCommand, VirtualList.MENU_TYPE_RIGHT);
+			tree.addCommandEx(openCommand, VirtualList.MENU_TYPE_LEFT_BAR);
 			tree.setCaption(currDir + name);
 		} else
 		{
-			tree.addCommand(selectCommand);
+			tree.addCommandEx(selectCommand, VirtualList.MENU_TYPE_RIGHT);
 			try
 			{
 				int file_size = 0;
@@ -548,12 +549,12 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 		currDir = ROOT_DIRECTORY;
 		items = FileSystem.getDirectoryContents(currDir, needToSelectDirectory);
 		rebuildTree();
-		Jimm.display.setCurrent(tree);
+		tree.activate(Jimm.display);
 	}
 
 	public void commandAction(Command c, Displayable d)
 	{
-		if (d == tree)
+		if (tree.isActive())
 		{
 			if (c == openCommand)
 			{

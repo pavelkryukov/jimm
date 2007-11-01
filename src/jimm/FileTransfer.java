@@ -190,6 +190,18 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 	public void onDirectorySelect(String s0)
 	{
 	}
+	
+	public static FileTransferMessage getFTM()
+	{
+		return ftm;
+	}
+	
+	public static void clearFTM()
+	{
+		ftm = null; 
+	}
+	
+	private static FileTransferMessage ftm;
 
 	// Init the ft
 	public void initFT(String filename, String description)
@@ -206,7 +218,7 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 		SplashCanvas.show();
 
 		// Send the ft message
-		FileTransferMessage ftm = new FileTransferMessage(Options
+		ftm = new FileTransferMessage(Options
 				.getString(Options.OPTION_UIN), this.cItem,
 				Message.MESSAGE_TYPE_EXTENDED, filename, description, fis,
 				fsize);
@@ -267,7 +279,7 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 		} else if (c == this.backCommand)
 		{
 			free();
-			this.getCItem().activate(true);
+			this.getCItem().activate();
 		} else if (c == SplashCanvas.cancelCommnad)
 		{
 			free();
@@ -324,8 +336,6 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 
 		private Command resCommand;
 
-		private Command selectCommand;
-
 		public ViewFinder()
 		{
 
@@ -333,9 +343,6 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 					Command.BACK, 2);
 			okCommand = new Command(ResourceBundle.getString("ok"),
 					Command.SCREEN, 1);
-			// resCommand = new Command(ResourceBundle.getString("res"), Command.SCREEN, 2);
-			selectCommand = new Command(ResourceBundle.getString("back"),
-					Command.OK, 1);
 
 			this.addCommand(backCommand);
 			this.addCommand(okCommand);

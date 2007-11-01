@@ -305,7 +305,7 @@ public class Options
 			{
 				setBoolean(OPTIONS_LANG_CHANGED, false);
 				resetLangDependedOpts();
-				System.out.println("Options.resetLangDependedOpts()");
+				//System.out.println("Options.resetLangDependedOpts()");
 			}
 		}
 		// Use default values if loading option values from record store failed
@@ -344,7 +344,7 @@ public class Options
 		//#sijapp cond.if target isnot "MOTOROLA"#
 		setBoolean(Options.OPTION_SHADOW_CON, false);
 		//#sijapp cond.end#
-		setBoolean(Options.OPTION_MD5_LOGIN, false);
+		setBoolean(Options.OPTION_MD5_LOGIN, true);
 		setBoolean(Options.OPTION_AUTO_CONNECT, false);
 		setString(Options.OPTION_HTTP_USER_AGENT, "unknown");
 		setString(Options.OPTION_HTTP_WAP_PROFILE, "unknown");
@@ -541,7 +541,6 @@ public class Options
 	/* Save option values to record store */
 	static public void save() throws IOException, RecordStoreException
 	{
-
 		/* Open record store */
 		RecordStore account = RecordStore.openRecordStore("options", true);
 
@@ -684,38 +683,34 @@ public class Options
 
 	/* Constants for color scheme */
 	private static final int CLRSCHHEME_BOW = 0; // black on white
-
 	private static final int CLRSCHHEME_WOB = 1; // white on black
-
 	private static final int CLRSCHHEME_WOBL = 2; // white on blue
 
 	/* Constants for method getSchemeColor to retrieving color from color scheme */
 	public static final int CLRSCHHEME_BACK = 1; // retrieving background color
-
 	public static final int CLRSCHHEME_TEXT = 2; // retrieving text color
-
-	public static final int CLRSCHHEME_BLUE = 3; // retrieving highlight color
-
+	public static final int CLRSCHHEME_OUTGOING = 3; // retrieving highlight color
 	public static final int CLRSCHHEME_CURS = 4; // retrieving curr mess highlight color
-
-	public static final int CLRSCHHEME_CAP = 5; // retrieving caption background color
+	public static final int CLRSCHHEME_CAP  = 5; // retrieving caption background color
+	public static final int CLRSCHHEME_INCOMING = 6; // retrieving highlight color
 
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
-
 	public static final int CONN_TYPE_HTTP = 1;
-
 	public static final int CONN_TYPE_PROXY = 2;
 
 	final static private int[] colors =
-	{ 0xFFFFFF, 0x000000, 0x0000FF, 0x404040, 0xF0F0F0, 0x000000, 0xFFFFFF,
-			0x00FFFF, 0x808080, 0x404040, 0x000080, 0xFFFFFF, 0x00FFFF,
-			0xFFFFFF, 0x000080 };
+	{// back      text      out text  cursor    caption   in text
+		0xFFFFFF, 0x000000, 0x0000FF, 0x404040, 0xF0F0F0, 0xFF0000,
+		0x000000, 0xFFFFFF, 0x00FFFF, 0x808080, 0x404040, 0xFF0000,
+		0x000080, 0xFFFFFF, 0x00FFFF, 0xFFFFFF, 0x000080, 0xFF0000,
+		0xFFA0C0, 0x000000, 0x4000C0, 0x404040, 0xFFE0D0, 0xC00040,
+	};
 
 	/* Retrieves color value from color scheme */
 	static public int getSchemeColor(int type)
 	{
-		return (colors[getInt(OPTION_COLOR_SCHEME) * 5 + type - 1]);
+		return (colors[getInt(OPTION_COLOR_SCHEME) * 6 + type - 1]);
 	}
 
 	static public void editOptions()
@@ -1505,7 +1500,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 				setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
 				
 				colorScheme = createSelector("color_scheme", "black_on_white"
-						+ "|" + "white_on_black" + "|" + "white_on_blue",
+						+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme",
 						Options.OPTION_COLOR_SCHEME);
 
 				chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),

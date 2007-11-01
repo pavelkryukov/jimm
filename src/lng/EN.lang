@@ -196,6 +196,7 @@
   "options_signaling"           "Signaling"
   "password"                    "Password"
   "phone"                       "Tel."
+  "pink_scheme"                 "Pink"
   "plength"                     "Length of charge packet in kB"
   "plsauthme"                   "Hi! Please authorise my request to add you to my contact list."
   "popup_win"                   "Popup window"

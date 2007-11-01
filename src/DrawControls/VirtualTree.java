@@ -24,6 +24,8 @@
 package DrawControls;
 
 import java.util.Vector;
+
+import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Graphics;
 
 import DrawControls.VirtualTreeCommands;
@@ -204,6 +206,7 @@ public class VirtualTree extends VirtualList
 	{
 		TreeNode currItem = getCurrentItem();
 		if (currItem == null) return;
+
 		if (autoExpand)
 		{
 			if (currItem.size() != 0)
@@ -213,11 +216,12 @@ public class VirtualTree extends VirtualList
 				invalidate();
 			}
 		}
+		else executeCommand(findMenuByType(Command.OK));
 		commands.VTnodeClicked(currItem);
 	}
 
 	//#sijapp cond.if target is "MIDP2"#
-	protected boolean pointerPressedOnUtem(int index, int x, int y)
+	protected boolean pointerPressedOnUtem(int index, int x, int y, int mode)
 	{
 		TreeNode currItem = getCurrentItem();
 		if (currItem == null) return false;
@@ -428,9 +432,10 @@ public class VirtualTree extends VirtualList
 	 false - node is collapsed */
 	)
 	{
+		if (node.expanded == value) return;
 		node.expanded = value;
-		checkCurrItem();
 		wasChanged();
+		//checkCurrItem();
 		invalidate();
 	}
 

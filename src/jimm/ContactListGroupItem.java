@@ -64,8 +64,12 @@ public class ContactListGroupItem implements ContactListItem
 	public void changeMessCount(int inc)
 	{
 		messCount += inc;
-		if (messCount < 0)
-			messCount = 0;
+		if (messCount < 0) messCount = 0;
+	}
+	
+	public void setMessCount(int value)
+	{
+		messCount = value;
 	}
 
 	// Constructor for a new group item

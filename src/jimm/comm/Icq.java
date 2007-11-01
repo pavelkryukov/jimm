@@ -273,7 +273,7 @@ public class Icq implements Runnable
 	}
 
 	// Dels a ContactListContactItem to the server saved contact list
-	static public synchronized void delFromContactList(
+	static public synchronized boolean delFromContactList(
 			ContactListContactItem cItem)
 	{
 		// Check whether contact item is temporary
@@ -299,12 +299,13 @@ public class Icq implements Runnable
 			{
 				JimmException.handleException(e);
 				if (e.isCritical())
-					return;
+					return false;
 			}
 
 			// Start timer
 			SplashCanvas.addTimerTask("wait", act2, false);
 		}
+		return true;
 	}
 
 	//#sijapp cond.if target isnot "DEFAULT"#
@@ -1104,7 +1105,7 @@ public class Icq implements Runnable
 					// 14 bytes is the overhead for ICQ HTTP data header
 					// 170 bytes is the ca. overhead of the HTTP/1.1 200 OK
 					Traffic.addTraffic(outpack.length + 40 + 190 + 14 + 170);
-					if (ContactList.getVisibleContactListRef().isShown())
+					if (ContactList.getVisibleContactListRef().isActive())
 					{
 						RunnableImpl.updateContactListCaption();
 					}
@@ -1297,7 +1298,7 @@ public class Icq implements Runnable
 					// ICQ HTTP data header is counted in bReadSum
 					Traffic.addTraffic(bReadSumRequest + 42 + 185 + 175);
 
-					if (ContactList.getVisibleContactListRef().isShown())
+					if (ContactList.getVisibleContactListRef().isActive())
 					{
 						RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);
@@ -1482,7 +1483,7 @@ public class Icq implements Runnable
 					//#sijapp cond.if modules_TRAFFIC is "true" #
 					Traffic.addTraffic(outpack.length + 51); // 51 is the overhead for each packet
 					if (Traffic.trafficScreen.isActive()
-							|| ContactList.getVisibleContactListRef().isShown())
+							|| ContactList.getVisibleContactListRef().isActive())
 					{
 						RunnableImpl.updateContactListCaption();
 					}
@@ -1603,7 +1604,7 @@ public class Icq implements Runnable
 					//#sijapp cond.if modules_TRAFFIC is "true" #
 					Traffic.addTraffic(bReadSum + 57);
 					// 46 is the overhead for each packet (6 byte flap header)
-					if (ContactList.getVisibleContactListRef().isShown())
+					if (ContactList.getVisibleContactListRef().isActive())
 					{
 						RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);
@@ -2141,7 +2142,7 @@ public class Icq implements Runnable
 					//#sijapp cond.if modules_TRAFFIC is "true" #
 					Traffic.addTraffic(outpack.length + 51); // 51 is the overhead for each packet
 					if (Traffic.trafficScreen.isActive()
-							|| ContactList.getVisibleContactListRef().isShown())
+							|| ContactList.getVisibleContactListRef().isActive())
 					{
 						RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);
@@ -2326,7 +2327,7 @@ public class Icq implements Runnable
 					Traffic.addTraffic(bReadSum + 57);
 					// 46 is the overhead for each packet (6 byte flap header)
 					if (Traffic.trafficScreen.isActive()
-							|| ContactList.getVisibleContactListRef().isShown())
+							|| ContactList.getVisibleContactListRef().isActive())
 					{
 						RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);
@@ -2550,7 +2551,7 @@ public class Icq implements Runnable
 
 					// 51 is the overhead for each packet
 					Traffic.addTraffic(outpack.length + 51);
-					if (ContactList.getVisibleContactListRef().isShown())
+					if (ContactList.getVisibleContactListRef().isActive())
 					{
 						RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);
@@ -2652,7 +2653,7 @@ public class Icq implements Runnable
 					Traffic.addTraffic(bReadSum + 53);
 
 					// 42 is the overhead for each packet (2 byte packet length)
-					if (ContactList.getVisibleContactListRef().isShown())
+					if (ContactList.getVisibleContactListRef().isActive())
 					{
 						RunnableImpl.updateContactListCaption();
 						Traffic.trafficScreen.update(false);

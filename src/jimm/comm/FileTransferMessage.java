@@ -53,7 +53,6 @@ public class FileTransferMessage extends Message
 		this.description = _description;
 		fis = is;
 		fsize = size;
-		this.rcvr.setFTM(this);
 	}
 
 	// Returns the description

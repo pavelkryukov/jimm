@@ -86,6 +86,7 @@ public class ResourceBundle {
 	public static synchronized String getString(String key) {
 		if (resources == null)
 			loadLang();
+		if (key == null) return null; 
 		String value = (String) resources.get(key);
 		if (value != null) {
 			return (value);

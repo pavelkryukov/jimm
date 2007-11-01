@@ -24,8 +24,8 @@
 package DrawControls;
 
 import javax.microedition.lcdui.*;
-import java.util.Vector;
 
+import java.util.Vector;
 import DrawControls.ImageList;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
@@ -45,8 +45,55 @@ import DrawControls.VirtualListCommands;
  user
  */
 
-public abstract class VirtualList extends Canvas
+class VirtualCanvas extends Canvas
 {
+	VirtualList currentControl;
+	
+	protected void showNotify()
+	{
+		if (currentControl != null) currentControl.showNotify();
+	}
+	
+	protected void keyPressed(int keyCode)
+	{
+		if (currentControl != null) currentControl.keyPressed(keyCode);
+	}
+	
+	protected void keyRepeated(int keyCode)
+	{
+		if (currentControl != null) currentControl.keyRepeated(keyCode); 
+	}
+
+	protected void keyReleased(int keyCode)
+	{
+		if (currentControl != null) currentControl.keyReleased(keyCode); 
+	}
+	
+	protected void pointerDragged(int x, int y)
+	{
+		if (currentControl != null) currentControl.pointerDragged(x, y); 
+	}
+	
+	protected void pointerPressed(int x, int y)
+	{
+		if (currentControl != null) currentControl.pointerPressed(x, y); 
+	}
+	
+	protected void pointerReleased(int x, int y)
+	{
+		if (currentControl != null) currentControl.pointerReleased(x, y);
+	}
+	
+	protected void paint(Graphics g)
+	{
+		if (currentControl != null) currentControl.paint(g); 
+	}
+}
+
+public abstract class VirtualList
+{
+	private static VirtualCanvas virtualCanvas = new VirtualCanvas();  
+	
 	/*! Use dotted mode of cursor. If item of list 
 	 is selected, dotted rectangle drawn around  it*/
 	public final static int SEL_DOTTED = 2;
@@ -87,9 +134,6 @@ public abstract class VirtualList extends Canvas
 
 	// Used by "Invalidate" method to prevent invalidate when locked 
 	private boolean dontRepaint = false;
-
-	// Images for VL
-	private ImageList imageList = null;
 
 	// Index for current item of VL
 	protected int currItem = 0;
@@ -140,8 +184,8 @@ public abstract class VirtualList extends Canvas
 		fullScreen = value;
 		if (current != null)
 		{
-			current.setFullScreenMode(fullScreen);
-			if (!fullScreen) current.setTitle(current.caption);
+			VirtualList.virtualCanvas.setFullScreenMode(fullScreen);
+			if (!fullScreen) VirtualList.virtualCanvas.setTitle(current.caption);
 		}
 		//#sijapp cond.end#
 	}
@@ -221,6 +265,16 @@ public abstract class VirtualList extends Canvas
 		checkTopItem();
 		invalidate();
 	}
+	
+	public int getGameAction(int keyCode)
+	{
+		return virtualCanvas.getGameAction(keyCode);
+	}
+	
+	public void repaint()
+	{
+		if (isActive()) virtualCanvas.repaint();
+	}
 
 	public void setCapImage(Image image)
 	{
@@ -241,7 +295,7 @@ public abstract class VirtualList extends Canvas
 		bkgrndColor = bkgrnd;
 		cursorColor = cursor;
 		textColor = text;
-		repaint();
+		if (isActive()) virtualCanvas.repaint();
 	}
 
 	private void createSetOfFonts(int size)
@@ -306,29 +360,65 @@ public abstract class VirtualList extends Canvas
 	{
 		return cursorMode;
 	}
+	
+	public boolean isActive()
+	{
+		return (virtualCanvas.currentControl == this) && virtualCanvas.isShown();
+	}
+	
+	public void activate(Display display)
+	{
+		if (isActive()) return;
+		virtualCanvas.currentControl = this;
+		display.setCurrent(virtualCanvas);
+		repaint();
+	}
+	
+	public void activate(Display display, Alert alert)
+	{
+		if (isActive()) return;
+		virtualCanvas.currentControl = this;
+		display.setCurrent(alert, virtualCanvas);
+		repaint();
+	}
 
 	protected void showNotify()
 	{
+		virtualCanvas.setCommandListener(commandListener);
 		current = this;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		
-		if (exMenuExists()) setFullScreenMode(true);
+		if (exMenuExists()) virtualCanvas.setFullScreenMode(true);
 		else
 		{
-			setFullScreenMode(fullScreen);
-			if (!fullScreen) setTitle(caption);
+			virtualCanvas.setFullScreenMode(fullScreen);
+			if (!fullScreen) virtualCanvas.setTitle(caption);
 		}
 		//#sijapp cond.end #
 		forcedHeight = forcedWidth = -1;
 		uiState = UI_STATE_NORMAL;
 	}
 
+	private static int maxInt(int value1, int value2)
+	{
+		return (value1 > value2) ? value1 : value2;
+	}
+
 	//! Returns height of each item in list
 	public int getItemHeight(int itemIndex)
 	{
-		int imgHeight, fontHeight = getFontHeight();
-		if (imageList != null) imgHeight = imageList.getHeight() + 1;
-		else imgHeight = 0;
+		int imgHeight = 0, fontHeight = getFontHeight();
+		//ListItem item = 
+		paintedItem.clear();
+		get(itemIndex, paintedItem);
+		if (paintedItem.leftImage != null) 
+			imgHeight = maxInt(imgHeight, paintedItem.leftImage.getHeight());
+		else if (paintedItem.secondLeftImage != null) 
+			imgHeight = maxInt(imgHeight, paintedItem.secondLeftImage.getHeight());
+		else if (paintedItem.rightImage != null) 
+			imgHeight = maxInt(imgHeight, paintedItem.secondLeftImage.getHeight());
+		else 
+			imgHeight = 0;
 		return (fontHeight > imgHeight) ? fontHeight : imgHeight;
 	}
 
@@ -336,21 +426,7 @@ public abstract class VirtualList extends Canvas
 	protected void invalidate()
 	{
 		if (dontRepaint) return;
-		repaint();
-	}
-
-	// Setting image list for items
-	public void setImageList(ImageList list)
-	{
-		imageList = list;
-		invalidate();
-	}
-
-	//! Return current image list, used for tree node icons
-	/*! If no image list stored, null is returned */
-	public ImageList getImageList()
-	{
-		return imageList;
+		if (isActive()) virtualCanvas.repaint();
 	}
 
 	// protected void checkCurrItem()
@@ -416,14 +492,95 @@ public abstract class VirtualList extends Canvas
 
 	protected void itemSelected()
 	{
+		executeCommand(findMenuByType(Command.OK));
 	}
-
+	
+	static private int visibleItemsMenuCount;
+	static private int topMenuItem;
+	
+	private Vector leftMenuPressed()
+	{
+		Vector items = null;
+		if (leftMenu != null)
+		{
+			if (leftMenuItems.size() == 0)
+			{
+				if ( executeCommand(leftMenu) ) return null;
+			}
+			else 
+			{
+				if (uiState == UI_STATE_LEFT_MENU_VISIBLE) uiState = UI_STATE_NORMAL;
+				else
+				{
+					if (!leftMenuItemsSorted)
+					{
+						sortMenuItems(leftMenuItems);
+						leftMenuItemsSorted = true;
+					}
+					uiState = UI_STATE_LEFT_MENU_VISIBLE;
+					items = leftMenuItems;
+				}
+			}
+		}
+		
+		return items;
+	}
+	
+	private Vector rightMenuPressed()
+	{
+		// System.out.println("rightMenuPressed");
+		Vector items = null;
+		if (rightMenu != null)
+		{
+			if (rightMenuItems.size() == 0)
+			{
+				if (executeCommand(rightMenu)) return null;
+			}
+			else
+			{
+				if (uiState == UI_STATE_RIGHT_MENU_VISIBLE) uiState = UI_STATE_NORMAL;
+				else
+				{
+					if (!rightMenuItemsSorted)
+					{
+						sortMenuItems(rightMenuItems);
+						rightMenuItemsSorted = true;
+					}
+					uiState = UI_STATE_RIGHT_MENU_VISIBLE;
+					items = rightMenuItems;
+				}
+			}
+		}
+		return items;
+	}
+	
+	private void initPopupMenuItems(Vector items)
+	{
+		if (items == null) return;
+		curMenuItemIndex = items.size()-1;
+		int menuItemsCount = items.size();
+		int menuHeight = getMenuHeight(menuItemsCount);
+		int drawHeight = getDrawHeight();
+		if (menuHeight > drawHeight)
+		{
+			visibleItemsMenuCount = drawHeight/menuItemsFont.getHeight();
+			topMenuItem = menuItemsCount-visibleItemsMenuCount;
+		}
+		else
+		{
+			visibleItemsMenuCount = menuItemsCount;
+			topMenuItem = 0;
+		}
+		
+	}
+	
 	// private keyReaction(int keyCode)
 	private void keyReaction(int keyCode)
 	{
 		boolean menuItemsVisible = false;
-		int lastManuIndex = curMenuItemIndex;
-		Vector menuItemsData = null;
+		
+		int lastMenuIndex = curMenuItemIndex;
+		Vector menuItemsData = null, clickedMenuItems = null;
 		switch (uiState)
 		{
 		case UI_STATE_LEFT_MENU_VISIBLE:
@@ -436,7 +593,7 @@ public abstract class VirtualList extends Canvas
 			menuItemsData = rightMenuItems;
 			break;
 		}
-		
+				
 		int lastUIState = uiState;
 		
 		try
@@ -444,33 +601,11 @@ public abstract class VirtualList extends Canvas
 			switch (getExtendedGameAction(keyCode))
 			{
 			case KEY_CODE_LEFT_MENU:
-				if (leftMenu != null)
-				{
-					if (leftMenuItems.size() == 0)
-					{
-						if ( executeCommand(leftMenu) ) return;
-					}
-					else 
-					{
-						uiState = UI_STATE_LEFT_MENU_VISIBLE;
-						curMenuItemIndex = leftMenuItems.size()-1;
-					}
-				}
+				clickedMenuItems = leftMenuPressed();
 				break;
 				
 			case KEY_CODE_RIGHT_MENU:
-				if (rightMenu != null)
-				{
-					if (rightMenuItems.size() == 0)
-					{
-						if (executeCommand(rightMenu)) return;
-					}
-					else
-					{
-						uiState = UI_STATE_RIGHT_MENU_VISIBLE;
-						curMenuItemIndex = rightMenuItems.size() - 1;
-					}
-				}
+				clickedMenuItems = rightMenuPressed();
 				break;
 				
 			case KEY_CODE_BACK_BUTTON:
@@ -512,6 +647,7 @@ public abstract class VirtualList extends Canvas
 				
 			case Canvas.FIRE:
 				if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return;
+				
 				if (menuItemsVisible)
 				{
 					uiState = UI_STATE_NORMAL;
@@ -520,13 +656,6 @@ public abstract class VirtualList extends Canvas
 				}
 				else
 				{
-					Command defaultCommand = findMenuByType(Command.OK);
-					if (defaultCommand != null)
-					{
-						executeCommand(defaultCommand);
-						return;
-					}
-					
 					itemSelected();
 					if (vlCommands != null) vlCommands.onItemSelected(this);
 				}
@@ -538,8 +667,9 @@ public abstract class VirtualList extends Canvas
 			return;
 		}
 		
+		initPopupMenuItems(clickedMenuItems);
 		
-		if ((menuItemsVisible && (lastManuIndex != curMenuItemIndex)) || (lastUIState != uiState))
+		if ((menuItemsVisible && (lastMenuIndex != curMenuItemIndex)) || (lastUIState != uiState))
 		{
 			invalidate();
 			return;
@@ -547,13 +677,13 @@ public abstract class VirtualList extends Canvas
 
 		switch (keyCode)
 		{
-		case KEY_NUM1:
+		case Canvas.KEY_NUM1:
 			storelastItemIndexes();
 			currItem = topItem = 0;
 			repaintIfLastIndexesChanged();
 			break;
 
-		case KEY_NUM7:
+		case Canvas.KEY_NUM7:
 			storelastItemIndexes();
 			int endIndex = getSize() - 1;
 			currItem = endIndex;
@@ -561,11 +691,11 @@ public abstract class VirtualList extends Canvas
 			repaintIfLastIndexesChanged();
 			break;
 
-		case KEY_NUM3:
+		case Canvas.KEY_NUM3:
 			moveCursor(-getVisCount(), false);
 			break;
 
-		case KEY_NUM9:
+		case Canvas.KEY_NUM9:
 			moveCursor(getVisCount(), false);
 			break;
 
@@ -604,7 +734,7 @@ public abstract class VirtualList extends Canvas
         String strCode = null;
         try 
         {
-            strCode = getKeyName(keyCode).toLowerCase();
+            strCode = virtualCanvas.getKeyName(keyCode).toLowerCase();
         } 
         catch(IllegalArgumentException e) 
         {
@@ -641,7 +771,7 @@ public abstract class VirtualList extends Canvas
         	return KEY_CODE_BACK_BUTTON;
         }
         
-        return getGameAction(keyCode);
+        return virtualCanvas.getGameAction(keyCode);
 	}
 
 	protected void keyPressed(int keyCode)
@@ -653,14 +783,14 @@ public abstract class VirtualList extends Canvas
 	public void setCommandListener(CommandListener l)
 	{
 		commandListener = l;
-		super.setCommandListener(l);
+		if (isActive()) virtualCanvas.setCommandListener(commandListener);
 	}
 	
-	private boolean executeCommand(Command command)
+	protected boolean executeCommand(Command command)
 	{
-		if (commandListener != null)
+		if ((commandListener != null) && (command != null))
 		{
-			commandListener.commandAction(command, this);
+			commandListener.commandAction(command, null);
 			return true;
 		}
 		return false;
@@ -699,7 +829,7 @@ public abstract class VirtualList extends Canvas
 		repaintIfLastIndexesChanged();
 	}
 
-	protected boolean pointerPressedOnUtem(int index, int x, int y)
+	protected boolean pointerPressedOnUtem(int index, int x, int y, int mode)
 	{
 		return false;
 	}
@@ -711,8 +841,6 @@ public abstract class VirtualList extends Canvas
 
 	protected void pointerPressed(int x, int y)
 	{
-		int itemY1 = getCapHeight();
-
 		// is pointing on scroller
 		if (x >= (getWidthInternal() - 3 * scrollerWidth))
 		{
@@ -720,39 +848,29 @@ public abstract class VirtualList extends Canvas
 			{
 				lastPointerYCrd = y;
 				lastPointerTopItem = topItem;
+				return;
 			}
-			return;
 		}
-
-		// is pointing on data area
 		lastPointerTopItem = -1;
-
-		int size = getSize();
-		for (int i = topItem; i < size; i++)
-		{
-			int height = getItemHeight(i);
-			int itemY2 = itemY1 + height;
-			if ((itemY1 <= y) && (y < itemY2))
-			{
-				setCurrentItem(i);
-
-				if (pointerPressedOnUtem(i, x, y) == false)
-				{
-					long time = System.currentTimeMillis();
-					if (((time - lastPointerTime) < 500) && (abs(x - lastPointerXCrd) < 10) && (abs(y - lastPointerYCrd) < 10))
-					{
-						itemSelected();
-						if (vlCommands != null) vlCommands.onItemSelected(this);
-					}
-					lastPointerTime = time;
-				}
-				break;
-			}
-			itemY1 = itemY2;
-		}
-
+		
+		int mode = DMS_CLICK;
+		long time = System.currentTimeMillis();
+		
+		if (((time - lastPointerTime) < 500) && 
+				(abs(x - lastPointerXCrd) < 10) && 
+				(abs(y - lastPointerYCrd) < 10)) mode = DMS_DBLCLICK;
+		
+		if (bDIimage == null) bDIimage = Image.createImage(getWidthInternal(), getHeightInternal());
+		paintAllOnGraphics(bDIimage.getGraphics(), mode, x, y);
+		
 		lastPointerXCrd = x;
 		lastPointerYCrd = y;
+		lastPointerTime = time;
+	}
+	
+	protected void pointerReleased(int x, int y)
+	{
+		
 	}
 
 	//#sijapp cond.end#
@@ -765,7 +883,7 @@ public abstract class VirtualList extends Canvas
 
 		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
 		if (fullScreen || exMenuExists()) invalidate();
-		else setTitle(capt);
+		else if (isActive()) virtualCanvas.setTitle(capt);
 		//#sijapp cond.else#
 		//# 	invalidate();
 		//#sijapp cond.end#
@@ -817,12 +935,14 @@ public abstract class VirtualList extends Canvas
 	}
 
 	// private int drawCaption(Graphics g)
-	protected int drawCaption(Graphics g)
+	protected int drawCaption(Graphics g, int mode, int curX, int curY)
 	{
 		if (caption == null) return 0;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (!fullScreen && !exMenuExists()) return 0;
 		//#sijapp cond.end#
+		
+		if (mode != DMS_DRAW) return getCapHeight();
 
 		int width = getWidthInternal();
 		g.setFont(capFont);
@@ -848,13 +968,6 @@ public abstract class VirtualList extends Canvas
 	protected boolean isItemSelected(int index)
 	{
 		return ((currItem == index) && (cursorMode != SEL_NONE));
-	}
-
-	// private int drawItem(int index, Graphics g, int top_y, int th, ListItem item)
-	private int drawItem(int index, Graphics g, int yCrd, int itemWidth, int itemHeight, int fontHeight)
-	{
-		drawItemData(g, index, 1, yCrd, itemWidth-2, yCrd + itemHeight, fontHeight);
-		return yCrd + itemHeight;
 	}
 
 	private static int srcollerY1 = -1;
@@ -918,42 +1031,45 @@ public abstract class VirtualList extends Canvas
 		return getQuickFont(Font.STYLE_PLAIN).getHeight();
 	}
 
-	// private int drawItems(Graphics g, int top_y)
-	private int drawItems(Graphics g, int top_y, int fontHeight, int menuBarHeight)
+	// private boolean drawItems(Graphics g, int top_y)
+	private boolean drawItems(Graphics g, int top_y, int fontHeight, int menuBarHeight, int mode, int curX, int curY)
 	{
 		int grCursorY1 = -1, grCursorY2 = -1;
 		int height = getHeightInternal();
 		int size = getSize();
 		int i, y;
 		int itemWidth = getWidthInternal() - scrollerWidth;
-
-		// Fill background
-		g.setColor(bkgrndColor);
-		g.fillRect(0, top_y, itemWidth, height - top_y);
-
-		// Draw cursor
-		y = top_y;
-		for (i = topItem; i < size; i++)
+		
+		if (mode == DMS_DRAW)
 		{
-			int itemHeight = getItemHeight(i);
-			if (isItemSelected(i))
+			// Fill background
+			g.setColor(bkgrndColor);
+			g.fillRect(0, top_y, itemWidth, height - top_y);
+
+			// Draw cursor
+			y = top_y;
+			for (i = topItem; i < size; i++)
 			{
-				if (grCursorY1 == -1) grCursorY1 = y;
-				grCursorY2 = y + itemHeight - 1;
+				int itemHeight = getItemHeight(i);
+				if (isItemSelected(i))
+				{
+					if (grCursorY1 == -1) grCursorY1 = y;
+					grCursorY2 = y + itemHeight - 1;
+				}
+				y += itemHeight;
+				if (y >= height) break;
 			}
-			y += itemHeight;
-			if (y >= height) break;
-		}
 
-		if (grCursorY1 != -1)
-		{
-			g.setStrokeStyle(Graphics.DOTTED);
-			g.setColor(cursorColor);
-			boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1) : false;
-			if (!isCursorUpper) g.drawLine(1, grCursorY1, itemWidth - 2, grCursorY1);
-			g.drawLine(0, grCursorY1 + 1, 0, grCursorY2 - 1);
-			g.drawLine(itemWidth - 1, grCursorY1 + 1, itemWidth - 1, grCursorY2 - 1);
-			g.drawLine(1, grCursorY2, itemWidth - 2, grCursorY2);
+			if (grCursorY1 != -1)
+			{
+				g.setStrokeStyle(Graphics.DOTTED);
+				g.setColor(cursorColor);
+				boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1) : false;
+				if (!isCursorUpper) g.drawLine(1, grCursorY1, itemWidth - 2, grCursorY1);
+				g.drawLine(0, grCursorY1 + 1, 0, grCursorY2 - 1);
+				g.drawLine(itemWidth - 1, grCursorY1 + 1, itemWidth - 1, grCursorY2 - 1);
+				g.drawLine(1, grCursorY2, itemWidth - 2, grCursorY2);
+			}
 		}
 
 		// Draw items
@@ -963,11 +1079,43 @@ public abstract class VirtualList extends Canvas
 		{
 			int itemHeight = getItemHeight(i);
 			g.setStrokeStyle(Graphics.SOLID);
-			y = drawItem(i, g, y, itemWidth, itemHeight, fontHeight);
+			
+			int x1 = 1;
+			int x2 = itemWidth-2;
+			int y1 = y;
+			int y2 = y + itemHeight;
+			if (mode == DMS_DRAW)
+			{
+				drawItemData(g, i, x1, y1, x2, y2, fontHeight);
+			}
+			else
+			{
+				if ((y1 < curY) && (curY < y2) && (x1 < curX) && (curX < x2))
+				{
+					switch (mode)
+					{
+					case DMS_CLICK:
+						if (currItem != i)
+						{
+							currItem = i;
+							invalidate();
+						}
+						break;
+						
+					case DMS_DBLCLICK:
+						itemSelected();
+						break;
+					}
+
+					pointerPressedOnUtem(i, curX-x1, curY-y1, mode);
+					return true;
+				}
+			}
+			y += itemHeight;
 			if (y >= height) break;
 		}
 
-		return y;
+		return false;
 	}
 
 	void init()
@@ -993,7 +1141,7 @@ public abstract class VirtualList extends Canvas
 		return r | (g << 8) | (b << 16);
 	}
 	
-	static private int getInverseColor(int color)
+	static public int getInverseColor(int color)
 	{
 		int r = (color & 0xFF);
 		int g = ((color & 0xFF00) >> 8);
@@ -1001,39 +1149,61 @@ public abstract class VirtualList extends Canvas
 		return ((r+g+b) > 3*127) ? 0 : 0xFFFFFF;
 	}
 
-	public void paintAllOnGraphics(Graphics graphics)
+	public void paintAllOnGraphics(Graphics graphics, int mode, int curX, int curY)
 	{
 		int visCount = getVisCount();
-		int y = drawCaption(graphics);
 		int menuBarHeight = getMenuBarHeight();
-		drawItems(graphics, y, getFontHeight(), menuBarHeight);
-		if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight);
-		drawScroller(graphics, y, visCount, menuBarHeight);
-		drawMenuItems(graphics, menuBarHeight);
+		int y = drawCaption(graphics, mode, curX, curY);
+		
+		switch (mode)
+		{
+		case DMS_DRAW:
+			drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, curX, curY);
+			if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight, mode, curX, curY);
+			drawScroller(graphics, y, visCount, menuBarHeight);
+			drawMenuItems(graphics, menuBarHeight, mode, curX, curY);
+			break;
+			
+		case DMS_CLICK:
+		case DMS_DBLCLICK:
+			boolean clicked;
+			if (menuBarHeight != 0)
+			{
+				clicked = drawMenuBar(graphics, menuBarHeight, mode, curX, curY);
+				if (clicked) return;
+			}
+			
+			clicked = drawMenuItems(graphics, menuBarHeight, mode, curX, curY);
+			if (clicked) return;
+			clicked = drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, curX, curY);
+			if (clicked) return;
+			break;
+		}
+
 	}
 
-	static Image bDIimage = null;
+	static private Image bDIimage = null;
 
 	// protected void paint(Graphics g)
 	protected void paint(Graphics g)
 	{
 		if (dontRepaint) return;
 
-		if (isDoubleBuffered())
+		if (virtualCanvas.isDoubleBuffered())
 		{
-			paintAllOnGraphics(g);
+			paintAllOnGraphics(g, DMS_DRAW, -1, -1);
 		}
 		else
 		{
 			try
 			{
 				if (bDIimage == null) bDIimage = Image.createImage(getWidthInternal(), getHeightInternal());
-				paintAllOnGraphics(bDIimage.getGraphics());
+				paintAllOnGraphics(bDIimage.getGraphics(), DMS_DRAW, -1, -1);
 				g.drawImage(bDIimage, 0, 0, Graphics.TOP | Graphics.LEFT);
 			}
 			catch (Exception e)
 			{
-				paintAllOnGraphics(g);
+				paintAllOnGraphics(g, DMS_DRAW, -1, -1);
 			}
 		}
 	}
@@ -1126,13 +1296,24 @@ public abstract class VirtualList extends Canvas
 
 	protected int getHeightInternal()
 	{
-		return (forcedHeight == -1) ? getHeight() : forcedHeight;
+		return (forcedHeight == -1) ? virtualCanvas.getHeight() : forcedHeight;
 	}
 
 	protected int getWidthInternal()
 	{
-		return (forcedWidth == -1) ? getWidth() : forcedWidth;
+		return (forcedWidth == -1) ? virtualCanvas.getWidth() : forcedWidth;
 	}
+	
+	public int getWidth()
+	{
+		return virtualCanvas.getWidth();
+	}
+	
+	public int getHeight()
+	{
+		return virtualCanvas.getHeight();
+	}
+	
 	
 	///////////////////////////////
 	//                           //
@@ -1159,8 +1340,10 @@ public abstract class VirtualList extends Canvas
 	private Command rightMenu;
 	private Vector leftMenuItems = new Vector();
 	private Vector rightMenuItems = new Vector();
+	private boolean leftMenuItemsSorted = true;
+	private boolean rightMenuItemsSorted = true;
 	
-	private void drawMenuBar(Graphics g, int height)
+	private boolean drawMenuBar(Graphics g, int height, int style, int curX, int curY)
 	{
 		int y1 = getHeightInternal()-height;
 		int y2 = getHeightInternal();
@@ -1168,7 +1351,10 @@ public abstract class VirtualList extends Canvas
 		int layer = height/4;
 		boolean defaultMenu = false;
 		
-		drawRect(g, transformColorLight(capBkCOlor, -32), capBkCOlor, 0, y1, width, y2);
+		if (style == DMS_DBLCLICK) return false;
+		
+		if (style == DMS_DRAW)
+			drawRect(g, transformColorLight(capBkCOlor, -32), capBkCOlor, 0, y1, width, y2);
 		
 		g.setFont(menuBarFont);
 		
@@ -1177,6 +1363,13 @@ public abstract class VirtualList extends Canvas
 		boolean menuItemsVisible = false;
 		if (leftMenu != null)
 		{
+			if ((style == DMS_CLICK) && (y1 <= curY) && (curY < y2) && (curX < getWidthInternal()/2))
+			{
+				Vector items = leftMenuPressed();
+				initPopupMenuItems(items);
+				invalidate();
+				return true;
+			}
 			if (uiState == UI_STATE_LEFT_MENU_VISIBLE)
 			{
 				menuItemsVisible = true;
@@ -1190,6 +1383,14 @@ public abstract class VirtualList extends Canvas
 		
 		if (rightMenu != null)
 		{
+			if ((style == DMS_CLICK) && (y1 <= curY) && (curY < y2) && (curX >= getWidthInternal()/2))
+			{
+				Vector items = rightMenuPressed();
+				initPopupMenuItems(items);
+				invalidate();
+				return true;
+			}
+			
 			String text = rightMenu.getLabel();
 			if (uiState == UI_STATE_RIGHT_MENU_VISIBLE)
 			{
@@ -1223,9 +1424,10 @@ public abstract class VirtualList extends Canvas
 		
 		g.setColor(transformColorLight(capBkCOlor, -128));
 		g.drawLine(0, y1, width, y1);
+		return false;
 	}
 	
-	private Command findMenuByType(int type)
+	protected Command findMenuByType(int type)
 	{
 		if ((leftMenu != null) && (leftMenu.getCommandType() == type)) return leftMenu;
 		
@@ -1269,11 +1471,19 @@ public abstract class VirtualList extends Canvas
 			break;
 			
 		case MENU_TYPE_LEFT:
-			leftMenuItems.addElement(cmd);
+			if (leftMenuItems.indexOf(cmd) == -1)
+			{
+				leftMenuItems.addElement(cmd);
+				leftMenuItemsSorted = false;
+			}
 			break;
 			
 		case MENU_TYPE_RIGHT:
-			rightMenuItems.addElement(cmd);
+			if (rightMenuItems.indexOf(cmd) == -1)
+			{
+				rightMenuItems.addElement(cmd);
+				rightMenuItemsSorted = false;
+			}
 			break;
 		}
 		invalidate();
@@ -1297,36 +1507,60 @@ public abstract class VirtualList extends Canvas
 		rightMenuItems.removeElement(cmd);
 	}
 	
-	private void drawMenuItems(Graphics g, int menuBarHeight)
+	public void removeAllCommands()
+	{
+		leftMenu = null;
+		rightMenu = null;
+		leftMenuItems.removeAllElements();
+		rightMenuItems.removeAllElements();
+	}
+	
+	private boolean drawMenuItems(Graphics g, int menuBarHeight, int style, int curX, int curY)
 	{
 		switch (uiState)
 		{
 		case UI_STATE_LEFT_MENU_VISIBLE:
-			drawManuItems(g, leftMenuItems, getHeightInternal()-menuBarHeight, Graphics.LEFT);
-			break;
+			return drawMenuItems(g, leftMenuItems, getHeightInternal()-menuBarHeight, Graphics.LEFT, style, curX, curY);
 			
 		case UI_STATE_RIGHT_MENU_VISIBLE:
-			drawManuItems(g, rightMenuItems, getHeightInternal()-menuBarHeight, Graphics.RIGHT);
-			break;
+			return drawMenuItems(g, rightMenuItems, getHeightInternal()-menuBarHeight, Graphics.RIGHT, style, curX, curY);
 		}
+		return false;
 	}
 	
-	private void drawManuItems(Graphics g, Vector items, int bottom, int horizAlign)
+	private static int getMenuHeight(int count)
+	{
+		int fontHeight = menuItemsFont.getHeight();
+		return 2*fontHeight/3+fontHeight*count;
+	}
+	
+	private static final int DMS_DRAW = 1;
+	private static final int DMS_CLICK = 2;
+	private static final int DMS_DBLCLICK = 3;
+	
+	private boolean drawMenuItems(Graphics g, Vector items, int bottom, int horizAlign, int mode, int curX, int curY)
 	{
 		int fontHeight = menuItemsFont.getHeight(); 
 		int layer = fontHeight/3;
 		
+		int itemsCount = items.size();
+		
 		// calculate width and height
 		int width = 0;
-		int height = layer*2;
-		for (int i = items.size()-1; i >= 0; i--)
+		int height = getMenuHeight(itemsCount);
+		for (int i = 0; i < itemsCount; i++)
 		{
 			Command cmd = (Command)items.elementAt(i);
 			int txtWidth = menuItemsFont.stringWidth(cmd.getLabel());
 			if (txtWidth > width) width = txtWidth;
-			height += fontHeight;
 		}
 		width += layer*2;
+	
+		// If all menues don't fit into screen height
+		if (visibleItemsMenuCount != itemsCount)
+		{
+			height += fontHeight;
+		}
 		
 		int y = bottom-height;
 		int x = 0;
@@ -1341,21 +1575,27 @@ public abstract class VirtualList extends Canvas
 		}
 		
 		// Draw rectangle
-		drawRect(g, transformColorLight(bkgrndColor, -12), transformColorLight(bkgrndColor, -32), x, y, x+width, y+height);
-		g.setColor(transformColorLight(bkgrndColor, -128));
-		g.drawRect(x, y, width, height);
+		if (mode == DMS_DRAW)
+		{
+			drawRect(g, transformColorLight(capBkCOlor, -12), transformColorLight(capBkCOlor, -32), x, y, x+width, y+height);
+			g.setColor(getInverseColor(capBkCOlor));
+			g.drawRect(x, y, width, height);
+		}
 		
 		// Draw items
 		g.setFont(menuItemsFont);
 		
 		int itemY = y+layer;
 		
-		for (int i = 0; i < items.size(); i++)
+		for (int i = topMenuItem; i < visibleItemsMenuCount; i++)
 		{
 			if (i == curMenuItemIndex)
 			{
-				g.setColor(capTxtColor);
-				g.fillRect(x, itemY-1, width+1, fontHeight+2);
+				if (mode == DMS_DRAW)
+				{
+					g.setColor(capTxtColor);
+					g.fillRect(x, itemY-1, width+1, fontHeight+2);
+				}
 			}
 			itemY += fontHeight;
 		}
@@ -1364,10 +1604,52 @@ public abstract class VirtualList extends Canvas
 		for (int i = 0; i < items.size(); i++)
 		{
 			Command cmd = (Command)items.elementAt(i);
-			g.setColor((i == curMenuItemIndex) ? getInverseColor(capTxtColor) : capTxtColor);
-			g.drawString(cmd.getLabel(), x+layer, itemY, Graphics.LEFT|Graphics.TOP);
+			switch (mode)
+			{
+			case DMS_DRAW:
+				g.setColor((i == curMenuItemIndex) ? getInverseColor(capTxtColor) : capTxtColor);
+				g.drawString(cmd.getLabel(), x+layer, itemY, Graphics.LEFT|Graphics.TOP);
+				break;
+				
+			case DMS_CLICK:
+				int y1 = itemY;
+				int y2 = itemY+fontHeight;
+				int x1 = x;
+				int x2 = x+width;
+				if ((x1 < curX) && (curX < x2) && (y1 < curY) && (curY < y2))
+				{
+					uiState = UI_STATE_NORMAL;
+					invalidate();
+					executeCommand(cmd);
+					return true;
+				}
+				break;
+			}
 			itemY += fontHeight;
 		}
+		return false;
+	}
+	
+	static private void sortMenuItems(Vector items)
+	{
+		int size = items.size()-1;
+		boolean swaped;
+		do
+		{
+			swaped = false; 
+			for (int i = 0; i < size; i++)
+			{
+				Command cmd1 = (Command)items.elementAt(i);
+				Command cmd2 = (Command)items.elementAt(i+1);
+				if (cmd1.getPriority() < cmd2.getPriority())
+				{
+					items.setElementAt(cmd2, i);
+					items.setElementAt(cmd1, i+1);
+					swaped = true;
+				}
+			}
+		}
+		while (swaped);
 	}
 
 	//#sijapp cond.if target="MOTOROLA"#
