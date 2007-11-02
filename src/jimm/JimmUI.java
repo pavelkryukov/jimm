@@ -266,6 +266,7 @@ public class JimmUI implements CommandListener
 			return;
 		}
 		
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (JimmUI.isControlActive(URLList))
 		{
 			if (c == cmdSelect)
@@ -280,6 +281,7 @@ public class JimmUI implements CommandListener
 			lastScreenBeforeUrlSelect = null;
 			return;
 		}
+		//#sijapp cond.end#
 		
 		else if ((messageTextbox != null) && (d == messageTextbox))
 		{
@@ -301,10 +303,12 @@ public class JimmUI implements CommandListener
 				}
 			}
 			
+			//#sijapp cond.if modules_SMILES is "true" #
 			else if (c == cmdInsertEmo)
 			{
 				Emotions.selectEmotion(messageTextbox, messageTextbox);
 			}
+			//#sijapp cond.end#
 			
 			else if (c == cmdInsTemplate)
 			{
@@ -1326,7 +1330,6 @@ public class JimmUI implements CommandListener
 		removeTextMessageCommands();
 		messageTextbox.addCommand(cmdSend);
 		messageTextbox.addCommand(cmdCancel);
-		messageTextbox.addCommand(cmdInsertEmo);
 		messageTextbox.addCommand(cmdClearText);
 		
 		//#sijapp cond.if modules_SMILES is "true" #
@@ -1373,7 +1376,8 @@ public class JimmUI implements CommandListener
 	}
 	
 	/////////////////////////////////////////////////////
-	
+
+	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	private static TextList URLList;
 	private static Object lastScreenBeforeUrlSelect;
 	
@@ -1402,6 +1406,7 @@ public class JimmUI implements CommandListener
 			JimmUI.showInfoTextList(URLList);
 		}
 	}
+	//#sijapp cond.end#
 	
 	///////////////////////////////////////////////////////////
 	
@@ -1418,7 +1423,13 @@ public class JimmUI implements CommandListener
 		JimmUI.authType = authType;
 		authChatTextList = chatTextList;
 		authContactItem = contactItem;
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		authTextbox = new TextBox(ResourceBundle.getString(caption), ResourceBundle.getString(text), 500, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
+		//#sijapp cond.else#
+		authTextbox = new TextBox(ResourceBundle.getString(caption), ResourceBundle.getString(text), 500, TextField.ANY);
+		//#sijapp cond.end#
+
+		
 		authTextbox.addCommand(cmdSend);
 		authTextbox.addCommand(cmdCancel);
 		authTextbox.setCommandListener(_this);
@@ -1475,6 +1486,7 @@ public class JimmUI implements CommandListener
 			addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE);		
 
 		
+		//#sijapp cond.if modules_FILES is "true"#
 		if ((status != ContactList.STATUS_OFFLINE) 
 				&& contact.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8)
 		{
@@ -1483,6 +1495,7 @@ public class JimmUI implements CommandListener
 			addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS);
 			//#sijapp cond.end#
 		}
+		//#sijapp cond.end#
 		
 		addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE);
 		addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME);

@@ -30,7 +30,9 @@ import jimm.ContactList;
 import jimm.ContactListContactItem;
 import jimm.DebugLog;
 import jimm.Jimm;
+//#sijapp cond.if modules_FILES is "true"#
 import jimm.FileTransfer;
+//#sijapp cond.end#
 import jimm.RunnableImpl;
 import jimm.JimmException;
 import jimm.Options;

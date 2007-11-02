@@ -382,10 +382,12 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		}
 		
 		/* Open URL in web brouser */
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		else if (c == JimmUI.cmdGotoURL)
 		{
 			JimmUI.gotoURL(textList.getCurrText(0, false), getVisibleObject());
 		}
+		//#sijapp cond.end#
 		
 		/* Add temporary user to contact list */
 		else if (c == cmdAddUrs)
@@ -408,6 +410,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		}
 		
 		/* Add selected text to history */
+		//#sijapp cond.if modules_HISTORY is "true" #
 		else if (c == cmdAddToHistory)
 		{
 			int textIndex = textList.getCurrTextIndex();
@@ -423,6 +426,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 					: (byte) 1, data.getIncoming() ? ChatName : ResourceBundle
 					.getString("me"), data.getTime());
 		}
+		//#sijapp cond.end#
 		
 		/* Grant authorization */
 		else if (c == cmdGrantAuth)
