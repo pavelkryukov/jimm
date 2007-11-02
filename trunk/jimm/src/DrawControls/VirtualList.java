@@ -49,6 +49,19 @@ class VirtualCanvas extends Canvas
 {
 	VirtualList currentControl;
 	
+	public VirtualCanvas()
+	{
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		setFullScreenMode(true);
+		//#sijapp cond.end#
+	}
+	
+	protected void paint(Graphics g)
+	{
+		if (currentControl != null) currentControl.paint(g); 
+	}
+
+	
 	protected void showNotify()
 	{
 		if (currentControl != null) currentControl.showNotify();
@@ -69,6 +82,7 @@ class VirtualCanvas extends Canvas
 		if (currentControl != null) currentControl.keyReleased(keyCode); 
 	}
 	
+	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	protected void pointerDragged(int x, int y)
 	{
 		if (currentControl != null) currentControl.pointerDragged(x, y); 
@@ -83,11 +97,7 @@ class VirtualCanvas extends Canvas
 	{
 		if (currentControl != null) currentControl.pointerReleased(x, y);
 	}
-	
-	protected void paint(Graphics g)
-	{
-		if (currentControl != null) currentControl.paint(g); 
-	}
+	//#sijapp cond.end#
 }
 
 public abstract class VirtualList
@@ -144,9 +154,7 @@ public abstract class VirtualList
 	// Used to catch changes to repaint data
 	private int lastCurrItem = 0, lastTopItem = 0;
 
-	private static VirtualList current;
-
-	private static boolean fullScreen = false;
+	private boolean fullScreen = false;
 
 	private Image capImage;
 	
@@ -177,18 +185,19 @@ public abstract class VirtualList
 		paintedItem = new ListItem();
 	}
 
-	static public void setFullScreen(boolean value)
+	public void setFullScreen(boolean value)
 	{
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (fullScreen == value) return;
 		fullScreen = value;
-		if (current != null)
-		{
-			VirtualList.virtualCanvas.setFullScreenMode(fullScreen);
-			if (!fullScreen) VirtualList.virtualCanvas.setTitle(current.caption);
-		}
-		//#sijapp cond.end#
+		if (isActive()) virtualCanvas.repaint();
 	}
+	
+	public static void setFullScreenForCurrent(boolean value)
+	{
+		if (virtualCanvas.currentControl != null) 
+			virtualCanvas.currentControl.setFullScreen(value);
+	}
+	
 
 	//! Create new virtual list with default values  
 	public VirtualList(String capt //!< Caption text of new virtual list
@@ -385,7 +394,6 @@ public abstract class VirtualList
 	protected void showNotify()
 	{
 		virtualCanvas.setCommandListener(commandListener);
-		current = this;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		
 		if (exMenuExists()) virtualCanvas.setFullScreenMode(true);
@@ -921,7 +929,7 @@ public abstract class VirtualList
 	private int getCapHeight()
 	{
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (!fullScreen && !exMenuExists()) return 0;
+		if (fullScreen) return 0;
 		//#sijapp cond.end#
 		int capHeight = 0;
 		if (caption != null) capHeight = capFont.getHeight() + 2;
@@ -939,7 +947,7 @@ public abstract class VirtualList
 	{
 		if (caption == null) return 0;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (!fullScreen && !exMenuExists()) return 0;
+		if (fullScreen) return 0;
 		//#sijapp cond.end#
 		
 		if (mode != DMS_DRAW) return getCapHeight();
@@ -1012,7 +1020,11 @@ public abstract class VirtualList
 		int r2 = ((color2 & 0xFF0000) >> 16);
 		int g2 = ((color2 & 0x00FF00) >> 8);
 		int b2 = (color2 & 0x0000FF);
-		int count = 8;
+		
+		int count = (y2-y1)/3;
+		if (count < 0) count = -count;
+		if (count < 8) count = 8;
+		
 		y2++;
 		x2++;
 
@@ -1020,6 +1032,7 @@ public abstract class VirtualList
 		{
 			int crd1 = i * (y2 - y1) / count + y1;
 			int crd2 = (i + 1) * (y2 - y1) / count + y1;
+			if (crd1 == crd2) continue;
 			g.setColor(i * (r2 - r1) / (count-1) + r1, i * (g2 - g1) / (count-1) + g1, i * (b2 - b1) / (count-1) + b1);
 			g.fillRect(x1, crd1, x2-x1, crd2-crd1);
 		}
@@ -1062,8 +1075,11 @@ public abstract class VirtualList
 
 			if (grCursorY1 != -1)
 			{
+				grCursorY1--;
+				grCursorY2++;
+				drawRect(g, transformColorLight(cursorColor, -32), transformColorLight(cursorColor, 0), 0, grCursorY1, itemWidth, grCursorY2);
 				g.setStrokeStyle(Graphics.DOTTED);
-				g.setColor(cursorColor);
+				g.setColor(textColor);
 				boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1) : false;
 				if (!isCursorUpper) g.drawLine(1, grCursorY1, itemWidth - 2, grCursorY1);
 				g.drawLine(0, grCursorY1 + 1, 0, grCursorY2 - 1);
@@ -1351,7 +1367,7 @@ public abstract class VirtualList
 		int layer = height/4;
 		boolean defaultMenu = false;
 		
-		if (style == DMS_DBLCLICK) return false;
+		if ((style == DMS_DBLCLICK) || fullScreen) return false;
 		
 		if (style == DMS_DRAW)
 			drawRect(g, transformColorLight(capBkCOlor, -32), capBkCOlor, 0, y1, width, y2);
@@ -1455,6 +1471,7 @@ public abstract class VirtualList
 	
 	private int getMenuBarHeight()
 	{
+		if (fullScreen) return 0;
 		return exMenuExists() ? menuBarFont.getHeight()+3 : 0;
 	}
 	

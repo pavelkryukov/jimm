@@ -139,7 +139,7 @@ public class MainMenu implements CommandListener
 	/* Builds the main menu (visual list) */
 	public static void build()
 	{
-		JimmUI.setColorScheme(list);
+		JimmUI.setColorScheme(list, false);
 		
 		boolean connected = Icq.isConnected();
 			
@@ -220,8 +220,7 @@ public class MainMenu implements CommandListener
 			String text, int fieldType)
 	{
 		textBoxForm = new Form(ResourceBundle.getString(caption));
-		uinTextField = new TextField(ResourceBundle.getString(label), text, 16,
-				fieldType);
+		uinTextField = new TextField(ResourceBundle.getString(label), text, 16, fieldType);
 		textBoxForm.append(uinTextField);
 
 		textBoxForm.addCommand(sendCommand);
@@ -399,19 +398,15 @@ public class MainMenu implements CommandListener
 			switch (status)
 			{
 			case STATUS_ADD_GROUP:
-				ContactListGroupItem newGroup = new ContactListGroupItem(
-						uinTextField.getString());
-				act = new UpdateContactListAction(newGroup,
-						UpdateContactListAction.ACTION_ADD);
+				ContactListGroupItem newGroup = new ContactListGroupItem(uinTextField.getString());
+				act = new UpdateContactListAction(newGroup, UpdateContactListAction.ACTION_ADD);
 				break;
 
 			case STATUS_RENAME_GROUP:
-				ContactListGroupItem group = ContactList
-						.getGroupById(groupIds[JimmUI.getLastSelIndex()]);
+				ContactListGroupItem group = ContactList.getGroupById(groupIds[JimmUI.getLastSelIndex()]);
 				group.setName(uinTextField.getString());
 				ContactList.safeSave();
-				act = new UpdateContactListAction(group,
-						UpdateContactListAction.ACTION_RENAME);
+				act = new UpdateContactListAction(group, UpdateContactListAction.ACTION_RENAME);
 				break;
 
 			case STATUS_ADD_CONTACT:
@@ -500,7 +495,7 @@ public class MainMenu implements CommandListener
 				
 				MainMenu.statusList.selectTextByIndex(stValue);
 			
-				JimmUI.setColorScheme(statusList);
+				JimmUI.setColorScheme(statusList, false);
 				
 				MainMenu.statusList.setCommandListener(_this);
 				MainMenu.statusList.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);

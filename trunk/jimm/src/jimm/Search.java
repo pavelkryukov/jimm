@@ -249,7 +249,7 @@ public class Search
 			screen.addCommandEx(this.cmdSendMessage, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.cmdShowInfo, VirtualList.MENU_TYPE_RIGHT);
 			screen.setCursorMode(TextList.SEL_NONE);
-			JimmUI.setColorScheme(screen);
+			JimmUI.setColorScheme(screen, false);
 		}
 
 		static final public int ACTIV_SHOW_RESULTS = 1;

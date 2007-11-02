@@ -362,11 +362,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	}
 
 	// Returns all group items as array
-	static public synchronized ContactListGroupItem[] getGroupItems()
+	static public ContactListGroupItem[] getGroupItems()
 	{
-		ContactListGroupItem[] gItems_ = new ContactListGroupItem[gItems.size()];
-		ContactList.gItems.copyInto(gItems_);
-		return (gItems_);
+		synchronized (_this)
+		{
+			ContactListGroupItem[] gItems_ = new ContactListGroupItem[gItems.size()];
+			ContactList.gItems.copyInto(gItems_);
+			return (gItems_);
+		}
 	}
 
 	// Request display of the given alert and the main menu afterwards
@@ -632,59 +635,58 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	// Updates the client-side conact list (called when a new roster has been
 	// received)
-	static public synchronized void update(int flags, int versionId1_,
-			int versionId2_, ContactListItem[] items)
+	static public void update(int flags, int versionId1_, int versionId2_, ContactListItem[] items)
 	{
-		//#log("some_debug_text")
-
-		//#sijapp cond.if modules_DEBUGLOG is "true"#
-		System.out.println("New roster. versionId1_=" + ssiListLastChangeTime
-				+ ", versionId2=" + versionId2_ + ", flags=" + flags);
-		System.out.println("Old versionId1=" + ssiListLastChangeTime
-				+ ", versionId2=" + ssiNumberOfItems + ", updated="
-				+ haveToBeCleared);
-		System.out.println();
-		//#sijapp cond.end #
-
-		// Remove all Elemente form the old ContactList
-		if (haveToBeCleared)
+		synchronized (_this)
 		{
-			cItems.removeAllElements();
-			gItems.removeAllElements();
-			haveToBeCleared = false;
-			ssiNumberOfItems = 0;
-		}
+			//#sijapp cond.if modules_DEBUGLOG is "true"#
+			System.out.println("New roster. versionId1_=" + ssiListLastChangeTime
+					+ ", versionId2=" + versionId2_ + ", flags=" + flags);
+			System.out.println("Old versionId1=" + ssiListLastChangeTime
+					+ ", versionId2=" + ssiNumberOfItems + ", updated="
+					+ haveToBeCleared);
+			System.out.println();
+			//#sijapp cond.end #
 
-		// Add new contact items and group items
-		for (int i = 0; i < items.length; i++)
-		{
-			if (items[i] instanceof ContactListContactItem)
+			// Remove all Elemente form the old ContactList
+			if (haveToBeCleared)
 			{
-				cItems.addElement(items[i]);
-			} else if (items[i] instanceof ContactListGroupItem)
-			{
-				gItems.addElement(items[i]);
+				cItems.removeAllElements();
+				gItems.removeAllElements();
+				haveToBeCleared = false;
+				ssiNumberOfItems = 0;
 			}
-		}
-		ssiNumberOfItems += versionId2_;
 
-		// Save new contact list
-		if (versionId1_ != 0)
-		{
-			ssiListLastChangeTime = versionId1_;
-			safeSave();
-			treeBuilt = false;
-
-			// Which contacts already have chats?
-			for (int i = getSize() - 1; i >= 0; i--)
+			// Add new contact items and group items
+			for (int i = 0; i < items.length; i++)
 			{
-				ContactListContactItem cItem = getCItem(i);
-				cItem
-						.setBooleanValue(
-								ContactListContactItem.CONTACTITEM_HAS_CHAT,
-								ChatHistory
-										.chatHistoryExists(cItem
-												.getStringValue(ContactListContactItem.CONTACTITEM_UIN)));
+				if (items[i] instanceof ContactListContactItem)
+				{
+					cItems.addElement(items[i]);
+				} else if (items[i] instanceof ContactListGroupItem)
+				{
+					gItems.addElement(items[i]);
+				}
+			}
+			ssiNumberOfItems += versionId2_;
+
+			// Save new contact list
+			if (versionId1_ != 0)
+			{
+				ssiListLastChangeTime = versionId1_;
+				safeSave();
+				treeBuilt = false;
+
+				// Which contacts already have chats?
+				for (int i = getSize() - 1; i >= 0; i--)
+				{
+					ContactListContactItem cItem = getCItem(i);
+					cItem.setBooleanValue
+					(
+						ContactListContactItem.CONTACTITEM_HAS_CHAT,
+						ChatHistory.chatHistoryExists(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN))
+					);
+				}
 			}
 		}
 	}
@@ -708,17 +710,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Sorts the contacts and calc online counters
 	static private void sortAll()
 	{
-		if (treeSorted)
-			return;
+		if (treeSorted) return;
 		sortType = Options.getInt(Options.OPTION_CL_SORT_BY);
 		if (Options.getBoolean(Options.OPTION_USER_GROUPS))
 		{
 			for (int i = 0; i < gItems.size(); i++)
 			{
-				ContactListGroupItem gItem = (ContactListGroupItem) gItems
-						.elementAt(i);
-				TreeNode groupNode = (TreeNode) gNodes.get(new Integer(gItem
-						.getId()));
+				ContactListGroupItem gItem = (ContactListGroupItem) gItems.elementAt(i);
+				TreeNode groupNode = (TreeNode) gNodes.get(new Integer(gItem.getId()));
 				tree.sortNode(groupNode);
 				calcGroupData(groupNode, gItem);
 			}
@@ -1125,188 +1124,193 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	}
 
 	// Removes a contact list item
-	static public synchronized void removeContactItem(
-			ContactListContactItem cItem)
+	static public void removeContactItem(ContactListContactItem cItem)
 	{
-		// Remove given contact item
-		ContactList.cItems.removeElement(cItem);
-
-		// Update visual list
-		contactChanged(cItem, false, false);
-
-		// Update online counters
-		statusChanged(
-				cItem,
-				cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE,
-				false, -1);
-
-		// Save list
-		safeSave();
-	}
-
-	// Adds a contact list item
-	static public synchronized void addContactItem(ContactListContactItem cItem)
-	{
-		if (!cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_ADDED))
+		synchronized (_this)
 		{
-			// does contact already exists or temporary ?
-			ContactListContactItem oldItem = getItembyUIN(cItem
-					.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
-			if (oldItem != null)
-			{
-				removeContactItem(oldItem);
-				lastUnknownStatus = oldItem
-						.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
-			}
-
-			// Add given contact item
-			cItems.addElement(cItem);
-			cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED,
-					true);
-
-			// Check is chat availible 
-			cItem
-					.setBooleanValue(
-							ContactListContactItem.CONTACTITEM_HAS_CHAT,
-							ChatHistory
-									.chatHistoryExists(cItem
-											.getStringValue(ContactListContactItem.CONTACTITEM_UIN)));
-
-			// Set contact status (if already received)
-			if (lastUnknownStatus != STATUS_NONE)
-			{
-				cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
-						lastUnknownStatus);
-				lastUnknownStatus = STATUS_NONE;
-			}
-
-			// Request contact status
-			else
-			{
-				Icq
-						.addLocalContacts(new String[]
-						{ cItem
-								.getStringValue(ContactListContactItem.CONTACTITEM_UIN) });
-			}
+			// Remove given contact item
+			ContactList.cItems.removeElement(cItem);
 
 			// Update visual list
-			contactChanged(cItem, true, true);
+			contactChanged(cItem, false, false);
 
 			// Update online counters
 			statusChanged(
 					cItem,
-					false,
-					cItem
-							.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE,
-					1);
+					cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE,
+					false, -1);
 
 			// Save list
 			safeSave();
 		}
 	}
 
-	// Adds new group
-	static public synchronized void addGroup(ContactListGroupItem gItem)
+	// Adds a contact list item
+	static public void addContactItem(ContactListContactItem cItem)
 	{
-		gItems.addElement(gItem);
-		if (!Options.getBoolean(Options.OPTION_USER_GROUPS))
-			return;
-		TreeNode groupNode = tree.addNode(null, gItem);
-		gNodes.put(new Integer(gItem.getId()), groupNode);
-		safeSave();
+		synchronized (_this)
+		{
+			if (!cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_ADDED))
+			{
+				// does contact already exists or temporary ?
+				ContactListContactItem oldItem = getItembyUIN(cItem
+						.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+				if (oldItem != null)
+				{
+					removeContactItem(oldItem);
+					lastUnknownStatus = oldItem
+							.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+				}
+
+				// Add given contact item
+				cItems.addElement(cItem);
+				cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED,
+						true);
+
+				// Check is chat availible 
+				cItem
+						.setBooleanValue(
+								ContactListContactItem.CONTACTITEM_HAS_CHAT,
+								ChatHistory
+										.chatHistoryExists(cItem
+												.getStringValue(ContactListContactItem.CONTACTITEM_UIN)));
+
+				// Set contact status (if already received)
+				if (lastUnknownStatus != STATUS_NONE)
+				{
+					cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
+							lastUnknownStatus);
+					lastUnknownStatus = STATUS_NONE;
+				}
+
+				// Request contact status
+				else
+				{
+					Icq.addLocalContacts(new String[] { cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN) });
+				}
+
+				// Update visual list
+				contactChanged(cItem, true, true);
+
+				// Update online counters
+				statusChanged(
+						cItem,
+						false,
+						cItem
+								.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE,
+						1);
+
+				// Save list
+				safeSave();
+			}
+		}
+	}
+
+	// Adds new group
+	static public void addGroup(ContactListGroupItem gItem)
+	{
+		synchronized (_this)
+		{
+			gItems.addElement(gItem);
+			if (!Options.getBoolean(Options.OPTION_USER_GROUPS))
+				return;
+			TreeNode groupNode = tree.addNode(null, gItem);
+			gNodes.put(new Integer(gItem.getId()), groupNode);
+			safeSave();
+		}
 	}
 
 	// removes existing group 
-	static public synchronized void removeGroup(ContactListGroupItem gItem)
+	static public void removeGroup(ContactListGroupItem gItem)
 	{
-		for (int i = cItems.size() - 1; i >= 0; i--)
+		synchronized (_this)
 		{
-			ContactListContactItem cItem = getCItem(i);
-			if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == gItem
-					.getId())
+			for (int i = cItems.size()-1; i >= 0; i--)
 			{
-				if (cItem
-						.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
-					onlineCounter--;
-				cItems.removeElementAt(i);
+				ContactListContactItem cItem = getCItem(i);
+				if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == gItem.getId())
+				{
+					if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
+						onlineCounter--;
+					cItems.removeElementAt(i);
+				}
 			}
+			Integer groupId = new Integer(gItem.getId());
+			if (Options.getBoolean(Options.OPTION_USER_GROUPS))
+			{
+				TreeNode node = (TreeNode) gNodes.get(groupId);
+				tree.deleteChild(tree.getRoot(), tree.getIndexOfChild(tree.getRoot(), node));
+				gNodes.remove(groupId);
+			}
+			gItems.removeElement(gItem);
+			safeSave();
 		}
-		Integer groupId = new Integer(gItem.getId());
-		if (Options.getBoolean(Options.OPTION_USER_GROUPS))
-		{
-			TreeNode node = (TreeNode) gNodes.get(groupId);
-			tree.deleteChild(tree.getRoot(), tree.getIndexOfChild(tree
-					.getRoot(), node));
-			gNodes.remove(groupId);
-		}
-		gItems.removeElement(gItem);
-		safeSave();
 	}
 
-	static public synchronized ContactListContactItem createTempContact(
-			String uin)
+	static public ContactListContactItem createTempContact(String uin)
 	{
-		ContactListContactItem cItem = getItembyUIN(uin);
+		synchronized (_this)
+		{
+			ContactListContactItem cItem = getItembyUIN(uin);
 
-		if (cItem != null)
+			if (cItem != null) return cItem;
+
+			try
+			{
+				cItem = new ContactListContactItem(0, 0, uin, uin, false, true);
+			} catch (Exception e)
+			{
+				// Message from non-icq contact
+				return null;
+			}
+			cItems.addElement(cItem);
+			cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, true);
+			Icq.addLocalContacts(new String[] { uin });
 			return cItem;
-
-		try
-		{
-			cItem = new ContactListContactItem(0, 0, uin, uin, false, true);
-		} catch (Exception e)
-		{
-			// Message from non-icq contact
-			return null;
 		}
-		cItems.addElement(cItem);
-		cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, true);
-		Icq.addLocalContacts(new String[]
-		{ uin });
-		return cItem;
 	}
 
 	/* Adds the given message to the message queue of the contact item
 	 identified by the given UIN */
-	static public synchronized void addMessage(Message message,
-			boolean haveToBeep)
+	static public void addMessage(Message message, boolean haveToBeep)
 	{
-		String uin = message.getSndrUin();
+		synchronized (_this)
+		{
+			String uin = message.getSndrUin();
 
-		ContactListContactItem cItem = getItembyUIN(uin);
+			ContactListContactItem cItem = getItembyUIN(uin);
 
-		/* Create a temporary contact entry if no contact entry could be found
-		 do we have a new temp contact */
-		if (cItem == null)
-			cItem = createTempContact(uin);
+			/* Create a temporary contact entry if no contact entry could be found
+			 do we have a new temp contact */
+			if (cItem == null)
+				cItem = createTempContact(uin);
 
-		/* Add message to chat */
-		ChatHistory.addMessage(cItem, message);
+			/* Add message to chat */
+			ChatHistory.addMessage(cItem, message);
 
-		/* Notify splash canvas */
-		SplashCanvas.messageAvailable();
+			/* Notify splash canvas */
+			SplashCanvas.messageAvailable();
 
-		/* Notify user */
-		if (!treeBuilt)
-			needPlayMessNotif |= true;
-		//#sijapp cond.if target isnot "DEFAULT" #
-		else if (haveToBeep)
-			playSoundNotification(SOUND_TYPE_MESSAGE);
-		//#sijapp cond.end #
+			/* Notify user */
+			if (!treeBuilt)
+				needPlayMessNotif |= true;
+			//#sijapp cond.if target isnot "DEFAULT" #
+			else if (haveToBeep)
+				playSoundNotification(SOUND_TYPE_MESSAGE);
+			//#sijapp cond.end #
 
-		/* Flag contact as having chat */
-		cItem
-				.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,
-						true);
+			/* Flag contact as having chat */
+			cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, true);
 
-		/* Increment messages count for group */
-		ContactListGroupItem gItem = getGroupById(cItem
-				.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
-		if (gItem != null)
-			gItem.changeMessCount(+1);
+			/* Increment messages count for group */
+			ContactListGroupItem gItem = getGroupById(cItem
+					.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
+			if (gItem != null)
+				gItem.changeMessCount(+1);
 
-		/* Update tree */
-		contactChanged(cItem, true, false);
+			/* Update tree */
+			contactChanged(cItem, true, false);
+		}
 	}
 
 	//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
