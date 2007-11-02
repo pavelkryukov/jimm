@@ -26,7 +26,6 @@ package DrawControls;
 import javax.microedition.lcdui.*;
 
 import java.util.Vector;
-import DrawControls.ImageList;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
 
@@ -1104,6 +1103,8 @@ public abstract class VirtualList
 			{
 				drawItemData(g, i, x1, y1, x2, y2, fontHeight);
 			}
+			
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			else
 			{
 				if ((y1 < curY) && (curY < y2) && (x1 < curX) && (curX < x2))
@@ -1127,6 +1128,8 @@ public abstract class VirtualList
 					return true;
 				}
 			}
+			//#sijapp cond.end#
+			
 			y += itemHeight;
 			if (y >= height) break;
 		}

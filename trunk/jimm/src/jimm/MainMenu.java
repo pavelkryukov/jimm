@@ -508,7 +508,13 @@ public class MainMenu implements CommandListener
 
 				groupActList = new List(ResourceBundle.getString("manage_contact_list"), List.IMPLICIT);
 
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 				groupActList.deleteAll();
+				//#sijapp cond.else#
+				while (groupActList.size() != 0) groupActList.delete(0);
+				//#sijapp cond.end#
+				
+				
 				groupActList.append(ResourceBundle.getString("add_user",
 						ResourceBundle.FLAG_ELLIPSIS), null);
 				groupActList.append(ResourceBundle.getString("search_user",
