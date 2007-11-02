@@ -316,7 +316,6 @@ public class Options
 		}
 
 		ResourceBundle.setCurrUiLanguage(getString(Options.OPTION_UI_LANGUAGE));
-		VirtualList.setFullScreen(getBoolean(Options.OPTION_FULL_SCREEN));
 	}
 
 	/* Set default values
@@ -701,10 +700,10 @@ public class Options
 
 	final static private int[] colors =
 	{// back      text      out text  cursor    caption   in text
-		0xFFFFFF, 0x000000, 0x0000FF, 0x404040, 0xF0F0F0, 0xFF0000,
+		0xFFFFFF, 0x000000, 0x0000FF, 0xF0F0FF, 0xF0F0F0, 0xFF0000,
 		0x000000, 0xFFFFFF, 0x00FFFF, 0x808080, 0x404040, 0xFF0000,
-		0x000080, 0xFFFFFF, 0x00FFFF, 0xFFFFFF, 0x000080, 0xFF0000,
-		0xFFA0C0, 0x000000, 0x4000C0, 0x404040, 0xFFE0D0, 0xC00040,
+		0x000080, 0xFFFFFF, 0x00FFFF, 0x4040FF, 0x0000B0, 0xFF0000,
+		0xFFA0C0, 0x000000, 0x4000C0, 0xFFE0D0, 0xFFE0D0, 0xC00040,
 	};
 
 	/* Retrieves color value from color scheme */
@@ -1877,7 +1876,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 				//#					Options.setBoolean(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
 				//#sijapp cond.end#
 
-				VirtualList.setFullScreen(Options.getBoolean(Options.OPTION_FULL_SCREEN));
+				VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 
 				if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
 				{

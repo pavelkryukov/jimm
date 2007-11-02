@@ -278,7 +278,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 		this.contact = contact;
 		ChatName = name;
-		JimmUI.setColorScheme(textList);
+		JimmUI.setColorScheme(textList, true);
 
 		textList.setVLCommands(this);
 	}
@@ -711,6 +711,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 public class ChatHistory
 {
+	static private ChatHistory _this;
 	static private Hashtable historyTable;
 
 	static private int counter;
@@ -736,6 +737,11 @@ public class ChatHistory
 	*/
 
 	//#sijapp cond.end#
+	
+	public ChatHistory()
+	{
+		_this = this;
+	}
 
 	static
 	{
@@ -744,106 +750,109 @@ public class ChatHistory
 	}
 
 	/* Adds a message to the message display */
-	static protected synchronized void addMessage(ContactListContactItem contact, Message message)
+	static protected void addMessage(ContactListContactItem contact, Message message)
 	{
-		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
-		if (!historyTable.containsKey(uin))
-			newChatForm(contact, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
-		
-		ChatTextList chat = (ChatTextList) historyTable.get(uin);
-
-		boolean offline = message.getOffline();
-		
-		boolean visible = chat.isVisible(); 
-
-		if (message instanceof PlainMessage)
+		synchronized (_this)
 		{
-			PlainMessage plainMsg = (PlainMessage) message;
-
-			if (!visible) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
-
-			addTextToForm(uin, contact
-					.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
-					plainMsg.getText(), "", plainMsg.getNewDate(), true,
-					offline);
+			String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+			if (!historyTable.containsKey(uin))
+				newChatForm(contact, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
 			
-			//#sijapp cond.if modules_HISTORY is "true" #
-			if (Options.getBoolean(Options.OPTION_HISTORY))
-				HistoryStorage
-						.addText(
-								uin,
-								plainMsg.getText(),
-								(byte) 0,
-								contact
-										.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
-								plainMsg.getNewDate());
-			//#sijapp cond.end#
-			
-			if (!offline)
-			{
-				// TODO: uncomment!
-				/* Popup window */
-				//ContactListContactItem.showPopupWindow(uin, contact .getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText());
-				/* Show creeping line */
-				//ContactListContactItem.showCreepingLine(uin, plainMsg.getText());
-			}
-		} else if (message instanceof UrlMessage)
-		{
-			UrlMessage urlMsg = (UrlMessage) message;
-			if (!chat.isVisible()) contact .increaseMessageCount(ContactListContactItem.MESSAGE_URL);
-			addTextToForm(uin, contact
-					.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
-					urlMsg.getText(), urlMsg.getUrl(), urlMsg.getNewDate(),
-					false, offline);
-		} else if (message instanceof SystemNotice)
-		{
-			SystemNotice notice = (SystemNotice) message;
-			if (!visible)
-				contact
-						.increaseMessageCount(ContactListContactItem.MESSAGE_SYS_NOTICE);
+			ChatTextList chat = (ChatTextList) historyTable.get(uin);
 
-			if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
+			boolean offline = message.getOffline();
+			
+			boolean visible = chat.isVisible(); 
+
+			if (message instanceof PlainMessage)
 			{
-				addTextToForm(uin, ResourceBundle.getString("sysnotice"),
-						ResourceBundle.getString("youwereadded")
-								+ notice.getSndrUin(), "", notice.getNewDate(),
-						false, offline);
-			} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
-			{
-				contact
-						.increaseMessageCount(ContactListContactItem.MESSAGE_AUTH_REQUEST);
-				addTextToForm(uin, ResourceBundle.getString("sysnotice"),
-						notice.getSndrUin()
-								+ ResourceBundle.getString("wantsyourauth")
-								+ notice.getReason(), "", notice.getNewDate(),
-						false, offline);
-			} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
-			{
-				if (notice.isAUTH_granted())
+				PlainMessage plainMsg = (PlainMessage) message;
+
+				if (!visible) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
+
+				addTextToForm(uin, contact
+						.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+						plainMsg.getText(), "", plainMsg.getNewDate(), true,
+						offline);
+				
+				//#sijapp cond.if modules_HISTORY is "true" #
+				if (Options.getBoolean(Options.OPTION_HISTORY))
+					HistoryStorage
+							.addText(
+									uin,
+									plainMsg.getText(),
+									(byte) 0,
+									contact
+											.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+									plainMsg.getNewDate());
+				//#sijapp cond.end#
+				
+				if (!offline)
 				{
-					contact.setBooleanValue(
-							ContactListContactItem.CONTACTITEM_NO_AUTH, false);
+					// TODO: uncomment!
+					/* Popup window */
+					//ContactListContactItem.showPopupWindow(uin, contact .getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText());
+					/* Show creeping line */
+					//ContactListContactItem.showCreepingLine(uin, plainMsg.getText());
+				}
+			} else if (message instanceof UrlMessage)
+			{
+				UrlMessage urlMsg = (UrlMessage) message;
+				if (!chat.isVisible()) contact .increaseMessageCount(ContactListContactItem.MESSAGE_URL);
+				addTextToForm(uin, contact
+						.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+						urlMsg.getText(), urlMsg.getUrl(), urlMsg.getNewDate(),
+						false, offline);
+			} else if (message instanceof SystemNotice)
+			{
+				SystemNotice notice = (SystemNotice) message;
+				if (!visible)
+					contact
+							.increaseMessageCount(ContactListContactItem.MESSAGE_SYS_NOTICE);
+
+				if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
+				{
 					addTextToForm(uin, ResourceBundle.getString("sysnotice"),
-							ResourceBundle.getString("grantedby")
-									+ notice.getSndrUin() + ".", "", notice
-									.getNewDate(), false, offline);
-				} else if (notice.getReason() != null)
+							ResourceBundle.getString("youwereadded")
+									+ notice.getSndrUin(), "", notice.getNewDate(),
+							false, offline);
+				} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
+				{
+					contact
+							.increaseMessageCount(ContactListContactItem.MESSAGE_AUTH_REQUEST);
 					addTextToForm(uin, ResourceBundle.getString("sysnotice"),
-							ResourceBundle.getString("denyedby")
-									+ notice.getSndrUin() + ". "
-									+ ResourceBundle.getString("reason") + ": "
-									+ notice.getReason(), "", notice
-									.getNewDate(), false, offline);
-				else
-					addTextToForm(uin, ResourceBundle.getString("sysnotice"),
-							ResourceBundle.getString("denyedby")
-									+ notice.getSndrUin() + ". "
-									+ ResourceBundle.getString("noreason"), "",
-							notice.getNewDate(), false, offline);
+							notice.getSndrUin()
+									+ ResourceBundle.getString("wantsyourauth")
+									+ notice.getReason(), "", notice.getNewDate(),
+							false, offline);
+				} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
+				{
+					if (notice.isAUTH_granted())
+					{
+						contact.setBooleanValue(
+								ContactListContactItem.CONTACTITEM_NO_AUTH, false);
+						addTextToForm(uin, ResourceBundle.getString("sysnotice"),
+								ResourceBundle.getString("grantedby")
+										+ notice.getSndrUin() + ".", "", notice
+										.getNewDate(), false, offline);
+					} else if (notice.getReason() != null)
+						addTextToForm(uin, ResourceBundle.getString("sysnotice"),
+								ResourceBundle.getString("denyedby")
+										+ notice.getSndrUin() + ". "
+										+ ResourceBundle.getString("reason") + ": "
+										+ notice.getReason(), "", notice
+										.getNewDate(), false, offline);
+					else
+						addTextToForm(uin, ResourceBundle.getString("sysnotice"),
+								ResourceBundle.getString("denyedby")
+										+ notice.getSndrUin() + ". "
+										+ ResourceBundle.getString("noreason"), "",
+								notice.getNewDate(), false, offline);
+				}
 			}
+			chat.checkTextForURL();
+			chat.checkForAuthReply();
 		}
-		chat.checkTextForURL();
-		chat.checkForAuthReply();
 	}
 
 	static protected synchronized void addMyMessage(ContactListContactItem contact, String message,
@@ -1039,7 +1048,7 @@ public class ChatHistory
 		Enumeration AllChats = historyTable.elements();
 		while (AllChats.hasMoreElements())
 			JimmUI
-					.setColorScheme(((ChatTextList) AllChats.nextElement()).textList);
+					.setColorScheme(((ChatTextList) AllChats.nextElement()).textList, false);
 	}
 
 	// Sets the counter for the ChatHistory

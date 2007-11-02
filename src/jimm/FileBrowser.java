@@ -362,7 +362,7 @@ public class FileBrowser implements CommandListener, VirtualTreeCommands,
 				: VirtualList.MEDIUM_FONT);
 		tree.setStepSize(-tree.getFontHeight() / 2);
 		tree.setCapImage(imageList.elementAt(0));
-		JimmUI.setColorScheme(tree);
+		JimmUI.setColorScheme(tree, false);
 		tree.setShowButtons(false);
 		tree.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT);
 		tree.setCommandListener(this);

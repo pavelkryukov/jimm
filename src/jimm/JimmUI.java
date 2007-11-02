@@ -463,7 +463,7 @@ public class JimmUI implements CommandListener
 	{
 		TextList list = new TextList(cap);
 		list.setCursorMode(TextList.SEL_NONE);
-		setColorScheme(list);
+		setColorScheme(list, false);
 		list.setFontSize(Font.SIZE_LARGE);
 		list.addBigText(text, list.getTextColor(), Font.STYLE_PLAIN, -1);
 		
@@ -502,7 +502,7 @@ public class JimmUI implements CommandListener
 		aboutTextList.lock();
 		aboutTextList.clear();
 		aboutTextList.setCursorMode(TextList.SEL_NONE);
-		setColorScheme(aboutTextList);
+		setColorScheme(aboutTextList, false);
 		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1,
 				0xffffff);
 
@@ -622,7 +622,7 @@ public class JimmUI implements CommandListener
 	//                    //
 	////////////////////////
 
-	static public void setColorScheme(VirtualList vl)
+	static public void setColorScheme(VirtualList vl, boolean setFullScreen)
 	{
 		if (vl == null) return;
 
@@ -631,9 +631,10 @@ public class JimmUI implements CommandListener
 			Options.getSchemeColor(Options.CLRSCHHEME_TEXT), 
 			Options.getSchemeColor(Options.CLRSCHHEME_CAP), 
 			Options.getSchemeColor(Options.CLRSCHHEME_BACK), 
-			VirtualList.getInverseColor(Options.getSchemeColor(Options.CLRSCHHEME_BACK)), 
+			Options.getSchemeColor(Options.CLRSCHHEME_CURS), 
 			Options.getSchemeColor(Options.CLRSCHHEME_TEXT)
 		);
+		if (setFullScreen) vl.setFullScreen(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 	}
 
 	static public void setColorScheme()
@@ -643,7 +644,7 @@ public class JimmUI implements CommandListener
 		//#sijapp cond.end#
 
 		ChatHistory.setColorScheme();
-		setColorScheme((VirtualList)ContactList.getVisibleContactListRef());
+		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), false);
 	}
 
 	/*****************************************************************************/
@@ -800,7 +801,7 @@ public class JimmUI implements CommandListener
 			case Options.HOTKEY_FULLSCR:
 				boolean fsValue = !Options
 						.getBoolean(Options.OPTION_FULL_SCREEN);
-				VirtualList.setFullScreen(fsValue);
+				VirtualList.setFullScreenForCurrent(fsValue);
 				Options.setBoolean(Options.OPTION_FULL_SCREEN, fsValue);
 				Options.safe_save();
 				//#sijapp cond.if target is "SIEMENS2"#
@@ -1090,7 +1091,7 @@ public class JimmUI implements CommandListener
 
 		infoTextList.setCaption(caption);
 
-		JimmUI.setColorScheme(infoTextList);
+		JimmUI.setColorScheme(infoTextList, false);
 		infoTextList.setCursorMode(TextList.SEL_NONE);
 
 		if (addCommands)
@@ -1449,7 +1450,7 @@ public class JimmUI implements CommandListener
 	{
 		clciContactMenu = contact; 
 		tlContactMenu = new TextList(ResourceBundle.getString("user_menu"));
-		JimmUI.setColorScheme(tlContactMenu);
+		JimmUI.setColorScheme(tlContactMenu, false);
 		tlContactMenu.setCursorMode(VirtualList.SEL_NONE);
 		tlContactMenu.activate(Jimm.display);
 		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);

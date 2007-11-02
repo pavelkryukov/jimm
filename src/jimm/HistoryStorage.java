@@ -155,7 +155,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		//addCommand(cmdGotoURL);
 		setCommandListener(this);
 		setVLCommands(this);
-		JimmUI.setColorScheme(this);
+		JimmUI.setColorScheme(this, false);
 	}
 
 	// VirtualList command impl.
@@ -603,7 +603,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			messText.addCommandEx(cmdMsgPrev, VirtualList.MENU_TYPE_RIGHT);
 			messText.addCommandEx(cmdMsgCopyText, VirtualList.MENU_TYPE_RIGHT);
 			messText.setVLCommands(this);
-			JimmUI.setColorScheme(messText);
+			JimmUI.setColorScheme(messText, false);
 		}
 
 		CachedRecord record = HistoryStorage.getRecord(currUin, this
@@ -937,9 +937,9 @@ public class HistoryStorage
 	{
 		if (list != null)
 		{
-			JimmUI.setColorScheme(list);
+			JimmUI.setColorScheme(list, false);
 			if (HistoryStorageList.messText != null)
-				JimmUI.setColorScheme(HistoryStorageList.messText);
+				JimmUI.setColorScheme(HistoryStorageList.messText, false);
 		}
 	}
 
