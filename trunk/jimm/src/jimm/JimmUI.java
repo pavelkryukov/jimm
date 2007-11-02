@@ -648,7 +648,7 @@ public class JimmUI implements CommandListener
 		//#sijapp cond.end#
 
 		ChatHistory.setColorScheme();
-		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), false);
+		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), true);
 	}
 
 	/*****************************************************************************/

@@ -147,10 +147,7 @@ public class MainMenu implements CommandListener
 		
 		int lastIndex = list.getCurrTextIndex();
 		
-		
-		list.removeCommandEx(JimmUI.cmdBack);
-		list.removeCommandEx(JimmUI.cmdSelect);
-		
+		list.removeAllCommands();
 		list.clear();
 		
 		if (connected)
