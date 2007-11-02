@@ -578,7 +578,26 @@ public abstract class VirtualList
 			visibleItemsMenuCount = menuItemsCount;
 			topMenuItem = 0;
 		}
-		
+	}
+	
+	private static void moveSelectedMenuItem(int offset, int size, boolean moveOnlyView)
+	{
+		if (!moveOnlyView)
+		{
+			curMenuItemIndex += offset;
+			if (curMenuItemIndex >= size) curMenuItemIndex = size-1;
+			if (curMenuItemIndex < 0) curMenuItemIndex = 0;
+			if (curMenuItemIndex >= topMenuItem+visibleItemsMenuCount) 
+				topMenuItem = curMenuItemIndex-visibleItemsMenuCount+1;
+			if (curMenuItemIndex < topMenuItem) 
+				topMenuItem = curMenuItemIndex;
+		}
+		else
+		{
+			topMenuItem += offset; 
+			if (topMenuItem < 0) topMenuItem = 0;
+			if (topMenuItem >= size-visibleItemsMenuCount) topMenuItem = size-visibleItemsMenuCount;
+		}
 	}
 	
 	// private keyReaction(int keyCode)
@@ -635,20 +654,12 @@ public abstract class VirtualList
 				break;
 
 			case Canvas.DOWN:
-				if (menuItemsVisible)
-				{
-					curMenuItemIndex++;
-					if (curMenuItemIndex >= menuItemsData.size()) curMenuItemIndex = menuItemsData.size()-1; 
-				}
+				if (menuItemsVisible) moveSelectedMenuItem(1, menuItemsData.size(), false);
 				else moveCursor(1, false);
 				break;
 				
 			case Canvas.UP:
-				if (menuItemsVisible)
-				{
-					curMenuItemIndex--;
-					if (curMenuItemIndex < 0) curMenuItemIndex = 0; 
-				}
+				if (menuItemsVisible) moveSelectedMenuItem(-1, menuItemsData.size(), false);
 				else moveCursor(-1, false);
 				break;
 				
@@ -1183,6 +1194,7 @@ public abstract class VirtualList
 			drawMenuItems(graphics, menuBarHeight, mode, curX, curY);
 			break;
 			
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		case DMS_CLICK:
 		case DMS_DBLCLICK:
 			boolean clicked;
@@ -1197,6 +1209,7 @@ public abstract class VirtualList
 			clicked = drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, curX, curY);
 			if (clicked) return;
 			break;
+			//#sijapp cond.end#
 		}
 
 	}
@@ -1382,13 +1395,16 @@ public abstract class VirtualList
 		boolean menuItemsVisible = false;
 		if (leftMenu != null)
 		{
-			if ((style == DMS_CLICK) && (y1 <= curY) && (curY < y2) && (curX < getWidthInternal()/2))
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			if ((style == DMS_CLICK) && ptInRect(curX, curY, 0, y1, getWidthInternal()/2, y2))
 			{
 				Vector items = leftMenuPressed();
 				initPopupMenuItems(items);
 				invalidate();
 				return true;
 			}
+			//#sijapp cond.end#
+			
 			if (uiState == UI_STATE_LEFT_MENU_VISIBLE)
 			{
 				menuItemsVisible = true;
@@ -1402,13 +1418,15 @@ public abstract class VirtualList
 		
 		if (rightMenu != null)
 		{
-			if ((style == DMS_CLICK) && (y1 <= curY) && (curY < y2) && (curX >= getWidthInternal()/2))
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			if ((style == DMS_CLICK) && ptInRect(curX, curY, getWidthInternal()/2, y1, getWidthInternal(), y2))
 			{
 				Vector items = rightMenuPressed();
 				initPopupMenuItems(items);
 				invalidate();
 				return true;
 			}
+			//#sijapp cond.end#
 			
 			String text = rightMenu.getLabel();
 			if (uiState == UI_STATE_RIGHT_MENU_VISIBLE)
@@ -1551,23 +1569,59 @@ public abstract class VirtualList
 	private static int getMenuHeight(int count)
 	{
 		int fontHeight = menuItemsFont.getHeight();
-		return 2*fontHeight/3+fontHeight*count;
+		return fontHeight+fontHeight*count;
+	}
+	
+	private static boolean ptInRect(int ptX, int ptY, int x1, int y1, int x2, int y2)
+	{
+		return (x1 <= ptX) && (ptX < x2) && (y1 <= ptY) && (ptY < y2); 
 	}
 	
 	private static final int DMS_DRAW = 1;
 	private static final int DMS_CLICK = 2;
 	private static final int DMS_DBLCLICK = 3;
 	
+	private boolean paint3points(Graphics g, int x1, int y1, int x2, int y2, int mode, int curX, int curY, int moveOffset, int menuItemsCount)
+	{
+		switch (mode)
+		{
+		case DMS_DRAW: 
+			g.setColor(textColor);
+			int size = 2;
+			int y = (y1+y2-size)/2;
+			for (int i = -1; i <= 1; i++)
+			{
+				int x = (x1+x2)/2-i*(2*size+1);
+				g.fillRect(x, y, size, size);
+			}
+			break;
+			
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#			
+		case DMS_CLICK:
+		case DMS_DBLCLICK:
+			if (ptInRect(curX, curY, x1, y1, x2, y2))
+			{
+				moveSelectedMenuItem(moveOffset, menuItemsCount, true);
+				invalidate();
+				return true;
+			}
+			break;
+		//#sijapp cond.end#
+		}
+		return false;
+	}
+	
 	private boolean drawMenuItems(Graphics g, Vector items, int bottom, int horizAlign, int mode, int curX, int curY)
 	{
 		int fontHeight = menuItemsFont.getHeight(); 
 		int layer = fontHeight/3;
+		int vert_layer = fontHeight/2;
 		
 		int itemsCount = items.size();
 		
 		// calculate width and height
 		int width = 0;
-		int height = getMenuHeight(itemsCount);
+		int height = getMenuHeight(visibleItemsMenuCount);
 		for (int i = 0; i < itemsCount; i++)
 		{
 			Command cmd = (Command)items.elementAt(i);
@@ -1575,12 +1629,7 @@ public abstract class VirtualList
 			if (txtWidth > width) width = txtWidth;
 		}
 		width += layer*2;
-	
-		// If all menues don't fit into screen height
-		if (visibleItemsMenuCount != itemsCount)
-		{
-			height += fontHeight;
-		}
+		if (width > getWidth()-4) width = getWidth()-4;
 		
 		int y = bottom-height;
 		int x = 0;
@@ -1594,20 +1643,31 @@ public abstract class VirtualList
 			break;
 		}
 		
-		// Draw rectangle
+		// Draw background
 		if (mode == DMS_DRAW)
 		{
 			drawRect(g, transformColorLight(capBkCOlor, -12), transformColorLight(capBkCOlor, -32), x, y, x+width, y+height);
-			g.setColor(getInverseColor(capBkCOlor));
-			g.drawRect(x, y, width, height);
+		}
+		
+		// Draw up button
+		if (topMenuItem != 0)
+		{
+			boolean ok = paint3points(g, x, y, x+width, y+vert_layer, mode, curX, curY, -1, itemsCount);
+			if (ok) return true;
+		}
+		
+		if (topMenuItem+visibleItemsMenuCount != itemsCount)
+		{
+			boolean ok = paint3points(g, x, y+height-vert_layer, x+width, y+height, mode, curX, curY, +1, itemsCount);
+			if (ok) return true;
 		}
 		
 		// Draw items
 		g.setFont(menuItemsFont);
 		
-		int itemY = y+layer;
+		int itemY = y+vert_layer;
 		
-		for (int i = topMenuItem; i < visibleItemsMenuCount; i++)
+		for (int i = topMenuItem, j = 0; j < visibleItemsMenuCount; i++, j++)
 		{
 			if (i == curMenuItemIndex)
 			{
@@ -1620,8 +1680,9 @@ public abstract class VirtualList
 			itemY += fontHeight;
 		}
 		
-		itemY = y+layer;
-		for (int i = 0; i < items.size(); i++)
+		itemY = y+vert_layer;
+
+		for (int i = topMenuItem, j = 0; j < visibleItemsMenuCount; i++, j++)
 		{
 			Command cmd = (Command)items.elementAt(i);
 			switch (mode)
@@ -1631,12 +1692,9 @@ public abstract class VirtualList
 				g.drawString(cmd.getLabel(), x+layer, itemY, Graphics.LEFT|Graphics.TOP);
 				break;
 				
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			case DMS_CLICK:
-				int y1 = itemY;
-				int y2 = itemY+fontHeight;
-				int x1 = x;
-				int x2 = x+width;
-				if ((x1 < curX) && (curX < x2) && (y1 < curY) && (curY < y2))
+				if (ptInRect(curX, curY, x, itemY, x+width, itemY+fontHeight))
 				{
 					uiState = UI_STATE_NORMAL;
 					invalidate();
@@ -1644,9 +1702,19 @@ public abstract class VirtualList
 					return true;
 				}
 				break;
+			//#sijapp cond.end#
 			}
 			itemY += fontHeight;
 		}
+		
+		
+		// Draw rectangle
+		if (mode == DMS_DRAW)
+		{
+			g.setColor(getInverseColor(capBkCOlor));
+			g.drawRect(x, y, width, height);
+		}
+		
 		return false;
 	}
 	
