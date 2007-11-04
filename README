@@ -239,7 +239,7 @@ ________________________________________________________________________________
 CREDITS
 
 Core development team:
-  *  Artyomov Denis <artyomov at jimm.org>
+  *  Denis Artyomov <artyomov at jimm.org>
   *  Manuel Linsmayer <manuel at jimm.org>
   *  Andreas Rossbacher <andreas at jimm.org>
 
@@ -275,6 +275,8 @@ Contributors:
   *  Igor Palkin
   		(Configurable hotkeys, history exporting, client info, open URL feature,
   		text templates)
+  * Vladimir Kryukov (Aspro)
+		Softkeys recognition, some bugfixes
 
 Translators:
   *  Guy Aroshas (Hebrew translation)

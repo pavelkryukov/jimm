@@ -81,7 +81,7 @@ class VirtualCanvas extends Canvas
 		if (currentControl != null) currentControl.keyReleased(keyCode); 
 	}
 	
-	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	//#sijapp cond.if target is "MIDP2"#
 	protected void pointerDragged(int x, int y)
 	{
 		if (currentControl != null) currentControl.pointerDragged(x, y); 
@@ -294,6 +294,11 @@ public abstract class VirtualList
 	public void setVLCommands(VirtualListCommands vlCommands)
 	{
 		this.vlCommands = vlCommands;
+	}
+	
+	public static VirtualList getCurrent()
+	{
+		return virtualCanvas.isShown() ? virtualCanvas.currentControl : null; 
 	}
 
 	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text)
@@ -1115,7 +1120,7 @@ public abstract class VirtualList
 				drawItemData(g, i, x1, y1, x2, y2, fontHeight);
 			}
 			
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//#sijapp cond.if target is "MIDP2"#
 			else
 			{
 				if ((y1 < curY) && (curY < y2) && (x1 < curX) && (curX < x2))
@@ -1194,7 +1199,7 @@ public abstract class VirtualList
 			drawMenuItems(graphics, menuBarHeight, mode, curX, curY);
 			break;
 			
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//#sijapp cond.if target is "MIDP2"#
 		case DMS_CLICK:
 		case DMS_DBLCLICK:
 			boolean clicked;
@@ -1395,7 +1400,7 @@ public abstract class VirtualList
 		boolean menuItemsVisible = false;
 		if (leftMenu != null)
 		{
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//#sijapp cond.if target is "MIDP2"#
 			if ((style == DMS_CLICK) && ptInRect(curX, curY, 0, y1, getWidthInternal()/2, y2))
 			{
 				Vector items = leftMenuPressed();
@@ -1418,7 +1423,7 @@ public abstract class VirtualList
 		
 		if (rightMenu != null)
 		{
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//#sijapp cond.if target is "MIDP2"#
 			if ((style == DMS_CLICK) && ptInRect(curX, curY, getWidthInternal()/2, y1, getWidthInternal(), y2))
 			{
 				Vector items = rightMenuPressed();
@@ -1596,7 +1601,7 @@ public abstract class VirtualList
 			}
 			break;
 			
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#			
+		//#sijapp cond.if target is "MIDP2"#			
 		case DMS_CLICK:
 		case DMS_DBLCLICK:
 			if (ptInRect(curX, curY, x1, y1, x2, y2))
@@ -1692,7 +1697,7 @@ public abstract class VirtualList
 				g.drawString(cmd.getLabel(), x+layer, itemY, Graphics.LEFT|Graphics.TOP);
 				break;
 				
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//#sijapp cond.if target is "MIDP2"#
 			case DMS_CLICK:
 				if (ptInRect(curX, curY, x, itemY, x+width, itemY+fontHeight))
 				{

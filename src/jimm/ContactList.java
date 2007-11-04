@@ -982,10 +982,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			return;
 		}
 
-		long oldStatus = cItem
-				.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+		long oldStatus = cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+		long oldXStatus = cItem.getIntValue(ContactListContactItem.CONTACTITEM_XSTATUS);
 
-		boolean statusChanged = (oldStatus != trueStatus) || (xStatus != cItem.getIntValue(ContactListContactItem.CONTACTITEM_XSTATUS));
+		boolean statusChanged = (oldStatus != trueStatus) || (xStatus != oldXStatus);
 		boolean wasOnline = (oldStatus != STATUS_OFFLINE);
 		boolean nowOnline = (trueStatus != STATUS_OFFLINE);
 
@@ -1040,6 +1040,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		if (statusChanged)
 			contactChanged(cItem, false, (wasOnline && !nowOnline)
 					|| (!wasOnline && nowOnline));
+		
+		Object curScr = JimmUI.getCurrentScreen();
+		if (tree.isActive())
+		{
+			String text = null;
+			if (oldStatus != trueStatus) text = JimmUI.getStatusString(trueStatus);
+			if ((xStatus != oldXStatus) && (xStatus >= 0)) text = ResourceBundle.getString(JimmUI.xStatusStrings[xStatus]);
+			if (text != null) JimmUI.showCapText(curScr, cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+": "+text, TimerTasks.TYPE_FLASH);
+		}
 	}
 
 	//#sijapp cond.if target isnot "DEFAULT" #

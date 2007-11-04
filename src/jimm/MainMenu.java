@@ -169,7 +169,9 @@ public class MainMenu implements CommandListener
 			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF);
 		}
 		
-		JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST);
+		if (ContactList.getSize() != 0)
+			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST);
+		
 		JimmUI.addTextListItem(list, "options_lng",  null, MENU_OPTIONS);
 		
 		//#sijapp cond.if target isnot "DEFAULT"#
@@ -210,6 +212,11 @@ public class MainMenu implements CommandListener
 		MainMenu.build();
 		MainMenu.list.activate(Jimm.display);
 		JimmUI.setLastScreen(MainMenu.list);
+	}
+	
+	public static TextList getUIConrol()
+	{
+		return MainMenu.list;
 	}
 
 	/* Show form for adding user */
@@ -278,53 +285,13 @@ public class MainMenu implements CommandListener
 		statusSelection = SELECT_STATUS;
 	}
 	
-    private static final String[] xstatus = {
-    	"xstatus_none",
-        "xstatus_angry",
-        "xstatus_duck",
-        "xstatus_tired",
-        "xstatus_party",
-        "xstatus_beer",
-        "xstatus_thinking",
-        "xstatus_eating",
-        "xstatus_tv",
-        "xstatus_friends",
-        "xstatus_coffee",
-        "xstatus_music",
-        "xstatus_business",
-        "xstatus_camera",
-        "xstatus_funny",
-        "xstatus_phone",
-        "xstatus_games",
-        "xstatus_college",
-        "xstatus_shopping",
-        "xstatus_sick",
-        "xstatus_sleeping",
-        "xstatus_surfing",
-        "xstatus_internet",
-        "xstatus_engineering",
-        "xstatus_typing",
-        "xstatus_unk",
-        "xstatus_ppc",
-        "xstatus_mobile",
-        "xstatus_man",
-        "xstatus_wc",
-        "xstatus_question",
-        "xstatus_way",
-        "xstatus_heart",
-        "xstatus_cigarette",
-        "xstatus_sex",
-        "xstatus_rambler_search",
-        "xstatus_rambler_journal"
-    };
-
 	private static void initXStatusList()
 	{
 		statusList = new TextList(ResourceBundle.getString("set_xstatus"));
 		statusList.setCursorMode(TextList.SEL_NONE);
 		statusList.lock();
-		for (int i = 0; i < xstatus.length; i++)
-			JimmUI.addTextListItem(statusList, xstatus[i], ContactList.xStatusImages.elementAt(i-1), i);
+		for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
+			JimmUI.addTextListItem(statusList, JimmUI.xStatusStrings[i], ContactList.xStatusImages.elementAt(i-1), i);
 		
 		statusList.unlock();
 		statusSelection = SELECT_XSTATUS;

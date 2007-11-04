@@ -450,7 +450,6 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		{
 			HistoryStorage.clearCache();
 			messText = null;
-			System.gc();
 			ContactList.activate();
 		}
 

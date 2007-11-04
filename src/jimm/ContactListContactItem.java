@@ -24,7 +24,6 @@
 package jimm;
 
 import java.io.IOException;
-import java.util.TimerTask;
 import javax.microedition.lcdui.*;
 
 import java.io.DataOutputStream;
@@ -677,10 +676,6 @@ public class ContactListContactItem implements ContactListItem
 	{
 		String currentUin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 
-		//#sijapp cond.if modules_HISTORY is "true" #
-		ChatHistory.fillFormHistory(this, name);
-		//#sijapp cond.end#
-
 		/* Display chat history */
 		if (getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
 		{
@@ -808,57 +803,3 @@ public class ContactListContactItem implements ContactListItem
 	}
 }
 
-class FlashCapClass extends TimerTask
-{
-	final static public int TYPE_FLASH = 1;
-
-	final static public int TYPE_CREEPING = 2;
-
-	private Displayable displ;
-
-	private String text, oldText;
-
-	private int counter;
-
-	private int type;
-
-	public FlashCapClass(Displayable displ, String text, int counter, int type)
-	{
-		this.displ = displ;
-		this.text = text;
-		this.oldText = JimmUI.getCaption(displ);
-		this.counter = (type == TYPE_FLASH) ? counter : 0;
-		this.type = type;
-	}
-
-	public void run()
-	{
-		if (((type == TYPE_FLASH) && (counter == 0)) || (!displ.isShown()))
-		{
-			JimmUI.setCaption(displ, oldText);
-			cancel();
-			return;
-		}
-
-		switch (type)
-		{
-		case TYPE_FLASH:
-			JimmUI.setCaption(displ, ((counter & 1) == 0) ? text : " ");
-			counter--;
-			break;
-
-		case TYPE_CREEPING:
-			JimmUI.setCaption(displ, text.substring(counter));
-			counter++;
-			if (counter > text.length() - 5)
-				counter = 0;
-			break;
-		}
-	}
-
-	public void restoreCaption()
-	{
-		JimmUI.setCaption(displ, oldText);
-	}
-
-}

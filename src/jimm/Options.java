@@ -456,7 +456,7 @@ public class Options
 		//#sijapp cond.end#
 
 		setBoolean(OPTIONS_LANG_CHANGED, false);
-		setBoolean(OPTION_CREEPING_LINE, true);
+		setBoolean(OPTION_CREEPING_LINE, false);
 		setBoolean(OPTION_SHOW_MESS_ICON, true);
 		setBoolean(OPTION_SHOW_NICK, true);
 		setBoolean(OPTION_SHOW_MESS_DATE, true);
@@ -1640,7 +1640,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 				//#sijapp cond.end#
 				optionsForm.append(chrgPopupWin);
 
-				//#sijapp cond.if target="MIDP2"#
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 				chsBringUp = new ChoiceGroup(ResourceBundle.getString("misc"),
 						Choice.MULTIPLE);
 				setChecked(chsBringUp, "bring_up", Options.OPTION_BRING_UP);
@@ -1918,7 +1918,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 				//#					Options.setBoolean(Options.OPTION_FLASH_BACKLIGHT, flashBkltChoiceGroup.isSelected(0));
 				//#sijapp cond.end#
 
-				//#sijapp cond.if target="MIDP2"#
+				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 				Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp
 						.isSelected(0));
 				Options.setBoolean(Options.OPTION_CREEPING_LINE, chsBringUp
