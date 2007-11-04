@@ -283,6 +283,16 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		textList.setVLCommands(this);
 	}
 	
+	public ContactListContactItem getContact()
+	{
+		return contact;
+	}
+	
+	public Object getUIControl()
+	{
+		return textList;
+	}
+	
 	void buildMenu()
 	{
 		textList.removeAllCommands();
@@ -450,13 +460,13 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		/* Deny authorization */
 		else if (c == cmdDenyAuth)
 		{
-			JimmUI.authMessage(JimmUI.AUTH_TYPE_DENY, this, contact, "reason", null);
+			JimmUI.authMessage(JimmUI.AUTH_TYPE_DENY, contact, "reason", null);
 		}
 		
 		/* Request autorization */
 		else if (c == cmdReqAuth)
 		{
-			JimmUI.authMessage(JimmUI.AUTH_TYPE_REQ_AUTH, this, contact, "requauth", "plsauthme");
+			JimmUI.authMessage(JimmUI.AUTH_TYPE_REQ_AUTH, contact, "requauth", "plsauthme");
 		}
 		
 		/* Show contact menu */
@@ -620,6 +630,10 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		//#sijapp cond.if target is "SIEMENS2"#
 		//#		if ( Options.getBoolean(Options.OPTION_CLASSIC_CHAT) ) chatItem.updateContents();
 		//#sijapp cond.end#
+		if (!textList.isActive())
+		{
+			
+		}
 	}
 
 	public void activate(boolean initChat, boolean resetText)
@@ -646,6 +660,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		textList.activate(Jimm.display);
 		JimmUI.setLastScreen(textList);
 		//#sijapp cond.end#
+		ChatHistory.currentChat = this;
 	}
 
 	//#sijapp cond.if target is "SIEMENS2"#
@@ -797,6 +812,7 @@ public class ChatHistory
 					/* Popup window */
 					//ContactListContactItem.showPopupWindow(uin, contact .getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText());
 					/* Show creeping line */
+					JimmUI.showCreepingLine(JimmUI.getCurrentScreen(), plainMsg.getText(), contact);
 					//ContactListContactItem.showCreepingLine(uin, plainMsg.getText());
 				}
 			} else if (message instanceof UrlMessage)
@@ -909,7 +925,7 @@ public class ChatHistory
 		if (historyTable.containsKey(uin))
 			return (ChatTextList) historyTable.get(uin);
 		else
-			return new ChatTextList("Error", null);
+			return null;
 	}
 
 	final static public int DEL_TYPE_CURRENT = 1;
@@ -980,7 +996,7 @@ public class ChatHistory
 		ContactList.getItembyUIN(uin).setBooleanValue(
 				ContactListContactItem.CONTACTITEM_HAS_CHAT, true); ///
 		//#sijapp cond.if modules_HISTORY is "true" #
-		fillFormHistory(contact, name);
+		fillFormHistory(contact);
 		//#sijapp cond.end#
 	}
 
@@ -988,8 +1004,9 @@ public class ChatHistory
 	//#sijapp cond.if modules_HISTORY is "true" #
 	final static private int MAX_HIST_LAST_MESS = 5;
 
-	static public void fillFormHistory(ContactListContactItem contact, String name)
+	static public void fillFormHistory(ContactListContactItem contact)
 	{
+		String name = contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME);
 		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		if (Options.getBoolean(Options.OPTION_SHOW_LAST_MESS))
 		{
@@ -1058,16 +1075,34 @@ public class ChatHistory
 	// Sets the counter for the ChatHistory
 	static public void calcCounter(String curUin)
 	{
-		if (curUin == null)
-			return;
+		if (curUin == null) return;
 		Enumeration AllChats = historyTable.elements();
 		Object chat = historyTable.get(curUin);
 		counter = 1;
 		while (AllChats.hasMoreElements())
 		{
-			if (AllChats.nextElement() == chat)
-				break;
+			if (AllChats.nextElement() == chat) break;
 			counter++;
 		}
+	}
+	
+	public static boolean activateIfExists(ContactListContactItem item)
+	{
+		if (item == null) return false;
+		
+		ChatTextList chat = getChatHistoryAt(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+		if (chat != null)
+		{
+			chat.buildMenu();
+			chat.activate(false, false);
+		}
+		return (chat != null);
+	}
+	
+	static ChatTextList currentChat;
+	
+	public static ChatTextList getCurrent()
+	{
+		return currentChat;
 	}
 }

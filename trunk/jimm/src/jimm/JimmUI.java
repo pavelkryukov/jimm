@@ -253,14 +253,12 @@ public class JimmUI implements CommandListener
 				
 				authContactItem.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
 				
-				authChatTextList.buildMenu();
-				authChatTextList.activate(false, false);
 			}
-			else 
-				backToLastScreen();
-			
+
+			boolean activated = ChatHistory.activateIfExists(authContactItem);
+			if (!activated) ContactList.activate();
+
 			authTextbox = null;
-			authChatTextList = null;
 			authContactItem = null;
 			
 			return;
@@ -297,7 +295,8 @@ public class JimmUI implements CommandListener
 					{
 						sendMessage(messText);
 						messageTextbox.setString(null);
-						backToLastScreen();
+						boolean activated = ChatHistory.activateIfExists(textMessReceiver);
+						if (!activated) backToLastScreen();
 					}
 					break;
 				}
@@ -638,7 +637,9 @@ public class JimmUI implements CommandListener
 			Options.getSchemeColor(Options.CLRSCHHEME_CURS), 
 			Options.getSchemeColor(Options.CLRSCHHEME_TEXT)
 		);
-		if (setFullScreen) vl.setFullScreen(Options.getBoolean(Options.OPTION_FULL_SCREEN));
+		
+		if (setFullScreen) 
+			vl.setFullScreen(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 	}
 
 	static public void setColorScheme()
@@ -1197,6 +1198,46 @@ public class JimmUI implements CommandListener
 			+ "|" + "status_offline" + "|" + "status_online" + "|"
 			+ "status_invis_all", '|');
 
+    public static final String[] xStatusStrings = {
+    	"xstatus_none",
+        "xstatus_angry",
+        "xstatus_duck",
+        "xstatus_tired",
+        "xstatus_party",
+        "xstatus_beer",
+        "xstatus_thinking",
+        "xstatus_eating",
+        "xstatus_tv",
+        "xstatus_friends",
+        "xstatus_coffee",
+        "xstatus_music",
+        "xstatus_business",
+        "xstatus_camera",
+        "xstatus_funny",
+        "xstatus_phone",
+        "xstatus_games",
+        "xstatus_college",
+        "xstatus_shopping",
+        "xstatus_sick",
+        "xstatus_sleeping",
+        "xstatus_surfing",
+        "xstatus_internet",
+        "xstatus_engineering",
+        "xstatus_typing",
+        "xstatus_unk",
+        "xstatus_ppc",
+        "xstatus_mobile",
+        "xstatus_man",
+        "xstatus_wc",
+        "xstatus_question",
+        "xstatus_way",
+        "xstatus_heart",
+        "xstatus_cigarette",
+        "xstatus_sex",
+        "xstatus_rambler_search",
+        "xstatus_rambler_journal"
+    };
+
 	public static int getStatusIndex(long status)
 	{
 		for (int i = 0; i < statuses.length; i++)
@@ -1412,16 +1453,14 @@ public class JimmUI implements CommandListener
 	
 	private static int authType;
 	private static TextBox authTextbox;
-	private static ChatTextList authChatTextList;
 	private static ContactListContactItem authContactItem;
 
 	public static final int AUTH_TYPE_DENY = 10001;
 	public static final int AUTH_TYPE_REQ_AUTH = 10002;
 	
-	public static void authMessage(int authType, ChatTextList chatTextList, ContactListContactItem contactItem, String caption, String text)
+	public static void authMessage(int authType, ContactListContactItem contactItem, String caption, String text)
 	{
 		JimmUI.authType = authType;
-		authChatTextList = chatTextList;
 		authContactItem = contactItem;
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		authTextbox = new TextBox(ResourceBundle.getString(caption), ResourceBundle.getString(text), 500, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
@@ -1465,7 +1504,7 @@ public class JimmUI implements CommandListener
 		tlContactMenu.setCursorMode(VirtualList.SEL_NONE);
 		tlContactMenu.activate(Jimm.display);
 		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
-		tlContactMenu.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tlContactMenu.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 		tlContactMenu.setCommandListener(_this);
 		
 		long status = contact.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
@@ -1514,6 +1553,10 @@ public class JimmUI implements CommandListener
 	{
 		switch (index)
 		{
+		case USER_MENU_REQU_AUTH:
+			JimmUI.authMessage(JimmUI.AUTH_TYPE_REQ_AUTH, clciContactMenu, "requauth", "plsauthme");
+			break;
+
 		case USER_MENU_MESSAGE:
 			writeMessage(clciContactMenu, null);
 			break;
@@ -1645,7 +1688,7 @@ public class JimmUI implements CommandListener
 					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME)
 				);
 				break;
-			//#sijapp cond.end#	
+			//#sijapp cond.end#
 		}
 	}
 	
@@ -1738,4 +1781,45 @@ public class JimmUI implements CommandListener
 		clciContactMenu.rename(newName);
 		messageTextbox.setString(null);
 	}
+	
+	////////////////////////////////
+	
+	public static Object getCurrentScreen()
+	{
+		if (VirtualList.getCurrent() != null) return VirtualList.getCurrent();
+		Displayable disp = Jimm.display.getCurrent();
+		if ((disp == null) || (disp instanceof Canvas)) return null;
+		return disp;
+	}
+	
+	private static TimerTasks flashTimerTask;
+	
+	public static void showCapText(Object control, String text, int type)
+	{
+		if ((text == null) || (control == null) || (control instanceof Canvas)) return;
+		if (!Options.getBoolean(Options.OPTION_CREEPING_LINE)) return;
+		if ((type == TimerTasks.TYPE_FLASH) && 
+			(flashTimerTask != null) && 
+			!flashTimerTask.isCanceled() && 
+			(flashTimerTask.getType() == TimerTasks.TYPE_CREEPING)) return;
+		
+		if (flashTimerTask != null) flashTimerTask.flashRestoreOldCaption();
+		flashTimerTask = new TimerTasks(control, text, (type == TimerTasks.TYPE_FLASH) ? 10 : 0, type);
+		int interval = (type == TimerTasks.TYPE_FLASH) ? 500 : 300;
+		Jimm.getTimerRef().schedule(flashTimerTask, interval, interval);
+	}
+	
+	public static void showCreepingLine(Object control, String text, ContactListContactItem cItem)
+	{
+		if ((text == null) || (control == null))
+		if (!Options.getBoolean(Options.OPTION_CREEPING_LINE)) return;
+		ChatTextList curChat = ChatHistory.getCurrent(); 
+		if ((curChat != null) && (curChat.getUIControl() == control) && (curChat.isVisible())) return;
+		String name = cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME);
+		String creepingText = name+": "+text;
+		showCapText(control, creepingText, TimerTasks.TYPE_CREEPING);
+	}
+	
+	//////////////////////////////////
+	
 }
