@@ -88,55 +88,55 @@ public class JimmUI implements CommandListener
 	final public static int CMD_BACK = 6;
 
 	// Commands
-	final public static Command cmdOk = new Command(ResourceBundle
+	public final static Command cmdOk = new Command(ResourceBundle
 			.getString("ok"), Command.OK, 1);
 
-	final public static Command cmdCancel = new Command(ResourceBundle
+	public final static Command cmdCancel = new Command(ResourceBundle
 			.getString("cancel"), Command.BACK, 1);
 
-	final public static Command cmdYes = new Command(ResourceBundle
+	public final static Command cmdYes = new Command(ResourceBundle
 			.getString("yes"), Command.OK, 1);
 
-	final public static Command cmdNo = new Command(ResourceBundle
+	public final static Command cmdNo = new Command(ResourceBundle
 			.getString("no"), Command.CANCEL, 2);
 
-	final public static Command cmdFind = new Command(ResourceBundle
+	public final static Command cmdFind = new Command(ResourceBundle
 			.getString("find"), Command.OK, 1);
 
-	final public static Command cmdBack = new Command(ResourceBundle
+	public final static Command cmdBack = new Command(ResourceBundle
 			.getString("back"), Command.BACK, 1);
 
-	final public static Command cmdCopyText = new Command(ResourceBundle
+	public final static Command cmdCopyText = new Command(ResourceBundle
 			.getString("copy_text"), Command.ITEM, 3);
 
-	final public static Command cmdCopyAll = new Command(ResourceBundle
+	public final static Command cmdCopyAll = new Command(ResourceBundle
 			.getString("copy_all_text"), Command.ITEM, 4);
 
-	final public static Command cmdEdit = new Command(ResourceBundle
+	public final static Command cmdEdit = new Command(ResourceBundle
 			.getString("edit"), Command.ITEM, 1);
 	
-	final public static Command cmdMenu = new Command(ResourceBundle
+	public final static Command cmdMenu = new Command(ResourceBundle
 			.getString("menu"), Command.ITEM, 1);
 	
-	final public static Command cmdSelect = new Command(ResourceBundle
+	public final static Command cmdSelect = new Command(ResourceBundle
 			.getString("select"), Command.OK, 2);
 	
-	private static Command cmdSend = new Command(ResourceBundle
+	public final static Command cmdSend = new Command(ResourceBundle
 			.getString("send"), Command.OK, 1);
 	
 	//#sijapp cond.if modules_SMILES is "true" #
-	private static Command cmdInsertEmo = new Command(ResourceBundle
+	public final static Command cmdInsertEmo = new Command(ResourceBundle
 			.getString("insert_emotion"), Command.ITEM, 3);
 	//#sijapp cond.end#
 	
-	private static Command cmdInsTemplate = new Command(ResourceBundle
+	public final static Command cmdInsTemplate = new Command(ResourceBundle
 			.getString("templates"), Command.ITEM, 4);	
 	
 	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
-	public static Command cmdGotoURL = new Command(ResourceBundle.getString("goto_url"), Command.ITEM, 9);
+	public final static Command cmdGotoURL = new Command(ResourceBundle.getString("goto_url"), Command.ITEM, 9);
 	//#sijapp cond.end#
 	
-	private static Command cmdClearText = new Command(ResourceBundle
+	private final static Command cmdClearText = new Command(ResourceBundle
 			.getString("clear"), Command.ITEM, 5);
 
 	static private CommandListener listener;
@@ -293,7 +293,7 @@ public class JimmUI implements CommandListener
 
 					if (messText.length() != 0)
 					{
-						sendMessage(messText);
+						sendMessage(messText, textMessReceiver);
 						messageTextbox.setString(null);
 						boolean activated = ChatHistory.activateIfExists(textMessReceiver);
 						if (!activated) backToLastScreen();
@@ -1384,7 +1384,7 @@ public class JimmUI implements CommandListener
 		Jimm.display.setCurrent(messageTextbox);
 	}
 
-	public void sendMessage(String text)
+	public static void sendMessage(String text, ContactListContactItem textMessReceiver)
 	{
 		/* Construct plain message object and request new SendMessageAction
 		 Add the new message to the chat history */

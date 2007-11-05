@@ -158,8 +158,6 @@ public class Options
 
 	public static final int OPTION_SHOW_LAST_MESS = 142; /* boolean */
 
-	public static final int OPTION_CLASSIC_CHAT = 143; /* boolean */
-
 	public static final int OPTION_COLOR_SCHEME = 73; /* int     */
 
 	public static final int OPTION_STATUS_MESSAGE = 7; /* String  */
@@ -429,7 +427,6 @@ public class Options
 		setInt(Options.OPTION_EXT_CLKEYCALL, HOTKEY_NEWMSG);
 		setInt(Options.OPTION_EXT_CLKEYPOUND, HOTKEY_LOCK);
 		setInt(Options.OPTION_POPUP_WIN2, 0);
-		setBoolean(Options.OPTION_CLASSIC_CHAT, false);
 
 		setString(Options.OPTION_UIN2, emptyString);
 		setString(Options.OPTION_PASSWORD2, emptyString);
@@ -1509,9 +1506,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 				setChecked(chrgChat, "use_history", Options.OPTION_HISTORY);
 				setChecked(chrgChat, "show_prev_mess", Options.OPTION_SHOW_LAST_MESS);
 				//#sijapp cond.end#
-				//#sijapp cond.if target is "SIEMENS2"#
-				//#	                setChecked(chrgChat, "cl_chat", Options.OPTION_CLASSIC_CHAT);
-				//#sijapp cond.end#
 				setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
 
 				//#sijapp cond.if target is "MOTOROLA"#
@@ -1839,10 +1833,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 						.isSelected(idx++));
 				Options.setBoolean(Options.OPTION_SHOW_LAST_MESS, chrgChat
 						.isSelected(idx++));
-				//#sijapp cond.end#
-
-				//#sijapp cond.if target is "SIEMENS2"#
-				//#					Options.setBoolean(Options.OPTION_CLASSIC_CHAT, chrgChat.isSelected(idx++));
 				//#sijapp cond.end#
 
 				Options.setBoolean(Options.OPTION_CP1251_HACK, chrgChat

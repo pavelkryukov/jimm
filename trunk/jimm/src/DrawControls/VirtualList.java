@@ -723,7 +723,7 @@ public abstract class VirtualList
 			break;
 
 		//#sijapp cond.if target is "MOTOROLA"#
-		//#		case KEY_STAR: 
+		//#		case Canvas.KEY_STAR: 
 		//#		setBkltOn(!bklt_on);
 		//#		break;
 		//#sijapp cond.end#
@@ -1184,6 +1184,11 @@ public abstract class VirtualList
 		return ((r+g+b) > 3*127) ? 0 : 0xFFFFFF;
 	}
 
+	public void paintAllOnGraphics(Graphics graphics)
+	{
+		paintAllOnGraphics(graphics, DMS_DRAW, -1, -1);
+	}
+	
 	public void paintAllOnGraphics(Graphics graphics, int mode, int curX, int curY)
 	{
 		int visCount = getVisCount();

@@ -49,8 +49,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 			textCorrWords;
 
 	private static boolean[] emoFinded;
-	
-	private static TextBox textBox;
 
 	public Emotions()
 	{
@@ -287,17 +285,14 @@ public class Emotions implements VirtualListCommands, CommandListener
 	//                               //
 	///////////////////////////////////
 
-	static private Command cmdOk = new Command(ResourceBundle
-			.getString("select"), Command.OK, 1);
+	private static Command cmdOk = new Command(ResourceBundle.getString("select"), Command.OK, 1);
+	private static Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Command.BACK, 2);
 
-	static private Command cmdCancel = new Command(ResourceBundle
-			.getString("cancel"), Command.BACK, 2);
-
-	static private String emotionText;
-
-	static private Selector selector;
-	static private int caretPos;
-	static private Object lastScreen;
+	private static String emotionText;
+	private static Selector selector;
+	private static int caretPos;
+	private static Object lastScreen;
+	private static TextBox textBox;
 
 	static public void selectEmotion(TextBox textBox, Object screen)
 	{
