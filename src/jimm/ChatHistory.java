@@ -43,88 +43,6 @@ import DrawControls.TextList;
 import DrawControls.VirtualList;
 import DrawControls.VirtualListCommands;
 
-//#sijapp cond.if target is "SIEMENS2"#
-//# class ChatItem extends CustomItem
-//# {
-//#	private int height, width;
-//#	private TextList textList;
-//#	
-//#	public ChatItem(int width, int height)
-//#	{
-//#		super(new String());
-//#		this.height   = height;
-//#		this.width    = width;
-//#	}
-//#	
-//#	void setTextList(TextList textList)
-//#	{
-//#		this.textList = textList;
-//#	}
-//#	
-//#	protected int getMinContentHeight()
-//#	{
-//#		return height;
-//#	}
-//#	
-//#	protected int getMinContentWidth()
-//#	{
-//#		return width;
-//#	}
-//#	
-//#	protected int getPrefContentHeight(int width)
-//#	{
-//#		return height;
-//#	}
-//#	
-//#	protected int getPrefContentWidth(int height)
-//#	{
-//#		return width;
-//#	}
-//#	
-//#	protected void paint(Graphics g, int w, int h)
-//#	{
-//#		if (textList == null) return;
-//#		textList.setForcedSize(w, h);
-//#		textList.paintAllOnGraphics(g);
-//#	}
-//#	
-//#	protected void keyPressed(int keyCode)
-//#	{
-//#		textList.doKeyreaction(keyCode, VirtualList.KEY_PRESSED);
-//#		repaint();
-//#	}
-//#	
-//#	protected void keyRepeated(int keyCode)
-//#	{
-//#		textList.doKeyreaction(keyCode, VirtualList.KEY_REPEATED);
-//#		repaint();
-//#	}
-//#	
-//#	protected void keyReleased(int keyCode)
-//#	{
-//#		textList.doKeyreaction(keyCode, VirtualList.KEY_RELEASED);
-//#		repaint();
-//#	}
-//#	
-//#	protected void showNotify()
-//#	{
-//#		ChatTextList.updateChatHeight(true);
-//#	}
-//#	
-//#	void setHeight(int value)
-//#	{
-//#		height = value;
-//#		invalidate();
-//#	}
-//#	
-//#	void updateContents()
-//#	{
-//#		if (textList == null) return;
-//#		repaint();
-//#	}
-//# }
-//#sijapp cond.end#
-
 class MessData
 {
 	private long time;
@@ -162,64 +80,8 @@ class MessData
 	//#sijapp cond.end#
 }
 
-//#sijapp cond.if target is "SIEMENS2"#
-//# class TextListEx extends TextList
-//# {
-//#	public TextListEx(String cap)
-//#	{
-//#		super(cap);
-//#	}
-//#	protected int drawCaption(Graphics g)
-//#	{
-//#		if (Options.getBoolean(Options.OPTION_CLASSIC_CHAT))
-//#			return 0;
-//#		else
-//#			return super.drawCaption(g);
-//#	}
-//# }
-//#sijapp cond.end#
-
 class ChatTextList implements VirtualListCommands, CommandListener
-//#sijapp cond.if target is "SIEMENS2"#
-//#                             ,ItemStateListener
-//#                             ,ItemCommandListener
-//#sijapp cond.end#
 {
-	//#sijapp cond.if target is "SIEMENS2"# ===>
-	//#	static public Form form;
-	//#	static public TextField textLine;
-	//#	static public ChatItem chatItem;
-	//#	static private Command cmdSend; 
-	//#sijapp cond.if modules_SMILES is "true" #
-	//#	private static Command insertEmotionCommand;
-	//#sijapp cond.end#
-	//# private static Command insertTemplateCommand;
-	//#	static private ChatTextList _this;
-	//#	
-	//#	static
-	//#	{
-	//#		form = new Form(null);
-	//#		textLine = new TextField(null, null, 1000, TextField.ANY);
-	//#		chatItem = new ChatItem(form.getWidth()-4, 10);
-	//#		cmdSend = new Command(ResourceBundle.getString("send"), Command.OK, 0);
-	//#		form.append(chatItem);
-	//#		form.append(textLine);
-	//#	
-	//#		textLine.addCommand(cmdSend);
-	//#		
-	//#sijapp cond.if modules_SMILES is "true" #
-	//#		insertEmotionCommand = new Command(ResourceBundle.getString("insert_emotion"), Command.SCREEN, 3);
-	//#		textLine.addCommand(insertEmotionCommand);
-	//#sijapp cond.end#
-	//#		insertTemplateCommand = new Command(ResourceBundle.getString("templates"), Command.SCREEN, 4);
-	//#		textLine.addCommand(insertTemplateCommand);
-	//#	}
-	//#sijapp cond.end# <===
-
-	//#sijapp cond.if target is "SIEMENS2"#
-	//#	TextListEx textList;
-	//#sijapp cond.else#
-
 	// UI modes
 	final public static int UI_MODE_NONE = 0;
 	final public static int UI_MODE_DEL_CHAT = 1;
@@ -235,7 +97,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	private static final Command cmdDenyAuth = new Command(ResourceBundle.getString("deny"), Command.CANCEL, 1);
 	
 	/* Request authorisation from a contact */
-	private static Command cmdReqAuth = new Command(ResourceBundle.getString("requauth"), Command.ITEM, 1);	
+	private static final Command cmdReqAuth = new Command(ResourceBundle.getString("requauth"), Command.ITEM, 1);	
 	
 	/* Grand authorisation a for authorisation asking contact */
 	private static final  Command cmdGrantAuth = new Command(ResourceBundle.getString("grant"), Command.ITEM, 1);
@@ -248,10 +110,8 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	private static final  Command cmdDelChat = new Command(ResourceBundle.getString("delete_chat", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 8);
 	
 	/* Show the message menu */
-	private static Command cmdContactMenu = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 7);
+	private static final Command cmdContactMenu = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 7);
 	
-	
-	//#sijapp cond.end#
 	public String ChatName;
 	ContactListContactItem contact;
 
@@ -263,15 +123,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 	ChatTextList(String name, ContactListContactItem contact)
 	{
-		//#sijapp cond.if target is "SIEMENS2"#
-		//#		_this = this;
-		//#sijapp cond.end#
-
-		//#sijapp cond.if target is "SIEMENS2"#
-		//#		textList = new TextListEx(null);
-		//#sijapp cond.else#
 		textList = new TextList(null);
-		//#sijapp cond.end#
 
 		textList.setCursorMode(TextList.SEL_NONE);
 		textList.setFontSize(Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT) ? TextList.SMALL_FONT : TextList.MEDIUM_FONT);
@@ -627,105 +479,15 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 		textList.setTopItem(lastSize);
 		textList.unlock();
-		//#sijapp cond.if target is "SIEMENS2"#
-		//#		if ( Options.getBoolean(Options.OPTION_CLASSIC_CHAT) ) chatItem.updateContents();
-		//#sijapp cond.end#
-		if (!textList.isActive())
-		{
-			
-		}
 	}
 
 	public void activate(boolean initChat, boolean resetText)
 	{
 		currentUiMode = UI_MODE_NONE;
-		//#sijapp cond.if target is "SIEMENS2"#
-		//#		if ( Options.getBoolean(Options.OPTION_CLASSIC_CHAT) )
-		//#		{
-		//#			textList.setFullScreenMode(false);
-		//#			form.setItemStateListener(this);
-		//#			textLine.setItemCommandListener(this);
-		//#			chatItem.setTextList(textList);
-		//#			chatItem.updateContents();
-		//#			Jimm.display.setCurrent(form);
-		//#			if (initChat) Jimm.display.setCurrentItem(textLine);
-		//#			if (resetText) textLine.setString(new String());
-		//#		}
-		//#		else
-		//#		{
-		//#			textList.setForcedSize(textList.getWidth(), textList.getHeight());
-		//#			Jimm.display.setCurrent(textList);
-		//#		}
-		//#sijapp cond.else#
 		textList.activate(Jimm.display);
 		JimmUI.setLastScreen(textList);
-		//#sijapp cond.end#
 		ChatHistory.currentChat = this;
 	}
-
-	//#sijapp cond.if target is "SIEMENS2"#
-	//#	private static int lastHeight = -1;
-	//#	public void itemStateChanged(Item item)
-	//#	{
-	//#		if (item == textLine) updateChatHeight(false);
-	//#	}
-	//#	
-	//#	static void updateChatHeight(boolean force)
-	//#	{
-	//#		int height = form.getHeight()-textLine.getPreferredHeight()-4;
-	//#		if (lastHeight != height)
-	//#		{
-	//#			chatItem.setHeight(height);
-	//#			_this.textList.setForcedSize(_this.textList.getWidth(), height);
-	//#			int size = _this.textList.getSize();
-	//#			if (size != 0)
-	//#			_this.textList.setCurrentItem(size-1);
-	//#			lastHeight = height; 
-	//#		}
-	//#	}
-	//#	
-	//#	private static int caretPos;
-	//#	public void commandAction(Command c, Item item)
-	//#	{
-	//#		if (c == cmdSend)
-	//#		{
-	//#			ContactListContactItem cItem = ContactList.getItembyUIN(uin);
-	//#			String text = textLine.getString();
-	//#			textLine.setString(new String());
-	//#			updateChatHeight(true);
-	//#			cItem.sendMessage(text);
-	//#		}
-	//#		
-	//#		if (c == insertTemplateCommand)
-	//#		{
-	//#			caretPos = textLine.getCaretPosition();
-	//#			Templates.selectTemplate(_this, form);
-	//#		}
-	//#		
-	//#sijapp cond.if modules_SMILES is "true" #
-	//#		if (c == insertEmotionCommand)
-	//#		{
-	//#			caretPos = textLine.getCaretPosition();
-	//#			Emotions.selectEmotion(_this, form);
-	//#		}
-	//#sijapp cond.end#
-	//#	}
-	//#	
-	//#	public void commandAction(Command c, Displayable d)
-	//#	{
-	//#sijapp cond.if modules_SMILES is "true" #
-	//#		if (Emotions.isMyOkCommand(c))
-	//#		{
-	//#			textLine.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
-	//#		}
-	//#sijapp cond.end#
-	//#		if (Templates.isMyOkCommand(c))
-	//#		{
-	//#			textLine.insert(Templates.getSelectedTemplate(), caretPos);
-	//#		}
-	//#	}
-	//#	
-	//#sijapp cond.end#
 }
 
 public class ChatHistory
@@ -735,28 +497,6 @@ public class ChatHistory
 
 	static private int counter;
 
-	// Adds selected message to history
-	//#sijapp cond.if modules_HISTORY is "true" #
-	/*
-	static public void addTextToHistory(String uin, String from)
-	{
-		ChatTextList list = getChatHistoryAt(uin);
-		int textIndex = list.textList.getCurrTextIndex();
-
-		MessData data = (MessData) list.getMessData().elementAt(textIndex);
-
-		String text = list.textList.getCurrText(data.getOffset(), false);
-		if (text == null)
-			return;
-
-		HistoryStorage.addText(uin, text, data.getIncoming() ? (byte) 0
-				: (byte) 1, data.getIncoming() ? from : ResourceBundle
-				.getString("me"), data.getTime());
-	}
-	*/
-
-	//#sijapp cond.end#
-	
 	public ChatHistory()
 	{
 		_this = this;
@@ -808,14 +548,11 @@ public class ChatHistory
 				
 				if (!offline)
 				{
-					// TODO: uncomment!
-					/* Popup window */
-					//ContactListContactItem.showPopupWindow(uin, contact .getStringValue(ContactListContactItem.CONTACTITEM_NAME), plainMsg.getText());
 					/* Show creeping line */
 					JimmUI.showCreepingLine(JimmUI.getCurrentScreen(), plainMsg.getText(), contact);
-					//ContactListContactItem.showCreepingLine(uin, plainMsg.getText());
 				}
-			} else if (message instanceof UrlMessage)
+			} 
+			else if (message instanceof UrlMessage)
 			{
 				UrlMessage urlMsg = (UrlMessage) message;
 				if (!chat.isVisible()) contact .increaseMessageCount(ContactListContactItem.MESSAGE_URL);
@@ -1033,7 +770,7 @@ public class ChatHistory
 				Emotions.addTextWithEmotions(chatForm.textList, rec.text,
 						Font.STYLE_PLAIN, 0x808080, -1);
 				//#sijapp cond.else#
-				//#				chatForm.textList.addBigText(rec.text, 0x808080, Font.STYLE_PLAIN, -1);
+				chatForm.textList.addBigText(rec.text, 0x808080, Font.STYLE_PLAIN, -1);
 				//#sijapp cond.end#
 				chatForm.textList.doCRLF(-1);
 			}
@@ -1059,9 +796,6 @@ public class ChatHistory
 		String Title = temp.ChatName + " (" + counter + "/"
 				+ historyTable.size() + ")";
 		temp.textList.setCaption(Title);
-		//#sijapp cond.if target is "SIEMENS2"#
-		//#		temp.form.setTitle(Title);
-		//#sijapp cond.end#
 	}
 
 	static public void setColorScheme()

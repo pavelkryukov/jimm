@@ -318,6 +318,7 @@ VERSION 0.5.2beta (0.6.0?)
   * NEW FEATURE: Client icon is shown in contact list
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * Modified user interface
+  * Classic chat is removed
   * It is possible to send messages to contact and view information about 
     contact at search form without adding it to contact list
   * It is possible to see short contact info withowt connecting to server
