@@ -36,6 +36,11 @@ public interface ContactListItem
 	public int getRightImageIndex();
 
 	public String getText();
+	
+	// Returns text used for sorting in contact list  
+	public String getSortText();
+	
+	public int getSortWeight();
 
 	public int getTextColor();
 

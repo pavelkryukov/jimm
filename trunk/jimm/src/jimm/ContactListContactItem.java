@@ -92,6 +92,23 @@ public class ContactListContactItem implements ContactListItem
 		}
 		return null;
 	}
+	
+	//////////////////////////////////////////////////////////////////////////
+	
+	public String getSortText()
+	{
+		return getLowerText(); 
+	}
+	
+	public int getSortWeight()
+	{
+		int status = getIntValue(ContactListContactItem.CONTACTITEM_STATUS); 
+		if (status != ContactList.STATUS_OFFLINE) return 0;
+		if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) 
+				&& status == ContactList.STATUS_OFFLINE) return 20;
+
+		return 10;
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 
