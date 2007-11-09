@@ -175,5 +175,15 @@ public class ContactListGroupItem implements ContactListItem
 	{
 		return -1;
 	}
+	
+	public String getSortText()
+	{
+		return name;
+	}
+	
+	public int getSortWeight()
+	{
+		return 0;
+	}
 
 }

@@ -260,51 +260,27 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	/* *********************************************************** */
 	final static public int SORT_BY_NAME = 1;
-
 	final static public int SORT_BY_STATUS = 0;
-
 	static private int sortType;
-
-	static int getNodeWeight(TreeNode node)
-	{
-		ContactListContactItem cItem;
-		Object obj;
-
-		obj = node.getData();
-		if (!(obj instanceof ContactListContactItem))
-			return 10;
-		cItem = (ContactListContactItem) obj;
-		if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
-			return 0;
-		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)
-				&& cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) == ContactList.STATUS_OFFLINE)
-			return 20;
-
-		return 10;
-	}
 
 	public int compareNodes(TreeNode node1, TreeNode node2)
 	{
-		ContactListContactItem item1, item2;
-		Object obj1, obj2;
+		Object obj1 = node1.getData();
+		Object obj2 = node2.getData();
+		ContactListItem item1 = (ContactListItem) obj1;
+		ContactListItem item2 = (ContactListItem) obj2;
+
 		int result = 0;
-
-		obj1 = node1.getData();
-		obj2 = node2.getData();
-
-		item1 = (ContactListContactItem) obj1;
-		item2 = (ContactListContactItem) obj2;
-
 		switch (sortType)
 		{
 		case SORT_BY_NAME:
-			result = item1.getLowerText().compareTo(item2.getLowerText());
+			result = item1.getSortText().compareTo(item2.getSortText());
 			break;
 		case SORT_BY_STATUS:
-			int weight1 = getNodeWeight(node1);
-			int weight2 = getNodeWeight(node2);
+			int weight1 = item1.getSortWeight();
+			int weight2 = item2.getSortWeight();
 			if (weight1 == weight2)
-				result = item1.getLowerText().compareTo(item2.getLowerText());
+				result = item1.getSortText().compareTo(item2.getSortText());
 			else
 				result = (weight1 < weight2) ? -1 : 1;
 			break;
@@ -416,15 +392,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	static public void optionsChanged(boolean needToRebuildTree,
 			boolean needToSortContacts)
 	{
-		if (needToRebuildTree)
-			treeBuilt = false;
-		if (needToSortContacts)
-			treeSorted = false;
+		if (needToRebuildTree) treeBuilt = false;
+		if (needToSortContacts) treeSorted = false;
 	}
 
 	// Tries to load contact list from record store
-	static private void load() throws Exception, IOException,
-			RecordStoreException
+	static private void load() throws Exception, IOException, RecordStoreException
 	{
 		// Initialize vectors
 		ContactList.cItems = new Vector();
@@ -592,6 +565,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		// Close record store
 		cl.closeRecordStore();
 	}
+	
+	private static void sortGroups()
+	{
+		
+	}
 
 	// called before jimm start to connect to server
 	public static void beforeConnect()
@@ -714,6 +692,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		sortType = Options.getInt(Options.OPTION_CL_SORT_BY);
 		if (Options.getBoolean(Options.OPTION_USER_GROUPS))
 		{
+			// Sort groups
+			tree.sortNode(null);
+			
+			// Sort contacts
 			for (int i = 0; i < gItems.size(); i++)
 			{
 				ContactListGroupItem gItem = (ContactListGroupItem) gItems.elementAt(i);
@@ -730,13 +712,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	static private void buildTree()
 	{
 		int i, gCount, cCount;
-		boolean use_groups = Options.getBoolean(Options.OPTION_USER_GROUPS), only_online = Options
-				.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
+		boolean use_groups = Options.getBoolean(Options.OPTION_USER_GROUPS);
+		boolean only_online = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 
 		cCount = cItems.size();
 		gCount = gItems.size();
-		if (treeBuilt || ((cCount == 0) && (gCount == 0)))
-			return;
+		if (treeBuilt || ((cCount == 0) && (gCount == 0))) return;
 
 		tree.clear();
 		tree.setShowButtons(use_groups);
@@ -746,7 +727,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 		if (use_groups)
 		{
-
 			for (i = 0; i < gCount; i++)
 			{
 				ContactListGroupItem item = (ContactListGroupItem) gItems
