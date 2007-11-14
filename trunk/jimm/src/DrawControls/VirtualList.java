@@ -63,6 +63,9 @@ class VirtualCanvas extends Canvas
 	
 	protected void showNotify()
 	{
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		setFullScreenMode(true);
+		//#sijapp cond.end#
 		if (currentControl != null) currentControl.showNotify();
 	}
 	
@@ -398,15 +401,6 @@ public abstract class VirtualList
 	protected void showNotify()
 	{
 		virtualCanvas.setCommandListener(commandListener);
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		
-		if (exMenuExists()) virtualCanvas.setFullScreenMode(true);
-		else
-		{
-			virtualCanvas.setFullScreenMode(fullScreen);
-			if (!fullScreen) virtualCanvas.setTitle(caption);
-		}
-		//#sijapp cond.end #
 		forcedHeight = forcedWidth = -1;
 		uiState = UI_STATE_NORMAL;
 	}
