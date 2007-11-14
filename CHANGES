@@ -330,5 +330,4 @@ VERSION 0.5.2beta (0.6.0?)
   * Creeping text line is returned back again
   * Another optimization for lower memory usage in chat
   * More options added to customize chat
-  
-  
+

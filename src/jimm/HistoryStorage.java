@@ -68,7 +68,7 @@ class CachedRecord
 class HistoryStorageList extends VirtualList implements CommandListener,
 		VirtualListCommands
 		//#sijapp cond.if target="SIEMENS2" | target="MOTOROLA" | target="MIDP2"#
-		, Runnable, FileBrowserListener
+		, Runnable
 //#sijapp cond.end#
 {
 	// commands for message text
@@ -212,43 +212,51 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	}
 
 	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"|target="SIEMENS2"#
+	private Object fileSystem; 
 	private boolean cp1251;
-
 	private String exportUin;
-
 	private String directory;
+	private TextList messTextList;
 
 	public void export(String uin)
 	{
 		exportUin = uin;
 		try
 		{
-			FileBrowser.setListener(this);
-			FileBrowser.setParameters(true);
-			FileBrowser.activate();
-		} catch (JimmException e)
+			FileSystem2 fb = new FileSystem2();
+			fb.browse(null, this, true);
+			fileSystem = fb; 
+		} catch (Exception e)
 		{
-			JimmException.handleException(e);
 		}
 	}
-
-	public void onFileSelect(String s0)
-	{
-	}
-
-	public void onDirectorySelect(String dir)
-	{
-		directory = dir;
-		(new Thread(this)).start();
-	}
+	
+	private static final int MODE_EXPORT_HISTORY = 1;
+	private static final int MODE_SHOW_EH_MESSAGE = 2;
+	private int currentMode;
+	private String currMessage;
 
 	public void run()
 	{
-		if (exportUin == null)
-			startExport(null);
-		else
-			startExport(new ContactListContactItem[]
-			{ ContactList.getItembyUIN(exportUin) });
+		switch (currentMode)
+		{
+		case MODE_EXPORT_HISTORY:
+			System.out.println("Start history export!");
+			if (exportUin == null) startExport(null);
+			else startExport(new ContactListContactItem[]{ ContactList.getItembyUIN(exportUin) });
+			break;
+			
+		case MODE_SHOW_EH_MESSAGE:
+			messTextList = new TextList(currName);
+			JimmUI.setColorScheme(messTextList, false);
+			messTextList.setFontSize(Font.SIZE_LARGE);
+			messTextList.setCursorMode(VirtualList.SEL_NONE);
+			messTextList.addBigText(currMessage, messTextList.getTextColor(), Font.STYLE_PLAIN, -1);
+			messTextList.setCommandListener(this);
+			messTextList.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
+			messTextList.activate(Jimm.display);
+			break;
+		}
 	}
 
 	private void exportUinToStream(ContactListContactItem item, OutputStream os)
@@ -314,25 +322,25 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		}
 	}
 
-	private void exportUinToFile(ContactListContactItem item, String filename)
+	private void exportUinToFile(ContactListContactItem item, String filename) throws IOException
 	{
-		try
+		if (HistoryStorage.getRecordCount(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) > 0)
 		{
-			if (HistoryStorage.getRecordCount(item
-					.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) > 0)
+			FileSystem2 fs = null;
+			OutputStream os = null;
+			try
 			{
-				FileSystem file = openFile(filename);
-				OutputStream os = file.openOutputStream();
-				if (!cp1251)
-					os.write(new byte[]
-					{ (byte) 0xef, (byte) 0xbb, (byte) 0xbf });
+				fs = (FileSystem2)fileSystem;
+				fs.openFile(filename);
+				os = fs.openOutputStream();
+				if (!cp1251) os.write(new byte[]{ (byte) 0xef, (byte) 0xbb, (byte) 0xbf });
 				exportUinToStream(item, os);
-				file.close();
 			}
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			JimmException.handleException(new JimmException(191, 0, false));
+			finally
+			{
+				if (os != null) os.close();
+				if (fs != null) fs.close();
+			}
 		}
 	}
 
@@ -345,34 +353,33 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
 		if (citems == null)
 			citems = ContactList.getContactItems();
-		for (int i = 0; i < citems.length; i++)
-			exportUinToFile(
-					citems[i],
-					directory
-							+ "jimm_hist_"
-							+ citems[i]
-									.getStringValue(ContactListContactItem.CONTACTITEM_UIN)
-							+ ".txt");
-		ContactList.activate();
-		Alert ok = new Alert("", ResourceBundle.getString("export_complete"),
-				null, AlertType.INFO);
-		ok.setTimeout(Alert.FOREVER);
-		Jimm.display.setCurrent(ok);
-	}
-
-	public FileSystem openFile(String fileName)
-	{
+		
 		try
 		{
-			FileSystem file = FileSystem.getInstance();
-			file.openFile(fileName);
-			return file;
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			JimmException.handleException(new JimmException(191, 0, true));
-			return null;
+			for (int i = 0; i < citems.length; i++)
+				exportUinToFile(
+						citems[i],
+						directory
+								+ "jimm_hist_"
+								+ citems[i]
+										.getStringValue(ContactListContactItem.CONTACTITEM_UIN)
+								+ ".txt");
+			
+			
+			((FileSystem2)fileSystem).close();
+			currMessage = ResourceBundle.getString("export_complete");
 		}
+		catch (Exception e)
+		{
+			currMessage = e.toString()+e.getMessage();
+		}
+		fileSystem = null;
+		
+		System.out.println("currMessage="+currMessage);
+		
+		// Show success (or error message) in main thread
+		currentMode = MODE_SHOW_EH_MESSAGE;
+		Jimm.display.callSerially(this);
 	}
 
 	//#sijapp cond.end#
@@ -397,8 +404,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			}
 		else
 		{
-			URLList = JimmUI.getInfoTextList(ResourceBundle
-					.getString("goto_url"), false);
+			URLList = JimmUI.getInfoTextList(ResourceBundle.getString("goto_url"), false);
 			URLList.addCommandEx(cmdurlSelect, VirtualList.MENU_TYPE_RIGHT);
 			URLList.addCommandEx(cmdurlBack, VirtualList.MENU_TYPE_RIGHT);
 			URLList.setCommandListener(this);
@@ -416,13 +422,38 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	public void commandAction(Command c, Displayable d)
 	{
 		//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
+		
+		if (JimmUI.isControlActive(messTextList))
+		{
+			messTextList = null;
+			HistoryStorage.showHistoryList(currUin, currName);
+			return;
+		}
+		
+		if (fileSystem != null)
+		{
+			if (c == JimmUI.cmdOk)
+			{
+				FileSystem2 fs = (FileSystem2)fileSystem;
+				directory = fs.getValue();
+				currentMode = MODE_EXPORT_HISTORY;
+				(new Thread(this)).start();
+			}
+			else
+			{
+				HistoryStorage.showHistoryList(currUin, currName);
+				fileSystem = null;
+			}
+			return;
+		}
+		
 		if (c == cmdurlBack)
 		{
 			URLList = null;
 			HistoryStorage.showHistoryList(currUin, currName);
 		}
 
-		if (c == cmdurlSelect)
+		else if (c == cmdurlSelect)
 		{
 			try
 			{
@@ -433,7 +464,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			}
 		}
 
-		if (c == cmdGotoURL)
+		else if (c == cmdGotoURL)
 			gotoURL();
 		//#sijapp cond.end#
 

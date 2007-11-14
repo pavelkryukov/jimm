@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.microedition.io.Connector;
+import javax.microedition.media.*;
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.io.file.FileConnection;
@@ -37,20 +38,7 @@ import javax.microedition.io.file.FileConnection;
 //# import com.siemens.mp.io.file.FileConnection;
 //# import com.siemens.mp.io.file.FileSystemRegistry;
 //#sijapp cond.end#
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.StringItem;
-import javax.microedition.lcdui.TextField;
-import javax.microedition.media.Manager;
-import javax.microedition.media.MediaException;
-import javax.microedition.media.Player;
+import javax.microedition.lcdui.*;
 //#sijapp cond.if target isnot "MOTOROLA"#
 import javax.microedition.media.control.VideoControl;
 //#sijapp cond.end#
@@ -62,23 +50,24 @@ import jimm.comm.SendMessageAction;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
-public class FileTransfer implements CommandListener, FileBrowserListener
+public class FileTransfer implements CommandListener, Runnable
 {
+	private static final int MODE_CHECK_FILE_LEN = 10001;
+	private static final int MODE_SHOW_DESC_FORM = 10002;
+	private int curMode;
+	
+	
+	
 	// Type of filetrasfer
 	public static final int FT_TYPE_FILE_BY_NAME = 1;
 
 	//#sijapp cond.if target isnot "MOTOROLA" #
 	public static final int FT_TYPE_CAMERA_SNAPSHOT = 2;
-
 	//#sijapp cond.end #
 
-	// Request
-	private String reqUin;
-
-	//#sijapp cond.if target isnot "MOTOROLA" #
 	// Viewfinder
+	//#sijapp cond.if target isnot "MOTOROLA" #
 	private ViewFinder vf;
-
 	//#sijapp cond.end #
 
 	// Form for entering the name and description
@@ -98,6 +87,9 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 	private int type;
 
 	private ContactListContactItem cItem;
+	
+	private String fileName;
+	private FileSystem2 fileSystem;
 
 	// Commands
 	private Command backCommand = new Command(ResourceBundle.getString("back"),
@@ -148,47 +140,38 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 		{
 			try
 			{
-				FileBrowser.setListener(this);
-				FileBrowser.setParameters(false);
-				FileBrowser.activate();
-			} catch (JimmException e)
+				fileSystem = new FileSystem2();
+				fileSystem.browse(null, this, false);
+			} catch (Exception e)
 			{
-				JimmException.handleException(e);
+				//JimmException.handleException(e); TODO: do correct error handling
 			}
 
 		}
-
 	}
-
-	//
-	public void onFileSelect(String fileName)
+	
+	public void run() 
 	{
-		try
+		switch (curMode)
 		{
-			InputStream fis = null;
-			int size = 0;
-			FileSystem file = FileSystem.getInstance();
-			file.openFile(fileName);
-			fis = file.openInputStream();
-			size = (int) file.fileSize();
-			// Set the file data in file transfer
-			setData(fis, size);
-			// Create filename and ask for name and description
-			//#sijapp cond.if target is "SIEMENS2"| target is "MIDP2"#
-			askForNameDesc(file.getName(), "");
-			//#sijapp cond.else#
-			//#			askForNameDesc(fileName, "");
-			//#sijapp cond.end#
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			JimmException.handleException(new JimmException(191, 0, true));
+		case MODE_CHECK_FILE_LEN:
+			try
+			{
+				fileSystem.openFile(fileName);
+				fsize = (int)fileSystem.fileSize();
+				fis = fileSystem.openInputStream();
+				curMode = MODE_SHOW_DESC_FORM;
+				Jimm.display.callSerially(this);
+			} catch (Exception e) 
+			{
+				e.printStackTrace();
+			}
+			break;
+			
+		case MODE_SHOW_DESC_FORM:
+			askForNameDesc(fileName, "");
+			break;
 		}
-	}
-
-	//
-	public void onDirectorySelect(String s0)
-	{
 	}
 	
 	public static FileTransferMessage getFTM()
@@ -209,13 +192,13 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 		//#sijapp cond.if target isnot "MOTOROLA" #
 		this.vf = null;
 		//#sijapp cond.end #
-
-		// Set the splash screen
-		SplashCanvas.setProgress(0);
-		SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
-		SplashCanvas.addCmd(SplashCanvas.cancelCommnad);
-		SplashCanvas.setCmdListener(this);
-		SplashCanvas.show();
+		
+        // Set the splash screen
+        SplashCanvas.setProgress(0);
+        SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
+        SplashCanvas.addCmd(SplashCanvas.cancelCommnad);
+        SplashCanvas.setCmdListener(this);
+        SplashCanvas.show();
 
 		// Send the ft message
 		ftm = new FileTransferMessage(Options
@@ -229,10 +212,8 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 		} catch (JimmException e)
 		{
 			JimmException.handleException(e);
-			if (e.isCritical())
-				return;
+			if (e.isCritical()) return;
 		}
-
 	}
 
 	public void askForNameDesc(String filename, String description)
@@ -269,21 +250,38 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 	// Command listener
 	public void commandAction(Command c, Displayable d)
 	{
-		if (c == this.okCommand)
+		if ((fileSystem != null) && fileSystem.isActive())
 		{
-			if (d == this.name_Desc)
+			if (c == JimmUI.cmdOk)
 			{
-				this.initFT(this.fileNameField.getString(),
-						this.descriptionField.getString());
+				curMode = MODE_CHECK_FILE_LEN;
+				fileName = fileSystem.getValue();
+				new Thread(this).start();
 			}
-		} else if (c == this.backCommand)
+			else
+			{
+				free();
+				this.getCItem().activate();
+			}
+		}
+		else
 		{
-			free();
-			this.getCItem().activate();
-		} else if (c == SplashCanvas.cancelCommnad)
-		{
-			free();
-			ContactList.activate();
+			if (c == this.okCommand)
+			{
+				if (d == this.name_Desc)
+				{
+					this.initFT(this.fileNameField.getString(),
+							this.descriptionField.getString());
+				}
+			} else if (c == this.backCommand)
+			{
+				free();
+				this.getCItem().activate();
+			} else if (c == SplashCanvas.cancelCommnad)
+			{
+				free();
+				ContactList.activate();
+			}
 		}
 	}
 
@@ -292,6 +290,17 @@ public class FileTransfer implements CommandListener, FileBrowserListener
 		//#sijapp cond.if target isnot "MOTOROLA" #
 		vf = null;
 		//#sijapp cond.end #
+		try
+		{
+			if (fis != null) fis.close();
+		} catch (Exception e) {} // Do nothing
+		
+		try
+		{
+			if (fileSystem != null) fileSystem.close();
+		} catch (Exception e) {} // Do nothing
+		
+		fileSystem = null;
 		fis = null;
 		name_Desc = null;
 		fileNameField = null;

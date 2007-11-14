@@ -2,8 +2,8 @@
 package jimm;
 
 //#sijapp cond.if target="MIDP2"|target="MOTOROLA"#
-import javax.microedition.io.file.FileSystemRegistry;
-import javax.microedition.io.file.FileConnection;
+import javax.microedition.io.file.*;
+import javax.microedition.io.*;
 //#sijapp cond.elseif target="SIEMENS2"#
 //#import com.siemens.mp.io.file.FileConnection;
 //#import com.siemens.mp.io.file.FileSystemRegistry;
@@ -11,6 +11,7 @@ import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Command;
+import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 
 import jimm.util.ResourceBundle;
@@ -19,559 +20,420 @@ import java.util.Vector;
 import java.io.*;
 import DrawControls.*;
 
-abstract class FileSystem
-{
-	public InputStream fileInputStream;
-
-	public OutputStream fileOutputStream;
-
-	public static FileSystem getInstance()
-	{
-		//#sijapp cond.if target="MOTOROLA"#
-		//#		if (!Jimm.supports_JSR75) return new MotorolaFileSystem();
-		//#		else
-		//#sijapp cond.end#
-		return new JSR75FileSystem();
-	}
-
-	public static String[] getDirectoryContents(String dir, boolean only_dirs)
-			throws JimmException
-	{
-		//#sijapp cond.if target="MOTOROLA"#
-		//#		if (!Jimm.supports_JSR75) return MotorolaFileSystem
-		//#				.getDirectoryContents(dir, only_dirs);
-		//#		else
-		//#sijapp cond.end#
-		return JSR75FileSystem.getDirectoryContents(dir, only_dirs);
-	}
-
-	public static long totalSize(String root) throws Exception
-	{
-		//#sijapp cond.if target="MOTOROLA"#
-		//#		if (!Jimm.supports_JSR75) return MotorolaFileSystem.totalSize(root);
-		//#		else
-		//#sijapp cond.end#
-		return JSR75FileSystem.totalSize(root);
-	}
-
-	public abstract void openFile(String file) throws Exception;
-
-	public abstract OutputStream openOutputStream() throws Exception;
-
-	public abstract InputStream openInputStream() throws Exception;
-
-	public abstract void close();
-
-	public abstract long fileSize() throws Exception;
-
-	//#sijapp cond.if target is "SIEMENS2"|target is "MIDP2"#
-	public abstract String getName();
-	//#sijapp cond.end#
-}
-
 //#sijapp cond.if target="MOTOROLA"#
-//#class MotorolaFileSystem extends FileSystem
-//#{
-//#	private com.motorola.io.FileConnection fileConnection;
 
-//#	public static String[] getDirectoryContents(
-//#		String currDir,
-//#		boolean only_dirs) throws JimmException
-//#	{
-//#		String[] items = null;
-//#		try
-//#		{
-//#			if (currDir.equals(FileBrowser.ROOT_DIRECTORY))
-//#			{
-//#				String[] roots = com.motorola.io.FileSystemRegistry.listRoots();
-//#				items = new String[roots.length];
-//#				for (int i = 0; i < roots.length; i++)
-//#					items[i] = roots[i].substring(1);
-//#			}
-//#			else
-//#			{
-//#				com.motorola.io.FileConnection fileconn = (com.motorola.io.FileConnection) Connector
-//#						.open("file://" + currDir);
-//#			String[] list = fileconn.list();
-//#				fileconn.close();
-//#				Vector list_vect = new Vector(list.length + 1);
-//#				list_vect.addElement(FileBrowser.PARENT_DIRECTORY);
-//#				for (int i = 0; i < list.length; i++)
-//#				{
-//#					if (only_dirs & !list[i].endsWith("/")) continue;
-//#					list_vect.addElement(list[i].substring(currDir.length()));
-//#				}
-//#				items = new String[list_vect.size()];
-//#				list_vect.copyInto(items);
-//#			}
-//#		}
-//#		catch (Exception e)
-//#		{
-//#			e.printStackTrace();
-//#			throw new JimmException(191, 0, true);
-//#		}
-//#		return items;
-//#	}
-
-//#	public static long totalSize(String name) throws Exception
-//#	{
-//#		long total_size = 0;
-//#		com.motorola.io.FileConnection fileconn = (com.motorola.io.FileConnection) Connector
-//#				.open("file:///" + name);
-//#		total_size = fileconn.totalSize();
-//#		fileconn.close();
-//#		return total_size;
-//#	}
-
-//#	public void openFile(String file) throws Exception
-//#	{
-//#		fileConnection = (com.motorola.io.FileConnection) Connector
-//#				.open("file://" + file);
-//#	}
-
-//#	public OutputStream openOutputStream() throws Exception
-//#	{
-//#		if (!fileConnection.exists())
-//#		{
-//#			fileConnection.create();
-//#		}
-//#		else if (fileConnection.exists() & (fileOutputStream == null))
-//#		{
-//#			fileConnection.delete();
-//#			fileConnection.create();
-//#		}
-//#		return (fileOutputStream != null) ? fileOutputStream : fileConnection
-//#				.openOutputStream();
-//#	}
-
-//#	public InputStream openInputStream() throws Exception
-//#	{
-//#		return (fileInputStream != null) ? fileInputStream : fileConnection
-//#				.openInputStream();
-//#	}
-
-//#	public void close()
-//#	{
-//#		try
-//#		{
-//#			if (fileInputStream != null) fileInputStream.close();
-//#			if (fileOutputStream != null) fileOutputStream.close();
-//#			if (fileConnection != null) fileConnection.close();
-//#		}
-//#		catch (Exception e)
-//#		{
-//#			e.printStackTrace();
-//#		}
-//#	}
-
-//#	public long fileSize() throws Exception
-//#	{
-//#		if (fileConnection != null) return fileConnection.fileSize();
-//#		else return -1;
-//#	}
-//#}
-
-//#sijapp cond.end#
-class JSR75FileSystem extends FileSystem
+interface MotoFileSystem
 {
-	private FileConnection fileConnection;
+	public void open(String fileName) throws IOException;
+	public void enumRoots(Vector result) throws IOException;
+	public void enumFiles(Vector result, String fileName) throws IOException;
+	public void closeFileConn() throws IOException;
+	public OutputStream openOutputStream() throws IOException;
+	public InputStream openInputStream() throws IOException;
+	public long fileSize() throws IOException;
+}
 
-	public static String[] getDirectoryContents(String currDir,
-			boolean only_dirs) throws JimmException
+class MotoFileSystemHelper implements MotoFileSystem
+{
+	private com.motorola.io.FileConnection fileConn;
+	
+	public void open(String fileName) throws IOException
 	{
-		System.out.println("getDirectoryContents.currDir=" + currDir);
-
-		String[] items = null;
+		fileConn = (com.motorola.io.FileConnection)Connector.open("file://" + fileName);
+	}
+	
+	public void enumRoots(Vector result) throws IOException
+	{
+		String[] roots = com.motorola.io.FileSystemRegistry.listRoots();
+		for (int i = 0; i < roots.length; i++) result.addElement(roots[i]);
+	}
+	
+	public void enumFiles(Vector result, String fileName) throws IOException
+	{
 		try
 		{
-			if (currDir.equals(FileBrowser.ROOT_DIRECTORY))
-			{
-				System.out
-						.println("currDir.equals(FileBrowser.ROOT_DIRECTORY)");
-				Vector roots_vect = new Vector();
-				Enumeration roots = FileSystemRegistry.listRoots();
-				while (roots.hasMoreElements())
-					roots_vect.addElement(((String) roots.nextElement()));
-				items = new String[roots_vect.size()];
-				roots_vect.copyInto(items);
-			} else
-			{
-				FileConnection fileconn;
-				//#sijapp cond.if target="SIEMENS2"#
-				//#				fileconn = (FileConnection) Connector.open("file://" + currDir);
-				//#sijapp cond.else#
-				fileconn = (FileConnection) Connector.open("file://localhost"
-						+ currDir);
-				//#sijapp cond.end#
-
-				Enumeration list = fileconn.list();
-				fileconn.close();
-				Vector list_vect = new Vector();
-				list_vect.addElement(FileBrowser.PARENT_DIRECTORY);
-				while (list.hasMoreElements())
-				{
-					String filename = (String) list.nextElement();
-					if (only_dirs & !filename.endsWith("/"))
-						continue;
-					list_vect.addElement(filename);
-				}
-				items = new String[list_vect.size()];
-				list_vect.copyInto(items);
-			}
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			throw new JimmException(191, 0, true);
+			com.motorola.io.FileConnection fileconn = (com.motorola.io.FileConnection)Connector.open("file://" + fileName);
+			String[] list = fileconn.list();
+			fileconn.close();
+			result.addElement(FileSystem2.PARENT_DIRECTORY);
+			for (int i = 0; i < list.length; i++) result.addElement(list[i]);
 		}
-		return items;
+		catch (Exception e) {}
 	}
-
-	public static long totalSize(String name) throws Exception
+	
+	public void closeFileConn() throws IOException
 	{
-		long total_size = 0;
-		FileConnection fileconn;
-		//#sijapp cond.if target="SIEMENS2"#
-		//#		fileconn = (FileConnection) Connector.open("file:///" + name);
-		//#sijapp cond.else#
-		fileconn = (FileConnection) Connector.open("file://localhost/" + name);
-		//#sijapp cond.end#
+		if (fileConn == null) return;
+		fileConn.close();
+		fileConn = null;
+	}
+	
+	public OutputStream openOutputStream() throws IOException
+	{
+		if ( !fileConn.exists() ) fileConn.create();
+		return fileConn.openOutputStream();
+	}
+	
+	public InputStream openInputStream() throws IOException
+	{
+		return fileConn.openInputStream();
+	}
+	
+	public long fileSize() throws IOException
+	{
+		return (fileConn == null) ? -1 : fileConn.fileSize();
+	}
+	
+}
 
-		total_size = fileconn.totalSize();
+class StdFileSystemHelper implements MotoFileSystem
+{
+	private FileConnection fileConn;
+	
+	public void open(String fileName) throws IOException
+	{
+		fileConn = (FileConnection)Connector.open("file://" + fileName);
+	}
+	
+	public void enumRoots(Vector result)
+	{
+		Enumeration roots = FileSystemRegistry.listRoots();
+		while (roots.hasMoreElements()) result.addElement(roots.nextElement());
+	}
+	
+	public void enumFiles(Vector result, String fileName) throws IOException
+	{
+		FileConnection fileconn = (FileConnection) Connector.open("file://" + fileName);
+		Enumeration list = fileconn.list();
 		fileconn.close();
-		return total_size;
-	}
-
-	public void openFile(String file) throws Exception
-	{
-		fileConnection = (FileConnection) Connector.open("file://" + file);
-	}
-
-	public OutputStream openOutputStream() throws Exception
-	{
-		if (!fileConnection.exists())
+		
+		result.addElement(FileSystem2.PARENT_DIRECTORY);
+		while (list.hasMoreElements())
 		{
-			fileConnection.create();
-		} else if (fileConnection.exists() & (fileOutputStream == null))
-		{
-			fileConnection.delete();
-			fileConnection.create();
+			String filename = (String) list.nextElement();
+			result.addElement(filename);
 		}
-		return (fileOutputStream != null) ? fileOutputStream : fileConnection
-				.openOutputStream();
 	}
-
-	public InputStream openInputStream() throws Exception
+	
+	public void closeFileConn() throws IOException
 	{
-		return (fileInputStream != null) ? fileInputStream : fileConnection
-				.openInputStream();
+		if (fileConn == null) return;
+		fileConn.close();
+		fileConn = null;
 	}
-
-	public void close()
+	
+	public OutputStream openOutputStream() throws IOException
 	{
+		if ( !fileConn.exists() ) fileConn.create();
+		return fileConn.openOutputStream();
+	}
+	
+	public InputStream openInputStream() throws IOException
+	{
+		return fileConn.openInputStream();
+	}
+	
+	public long fileSize() throws IOException
+	{
+		return (fileConn == null) ? -1 : fileConn.fileSize();
+	}
+	
+}
+//#sijapp cond.end#
+
+class FileSystem2 implements CommandListener, Runnable
+{
+	private CommandListener externalListener;
+	private TextList list;
+	final static String ROOT_DIRECTORY = "/";
+	final static String PARENT_DIRECTORY = "../";
+	private ImageList imageList;
+	private final static int MODE_SCAN_DIRECTORY = 1;
+	private final static int MODE_SHOW_RESULTS   = 2;
+	private int currentMode;
+	private String currentDir;
+	private String selectedItem;
+	private Vector items;
+	private boolean onlyDirs;
+	
+	//#sijapp cond.if target="MOTOROLA"#
+	MotoFileSystem motoFileConnection;
+	//#sijapp cond.else#
+	private FileConnection fileConnection;
+	//#sijapp cond.end#
+	
+	public FileSystem2()
+	{
+		//#sijapp cond.if target="MOTOROLA"#
 		try
 		{
-			if (fileInputStream != null)
-				fileInputStream.close();
-			if (fileOutputStream != null)
-				fileOutputStream.close();
-			if (fileConnection != null)
-				fileConnection.close();
-		} catch (Exception e)
-		{
-			e.printStackTrace();
+			Class.forName("javax.microedition.io.file.FileConnection");
+			motoFileConnection = new StdFileSystemHelper();
 		}
-	}
-
-	public long fileSize() throws Exception
-	{
-		if (fileConnection != null)
-			return fileConnection.fileSize();
-		else
-			return -1;
-	}
-
-	//#sijapp cond.if target is "SIEMENS2"|target is "MIDP2"#
-	public String getName()
-	{
-		if (fileConnection != null)
-			return fileConnection.getName();
-
-		return null;
-	}
-	//#sijapp cond.end#
-}
-
-interface FileBrowserListener
-{
-	public void onFileSelect(String file);
-
-	public void onDirectorySelect(String directory);
-}
-
-/**
- * @author andreas
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
-public class FileBrowser implements CommandListener, VirtualTreeCommands,
-		VirtualListCommands
-{
-	public static final String ROOT_DIRECTORY = "/";
-
-	public static final String PARENT_DIRECTORY = "../";
-
-	public static final Command backCommand = new Command(ResourceBundle
-			.getString("back"), Command.SCREEN, 0);
-
-	public static final Command selectCommand = new Command(ResourceBundle
-			.getString("select"), Command.OK, 1);
-
-	public static final Command openCommand = new Command(ResourceBundle
-			.getString("open"), Command.OK, 1);
-
-	private static boolean needToSelectDirectory, openCommandSelected;
-
-	private static FileBrowser _this;
-
-	private static VirtualTree tree;
-
-	private static FileBrowserListener listener;
-
-	private static ImageList imageList;
-
-	private static String[] items;
-
-	private static String currDir;
-
-	public FileBrowser()
-	{
-		_this = this;
+		catch (ClassNotFoundException cnfe)
+		{
+			motoFileConnection = new MotoFileSystemHelper();
+		}
+		//#sijapp cond.end#
+		
 		imageList = new ImageList();
 		try
 		{
 			imageList.load("/fs.png", -1, -1, -1);
-		} catch (java.io.IOException e)
+		} catch (java.io.IOException e) {}		
+		
+		items = new Vector();
+		list = new TextList(null);
+	}
+	
+	public void browse(String root, CommandListener externalListener, boolean onlyDirs)
+	{
+		this.externalListener = externalListener;
+		this.onlyDirs = onlyDirs;
+		
+		if (root == null) root = ROOT_DIRECTORY;
+		
+		list.removeAllCommands();
+		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		if (onlyDirs)
 		{
+			list.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+			list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT);
+			list.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT);
 		}
-		tree = new VirtualTree(null, false);
-		tree.setVTCommands(this);
-		tree.setVLCommands(this);
-
-		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
-				: VirtualList.MEDIUM_FONT);
-		tree.setStepSize(-tree.getFontHeight() / 2);
-		tree.setCapImage(imageList.elementAt(0));
-		JimmUI.setColorScheme(tree, false);
-		tree.setShowButtons(false);
-		tree.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT);
-		tree.setCommandListener(this);
+		else list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+		
+		JimmUI.setColorScheme(list, false);
+		list.setCursorMode(VirtualList.SEL_NONE);
+		list.activate(Jimm.display);
+		list.setCommandListener(this);
+		showFolder(root);
 	}
+	
 
-	private static void reset()
+	private void showFolder(String path)
 	{
-		tree.lock();
-		items = new String[0];
-		tree.clear();
-		tree.unlock();
+		if (currentMode == MODE_SCAN_DIRECTORY) return;
+		currentMode = MODE_SCAN_DIRECTORY;
+		currentDir = path;
+		new Thread(this).start();
 	}
-
-	private static int getNodeWeight(String filename)
+	
+	//#sijapp cond.if target="MOTOROLA"#
+	private void enumRootsMoto(Vector result) throws IOException
 	{
-		if (filename.equals(PARENT_DIRECTORY))
-			return 0;
-		if (filename.endsWith("/"))
-			return 10;
-		return 20;
+		motoFileConnection.enumRoots(result);
 	}
-
-	public int compareNodes(TreeNode node1, TreeNode node2)
+	
+	private void enumFilesMoto(Vector result, String fileName) throws IOException
 	{
-		int result = 0;
-		String name1 = (String) node1.getData();
-		String name2 = (String) node2.getData();
-		int weight1 = getNodeWeight(name1);
-		int weight2 = getNodeWeight(name2);
-		if (weight1 == weight2)
-			result = name1.toLowerCase().compareTo(name2.toLowerCase());
-		else
-			result = (weight1 < weight2) ? -1 : 1;
-		return result;
+		motoFileConnection.enumFiles(result, fileName);
 	}
-
-	private static void rebuildTree()
+	
+	//#sijapp cond.else#
+	
+	private void enumRootsStd(Vector result)
 	{
-		tree.lock();
-		tree.clear();
-		for (int i = 0; i < items.length; i++)
-			tree.addNode(null, items[i]);
-		tree.sortNode(null);
-		tree.unlock();
-		updateTreeCaptionAndCommands((String) tree.getCurrentItem().getData());
+		Enumeration roots = FileSystemRegistry.listRoots();
+		while (roots.hasMoreElements()) result.addElement(roots.nextElement());
 	}
-
-	public static void setParameters(boolean select_dir)
+	
+	private void enumFilesStd(Vector result, String fileName) throws IOException
 	{
-		needToSelectDirectory = select_dir;
-	}
+		FileConnection fileconn;
+		//#sijapp cond.if target="SIEMENS2"#
+		fileconn = (FileConnection) Connector.open("file://" + fileName);
+		//#sijapp cond.else#
+		fileconn = (FileConnection) Connector.open("file://localhost"+fileName);
+		//#sijapp cond.end#
 
-	public static void setListener(FileBrowserListener _listener)
-	{
-		listener = _listener;
-	}
-
-	public void VTnodeClicked(TreeNode node)
-	{
-		String file = (String) node.getData();
-
-		if (file.equals(PARENT_DIRECTORY))
+		Enumeration list = fileconn.list();
+		fileconn.close();
+		
+		result.addElement(PARENT_DIRECTORY);
+		while (list.hasMoreElements())
 		{
-			int d = currDir.lastIndexOf('/', currDir.length() - 2);
-			currDir = (d != -1) ? currDir.substring(0, d + 1) : ROOT_DIRECTORY;
-			reset();
-			try
-			{
-				items = FileSystem.getDirectoryContents(currDir,
-						needToSelectDirectory);
-			} catch (JimmException e)
-			{
-				JimmException.handleException(e);
-			}
-			rebuildTree();
-		} else if (file.endsWith("/"))
-		{
-			currDir += file;
-			reset();
-			try
-			{
-				items = FileSystem.getDirectoryContents(currDir,
-						needToSelectDirectory);
-			} catch (JimmException e)
-			{
-				JimmException.handleException(e);
-			}
-			//			if (needToSelectDirectory & !openCommandSelected
-			//					& (items.length <= 1)) listener.onDirectorySelect(currDir);
-			//			else 
-			rebuildTree();
-			openCommandSelected = false;
-		} else
-		{
-			listener.onFileSelect(currDir + file);
+			String filename = (String) list.nextElement();
+			result.addElement(filename);
 		}
 	}
-
-	private static void updateTreeCaptionAndCommands(String name)
+	
+	//#sijapp cond.end#
+	
+	public void run() 
 	{
-		tree.removeCommandEx(openCommand);
-		tree.removeCommandEx(selectCommand);
-		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
-		if (name.equals(PARENT_DIRECTORY))
+		switch (currentMode)
 		{
-			int d = currDir.lastIndexOf('/', currDir.length() - 2);
-			tree.addCommandEx(openCommand, VirtualList.MENU_TYPE_LEFT_BAR);
-			tree.setCaption((d != -1) ? currDir.substring(0, d + 1)
-					: ROOT_DIRECTORY);
-		} else if (name.endsWith("/") & currDir.equals(ROOT_DIRECTORY))
-		{
+		case MODE_SCAN_DIRECTORY:
 			try
 			{
-				tree.setCaption(ResourceBundle.getString("total_mem") + ": "
-						+ (FileSystem.totalSize(name) >> 10)
-						+ ResourceBundle.getString("kb"));
-			} catch (Exception e)
+				items.removeAllElements();
+				if (currentDir.equals(ROOT_DIRECTORY))
+				{
+					//#sijapp cond.if target="MOTOROLA"#
+					enumRootsMoto(items);
+					//#sijapp cond.else#
+					enumRootsStd(items);
+					//#sijapp cond.end#
+				}
+				else
+				{
+					//#sijapp cond.if target="MOTOROLA"#
+					enumFilesMoto(items, currentDir);
+					//#sijapp cond.else#
+					enumFilesStd(items, currentDir);
+					//#sijapp cond.end#
+				}
+			} 
+			catch (Exception e)
 			{
 				e.printStackTrace();
-				tree.setCaption("???");
 			}
-			if (needToSelectDirectory)
-				tree.addCommandEx(selectCommand, VirtualList.MENU_TYPE_RIGHT);
-			tree.addCommandEx(openCommand, VirtualList.MENU_TYPE_LEFT_BAR);
-		} else if (name.endsWith("/") & !currDir.equals(ROOT_DIRECTORY))
-		{
-			if (needToSelectDirectory)
-				tree.addCommandEx(selectCommand, VirtualList.MENU_TYPE_RIGHT);
-			tree.addCommandEx(openCommand, VirtualList.MENU_TYPE_LEFT_BAR);
-			tree.setCaption(currDir + name);
-		} else
-		{
-			tree.addCommandEx(selectCommand, VirtualList.MENU_TYPE_RIGHT);
-			try
+			
+			currentMode = MODE_SHOW_RESULTS;
+			Jimm.display.callSerially(this);
+			break;
+			
+		case MODE_SHOW_RESULTS:
+			
+			// Show last path element at caption 
+			int index1 = -1, index2 = -1;
+			for (int i = currentDir.length()-1; i >= 0; i--)
 			{
-				int file_size = 0;
-				FileSystem file = FileSystem.getInstance();
-				file.openFile(currDir + name);
-				file_size = (int) (file.fileSize() >> 10);
-				file.close();
-				int ext = name.lastIndexOf('.');
-				StringBuffer str_buf = new StringBuffer();
-				if (ext != -1)
-					str_buf = str_buf.append(
-							name.substring(ext + 1).toUpperCase()).append(", ");
-				str_buf = str_buf.append(file_size).append(
-						ResourceBundle.getString("kb"));
-				tree.setCaption(str_buf.toString());
-			} catch (Exception e)
-			{
+				boolean isDelim = (currentDir.charAt(i) == '/');
+				if (isDelim)
+				{
+					if (index1 == -1) index1 = i;
+					else if (index2 == -1) index2 = i;
+					else break;
+				}
 			}
+			
+			list.setCaption
+			(
+				(index1 != -1) && (index2 != -1) ? 
+				currentDir.substring(index2+1, index1) : 
+				"Root"
+			);
+
+			// Show directory content
+			list.clear();
+			
+			// Show dirs
+			for (int i = 0; i < items.size(); i++)
+			{
+				String itemText = (String)items.elementAt(i);
+				if (!itemText.endsWith("/")) continue;
+				JimmUI.addTextListItem(list, itemText, imageList.elementAt(0), i);
+			}
+			
+			// Show files
+			if (!onlyDirs) for (int i = 0; i < items.size(); i++)
+			{
+				String itemText = (String)items.elementAt(i);
+				if (itemText.endsWith("/")) continue;
+				JimmUI.addTextListItem(list, itemText, imageList.elementAt(1), i);
+			}
+			break;
 		}
 	}
-
-	public void onCursorMove(VirtualList sender)
-	{
-		if (sender == tree)
-			updateTreeCaptionAndCommands((String) tree.getCurrentItem()
-					.getData());
-	}
-
-	public void VTGetItemDrawData(TreeNode src, ListItem dst)
-	{
-		String file = (String) src.getData();
-		dst.text = file;
-		dst.leftImage = imageList.elementAt(file.endsWith("/") ? 0 : 1);
-		dst.color = tree.getTextColor();
-		dst.fontStyle = javax.microedition.lcdui.Font.STYLE_PLAIN;
-	}
-
-	public void onItemSelected(VirtualList sender)
-	{
-	}
-
-	public void onKeyPress(VirtualList sender, int keyCode, int type)
-	{
-	}
-
-	public static void activate() throws JimmException
-	{
-		if (_this == null)
-			new FileBrowser();
-		reset();
-		currDir = ROOT_DIRECTORY;
-		items = FileSystem.getDirectoryContents(currDir, needToSelectDirectory);
-		rebuildTree();
-		tree.activate(Jimm.display);
-	}
-
+	
 	public void commandAction(Command c, Displayable d)
 	{
-		if (tree.isActive())
+		if ((c == JimmUI.cmdSelect) || (c == JimmUI.cmdOk)) 
 		{
-			if (c == openCommand)
+			int index = list.getCurrTextIndex();
+			if (index < 0) return;
+			String itemText = (String)items.elementAt(index);
+			selectedItem = currentDir+itemText;
+			if (itemText == PARENT_DIRECTORY)
 			{
-				openCommandSelected = needToSelectDirectory;
-				VTnodeClicked(tree.getCurrentItem());
-			} else if (c == selectCommand)
+				String parentDir = null;
+				for (int i = currentDir.length()-2; i >= 0; i--) if (currentDir.charAt(i) == '/')
+				{
+					parentDir = currentDir.substring(0, i+1);
+					break;
+				}
+				if (parentDir != null) showFolder(parentDir);
+			}
+			else if (itemText.endsWith("/") && (c != JimmUI.cmdOk))
 			{
-				String filename = (String) tree.getCurrentItem().getData();
-				if (filename.endsWith("/"))
-					listener.onDirectorySelect(currDir + filename);
-				else
-					listener.onFileSelect(currDir + filename);
-			} else if (c == backCommand)
+				showFolder(selectedItem);
+			}
+			else
 			{
-				ContactList.activate();
+				if (externalListener != null) externalListener.commandAction(JimmUI.cmdOk, d);
 			}
 		}
+		else if (c == JimmUI.cmdBack) externalListener.commandAction(JimmUI.cmdBack, d);
+	}
+	
+	public boolean isActive()
+	{
+		return (list == null) ? false : list.isActive();
+	}
+	
+	public String getValue()
+	{
+		return selectedItem;
+	}
+	
+	public void openFile(String fileName) throws IOException
+	{
+		close();
+		//#sijapp cond.if target="MOTOROLA"#
+		motoFileConnection.open(fileName);
+		//#sijapp cond.else#
+		fileConnection = (FileConnection) Connector.open("file://" + fileName);		
+		//#sijapp cond.end#
+	}
+	
+	public InputStream openInputStream() throws IOException
+	{
+		InputStream result;
+		//#sijapp cond.if target="MOTOROLA"#
+		result = motoFileConnection.openInputStream();
+		//#sijapp cond.else#
+		result = fileConnection.openInputStream();
+		//#sijapp cond.end#
+		return result;
+	}
+	
+	public OutputStream openOutputStream() throws IOException
+	{
+		OutputStream result;
+		//#sijapp cond.if target="MOTOROLA"#
+		result = motoFileConnection.openOutputStream();
+		//#sijapp cond.else#
+		if ( !fileConnection.exists() ) fileConnection.create();
+		result = fileConnection.openOutputStream();
+		//#sijapp cond.end#
+		return result;
+	}
+	
+	public void close() throws IOException
+	{
+		//#sijapp cond.if target="MOTOROLA"#
+		motoFileConnection.closeFileConn();
+		//#sijapp cond.else#
+		if (fileConnection != null)
+		{
+			fileConnection.close();
+			fileConnection = null;
+		}
+		//#sijapp cond.end#
+	}
+	
+	public long fileSize() throws IOException
+	{
+		long result = 0;
+		//#sijapp cond.if target="MOTOROLA"#
+		motoFileConnection.fileSize();
+		//#sijapp cond.else#
+		result = (fileConnection == null) ? -1 : fileConnection.fileSize();
+		//#sijapp cond.end#
+		return result;
 	}
 }
+
 //#sijapp cond.end#
