@@ -160,9 +160,10 @@ public abstract class VirtualList
 
 	private Image capImage;
 	
-	private static final int KEY_CODE_LEFT_MENU = -1000001;
-	private static final int KEY_CODE_RIGHT_MENU = -1000002;
-	private static final int KEY_CODE_BACK_BUTTON = -1000003;
+	private static final int KEY_CODE_LEFT_MENU = 1000001;
+	private static final int KEY_CODE_RIGHT_MENU = 1000002;
+	private static final int KEY_CODE_BACK_BUTTON = 1000003;
+	private static final int KEY_CODE_UNKNOWN = 1000004;
 	
 	private static int curMenuItemIndex; 
 	
@@ -621,66 +622,61 @@ public abstract class VirtualList
 				
 		int lastUIState = uiState;
 		
-		try
+		switch (getExtendedGameAction(keyCode))
 		{
-			switch (getExtendedGameAction(keyCode))
+		case KEY_CODE_LEFT_MENU:
+			clickedMenuItems = leftMenuPressed();
+			break;
+			
+		case KEY_CODE_RIGHT_MENU:
+			clickedMenuItems = rightMenuPressed();
+			break;
+			
+		case KEY_CODE_BACK_BUTTON:
+			switch (uiState)
 			{
-			case KEY_CODE_LEFT_MENU:
-				clickedMenuItems = leftMenuPressed();
-				break;
-				
-			case KEY_CODE_RIGHT_MENU:
-				clickedMenuItems = rightMenuPressed();
-				break;
-				
-			case KEY_CODE_BACK_BUTTON:
-				switch (uiState)
-				{
-				case UI_STATE_RIGHT_MENU_VISIBLE:
-				case UI_STATE_LEFT_MENU_VISIBLE:
-					uiState = UI_STATE_NORMAL;
-					invalidate();
-					break;
-
-				default:
-					Command backMenu = findMenuByType(Command.BACK);
-					if (backMenu != null)
-					{
-						if (executeCommand(backMenu)) return;
-					}
-					break;
-				}
+			case UI_STATE_RIGHT_MENU_VISIBLE:
+			case UI_STATE_LEFT_MENU_VISIBLE:
+				uiState = UI_STATE_NORMAL;
+				invalidate();
 				break;
 
-			case Canvas.DOWN:
-				if (menuItemsVisible) moveSelectedMenuItem(1, menuItemsData.size(), false);
-				else moveCursor(1, false);
-				break;
-				
-			case Canvas.UP:
-				if (menuItemsVisible) moveSelectedMenuItem(-1, menuItemsData.size(), false);
-				else moveCursor(-1, false);
-				break;
-				
-			case Canvas.FIRE:
-				if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return;
-				
-				if (menuItemsVisible)
+			default:
+				Command backMenu = findMenuByType(Command.BACK);
+				if (backMenu != null)
 				{
-					uiState = UI_STATE_NORMAL;
-					executeCommand((Command)menuItemsData.elementAt(curMenuItemIndex));
-					invalidate();
-				}
-				else
-				{
-					itemSelected();
-					if (vlCommands != null) vlCommands.onItemSelected(this);
+					if (executeCommand(backMenu)) return;
 				}
 				break;
 			}
-		}
-		catch (Exception e) // getGameAction throws exception on motorola
-		{ // when opening flipper
+			break;
+
+		case Canvas.DOWN:
+			if (menuItemsVisible) moveSelectedMenuItem(1, menuItemsData.size(), false);
+			else moveCursor(1, false);
+			break;
+			
+		case Canvas.UP:
+			if (menuItemsVisible) moveSelectedMenuItem(-1, menuItemsData.size(), false);
+			else moveCursor(-1, false);
+			break;
+			
+		case Canvas.FIRE:
+			if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return;
+			
+			if (menuItemsVisible)
+			{
+				uiState = UI_STATE_NORMAL;
+				executeCommand((Command)menuItemsData.elementAt(curMenuItemIndex));
+				invalidate();
+			}
+			else
+			{
+				itemSelected();
+				if (vlCommands != null) vlCommands.onItemSelected(this);
+			}
+			break;
+		default:
 			return;
 		}
 		
@@ -749,13 +745,19 @@ public abstract class VirtualList
 	private int getExtendedGameAction(int keyCode)
 	{
         String strCode = null;
+        
+        try
+        {
+        	int gameAct = virtualCanvas.getGameAction(keyCode);
+        	if (gameAct > 0) return gameAct;
+        }
+        catch (Exception e) {} // Do nothing
+        
         try 
         {
             strCode = virtualCanvas.getKeyName(keyCode).toLowerCase();
         } 
-        catch(IllegalArgumentException e) 
-        {
-        }
+        catch(IllegalArgumentException e) {} // Do nothing
         
         if (strCode != null) 
         {
@@ -788,7 +790,7 @@ public abstract class VirtualList
         	return KEY_CODE_BACK_BUTTON;
         }
         
-        return virtualCanvas.getGameAction(keyCode);
+        return KEY_CODE_UNKNOWN;
 	}
 
 	protected void keyPressed(int keyCode)

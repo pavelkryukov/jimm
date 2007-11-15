@@ -304,6 +304,7 @@ public class FileTransfer implements CommandListener, Runnable
 		fis = null;
 		name_Desc = null;
 		fileNameField = null;
+		descriptionField = null;
 		System.gc();
 	}
 
