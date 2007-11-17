@@ -125,7 +125,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	{
 		textList = new TextList(null);
 
-		textList.setCursorMode(TextList.SEL_NONE);
+		textList.setMode(TextList.MODE_TEXT);
 		textList.setFontSize(Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT) ? TextList.SMALL_FONT : TextList.MEDIUM_FONT);
 
 		this.contact = contact;
@@ -341,7 +341,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		return messData;
 	}
 
-	public void onCursorMove(VirtualList sender)
+	public void vlCursorMoved(VirtualList sender)
 	{
 		checkTextForURL();
 	}
@@ -373,11 +373,11 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		textList.setCapImage(img);
 	}
 
-	public void onItemSelected(VirtualList sender)
+	public void vlItemClicked(VirtualList sender)
 	{
 	}
 
-	public void onKeyPress(VirtualList sender, int keyCode, int type)
+	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
 		try
 		// getGameAction can raise exception

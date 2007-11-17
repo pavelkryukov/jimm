@@ -177,6 +177,8 @@ class TextLine
  You may use it to show text with colorised lines :) */
 public class TextList extends VirtualList
 {
+	private static final int BORDER = 3; 
+	
 	// Vector of lines. Each line contains cols. Col can be text or image
 	private Vector lines = new Vector();
 
@@ -282,7 +284,7 @@ public class TextList extends VirtualList
 
 	public int getItemHeight(int itemIndex)
 	{
-		if (getCursorMode() != SEL_NONE) return super.getItemHeight(itemIndex);
+		if (getCursorMode() != MODE_TEXT) return super.getItemHeight(itemIndex);
 		if (itemIndex >= lines.size()) return 1;
 		return getLine(itemIndex).getHeight(getFontSize());
 	}
@@ -290,14 +292,14 @@ public class TextList extends VirtualList
 	// Overrides VirtualList.drawItemData
 	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight)
 	{
-		if (getCursorMode() != SEL_NONE)
+		if (getCursorMode() != MODE_TEXT)
 		{
 			super.drawItemData(g, index, x1, y1, x2, y2, fontHeight);
 			return;
 		}
 
 		TextLine line = getLine(index);
-		line.paint(1, y1, g, getFontSize(), this);
+		line.paint(BORDER, y1, g, getFontSize(), this);
 	}
 
 	// Overrides VirtualList.moveCursor
@@ -440,7 +442,7 @@ public class TextList extends VirtualList
 		TextLine textLine = (TextLine) lines.lastElement();
 		textLine.bigTextIndex = blockTextIndex;
 		
-		if ((textLine.getWidth(getFontSize()) + image.getWidth()) > getTrueWidth())
+		if ((textLine.getWidth(getFontSize()) + image.getWidth()) > getTextAreaWidth())
 		{
 			doCRLF(blockTextIndex);
 			textLine = (TextLine) lines.lastElement();
@@ -453,9 +455,9 @@ public class TextList extends VirtualList
 		return this;
 	}
 
-	private int getTrueWidth()
+	private int getTextAreaWidth()
 	{
-		return getWidthInternal() - scrollerWidth - 3;
+		return getWidthInternal() - scrollerWidth - BORDER*2;
 	}
 
 	private static String replace(String text, String from, String to)
@@ -590,7 +592,7 @@ public class TextList extends VirtualList
 		int textIndex //!< Whole text index
 	)
 	{
-		addBigTextInternal(text, color, fontStyle, textIndex, getTrueWidth());
+		addBigTextInternal(text, color, fontStyle, textIndex, getTextAreaWidth());
 		invalidate();
 		return this;
 	}

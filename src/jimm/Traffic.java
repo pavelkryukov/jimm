@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-06  Jimm Project
+ Copyright (C) 2003-07  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -359,7 +359,7 @@ public class Traffic
 			// Initialize traffic screen
 			this.trafficTextList = new TextList(ResourceBundle
 					.getString("traffic_lng"));
-			this.trafficTextList.setCursorMode(TextList.SEL_NONE);
+			this.trafficTextList.setMode(TextList.MODE_TEXT);
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			trafficTextList.setFontSize(Font.SIZE_MEDIUM);

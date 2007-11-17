@@ -102,15 +102,15 @@ public class Templates implements VirtualListCommands, CommandListener
 		return (c == selectTemplateCommand);
 	}
 
-	public void onKeyPress(VirtualList sender, int keyCode, int type)
+	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
 	}
 
-	public void onCursorMove(VirtualList sender)
+	public void vlCursorMoved(VirtualList sender)
 	{
 	}
 
-	public void onItemSelected(VirtualList sender)
+	public void vlItemClicked(VirtualList sender)
 	{
 		select();
 	}

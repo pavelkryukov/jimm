@@ -76,7 +76,7 @@ public class VirtualTree extends VirtualList
 					 for caption and text in tree nodes */
 		boolean autoExpand)
 	{
-		super(capt, capTextColor, backColor, fontSize, VirtualList.SEL_DOTTED);
+		super(capt, capTextColor, backColor, fontSize, VirtualList.MODE_LIST);
 		this.autoExpand = autoExpand;
 	}
 
@@ -217,7 +217,6 @@ public class VirtualTree extends VirtualList
 			}
 		}
 		else executeCommand(findMenuByType(Command.OK));
-		commands.VTnodeClicked(currItem);
 	}
 
 	//#sijapp cond.if target is "MIDP2"#
@@ -271,7 +270,7 @@ public class VirtualTree extends VirtualList
 	{
 		checkToRebuildTree();
 		TreeNode treeItem = getDrawItem(index);
-		commands.VTGetItemDrawData(treeItem, item);
+		commands.vtGetItemDrawData(treeItem, item);
 		item.horizOffset = treeItem.level * stepSize;
 		if ((showButtons) && (treeItem.size() != 0)) item.horizOffset += 3*currFontHeight/4;
 	}

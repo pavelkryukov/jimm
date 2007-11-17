@@ -257,13 +257,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 		tree.setCommandListener(this);
 	}
-
+	
 	/* *********************************************************** */
 	final static public int SORT_BY_NAME = 1;
 	final static public int SORT_BY_STATUS = 0;
 	static private int sortType;
 
-	public int compareNodes(TreeNode node1, TreeNode node2)
+	public int vtCompareNodes(TreeNode node1, TreeNode node2)
 	{
 		Object obj1 = node1.getData();
 		Object obj2 = node2.getData();
@@ -566,11 +566,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		cl.closeRecordStore();
 	}
 	
-	private static void sortGroups()
-	{
-		
-	}
-
 	// called before jimm start to connect to server
 	public static void beforeConnect()
 	{
@@ -917,7 +912,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				TreeNode testNode = groupNode.elementAt(j);
 				if (!(testNode.getData() instanceof ContactListContactItem))
 					continue;
-				if (_this.compareNodes(cItemNode, testNode) < 0)
+				if (_this.vtCompareNodes(cItemNode, testNode) < 0)
 				{
 					tree.insertChild(groupNode, cItemNode, j);
 					inserted = true;
@@ -1632,7 +1627,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	static ContactListContactItem lastChatItem = null;
 
-	public void VTGetItemDrawData(TreeNode src, ListItem dst)
+	public void vtGetItemDrawData(TreeNode src, ListItem dst)
 	{
 		ContactListItem item = (ContactListItem) src.getData();
 		dst.text = item.getText();
@@ -1651,13 +1646,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		dst.fontStyle = item.getFontStyle();
 	}
 
-	public void VTnodeClicked(TreeNode node) {}
+	public void vlCursorMoved(VirtualList sender) 
+	{
+	}
 
-	public void onCursorMove(VirtualList sender) {}
+	public void vlItemClicked(VirtualList sender) 
+	{
+	}
 
-	public void onItemSelected(VirtualList sender) {}
-
-	public void onKeyPress(VirtualList sender, int keyCode, int type)
+	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
 		TreeNode node = tree.getCurrentItem();
 		ContactListContactItem item = ((node != null) && (node.getData() instanceof ContactListContactItem)) ? (ContactListContactItem) node

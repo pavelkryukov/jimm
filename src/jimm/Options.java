@@ -689,6 +689,7 @@ public class Options
 	public static final int CLRSCHHEME_CURS = 4; // retrieving curr mess highlight color
 	public static final int CLRSCHHEME_CAP  = 5; // retrieving caption background color
 	public static final int CLRSCHHEME_INCOMING = 6; // retrieving highlight color
+	public static final int CLRSCHHEME_CAP_TEXT = 7; // retrieving caption text color
 
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
@@ -696,17 +697,18 @@ public class Options
 	public static final int CONN_TYPE_PROXY = 2;
 
 	final static private int[] colors =
-	{// back      text      out text  cursor    caption   in text
-		0xFFFFFF, 0x000000, 0x0000FF, 0xF0F0FF, 0xF0F0F0, 0xFF0000,
-		0x000000, 0xFFFFFF, 0x00FFFF, 0x808080, 0x404040, 0xFF0000,
-		0x000080, 0xFFFFFF, 0x00FFFF, 0x4040FF, 0x0000B0, 0xFF0000,
-		0xFFA0C0, 0x000000, 0x4000C0, 0xFFE0D0, 0xFFE0D0, 0xC00040,
+	{// back      text      out text  cursor    caption   in text   cap text
+		0xFFFFFF, 0x000000, 0x0000FF, 0xF0F0FF, 0xF0F0F0, 0xFF0000, 0x000000,
+		0x000000, 0xFFFFFF, 0x00FFFF, 0x0000C0, 0x505050, 0xFF0000, 0xFFFFFF,
+		0x000080, 0xFFFFFF, 0x00FFFF, 0x4040FF, 0x0000B0, 0xFF0000, 0xFFFFFF,
+		0xFFA0C0, 0x000000, 0x4000C0, 0xFFE0D0, 0xFFE0D0, 0xC00040, 0x000000,
+		0xE0FFE0, 0x000000, 0x008000, 0xC0FFC0, 0xC0FFC0, 0xFF0000, 0x000000,
 	};
 
 	/* Retrieves color value from color scheme */
 	static public int getSchemeColor(int type)
 	{
-		return (colors[getInt(OPTION_COLOR_SCHEME) * 6 + type - 1]);
+		return (colors[getInt(OPTION_COLOR_SCHEME) * 7 + type - 1]);
 	}
 
 	static public void editOptions()
@@ -1496,7 +1498,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 				setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
 				
 				colorScheme = createSelector("color_scheme", "black_on_white"
-						+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme",
+						+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme" + "|" + "Green",
 						Options.OPTION_COLOR_SCHEME);
 
 				chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
