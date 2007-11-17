@@ -1,3 +1,26 @@
+/*******************************************************************************
+ Jimm - Mobile Messaging - J2ME ICQ clone
+ Copyright (C) 2003-07  Jimm Project
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ ********************************************************************************
+ File: src/jimm/FileBrowser.java
+ Version: ###VERSION###  Date: ###DATE###
+ Author(s): Andreas Rossbacher, Andrey Kazakov, Artyomov Denis, 
+ *******************************************************************************/
+
 //#sijapp cond.if (target="MOTOROLA"|target="MIDP2"|target="SIEMENS2")&(modules_FILES="true"|modules_HISTORY="true")#
 package jimm;
 
@@ -204,7 +227,7 @@ class FileSystem2 implements CommandListener, Runnable
 		else list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 		
 		JimmUI.setColorScheme(list, false);
-		list.setCursorMode(VirtualList.SEL_NONE);
+		list.setMode(VirtualList.MODE_TEXT);
 		list.activate(Jimm.display);
 		list.setCommandListener(this);
 		showFolder(root);
@@ -324,7 +347,7 @@ class FileSystem2 implements CommandListener, Runnable
 			{
 				String itemText = (String)items.elementAt(i);
 				if (!itemText.endsWith("/")) continue;
-				JimmUI.addTextListItem(list, itemText, imageList.elementAt(0), i);
+				JimmUI.addTextListItem(list, itemText, imageList.elementAt(0), i, true);
 			}
 			
 			// Show files
@@ -332,7 +355,7 @@ class FileSystem2 implements CommandListener, Runnable
 			{
 				String itemText = (String)items.elementAt(i);
 				if (itemText.endsWith("/")) continue;
-				JimmUI.addTextListItem(list, itemText, imageList.elementAt(1), i);
+				JimmUI.addTextListItem(list, itemText, imageList.elementAt(1), i, true);
 			}
 			break;
 		}

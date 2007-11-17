@@ -248,7 +248,7 @@ public class Search
 			screen.addCommandEx(this.addCommand, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.cmdSendMessage, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.cmdShowInfo, VirtualList.MENU_TYPE_RIGHT);
-			screen.setCursorMode(TextList.SEL_NONE);
+			screen.setMode(TextList.MODE_TEXT);
 			JimmUI.setColorScheme(screen, false);
 		}
 
@@ -342,7 +342,7 @@ public class Search
 
 		}
 
-		public void onKeyPress(VirtualList sender, int keyCode, int type)
+		public void vlKeyPress(VirtualList sender, int keyCode, int type)
 		{
 			if (type == VirtualList.KEY_PRESSED)
 			{
@@ -359,11 +359,11 @@ public class Search
 			}
 		}
 
-		public void onCursorMove(VirtualList sender)
+		public void vlCursorMoved(VirtualList sender)
 		{
 		}
 
-		public void onItemSelected(VirtualList sender)
+		public void vlItemClicked(VirtualList sender)
 		{
 		}
 

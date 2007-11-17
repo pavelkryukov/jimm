@@ -159,7 +159,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	}
 
 	// VirtualList command impl.
-	public void onCursorMove(VirtualList sender)
+	public void vlCursorMoved(VirtualList sender)
 	{
 		// user select some history storage line
 		if (sender == this)
@@ -179,7 +179,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	}
 
 	// VirtualList command impl.
-	public void onKeyPress(VirtualList sender, int keyCode, int type)
+	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
 		if ((sender == messText) && (type == VirtualList.KEY_PRESSED))
 		{
@@ -203,7 +203,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	}
 
 	// VirtualList command impl.
-	public void onItemSelected(VirtualList sender)
+	public void vlItemClicked(VirtualList sender)
 	{
 		if (sender == this)
 		{
@@ -250,7 +250,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			messTextList = new TextList(currName);
 			JimmUI.setColorScheme(messTextList, false);
 			messTextList.setFontSize(Font.SIZE_LARGE);
-			messTextList.setCursorMode(VirtualList.SEL_NONE);
+			messTextList.setMode(VirtualList.MODE_TEXT);
 			messTextList.addBigText(currMessage, messTextList.getTextColor(), Font.STYLE_PLAIN, -1);
 			messTextList.setCommandListener(this);
 			messTextList.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
@@ -625,7 +625,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		if (messText == null)
 		{
 			messText = new TextList(null);
-			messText.setCursorMode(TextList.SEL_NONE);
+			messText.setMode(TextList.MODE_TEXT);
 			messText.setCommandListener(this);
 			messText.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
 			messText.addCommandEx(cmdMsgBack, VirtualList.MENU_TYPE_RIGHT);

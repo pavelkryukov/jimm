@@ -108,10 +108,10 @@ public abstract class VirtualList
 	
 	/*! Use dotted mode of cursor. If item of list 
 	 is selected, dotted rectangle drawn around  it*/
-	public final static int SEL_DOTTED = 2;
+	public final static int MODE_LIST = 2;
 
 	/*! Does't show cursor at selected item. */
-	public final static int SEL_NONE = 3;
+	public final static int MODE_TEXT = 3;
 
 	/*! Constant for medium sized font of caption and item text */
 	public final static int MEDIUM_FONT = Font.SIZE_MEDIUM;
@@ -174,7 +174,7 @@ public abstract class VirtualList
 			cursorColor = 0x808080, // Used when drawing focus rect.
 			textColor = 0x000000, // Default text color.
 			capBkCOlor = 0xC0C0C0, capTxtColor = 0x00, // Color of caprion text
-			cursorMode = SEL_DOTTED; // Cursor mode
+			cursorMode = MODE_LIST; // Cursor mode
 
 	static
 	{
@@ -214,7 +214,7 @@ public abstract class VirtualList
 		this.fontSize = Font.SIZE_MEDIUM;
 		//#sijapp cond.end#
 		createSetOfFonts(this.fontSize);
-		this.cursorMode = SEL_DOTTED;
+		this.cursorMode = MODE_LIST;
 	}
 
 	// public VirtualList
@@ -366,7 +366,7 @@ public abstract class VirtualList
 	}
 
 	//TODO: brief text
-	public void setCursorMode(int value)
+	public void setMode(int value)
 	{
 		if (cursorMode == value) return;
 		cursorMode = value;
@@ -479,18 +479,15 @@ public abstract class VirtualList
 	// private void repaintIfLastIndexesChanged()
 	protected void repaintIfLastIndexesChanged()
 	{
-		if ((lastCurrItem != currItem) || (lastTopItem != topItem))
-		{
-			invalidate();
-			if (vlCommands != null) vlCommands.onCursorMove(this);
-		}
+		if ((lastCurrItem != currItem) || (lastTopItem != topItem)) invalidate();
+		if ((lastCurrItem != currItem) && (vlCommands != null)) vlCommands.vlCursorMoved(this);
 	}
 
 	// protected void moveCursor(int step)
 	protected void moveCursor(int step, boolean moveTop)
 	{
 		storelastItemIndexes();
-		if (moveTop && (cursorMode == SEL_NONE)) topItem += step;
+		if (moveTop && (cursorMode == MODE_TEXT)) topItem += step;
 		currItem += step;
 		checkCurrItem();
 		checkTopItem();
@@ -673,7 +670,7 @@ public abstract class VirtualList
 			else
 			{
 				itemSelected();
-				if (vlCommands != null) vlCommands.onItemSelected(this);
+				if (vlCommands != null) vlCommands.vlItemClicked(this);
 			}
 			break;
 		default:
@@ -737,7 +734,7 @@ public abstract class VirtualList
 			break;
 		}
 
-		if (vlCommands != null) vlCommands.onKeyPress(this, keyCode, type);
+		if (vlCommands != null) vlCommands.vlKeyPress(this, keyCode, type);
 	}
 	
 	// Return game action or extended codes
@@ -966,7 +963,7 @@ public abstract class VirtualList
 		int width = getWidthInternal();
 		g.setFont(capFont);
 		int height = getCapHeight();
-		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -32), 0, 0, width, height);
+		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -48), 0, 0, width, height);
 
 		g.setColor(transformColorLight(capBkCOlor, -128));
 		g.drawLine(0, height - 1, width, height - 1);
@@ -986,7 +983,7 @@ public abstract class VirtualList
 
 	protected boolean isItemSelected(int index)
 	{
-		return ((currItem == index) && (cursorMode != SEL_NONE));
+		return ((currItem == index) && (cursorMode != MODE_TEXT));
 	}
 
 	private static int srcollerY1 = -1;
@@ -1127,6 +1124,7 @@ public abstract class VirtualList
 						if (currItem != i)
 						{
 							currItem = i;
+							if (vlCommands != null) vlCommands.vlCursorMoved(this);
 							invalidate();
 						}
 						break;
@@ -1392,7 +1390,7 @@ public abstract class VirtualList
 		if ((style == DMS_DBLCLICK) || fullScreen) return false;
 		
 		if (style == DMS_DRAW)
-			drawRect(g, transformColorLight(capBkCOlor, -32), capBkCOlor, 0, y1, width, y2);
+			drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -48), 0, y1, width, y2);
 		
 		g.setFont(menuBarFont);
 		
@@ -1508,10 +1506,12 @@ public abstract class VirtualList
 		{
 		case MENU_TYPE_LEFT_BAR:
 			leftMenu = cmd;
+			invalidate();
 			break;
 			
 		case MENU_TYPE_RIGHT_BAR:
 			rightMenu = cmd;
+			invalidate();
 			break;
 			
 		case MENU_TYPE_LEFT:
@@ -1530,7 +1530,6 @@ public abstract class VirtualList
 			}
 			break;
 		}
-		invalidate();
 	}
 	
 	public void removeCommandEx(Command cmd)
@@ -1539,12 +1538,15 @@ public abstract class VirtualList
 		{
 			leftMenu = null;
 			leftMenuItems.removeAllElements();
-		}
-		
-		if (cmd == rightMenu)
+			invalidate();
+			return;
+		} 
+		else if (cmd == rightMenu)
 		{
 			rightMenu = null;
 			rightMenuItems.removeAllElements();
+			invalidate();
+			return;
 		}
 		
 		leftMenuItems.removeElement(cmd);
@@ -1652,7 +1654,7 @@ public abstract class VirtualList
 		// Draw background
 		if (mode == DMS_DRAW)
 		{
-			drawRect(g, transformColorLight(capBkCOlor, -12), transformColorLight(capBkCOlor, -32), x, y, x+width, y+height);
+			drawRect(g, transformColorLight(capBkCOlor, 0), transformColorLight(capBkCOlor, -48), x, y, x+width, y+height);
 		}
 		
 		// Draw up button
@@ -1717,7 +1719,7 @@ public abstract class VirtualList
 		// Draw rectangle
 		if (mode == DMS_DRAW)
 		{
-			g.setColor(getInverseColor(capBkCOlor));
+			g.setColor(textColor);
 			g.drawRect(x, y, width, height);
 		}
 		

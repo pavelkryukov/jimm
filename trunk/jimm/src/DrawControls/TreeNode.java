@@ -128,8 +128,8 @@ public class TreeNode
 
 		begin = 0;
 		end = size - 1;
-		begRes = comparer.compareNodes(node, (TreeNode) vect.elementAt(begin));
-		endRes = comparer.compareNodes(node, (TreeNode) vect.elementAt(end));
+		begRes = comparer.vtCompareNodes(node, (TreeNode) vect.elementAt(begin));
+		endRes = comparer.vtCompareNodes(node, (TreeNode) vect.elementAt(end));
 
 		if (begRes < 0)
 			return 0;
@@ -139,7 +139,7 @@ public class TreeNode
 		for (;;)
 		{
 			middle = (begin + end) / 2;
-			midRes = comparer.compareNodes(node, (TreeNode) vect
+			midRes = comparer.vtCompareNodes(node, (TreeNode) vect
 					.elementAt(middle));
 
 			if (((midRes <= 0) && (endRes >= 0))

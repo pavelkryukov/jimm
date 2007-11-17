@@ -45,7 +45,7 @@ public class DebugLog
 		list.setCommandListener(new DebugLog());
 		list.setFontSize(TextList.SMALL_FONT);
 		list.setCaption("Debug log");
-		list.setCursorMode(TextList.SEL_NONE);
+		list.setMode(TextList.MODE_TEXT);
 	}
 
 	private static boolean wasShown = false;

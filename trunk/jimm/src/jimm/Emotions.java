@@ -316,15 +316,15 @@ public class Emotions implements VirtualListCommands, CommandListener
 		else if (c == cmdCancel) JimmUI.selectScreen(lastScreen);
 	}
 
-	public void onKeyPress(VirtualList sender, int keyCode, int type)
+	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
 	}
 
-	public void onCursorMove(VirtualList sender)
+	public void vlCursorMoved(VirtualList sender)
 	{
 	}
 
-	public void onItemSelected(VirtualList sender)
+	public void vlItemClicked(VirtualList sender)
 	{
 		select();
 	}
@@ -365,7 +365,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 			int drawWidth = getWidth() - scrollerWidth - 2;
 
-			setCursorMode(SEL_NONE);
+			setMode(MODE_TEXT);
 
 			int imgHeight = images.getHeight();
 
@@ -451,7 +451,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 		}
 
-		public void onKeyPress(VirtualList sender, int keyCode, int type)
+		public void vlKeyPress(VirtualList sender, int keyCode, int type)
 		{
 			if (type == VirtualList.KEY_PRESSED)
 			{
@@ -495,12 +495,12 @@ public class Emotions implements VirtualListCommands, CommandListener
 			}
 		}
 
-		public void onCursorMove(VirtualList sender)
+		public void vlCursorMoved(VirtualList sender)
 		{
 			showCurrSmileName();
 		}
 
-		public void onItemSelected(VirtualList sender)
+		public void vlItemClicked(VirtualList sender)
 		{
 			select();
 		}
