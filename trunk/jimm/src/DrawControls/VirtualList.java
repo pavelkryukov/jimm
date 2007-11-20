@@ -24,10 +24,13 @@
 package DrawControls;
 
 import javax.microedition.lcdui.*;
-
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
+
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
+
 
 //#sijapp cond.if target is "MOTOROLA"#
 //# import jimm.TimerTasks;
@@ -47,6 +50,9 @@ import DrawControls.VirtualListCommands;
 class VirtualCanvas extends Canvas
 {
 	VirtualList currentControl;
+	private Timer repeatTimer = new Timer();
+	private TimerTask timerTask;
+	private int lastKeyKode;
 	
 	public VirtualCanvas()
 	{
@@ -59,7 +65,6 @@ class VirtualCanvas extends Canvas
 	{
 		if (currentControl != null) currentControl.paint(g); 
 	}
-
 	
 	protected void showNotify()
 	{
@@ -67,21 +72,38 @@ class VirtualCanvas extends Canvas
 		setFullScreenMode(true);
 		//#sijapp cond.end#
 		if (currentControl != null) currentControl.showNotify();
+		cancelKeyRepeatTask();
 	}
 	
+	protected void hideNotify()
+	{
+		cancelKeyRepeatTask();
+	}
+
 	protected void keyPressed(int keyCode)
 	{
+		lastKeyKode = keyCode;
 		if (currentControl != null) currentControl.keyPressed(keyCode);
-	}
-	
-	protected void keyRepeated(int keyCode)
-	{
-		if (currentControl != null) currentControl.keyRepeated(keyCode); 
+		cancelKeyRepeatTask();
+		timerTask = new TimerTask() {
+			public void run()
+			{
+				currentControl.keyRepeated(lastKeyKode);
+			}
+		};
+		repeatTimer.schedule(timerTask, 400, 100);
 	}
 
 	protected void keyReleased(int keyCode)
 	{
-		if (currentControl != null) currentControl.keyReleased(keyCode); 
+		if (currentControl != null) currentControl.keyReleased(keyCode);
+		cancelKeyRepeatTask();
+	}
+	
+	private void cancelKeyRepeatTask()
+	{
+		if (timerTask != null) timerTask.cancel();
+		timerTask = null;
 	}
 	
 	//#sijapp cond.if target is "MIDP2"#
@@ -598,7 +620,7 @@ public abstract class VirtualList
 	}
 	
 	// private keyReaction(int keyCode)
-	private void keyReaction(int keyCode)
+	private void keyReaction(int keyCode, int type)
 	{
 		boolean menuItemsVisible = false;
 		
@@ -622,11 +644,11 @@ public abstract class VirtualList
 		switch (getExtendedGameAction(keyCode))
 		{
 		case KEY_CODE_LEFT_MENU:
-			clickedMenuItems = leftMenuPressed();
+			if (type == KEY_PRESSED) clickedMenuItems = leftMenuPressed();
 			break;
 			
 		case KEY_CODE_RIGHT_MENU:
-			clickedMenuItems = rightMenuPressed();
+			if (type == KEY_PRESSED) clickedMenuItems = rightMenuPressed();
 			break;
 			
 		case KEY_CODE_BACK_BUTTON:
@@ -659,18 +681,20 @@ public abstract class VirtualList
 			break;
 			
 		case Canvas.FIRE:
-			if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return;
-			
-			if (menuItemsVisible)
+			if (type == KEY_PRESSED)
 			{
-				uiState = UI_STATE_NORMAL;
-				executeCommand((Command)menuItemsData.elementAt(curMenuItemIndex));
-				invalidate();
-			}
-			else
-			{
-				itemSelected();
-				if (vlCommands != null) vlCommands.vlItemClicked(this);
+				if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return;
+				if (menuItemsVisible)
+				{
+					uiState = UI_STATE_NORMAL;
+					executeCommand((Command)menuItemsData.elementAt(curMenuItemIndex));
+					invalidate();
+				}
+				else
+				{
+					itemSelected();
+					if (vlCommands != null) vlCommands.vlItemClicked(this);
+				}
 			}
 			break;
 		default:
@@ -684,36 +708,39 @@ public abstract class VirtualList
 			invalidate();
 			return;
 		}
-
-		switch (keyCode)
+		
+		if (type == KEY_PRESSED)
 		{
-		case Canvas.KEY_NUM1:
-			storelastItemIndexes();
-			currItem = topItem = 0;
-			repaintIfLastIndexesChanged();
-			break;
+			switch (keyCode)
+			{
+			case Canvas.KEY_NUM1:
+				storelastItemIndexes();
+				currItem = topItem = 0;
+				repaintIfLastIndexesChanged();
+				break;
 
-		case Canvas.KEY_NUM7:
-			storelastItemIndexes();
-			int endIndex = getSize() - 1;
-			currItem = endIndex;
-			checkTopItem();
-			repaintIfLastIndexesChanged();
-			break;
+			case Canvas.KEY_NUM7:
+				storelastItemIndexes();
+				int endIndex = getSize() - 1;
+				currItem = endIndex;
+				checkTopItem();
+				repaintIfLastIndexesChanged();
+				break;
 
-		case Canvas.KEY_NUM3:
-			moveCursor(-getVisCount(), false);
-			break;
+			case Canvas.KEY_NUM3:
+				moveCursor(-getVisCount(), false);
+				break;
 
-		case Canvas.KEY_NUM9:
-			moveCursor(getVisCount(), false);
-			break;
+			case Canvas.KEY_NUM9:
+				moveCursor(getVisCount(), false);
+				break;
 
-		//#sijapp cond.if target is "MOTOROLA"#
-		//#		case Canvas.KEY_STAR: 
-		//#		setBkltOn(!bklt_on);
-		//#		break;
-		//#sijapp cond.end#
+			//#sijapp cond.if target is "MOTOROLA"#
+			//#		case Canvas.KEY_STAR: 
+			//#		setBkltOn(!bklt_on);
+			//#		break;
+			//#sijapp cond.end#
+			}
 		}
 
 	}
@@ -727,10 +754,10 @@ public abstract class VirtualList
 			//#			if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL))
 			//#				flashBklt(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)*1000);
 			//#sijapp cond.end#
-			keyReaction(keyCode);
+			keyReaction(keyCode, type);
 			break;
 		case KEY_REPEATED:
-			keyReaction(keyCode);
+			keyReaction(keyCode, type);
 			break;
 		}
 
