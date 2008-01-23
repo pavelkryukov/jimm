@@ -175,9 +175,12 @@ public class JimmUI implements CommandListener
 		else if (isControlActive(tlContactMenu))
 		{
 			if (c == cmdSelect) contactMenuSelected(tlContactMenu.getCurrTextIndex());
-			else backToLastScreen();
-			tlContactMenu = null;
-			clciContactMenu = null;
+			else
+			{
+				backToLastScreen();
+				tlContactMenu = null;
+				clciContactMenu = null;
+			}
 		}
 		
 		else if ((authTextbox != null) && (d == authTextbox))
@@ -1475,7 +1478,10 @@ public class JimmUI implements CommandListener
 	
 	public static void showContactMenu(ContactListContactItem contact)
 	{
-		clciContactMenu = contact; 
+		clciContactMenu = contact;
+		
+		System.out.println("clciContactMenu = contact");
+		
 		tlContactMenu = new TextList(ResourceBundle.getString("user_menu"));
 		JimmUI.setColorScheme(tlContactMenu, false);
 		tlContactMenu.setMode(VirtualList.MODE_TEXT);
@@ -1719,6 +1725,7 @@ public class JimmUI implements CommandListener
 
 	private static void menuRemoveContactSelected()
 	{
+		System.out.println("clciContactMenu="+clciContactMenu);
 		String uin = clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
 		ChatHistory.chatHistoryDelete(uin);
 		boolean ok = Icq.delFromContactList(clciContactMenu);

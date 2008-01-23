@@ -91,7 +91,7 @@ class VirtualCanvas extends Canvas
 				currentControl.keyRepeated(lastKeyKode);
 			}
 		};
-		repeatTimer.schedule(timerTask, 400, 100);
+		repeatTimer.schedule(timerTask, 500, 50);
 	}
 
 	protected void keyReleased(int keyCode)
@@ -697,8 +697,6 @@ public abstract class VirtualList
 				}
 			}
 			break;
-		default:
-			return;
 		}
 		
 		initPopupMenuItems(clickedMenuItems);
@@ -1083,16 +1081,17 @@ public abstract class VirtualList
 	private boolean drawItems(Graphics g, int top_y, int fontHeight, int menuBarHeight, int mode, int curX, int curY)
 	{
 		int grCursorY1 = -1, grCursorY2 = -1;
-		int height = getHeightInternal();
+		int height = getDrawHeight();
 		int size = getSize();
 		int i, y;
 		int itemWidth = getWidthInternal() - scrollerWidth;
+		int bottomY = top_y+height; 
 		
 		if (mode == DMS_DRAW)
 		{
 			// Fill background
 			g.setColor(bkgrndColor);
-			g.fillRect(0, top_y, itemWidth, height - top_y);
+			g.fillRect(0, top_y, itemWidth, height);
 
 			// Draw cursor
 			y = top_y;
@@ -1105,7 +1104,7 @@ public abstract class VirtualList
 					grCursorY2 = y + itemHeight - 1;
 				}
 				y += itemHeight;
-				if (y >= height) break;
+				if (y >= bottomY) break;
 			}
 
 			if (grCursorY1 != -1)
@@ -1168,7 +1167,7 @@ public abstract class VirtualList
 			//#sijapp cond.end#
 			
 			y += itemHeight;
-			if (y >= height) break;
+			if (y >= bottomY) break;
 		}
 
 		return false;
@@ -1220,8 +1219,8 @@ public abstract class VirtualList
 		{
 		case DMS_DRAW:
 			drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, curX, curY);
-			if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight, mode, curX, curY);
 			drawScroller(graphics, y, visCount, menuBarHeight);
+			if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight, mode, curX, curY);
 			drawMenuItems(graphics, menuBarHeight, mode, curX, curY);
 			break;
 			
@@ -1492,7 +1491,7 @@ public abstract class VirtualList
 		
 		g.setColor(transformColorLight(capBkCOlor, -128));
 		g.drawLine(0, y1, width, y1);
-		return false;
+		return false; 
 	}
 	
 	protected Command findMenuByType(int type)
