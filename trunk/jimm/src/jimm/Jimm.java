@@ -255,6 +255,8 @@ public class Jimm extends MIDlet
 			// Activate main menu
 			MainMenu.activate();
 		}
+		
+		DrawControls.VirtualList.setDisplay(Jimm.display);
 	}
 
 	// Pause

@@ -24,6 +24,7 @@
 package DrawControls;
 
 import javax.microedition.lcdui.*;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -47,15 +48,23 @@ import DrawControls.VirtualListCommands;
  user
  */
 
-class VirtualCanvas extends Canvas
+class VirtualCanvas extends Canvas implements Runnable
 {
 	VirtualList currentControl;
 	private Timer repeatTimer = new Timer();
 	private TimerTask timerTask;
 	private int lastKeyKode;
+	private Display display;
+	
+	
+	public void setDisplay(Display display)
+	{
+		this.display = display;
+	}
 	
 	public VirtualCanvas()
 	{
+		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		setFullScreenMode(true);
 		//#sijapp cond.end#
@@ -79,16 +88,22 @@ class VirtualCanvas extends Canvas
 	{
 		cancelKeyRepeatTask();
 	}
+	
+	public void run()
+	{
+		if (timerTask == null) return;
+		currentControl.keyRepeated(lastKeyKode);
+	}
 
 	protected void keyPressed(int keyCode)
 	{
-		lastKeyKode = keyCode;
 		if (currentControl != null) currentControl.keyPressed(keyCode);
 		cancelKeyRepeatTask();
+		lastKeyKode = keyCode;
 		timerTask = new TimerTask() {
 			public void run()
 			{
-				currentControl.keyRepeated(lastKeyKode);
+				display.callSerially(VirtualCanvas.this);
 			}
 		};
 		repeatTimer.schedule(timerTask, 500, 50);
@@ -103,6 +118,7 @@ class VirtualCanvas extends Canvas
 	private void cancelKeyRepeatTask()
 	{
 		if (timerTask != null) timerTask.cancel();
+		lastKeyKode = 0;
 		timerTask = null;
 	}
 	
@@ -210,6 +226,11 @@ public abstract class VirtualList
 		paintedItem = new ListItem();
 	}
 
+	static public void setDisplay(Display display)
+	{
+		virtualCanvas.setDisplay(display);
+	}
+	
 	public void setFullScreen(boolean value)
 	{
 		if (fullScreen == value) return;
@@ -652,21 +673,24 @@ public abstract class VirtualList
 			break;
 			
 		case KEY_CODE_BACK_BUTTON:
-			switch (uiState)
+			if (type == KEY_PRESSED)
 			{
-			case UI_STATE_RIGHT_MENU_VISIBLE:
-			case UI_STATE_LEFT_MENU_VISIBLE:
-				uiState = UI_STATE_NORMAL;
-				invalidate();
-				break;
-
-			default:
-				Command backMenu = findMenuByType(Command.BACK);
-				if (backMenu != null)
+				switch (uiState)
 				{
-					if (executeCommand(backMenu)) return;
+				case UI_STATE_RIGHT_MENU_VISIBLE:
+				case UI_STATE_LEFT_MENU_VISIBLE:
+					uiState = UI_STATE_NORMAL;
+					invalidate();
+					break;
+
+				default:
+					Command backMenu = findMenuByType(Command.BACK);
+					if (backMenu != null)
+					{
+						if (executeCommand(backMenu)) return;
+					}
+					break;
 				}
-				break;
 			}
 			break;
 
