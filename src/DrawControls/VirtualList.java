@@ -482,8 +482,9 @@ public abstract class VirtualList
 	// protected void checkCurrItem()
 	protected void checkCurrItem()
 	{
-		if (currItem < 0) currItem = 0;
-		if (currItem >= getSize() - 1) currItem = getSize() - 1;
+		int size = getSize();
+		if (currItem < 0) currItem = size - 1;
+		if (currItem >= size) currItem = 0;
 	}
 
 	// protected void checkTopItem() - internal
