@@ -202,10 +202,10 @@ public class VirtualTree extends VirtualList
 
 	//! Internal function
 	/*! Changes node state*/
-	protected void itemSelected()
+	protected boolean itemSelected()
 	{
 		TreeNode currItem = getCurrentItem();
-		if (currItem == null) return;
+		if (currItem == null) return false;
 
 		if (autoExpand)
 		{
@@ -215,8 +215,11 @@ public class VirtualTree extends VirtualList
 				rebuildTreeIntItems();
 				invalidate();
 			}
+			return false;
 		}
-		else executeCommand(findMenuByType(Command.OK));
+		
+		executeCommand(findMenuByType(Command.OK));
+		return true; 
 	}
 
 	//#sijapp cond.if target is "MIDP2"#

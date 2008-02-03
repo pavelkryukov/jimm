@@ -161,7 +161,7 @@ public class JimmUI implements CommandListener
 		else if ((renameTextbox != null) && (d == renameTextbox))
 		{
 			if (c == cmdOk) menuRenameSelected();
-			else backToLastScreen();
+			backToLastScreen();
 			renameTextbox = null;
 		}
 		
@@ -1758,7 +1758,7 @@ public class JimmUI implements CommandListener
 		String newName = renameTextbox.getString();
 		if ((newName == null) || (newName.length() == 0)) return;
 		clciContactMenu.rename(newName);
-		messageTextbox.setString(null);
+		renameTextbox.setString(null);
 	}
 	
 	////////////////////////////////
