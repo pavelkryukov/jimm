@@ -64,7 +64,6 @@ class VirtualCanvas extends Canvas implements Runnable
 	
 	public VirtualCanvas()
 	{
-		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		setFullScreenMode(true);
 		//#sijapp cond.end#
@@ -72,16 +71,16 @@ class VirtualCanvas extends Canvas implements Runnable
 	
 	protected void paint(Graphics g)
 	{
-		if (currentControl != null) currentControl.paint(g); 
+		if (currentControl != null) currentControl.paint(g);
 	}
 	
 	protected void showNotify()
 	{
+		cancelKeyRepeatTask();
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		setFullScreenMode(true);
 		//#sijapp cond.end#
 		if (currentControl != null) currentControl.showNotify();
-		cancelKeyRepeatTask();
 	}
 	
 	protected void hideNotify()
@@ -97,8 +96,8 @@ class VirtualCanvas extends Canvas implements Runnable
 
 	protected void keyPressed(int keyCode)
 	{
-		if (currentControl != null) currentControl.keyPressed(keyCode);
 		cancelKeyRepeatTask();
+		if (currentControl != null) currentControl.keyPressed(keyCode);
 		lastKeyKode = keyCode;
 		timerTask = new TimerTask() {
 			public void run()
@@ -115,7 +114,7 @@ class VirtualCanvas extends Canvas implements Runnable
 		cancelKeyRepeatTask();
 	}
 	
-	private void cancelKeyRepeatTask()
+	void cancelKeyRepeatTask()
 	{
 		if (timerTask != null) timerTask.cancel();
 		lastKeyKode = 0;
@@ -430,6 +429,7 @@ public abstract class VirtualList
 	{
 		if (isActive()) return;
 		virtualCanvas.currentControl = this;
+		virtualCanvas.cancelKeyRepeatTask();
 		display.setCurrent(virtualCanvas);
 		repaint();
 	}
@@ -438,6 +438,7 @@ public abstract class VirtualList
 	{
 		if (isActive()) return;
 		virtualCanvas.currentControl = this;
+		virtualCanvas.cancelKeyRepeatTask();
 		display.setCurrent(alert, virtualCanvas);
 		repaint();
 	}
@@ -484,7 +485,7 @@ public abstract class VirtualList
 	{
 		int size = getSize();
 		if (currItem < 0) currItem = size - 1;
-		if (currItem >= size) currItem = 0;
+		else if (currItem >= size) currItem = 0;
 	}
 
 	// protected void checkTopItem() - internal
@@ -538,9 +539,9 @@ public abstract class VirtualList
 		repaintIfLastIndexesChanged();
 	}
 
-	protected void itemSelected()
+	protected boolean itemSelected()
 	{
-		executeCommand(findMenuByType(Command.OK));
+		return executeCommand(findMenuByType(Command.OK));
 	}
 	
 	static private int visibleItemsMenuCount;
@@ -717,8 +718,8 @@ public abstract class VirtualList
 				}
 				else
 				{
-					itemSelected();
-					if (vlCommands != null) vlCommands.vlItemClicked(this);
+					boolean executed = itemSelected();
+					if (!executed && (vlCommands != null)) vlCommands.vlItemClicked(this);
 				}
 			}
 			break;

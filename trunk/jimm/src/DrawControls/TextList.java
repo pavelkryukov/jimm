@@ -312,19 +312,19 @@ public class TextList extends VirtualList
 		case -1:
 		case 1:
 			currTextIndex = getCurrTextIndex();
-			size = lines.size();
-			/*if (currTextIndex == -1)
-			 {
-			 super.moveCursor(step, true);
-			 return;
-			 }*/
+			size = getSize();
 
 			storelastItemIndexes();
 
 			for (i = 0; i < halfSize;)
 			{
 				currItem += step;
-				if ((currItem < 0) || (currItem >= size)) break;
+				if ((currItem < 0) || (currItem >= size))
+				{
+					if (changeCounter != 0) currItem -= step;
+					break;
+				}
+				
 				TextLine item = getLine(currItem);
 				if (currTextIndex != item.bigTextIndex)
 				{
