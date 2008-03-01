@@ -2800,7 +2800,7 @@ public class Icq implements Runnable
 			byte[] ver = Util.stringToByteArray("###VERSION###");
 			int verLen = ver.length;
 			if (verLen > 10) verLen = 10;
-			for (int i = 0; i < verLen; i++) CAP_VERSION[i+4] = ver[i];    
+			for (int i = 0; i < verLen; i++) CAP_VERSION[i+5] = ver[i];    
 			
 			capsStream.write(new byte[] {(byte)0x00, (byte)0x05, (byte)0x00, (byte)0x00});
 			capsStream.write(CAP_AIM_SERVERRELAY);
