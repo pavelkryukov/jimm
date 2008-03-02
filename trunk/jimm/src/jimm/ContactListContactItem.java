@@ -143,6 +143,9 @@ public class ContactListContactItem implements ContactListItem
 		case CONTACTITEM_IDLE:
 			idle = value;
 			return;
+		case CONTACTITEM_CAPABILITIES:
+			caps = value;
+			return;
 		case CONTACTITEM_STATUS:
 			status = value;
 			return;
@@ -197,6 +200,8 @@ public class ContactListContactItem implements ContactListItem
 			return (messCounters & 0x000000FF);
 		case CONTACTITEM_IDLE:
 			return idle;
+		case CONTACTITEM_CAPABILITIES:
+			return caps;
 		case CONTACTITEM_STATUS:
 			return status;
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -356,6 +361,8 @@ public class ContactListContactItem implements ContactListItem
 
 	//#sijapp cond.end#
 	//#sijapp cond.end#
+	public static final int CONTACTITEM_CAPABILITIES = 75; /* Integer */
+
 	public static final int CONTACTITEM_CLIENT = 76; /* Integer */
 
 	public static final int CONTACTITEM_CLIVERSION = 2; /* String */
@@ -379,6 +386,8 @@ public class ContactListContactItem implements ContactListItem
 		setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED, added);
 		setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
 				ContactList.STATUS_OFFLINE);
+		setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES,
+				Icq.CAPF_NO_INTERNAL);
 		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
 		setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES, 0);

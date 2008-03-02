@@ -3520,6 +3520,8 @@ public class Icq implements Runnable
 				item.setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, szVersion);
 			}
 		}
+
+		item.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, caps);
 	}
 
 	public static String getClientString(int cli)
