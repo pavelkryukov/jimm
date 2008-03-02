@@ -271,7 +271,7 @@ public class JimmUI implements CommandListener
 					if (messText.length() != 0)
 					{
 						sendMessage(messText, textMessReceiver);
-						messageTextbox.setString(null);
+						messageTextbox = null;
 						boolean activated = ChatHistory.activateIfExists(textMessReceiver);
 						if (!activated) backToLastScreen();
 					}

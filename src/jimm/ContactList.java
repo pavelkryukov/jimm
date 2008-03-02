@@ -606,7 +606,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		return result;
 	}
 
-	// Updates the client-side conact list (called when a new roster has been
+	// Updates the client-side contact list (called when a new roster has been
 	// received)
 	static public void update(int flags, int versionId1_, int versionId2_, ContactListItem[] items)
 	{
@@ -1021,7 +1021,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		{
 			String text = null;
 			if (oldStatus != trueStatus) text = JimmUI.getStatusString(trueStatus);
-			if ((xStatus != oldXStatus) && (xStatus >= 0)) text = ResourceBundle.getString(JimmUI.xStatusStrings[xStatus]);
+			if ((xStatus != oldXStatus) && (xStatus >= 0)) text = ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]);
 			if (text != null) JimmUI.showCapText(curScr, cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+": "+text, TimerTasks.TYPE_FLASH);
 		}
 	}
