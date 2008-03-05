@@ -275,6 +275,11 @@ public class MainMenu implements CommandListener
 		statusList.lock();
 		JimmUI.addTextListItem(statusList, "status_online", ContactList.statusOnlineImg,    ContactList.STATUS_ONLINE, true);
 		JimmUI.addTextListItem(statusList, "status_chat", ContactList.statusChatImg,      ContactList.STATUS_CHAT, true);
+		JimmUI.addTextListItem(statusList, "status_evil", ContactList.statusEvilImg,	 ContactList.STATUS_EVIL,true);
+		JimmUI.addTextListItem(statusList, "status_depression",	ContactList.statusDepressionImg, ContactList.STATUS_DEPRESSION,true);
+		JimmUI.addTextListItem(statusList, "status_home", ContactList.statusHomeImg,	 ContactList.STATUS_HOME,true);
+		JimmUI.addTextListItem(statusList, "status_work", ContactList.statusWorkImg,	 ContactList.STATUS_WORK,true);
+		JimmUI.addTextListItem(statusList, "status_lunch", ContactList.statusLunchImg,	 ContactList.STATUS_LUNCH,true);
 		JimmUI.addTextListItem(statusList, "status_away", ContactList.statusAwayImg,      ContactList.STATUS_AWAY, true);
 		JimmUI.addTextListItem(statusList, "status_na", ContactList.statusNaImg,        ContactList.STATUS_NA, true);
 		JimmUI.addTextListItem(statusList, "status_occupied", ContactList.statusOccupiedImg,  ContactList.STATUS_OCCUPIED, true);
@@ -586,13 +591,18 @@ public class MainMenu implements CommandListener
 			if ((onlineStatus != ContactList.STATUS_INVISIBLE)
 					&& (onlineStatus != ContactList.STATUS_INVIS_ALL)
 					&& (onlineStatus != ContactList.STATUS_ONLINE)
-					&& (onlineStatus != ContactList.STATUS_CHAT))
+					&& (onlineStatus != ContactList.STATUS_CHAT)
+					&& (onlineStatus != ContactList.STATUS_EVIL)
+					&& (onlineStatus != ContactList.STATUS_DEPRESSION)
+					&& (onlineStatus != ContactList.STATUS_HOME)
+					&& (onlineStatus != ContactList.STATUS_WORK)
+					&& (onlineStatus != ContactList.STATUS_LUNCH))
 			{
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				statusMessage = new TextBox(ResourceBundle
-						.getString("status_message"), Options
-						.getString(Options.OPTION_STATUS_MESSAGE), 255,
-						TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
+				    statusMessage = new TextBox(ResourceBundle
+					.getString("status_message"), Options
+					.getString(Options.OPTION_STATUS_MESSAGE), 255,
+					TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
 				//#sijapp cond.else#
 				//#				statusMessage = new TextBox(ResourceBundle.getString("status_message"), Options.getString(Options.OPTION_STATUS_MESSAGE), 255, TextField.ANY);
 				//#sijapp cond.end#

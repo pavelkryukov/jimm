@@ -427,7 +427,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		
 		if (Options.getBoolean(Options.OPTION_SHOW_MESS_ICON))
 		{
-			textList.addImage(ContactList.imageList.elementAt(8), "", messTotalCounter);
+			textList.addImage(ContactList.imageList.elementAt(13), "", messTotalCounter);
 			messHeader.append(' ');
 		}
 		

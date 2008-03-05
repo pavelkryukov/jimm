@@ -84,6 +84,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 //#sijapp cond.end#
 {
 	/* Status (all are mutual exclusive) TODO: move status to ContactListContactItem */
+	public static final int STATUS_EVIL = 0x00003000;
+
+	public static final int STATUS_DEPRESSION = 0x00004000;
+
+	public static final int STATUS_HOME = 0x00005000;
+
+	public static final int STATUS_WORK = 0x00006000;
+
+	public static final int STATUS_LUNCH = 0x00002001;
+
 	public static final int STATUS_AWAY = 0x00000001;
 
 	public static final int STATUS_CHAT = 0x00000020;
@@ -110,6 +120,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	public static final int SOUND_TYPE_ONLINE = 2;
 
 	public static final int SOUND_TYPE_TYPING = 3;
+
+	public static Image statusEvilImg;
+
+	public static Image statusDepressionImg;
+
+	public static Image statusHomeImg;
+
+	public static Image statusWorkImg;
+
+	public static Image statusLunchImg;
 
 	public static Image statusAwayImg;
 
@@ -195,6 +215,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		{
 			/* reads and divides image "icons.png" to several icons */
 			imageList.load("/icons.png", -1, -1, -1);
+			ContactList.statusEvilImg = imageList.elementAt(8);
+			ContactList.statusDepressionImg = imageList.elementAt(9);
+			ContactList.statusHomeImg = imageList.elementAt(10);
+			ContactList.statusWorkImg = imageList.elementAt(11);
+			ContactList.statusLunchImg = imageList.elementAt(12);
 			ContactList.statusAwayImg = imageList.elementAt(0);
 			ContactList.statusChatImg = imageList.elementAt(1);
 			ContactList.statusDndImg = imageList.elementAt(2);
@@ -203,10 +228,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			ContactList.statusOccupiedImg = imageList.elementAt(5);
 			ContactList.statusOfflineImg = imageList.elementAt(6);
 			ContactList.statusOnlineImg = imageList.elementAt(7);
-			ContactList.eventPlainMessageImg = imageList.elementAt(8);
-			ContactList.eventUrlMessageImg = imageList.elementAt(9);
-			ContactList.eventSystemNoticeImg = imageList.elementAt(10);
-			ContactList.eventSysActionImg = imageList.elementAt(11);
+			ContactList.eventPlainMessageImg = imageList.elementAt(13);
+			ContactList.eventUrlMessageImg = imageList.elementAt(14);
+			ContactList.eventSystemNoticeImg = imageList.elementAt(15);
+			ContactList.eventSysActionImg = imageList.elementAt(16);
 			smallIcons.load("/sicons.png", -1, -1, -1);
 		} catch (Exception e) {}
 		
