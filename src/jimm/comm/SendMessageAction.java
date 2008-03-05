@@ -100,7 +100,9 @@ public class SendMessageAction extends Action
 		// What message format/encoding should we use?
 		int type = 1;
 		boolean utf8;
-		utf8 = rcvr.hasCapability(Icq.CAPF_UTF8_INTERNAL);
+		utf8 = (rcvr.getIntValue (ContactListContactItem.CONTACTITEM_STATUS) == 
+			ContactList.STATUS_OFFLINE) ? false : 
+			rcvr.hasCapability(Icq.CAPF_UTF8_INTERNAL);
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
 		if ((this.fileTrans != null)
@@ -140,7 +142,6 @@ public class SendMessageAction extends Action
 				textRaw = Util.stringToByteArray(Util.restoreCrLf(this.plainMsg
 						.getText()));
 			}
-
 			// Pack data
 			byte[] buf = new byte[10 + 1 + uinRaw.length + 4 + (utf8 ? 6 : 5)
 					+ 4 + 4 + textRaw.length + 4];
