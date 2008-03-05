@@ -71,6 +71,16 @@ public class Util
 
 	public static final int SET_STATUS_ONLINE = 0x0000;
 
+	public static final int SET_STATUS_EVIL = 0x3000;
+
+	public static final int SET_STATUS_DEPRESSION = 0x4000;
+
+	public static final int SET_STATUS_HOME = 0x5000;
+
+	public static final int SET_STATUS_WORK = 0x6000;
+
+	public static final int SET_STATUS_LUNCH = 0x2001;
+
 	// Counter variable
 	private static int counter = 0;
 
@@ -691,10 +701,20 @@ public class Util
 			return (ContactList.STATUS_OCCUPIED);
 		if ((status & ContactList.STATUS_NA) != 0)
 			return (ContactList.STATUS_NA);
-		if ((status & ContactList.STATUS_AWAY) != 0)
-			return (ContactList.STATUS_AWAY);
 		if ((status & ContactList.STATUS_CHAT) != 0)
 			return (ContactList.STATUS_CHAT);
+		if ((status & ContactList.STATUS_LUNCH) == ContactList.STATUS_LUNCH)
+			return (ContactList.STATUS_LUNCH);
+                if ((status & ContactList.STATUS_EVIL) == ContactList.STATUS_EVIL)
+			return (ContactList.STATUS_EVIL);
+		if ((status & ContactList.STATUS_HOME) == ContactList.STATUS_HOME)
+			return (ContactList.STATUS_HOME);
+		if ((status & ContactList.STATUS_WORK) == ContactList.STATUS_WORK)
+			return (ContactList.STATUS_WORK);
+		if ((status & ContactList.STATUS_AWAY) != 0)
+			return (ContactList.STATUS_AWAY);
+		if ((status & ContactList.STATUS_DEPRESSION) == ContactList.STATUS_DEPRESSION)
+			return (ContactList.STATUS_DEPRESSION);
 		return (ContactList.STATUS_ONLINE);
 	}
 
@@ -715,6 +735,16 @@ public class Util
 			return (Util.SET_STATUS_NA);
 		if (status == ContactList.STATUS_OCCUPIED)
 			return (Util.SET_STATUS_OCCUPIED);
+		if (status == ContactList.STATUS_EVIL)
+			return (Util.SET_STATUS_EVIL);
+		if (status == ContactList.STATUS_DEPRESSION)
+			return (Util.SET_STATUS_DEPRESSION);
+		if (status == ContactList.STATUS_HOME)
+			return (Util.SET_STATUS_HOME);
+		if (status == ContactList.STATUS_WORK)
+			return (Util.SET_STATUS_WORK);
+		if (status == ContactList.STATUS_LUNCH)
+			return (Util.SET_STATUS_LUNCH);
 		return (Util.SET_STATUS_ONLINE);
 	}
 

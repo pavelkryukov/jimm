@@ -1150,7 +1150,10 @@ public class JimmUI implements CommandListener
 	{ ContactList.STATUS_AWAY, ContactList.STATUS_CHAT, ContactList.STATUS_DND,
 			ContactList.STATUS_INVISIBLE, ContactList.STATUS_NA,
 			ContactList.STATUS_OCCUPIED, ContactList.STATUS_OFFLINE,
-			ContactList.STATUS_ONLINE, ContactList.STATUS_INVIS_ALL, };
+			ContactList.STATUS_ONLINE, ContactList.STATUS_INVIS_ALL,
+                        ContactList.STATUS_EVIL, ContactList.STATUS_DEPRESSION,
+                        ContactList.STATUS_HOME, ContactList.STATUS_WORK, 
+                        ContactList.STATUS_LUNCH };
 
 	//#sijapp cond.if target="MOTOROLA"#
 	//#	public final static int[] st_colors =
@@ -1169,13 +1172,15 @@ public class JimmUI implements CommandListener
 	//#sijapp cond.end#
 
 	public final static int[] imageIndexes =
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 3 };
+	{ 0, 1, 2, 3, 4, 5, 6, 7, 3, 8, 9, 10, 11, 12 };
 
 	private final static String[] statusStrings = Util.explode("status_away"
 			+ "|" + "status_chat" + "|" + "status_dnd" + "|"
 			+ "status_invisible" + "|" + "status_na" + "|" + "status_occupied"
 			+ "|" + "status_offline" + "|" + "status_online" + "|"
-			+ "status_invis_all", '|');
+			+ "status_invis_all" + "|" + "status_evil" + "|" + "status_depression"
+                        + "|" + "status_home" + "|" + "status_work" + "|"
+                        + "status_lunch", '|');
 
     public static final String[] xStatusStrings = {
     	"xstatus_none",
@@ -1565,6 +1570,16 @@ public class JimmUI implements CommandListener
 					msgType = Message.MESSAGE_TYPE_FFC;
 				else if (status == ContactList.STATUS_NA)
 					msgType = Message.MESSAGE_TYPE_NA;
+				else if (status == ContactList.STATUS_EVIL)
+                                        msgType = Message.MESSAGE_TYPE_EVIL;
+				else if (status == ContactList.STATUS_DEPRESSION)
+                                        msgType = Message.MESSAGE_TYPE_DEPRESSION;
+				else if (status == ContactList.STATUS_HOME)
+                                        msgType = Message.MESSAGE_TYPE_HOME;
+				else if (status == ContactList.STATUS_WORK)
+                                        msgType = Message.MESSAGE_TYPE_WORK;
+				else if (status == ContactList.STATUS_LUNCH)
+                                        msgType = Message.MESSAGE_TYPE_LUNCH;
 				else
 					msgType = Message.MESSAGE_TYPE_AWAY;
 

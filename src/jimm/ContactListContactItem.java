@@ -474,16 +474,16 @@ public class ContactListContactItem implements ContactListItem
 		int tempIndex = -1;
 		//#sijapp cond.if target isnot "DEFAULT"#		
 		if (typing)
-			return 12;
+			return 17;
 		//#sijapp cond.end#			
 		if (isMessageAvailable(MESSAGE_PLAIN))
-			tempIndex = 8;
+			tempIndex = 13;
 		else if (isMessageAvailable(MESSAGE_URL))
-			tempIndex = 9;
+			tempIndex = 14;
 		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST))
-			tempIndex = 11;
+			tempIndex = 15;
 		else if (isMessageAvailable(MESSAGE_SYS_NOTICE))
-			tempIndex = 10;
+			tempIndex = 16;
 		else
 			tempIndex = JimmUI
 					.getStatusImageIndex(getIntValue(ContactListContactItem.CONTACTITEM_STATUS));
@@ -549,7 +549,7 @@ public class ContactListContactItem implements ContactListItem
 				.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
 	}
 
-	/* Increases the mesage count */
+	/* Increases the message count */
 	protected synchronized void increaseMessageCount(int type)
 	{
 		switch (type)
@@ -807,7 +807,7 @@ public class ContactListContactItem implements ContactListItem
 		int imgIndex;
 
 		//#sijapp cond.if target isnot "DEFAULT"#		
-		imgIndex = typing ? 8 : JimmUI
+		imgIndex = typing ? 13 : JimmUI
 				.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
 		//#sijapp cond.else#
 		//#		imgIndex = JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
