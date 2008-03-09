@@ -965,8 +965,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 		
 		JimmUI.setColorScheme(optionsMenu, false);
 
-		optionsMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
-		optionsMenu.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR); 
+		optionsMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		optionsMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR); 
 		optionsMenu.setCommandListener(this);
 
 		// Initialize options form
@@ -1278,7 +1278,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 		}
 
 		// Look for select command
-		if (c == JimmUI.cmdOk)
+		if (c == JimmUI.cmdSelect)
 		{
 			// Delete all items
 			clearForm();
