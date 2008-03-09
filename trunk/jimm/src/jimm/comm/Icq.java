@@ -3375,6 +3375,14 @@ public class Icq implements Runnable
 
 				switch (dwFP1)
 				{
+				case 0x7FFFFFFF:
+
+					if ((caps & CAPF_MIRANDAIM) != 0)
+					{
+						client = CLI_MIRANDA;
+						szVersion = "IM: " + szVersion + " ICQ: " +((dwFP2 >> 24) & 0x7F) + "." + ((dwFP2 >> 16) & 0xFF) + "." + ((dwFP2 >> 8) & 0xFF) + "." + (dwFP2 & 0xFF);
+					}
+					break;
 				case 0xFFFFFFFF:
 					if ((dwFP3 == 0xFFFFFFFF) && (dwFP2 == 0xFFFFFFFF))
 					{
@@ -3556,7 +3564,7 @@ public class Icq implements Runnable
 				ver = "0." + buf[0xD] + "." + buf[0xE] + "." + buf[0xF];
 			} else
 			{
-				ver = buf[0x8] + "." + buf[0x9] + "." + buf[0xA] + "."
+				ver = (buf[0x8] & 0x7F) + "." + buf[0x9] + "." + buf[0xA] + "."
 						+ buf[0xB];
 			}
 		} else if (cli == CAPF_LICQ)
