@@ -88,7 +88,8 @@ public class MainMenu implements CommandListener
 	/* List for selecting a online status */
 	//private static List statusList;
 	private static TextList statusList;
-	
+	private static TextList groupMenu;
+
 	private static List groupActList;
 
 	/////////////////////////////////////////////////////////////////
@@ -169,9 +170,6 @@ public class MainMenu implements CommandListener
 			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF, true);
 		}
 		
-		if (ContactList.getSize() != 0)
-			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST, true);
-		
 		JimmUI.addTextListItem(list, "options_lng",  null, MENU_OPTIONS, true);
 		
 		//#sijapp cond.if target isnot "DEFAULT"#
@@ -189,8 +187,9 @@ public class MainMenu implements CommandListener
 		JimmUI.addTextListItem(list, "exit", null, MENU_EXIT, true);
 
 		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
-		if (connected) list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
-			
+		if (ContactList.getSize() != 0)
+			list.addCommandEx(JimmUI.cmdList, VirtualList.MENU_TYPE_RIGHT_BAR);
+
 		list.selectTextByIndex(lastIndex);
 			
 		list.unlock();
@@ -302,6 +301,18 @@ public class MainMenu implements CommandListener
 		statusSelection = SELECT_XSTATUS;
 	}
 
+	private static void initGroupMenu()
+	{
+		groupMenu = new TextList(ResourceBundle.getString("manage_contact_list"));
+		groupMenu.setMode(TextList.MODE_TEXT);
+		groupMenu.lock();
+		JimmUI.addTextListItem(groupMenu, "add_user", null, 0, true);
+		JimmUI.addTextListItem(groupMenu, "search_user", null, 1, true);
+		JimmUI.addTextListItem(groupMenu, "add_group", null, 2, true);
+		JimmUI.addTextListItem(groupMenu, "rename_group", null, 3, true);
+		JimmUI.addTextListItem(groupMenu, "del_group", null, 4, true);
+		groupMenu.unlock();
+	}
 	
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
@@ -314,12 +325,14 @@ public class MainMenu implements CommandListener
 		//#			return;
 		//#		}
 		//#sijapp cond.end#
-		if ((groupActList != null) && (d == groupActList))
+		if ((groupMenu != null) && (JimmUI.isControlActive(groupMenu)))
 		{
 			if ((c == JimmUI.cmdSelect) || (c == List.SELECT_COMMAND))
-				CLManagementItemSelected(groupActList.getSelectedIndex());
-			else if (c == JimmUI.cmdBack)
-				activate();
+				CLManagementItemSelected(groupMenu.getCurrTextIndex());
+			else if (c == JimmUI.cmdBack) {
+				MainMenu.activate();
+				groupMenu = null;
+			}
 			return;
 		}
 
@@ -354,13 +367,17 @@ public class MainMenu implements CommandListener
 			statusList = null;
 		} 
 		
-		// Activate contact list after pressing "back" menu
-		else if ((c == JimmUI.cmdBack) && JimmUI.isControlActive(list))
+		// Activate contact list after pressing "List" menu
+		else if (c == JimmUI.cmdList)
 		{
 			ContactList.activate();
 		}
 		
-		else if ((c == sendCommand) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
+		else if ((c == JimmUI.cmdBack) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
+		{
+			MainMenu.groupMenu.activate(Jimm.display);
+		}
+		    else if ((c == sendCommand) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
 		{
 			Action act = null;
 
@@ -475,29 +492,16 @@ public class MainMenu implements CommandListener
 
 			case MENU_GROUPS:
 
-				groupActList = new List(ResourceBundle.getString("manage_contact_list"), List.IMPLICIT);
+				initGroupMenu ();
 
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				groupActList.deleteAll();
-				//#sijapp cond.else#
-				while (groupActList.size() != 0) groupActList.delete(0);
-				//#sijapp cond.end#
+				MainMenu.groupMenu.selectTextByIndex(0);
+			
+				JimmUI.setColorScheme(groupMenu, false);
 				
-				
-				groupActList.append(ResourceBundle.getString("add_user",
-						ResourceBundle.FLAG_ELLIPSIS), null);
-				groupActList.append(ResourceBundle.getString("search_user",
-						ResourceBundle.FLAG_ELLIPSIS), null);
-				groupActList.append(ResourceBundle.getString("add_group",
-						ResourceBundle.FLAG_ELLIPSIS), null);
-				groupActList.append(ResourceBundle.getString("rename_group",
-						ResourceBundle.FLAG_ELLIPSIS), null);
-				groupActList.append(ResourceBundle.getString("del_group",
-						ResourceBundle.FLAG_ELLIPSIS), null);
-				groupActList.setCommandListener(_this);
-				groupActList.addCommand(JimmUI.cmdBack);
-				groupActList.addCommand(JimmUI.cmdSelect);
-				Jimm.display.setCurrent(groupActList);
+				MainMenu.groupMenu.setCommandListener(_this);
+				MainMenu.groupMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+				MainMenu.groupMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+				MainMenu.groupMenu.activate(Jimm.display);
 
 				break;
 

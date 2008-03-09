@@ -187,7 +187,7 @@ public abstract class VirtualList
 	// Index for current item of VL
 	protected int currItem = 0;
 
-	// Used for passing params of items whan painting 
+	// Used for passing params of items when painting 
 	final static protected ListItem paintedItem;
 
 	// Used to catch changes to repaint data
