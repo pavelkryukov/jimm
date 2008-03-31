@@ -192,6 +192,8 @@ public class Options
 
 	public static final int OPTIONS_LOCAL_OFFSET = 90; /* int     */
 
+	public static final int OPTIONS_DAYLIGHT_SAVING = 93; /* int     */
+
 	public static final int OPTION_FULL_SCREEN = 145; /* boolean */
 
 	public static final int OPTION_SILENT_MODE = 150; /* boolean */
@@ -442,12 +444,15 @@ public class Options
 		//#sijapp cond.end#
 
 		/* Offset (in hours) between GMT time and local zone time 
-		 GMT_time + GMT_offset = Local_time */
+		 GMT_time + GMT_offset + DayLightSaving = Local_time */
 		setInt(Options.OPTIONS_GMT_OFFSET, 0);
 
 		/* Offset (in hours) between GMT time and phone clock 
-		 Phone_clock + Local_offset = GMT_time */
+		 Phone_clock + Local_offset - DayLightSaving = GMT_time */
 		setInt(Options.OPTIONS_LOCAL_OFFSET, 0);
+
+		/* DayLightSaving (int) */
+		setInt(Options.OPTIONS_DAYLIGHT_SAVING, 0);
 
 		//#sijapp cond.if target="MOTOROLA"#
 		//#		setBoolean(OPTION_FLASH_BACKLIGHT,            true);
@@ -839,6 +844,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 	private ChoiceGroup chsTimeZone;
 
 	private ChoiceGroup chsCurrTime;
+
+	private ChoiceGroup chsDayLight;
 
 	//#sijapp cond.if target isnot "DEFAULT"#
 	private ChoiceGroup messageNotificationModeChoiceGroup;
@@ -1653,8 +1660,17 @@ class OptionsForm implements CommandListener, ItemStateListener
 				calendar.setTime(new Date());
 				currentHour = calendar.get(Calendar.HOUR_OF_DAY);
 
+				chsDayLight = new ChoiceGroup(ResourceBundle
+						.getString("daylight_saving"), Choice.EXCLUSIVE);
+				chsDayLight.append(ResourceBundle
+						.getString("standard_time"), null);
+				chsDayLight.append(ResourceBundle
+						.getString("daylight_saving"), null);
+				chsDayLight.setSelectedIndex(Options
+						.getInt(Options.OPTIONS_DAYLIGHT_SAVING), true);
 				optionsForm.append(chsTimeZone);
 				optionsForm.append(chsCurrTime);
+				optionsForm.append(chsDayLight);
 
 				break;
 			}
@@ -1889,6 +1905,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 				int timeZone = chsTimeZone.getSelectedIndex() - 12;
 				Options.setInt(Options.OPTIONS_GMT_OFFSET, timeZone);
 
+				int dayLight = chsDayLight.getSelectedIndex();
+				Options.setInt(Options.OPTIONS_DAYLIGHT_SAVING, dayLight);
 				/* Translate selected time to GMT */
 				int selHour = chsCurrTime.getSelectedIndex() - timeZone;
 				if (selHour < 0)

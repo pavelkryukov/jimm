@@ -279,6 +279,8 @@
   "templates"                   "Templates"
   "text_too_long"               "Text too long to be inserted"
   "time_zone"                   "Time zone"
+  "daylight_saving"		"Daylight saving"
+  "standard_time"		"Standard time"
   "timeout_interv"              "Keepalive packet interval"
   "title"                       "Title"
   "total_mem"                   "Total memory"

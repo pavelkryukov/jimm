@@ -910,9 +910,9 @@ public class Util
 		{
 			if (value != 0)
 			{
-				costString = Integer.toString(value / 1000) + ".";
-				afterDot = Integer.toString(value % 1000);
-				while (afterDot.length() != 3)
+				costString = Integer.toString(value / 10000) + ".";
+				afterDot = Integer.toString(value % 10000);
+				while (afterDot.length() != 4)
 				{
 					afterDot = "0" + afterDot;
 				}
@@ -949,7 +949,7 @@ public class Util
 			}
 			if (i == string.length() - 1)
 			{
-				value = Integer.parseInt(string) * 1000;
+				value = Integer.parseInt(string) * 10000;
 				return (value);
 			} else
 			{
@@ -957,13 +957,13 @@ public class Util
 				{
 					i++;
 				}
-				value = Integer.parseInt(string.substring(0, i)) * 1000;
+				value = Integer.parseInt(string.substring(0, i)) * 10000;
 				string = string.substring(i + 1, string.length());
-				while (string.length() > 3)
+				while (string.length() > 4)
 				{
 					string = string.substring(0, string.length() - 1);
 				}
-				while (string.length() < 3)
+				while (string.length() < 4)
 				{
 					string = string + "0";
 				}
@@ -1138,14 +1138,16 @@ public class Util
 	/* Creates current date (GMT or local) */
 	public static long createCurrentDate(boolean gmt)
 	{
-		long result = new Date().getTime() / 1000;
+	    // getTime() returns GTM time
+	    long result = new Date().getTime() / 1000;
 
-		/* convert result to GMT time */
-		long diff = Options.getInt(Options.OPTIONS_LOCAL_OFFSET);
-		result += (diff * 3600);
+	    /* convert result to GMT time */
+//	    long diff = Options.getInt(Options.OPTIONS_LOCAL_OFFSET);
+//	    long dl = Options.getInt(Options.OPTIONS_DAYLIGHT_SAVING);
+//	    result += ((diff + dl) * 3600);
 
-		/* returns GMT or local time */
-		return gmt ? result : gmtTimeToLocalTime(result);
+	    /* returns GMT or local time */
+	    return gmt ? result : gmtTimeToLocalTime(result);
 	}
 
 	/* Show date string */
@@ -1248,7 +1250,8 @@ public class Util
 	public static long gmtTimeToLocalTime(long gmtTime)
 	{
 		long diff = Options.getInt(Options.OPTIONS_GMT_OFFSET);
-		return gmtTime + diff * 3600L;
+		long dl = Options.getInt(Options.OPTIONS_DAYLIGHT_SAVING);
+		return gmtTime + (diff + dl) * 3600L;
 	}
 
 	public static String longitudeToString(long seconds)
