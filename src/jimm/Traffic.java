@@ -218,9 +218,9 @@ public class Traffic
 		{
 			if (value != 0)
 			{
-				costString = Integer.toString(value / 100000) + ".";
-				afterDot = Integer.toString(value % 100000);
-				while (afterDot.length() != 5)
+				costString = Integer.toString(value / 10000) + ".";
+				afterDot = Integer.toString(value % 10000);
+				while (afterDot.length() != 4)
 					afterDot = "0" + afterDot;
 				while ((afterDot.endsWith("0")) && (afterDot.length() > 2))
 				{
