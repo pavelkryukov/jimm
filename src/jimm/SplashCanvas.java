@@ -179,6 +179,7 @@ public class SplashCanvas extends Canvas
 	static public synchronized void setMessage(String message)
 	{
 		SplashCanvas.message = new String(message);
+		SplashCanvas._this.repaint();
 		setProgress(0);
 	}
 

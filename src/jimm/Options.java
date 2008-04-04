@@ -237,6 +237,13 @@ public class Options
 	public static final int OPTION_VISIBILITY_ID = 85; /* int     */
 	
 	public static final int OPTION_XSTATUS = 92; /* int     */
+	
+	public static final int OPTION_FS_MODE = 94; /* int     */
+	
+	// Filetransfer modes
+	public static final int FS_MODE_WEB = 0;
+	public static final int FS_MODE_NET = 1;
+	
 
 	//Hotkey Actions
 	public static final int HOTKEY_NONE = 0;
@@ -474,6 +481,8 @@ public class Options
 		selectSoundType("message.", OPTION_MESS_NOTIF_FILE);
 		selectSoundType("typing.", OPTION_TYPING_FILE);
 		//#sijapp cond.end#
+		
+		setInt(OPTION_FS_MODE, FS_MODE_WEB);
 	}
 
 	static public void resetLangDependedOpts()
@@ -838,6 +847,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 	private ChoiceGroup vibratorChoiceGroup;
 
 	private ChoiceGroup chsBringUp;
+	
+	private ChoiceGroup chsFSMode;
 
 	private ChoiceGroup choiceCurAccount;
 
@@ -1378,6 +1389,12 @@ class OptionsForm implements CommandListener, ItemStateListener
 				optionsForm.append(httpUserAgendTextField);
 				optionsForm.append(httpWAPProfileTextField);
 				optionsForm.append(reconnectNumberTextField);
+				
+				//#sijapp cond.if modules_FILES is "true"#
+				chsFSMode = createSelector("ft_type", "ft_type_web"+"|"+"ft_type_net", Options.OPTION_FS_MODE);
+				optionsForm.append(chsFSMode);
+				//#sijapp cond.end#
+				
 				break;
 
 			//#sijapp cond.if modules_PROXY is "true"#
@@ -1740,6 +1757,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 						httpWAPProfileTextField.getString());
 				Options.setInt(Options.OPTION_RECONNECT_NUMBER, Integer
 						.parseInt(reconnectNumberTextField.getString()));
+				
+				//#sijapp cond.if modules_FILES is "true"#
+				Options.setInt(Options.OPTION_FS_MODE, chsFSMode.getSelectedIndex());
+				//#sijapp cond.end#
 				break;
 			//#sijapp cond.if modules_PROXY is "true"#
 			case OPTIONS_PROXY:

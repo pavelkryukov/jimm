@@ -1512,11 +1512,12 @@ public class JimmUI implements CommandListener
 				&& (status != ContactList.STATUS_OFFLINE)
 				&& (status != ContactList.STATUS_INVISIBLE))
 			addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true);		
-
 		
 		//#sijapp cond.if modules_FILES is "true"#
-		if ((status != ContactList.STATUS_OFFLINE) 
-				&& contact.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8)
+		
+		if (((status != ContactList.STATUS_OFFLINE) 
+				&& contact.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
+				(Options.getInt(Options.OPTION_FS_MODE) == Options.FS_MODE_WEB))
 		{
 			addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS, true);
 			//#sijapp cond.if target isnot "MOTOROLA"#
@@ -1604,7 +1605,8 @@ public class JimmUI implements CommandListener
 			
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			//#sijapp cond.if modules_FILES is "true"#                    
+			//#sijapp cond.if modules_FILES is "true"#     
+			
 			case USER_MENU_FILE_TRANS:
 				/* Send a filetransfer with a file given by path */
 				{
@@ -1617,10 +1619,6 @@ public class JimmUI implements CommandListener
 			case USER_MENU_CAM_TRANS:
 				/* Send a filetransfer with a camera image
 				 We can only make file transfers with ICQ clients prot V8 and up */
-				if (clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) < 8)
-				{
-					JimmException.handleException(new JimmException(190, 0, true));
-				} else
 				{
 					FileTransfer ft = new FileTransfer(FileTransfer.FT_TYPE_CAMERA_SNAPSHOT, clciContactMenu);
 					ft.startFT();
