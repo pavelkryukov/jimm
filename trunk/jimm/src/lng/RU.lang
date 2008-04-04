@@ -267,6 +267,7 @@
 "options_network"			"Сеть"
 "options_other"				"Разное"
 "options_signaling"			"Оповещения"
+"opt_camerauri"				"Устройсво захвата"
 "password"					"Пароль"
 "phone"						"Телефон"
 "pink_scheme"				"Розовая"

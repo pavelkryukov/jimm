@@ -477,9 +477,11 @@ public class FileTransfer implements CommandListener, Runnable
 
 		private byte[] data;
 
-		//private byte[] data_pre;
-
 		private int res_marker = 0;
+
+		private int sourceWidth = 0;
+
+		private int sourceHeight = 0;
 
 		// Commands
 		private Command backCommand;
@@ -502,14 +504,47 @@ public class FileTransfer implements CommandListener, Runnable
 			this.setCommandListener(this);
 		}
 
+	      private Image createThumbnail(Image image) {
+		sourceWidth = image.getWidth();
+		sourceHeight = image.getHeight();
+
+		int thumbWidth = Integer.parseInt(this.res[0][this.res_marker]);
+		int thumbHeight = Integer.parseInt(this.res[1][this.res_marker]);
+
+		if (thumbHeight == -1)
+		  thumbHeight = thumbWidth * sourceHeight / sourceWidth;
+
+		Image thumb = Image.createImage(thumbWidth, thumbHeight);
+		Graphics g = thumb.getGraphics();
+
+		for (int y = 0; y < thumbHeight; y++) {
+		  for (int x = 0; x < thumbWidth; x++) {
+		    g.setClip(x, y, 1, 1);
+		    int dx = x * sourceWidth / thumbWidth;
+		    int dy = y * sourceHeight / thumbHeight;
+		    g.drawImage(image, x - dx, y - dy, Graphics.LEFT | Graphics.TOP);
+		  }
+		}
+
+		Image immutableThumb = Image.createImage(thumb);
+
+		return immutableThumb;
+	      }
 		private void reset()
 		{
+			img = null;
+			if (vc != null)
+			{
+				vc.setVisible(false);
+				vc = null;
+			}
 			if (p != null)
 			{
 				try
 				{
 					if (p.getState() == Player.STARTED)
 						p.stop();
+			        	p.deallocate();
 					p.close();
 				} catch (Exception e)
 				{
@@ -517,11 +552,6 @@ public class FileTransfer implements CommandListener, Runnable
 				p = null;
 			}
 
-			if (vc != null)
-			{
-				vc.setVisible(false);
-				vc = null;
-			}
 			System.gc();
 		}
 
@@ -545,8 +575,8 @@ public class FileTransfer implements CommandListener, Runnable
 						| Graphics.LEFT);
 			else
 				g.drawString(ResourceBundle.getString("send_img") + "? "
-						+ this.res[0][this.res_marker] + "x"
-						+ this.res[1][this.res_marker], 1, 1, Graphics.TOP
+						+ sourceWidth + "x"
+						+ sourceHeight, 1, 1, Graphics.TOP
 						| Graphics.LEFT);
 		}
 
@@ -559,7 +589,8 @@ public class FileTransfer implements CommandListener, Runnable
 				try
 				{
 					// Create the player
-					p = Manager.createPlayer("capture://video");
+					String cam_dev = Options.getInt(Options.OPTION_CAMERAURI) == 0 ? "capture://video" : "capture://image";
+					p = Manager.createPlayer(cam_dev);
 					p.realize();
 
 					// Get the video control
@@ -571,15 +602,25 @@ public class FileTransfer implements CommandListener, Runnable
 
 						int canvasWidth = this.getWidth();
 						int canvasHeight = this.getHeight();
-						int displayWidth = vc.getDisplayWidth();
-						int displayHeight = vc.getDisplayHeight();
-						int x = (canvasWidth - displayWidth) / 2;
-						int y = (canvasHeight - displayHeight) / 2;
 
-						vc.setDisplayLocation(x, y);
+						try {
+						  vc.setDisplayLocation(2, 2);
+						  vc.setDisplaySize(canvasWidth - 4, canvasHeight - 4);
+						}
+						catch (MediaException me) {
+						  try { vc.setDisplayFullScreen(true); }
+						  catch (MediaException me2) {}
+						}
 
-						p.start();
+//						int displayWidth = vc.getDisplayWidth();
+//						int displayHeight = vc.getDisplayHeight();
+//						int x = (canvasWidth - displayWidth) / 2;
+//						int y = (canvasHeight - displayHeight) / 2;
+
+//						vc.setDisplayLocation(x, y);
+
 						vc.setVisible(true);
+						p.start();
 						active = true;
 
 					} else
@@ -633,9 +674,10 @@ public class FileTransfer implements CommandListener, Runnable
 				if (data == null)
 					JimmException.handleException(new JimmException(183, 0,
 							true));
-				this.stop();
-				img = Image.createImage(data, 0, data.length);
+				// this.stop();
+				img = createThumbnail(Image.createImage(data, 0, data.length));
 				viewfinder = false;
+				vc.setVisible(false);
 				repaint();
 			}
 		}
@@ -652,8 +694,8 @@ public class FileTransfer implements CommandListener, Runnable
 
 					// Remove video control at SE phones placing it beyond screen border
 					//#sijapp cond.if target is "MIDP2" #
-					if (Jimm.is_phone_SE())
-						vc.setDisplayLocation(1000, 1000);
+					//if (Jimm.is_phone_SE())
+					//	vc.setDisplayLocation(1000, 1000);
 					//#sijapp cond.end #
 				} catch (Exception e)
 				{
@@ -676,13 +718,14 @@ public class FileTransfer implements CommandListener, Runnable
 							data.length);
 					FileTransfer.this.askForNameDesc("jimm_cam"
 							+ Util.getCounter() + ".jpeg", "");
-				}
+				} else
 				this.takeSnapshot();
 			} else if (c == this.backCommand)
 			{
 				if (!viewfinder)
 				{
 					viewfinder = true;
+					active = false;
 					start();
 				} else
 				{

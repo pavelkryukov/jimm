@@ -244,6 +244,8 @@ public class Options
 	public static final int FS_MODE_WEB = 0;
 	public static final int FS_MODE_NET = 1;
 	
+	public static final int OPTION_CAMERAURI = 95; /* int     */
+
 
 	//Hotkey Actions
 	public static final int HOTKEY_NONE = 0;
@@ -475,6 +477,7 @@ public class Options
 		setBoolean(OPTION_CL_CLIENTS, true);
 		setBoolean(OPTION_XSTATUSES, true);
 		setInt(OPTION_XSTATUS, -1);
+		setInt(OPTION_CAMERAURI, 0);
 
 		//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 		selectSoundType("online.", OPTION_ONLINE_NOTIF_FILE);
@@ -857,6 +860,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 	private ChoiceGroup chsCurrTime;
 
 	private ChoiceGroup chsDayLight;
+	private ChoiceGroup clCamDevGroup;
 
 	//#sijapp cond.if target isnot "DEFAULT"#
 	private ChoiceGroup messageNotificationModeChoiceGroup;
@@ -1516,6 +1520,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 				//#					optionsForm.append(lightTimeout);
 				//#					optionsForm.append(lightManual);
 				//#sijapp cond.end #
+				clCamDevGroup = new ChoiceGroup(ResourceBundle.getString("opt_camerauri"), Choice.EXCLUSIVE);
+				addStr(clCamDevGroup, "camera://video" + "|" + "camera://image");
+				clCamDevGroup.setSelectedIndex(Options.getInt(Options.OPTION_CAMERAURI), true);
+				optionsForm.append(clCamDevGroup);
 
 				break;
 
@@ -1796,6 +1804,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 						choiceInterfaceMisc.isSelected(idx++));
 				//#sijapp cond.end#
 
+				Options.setInt(Options.OPTION_CAMERAURI, clCamDevGroup
+						.getSelectedIndex());
 				int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
 				int newColorScheme = colorScheme.getSelectedIndex();
 				
