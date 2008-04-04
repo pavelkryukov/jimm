@@ -409,9 +409,9 @@ public class JimmUI implements CommandListener
 		return (actionTag == testTag) ? getCommandIdx(testCommand) : -1;
 	}
 
-	final public static int MESBOX_YESNO = 1;
-
+	final public static int MESBOX_YESNO    = 1;
 	final public static int MESBOX_OKCANCEL = 2;
+	final public static int MESBOX_OK       = 3;
 
 	static public void messageBox(String cap, String text, int type,
 			CommandListener listener, int tag)
@@ -430,6 +430,11 @@ public class JimmUI implements CommandListener
 			break;
 
 		case MESBOX_OKCANCEL:
+			msgForm.addCommand(cmdOk);
+			msgForm.addCommand(cmdCancel);
+			break;
+			
+		case MESBOX_OK:
 			msgForm.addCommand(cmdOk);
 			msgForm.addCommand(cmdCancel);
 			break;
