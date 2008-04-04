@@ -197,6 +197,7 @@
   "options_network"             "Network"
   "options_other"               "Other"
   "options_signaling"           "Signaling"
+  "opt_camerauri"	        "Capture device"
   "password"                    "Password"
   "phone"                       "Tel."
   "pink_scheme"                 "Pink"
