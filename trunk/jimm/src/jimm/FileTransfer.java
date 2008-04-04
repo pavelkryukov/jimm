@@ -27,9 +27,11 @@ package jimm;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.microedition.io.Connector;
+import javax.microedition.io.SocketConnection;
 import javax.microedition.media.*;
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 import javax.microedition.io.file.FileSystemRegistry;
@@ -46,6 +48,7 @@ import javax.microedition.media.control.VideoControl;
 import jimm.comm.Icq;
 import jimm.comm.FileTransferMessage;
 import jimm.comm.Message;
+import jimm.comm.PlainMessage;
 import jimm.comm.SendMessageAction;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
@@ -54,9 +57,9 @@ public class FileTransfer implements CommandListener, Runnable
 {
 	private static final int MODE_CHECK_FILE_LEN = 10001;
 	private static final int MODE_SHOW_DESC_FORM = 10002;
+	private static final int MODE_SEND_THROUGH_WEB = 10003;
+	private static final int MODE_BACK_TO_MENU= 10004;
 	private int curMode;
-	
-	
 	
 	// Type of filetrasfer
 	public static final int FT_TYPE_FILE_BY_NAME = 1;
@@ -88,7 +91,7 @@ public class FileTransfer implements CommandListener, Runnable
 
 	private ContactListContactItem cItem;
 	
-	private String fileName;
+	private String fileName, shortFileName;
 	private FileSystem2 fileSystem;
 
 	// Commands
@@ -103,7 +106,6 @@ public class FileTransfer implements CommandListener, Runnable
 	{
 		type = ftType;
 		cItem = _cItem;
-
 	}
 
 	// Return the cItem belonging to this FileTransfer
@@ -171,7 +173,108 @@ public class FileTransfer implements CommandListener, Runnable
 		case MODE_SHOW_DESC_FORM:
 			askForNameDesc(fileName, "");
 			break;
+			
+		case MODE_SEND_THROUGH_WEB:
+			sendFileThroughWebThread();
+			break;
+			
+		case MODE_BACK_TO_MENU:
+			free();
+			cItem.activate();
+			break;
 		}
+	}
+	
+	private void sendFileThroughWebThread()
+	{
+		InputStream is;
+		OutputStream os;
+		SocketConnection sc;
+		
+		String address = "artden.homeftp.net";
+		String url = "http://"+address+"/__receive_file.php"; 
+		
+		try
+		{
+			sc = (SocketConnection) Connector.open("socket://"+address+":80", Connector.READ_WRITE);
+			is = sc.openInputStream();
+			os = sc.openOutputStream();
+			String boundary = "A8KJ8HAOI7K7Hl2LS926KAENXSDK652989W987QKJ82KAW7SD";
+			
+			SplashCanvas.setMessage(ResourceBundle.getString("ft_transfer"));
+			
+			StringBuffer buffer2 = new StringBuffer();
+			buffer2.append("--").append(boundary).append("\r\n");
+			buffer2.append("Content-Type: application/octet-stream\r\n");
+			buffer2.append("Content-Disposition: form-data; name=\"jimmfile\"; filename=\"").append(shortFileName).append("\"\r\n");
+			buffer2.append("Content-Transfer-Encoding: binary\r\n\r\n");
+			byte[] post2 = Util.stringToByteArray(buffer2.toString(), true);
+			
+			StringBuffer buffer3 = new StringBuffer();
+			buffer3.append("\r\n--").append(boundary).append("--\r\n");
+			byte[] post3 = Util.stringToByteArray(buffer3.toString(), true); 
+			
+			StringBuffer buffer1 = new StringBuffer();
+			buffer1.append("POST ").append(url).append(" HTTP/1.0\r\n");
+			buffer1.append("Host: ").append(address).append("\r\n");
+			buffer1.append("Content-Type: multipart/form-data; boundary=").append(boundary).append("\r\n");
+			buffer1.append("Content-Length: ").append(post2.length+post3.length+fsize).append("\r\n\r\n");
+			
+			// Send post header
+			os.write(Util.stringToByteArray(buffer1.toString(), true));
+			os.write(post2);
+
+			// Send file data and show progress
+			byte[] buffer = new byte[1024];
+			int counter = fsize;
+			do 
+			{
+				int read = fis.read(buffer);
+				os.write(buffer, 0, read);
+				counter -= read;
+				if (fsize != 0) SplashCanvas.setProgress(100*(fsize-counter)/fsize);
+			} while (counter > 0);
+			
+			// Send end of header
+			os.write(post3);
+			os.flush();
+			
+			// Read response
+			StringBuffer response = new StringBuffer();
+			for (;;)
+			{
+				int read = is.read();
+				if (read == -1) break;
+				byte bt = (byte)(read & 0xFF);
+				response.append((char)bt);
+			}
+			String respString = response.toString();
+			int dataPos = respString.indexOf("\r\n\r\n");
+			if (dataPos == -1) {} // TODO: show error!
+			else respString = Util.replaceStr(respString.substring(dataPos+4), "\r\n", "");
+
+			// Close all http connection headers 
+			os.close();
+			is.close();
+			sc.close();
+			
+			System.out.println(respString);
+		
+			// Send info about file
+			StringBuffer messText = new StringBuffer();
+			messText.append("Filename: ").append(shortFileName).append("\n");
+			messText.append("Filesize: ").append(fsize/1024).append("KB\n");
+			messText.append("Link: ").append(respString);
+		
+			PlainMessage plainMsg = new PlainMessage(Options.getString(Options.OPTION_UIN), cItem, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(false), messText.toString());
+			Icq.requestAction(new SendMessageAction(plainMsg));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		curMode = MODE_BACK_TO_MENU;
+		Jimm.display.callSerially(this);
 	}
 	
 	public static FileTransferMessage getFTM()
@@ -270,8 +373,24 @@ public class FileTransfer implements CommandListener, Runnable
 			{
 				if (d == this.name_Desc)
 				{
-					this.initFT(this.fileNameField.getString(),
-							this.descriptionField.getString());
+					switch (Options.getInt(Options.OPTION_FS_MODE))
+					{
+					case Options.FS_MODE_NET:
+						this.initFT(this.fileNameField.getString(), this.descriptionField.getString());
+						break;
+						
+					case Options.FS_MODE_WEB:
+				        SplashCanvas.setProgress(0);
+				        SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
+				        SplashCanvas.removeCmd(SplashCanvas.cancelCommnad);
+				        SplashCanvas.setCmdListener(this);
+						SplashCanvas.show();
+						
+						shortFileName = this.fileNameField.getString();
+						curMode = MODE_SEND_THROUGH_WEB;
+						new Thread(this).start();
+						break;
+					}
 				}
 			} else if (c == this.backCommand)
 			{

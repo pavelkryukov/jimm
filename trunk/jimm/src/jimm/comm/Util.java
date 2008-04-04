@@ -533,7 +533,6 @@ public class Util
 		{
 			return (val.getBytes());
 		}
-
 	}
 
 	// Converts the specified string (val) to a byte array

@@ -164,6 +164,9 @@ public class MainMenu implements CommandListener
 		JimmUI.addTextListItem(list, "set_status", getStatusImage(), MENU_STATUS, true);
 		JimmUI.addTextListItem(list, "set_xstatus", ContactList.xStatusImages.elementAt(Options.getInt(Options.OPTION_XSTATUS)), MENU_XSTATUS, true);
 		
+		if (ContactList.getSize() != 0)
+			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST, true);
+		
 		if (connected)
 		{
 			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_GROUPS, true);
