@@ -789,10 +789,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		for (int i = gItems.size() - 1; i >= 0; i--)
 		{
-			ContactListGroupItem group = (ContactListGroupItem) gItems
-					.elementAt(i);
-			if (group.getId() == id)
-				return group;
+			ContactListGroupItem group = (ContactListGroupItem) gItems.elementAt(i);
+			if (group.getId() == id) return group;
 		}
 		return null;
 	}
@@ -1433,36 +1431,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	//#sijapp cond.end#
 
 	//#sijapp cond.if target isnot "DEFAULT"#
-	synchronized static private void TypingHelper(String uin, boolean type)
-	{
-		if (type)
-			playSoundNotification(ContactList.SOUND_TYPE_TYPING);
-		if (ChatHistory.chatHistoryShown(uin))
-		{
-			ChatHistory.getChatHistoryAt(uin).BeginTyping(type);
-		} else
-			tree.repaint();
-	}
-
 	synchronized static public void BeginTyping(String uin, boolean type)
 	{
 		ContactListContactItem item = getItembyUIN(uin);
-		if (item == null)
-			item = createTempContact(uin);
-
-		if (item == null)
-		{
-			System.out.println("Unable to create temp ContactItem!");
-			return;
-		}
+		if (item == null) return;
 
 		// If the user does not have it add the typing capability
-		if (!item.hasCapability(Icq.CAPF_TYPING))
-			item.addCapability(Icq.CAPF_TYPING);
+		if (!item.hasCapability(Icq.CAPF_TYPING)) item.addCapability(Icq.CAPF_TYPING);
 		item.BeginTyping(type);
-		TypingHelper(uin, type);
+		
+		if (type) playSoundNotification(ContactList.SOUND_TYPE_TYPING);
+		
+		if (ChatHistory.chatHistoryShown(uin)) ChatHistory.getChatHistoryAt(uin).BeginTyping(type);
+		else tree.repaint();
 	}
-
 	//#sijapp cond.end#
 
 	//#sijapp cond.if target isnot  "DEFAULT"#		

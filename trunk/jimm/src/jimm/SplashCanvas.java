@@ -180,7 +180,6 @@ public class SplashCanvas extends Canvas
 	{
 		SplashCanvas.message = new String(message);
 		SplashCanvas._this.repaint();
-		setProgress(0);
 	}
 
 	public static synchronized void setStatusToDraw(int st_index)

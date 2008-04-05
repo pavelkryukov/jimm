@@ -409,6 +409,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	//#sijapp cond.if target isnot "DEFAULT"#
 	public void BeginTyping(boolean type)
 	{
+		System.out.println("ChatHistory.BeginTyping");
 		textList.repaint();
 	}
 
@@ -536,14 +537,14 @@ public class ChatHistory
 				
 				//#sijapp cond.if modules_HISTORY is "true" #
 				if (Options.getBoolean(Options.OPTION_HISTORY))
-					HistoryStorage
-							.addText(
-									uin,
-									plainMsg.getText(),
-									(byte) 0,
-									contact
-											.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
-									plainMsg.getNewDate());
+					HistoryStorage.addText
+					(
+						uin,
+						plainMsg.getText(),
+						(byte) 0,
+						contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+						plainMsg.getNewDate()
+					);
 				//#sijapp cond.end#
 				
 				if (!offline)
