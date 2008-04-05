@@ -39,42 +39,29 @@ public class UpdateContactListAction extends Action
 
 	private static final int STATE_CLI_ROSTERMODIFY_SENT = 1;
 
-	private static final int STATE_COMPLETED = 3;
+	private static final int STATE_COMPLETED = 2;
 
-	/*
-	 private static final int STATE_MOVE1 = 4;
-	 private static final int STATE_MOVE2 = 5;
-	 private static final int STATE_MOVE3 = 6;
-	 private static final int STATE_MOVE4 = 14;
-	 */
+	private static final int STATE_MOVE1 = 3;
+	private static final int STATE_MOVE2 = 4;
+	private static final int STATE_MOVE3 = 5;
+	private static final int STATE_MOVE4 = 6;
+	
+	private static final int STATE_ADD1 = 7;
+	private static final int STATE_ADD2 = 8;
 
-	private static final int STATE_ADD1 = 17;
-
-	private static final int STATE_ADD2 = 18;
-
-	private static final int STATE_DELETE_CONTACT1 = 7;
-
-	private static final int STATE_DELETE_CONTACT2 = 8;
-
-	private static final int STATE_DELETE_GROUP1 = 9;
-
-	private static final int STATE_DELETE_GROUP2 = 10;
-
-	private static final int STATE_ADD_GROUP1 = 11;
-
-	private static final int STATE_ADD_GROUP2 = 12;
+	private static final int STATE_DELETE_CONTACT1 = 9;
+	private static final int STATE_DELETE_CONTACT2 = 10;
+	private static final int STATE_DELETE_GROUP1 = 11;
+	private static final int STATE_DELETE_GROUP2 = 12;
+	
+	private static final int STATE_ADD_GROUP1 = 13;
+	private static final int STATE_ADD_GROUP2 = 14;
 
 	/* Action types */
 	public static final int ACTION_ADD = 1;
-
 	public static final int ACTION_DEL = 2;
-
 	public static final int ACTION_RENAME = 3;
-
-	/*
-	 public static final int ACTION_MOVE   = 4;
-	 */
-
+	public static final int ACTION_MOVE = 4;
 	public static final int ACTION_REQ_AUTH = 5;
 
 	/* Timeout */
@@ -116,16 +103,15 @@ public class UpdateContactListAction extends Action
 		}
 	}
 
-	/*
-	 public UpdateContactListAction(ContactListContactItem cItem, ContactListGroupItem oldGroup, ContactListGroupItem newGroup)
-	 {
-	 super(false, true);
-	 this.cItem = cItem;
-	 this.gItem = oldGroup;
-	 this.newGItem = newGroup;
-	 action = ACTION_MOVE;
-	 }
-	 */
+	public UpdateContactListAction(ContactListContactItem cItem, ContactListGroupItem oldGroup, ContactListGroupItem newGroup)
+	{
+		super(false, true);
+		this.cItem = cItem;
+		this.gItem = oldGroup;
+		this.newGItem = newGroup;
+		action = ACTION_MOVE;
+	}
+
 
 	/* Init action */
 	protected void init() throws JimmException
@@ -200,27 +186,19 @@ public class UpdateContactListAction extends Action
 			Icq.c.sendPacket(packet);
 			break;
 
-		/* Move contact between groups (like Miranda does) */
-		/*
-		 case ACTION_MOVE:
-		 Icq.c.sendPacket
-		 (
-		 new SnacPacket
-		 (
-		 SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-		 SnacPacket.CLI_ROSTERDELETE_COMMAND,
-		 Util.getCounter(),
-		 new byte[0],
-		 packRosterItem(cItem, gItem.getId())
-		 )
-		 );
-
-		 cItem.setIntValue(ContactListContactItem.CONTACTITEM_GROUP, newGItem.getId());
-		 cItem.setIntValue(ContactListContactItem.CONTACTITEM_ID, Util.createRandomId());
-		 
-		 this.state = STATE_MOVE1;
-		 break;
-		 */
+        case ACTION_MOVE:
+            Icq.c.sendPacket
+            (
+                 new SnacPacket
+                 (
+                      SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+                      SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+                      Util.getCounter(), new byte[0],
+                      packRosterItem(cItem, gItem.getId())
+                 )
+            );
+            state = STATE_MOVE1;
+            break;
 		}
 	}
 
@@ -324,40 +302,50 @@ public class UpdateContactListAction extends Action
 
 					this.state = STATE_COMPLETED;
 					break;
+					
+                /* STATE_MOVE */
+                case STATE_MOVE1:
+                     Icq.c.sendPacket
+                     (
+                          new SnacPacket
+                          (
+                               SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+                               SnacPacket.CLI_ROSTERDELETE_COMMAND,
+                               Util.getCounter(), new byte[0],
+                               packRosterItem(cItem, gItem.getId())
+                          )
+                     );
 
-				/* STATE_MOVE */
-				/*
-				 case STATE_MOVE1:
-				 Icq.c.sendPacket
-				 (
-				 new SnacPacket
-				 (
-				 SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-				 SnacPacket.CLI_ROSTERADD_COMMAND,
-				 Util.getCounter(),
-				 new byte[0],
-				 packRosterItem(cItem, newGItem.getId())
-				 )
-				 );
-				 
-				 this.state = STATE_MOVE2;
-				 break;
-				 
-				 case STATE_MOVE2:
-				 sendGroup(gItem);
-				 this.state = STATE_MOVE3;
-				 break;
-				 
-				 case STATE_MOVE3:
-				 sendGroup(newGItem);
-				 this.state = STATE_MOVE4;
-				 break;
-				 
-				 case STATE_MOVE4:
-				 sendCLI_ADDEND();
-				 this.state = STATE_COMPLETED;
-				 break;
-				 */
+                     cItem.setIntValue(ContactListContactItem.CONTACTITEM_GROUP, newGItem.getId());
+                     cItem.setIntValue(ContactListContactItem.CONTACTITEM_ID, Util.createRandomId());
+
+                     state = STATE_MOVE2;
+                     break;
+
+                case STATE_MOVE2:
+                     Icq.c.sendPacket
+                     (
+                          new SnacPacket
+                          (
+                               SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+                               SnacPacket.CLI_ROSTERADD_COMMAND,
+                               Util.getCounter(),
+                               new byte[0],
+                               packRosterItem(cItem, newGItem.getId())
+                          )
+                     );
+                     state = STATE_MOVE3;
+                     break;
+
+                case STATE_MOVE3:
+                     sendGroup(newGItem);
+                     state = STATE_MOVE4;
+                     break;
+
+                case STATE_MOVE4:
+                     sendCLI_ADDEND();
+                     state = STATE_COMPLETED;
+                     break;					
 
 				/* STATE_DELETE_CONTACT */
 				case STATE_DELETE_CONTACT1:
@@ -380,7 +368,6 @@ public class UpdateContactListAction extends Action
 
 				/* Update activity timestamp */
 				lastActivity = System.currentTimeMillis();
-
 			}
 
 		} /* end 'if (packet instanceof SnacPacket)' */

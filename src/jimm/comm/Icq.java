@@ -308,7 +308,7 @@ public class Icq implements Runnable
 	}
 
 	//#sijapp cond.if target isnot "DEFAULT"#
-	public synchronized void beginTyping(String uin, boolean isTyping)
+	public synchronized static void beginTyping(String uin, boolean isTyping)
 			throws JimmException
 	{
 		byte[] uinRaw = Util.stringToByteArray(uin);

@@ -117,6 +117,9 @@ public class JimmUI implements CommandListener
 	static private CommandListener listener;
 	static private Hashtable commands = new Hashtable();
 	static private JimmUI _this;
+	
+	// Misc constants
+	final private static int GROUP_SELECTOR_MOVE_TAG = 1; 
 
 	// Associate commands and commands codes 
 	static
@@ -261,7 +264,11 @@ public class JimmUI implements CommandListener
 		
 		else if ((messageTextbox != null) && (d == messageTextbox))
 		{
-			if (c == cmdCancel) backToLastScreen();
+			sendTypeingNotify(false);
+			if (c == cmdCancel)
+			{
+				backToLastScreen();
+			}
 			else if (c == cmdSend)
 			{
 				switch (textMessCurMode)
@@ -334,6 +341,28 @@ public class JimmUI implements CommandListener
 		else if (isControlActive(lstSelector))
 		{
 			lastSelectedItemIndex = lstSelector.getCurrTextIndex();
+			
+			// User have selected new group for contact
+			if ((actionTag == GROUP_SELECTOR_MOVE_TAG) && ((c == cmdOk) || (c == List.SELECT_COMMAND)))
+			{
+				int currGroupId = clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
+				int newGroupId = groupList[JimmUI.getLastSelIndex()];
+				ContactListGroupItem oldGroup = ContactList.getGroupById(currGroupId);
+				ContactListGroupItem newGroup = ContactList.getGroupById(newGroupId);
+
+				UpdateContactListAction act = new UpdateContactListAction(clciContactMenu, oldGroup, newGroup);
+
+				try
+				{
+					Icq.requestAction(act);
+					SplashCanvas.addTimerTask("wait", act, false);
+				}
+				catch (JimmException e)
+				{
+					JimmException.handleException(e);
+				}
+				return;
+			}
 
 			// "Selector" -> "Cancel"
 			if (c == cmdCancel)
@@ -1363,7 +1392,7 @@ public class JimmUI implements CommandListener
 		messageTextbox.addCommand(cmdSend);
 		messageTextbox.addCommand(cmdCancel);
 		messageTextbox.addCommand(cmdClearText);
-		
+
 		//#sijapp cond.if modules_SMILES is "true" #
 		messageTextbox.addCommand(cmdInsertEmo);
 		//#sijapp cond.end#
@@ -1373,6 +1402,27 @@ public class JimmUI implements CommandListener
 		if (initText != null) messageTextbox.setString(initText);
 		messageTextbox.setCommandListener(_this);
 		Jimm.display.setCurrent(messageTextbox);
+		
+		sendTypeingNotify(true);
+	}
+	
+	private static void sendTypeingNotify(boolean value)
+	{
+		//#sijapp cond.if target isnot "DEFAULT"#
+		if 
+		(      (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
+			&& textMessReceiver.hasCapability(Icq.CAPF_TYPING)
+			&& ((Options.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVISIBLE)
+			&& (Options.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVIS_ALL))
+		){
+			try
+			{
+				System.out.println("sendTypeingNotify()");
+				Icq.beginTyping(textMessReceiver.getStringValue(ContactListContactItem.CONTACTITEM_UIN), value);
+			} catch (JimmException e)
+			{}
+		}
+		//#sijapp cond.end#
 	}
 
 	public static void sendMessage(String text, ContactListContactItem textMessReceiver)
@@ -1480,6 +1530,7 @@ public class JimmUI implements CommandListener
 	private static final int USER_MENU_LOCAL_INFO = 11;
 	private static final int USER_MENU_USER_INFO = 12;
 	private static final int USER_MENU_QUOTA = 14;
+	private static final int USER_MENU_MOVE_TO_GROUP = 15;
 	
 	private static TextList tlContactMenu;
 	private static ContactListContactItem clciContactMenu;
@@ -1503,46 +1554,54 @@ public class JimmUI implements CommandListener
 		
 		long status = contact.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
 		
-		if (contact.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
-			addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH, true);
-		
-		addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE, true);
-		
-		if (JimmUI.getClipBoardText() != null)
-			addTextListItem(tlContactMenu, "quote", null, USER_MENU_QUOTA, true);
+		if (Icq.isConnected())
+		{
+			if (contact.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
+				addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH, true);
+			
+			addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE, true);
+			
+			if (JimmUI.getClipBoardText() != null)
+				addTextListItem(tlContactMenu, "quote", null, USER_MENU_QUOTA, true);
+		}
 		
 		addTextListItem(tlContactMenu, "info", null, USER_MENU_USER_INFO, true);
 		
-		if ((status != ContactList.STATUS_ONLINE)
-				&& (status != ContactList.STATUS_OFFLINE)
-				&& (status != ContactList.STATUS_INVISIBLE))
-			addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true);		
-		
-		//#sijapp cond.if modules_FILES is "true"#
-		
-		if (((status != ContactList.STATUS_OFFLINE) 
-				&& contact.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
-				(Options.getInt(Options.OPTION_FS_MODE) == Options.FS_MODE_WEB))
-		{
-			addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS, true);
-			//#sijapp cond.if target isnot "MOTOROLA"#
-			addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS, true);
-			//#sijapp cond.end#
-		}
-		//#sijapp cond.end#
-		
-		addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE, true);
-		addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true);
-		addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true);
-
 		//#sijapp cond.if modules_HISTORY is "true" #
 		addTextListItem(tlContactMenu, "history", null, USER_MENU_HISTORY, true);
 		//#sijapp cond.end#
+		
+		if (Icq.isConnected())
+		{
+			if ((status != ContactList.STATUS_ONLINE)
+					&& (status != ContactList.STATUS_OFFLINE)
+					&& (status != ContactList.STATUS_INVISIBLE))
+				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true);		
+			
+			//#sijapp cond.if modules_FILES is "true"#
+			
+			if (((status != ContactList.STATUS_OFFLINE) 
+					&& contact.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
+					(Options.getInt(Options.OPTION_FS_MODE) == Options.FS_MODE_WEB))
+			{
+				addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS, true);
+				//#sijapp cond.if target isnot "MOTOROLA"#
+				addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS, true);
+				//#sijapp cond.end#
+			}
+			//#sijapp cond.end#
+			
+			addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE, true);
+			addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true);
+			addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true);
+			//addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true);
+		}
 
 		if (status != ContactList.STATUS_OFFLINE)
 			addTextListItem(tlContactMenu, "dc_info", null, USER_MENU_LOCAL_INFO, true);
-		
 	}
+	
+	private static int[] groupList;
 	
 	private static void contactMenuSelected(int index)
 	{
@@ -1675,6 +1734,17 @@ public class JimmUI implements CommandListener
 				
 			case USER_MENU_LOCAL_INFO:
 				showClientInfo(clciContactMenu);
+				break;
+				
+			case USER_MENU_MOVE_TO_GROUP:
+				groupList = showGroupSelector
+				(
+					"move_to_group", 
+					GROUP_SELECTOR_MOVE_TAG, 
+					_this, 
+					SHS_TYPE_ALL, 
+					clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_GROUP)
+				);
 				break;
 				
 			//#sijapp cond.if modules_HISTORY is "true" #

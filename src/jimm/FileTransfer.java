@@ -214,8 +214,6 @@ public class FileTransfer implements CommandListener, Runnable
 			
 			String boundary = "A8KJ8HAOI7KENXSDK652989W987QKJ82KAW7SD";
 			
-			SplashCanvas.setMessage(ResourceBundle.getString("ft_transfer"));
-			
 			StringBuffer buffer2 = new StringBuffer();
 			buffer2.append("--").append(boundary).append("\r\n");
 			buffer2.append("Content-Disposition: form-data; name=\"jimmfile\"; filename=\"").append(shortFileName).append("\"\r\n");
@@ -229,7 +227,6 @@ public class FileTransfer implements CommandListener, Runnable
 			byte[] post3 = Util.stringToByteArray(buffer3.toString(), true);
 		
 			sc.setRequestProperty("Content-Type", "multipart/form-data; boundary="+boundary);
-			sc.setRequestProperty("Content-Length", Integer.toString(post2.length+post3.length+fsize));
 			
 			os = sc.openOutputStream();
 			
@@ -244,7 +241,12 @@ public class FileTransfer implements CommandListener, Runnable
 				int read = fis.read(buffer);
 				os.write(buffer, 0, read);
 				counter -= read;
-				if (fsize != 0) SplashCanvas.setProgress(100*(fsize-counter)/fsize);
+				if (fsize != 0)
+				{
+					int percent = 100*(fsize-counter)/fsize;
+					SplashCanvas.setProgress(percent);
+					SplashCanvas.setMessage(ResourceBundle.getString("ft_transfer")+" "+percent+"% / "+fsize/1024+"KB");
+				}
 			} while (counter > 0);
 			
 			// Send end of header
@@ -261,8 +263,7 @@ public class FileTransfer implements CommandListener, Runnable
 			{
 				int read = is.read();
 				if (read == -1) break;
-				byte bt = (byte)(read & 0xFF);
-				response.append((char)bt);
+				response.append((char)(read & 0xFF));
 			}
 			String respString = response.toString();
 			int dataPos = respString.indexOf("\r\n\r\n");
