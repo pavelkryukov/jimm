@@ -688,6 +688,10 @@ public class ConnectAction extends Action
 									// if (serverData.size() != 0) item.ssData = serverData.toByteArray();
 									items.addElement(item);
 								}
+								catch (NumberFormatException ne)
+								{
+									// Contact with wrong uin was received  
+								}
 								catch (Exception e)
 								{
 									// Contact with wrong uin was received  
