@@ -798,7 +798,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Returns reference to contact item with uin or null if not found  
 	static public ContactListContactItem getItembyUIN(String uin)
 	{
-		int uinInt = Integer.parseInt(uin);
+		int uinInt;
+		try {
+			uinInt = Integer.parseInt(uin);
+		} catch (NumberFormatException ne){
+			System.out.println ("NFE: getItemByUin("+uin+")");
+			return null;
+		}
 		for (int i = cItems.size() - 1; i >= 0; i--)
 		{
 			ContactListContactItem citem = getCItem(i);

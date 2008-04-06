@@ -67,7 +67,13 @@ public class ContactListContactItem implements ContactListItem
 		switch (key)
 		{
 		case CONTACTITEM_UIN:
-			uinLong = Integer.parseInt(value);
+			try
+			{
+				uinLong = Integer.parseInt(value);
+			} catch (NumberFormatException e)
+			{
+				System.out.println ("NFE: setStringValue(UIN,"+value+")");
+			}
 			return;
 		case CONTACTITEM_NAME:
 			name = value;
@@ -103,11 +109,29 @@ public class ContactListContactItem implements ContactListItem
 	public int getSortWeight()
 	{
 		int status = getIntValue(ContactListContactItem.CONTACTITEM_STATUS); 
-		if (status != ContactList.STATUS_OFFLINE) return 0;
-		if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) 
-				&& status == ContactList.STATUS_OFFLINE) return 20;
 
-		return 10;
+		switch (status)
+		{
+			case ContactList.STATUS_ONLINE:		return 0;
+			case ContactList.STATUS_CHAT:		return 1;
+			case ContactList.STATUS_EVIL:		return 2;
+			case ContactList.STATUS_DEPRESSION:	return 3;
+			case ContactList.STATUS_HOME:		return 4;
+			case ContactList.STATUS_WORK:		return 5;
+			case ContactList.STATUS_LUNCH:		return 6;
+			case ContactList.STATUS_AWAY:		return 7;
+			case ContactList.STATUS_NA:		return 8;
+			case ContactList.STATUS_OCCUPIED:	return 9;
+			case ContactList.STATUS_DND:		return 10;
+			case ContactList.STATUS_INVISIBLE:	return 11;
+
+			case ContactList.STATUS_OFFLINE:
+				if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
+					return 19;
+				return 20;
+		}
+
+		return 15;
 	}
 
 	///////////////////////////////////////////////////////////////////////////
