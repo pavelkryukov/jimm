@@ -572,8 +572,8 @@ public class FileTransfer implements CommandListener, Runnable
 			g.setColor(0x00000000);
 			if (viewfinder)
 				g.drawString(ResourceBundle.getString("viewfinder") + " "
-						+ getWidth() - 2 + "x"
-						+ getHeight() - 2, 1, 1, Graphics.TOP
+						+ (getWidth()-2) + "x"
+						+ (getHeight()-2), 1, 1, Graphics.TOP
 						| Graphics.LEFT);
 			else
 				g.drawString(ResourceBundle.getString("send_img") + "? "
