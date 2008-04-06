@@ -671,7 +671,7 @@ public class FileTransfer implements CommandListener, Runnable
 				data = getSnapshot("encoding=jpeg");
 				if (data == null)
 					data = getSnapshot("JPEG");
-				else if (data == null)
+				if (data == null)
 					data = getSnapshot(null);
 				if (data == null)
 					JimmException.handleException(new JimmException(183, 0,
