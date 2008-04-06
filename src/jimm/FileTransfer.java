@@ -509,12 +509,13 @@ public class FileTransfer implements CommandListener, Runnable
 		sourceWidth = image.getWidth();
 		sourceHeight = image.getHeight();
 
-		int thumbWidth = Integer.parseInt(this.res[0][this.res_marker]);
-		int thumbHeight = Integer.parseInt(this.res[1][this.res_marker]);
-
-		if (thumbHeight == -1)
-		  thumbHeight = thumbWidth * sourceHeight / sourceWidth;
-
+		int thumbWidth = this.getWidth();
+		int thumbHeight = this.getHeight();
+		if (sourceHeight >= sourceWidth)
+		    thumbWidth = thumbHeight * sourceWidth / sourceHeight;
+		else
+		    thumbHeight = thumbWidth * sourceHeight / sourceWidth;
+		
 		Image thumb = Image.createImage(thumbWidth, thumbHeight);
 		Graphics g = thumb.getGraphics();
 
@@ -571,8 +572,8 @@ public class FileTransfer implements CommandListener, Runnable
 			g.setColor(0x00000000);
 			if (viewfinder)
 				g.drawString(ResourceBundle.getString("viewfinder") + " "
-						+ this.res[0][this.res_marker] + "x"
-						+ this.res[1][this.res_marker], 1, 1, Graphics.TOP
+						+ getWidth() - 2 + "x"
+						+ getHeight() - 2, 1, 1, Graphics.TOP
 						| Graphics.LEFT);
 			else
 				g.drawString(ResourceBundle.getString("send_img") + "? "
@@ -693,11 +694,6 @@ public class FileTransfer implements CommandListener, Runnable
 					vc.setVisible(false);
 					p.stop();
 
-					// Remove video control at SE phones placing it beyond screen border
-					//#sijapp cond.if target is "MIDP2" #
-					//if (Jimm.is_phone_SE())
-					//	vc.setDisplayLocation(1000, 1000);
-					//#sijapp cond.end #
 				} catch (Exception e)
 				{
 					reset();
@@ -717,8 +713,9 @@ public class FileTransfer implements CommandListener, Runnable
 					this.reset();
 					FileTransfer.this.setData(new ByteArrayInputStream(data),
 							data.length);
-					FileTransfer.this.askForNameDesc("jimm_cam"
-							+ Util.getCounter() + ".jpeg", "");
+					FileTransfer.this.askForNameDesc("jimm_cam_"
+							+ Util.getDateString(false,Util.createCurrentDate(true))
+							+ "_" + Util.getCounter() + ".jpeg", "");
 				} else
 				this.takeSnapshot();
 			} else if (c == this.backCommand)
@@ -753,8 +750,9 @@ public class FileTransfer implements CommandListener, Runnable
 					this.reset();
 					FileTransfer.this.setData(new ByteArrayInputStream(data),
 							data.length);
-					FileTransfer.this.askForNameDesc("jimm_cam"
-							+ Util.getCounter() + ".jpeg", "");
+					FileTransfer.this.askForNameDesc("jimm_cam_"
+							+ Util.getDateString(false,Util.createCurrentDate(true))
+							+ "_" + Util.getCounter() + ".jpeg", "");
 				} else
 				{
 					this.takeSnapshot();
