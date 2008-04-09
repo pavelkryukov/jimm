@@ -263,6 +263,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		tree = new VirtualTree(null, false);
 		tree.setVTCommands(this);
 		tree.setVLCommands(this);
+		tree.setCyclingCursor(true);
 
 		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
 				: VirtualList.MEDIUM_FONT);

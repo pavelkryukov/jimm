@@ -186,6 +186,8 @@ public abstract class VirtualList
 
 	// Index for current item of VL
 	protected int currItem = 0;
+	
+	protected boolean cyclingCursor = false;
 
 	// Used for passing params of items when painting 
 	final static protected ListItem paintedItem;
@@ -318,6 +320,11 @@ public abstract class VirtualList
 		createSetOfFonts(fontSize);
 		checkTopItem();
 		invalidate();
+	}
+	
+	public void setCyclingCursor(boolean value)
+	{
+		cyclingCursor = value;
 	}
 	
 	public int getGameAction(int keyCode)
@@ -484,8 +491,16 @@ public abstract class VirtualList
 	protected void checkCurrItem()
 	{
 		int size = getSize();
-		if (currItem < 0) currItem = size - 1;
-		else if (currItem >= size) currItem = 0;
+		if (cyclingCursor)
+		{
+			if (currItem < 0) currItem = size - 1;
+			else if (currItem >= size) currItem = 0;
+		}
+		else
+		{
+			if (currItem < 0) currItem = 0;
+			else if (currItem >= size) currItem = size-1;
+		}
 	}
 
 	// protected void checkTopItem() - internal
