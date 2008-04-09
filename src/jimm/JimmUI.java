@@ -519,7 +519,7 @@ public class JimmUI implements CommandListener
 		aboutTextList.setMode(TextList.MODE_TEXT);
 		setColorScheme(aboutTextList, false);
 		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1,
-				0xffffff);
+				0xffffff, 0);
 
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 		aboutTextList.setFontSize(Font.SIZE_MEDIUM);
@@ -647,7 +647,8 @@ public class JimmUI implements CommandListener
 			Options.getSchemeColor(Options.CLRSCHHEME_CAP), 
 			Options.getSchemeColor(Options.CLRSCHHEME_BACK), 
 			Options.getSchemeColor(Options.CLRSCHHEME_CURS), 
-			Options.getSchemeColor(Options.CLRSCHHEME_TEXT)
+			Options.getSchemeColor(Options.CLRSCHHEME_TEXT),
+			Options.getSchemeColor(Options.CLRSCHHEME_CURS_FRAME)
 		);
 		
 		if (setFullScreen) 
