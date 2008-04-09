@@ -342,6 +342,7 @@ public class TextList extends VirtualList
 
 			checkCurrItem();
 			checkTopItem();
+			checkTopItem();
 			repaintIfLastIndexesChanged();
 			break;
 

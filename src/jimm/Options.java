@@ -971,9 +971,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 	{
 		// Initialize hotkeys
 		keysMenu = new TextList(ResourceBundle.getString("ext_listhotkeys"));
+		keysMenu.setCyclingCursor(true);
 		JimmUI.setColorScheme(keysMenu, false);
-		
 		keysMenu.setCommandListener(this);
+		keysMenu.setCyclingCursor(true);
 		actionMenu = new TextList(ResourceBundle.getString("ext_actionhotkeys"));
 		JimmUI.setColorScheme(actionMenu, false);
 		actionMenu.setCommandListener(this);
@@ -990,6 +991,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 		optionsMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
 		optionsMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR); 
 		optionsMenu.setCommandListener(this);
+		optionsMenu.setCyclingCursor(true);
 
 		// Initialize options form
 		optionsForm = new Form(ResourceBundle.getString("options_lng"));

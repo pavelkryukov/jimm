@@ -1551,6 +1551,7 @@ public class JimmUI implements CommandListener
 		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
 		tlContactMenu.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 		tlContactMenu.setCommandListener(_this);
+		tlContactMenu.setCyclingCursor(true);
 		
 		long status = contact.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
 		
