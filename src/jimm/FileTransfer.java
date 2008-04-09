@@ -42,6 +42,7 @@ import javax.microedition.lcdui.*;
 import javax.microedition.media.control.VideoControl;
 //#sijapp cond.end#
 
+import DrawControls.*;
 import jimm.comm.Icq;
 import jimm.comm.FileTransferMessage;
 import jimm.comm.Message;
@@ -52,10 +53,14 @@ import jimm.util.ResourceBundle;
 
 public class FileTransfer implements CommandListener, Runnable
 {
-	private static final int MODE_CHECK_FILE_LEN = 10001;
-	private static final int MODE_SHOW_DESC_FORM = 10002;
+	private static final int MODE_CHECK_FILE_LEN   = 10001;
+	private static final int MODE_SHOW_DESC_FORM   = 10002;
 	private static final int MODE_SEND_THROUGH_WEB = 10003;
-	private static final int MODE_BACK_TO_MENU= 10004;
+	private static final int MODE_BACK_TO_MENU     = 10004;
+	
+	private static final int WEB_ASK_RESULT_YES = 20000;
+	private static final int WEB_ASK_RESULT_NO  = 20001;
+	
 	private int curMode;
 	
 	// Type of filetrasfer
@@ -79,6 +84,8 @@ public class FileTransfer implements CommandListener, Runnable
 	private int fsize;
 	
 	private String exceptionText;
+	
+	TextList tlWebAsk;
 
 	// File path and description TextField
 	private TextField fileNameField;
@@ -124,6 +131,31 @@ public class FileTransfer implements CommandListener, Runnable
 
 	// Start the file transfer procedure depening on the ft type
 	public void startFT()
+	{
+		// Ask user about web file transfer
+		if (Options.getBoolean(Options.OPTION_ASK_FOR_WEB_FT) 
+		   && (Options.getInt(Options.OPTION_FT_MODE) == Options.FS_MODE_WEB))
+		{
+			tlWebAsk = new TextList(ResourceBundle.getString("ft_caption"));
+			JimmUI.setColorScheme(tlWebAsk, true);
+			
+			tlWebAsk.addBigText(ResourceBundle.getString("ft_web_ask"), tlWebAsk.getTextColor(), Font.STYLE_PLAIN, -1);
+			tlWebAsk.doCRLF(-1);
+			tlWebAsk.doCRLF(-1);
+			tlWebAsk.addBigText(ResourceBundle.getString("ft_web_yes"), tlWebAsk.getTextColor(), Font.STYLE_BOLD, WEB_ASK_RESULT_YES);
+			tlWebAsk.doCRLF(1);
+			tlWebAsk.addBigText(ResourceBundle.getString("ft_web_no"), tlWebAsk.getTextColor(), Font.STYLE_BOLD, WEB_ASK_RESULT_NO);
+			tlWebAsk.doCRLF(2);
+			tlWebAsk.selectTextByIndex(WEB_ASK_RESULT_YES);
+			tlWebAsk.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+			tlWebAsk.setCommandListener(this);
+			tlWebAsk.activate(Jimm.display);
+			return;
+		}
+		else startFtInternal();
+	}
+	
+	private void startFtInternal()
 	{
 		//#sijapp cond.if target isnot "MOTOROLA" #
 		if (type == FileTransfer.FT_TYPE_CAMERA_SNAPSHOT)
@@ -203,8 +235,9 @@ public class FileTransfer implements CommandListener, Runnable
 		
 		exceptionText = null;
 		
+		//String host = "www.jimm.org";
+		//String url = "http://"+host+"/ft_alpha/__receive_file.php";
 		String host = "artden.homeftp.net";
-		//String host = "jimm.org";
 		String url = "http://"+host+"/__receive_file.php";
 		
 		try
@@ -212,26 +245,19 @@ public class FileTransfer implements CommandListener, Runnable
 			sc = (HttpConnection) Connector.open(url, Connector.READ_WRITE);
 			sc.setRequestMethod(HttpConnection.POST);
 			
-			String boundary = "A8KJ8HAOI7KENXSDK652989W987QKJ82KAW7SD";
+			String boundary = "a9f843c9b8a736e53c40f598d434d283e4d9ff72";
 			
+			sc.setRequestProperty("Content-Type", "multipart/form-data; boundary="+boundary);
+			os = sc.openOutputStream();
+			
+			// Send post header
 			StringBuffer buffer2 = new StringBuffer();
 			buffer2.append("--").append(boundary).append("\r\n");
 			buffer2.append("Content-Disposition: form-data; name=\"jimmfile\"; filename=\"").append(shortFileName).append("\"\r\n");
 			buffer2.append("Content-Type: application/octet-stream\r\n");
 			buffer2.append("Content-Transfer-Encoding: binary\r\n");
 			buffer2.append("\r\n");
-			byte[] post2 = Util.stringToByteArray(buffer2.toString(), true);
-			
-			StringBuffer buffer3 = new StringBuffer();
-			buffer3.append("\r\n--").append(boundary).append("--\r\n");
-			byte[] post3 = Util.stringToByteArray(buffer3.toString(), true);
-		
-			sc.setRequestProperty("Content-Type", "multipart/form-data; boundary="+boundary);
-			
-			os = sc.openOutputStream();
-			
-			// Send post header
-			os.write(post2);
+			os.write(Util.stringToByteArray(buffer2.toString(), true));
 
 			// Send file data and show progress
 			byte[] buffer = new byte[1024];
@@ -250,8 +276,11 @@ public class FileTransfer implements CommandListener, Runnable
 			} while (counter > 0);
 			
 			// Send end of header
-			os.write(post3);
-			
+			StringBuffer buffer3 = new StringBuffer();
+			buffer3.append("\r\n--").append(boundary).append("--\r\n");
+			os.write(Util.stringToByteArray(buffer3.toString(), true));
+			os.flush();
+
 			int respCode = sc.getResponseCode();
 			if (respCode != HttpConnection.HTTP_OK) throw new Exception("Server error: "+respCode+"\r\n"+sc.getResponseMessage());
 			
@@ -370,7 +399,24 @@ public class FileTransfer implements CommandListener, Runnable
 	// Command listener
 	public void commandAction(Command c, Displayable d)
 	{
-		if ((alert != null) && (d == alert))
+		if (JimmUI.isControlActive(tlWebAsk) && (c == JimmUI.cmdSelect))
+		{
+			int index = tlWebAsk.getCurrTextIndex(); 
+			switch (index)
+			{
+			case WEB_ASK_RESULT_NO:
+			case WEB_ASK_RESULT_YES:
+				Options.setInt(Options.OPTION_FT_MODE, (index == WEB_ASK_RESULT_NO) ? Options.FS_MODE_NET : Options.FS_MODE_WEB);
+				Options.setBoolean(Options.OPTION_ASK_FOR_WEB_FT, false);
+				Options.safe_save();
+				startFtInternal();
+				return;
+				
+			default:
+				return;
+			}
+		}
+		else if ((alert != null) && (d == alert))
 		{
 			System.out.println("cItem.activate();");
 			cItem.activate();
@@ -395,7 +441,7 @@ public class FileTransfer implements CommandListener, Runnable
 			{
 				if (d == this.name_Desc)
 				{
-					switch (Options.getInt(Options.OPTION_FS_MODE))
+					switch (Options.getInt(Options.OPTION_FT_MODE))
 					{
 					case Options.FS_MODE_NET:
 						this.initFT(this.fileNameField.getString(), this.descriptionField.getString());
