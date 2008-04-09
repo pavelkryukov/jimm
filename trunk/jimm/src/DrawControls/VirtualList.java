@@ -206,14 +206,17 @@ public abstract class VirtualList
 	
 	private static int curMenuItemIndex; 
 	
-
-	private int topItem = 0, // Index of top visilbe item 
-			fontSize = MEDIUM_FONT, // Current font size of VL
-			bkgrndColor = 0xFFFFFF, // bk color of VL
-			cursorColor = 0x808080, // Used when drawing focus rect.
-			textColor = 0x000000, // Default text color.
-			capBkCOlor = 0xC0C0C0, capTxtColor = 0x00, // Color of caprion text
-			cursorMode = MODE_LIST; // Cursor mode
+	protected int borderWidth = 0;
+	protected int curFrameWidth = 1;
+	private int topItem = 0; // Index of top visilbe item 
+	private int fontSize = MEDIUM_FONT; // Current font size of VL
+	private int bkgrndColor = 0xFFFFFF; // bk color of VL
+	private int cursorColor = 0x808080; // Used when drawing focus rect.
+	private int cursorFrameColor = 0xFF; // Used when drawing focus rect.
+	private int textColor = 0x000000; // Default text color.
+	private int capBkCOlor = 0xC0C0C0;
+	private int capTxtColor = 0x00; // Color of caprion text
+	private int cursorMode = MODE_LIST; // Cursor mode
 
 	static
 	{
@@ -257,8 +260,9 @@ public abstract class VirtualList
 		//#sijapp cond.else#
 		this.fontSize = Font.SIZE_MEDIUM;
 		//#sijapp cond.end#
-		createSetOfFonts(this.fontSize);
+		
 		this.cursorMode = MODE_LIST;
+		initVirtualList();
 	}
 
 	// public VirtualList
@@ -273,10 +277,17 @@ public abstract class VirtualList
 		setCaption(capt);
 		this.capTxtColor = capTextColor;
 		this.bkgrndColor = backColor;
-
 		this.fontSize = fontSize;
-		createSetOfFonts(this.fontSize);
 		this.cursorMode = cursorMode;
+		initVirtualList();
+	}
+	
+	private void initVirtualList()
+	{
+		createSetOfFonts(this.fontSize);
+		int fontHeight = normalFont.getHeight();
+		curFrameWidth = (fontHeight > 16) ? 2 : 1;
+		borderWidth = fontHeight/6+1;
 	}
 
 	//! Request number of list elements to be shown in list
@@ -354,13 +365,14 @@ public abstract class VirtualList
 		return virtualCanvas.isShown() ? virtualCanvas.currentControl : null; 
 	}
 
-	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text)
+	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text, int crsFrame)
 	{
 		capBkCOlor = capbk;
 		capTxtColor = capTxt;
 		bkgrndColor = bkgrnd;
 		cursorColor = cursor;
 		textColor = text;
+		cursorFrameColor = crsFrame;
 		if (isActive()) virtualCanvas.repaint();
 	}
 
@@ -1152,14 +1164,32 @@ public abstract class VirtualList
 			{
 				grCursorY1--;
 				grCursorY2++;
-				drawRect(g, transformColorLight(cursorColor, -32), transformColorLight(cursorColor, 0), 0, grCursorY1, itemWidth, grCursorY2);
-				g.setStrokeStyle(Graphics.DOTTED);
-				g.setColor(textColor);
+				
+				int leftLayer = (curFrameWidth >= 2) ? 1 : 0;
+				
+				g.setColor(cursorColor);
+				g.fillRect(curFrameWidth+leftLayer, grCursorY1, itemWidth-2*curFrameWidth-leftLayer, grCursorY2-grCursorY1);
+				g.setColor(cursorFrameColor);
 				boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1) : false;
-				if (!isCursorUpper) g.drawLine(1, grCursorY1, itemWidth - 2, grCursorY1);
-				g.drawLine(0, grCursorY1 + 1, 0, grCursorY2 - 1);
-				g.drawLine(itemWidth - 1, grCursorY1 + 1, itemWidth - 1, grCursorY2 - 1);
-				g.drawLine(1, grCursorY2, itemWidth - 2, grCursorY2);
+				
+				if (!isCursorUpper)
+					g.fillRect(leftLayer+1, grCursorY1-curFrameWidth+1, itemWidth - 2-leftLayer, curFrameWidth);
+				
+				g.fillRect(leftLayer, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
+				
+				g.fillRect(itemWidth - curFrameWidth, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
+				
+				g.fillRect(leftLayer+1, grCursorY2, itemWidth-2-leftLayer, curFrameWidth);
+				
+				g.setColor(mergeColors(cursorFrameColor, cursorColor, 50));
+				if (!isCursorUpper)
+				{
+					g.fillRect(curFrameWidth+leftLayer, grCursorY1+1, 1, 1);
+					g.fillRect(curFrameWidth+leftLayer, grCursorY2-1, 1, 1);
+				}
+				
+				g.fillRect(itemWidth-curFrameWidth-1, grCursorY1+1, 1, 1);
+				g.fillRect(itemWidth-curFrameWidth-1, grCursorY2-1, 1, 1);
 			}
 		}
 
@@ -1171,7 +1201,7 @@ public abstract class VirtualList
 			int itemHeight = getItemHeight(i);
 			g.setStrokeStyle(Graphics.SOLID);
 			
-			int x1 = 1;
+			int x1 = borderWidth;
 			int x2 = itemWidth-2;
 			int y1 = y;
 			int y2 = y + itemHeight;
@@ -1214,10 +1244,6 @@ public abstract class VirtualList
 		return false;
 	}
 
-	void init()
-	{
-	}
-
 	void destroy()
 	{
 	}
@@ -1235,6 +1261,20 @@ public abstract class VirtualList
 		if (b < 0) b = 0;
 		if (b > 255) b = 255;
 		return r | (g << 8) | (b << 16);
+	}
+	
+	static private int mergeColors(int color1, int color2, int value)
+	{
+		int r1 = (color1 & 0xFF);
+		int g1 = ((color1 & 0xFF00) >> 8);
+		int b1 = ((color1 & 0xFF0000) >> 16);
+		int r2 = (color2 & 0xFF);
+		int g2 = ((color2 & 0xFF00) >> 8);
+		int b2 = ((color2 & 0xFF0000) >> 16);
+		int r = value*(r2-r1)/100+r1;
+		int g = value*(g2-g1)/100+g1;
+		int b = value*(b2-b1)/100+b1;
+		return (r) | (g << 8) | (b << 16);
 	}
 	
 	static public int getInverseColor(int color)

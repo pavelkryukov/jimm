@@ -299,6 +299,7 @@ public class MainMenu implements CommandListener
 	{
 		statusList = new TextList(ResourceBundle.getString("set_xstatus"));
 		statusList.setMode(TextList.MODE_TEXT);
+		statusList.setCyclingCursor(true);
 		statusList.lock();
 		for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
 			JimmUI.addTextListItem(statusList, JimmUI.xStatusStrings[i], ContactList.xStatusImages.elementAt(i-1), i, true);

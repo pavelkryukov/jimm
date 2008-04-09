@@ -177,7 +177,26 @@ class TextLine
  You may use it to show text with colorised lines :) */
 public class TextList extends VirtualList
 {
-	private static final int BORDER = 3; 
+	//! Construct new text list 
+	public TextList
+	(
+		String capt, //!< Caption of list
+		int capTextColor, //!< Text color of caption
+		int backColor, //!< Background color of list
+		int fontSize, /*!< Font size for list lines and caption. 
+					 Can be VirtualList.SMALL_FONT, VirtualList.MEDIUM_FONT 
+					 or VirtualList.LARGE_FONT */
+		int cursorMode //!< Cursor mode. Can be VirtualList.SEL_INVERTED, VirtualList.SEL_DOTTED, VirtualList.SEL_NONE
+	)
+	{
+		super(capt, capTextColor, backColor, fontSize, cursorMode);
+	}
+	
+	//! Construct new text list with default values of colors, font size etc...
+	public TextList(String capt)
+	{
+		super(capt);
+	}
 	
 	// Vector of lines. Each line contains cols. Col can be text or image
 	private Vector lines = new Vector();
@@ -275,13 +294,6 @@ public class TextList extends VirtualList
 		add(text, this.getTextColor(), -1);
 	}
 
-	//! Construct new text list with default values of colors, font size etc...
-	public TextList(String capt //!< Caption of list
-	)
-	{
-		super(capt);
-	}
-
 	public int getItemHeight(int itemIndex)
 	{
 		if (getCursorMode() != MODE_TEXT) return super.getItemHeight(itemIndex);
@@ -299,7 +311,7 @@ public class TextList extends VirtualList
 		}
 
 		TextLine line = getLine(index);
-		line.paint(BORDER, y1, g, getFontSize(), this);
+		line.paint(borderWidth, y1, g, getFontSize(), this);
 	}
 
 	// Overrides VirtualList.moveCursor
@@ -407,25 +419,12 @@ public class TextList extends VirtualList
 		return getLine(currItemIndex).bigTextIndex;
 	}
 
-	//! Construct new text list 
-	public TextList(String capt, //!< Caption of list
-		int capTextColor, //!< Text color of caption
-		int backColor, //!< Background color of list
-		int fontSize, /*!< Font size for list lines and caption. 
-					 Can be VirtualList.SMALL_FONT, VirtualList.MEDIUM_FONT 
-					 or VirtualList.LARGE_FONT */
-		int cursorMode //!< Cursor mode. Can be VirtualList.SEL_INVERTED, VirtualList.SEL_DOTTED, VirtualList.SEL_NONE
-	)
-	{
-		super(capt, capTextColor, backColor, fontSize, cursorMode);
-	}
-
-	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text)
+	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text, int crsFrame)
 	{
 		Enumeration allLines = lines.elements();
 		while (allLines.hasMoreElements())
 			((TextLine) allLines.nextElement()).setItemColor(text);
-		super.setColors(capTxt, capbk, bkgrnd, cursor, text);
+		super.setColors(capTxt, capbk, bkgrnd, cursor, text, crsFrame);
 	}
 
 	public TextList doCRLF(int blockTextIndex)
@@ -458,7 +457,7 @@ public class TextList extends VirtualList
 
 	private int getTextAreaWidth()
 	{
-		return getWidthInternal() - scrollerWidth - BORDER*2;
+		return getWidthInternal() - scrollerWidth - borderWidth*2;
 	}
 
 	private static String replace(String text, String from, String to)
