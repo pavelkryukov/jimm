@@ -217,6 +217,8 @@ public class Options
 	
 	public static final int OPTION_CL_CLIENTS = 158; /* boolean */
 	public static final int OPTION_XSTATUSES = 159; /* boolean */
+	
+	public static final int OPTION_ASK_FOR_WEB_FT = 160; /* boolean */
 
 	protected static final int OPTIONS_LANG_CHANGED = 148;
 
@@ -238,7 +240,7 @@ public class Options
 	
 	public static final int OPTION_XSTATUS = 92; /* int     */
 	
-	public static final int OPTION_FS_MODE = 94; /* int     */
+	public static final int OPTION_FT_MODE = 94; /* int     */
 	
 	// Filetransfer modes
 	public static final int FS_MODE_WEB = 0;
@@ -476,6 +478,7 @@ public class Options
 		setBoolean(OPTION_MESS_COLORED_TEXT, false);
 		setBoolean(OPTION_CL_CLIENTS, true);
 		setBoolean(OPTION_XSTATUSES, true);
+		setBoolean(OPTION_ASK_FOR_WEB_FT, true);
 		setInt(OPTION_XSTATUS, -1);
 		setInt(OPTION_CAMERAURI, 0);
 
@@ -485,7 +488,7 @@ public class Options
 		selectSoundType("typing.", OPTION_TYPING_FILE);
 		//#sijapp cond.end#
 		
-		setInt(OPTION_FS_MODE, FS_MODE_WEB);
+		setInt(OPTION_FT_MODE, FS_MODE_WEB);
 	}
 
 	static public void resetLangDependedOpts()
@@ -769,7 +772,7 @@ public class Options
 
 class OptionsForm implements CommandListener, ItemStateListener
 {
-	private boolean lastGroupsUsed, lastHideOffline, lastShowClients, lastShowXStatuses;
+	private boolean lastGroupsUsed, lastHideOffline;
 
 	private int lastSortMethod, lastColorScheme;
 
@@ -806,9 +809,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 	//#sijapp cond.end#
 
 	private static final int OPTIONS_TIMEZONE = 7;
-
-	// Exit has to be biggest element cause it also marks the size
-	private static final int MENU_EXIT = 8;
 
 	// Options
 	private TextField[] uinTextField;
@@ -1229,8 +1229,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 		lastGroupsUsed = Options.getBoolean(Options.OPTION_USER_GROUPS);
 		lastSortMethod = Options.getInt(Options.OPTION_CL_SORT_BY);
 		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
-		lastShowClients = Options.getBoolean(Options.OPTION_CL_CLIENTS);
-		lastShowXStatuses = Options.getBoolean(Options.OPTION_XSTATUSES);
+		Options.getBoolean(Options.OPTION_CL_CLIENTS);
+		Options.getBoolean(Options.OPTION_XSTATUSES);
 
 		initOptionsList();
 		optionsMenu.activate(Jimm.display);
@@ -1252,7 +1252,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 		ChoiceGroup chs = new ChoiceGroup(ResourceBundle.getString(cap),
 				Choice.EXCLUSIVE);
 		addStr(chs, items);
-		chs.setSelectedIndex(Options.getInt(optValue), true);
+		int value = Options.getInt(optValue);
+		if ((value >= 0) && (value < chs.size())) chs.setSelectedIndex(value, true);
 		return chs;
 	}
 
@@ -1395,7 +1396,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 				optionsForm.append(reconnectNumberTextField);
 				
 				//#sijapp cond.if modules_FILES is "true"#
-				chsFSMode = createSelector("ft_type", "ft_type_web"+"|"+"ft_type_net", Options.OPTION_FS_MODE);
+				chsFSMode = createSelector("ft_type", "ft_type_web"+"|"+"ft_type_net", Options.OPTION_FT_MODE);
 				optionsForm.append(chsFSMode);
 				//#sijapp cond.end#
 				
@@ -1767,7 +1768,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 						.parseInt(reconnectNumberTextField.getString()));
 				
 				//#sijapp cond.if modules_FILES is "true"#
-				Options.setInt(Options.OPTION_FS_MODE, chsFSMode.getSelectedIndex());
+				Options.setInt(Options.OPTION_FT_MODE, chsFSMode.getSelectedIndex());
 				//#sijapp cond.end#
 				break;
 			//#sijapp cond.if modules_PROXY is "true"#

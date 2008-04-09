@@ -1582,7 +1582,7 @@ public class JimmUI implements CommandListener
 			
 			if (((status != ContactList.STATUS_OFFLINE) 
 					&& contact.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
-					(Options.getInt(Options.OPTION_FS_MODE) == Options.FS_MODE_WEB))
+					(Options.getInt(Options.OPTION_FT_MODE) == Options.FS_MODE_WEB))
 			{
 				addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS, true);
 				//#sijapp cond.if target isnot "MOTOROLA"#
