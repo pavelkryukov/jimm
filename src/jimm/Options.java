@@ -1267,6 +1267,638 @@ class OptionsForm implements CommandListener, ItemStateListener
 		chs.setSelectedIndex(chs.size() - 1, Options.getBoolean(optValue));
 	}
 	
+	private void dataToForm()
+	{
+		// Delete all items
+		clearForm();
+
+		// Add elements, depending on selected option menu item
+		switch (optionsMenu.getCurrTextIndex())
+		{
+		case OPTIONS_ACCOUNT:
+			readAccontsData();
+			showAccountControls();
+			break;
+
+		case OPTIONS_NETWORK:
+			// Initialize elements (network section)
+			srvHostTextField = new TextField(ResourceBundle
+					.getString("server_host"), Options
+					.getString(Options.OPTION_SRV_HOST), 32, TextField.ANY);
+			srvPortTextField = new TextField(ResourceBundle
+					.getString("server_port"), Options
+					.getString(Options.OPTION_SRV_PORT), 5,
+					TextField.NUMERIC);
+
+			connTypeChoiceGroup = new ChoiceGroup(ResourceBundle
+					.getString("conn_type"), Choice.EXCLUSIVE);
+			addStr(connTypeChoiceGroup, "socket" + "|" + "http");
+			//#sijapp cond.if modules_PROXY is "true"#
+			addStr(connTypeChoiceGroup, "proxy");
+			connTypeChoiceGroup.setSelectedIndex(Options
+					.getInt(Options.OPTION_CONN_TYPE), true);
+			//#sijapp cond.else#
+			//#	                connTypeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_CONN_TYPE)%2,true);
+			//#sijapp cond.end#
+
+			keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle
+					.getString("keep_conn_alive"), Choice.MULTIPLE);
+			setChecked(keepConnAliveChoiceGroup, "yes",
+					Options.OPTION_KEEP_CONN_ALIVE);
+
+			connAliveIntervTextField = new TextField(ResourceBundle
+					.getString("timeout_interv"), Options
+					.getString(Options.OPTION_CONN_ALIVE_INVTERV), 3,
+					TextField.NUMERIC);
+
+			connPropChoiceGroup = new ChoiceGroup(ResourceBundle
+					.getString("conn_prop"), Choice.MULTIPLE);
+			addStr(connPropChoiceGroup, "md5_login" + "|" + "async" + "|"
+					+ "reconnect");
+			//#sijapp cond.if target isnot "MOTOROLA"#
+			addStr(connPropChoiceGroup, "shadow_con");
+			//#sijapp cond.end#
+			connPropChoiceGroup.setSelectedIndex(0, Options
+					.getBoolean(Options.OPTION_MD5_LOGIN));
+			connPropChoiceGroup.setSelectedIndex(1, Options
+					.getInt(Options.OPTION_CONN_PROP) != 0);
+			connPropChoiceGroup.setSelectedIndex(2, Options
+					.getBoolean(Options.OPTION_RECONNECT));
+			//#sijapp cond.if target isnot "MOTOROLA"#
+			connPropChoiceGroup.setSelectedIndex(3, Options
+					.getBoolean(Options.OPTION_SHADOW_CON));
+			//#sijapp cond.end#
+
+			autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle
+					.getString("auto_connect")
+					+ "?", Choice.MULTIPLE);
+			setChecked(autoConnectChoiceGroup, "yes",
+					Options.OPTION_AUTO_CONNECT);
+
+			httpUserAgendTextField = new TextField(ResourceBundle
+					.getString("http_user_agent"), Options
+					.getString(Options.OPTION_HTTP_USER_AGENT), 256,
+					TextField.ANY);
+
+			httpWAPProfileTextField = new TextField(ResourceBundle
+					.getString("http_wap_profile"), Options
+					.getString(Options.OPTION_HTTP_WAP_PROFILE), 256,
+					TextField.ANY);
+
+			reconnectNumberTextField = new TextField(ResourceBundle
+					.getString("reconnect_number"), String.valueOf(Options
+					.getInt(Options.OPTION_RECONNECT_NUMBER)), 2,
+					TextField.NUMERIC);
+
+			optionsForm.append(srvHostTextField);
+			optionsForm.append(srvPortTextField);
+			optionsForm.append(connTypeChoiceGroup);
+			optionsForm.append(keepConnAliveChoiceGroup);
+			optionsForm.append(connAliveIntervTextField);
+			optionsForm.append(autoConnectChoiceGroup);
+			optionsForm.append(connPropChoiceGroup);
+			optionsForm.append(httpUserAgendTextField);
+			optionsForm.append(httpWAPProfileTextField);
+			optionsForm.append(reconnectNumberTextField);
+			
+			//#sijapp cond.if modules_FILES is "true"#
+			chsFSMode = createSelector("ft_type", "ft_type_web"+"|"+"ft_type_net", Options.OPTION_FT_MODE);
+			optionsForm.append(chsFSMode);
+			//#sijapp cond.end#
+			
+			break;
+
+		//#sijapp cond.if modules_PROXY is "true"#
+		case OPTIONS_PROXY:
+			srvProxyType = createSelector("proxy_type", "proxy_socks4"
+					+ "|" + "proxy_socks5" + "|" + "proxy_guess",
+					Options.OPTION_PRX_TYPE);
+
+			srvProxyHostTextField = new TextField(ResourceBundle
+					.getString("proxy_server_host"), Options
+					.getString(Options.OPTION_PRX_SERV), 32, TextField.ANY);
+			srvProxyPortTextField = new TextField(ResourceBundle
+					.getString("proxy_server_port"), Options
+					.getString(Options.OPTION_PRX_PORT), 5,
+					TextField.NUMERIC);
+
+			srvProxyLoginTextField = new TextField(ResourceBundle
+					.getString("proxy_server_login"), Options
+					.getString(Options.OPTION_PRX_NAME), 32, TextField.ANY);
+			srvProxyPassTextField = new TextField(ResourceBundle
+					.getString("proxy_server_pass"), Options
+					.getString(Options.OPTION_PRX_PASS), 32,
+					TextField.PASSWORD);
+
+			connAutoRetryTextField = new TextField(ResourceBundle
+					.getString("auto_retry_count"), Options
+					.getString(Options.OPTION_AUTORETRY_COUNT), 5,
+					TextField.NUMERIC);
+
+			optionsForm.append(srvProxyType);
+			optionsForm.append(srvProxyHostTextField);
+			optionsForm.append(srvProxyPortTextField);
+			optionsForm.append(srvProxyLoginTextField);
+			optionsForm.append(srvProxyPassTextField);
+			optionsForm.append(connAutoRetryTextField);
+			break;
+		//#sijapp cond.end# 
+		case OPTIONS_INTERFACE:
+			// Initialize elements (interface section)
+			if (ResourceBundle.langAvailable.length > 1)
+			{
+				uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle
+						.getString("language"), Choice.EXCLUSIVE);
+				for (int j = 0; j < ResourceBundle.langAvailable.length; j++)
+				{
+					uiLanguageChoiceGroup.append(ResourceBundle
+							.getString("lang_"
+									+ ResourceBundle.langAvailable[j]),
+							null);
+					if (ResourceBundle.langAvailable[j].equals(Options
+							.getString(Options.OPTION_UI_LANGUAGE)))
+					{
+						uiLanguageChoiceGroup.setSelectedIndex(j, true);
+					}
+				}
+			}
+
+			choiceInterfaceMisc = new ChoiceGroup(ResourceBundle
+					.getString("misc"), Choice.MULTIPLE);
+			setChecked(choiceInterfaceMisc, "display_date",
+					Options.OPTION_DISPLAY_DATE);
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			setChecked(choiceInterfaceMisc, "full_screen",
+					Options.OPTION_FULL_SCREEN);
+			//#sijapp cond.end#
+
+			clSortByChoiceGroup = createSelector("sort_by",
+					"sort_by_status" + "|" + "sort_by_name",
+					Options.OPTION_CL_SORT_BY);
+
+			choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
+			setChecked(choiceContactList, "show_user_groups", Options.OPTION_USER_GROUPS);
+			setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
+			setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
+			setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
+			
+			colorScheme = createSelector("color_scheme", "black_on_white"
+					+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme" + "|" + "Green",
+					Options.OPTION_COLOR_SCHEME);
+
+			chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
+					Choice.MULTIPLE);
+			
+			//#sijapp cond.if modules_HISTORY is "true"#
+			setChecked(chrgChat, "use_history", Options.OPTION_HISTORY);
+			setChecked(chrgChat, "show_prev_mess", Options.OPTION_SHOW_LAST_MESS);
+			//#sijapp cond.end#
+			setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
+
+			//#sijapp cond.if target is "MOTOROLA"#
+			//#					lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
+			//#					lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
+			//#					setChecked(lightManual, "yes", Options.OPTION_LIGHT_MANUAL);
+			//#sijapp cond.end#
+			
+			// OPTION_SHOW_MESS_ICON
+			chrgMessFormat = new ChoiceGroup(ResourceBundle.getString("mess_format"), Choice.MULTIPLE);
+			setChecked(chrgMessFormat, "chat_small_font", Options.OPTION_CHAT_SMALL_FONT);
+			setChecked(chrgMessFormat, "show_mess_icon", Options.OPTION_SHOW_MESS_ICON);
+			setChecked(chrgMessFormat, "show_mess_nick", Options.OPTION_SHOW_NICK);
+			setChecked(chrgMessFormat, "show_mess_date", Options.OPTION_SHOW_MESS_DATE);
+			setChecked(chrgMessFormat, "show_mess_clrf", Options.OPTION_SHOW_MESS_CLRF);
+			//#sijapp cond.if modules_SMILES is "true"#
+			setChecked(chrgMessFormat, "use_smiles", Options.OPTION_USE_SMILES);
+			//#sijapp cond.end#
+			setChecked(chrgMessFormat, "mess_colored_text", Options.OPTION_MESS_COLORED_TEXT);
+
+			if (uiLanguageChoiceGroup != null)
+				optionsForm.append(uiLanguageChoiceGroup);
+			optionsForm.append(choiceInterfaceMisc);
+			optionsForm.append(choiceContactList);
+			optionsForm.append(clSortByChoiceGroup);
+
+			if (chrgChat.size() != 0) optionsForm.append(chrgChat);
+			optionsForm.append(chrgMessFormat);
+
+			optionsForm.append(colorScheme);
+			//#sijapp cond.if target is "MOTOROLA"#
+			//#					optionsForm.append(lightTimeout);
+			//#					optionsForm.append(lightManual);
+			//#sijapp cond.end #
+			clCamDevGroup = new ChoiceGroup(ResourceBundle.getString("opt_camerauri"), Choice.EXCLUSIVE);
+			addStr(clCamDevGroup, "camera://video" + "|" + "camera://image");
+			clCamDevGroup.setSelectedIndex(Options.getInt(Options.OPTION_CAMERAURI), true);
+			optionsForm.append(clCamDevGroup);
+
+			break;
+
+		case OPTIONS_HOTKEYS:
+			InitHotkeyMenuUI();
+			return;
+
+		case OPTIONS_SIGNALING:
+			/* Initialize elements (Signaling section) */
+
+			//#sijapp cond.if target isnot "DEFAULT"#
+			onlineNotificationModeChoiceGroup = createSelector(
+					"onl_notification", "no" + "|" + "beep"
+					//#sijapp cond.if target isnot "RIM"#
+							+ "|" + "sound"
+					//#sijapp cond.end#
+					, Options.OPTION_ONLINE_NOTIF_MODE);
+
+			//#sijapp cond.if target isnot "RIM"#                 
+			onlineNotificationSoundfileTextField = new TextField(
+					ResourceBundle.getString("onl_sound_file_name"),
+					Options.getString(Options.OPTION_ONLINE_NOTIF_FILE),
+					32, TextField.ANY);
+			//#sijapp cond.end#                 
+			messageNotificationModeChoiceGroup = createSelector(
+					"message_notification", "no" + "|" + "beep"
+					//#sijapp cond.if target isnot "RIM"#
+							+ "|" + "sound"
+					//#sijapp cond.end#
+					, Options.OPTION_MESS_NOTIF_MODE);
+
+			//#sijapp cond.if target isnot "RIM"#                  
+			messageNotificationSoundfileTextField = new TextField(
+					ResourceBundle.getString("msg_sound_file_name"),
+					Options.getString(Options.OPTION_MESS_NOTIF_FILE), 32,
+					TextField.ANY);
+			messageNotificationSoundVolume = new Gauge(ResourceBundle
+					.getString("volume"), true, 10, Options
+					.getInt(Options.OPTION_MESS_NOTIF_VOL) / 10);
+			onlineNotificationSoundVolume = new Gauge(ResourceBundle
+					.getString("volume"), true, 10, Options
+					.getInt(Options.OPTION_ONLINE_NOTIF_VOL) / 10);
+			typingNotificationSoundVolume = new Gauge(ResourceBundle
+					.getString("volume"), true, 10, Options
+					.getInt(Options.OPTION_TYPING_VOL) / 10);
+			typingNotificationSoundfileTextField = new TextField(
+					ResourceBundle.getString("msg_sound_file_name"),
+					Options.getString(Options.OPTION_TYPING_FILE), 32,
+					TextField.ANY);
+			typingNotificationModeChoiceGroup = createSelector(
+					"typing_notify", "no" + "|" + "typing_display_only"
+							+ "|" + "beep" + "|" + "sound",
+					Options.OPTION_TYPING_MODE);
+			//#sijapp cond.end#
+
+			vibratorChoiceGroup = createSelector("vibration", "no" + "|"
+					+ "yes" + "|" + "when_locked", Options.OPTION_VIBRATOR);
+
+			//#sijapp cond.if target="MOTOROLA"#
+			//#					flashBkltChoiceGroup = new ChoiceGroup(ResourceBundle.getString("flash_backight"), Choice.MULTIPLE);
+			//#					setChecked(flashBkltChoiceGroup, "yes", Options.OPTION_FLASH_BACKLIGHT);
+			//#sijapp cond.end#
+			//#sijapp cond.end#
+
+			chrgPopupWin = createSelector("popup_win", "no" + "|"
+					+ "pw_forme" + "|" + "pw_all",
+					Options.OPTION_POPUP_WIN2);
+
+			//#sijapp cond.if target isnot "DEFAULT"#     
+			optionsForm.append(messageNotificationModeChoiceGroup);
+
+			//#sijapp cond.if target isnot "RIM"#                        
+			optionsForm.append(messageNotificationSoundVolume);
+			optionsForm.append(messageNotificationSoundfileTextField);
+			//#sijapp cond.end#
+
+			optionsForm.append(vibratorChoiceGroup);
+			//#sijapp cond.if target="MOTOROLA"#
+			//#					if (Jimm.funlight_device_type != -1)
+			//#						optionsForm.append(flashBkltChoiceGroup);
+			//#sijapp cond.end#
+			optionsForm.append(onlineNotificationModeChoiceGroup);
+
+			//#sijapp cond.if target isnot "RIM"#                          
+			optionsForm.append(onlineNotificationSoundVolume);
+			optionsForm.append(onlineNotificationSoundfileTextField);
+			optionsForm.append(typingNotificationModeChoiceGroup);
+			optionsForm.append(typingNotificationSoundVolume);
+			optionsForm.append(typingNotificationSoundfileTextField);
+			//#sijapp cond.end#
+
+			//#sijapp cond.end#
+			optionsForm.append(chrgPopupWin);
+
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			chsBringUp = new ChoiceGroup(ResourceBundle.getString("misc"),
+					Choice.MULTIPLE);
+			setChecked(chsBringUp, "bring_up", Options.OPTION_BRING_UP);
+			setChecked(chsBringUp, "creeping_line",
+					Options.OPTION_CREEPING_LINE);
+			optionsForm.append(chsBringUp);
+			//#sijapp cond.end#
+
+			break;
+
+		//#sijapp cond.if modules_TRAFFIC is "true"#
+		case OPTIONS_TRAFFIC:
+			/* Initialize elements (cost section) */
+			costPerPacketTextField = new TextField(ResourceBundle
+					.getString("cpp"), Util.intToDecimal(Options
+					.getInt(Options.OPTION_COST_PER_PACKET)), 6,
+					TextField.ANY);
+			costPerDayTextField = new TextField(ResourceBundle
+					.getString("cpd"), Util.intToDecimal(Options
+					.getInt(Options.OPTION_COST_PER_DAY)), 6, TextField.ANY);
+			costPacketLengthTextField = new TextField(ResourceBundle
+					.getString("plength"), String.valueOf(Options
+					.getInt(Options.OPTION_COST_PACKET_LENGTH) / 1024), 4,
+					TextField.NUMERIC);
+			currencyTextField = new TextField(ResourceBundle
+					.getString("currency"), Options
+					.getString(Options.OPTION_CURRENCY), 4, TextField.ANY);
+
+			optionsForm.append(costPerPacketTextField);
+			optionsForm.append(costPerDayTextField);
+			optionsForm.append(costPacketLengthTextField);
+			optionsForm.append(currencyTextField);
+			break;
+		//#sijapp cond.end#
+
+		case OPTIONS_TIMEZONE:
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			int choiceType = Choice.POPUP;
+			//#sijapp cond.else#
+			//# 				choiceType = Choice.EXCLUSIVE;
+			//#sijapp cond.end#
+
+			chsTimeZone = new ChoiceGroup(ResourceBundle
+					.getString("time_zone"), choiceType);
+			for (int i = -12; i <= 13; i++)
+				chsTimeZone.append("GMT" + (i < 0 ? "" : "+") + i + ":00",
+						null);
+			chsTimeZone.setSelectedIndex(Options
+					.getInt(Options.OPTIONS_GMT_OFFSET) + 12, true);
+
+			int[] currDateTime = Util.createDate(Util
+					.createCurrentDate(false));
+			chsCurrTime = new ChoiceGroup(ResourceBundle
+					.getString("local_time"), choiceType);
+			int minutes = currDateTime[Util.TIME_MINUTE];
+			int hour = currDateTime[Util.TIME_HOUR];
+			for (int i = 0; i < 24; i++)
+				chsCurrTime.append(i + ":" + minutes, null);
+			chsCurrTime.setSelectedIndex(hour, true);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+
+			chsDayLight = new ChoiceGroup(ResourceBundle
+					.getString("daylight_saving"), Choice.EXCLUSIVE);
+			chsDayLight.append(ResourceBundle
+					.getString("standard_time"), null);
+			chsDayLight.append(ResourceBundle
+					.getString("daylight_saving"), null);
+			chsDayLight.setSelectedIndex(Options
+					.getInt(Options.OPTIONS_DAYLIGHT_SAVING), true);
+			optionsForm.append(chsTimeZone);
+			optionsForm.append(chsCurrTime);
+			optionsForm.append(chsDayLight);
+
+			break;
+		}
+
+		/* Activate options form */
+		Jimm.display.setCurrent(optionsForm);
+	}
+	
+	private void readDataFromForm()
+	{
+		// Save values, depending on selected option menu item
+		switch (optionsMenu.getCurrTextIndex())
+		{
+		case OPTIONS_ACCOUNT:
+			readAccontsControls();
+			setAccountOptions();
+			break;
+		case OPTIONS_NETWORK:
+			Options.setString(Options.OPTION_SRV_HOST, srvHostTextField
+					.getString());
+			Options.setString(Options.OPTION_SRV_PORT, srvPortTextField
+					.getString());
+			Options.setInt(Options.OPTION_CONN_TYPE, connTypeChoiceGroup
+					.getSelectedIndex());
+			Options.setBoolean(Options.OPTION_KEEP_CONN_ALIVE,
+					keepConnAliveChoiceGroup.isSelected(0));
+			Options.setString(Options.OPTION_CONN_ALIVE_INVTERV,
+					connAliveIntervTextField.getString());
+			Options.setBoolean(Options.OPTION_AUTO_CONNECT,
+					autoConnectChoiceGroup.isSelected(0));
+			Options.setBoolean(Options.OPTION_MD5_LOGIN,
+					connPropChoiceGroup.isSelected(0));
+			if (connPropChoiceGroup.isSelected(1))
+				Options.setInt(Options.OPTION_CONN_PROP, 1);
+			else
+				Options.setInt(Options.OPTION_CONN_PROP, 0);
+			Options.setBoolean(Options.OPTION_RECONNECT,
+					connPropChoiceGroup.isSelected(2));
+			//#sijapp cond.if target isnot "MOTOROLA"#
+			Options.setBoolean(Options.OPTION_SHADOW_CON,
+					connPropChoiceGroup.isSelected(3));
+			//#sijapp cond.end#
+			Options.setString(Options.OPTION_HTTP_USER_AGENT,
+					httpUserAgendTextField.getString());
+			Options.setString(Options.OPTION_HTTP_WAP_PROFILE,
+					httpWAPProfileTextField.getString());
+			Options.setInt(Options.OPTION_RECONNECT_NUMBER, Integer
+					.parseInt(reconnectNumberTextField.getString()));
+			
+			//#sijapp cond.if modules_FILES is "true"#
+			Options.setInt(Options.OPTION_FT_MODE, chsFSMode.getSelectedIndex());
+			//#sijapp cond.end#
+			break;
+		//#sijapp cond.if modules_PROXY is "true"#
+		case OPTIONS_PROXY:
+			Options.setInt(Options.OPTION_PRX_TYPE, srvProxyType
+					.getSelectedIndex());
+			Options.setString(Options.OPTION_PRX_SERV,
+					srvProxyHostTextField.getString());
+			Options.setString(Options.OPTION_PRX_PORT,
+					srvProxyPortTextField.getString());
+
+			Options.setString(Options.OPTION_PRX_NAME,
+					srvProxyLoginTextField.getString());
+			Options.setString(Options.OPTION_PRX_PASS,
+					srvProxyPassTextField.getString());
+
+			Options.setString(Options.OPTION_AUTORETRY_COUNT,
+					connAutoRetryTextField.getString());
+			break;
+		//#sijapp cond.end#      
+		case OPTIONS_INTERFACE:
+			if (ResourceBundle.langAvailable.length > 1)
+				Options.setString(Options.OPTION_UI_LANGUAGE,
+						ResourceBundle.langAvailable[uiLanguageChoiceGroup
+								.getSelectedIndex()]);
+
+			int idx = 0;
+
+			Options.setBoolean(Options.OPTION_DISPLAY_DATE,
+					choiceInterfaceMisc.isSelected(idx++));
+
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			Options.setBoolean(Options.OPTION_FULL_SCREEN,
+					choiceInterfaceMisc.isSelected(idx++));
+			//#sijapp cond.end#
+
+			Options.setInt(Options.OPTION_CAMERAURI, clCamDevGroup
+					.getSelectedIndex());
+			int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
+			int newColorScheme = colorScheme.getSelectedIndex();
+			
+			idx = 0;
+			boolean newUseGroups = choiceContactList.isSelected(idx++);
+			boolean newHideOffline = choiceContactList.isSelected(idx++);
+			boolean newShowXStatuses = choiceContactList.isSelected(idx++);
+			boolean newShowClients = choiceContactList.isSelected(idx++);
+
+			Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
+			Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
+			//setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
+			Options.setBoolean(Options.OPTION_XSTATUSES, newShowXStatuses);
+			Options.setBoolean(Options.OPTION_CL_CLIENTS, newShowClients); 
+
+			idx = 0;
+			//#sijapp cond.if modules_HISTORY is "true"#
+			Options.setBoolean(Options.OPTION_HISTORY, chrgChat
+					.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_SHOW_LAST_MESS, chrgChat
+					.isSelected(idx++));
+			//#sijapp cond.end#
+
+			Options.setBoolean(Options.OPTION_CP1251_HACK, chrgChat
+					.isSelected(idx++));
+			
+			idx = 0;
+			Options.setBoolean(Options.OPTION_CHAT_SMALL_FONT, chrgMessFormat.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_SHOW_MESS_ICON, chrgMessFormat.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_SHOW_NICK, chrgMessFormat.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_SHOW_MESS_DATE, chrgMessFormat.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_SHOW_MESS_CLRF, chrgMessFormat.isSelected(idx++));
+			//#sijapp cond.if modules_SMILES is "true"#
+			Options.setBoolean(Options.OPTION_USE_SMILES, chrgMessFormat.isSelected(idx++));
+			//#sijapp cond.end#
+			Options.setBoolean(Options.OPTION_MESS_COLORED_TEXT, chrgMessFormat.isSelected(idx++));
+
+			Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
+			Options.setInt(Options.OPTION_COLOR_SCHEME, newColorScheme);
+
+			// Set UI options for existing controls
+			ContactList.optionsChanged
+			(
+				(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline),
+				(newSortMethod != lastSortMethod)
+			);
+
+			if (lastColorScheme != newColorScheme)
+				JimmUI.setColorScheme();
+			//#sijapp cond.if target is "MOTOROLA"#
+			//#					Options.setInt(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(lightTimeout.getString()));
+			//#					Options.setBoolean(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
+			//#sijapp cond.end#
+
+			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
+
+			if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
+			{
+				Options.setBoolean(Options.OPTIONS_LANG_CHANGED, true);
+			}
+
+			break;
+
+		case OPTIONS_SIGNALING:
+			//#sijapp cond.if target isnot "DEFAULT"# ===>
+			Options.setInt(Options.OPTION_MESS_NOTIF_MODE,
+					messageNotificationModeChoiceGroup.getSelectedIndex());
+			Options.setInt(Options.OPTION_VIBRATOR, vibratorChoiceGroup
+					.getSelectedIndex());
+			Options.setInt(Options.OPTION_ONLINE_NOTIF_MODE,
+					onlineNotificationModeChoiceGroup.getSelectedIndex());
+			Options.setInt(Options.OPTION_TYPING_MODE,
+					typingNotificationModeChoiceGroup.getSelectedIndex());
+
+			//#sijapp cond.if target isnot "RIM"#       
+			Options.setString(Options.OPTION_MESS_NOTIF_FILE,
+					messageNotificationSoundfileTextField.getString());
+			Options.setInt(Options.OPTION_MESS_NOTIF_VOL,
+					messageNotificationSoundVolume.getValue() * 10);
+			Options.setString(Options.OPTION_ONLINE_NOTIF_FILE,
+					onlineNotificationSoundfileTextField.getString());
+			Options.setInt(Options.OPTION_ONLINE_NOTIF_VOL,
+					onlineNotificationSoundVolume.getValue() * 10);
+			Options.setString(Options.OPTION_TYPING_FILE,
+					typingNotificationSoundfileTextField.getString());
+			Options.setInt(Options.OPTION_TYPING_VOL,
+					typingNotificationSoundVolume.getValue() * 10);
+			//#sijapp cond.end#
+			//#sijapp cond.end# <===
+			Options.setInt(Options.OPTION_POPUP_WIN2, chrgPopupWin
+					.getSelectedIndex());
+
+			//#sijapp cond.if target="MOTOROLA"#
+			//#					Options.setBoolean(Options.OPTION_FLASH_BACKLIGHT, flashBkltChoiceGroup.isSelected(0));
+			//#sijapp cond.end#
+
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp
+					.isSelected(0));
+			Options.setBoolean(Options.OPTION_CREEPING_LINE, chsBringUp
+					.isSelected(1));
+			//#sijapp cond.end#
+
+			break;
+
+		//#sijapp cond.if modules_TRAFFIC is "true"#
+		case OPTIONS_TRAFFIC:
+			Options.setInt(Options.OPTION_COST_PER_PACKET, Util
+					.decimalToInt(costPerPacketTextField.getString()));
+			costPerPacketTextField.setString(Util.intToDecimal(Options
+					.getInt(Options.OPTION_COST_PER_PACKET)));
+			Options.setInt(Options.OPTION_COST_PER_DAY, Util
+					.decimalToInt(costPerDayTextField.getString()));
+			costPerDayTextField.setString(Util.intToDecimal(Options
+					.getInt(Options.OPTION_COST_PER_DAY)));
+			Options
+					.setInt(Options.OPTION_COST_PACKET_LENGTH,
+							Integer.parseInt(costPacketLengthTextField
+									.getString()) * 1024);
+			Options.setString(Options.OPTION_CURRENCY, currencyTextField
+					.getString());
+			break;
+		//#sijapp cond.end#
+
+		case OPTIONS_TIMEZONE:
+			/* Set up time zone*/
+			int timeZone = chsTimeZone.getSelectedIndex() - 12;
+			Options.setInt(Options.OPTIONS_GMT_OFFSET, timeZone);
+
+			int dayLight = chsDayLight.getSelectedIndex();
+			Options.setInt(Options.OPTIONS_DAYLIGHT_SAVING, dayLight);
+			/* Translate selected time to GMT */
+			int selHour = chsCurrTime.getSelectedIndex() - timeZone;
+			if (selHour < 0)
+				selHour += 24;
+			if (selHour >= 24)
+				selHour -= 24;
+
+			/* Calculate diff. between selected GMT time and phone time */
+			int localOffset = selHour - currentHour;
+			while (localOffset >= 12)
+				localOffset -= 24;
+			while (localOffset < -12)
+				localOffset += 24;
+			Options.setInt(Options.OPTIONS_LOCAL_OFFSET, localOffset);
+			break;
+		}
+	}
+
+	
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
@@ -1305,410 +1937,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 		}
 
 		// Look for select command
-		if (c == JimmUI.cmdSelect)
+		if ((c == JimmUI.cmdSelect) && JimmUI.isControlActive(optionsMenu))
 		{
-			// Delete all items
-			clearForm();
-
-			// Add elements, depending on selected option menu item
-			switch (optionsMenu.getCurrTextIndex())
-			{
-			case OPTIONS_ACCOUNT:
-				readAccontsData();
-				showAccountControls();
-				break;
-
-			case OPTIONS_NETWORK:
-				// Initialize elements (network section)
-				srvHostTextField = new TextField(ResourceBundle
-						.getString("server_host"), Options
-						.getString(Options.OPTION_SRV_HOST), 32, TextField.ANY);
-				srvPortTextField = new TextField(ResourceBundle
-						.getString("server_port"), Options
-						.getString(Options.OPTION_SRV_PORT), 5,
-						TextField.NUMERIC);
-
-				connTypeChoiceGroup = new ChoiceGroup(ResourceBundle
-						.getString("conn_type"), Choice.EXCLUSIVE);
-				addStr(connTypeChoiceGroup, "socket" + "|" + "http");
-				//#sijapp cond.if modules_PROXY is "true"#
-				addStr(connTypeChoiceGroup, "proxy");
-				connTypeChoiceGroup.setSelectedIndex(Options
-						.getInt(Options.OPTION_CONN_TYPE), true);
-				//#sijapp cond.else#
-				//#	                connTypeChoiceGroup.setSelectedIndex(Options.getInt(Options.OPTION_CONN_TYPE)%2,true);
-				//#sijapp cond.end#
-
-				keepConnAliveChoiceGroup = new ChoiceGroup(ResourceBundle
-						.getString("keep_conn_alive"), Choice.MULTIPLE);
-				setChecked(keepConnAliveChoiceGroup, "yes",
-						Options.OPTION_KEEP_CONN_ALIVE);
-
-				connAliveIntervTextField = new TextField(ResourceBundle
-						.getString("timeout_interv"), Options
-						.getString(Options.OPTION_CONN_ALIVE_INVTERV), 3,
-						TextField.NUMERIC);
-
-				connPropChoiceGroup = new ChoiceGroup(ResourceBundle
-						.getString("conn_prop"), Choice.MULTIPLE);
-				addStr(connPropChoiceGroup, "md5_login" + "|" + "async" + "|"
-						+ "reconnect");
-				//#sijapp cond.if target isnot "MOTOROLA"#
-				addStr(connPropChoiceGroup, "shadow_con");
-				//#sijapp cond.end#
-				connPropChoiceGroup.setSelectedIndex(0, Options
-						.getBoolean(Options.OPTION_MD5_LOGIN));
-				connPropChoiceGroup.setSelectedIndex(1, Options
-						.getInt(Options.OPTION_CONN_PROP) != 0);
-				connPropChoiceGroup.setSelectedIndex(2, Options
-						.getBoolean(Options.OPTION_RECONNECT));
-				//#sijapp cond.if target isnot "MOTOROLA"#
-				connPropChoiceGroup.setSelectedIndex(3, Options
-						.getBoolean(Options.OPTION_SHADOW_CON));
-				//#sijapp cond.end#
-
-				autoConnectChoiceGroup = new ChoiceGroup(ResourceBundle
-						.getString("auto_connect")
-						+ "?", Choice.MULTIPLE);
-				setChecked(autoConnectChoiceGroup, "yes",
-						Options.OPTION_AUTO_CONNECT);
-
-				httpUserAgendTextField = new TextField(ResourceBundle
-						.getString("http_user_agent"), Options
-						.getString(Options.OPTION_HTTP_USER_AGENT), 256,
-						TextField.ANY);
-
-				httpWAPProfileTextField = new TextField(ResourceBundle
-						.getString("http_wap_profile"), Options
-						.getString(Options.OPTION_HTTP_WAP_PROFILE), 256,
-						TextField.ANY);
-
-				reconnectNumberTextField = new TextField(ResourceBundle
-						.getString("reconnect_number"), String.valueOf(Options
-						.getInt(Options.OPTION_RECONNECT_NUMBER)), 2,
-						TextField.NUMERIC);
-
-				optionsForm.append(srvHostTextField);
-				optionsForm.append(srvPortTextField);
-				optionsForm.append(connTypeChoiceGroup);
-				optionsForm.append(keepConnAliveChoiceGroup);
-				optionsForm.append(connAliveIntervTextField);
-				optionsForm.append(autoConnectChoiceGroup);
-				optionsForm.append(connPropChoiceGroup);
-				optionsForm.append(httpUserAgendTextField);
-				optionsForm.append(httpWAPProfileTextField);
-				optionsForm.append(reconnectNumberTextField);
-				
-				//#sijapp cond.if modules_FILES is "true"#
-				chsFSMode = createSelector("ft_type", "ft_type_web"+"|"+"ft_type_net", Options.OPTION_FT_MODE);
-				optionsForm.append(chsFSMode);
-				//#sijapp cond.end#
-				
-				break;
-
-			//#sijapp cond.if modules_PROXY is "true"#
-			case OPTIONS_PROXY:
-				srvProxyType = createSelector("proxy_type", "proxy_socks4"
-						+ "|" + "proxy_socks5" + "|" + "proxy_guess",
-						Options.OPTION_PRX_TYPE);
-
-				srvProxyHostTextField = new TextField(ResourceBundle
-						.getString("proxy_server_host"), Options
-						.getString(Options.OPTION_PRX_SERV), 32, TextField.ANY);
-				srvProxyPortTextField = new TextField(ResourceBundle
-						.getString("proxy_server_port"), Options
-						.getString(Options.OPTION_PRX_PORT), 5,
-						TextField.NUMERIC);
-
-				srvProxyLoginTextField = new TextField(ResourceBundle
-						.getString("proxy_server_login"), Options
-						.getString(Options.OPTION_PRX_NAME), 32, TextField.ANY);
-				srvProxyPassTextField = new TextField(ResourceBundle
-						.getString("proxy_server_pass"), Options
-						.getString(Options.OPTION_PRX_PASS), 32,
-						TextField.PASSWORD);
-
-				connAutoRetryTextField = new TextField(ResourceBundle
-						.getString("auto_retry_count"), Options
-						.getString(Options.OPTION_AUTORETRY_COUNT), 5,
-						TextField.NUMERIC);
-
-				optionsForm.append(srvProxyType);
-				optionsForm.append(srvProxyHostTextField);
-				optionsForm.append(srvProxyPortTextField);
-				optionsForm.append(srvProxyLoginTextField);
-				optionsForm.append(srvProxyPassTextField);
-				optionsForm.append(connAutoRetryTextField);
-				break;
-			//#sijapp cond.end# 
-			case OPTIONS_INTERFACE:
-				// Initialize elements (interface section)
-				if (ResourceBundle.langAvailable.length > 1)
-				{
-					uiLanguageChoiceGroup = new ChoiceGroup(ResourceBundle
-							.getString("language"), Choice.EXCLUSIVE);
-					for (int j = 0; j < ResourceBundle.langAvailable.length; j++)
-					{
-						uiLanguageChoiceGroup.append(ResourceBundle
-								.getString("lang_"
-										+ ResourceBundle.langAvailable[j]),
-								null);
-						if (ResourceBundle.langAvailable[j].equals(Options
-								.getString(Options.OPTION_UI_LANGUAGE)))
-						{
-							uiLanguageChoiceGroup.setSelectedIndex(j, true);
-						}
-					}
-				}
-
-				choiceInterfaceMisc = new ChoiceGroup(ResourceBundle
-						.getString("misc"), Choice.MULTIPLE);
-				setChecked(choiceInterfaceMisc, "display_date",
-						Options.OPTION_DISPLAY_DATE);
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				setChecked(choiceInterfaceMisc, "full_screen",
-						Options.OPTION_FULL_SCREEN);
-				//#sijapp cond.end#
-
-				clSortByChoiceGroup = createSelector("sort_by",
-						"sort_by_status" + "|" + "sort_by_name",
-						Options.OPTION_CL_SORT_BY);
-
-				choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
-				setChecked(choiceContactList, "show_user_groups", Options.OPTION_USER_GROUPS);
-				setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
-				setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
-				setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
-				
-				colorScheme = createSelector("color_scheme", "black_on_white"
-						+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme" + "|" + "Green"
-						+ "|" + "Golden",
-						Options.OPTION_COLOR_SCHEME);
-
-				chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
-						Choice.MULTIPLE);
-				
-				//#sijapp cond.if modules_HISTORY is "true"#
-				setChecked(chrgChat, "use_history", Options.OPTION_HISTORY);
-				setChecked(chrgChat, "show_prev_mess", Options.OPTION_SHOW_LAST_MESS);
-				//#sijapp cond.end#
-				setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
-
-				//#sijapp cond.if target is "MOTOROLA"#
-				//#					lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
-				//#					lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
-				//#					setChecked(lightManual, "yes", Options.OPTION_LIGHT_MANUAL);
-				//#sijapp cond.end#
-				
-				// OPTION_SHOW_MESS_ICON
-				chrgMessFormat = new ChoiceGroup(ResourceBundle.getString("mess_format"), Choice.MULTIPLE);
-				setChecked(chrgMessFormat, "chat_small_font", Options.OPTION_CHAT_SMALL_FONT);
-				setChecked(chrgMessFormat, "show_mess_icon", Options.OPTION_SHOW_MESS_ICON);
-				setChecked(chrgMessFormat, "show_mess_nick", Options.OPTION_SHOW_NICK);
-				setChecked(chrgMessFormat, "show_mess_date", Options.OPTION_SHOW_MESS_DATE);
-				setChecked(chrgMessFormat, "show_mess_clrf", Options.OPTION_SHOW_MESS_CLRF);
-				//#sijapp cond.if modules_SMILES is "true"#
-				setChecked(chrgMessFormat, "use_smiles", Options.OPTION_USE_SMILES);
-				//#sijapp cond.end#
-				setChecked(chrgMessFormat, "mess_colored_text", Options.OPTION_MESS_COLORED_TEXT);
-
-				if (uiLanguageChoiceGroup != null)
-					optionsForm.append(uiLanguageChoiceGroup);
-				optionsForm.append(choiceInterfaceMisc);
-				optionsForm.append(choiceContactList);
-				optionsForm.append(clSortByChoiceGroup);
-
-				if (chrgChat.size() != 0) optionsForm.append(chrgChat);
-				optionsForm.append(chrgMessFormat);
-
-				optionsForm.append(colorScheme);
-				//#sijapp cond.if target is "MOTOROLA"#
-				//#					optionsForm.append(lightTimeout);
-				//#					optionsForm.append(lightManual);
-				//#sijapp cond.end #
-				clCamDevGroup = new ChoiceGroup(ResourceBundle.getString("opt_camerauri"), Choice.EXCLUSIVE);
-				addStr(clCamDevGroup, "camera://video" + "|" + "camera://image");
-				clCamDevGroup.setSelectedIndex(Options.getInt(Options.OPTION_CAMERAURI), true);
-				optionsForm.append(clCamDevGroup);
-
-				break;
-
-			case OPTIONS_HOTKEYS:
-				InitHotkeyMenuUI();
-				return;
-
-			case OPTIONS_SIGNALING:
-				/* Initialize elements (Signaling section) */
-
-				//#sijapp cond.if target isnot "DEFAULT"#
-				onlineNotificationModeChoiceGroup = createSelector(
-						"onl_notification", "no" + "|" + "beep"
-						//#sijapp cond.if target isnot "RIM"#
-								+ "|" + "sound"
-						//#sijapp cond.end#
-						, Options.OPTION_ONLINE_NOTIF_MODE);
-
-				//#sijapp cond.if target isnot "RIM"#                 
-				onlineNotificationSoundfileTextField = new TextField(
-						ResourceBundle.getString("onl_sound_file_name"),
-						Options.getString(Options.OPTION_ONLINE_NOTIF_FILE),
-						32, TextField.ANY);
-				//#sijapp cond.end#                 
-				messageNotificationModeChoiceGroup = createSelector(
-						"message_notification", "no" + "|" + "beep"
-						//#sijapp cond.if target isnot "RIM"#
-								+ "|" + "sound"
-						//#sijapp cond.end#
-						, Options.OPTION_MESS_NOTIF_MODE);
-
-				//#sijapp cond.if target isnot "RIM"#                  
-				messageNotificationSoundfileTextField = new TextField(
-						ResourceBundle.getString("msg_sound_file_name"),
-						Options.getString(Options.OPTION_MESS_NOTIF_FILE), 32,
-						TextField.ANY);
-				messageNotificationSoundVolume = new Gauge(ResourceBundle
-						.getString("volume"), true, 10, Options
-						.getInt(Options.OPTION_MESS_NOTIF_VOL) / 10);
-				onlineNotificationSoundVolume = new Gauge(ResourceBundle
-						.getString("volume"), true, 10, Options
-						.getInt(Options.OPTION_ONLINE_NOTIF_VOL) / 10);
-				typingNotificationSoundVolume = new Gauge(ResourceBundle
-						.getString("volume"), true, 10, Options
-						.getInt(Options.OPTION_TYPING_VOL) / 10);
-				typingNotificationSoundfileTextField = new TextField(
-						ResourceBundle.getString("msg_sound_file_name"),
-						Options.getString(Options.OPTION_TYPING_FILE), 32,
-						TextField.ANY);
-				typingNotificationModeChoiceGroup = createSelector(
-						"typing_notify", "no" + "|" + "typing_display_only"
-								+ "|" + "beep" + "|" + "sound",
-						Options.OPTION_TYPING_MODE);
-				//#sijapp cond.end#
-
-				vibratorChoiceGroup = createSelector("vibration", "no" + "|"
-						+ "yes" + "|" + "when_locked", Options.OPTION_VIBRATOR);
-
-				//#sijapp cond.if target="MOTOROLA"#
-				//#					flashBkltChoiceGroup = new ChoiceGroup(ResourceBundle.getString("flash_backight"), Choice.MULTIPLE);
-				//#					setChecked(flashBkltChoiceGroup, "yes", Options.OPTION_FLASH_BACKLIGHT);
-				//#sijapp cond.end#
-				//#sijapp cond.end#
-
-				chrgPopupWin = createSelector("popup_win", "no" + "|"
-						+ "pw_forme" + "|" + "pw_all",
-						Options.OPTION_POPUP_WIN2);
-
-				//#sijapp cond.if target isnot "DEFAULT"#     
-				optionsForm.append(messageNotificationModeChoiceGroup);
-
-				//#sijapp cond.if target isnot "RIM"#                        
-				optionsForm.append(messageNotificationSoundVolume);
-				optionsForm.append(messageNotificationSoundfileTextField);
-				//#sijapp cond.end#
-
-				optionsForm.append(vibratorChoiceGroup);
-				//#sijapp cond.if target="MOTOROLA"#
-				//#					if (Jimm.funlight_device_type != -1)
-				//#						optionsForm.append(flashBkltChoiceGroup);
-				//#sijapp cond.end#
-				optionsForm.append(onlineNotificationModeChoiceGroup);
-
-				//#sijapp cond.if target isnot "RIM"#                          
-				optionsForm.append(onlineNotificationSoundVolume);
-				optionsForm.append(onlineNotificationSoundfileTextField);
-				optionsForm.append(typingNotificationModeChoiceGroup);
-				optionsForm.append(typingNotificationSoundVolume);
-				optionsForm.append(typingNotificationSoundfileTextField);
-				//#sijapp cond.end#
-
-				//#sijapp cond.end#
-				optionsForm.append(chrgPopupWin);
-
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				chsBringUp = new ChoiceGroup(ResourceBundle.getString("misc"),
-						Choice.MULTIPLE);
-				setChecked(chsBringUp, "bring_up", Options.OPTION_BRING_UP);
-				setChecked(chsBringUp, "creeping_line",
-						Options.OPTION_CREEPING_LINE);
-				optionsForm.append(chsBringUp);
-				//#sijapp cond.end#
-
-				break;
-
-			//#sijapp cond.if modules_TRAFFIC is "true"#
-			case OPTIONS_TRAFFIC:
-				/* Initialize elements (cost section) */
-				costPerPacketTextField = new TextField(ResourceBundle
-						.getString("cpp"), Util.intToDecimal(Options
-						.getInt(Options.OPTION_COST_PER_PACKET)), 6,
-						TextField.ANY);
-				costPerDayTextField = new TextField(ResourceBundle
-						.getString("cpd"), Util.intToDecimal(Options
-						.getInt(Options.OPTION_COST_PER_DAY)), 6, TextField.ANY);
-				costPacketLengthTextField = new TextField(ResourceBundle
-						.getString("plength"), String.valueOf(Options
-						.getInt(Options.OPTION_COST_PACKET_LENGTH) / 1024), 4,
-						TextField.NUMERIC);
-				currencyTextField = new TextField(ResourceBundle
-						.getString("currency"), Options
-						.getString(Options.OPTION_CURRENCY), 4, TextField.ANY);
-
-				optionsForm.append(costPerPacketTextField);
-				optionsForm.append(costPerDayTextField);
-				optionsForm.append(costPacketLengthTextField);
-				optionsForm.append(currencyTextField);
-				break;
-			//#sijapp cond.end#
-
-			case OPTIONS_TIMEZONE:
-			{
-				int choiceType;
-
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				choiceType = Choice.POPUP;
-				//#sijapp cond.else#
-				//# 				choiceType = Choice.EXCLUSIVE;
-				//#sijapp cond.end#
-
-				chsTimeZone = new ChoiceGroup(ResourceBundle
-						.getString("time_zone"), choiceType);
-				for (int i = -12; i <= 13; i++)
-					chsTimeZone.append("GMT" + (i < 0 ? "" : "+") + i + ":00",
-							null);
-				chsTimeZone.setSelectedIndex(Options
-						.getInt(Options.OPTIONS_GMT_OFFSET) + 12, true);
-
-				int[] currDateTime = Util.createDate(Util
-						.createCurrentDate(false));
-				chsCurrTime = new ChoiceGroup(ResourceBundle
-						.getString("local_time"), choiceType);
-				int minutes = currDateTime[Util.TIME_MINUTE];
-				int hour = currDateTime[Util.TIME_HOUR];
-				for (int i = 0; i < 24; i++)
-					chsCurrTime.append(i + ":" + minutes, null);
-				chsCurrTime.setSelectedIndex(hour, true);
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(new Date());
-				currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-
-				chsDayLight = new ChoiceGroup(ResourceBundle
-						.getString("daylight_saving"), Choice.EXCLUSIVE);
-				chsDayLight.append(ResourceBundle
-						.getString("standard_time"), null);
-				chsDayLight.append(ResourceBundle
-						.getString("daylight_saving"), null);
-				chsDayLight.setSelectedIndex(Options
-						.getInt(Options.OPTIONS_DAYLIGHT_SAVING), true);
-				optionsForm.append(chsTimeZone);
-				optionsForm.append(chsCurrTime);
-				optionsForm.append(chsDayLight);
-
-				break;
-			}
-			}
-
-			/* Activate options form */
-			Jimm.display.setCurrent(optionsForm);
+			dataToForm();
 		}
 
 		/* Look for back command */
@@ -1721,247 +1952,15 @@ class OptionsForm implements CommandListener, ItemStateListener
 			else
 			{
 				Options.optionsForm = null;
-
-				/* Active MM/CL */
-				Jimm.showWorkScreen();
+				Jimm.showWorkScreen(); /* Active MM/CL */
 				return;
 			}
-
 		}
 
 		// Look for save command
 		else if (c == saveCommand)
 		{
-
-			// Save values, depending on selected option menu item
-			switch (optionsMenu.getCurrTextIndex())
-			{
-			case OPTIONS_ACCOUNT:
-				readAccontsControls();
-				setAccountOptions();
-				break;
-			case OPTIONS_NETWORK:
-				Options.setString(Options.OPTION_SRV_HOST, srvHostTextField
-						.getString());
-				Options.setString(Options.OPTION_SRV_PORT, srvPortTextField
-						.getString());
-				Options.setInt(Options.OPTION_CONN_TYPE, connTypeChoiceGroup
-						.getSelectedIndex());
-				Options.setBoolean(Options.OPTION_KEEP_CONN_ALIVE,
-						keepConnAliveChoiceGroup.isSelected(0));
-				Options.setString(Options.OPTION_CONN_ALIVE_INVTERV,
-						connAliveIntervTextField.getString());
-				Options.setBoolean(Options.OPTION_AUTO_CONNECT,
-						autoConnectChoiceGroup.isSelected(0));
-				Options.setBoolean(Options.OPTION_MD5_LOGIN,
-						connPropChoiceGroup.isSelected(0));
-				if (connPropChoiceGroup.isSelected(1))
-					Options.setInt(Options.OPTION_CONN_PROP, 1);
-				else
-					Options.setInt(Options.OPTION_CONN_PROP, 0);
-				Options.setBoolean(Options.OPTION_RECONNECT,
-						connPropChoiceGroup.isSelected(2));
-				//#sijapp cond.if target isnot "MOTOROLA"#
-				Options.setBoolean(Options.OPTION_SHADOW_CON,
-						connPropChoiceGroup.isSelected(3));
-				//#sijapp cond.end#
-				Options.setString(Options.OPTION_HTTP_USER_AGENT,
-						httpUserAgendTextField.getString());
-				Options.setString(Options.OPTION_HTTP_WAP_PROFILE,
-						httpWAPProfileTextField.getString());
-				Options.setInt(Options.OPTION_RECONNECT_NUMBER, Integer
-						.parseInt(reconnectNumberTextField.getString()));
-				
-				//#sijapp cond.if modules_FILES is "true"#
-				Options.setInt(Options.OPTION_FT_MODE, chsFSMode.getSelectedIndex());
-				//#sijapp cond.end#
-				break;
-			//#sijapp cond.if modules_PROXY is "true"#
-			case OPTIONS_PROXY:
-				Options.setInt(Options.OPTION_PRX_TYPE, srvProxyType
-						.getSelectedIndex());
-				Options.setString(Options.OPTION_PRX_SERV,
-						srvProxyHostTextField.getString());
-				Options.setString(Options.OPTION_PRX_PORT,
-						srvProxyPortTextField.getString());
-
-				Options.setString(Options.OPTION_PRX_NAME,
-						srvProxyLoginTextField.getString());
-				Options.setString(Options.OPTION_PRX_PASS,
-						srvProxyPassTextField.getString());
-
-				Options.setString(Options.OPTION_AUTORETRY_COUNT,
-						connAutoRetryTextField.getString());
-				break;
-			//#sijapp cond.end#      
-			case OPTIONS_INTERFACE:
-				if (ResourceBundle.langAvailable.length > 1)
-					Options.setString(Options.OPTION_UI_LANGUAGE,
-							ResourceBundle.langAvailable[uiLanguageChoiceGroup
-									.getSelectedIndex()]);
-
-				int idx = 0;
-
-				Options.setBoolean(Options.OPTION_DISPLAY_DATE,
-						choiceInterfaceMisc.isSelected(idx++));
-
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				Options.setBoolean(Options.OPTION_FULL_SCREEN,
-						choiceInterfaceMisc.isSelected(idx++));
-				//#sijapp cond.end#
-
-				Options.setInt(Options.OPTION_CAMERAURI, clCamDevGroup
-						.getSelectedIndex());
-				int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
-				int newColorScheme = colorScheme.getSelectedIndex();
-				
-				idx = 0;
-				boolean newUseGroups = choiceContactList.isSelected(idx++);
-				boolean newHideOffline = choiceContactList.isSelected(idx++);
-				boolean newShowXStatuses = choiceContactList.isSelected(idx++);
-				boolean newShowClients = choiceContactList.isSelected(idx++);
-
-				Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
-				Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
-				//setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
-				Options.setBoolean(Options.OPTION_XSTATUSES, newShowXStatuses);
-				Options.setBoolean(Options.OPTION_CL_CLIENTS, newShowClients); 
-
-				idx = 0;
-				//#sijapp cond.if modules_HISTORY is "true"#
-				Options.setBoolean(Options.OPTION_HISTORY, chrgChat
-						.isSelected(idx++));
-				Options.setBoolean(Options.OPTION_SHOW_LAST_MESS, chrgChat
-						.isSelected(idx++));
-				//#sijapp cond.end#
-
-				Options.setBoolean(Options.OPTION_CP1251_HACK, chrgChat
-						.isSelected(idx++));
-				
-				idx = 0;
-				Options.setBoolean(Options.OPTION_CHAT_SMALL_FONT, chrgMessFormat.isSelected(idx++));
-				Options.setBoolean(Options.OPTION_SHOW_MESS_ICON, chrgMessFormat.isSelected(idx++));
-				Options.setBoolean(Options.OPTION_SHOW_NICK, chrgMessFormat.isSelected(idx++));
-				Options.setBoolean(Options.OPTION_SHOW_MESS_DATE, chrgMessFormat.isSelected(idx++));
-				Options.setBoolean(Options.OPTION_SHOW_MESS_CLRF, chrgMessFormat.isSelected(idx++));
-				//#sijapp cond.if modules_SMILES is "true"#
-				Options.setBoolean(Options.OPTION_USE_SMILES, chrgMessFormat.isSelected(idx++));
-				//#sijapp cond.end#
-				Options.setBoolean(Options.OPTION_MESS_COLORED_TEXT, chrgMessFormat.isSelected(idx++));
-
-				Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
-				Options.setInt(Options.OPTION_COLOR_SCHEME, newColorScheme);
-
-				// Set UI options for existing controls
-				ContactList.optionsChanged
-				(
-					(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline),
-					(newSortMethod != lastSortMethod)
-				);
-
-				if (lastColorScheme != newColorScheme)
-					JimmUI.setColorScheme();
-				//#sijapp cond.if target is "MOTOROLA"#
-				//#					Options.setInt(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(lightTimeout.getString()));
-				//#					Options.setBoolean(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
-				//#sijapp cond.end#
-
-				VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
-
-				if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
-				{
-					Options.setBoolean(Options.OPTIONS_LANG_CHANGED, true);
-				}
-
-				break;
-
-			case OPTIONS_SIGNALING:
-				//#sijapp cond.if target isnot "DEFAULT"# ===>
-				Options.setInt(Options.OPTION_MESS_NOTIF_MODE,
-						messageNotificationModeChoiceGroup.getSelectedIndex());
-				Options.setInt(Options.OPTION_VIBRATOR, vibratorChoiceGroup
-						.getSelectedIndex());
-				Options.setInt(Options.OPTION_ONLINE_NOTIF_MODE,
-						onlineNotificationModeChoiceGroup.getSelectedIndex());
-				Options.setInt(Options.OPTION_TYPING_MODE,
-						typingNotificationModeChoiceGroup.getSelectedIndex());
-
-				//#sijapp cond.if target isnot "RIM"#       
-				Options.setString(Options.OPTION_MESS_NOTIF_FILE,
-						messageNotificationSoundfileTextField.getString());
-				Options.setInt(Options.OPTION_MESS_NOTIF_VOL,
-						messageNotificationSoundVolume.getValue() * 10);
-				Options.setString(Options.OPTION_ONLINE_NOTIF_FILE,
-						onlineNotificationSoundfileTextField.getString());
-				Options.setInt(Options.OPTION_ONLINE_NOTIF_VOL,
-						onlineNotificationSoundVolume.getValue() * 10);
-				Options.setString(Options.OPTION_TYPING_FILE,
-						typingNotificationSoundfileTextField.getString());
-				Options.setInt(Options.OPTION_TYPING_VOL,
-						typingNotificationSoundVolume.getValue() * 10);
-				//#sijapp cond.end#
-				//#sijapp cond.end# <===
-				Options.setInt(Options.OPTION_POPUP_WIN2, chrgPopupWin
-						.getSelectedIndex());
-
-				//#sijapp cond.if target="MOTOROLA"#
-				//#					Options.setBoolean(Options.OPTION_FLASH_BACKLIGHT, flashBkltChoiceGroup.isSelected(0));
-				//#sijapp cond.end#
-
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp
-						.isSelected(0));
-				Options.setBoolean(Options.OPTION_CREEPING_LINE, chsBringUp
-						.isSelected(1));
-				//#sijapp cond.end#
-
-				break;
-
-			//#sijapp cond.if modules_TRAFFIC is "true"#
-			case OPTIONS_TRAFFIC:
-				Options.setInt(Options.OPTION_COST_PER_PACKET, Util
-						.decimalToInt(costPerPacketTextField.getString()));
-				costPerPacketTextField.setString(Util.intToDecimal(Options
-						.getInt(Options.OPTION_COST_PER_PACKET)));
-				Options.setInt(Options.OPTION_COST_PER_DAY, Util
-						.decimalToInt(costPerDayTextField.getString()));
-				costPerDayTextField.setString(Util.intToDecimal(Options
-						.getInt(Options.OPTION_COST_PER_DAY)));
-				Options
-						.setInt(Options.OPTION_COST_PACKET_LENGTH,
-								Integer.parseInt(costPacketLengthTextField
-										.getString()) * 1024);
-				Options.setString(Options.OPTION_CURRENCY, currencyTextField
-						.getString());
-				break;
-			//#sijapp cond.end#
-
-			case OPTIONS_TIMEZONE:
-			{
-				/* Set up time zone*/
-				int timeZone = chsTimeZone.getSelectedIndex() - 12;
-				Options.setInt(Options.OPTIONS_GMT_OFFSET, timeZone);
-
-				int dayLight = chsDayLight.getSelectedIndex();
-				Options.setInt(Options.OPTIONS_DAYLIGHT_SAVING, dayLight);
-				/* Translate selected time to GMT */
-				int selHour = chsCurrTime.getSelectedIndex() - timeZone;
-				if (selHour < 0)
-					selHour += 24;
-				if (selHour >= 24)
-					selHour -= 24;
-
-				/* Calculate diff. between selected GMT time and phone time */
-				int localOffset = selHour - currentHour;
-				while (localOffset >= 12)
-					localOffset -= 24;
-				while (localOffset < -12)
-					localOffset += 24;
-				Options.setInt(Options.OPTIONS_LOCAL_OFFSET, localOffset);
-				break;
-			}
-
-			}
+			readDataFromForm();
 
 			/* Save options */
 			Options.safe_save();
@@ -1971,10 +1970,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 			{
 				Options.optionsForm = null;
 				ContactList.activate();
-			} else
-			{
-				activate();
 			}
+			else activate();
 		}
 
 		/* Accounts */
@@ -1986,7 +1983,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 			clearForm();
 			showAccountControls();
 			return;
-		} else if (c == cmdDeleteAccount)
+		} 
+		else if (c == cmdDeleteAccount)
 		{
 			readAccontsControls();
 			int size = uins.size();
@@ -1996,17 +1994,20 @@ class OptionsForm implements CommandListener, ItemStateListener
 			JimmUI.showSelector("delete", items, this, TAG_DELETE_ACCOUNT,
 					false);
 			return;
-		} else if (JimmUI.getCommandType(c, TAG_DELETE_ACCOUNT) == JimmUI.CMD_OK)
+		} 
+		else if (JimmUI.getCurScreenTag() == TAG_DELETE_ACCOUNT)
 		{
-			readAccontsControls();
-			int index = JimmUI.getLastSelIndex();
-			uins.removeElementAt(index);
-			passwords.removeElementAt(index);
+			if (c == JimmUI.cmdOk)
+			{
+				readAccontsControls();
+				int index = JimmUI.getLastSelIndex();
+				uins.removeElementAt(index);
+				passwords.removeElementAt(index);
+			}
 			clearForm();
 			showAccountControls();
 			Jimm.display.setCurrent(optionsForm);
 		}
-
 	}
 
 	private void clearForm()

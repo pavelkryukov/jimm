@@ -498,21 +498,24 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		}
 
 		// "Clear history"
-		else if (JimmUI.getCommandType(c, SELECTOR_DEL_HISTORY) == JimmUI.CMD_OK)
+		else if (JimmUI.getCurScreenTag() == SELECTOR_DEL_HISTORY)
 		{
-			switch (JimmUI.getLastSelIndex())
+			if (c == JimmUI.cmdOk)
 			{
-			case 0: // Current
-				HistoryStorage.clearHistory(currUin);
-				break;
+				switch (JimmUI.getLastSelIndex())
+				{
+				case 0: // Current
+					HistoryStorage.clearHistory(currUin);
+					break;
 
-			case 1: // All except current
-				HistoryStorage.clear_all(currUin);
-				break;
+				case 1: // All except current
+					HistoryStorage.clear_all(currUin);
+					break;
 
-			case 2: // All
-				HistoryStorage.clear_all(null);
-				break;
+				case 2: // All
+					HistoryStorage.clear_all(null);
+					break;
+				}
 			}
 			activate(Jimm.display);
 			invalidate();
