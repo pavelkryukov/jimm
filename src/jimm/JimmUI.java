@@ -52,6 +52,8 @@ public class JimmUI implements CommandListener
 	// Last screen constants
 	static private Object lastScreen;
 	
+	static private TextList msgBoxList;
+	
 	public static void setLastScreen(Object screen)
 	{
 		lastScreen = screen;
@@ -343,7 +345,7 @@ public class JimmUI implements CommandListener
 			lastSelectedItemIndex = lstSelector.getCurrTextIndex();
 			
 			// User have selected new group for contact
-			if ((actionTag == GROUP_SELECTOR_MOVE_TAG) && ((c == cmdOk) || (c == List.SELECT_COMMAND)))
+			if ((curScreenTag == GROUP_SELECTOR_MOVE_TAG) && ((c == cmdOk) || (c == List.SELECT_COMMAND)))
 			{
 				int currGroupId = clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
 				int newGroupId = groupList[JimmUI.getLastSelIndex()];
@@ -377,7 +379,7 @@ public class JimmUI implements CommandListener
 			lstSelector = null;
 			listener = null;
 
-			actionTag = -1;
+			curScreenTag = -1;
 		}
 
 		// Message box
@@ -385,7 +387,7 @@ public class JimmUI implements CommandListener
 		{
 			listener.commandAction(c, d);
 			msgForm = null;
-			actionTag = -1;
+			curScreenTag = -1;
 		}
 	}
 
@@ -423,6 +425,14 @@ public class JimmUI implements CommandListener
 
 		return result;
 	}
+	
+	public static int getCurScreenTag()
+	{
+		if ((msgForm != null) && (msgForm.isShown())) return curScreenTag;
+		if (isControlActive(msgBoxList)) return curScreenTag;
+		if (isControlActive(lstSelector)) return curScreenTag;
+		return -1;
+	}
 
 	/////////////////////////
 	//                     // 
@@ -431,11 +441,11 @@ public class JimmUI implements CommandListener
 	/////////////////////////
 	static private Form msgForm;
 
-	static private int actionTag = -1;
+	static private int curScreenTag = -1;
 
 	public static int getCommandType(Command testCommand, int testTag)
 	{
-		return (actionTag == testTag) ? getCommandIdx(testCommand) : -1;
+		return (curScreenTag == testTag) ? getCommandIdx(testCommand) : -1;
 	}
 
 	final public static int MESBOX_YESNO    = 1;
@@ -447,7 +457,7 @@ public class JimmUI implements CommandListener
 	{
 		clearAll();
 
-		actionTag = tag;
+		curScreenTag = tag;
 		msgForm = new Form(cap);
 		msgForm.append(text);
 
@@ -476,28 +486,28 @@ public class JimmUI implements CommandListener
 	
 	static private TextList showMessageBox(String cap, String text, int type)
 	{
-		TextList list = new TextList(cap);
-		list.setMode(TextList.MODE_TEXT);
-		setColorScheme(list, false);
-		list.setFontSize(Font.SIZE_LARGE);
-		list.addBigText(text, list.getTextColor(), Font.STYLE_PLAIN, -1);
+		msgBoxList = new TextList(cap);
+		msgBoxList.setMode(TextList.MODE_TEXT);
+		setColorScheme(msgBoxList, false);
+		msgBoxList.setFontSize(Font.SIZE_LARGE);
+		msgBoxList.addBigText(text, msgBoxList.getTextColor(), Font.STYLE_PLAIN, -1);
 		
 		switch (type)
 		{
 		case MESBOX_YESNO:
-			list.addCommandEx(cmdYes, TextList.MENU_TYPE_LEFT_BAR);
-			list.addCommandEx(cmdNo, TextList.MENU_TYPE_RIGHT_BAR);
+			msgBoxList.addCommandEx(cmdYes, TextList.MENU_TYPE_LEFT_BAR);
+			msgBoxList.addCommandEx(cmdNo, TextList.MENU_TYPE_RIGHT_BAR);
 			break;
 
 		case MESBOX_OKCANCEL:
-			list.addCommandEx(cmdOk, TextList.MENU_TYPE_LEFT_BAR);
-			list.addCommandEx(cmdCancel, TextList.MENU_TYPE_RIGHT_BAR);
+			msgBoxList.addCommandEx(cmdOk, TextList.MENU_TYPE_LEFT_BAR);
+			msgBoxList.addCommandEx(cmdCancel, TextList.MENU_TYPE_RIGHT_BAR);
 			break;
 		}
 		
-		list.setCommandListener(_this);
-		list.activate(Jimm.display);
-		return list; 
+		msgBoxList.setCommandListener(_this);
+		msgBoxList.activate(Jimm.display);
+		return msgBoxList; 
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -1145,7 +1155,7 @@ public class JimmUI implements CommandListener
 	static public void showSelector(String caption, String[] elements,
 			CommandListener listener, int tag, boolean translateWords)
 	{
-		actionTag = tag;
+		curScreenTag = tag;
 		lstSelector = new TextList (ResourceBundle.getString(caption));
 		JimmUI.setColorScheme(lstSelector, false);
 		lstSelector.setMode(VirtualList.MODE_TEXT);
