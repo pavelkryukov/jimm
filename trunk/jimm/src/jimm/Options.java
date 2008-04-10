@@ -724,7 +724,8 @@ public class Options
 		0x000000, 0xFFFFFF, 0x00FFFF, 0x0000C0, 0x505050, 0xFF0000, 0xFFFFFF, 0x0000FF,
 		0x000080, 0xFFFFFF, 0x00FFFF, 0x0000D0, 0x0000B0, 0xFF0000, 0xFFFFFF, 0x0000FF,
 		0xFFA0C0, 0x000000, 0x4000C0, 0xFFE0D0, 0xFFE0D0, 0xC00040, 0x000000, 0xA02020,
-		0xE0FFE0, 0x000000, 0x008000, 0xC0FFC0, 0xC0FFC0, 0xFF0000, 0x000000, 0x00A000
+		0xE0FFE0, 0x000000, 0x008000, 0xC0FFC0, 0xC0FFC0, 0xFF0000, 0x000000, 0x00A000,
+		0xF9F3EF, 0xD60000, 0x3A6793, 0xE3BFA1, 0xC37D3F, 0xDB8941, 0xFFFFF0, 0xD26464
 	};
 
 	/* Retrieves color value from color scheme */
@@ -1480,7 +1481,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 				setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
 				
 				colorScheme = createSelector("color_scheme", "black_on_white"
-						+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme" + "|" + "Green",
+						+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme" + "|" + "Green"
+						+ "|" + "Golden",
 						Options.OPTION_COLOR_SCHEME);
 
 				chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
