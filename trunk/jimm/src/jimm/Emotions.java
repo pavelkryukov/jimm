@@ -467,16 +467,24 @@ public class Emotions implements VirtualListCommands, CommandListener
 					{
 						curCol = cols - 1;
 						curRow--;
+					} else
+					{
+					    curCol = (selEmotionsIndexes.length - 1) % cols;
+					    curRow = rowCount - 1;
 					}
 					break;
 
 				case Canvas.RIGHT:
 					if (curCol < (cols - 1))
 						curCol++;
-					else if (curRow < rowCount)
+					else if (curRow < rowCount-1)
 					{
 						curCol = 0;
 						curRow++;
+					} else
+					{
+					    curCol = 0;
+					    curRow = 0;
 					}
 					break;
 				}
@@ -484,7 +492,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 				setCurrentItem(curRow);
 
 				int index = curCol + getCurrIndex() * cols;
-				if (index >= selEmotionsIndexes.length)
+				if (index >= selEmotionsIndexes.length-1)
 					curCol = (selEmotionsIndexes.length - 1) % cols;
 
 				if (lastCol != curCol)
