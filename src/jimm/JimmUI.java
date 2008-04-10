@@ -1902,4 +1902,16 @@ public class JimmUI implements CommandListener
 	
 	//////////////////////////////////
 	
+	public static void startTaskForTimeString()
+	{
+		TimerTask task = new TimerTask() 
+		{
+			public void run()
+			{
+				RunnableImpl.showTime(Util.getDateString(true));
+			}
+		};
+		Jimm.getTimerRef().schedule(task, 500, 10000);
+	}
+	
 }

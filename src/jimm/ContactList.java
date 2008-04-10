@@ -1120,18 +1120,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	static public void updateTitle(int traffic)
 	{
 		String text = onlineCounter + "/" + cItems.size();
-		String sep = "-";
-		if (traffic != 0)
-			text += sep + traffic + ResourceBundle.getString("kb") + sep
-					+ Util.getDateString(true);
-		else
-			text += sep + Util.getDateString(true);
+		if (traffic != 0) text += " " + traffic + ResourceBundle.getString("kb");
 		//#sijapp cond.if target is "SIEMENS2"#
 		//#		if( Options.getBoolean(Options.OPTION_FULL_SCREEN) )
 		//#		{
 		//#			String accuLevel = System.getProperty("MPJC_CAP");
 		//#			if( accuLevel != null )
-		//#				text += "-" + accuLevel + "%";
+		//#				text += " " + accuLevel + "%";
 		//#		}
 		//#sijapp cond.end#
 		tree.setCaption(text);
