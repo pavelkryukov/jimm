@@ -119,7 +119,7 @@ public class JimmUI implements CommandListener
 	static private JimmUI _this;
 	
 	// Misc constants
-	final private static int GROUP_SELECTOR_MOVE_TAG = 1; 
+	final private static int GROUP_SELECTOR_MOVE_TAG = 4; 
 
 	// Associate commands and commands codes 
 	static

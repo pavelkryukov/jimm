@@ -473,7 +473,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 				case Canvas.RIGHT:
 					if (curCol < (cols - 1))
 						curCol++;
-					else if (curRow <= rowCount)
+					else if (curRow < rowCount)
 					{
 						curCol = 0;
 						curRow++;
