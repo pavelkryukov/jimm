@@ -117,9 +117,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 	private Vector messData = new Vector();
 
-	private int messTotalCounter = 0;
-	
-	private static int currentUiMode; 
+	private int messTotalCounter = 0; 
 
 	ChatTextList(String name, ContactListContactItem contact)
 	{
@@ -188,26 +186,29 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	public void commandAction(Command c, Displayable d)
 	{
 		/* User selected chat to delete */
-		if ((currentUiMode == UI_MODE_DEL_CHAT) && (c == JimmUI.cmdOk))
+		if (JimmUI.getCurScreenTag() == UI_MODE_DEL_CHAT)
 		{
-			int delType = -1;
-
-			switch (JimmUI.getLastSelIndex())
+			if (c == JimmUI.cmdOk)
 			{
-			case 0:
-				delType = ChatHistory.DEL_TYPE_CURRENT;
-				break;
-			case 1:
-				delType = ChatHistory.DEL_TYPE_ALL_EXCEPT_CUR;
-				break;
-			case 2:
-				delType = ChatHistory.DEL_TYPE_ALL;
-				break;
-			}
+				int delType = -1;
+				switch (JimmUI.getLastSelIndex())
+				{
+				case 0:
+					delType = ChatHistory.DEL_TYPE_CURRENT;
+					break;
+				case 1:
+					delType = ChatHistory.DEL_TYPE_ALL_EXCEPT_CUR;
+					break;
+				case 2:
+					delType = ChatHistory.DEL_TYPE_ALL;
+					break;
+				}
 
-			ChatHistory.chatHistoryDelete(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), delType);
-			ContactList.activate();
-			return;
+				ChatHistory.chatHistoryDelete(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), delType);
+				ContactList.activate();
+				return;
+			}
+			else activate(false, false);
 		}
 		
 		/* Write new message */
@@ -226,7 +227,6 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		/* Delete current chat */
 		else if (c == cmdDelChat)
 		{
-			currentUiMode = UI_MODE_DEL_CHAT;
 			JimmUI.showSelector("delete_chat", JimmUI.stdSelector, this, UI_MODE_DEL_CHAT, true);
 		}
 		
@@ -486,7 +486,6 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 	public void activate(boolean initChat, boolean resetText)
 	{
-		currentUiMode = UI_MODE_NONE;
 		textList.activate(Jimm.display);
 		JimmUI.setLastScreen(textList);
 		ChatHistory.currentChat = this;
