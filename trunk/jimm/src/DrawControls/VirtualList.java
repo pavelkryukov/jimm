@@ -180,6 +180,8 @@ public abstract class VirtualList
 
 	// Caption of VL
 	private String caption;
+	
+	static private String bottomText;
 
 	// Used by "Invalidate" method to prevent invalidate when locked 
 	private boolean dontRepaint = false;
@@ -968,11 +970,18 @@ public abstract class VirtualList
 	}
 
 	//#sijapp cond.end#
+	
+	static public void setBottomText(String text)
+	{
+		if ((bottomText != null) && bottomText.equals(text)) return;
+		bottomText = text;
+		if ((virtualCanvas != null) && virtualCanvas.isShown()) virtualCanvas.repaint();
+	}
 
 	//! Set caption text for list
 	public void setCaption(String capt)
 	{
-		if (caption != null) if (caption.equals(capt)) return;
+		if ((caption != null) && (caption.equals(capt))) return;
 		caption = capt;
 
 		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
@@ -1131,14 +1140,14 @@ public abstract class VirtualList
 	}
 
 	// private boolean drawItems(Graphics g, int top_y)
-	private boolean drawItems(Graphics g, int top_y, int fontHeight, int menuBarHeight, int mode, int curX, int curY)
+	private boolean drawItems(Graphics g, int top_y, int fontHeight, int menuBarHeight, int mode, int mouseX, int mouseY)
 	{
 		int grCursorY1 = -1, grCursorY2 = -1;
 		int height = getDrawHeight();
 		int size = getSize();
 		int i, y;
 		int itemWidth = getWidthInternal() - scrollerWidth;
-		int bottomY = top_y+height; 
+		int bottomY = top_y+height;
 		
 		if (mode == DMS_DRAW)
 		{
@@ -1213,7 +1222,7 @@ public abstract class VirtualList
 			//#sijapp cond.if target is "MIDP2"#
 			else
 			{
-				if ((y1 < curY) && (curY < y2) && (x1 < curX) && (curX < x2))
+				if ((y1 < mouseY) && (mouseY < y2) && (x1 < mouseX) && (mouseX < x2))
 				{
 					switch (mode)
 					{
@@ -1231,7 +1240,7 @@ public abstract class VirtualList
 						break;
 					}
 
-					pointerPressedOnUtem(i, curX-x1, curY-y1, mode);
+					pointerPressedOnUtem(i, mouseX-x1, mouseY-y1, mode);
 					return true;
 				}
 			}
@@ -1290,19 +1299,19 @@ public abstract class VirtualList
 		paintAllOnGraphics(graphics, DMS_DRAW, -1, -1);
 	}
 	
-	public void paintAllOnGraphics(Graphics graphics, int mode, int curX, int curY)
+	public void paintAllOnGraphics(Graphics graphics, int mode, int mouseX, int mouseY)
 	{
 		int visCount = getVisCount();
 		int menuBarHeight = getMenuBarHeight();
-		int y = drawCaption(graphics, mode, curX, curY);
+		int y = drawCaption(graphics, mode, mouseX, mouseY);
 		
 		switch (mode)
 		{
 		case DMS_DRAW:
-			drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, curX, curY);
+			drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, mouseX, mouseY);
 			drawScroller(graphics, y, visCount, menuBarHeight);
-			if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight, mode, curX, curY);
-			drawMenuItems(graphics, menuBarHeight, mode, curX, curY);
+			if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight, mode, mouseX, mouseY);
+			drawMenuItems(graphics, menuBarHeight, mode, mouseX, mouseY);
 			break;
 			
 		//#sijapp cond.if target is "MIDP2"#
@@ -1311,13 +1320,13 @@ public abstract class VirtualList
 			boolean clicked;
 			if (menuBarHeight != 0)
 			{
-				clicked = drawMenuBar(graphics, menuBarHeight, mode, curX, curY);
+				clicked = drawMenuBar(graphics, menuBarHeight, mode, mouseX, mouseY);
 				if (clicked) return;
 			}
 			
-			clicked = drawMenuItems(graphics, menuBarHeight, mode, curX, curY);
+			clicked = drawMenuItems(graphics, menuBarHeight, mode, mouseX, mouseY);
 			if (clicked) return;
-			clicked = drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, curX, curY);
+			clicked = drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, mouseX, mouseY);
 			if (clicked) return;
 			break;
 			//#sijapp cond.end#
@@ -1557,14 +1566,13 @@ public abstract class VirtualList
 			if (rightMenu.getCommandType() == Command.OK) defaultMenu = true;
 		}
 		
-		if (defaultMenu && !menuItemsVisible)
+		if (!menuItemsVisible && (bottomText != null))
 		{
-			String text = "v";
 			g.setColor(capTxtColor);
 			g.drawString
 			(
-				text, 
-				(width-menuBarFont.stringWidth(text))/2, 
+				bottomText, 
+				(width-menuBarFont.stringWidth(bottomText))/2, 
 				textY, 
 				Graphics.TOP|Graphics.LEFT
 			);

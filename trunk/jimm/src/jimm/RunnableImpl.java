@@ -25,6 +25,8 @@ package jimm;
 
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.*;
+
+import DrawControls.VirtualList;
 import jimm.comm.Message;
 import jimm.ContactListContactItem;
 
@@ -53,6 +55,8 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_USER_IS_TYPING = 9;
 
 	final static public int TYPE_RESET_CONTACTS = 10;
+	
+	final static public int TYPE_SHOW_TIME = 11;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -111,6 +115,10 @@ public class RunnableImpl implements Runnable
 
 		case TYPE_RESET_CONTACTS:
 			ContactList.setStatusesOffline();
+			break;
+			
+		case TYPE_SHOW_TIME:
+			VirtualList.setBottomText((String)data[0]);
 			break;
 		}
 	}
@@ -209,6 +217,11 @@ public class RunnableImpl implements Runnable
 	static public void resetContactsOffline()
 	{
 		callSerially(TYPE_RESET_CONTACTS);
+	}
+	
+	static public void showTime(String time)
+	{
+		callSerially(TYPE_SHOW_TIME, time);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

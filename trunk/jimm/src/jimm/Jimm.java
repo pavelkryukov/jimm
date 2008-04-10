@@ -257,6 +257,8 @@ public class Jimm extends MIDlet
 		}
 		
 		DrawControls.VirtualList.setDisplay(Jimm.display);
+		
+		JimmUI.startTaskForTimeString();
 	}
 
 	// Pause
