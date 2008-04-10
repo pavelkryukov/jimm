@@ -343,29 +343,35 @@ public class MainMenu implements CommandListener
 			}
 			return;
 		}
-
-		if (JimmUI.getCommandType(c, TAG_RENAME_GROUPS) == JimmUI.CMD_OK)
+		
+		else if (JimmUI.getCurScreenTag() == TAG_RENAME_GROUPS)
 		{
-			String groupName = ContactList.getGroupById(
-					groupIds[JimmUI.getLastSelIndex()]).getName();
-			showTextBoxForm("rename_group", "group_name", groupName,
-					TextField.ANY);
-		}
-
-		else if (JimmUI.getCommandType(c, TAG_DELETE_GROUPS) == JimmUI.CMD_OK)
-		{
-			UpdateContactListAction deleteGroupAct = new UpdateContactListAction(
-					ContactList
-							.getGroupById(groupIds[JimmUI.getLastSelIndex()]),
-					UpdateContactListAction.ACTION_DEL);
-			try
+			if (c == JimmUI.cmdOk)
 			{
-				Icq.requestAction(deleteGroupAct);
-				SplashCanvas.addTimerTask("wait", deleteGroupAct, false);
-			} catch (JimmException e)
-			{
-				JimmException.handleException(e);
+				String groupName = ContactList.getGroupById(groupIds[JimmUI.getLastSelIndex()]).getName();
+				showTextBoxForm("rename_group", "group_name", groupName, TextField.ANY);
 			}
+			else activate();
+		}
+		
+		else if (JimmUI.getCurScreenTag() == TAG_DELETE_GROUPS)
+		{
+			if (c == JimmUI.cmdOk)
+			{
+				UpdateContactListAction deleteGroupAct = new UpdateContactListAction(
+						ContactList
+								.getGroupById(groupIds[JimmUI.getLastSelIndex()]),
+						UpdateContactListAction.ACTION_DEL);
+				try
+				{
+					Icq.requestAction(deleteGroupAct);
+					SplashCanvas.addTimerTask("wait", deleteGroupAct, false);
+				} catch (JimmException e)
+				{
+					JimmException.handleException(e);
+				}
+			}
+			else activate();
 		}
 
 		// Return to works screen after canceling status selection 
@@ -385,7 +391,8 @@ public class MainMenu implements CommandListener
 		{
 			MainMenu.groupMenu.activate(Jimm.display);
 		}
-		    else if ((c == sendCommand) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
+		
+		else if ((c == sendCommand) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
 		{
 			Action act = null;
 
@@ -440,7 +447,6 @@ public class MainMenu implements CommandListener
 		}
 
 		/* Menu item has been selected */
-
 		else if (((c == List.SELECT_COMMAND) || (c == JimmUI.cmdSelect)) && JimmUI.isControlActive(list))
 		{
 			int selectedIndex = MainMenu.list.getCurrTextIndex();

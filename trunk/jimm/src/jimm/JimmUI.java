@@ -365,16 +365,7 @@ public class JimmUI implements CommandListener
 				}
 				return;
 			}
-
-			// "Selector" -> "Cancel"
-			if (c == cmdCancel)
-			{
-				backToLastScreen();
-			}
-
-			// "Selector" -> "Ok"
-			else if ((c == cmdOk) || (c == List.SELECT_COMMAND))
-				listener.commandAction(cmdOk, d);
+			else listener.commandAction(c, d); 
 
 			lstSelector = null;
 			listener = null;
