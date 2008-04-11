@@ -1479,8 +1479,8 @@ public class JimmUI implements CommandListener
 		else
 		{
 			URLList = JimmUI.getInfoTextList(ResourceBundle.getString("goto_url"), false);
-			URLList.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT);
-			URLList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT);
+			URLList.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+			URLList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 			URLList.setCommandListener(_this);
 			for (int i = 0; i < v.size(); i++)
 			{
