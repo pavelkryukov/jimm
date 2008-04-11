@@ -194,6 +194,7 @@ public class JimmUI implements CommandListener
 			if (c == cmdSend)
 			{
 				SystemNotice notice = null;
+				boolean authRequested = false;
 
 				/* If or if not a reason was entered
 				 Though this box is used twice (reason for auth request and auth repley)
@@ -214,6 +215,7 @@ public class JimmUI implements CommandListener
 							SystemNotice.SYS_NOTICE_REQUAUTH,
 							authContactItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
 							false, reasonText);
+					authRequested = true;
 					break;
 				}
 				
@@ -228,6 +230,8 @@ public class JimmUI implements CommandListener
 					if (authContactItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
 						Icq.requestAction(updateAct);
 					ChatHistory.rebuildMenu(authContactItem);
+					if (authRequested) 
+						authContactItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
@@ -236,7 +240,6 @@ public class JimmUI implements CommandListener
 				}
 				
 				authContactItem.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
-				
 			}
 
 			boolean activated = ChatHistory.activateIfExists(authContactItem);
