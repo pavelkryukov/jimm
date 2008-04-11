@@ -46,8 +46,16 @@ public class Util
 			System.arraycopy(caps, n, b, 0, 16);
 
 			String bytes = new String();
-			for (int i = 0; i < b.length; i++)
-				bytes += Integer.toHexString(b[i] & 0xFF);
+			bytes += "{";
+			for (int i = 0; i < b.length; i++) {
+				if ((i == 4) || (i == 6) || (i == 8) || (i == 10)) {
+					bytes += "-";
+				}
+				String bj = Integer.toHexString(b[i] & 0xFF);
+				if (bj.length() == 1) bj = "0"+bj;
+				bytes += bj;
+			}
+			bytes += "}";
 			System.out.println(caption + bytes);
 		}
 	}

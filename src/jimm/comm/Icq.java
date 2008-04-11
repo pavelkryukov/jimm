@@ -2807,6 +2807,14 @@ public class Icq implements Runnable
 	public static final byte[] CAP_UTF8            = Util.explodeToBytes("09,46,13,4E,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
 	public static final byte[] CAP_UTF8_GUID       = Util.explodeToBytes("7b,30,39,34,36,31,33,34,45,2D,34,43,37,46,2D,31,31,44,31,2D,38,32,32,32,2D,34,34,34,35,35,33,35,34,30,30,30,30,7D", ',', 16);
 	
+	private static final byte[] CAP_QIPINFIUM = Util.explodeToBytes("7c,73,75,02,c3,be,4f,3e,a6,9f,01,53,13,43,1e,1a", ',', 16);
+//	private static final byte[] CAP_QIPPLUGINS = Util.explodeToBytes("7C,53,3F,FA,68,00,4F,21,BC,FB,C7,D2,43,9A,AD,31", ',', 16);
+//	private static final byte[] CAP_AUDIO = Util.explodeToBytes("09,46,01,04,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+//	private static final byte[] CAP_VIDEO = Util.explodeToBytes("09,46,01,01,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_HTMLMESSAGES = Util.explodeToBytes("01,38,ca,7b,76,9a,49,15,88,f2,13,fc,00,97,9e,a8", ',', 16);
+//	private static final byte[] CAP_XMultiUserChat = Util.explodeToBytes("67,36,15,15,61,2d,4c,07,8f,3d,bd,e6,40,8e,a0,41", ',', 16);
+//	private static final byte[] CAP_XtZers = Util.explodeToBytes("b2,ec,8f,16,7c,6f,45,1b,bd,79,dc,58,49,78,88,b9", ',', 16);
+	private static final byte[] CAP_IsICQLITE = Util.explodeToBytes("17,8c,2d,9b,da,a5,45,bb,8d,db,f3,bd,bd,53,a1,0a", ',', 16);
 	private static final byte[] CAP_MIRANDAIM = Util.explodeToBytes("4D,69,72,61,6E,64,61,4D,00,00,00,00,00,00,00,00", ',', 16);
 	private static final byte[] CAP_TRILLIAN = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,09", ',', 16);
 	private static final byte[] CAP_TRILCRYPT = Util.explodeToBytes("f2,e7,c7,f4,fe,ad,4d,fb,b2,35,36,79,8b,df,00,00", ',', 16);
@@ -2953,6 +2961,16 @@ public class Icq implements Runnable
 
 	public static final int CAPF_MCHAT = 0x80000000;
 
+	// additional caps (caps2)
+	public static final int CAPF_QIPINFIUM		= 0x00000001;
+//	public static final int CAPF_QIPPLUGINS		= 0x00000002;
+//	public static final int CAPF_AUDIO		= 0x00000004;
+//	public static final int CAPF_VIDEO		= 0x00000008;
+	public static final int CAPF_HTMLMESSAGES	= 0x00000010;
+//	public static final int CAPF_XMultiUserChat	= 0x00000020;
+//	public static final int CAPF_XtZers		= 0x00000040;
+	public static final int CAPF_IsICQLITE		= 0x00000080;
+
 	// Client IDs
 	public static final byte CLI_NONE = 0;
 	public static final byte CLI_QIP = 1;
@@ -2994,6 +3012,8 @@ public class Icq implements Runnable
 	public static final byte CLI_ICQPPC = 37;
 	public static final byte CLI_STICQ = 38;
 	public static final byte CLI_MCHAT = 39;
+	public static final byte CLI_QIPINFIUM = 40;
+	public static final byte CLI_ICQ6 = 41;
 	
 	private static int[] clientIndexes;
 	private static int[] clientImageIndexes;
@@ -3045,6 +3065,8 @@ public class Icq implements Runnable
 		initClientIndDataItem("ICQ for Pocket PC",      CLI_ICQPPC,        33, vInd, vImg, vNames);
 		initClientIndDataItem("StIcq",                  CLI_STICQ,         9,  vInd, vImg, vNames);
 		initClientIndDataItem("MChat",                  CLI_MCHAT,         22, vInd, vImg, vNames);
+		initClientIndDataItem("QIP Infium",             CLI_QIPINFIUM,     15, vInd, vImg, vNames);
+		initClientIndDataItem("ICQ 6",                  CLI_ICQ6,          16, vInd, vImg, vNames);
 		
 		clientNames = new String[vNames.size()];
 		vNames.copyInto(clientNames);
@@ -3080,11 +3102,10 @@ public class Icq implements Runnable
 	
 	public static void detectUserClientAndParseCaps(ContactItem item, int dwFP1, int dwFP2, int dwFP3, byte[] capabilities, int wVersion, boolean statusChange)
 	{
-		//System.out.println("uin - " + uin + " found capabilities count:" + capabilities.length/16);
-		//PrintCapabilities("cap - ", capabilities);
 		int client = CLI_NONE;
 		String szVersion = "";
 		int caps = CAPF_NO_INTERNAL;
+		int caps2 = CAPF_NO_INTERNAL;
 
 		if (capabilities != null)
 		{
@@ -3215,6 +3236,34 @@ public class Icq implements Runnable
 					caps |= CAPF_MCHAT;
 					szVersion = detectClientVersion(capabilities, CAPF_MCHAT, j);
 				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPINFIUM, 0, 16))
+				{
+					caps2 |= CAPF_QIPINFIUM;
+				}
+//				else if (Util.byteArrayEquals(capabilities, j16, CAP_AUDIO, 0, 16))
+//				{
+//					caps2 |= CAPF_AUDIO;
+//				}
+//				else if (Util.byteArrayEquals(capabilities, j16, CAP_VIDEO, 0, 16))
+//				{
+//					caps2 |= CAPF_VIDEO;
+//				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_HTMLMESSAGES, 0, 16))
+				{
+					caps2 |= CAPF_HTMLMESSAGES;
+				}
+//				else if (Util.byteArrayEquals(capabilities, j16, CAP_XMultiUserChat, 0, 16))
+//				{
+//					caps2 |= CAPF_XMultiUserChat;
+//				}
+//				else if (Util.byteArrayEquals(capabilities, j16, CAP_XtZers, 0, 16))
+//				{
+//					caps2 |= CAPF_XtZers;
+//				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_IsICQLITE, 0, 16))
+				{
+					caps2 |= CAPF_IsICQLITE;
+				}
 			}
 		}
 
@@ -3225,6 +3274,12 @@ public class Icq implements Runnable
 			switch (1)
 			{
 			default:
+				if ((caps2 & CAPF_QIPINFIUM) != 0)
+				{
+					client = CLI_QIPINFIUM;
+					szVersion += "(" + dwFP1 + ")" + ((dwFP2 == 0xB) ? " Beta" : "");
+					break;
+				}
 				if ((caps & CAPF_MCHAT) != 0)
 				{
 					client = CLI_MCHAT;
@@ -3307,6 +3362,10 @@ public class Icq implements Runnable
 									else client = CLI_ICQLITE4;
 								}
 							}
+							else if (((caps2 & CAPF_IsICQLITE) != 0) && ((caps2 & CAPF_HTMLMESSAGES) != 0))
+								{
+									client = CLI_ICQ6;
+								}
 							else if ((caps & CAPF_UIM) != 0) client = CLI_UIM;
 							else client = CLI_AGILE;
 						}
@@ -3320,7 +3379,7 @@ public class Icq implements Runnable
 					break;
 				}
 
-				if ((caps & CAPF_AIMCHAT) != 0)
+				if (((caps & CAPF_AIMCHAT) != 0) && ((caps2 & CAPF_IsICQLITE) == 0))
 				{
 					client = CLI_AIM;
 					break;
@@ -3498,6 +3557,13 @@ public class Icq implements Runnable
 		}
 
 		item.setIntValue(ContactItem.CONTACTITEM_CAPABILITIES, caps);
+		//#sijapp cond.if modules_DEBUGLOG is "true"#
+		System.out.println("uin - " + item.getStringValue(ContactItem.CONTACTITEM_UIN) + " found capabilities count:" + capabilities.length/16);
+		System.out.println("dwFP1 = " + "0x"+Integer.toHexString(dwFP1) + ", " + "dwFP2 = " + "0x"+Integer.toHexString(dwFP2) + ", " + "dwFP3 = " + "0x"+Integer.toHexString(dwFP3));
+		System.out.println("wVersion = " + Integer.toHexString(wVersion));
+		System.out.println("client = " + client + ", " + "szVersion = " + szVersion);
+		Util.PrintCapabilities("", capabilities);
+		//#sijapp cond.end#
 	}
 
 	public static String getClientString(int cli)
