@@ -26,7 +26,7 @@ package jimm.comm;
 import java.util.*;
 import java.io.*;
 
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
@@ -684,7 +684,7 @@ public class ConnectAction extends Action
 								// Add this contact item to the vector
 								try
 								{
-									ContactListContactItem item = new ContactListContactItem(id, group, name, nick, noAuth, true);
+									ContactItem item = new ContactItem(id, group, name, nick, noAuth, true);
 									// if (serverData.size() != 0) item.ssData = serverData.toByteArray();
 									items.addElement(item);
 								}

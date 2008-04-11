@@ -25,7 +25,7 @@
 //#sijapp cond.if modules_FILES is "true"#
 package jimm.comm;
 
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import java.io.InputStream;
 
 public class FileTransferMessage extends Message
@@ -43,7 +43,7 @@ public class FileTransferMessage extends Message
 	int fsize;
 
 	// Constructs an outgoing message
-	public FileTransferMessage(String sndrUin, ContactListContactItem _rcvr,
+	public FileTransferMessage(String sndrUin, ContactItem _rcvr,
 			int _messageType, String _filename, String _description,
 			InputStream is, int size)
 	{

@@ -32,7 +32,7 @@ import jimm.JimmException;
 import jimm.Options;
 import jimm.JimmUI;
 import jimm.RunnableImpl;
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import jimm.ContactList;
 
 public class RequestInfoAction extends Action
@@ -220,7 +220,7 @@ public class RequestInfoAction extends Action
 	{
 		if (strData[JimmUI.UI_UIN].equals(existingNick))
 		{
-			ContactListContactItem item = ContactList
+			ContactItem item = ContactList
 					.getItembyUIN(strData[JimmUI.UI_UIN]);
 			item.rename(strData[JimmUI.UI_NICK]);
 		}

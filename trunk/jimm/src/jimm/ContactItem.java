@@ -16,9 +16,9 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
- File: src/jimm/ContactListContactItem.java
+ File: src/jimm/ContactItem.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher, Artyomov Denis
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Denis Artyomov
  *******************************************************************************/
 
 package jimm;
@@ -35,7 +35,7 @@ import jimm.SplashCanvas;
 
 
 /* TODO: remove UI code to ChatHistory */
-public class ContactListContactItem implements ContactListItem
+public class ContactItem implements ContactListItem
 {
 	/* No capability */
 	public static final int CAP_NO_INTERNAL = 0x00000000;
@@ -108,7 +108,7 @@ public class ContactListContactItem implements ContactListItem
 	
 	public int getSortWeight()
 	{
-		int status = getIntValue(ContactListContactItem.CONTACTITEM_STATUS); 
+		int status = getIntValue(ContactItem.CONTACTITEM_STATUS); 
 
 		switch (status)
 		{
@@ -126,7 +126,7 @@ public class ContactListContactItem implements ContactListItem
 			case ContactList.STATUS_INVISIBLE:	return 11;
 
 			case ContactList.STATUS_OFFLINE:
-				if (getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
+				if (getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP))
 					return 19;
 				return 20;
 		}
@@ -397,51 +397,51 @@ public class ContactListContactItem implements ContactListItem
 			boolean noAuth, boolean added)
 	{
 		if (id == -1)
-			setIntValue(ContactListContactItem.CONTACTITEM_ID, Util
+			setIntValue(ContactItem.CONTACTITEM_ID, Util
 					.createRandomId());
 		else
-			setIntValue(ContactListContactItem.CONTACTITEM_ID, id);
-		setIntValue(ContactListContactItem.CONTACTITEM_GROUP, group);
-		setStringValue(ContactListContactItem.CONTACTITEM_UIN, uin);
-		setStringValue(ContactListContactItem.CONTACTITEM_NAME, name);
-		setBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH, noAuth);
-		setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
-		setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, false);
-		setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED, added);
-		setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
+			setIntValue(ContactItem.CONTACTITEM_ID, id);
+		setIntValue(ContactItem.CONTACTITEM_GROUP, group);
+		setStringValue(ContactItem.CONTACTITEM_UIN, uin);
+		setStringValue(ContactItem.CONTACTITEM_NAME, name);
+		setBooleanValue(ContactItem.CONTACTITEM_NO_AUTH, noAuth);
+		setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, false);
+		setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT, false);
+		setBooleanValue(ContactItem.CONTACTITEM_ADDED, added);
+		setIntValue(ContactItem.CONTACTITEM_STATUS,
 				ContactList.STATUS_OFFLINE);
-		setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES,
+		setIntValue(ContactItem.CONTACTITEM_CAPABILITIES,
 				Icq.CAPF_NO_INTERNAL);
-		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
+		setIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
+		setIntValue(ContactItem.CONTACTITEM_URLMESSAGES, 0);
+		setIntValue(ContactItem.CONTACTITEM_SYSNOTICES, 0);
+		setIntValue(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
-		setIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
-		setIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
-		setIntValue(ContactListContactItem.CONTACTITEM_DC_PORT, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE, 0);
+		setIPValue(ContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
+		setIPValue(ContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
+		setIntValue(ContactItem.CONTACTITEM_DC_PORT, 0);
+		setIntValue(ContactItem.CONTACTITEM_DC_TYPE, 0);
+		setIntValue(ContactItem.CONTACTITEM_ICQ_PROT, 0);
+		setIntValue(ContactItem.CONTACTITEM_AUTH_COOKIE, 0);
 		//#sijapp cond.end#
 		//#sijapp cond.end#
-		setIntValue(ContactListContactItem.CONTACTITEM_SIGNON, -1);
+		setIntValue(ContactItem.CONTACTITEM_SIGNON, -1);
 		online = -1;
-		setIntValue(ContactListContactItem.CONTACTITEM_IDLE, -1);
-		setIntValue(ContactListContactItem.CONTACTITEM_CLIENT, Icq.CLI_NONE);
-		setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, "");
+		setIntValue(ContactItem.CONTACTITEM_IDLE, -1);
+		setIntValue(ContactItem.CONTACTITEM_CLIENT, Icq.CLI_NONE);
+		setStringValue(ContactItem.CONTACTITEM_CLIVERSION, "");
 		xStatusId = -1;
 	}
 
 	/* Constructor for an existing contact item */
-	public ContactListContactItem(int id, int group, String uin, String name,
+	public ContactItem(int id, int group, String uin, String name,
 			boolean noAuth, boolean added)
 	{
 		this.init(id, group, uin, name, noAuth, added);
 	}
 
-	public ContactListContactItem()
+	public ContactItem()
 	{
 		xStatusId = -1;
 	}
@@ -474,7 +474,7 @@ public class ContactListContactItem implements ContactListItem
 	{
 		if (getBooleanValue(CONTACTITEM_IS_TEMP))
 			return 0x808080;
-		int color = getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) ? Options
+		int color = getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT) ? Options
 				.getSchemeColor(Options.CLRSCHHEME_OUTGOING)
 				: Options.getSchemeColor(Options.CLRSCHHEME_TEXT);
 		return color;
@@ -483,7 +483,7 @@ public class ContactListContactItem implements ContactListItem
 	/* Returns font style for contact name */
 	public int getFontStyle()
 	{
-		return getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT) ? Font.STYLE_BOLD
+		return getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT) ? Font.STYLE_BOLD
 				: Font.STYLE_PLAIN;
 	}
 
@@ -510,7 +510,7 @@ public class ContactListContactItem implements ContactListItem
 			tempIndex = 16;
 		else
 			tempIndex = JimmUI
-					.getStatusImageIndex(getIntValue(ContactListContactItem.CONTACTITEM_STATUS));
+					.getStatusImageIndex(getIntValue(ContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
 	
@@ -536,17 +536,17 @@ public class ContactListContactItem implements ContactListItem
 	 and "hide offline" is on */
 	protected boolean mustBeShownAnyWay()
 	{
-		return getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT)
-				|| getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP);
+		return getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT)
+				|| getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP);
 	}
 
 	/* Returns total count of all unread messages (messages, sys notices, urls, auths) */
 	protected int getUnreadMessCount()
 	{
-		return getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES)
-				+ getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES)
-				+ getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES)
-				+ getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS);
+		return getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES)
+				+ getIntValue(ContactItem.CONTACTITEM_URLMESSAGES)
+				+ getIntValue(ContactItem.CONTACTITEM_SYSNOTICES)
+				+ getIntValue(ContactItem.CONTACTITEM_AUTREQUESTS);
 	}
 
 	/* Returns true if the next available message is a message of given type
@@ -558,19 +558,19 @@ public class ContactListContactItem implements ContactListItem
 		{
 		case MESSAGE_PLAIN:
 			return (this
-					.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
+					.getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
 		case MESSAGE_URL:
 			return (this
-					.getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES) > 0);
+					.getIntValue(ContactItem.CONTACTITEM_URLMESSAGES) > 0);
 		case MESSAGE_SYS_NOTICE:
 			return (this
-					.getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES) > 0);
+					.getIntValue(ContactItem.CONTACTITEM_SYSNOTICES) > 0);
 		case MESSAGE_AUTH_REQUEST:
 			return (this
-					.getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) > 0);
+					.getIntValue(ContactItem.CONTACTITEM_AUTREQUESTS) > 0);
 		}
 		return (this
-				.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
+				.getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
 	}
 
 	/* Increases the message count */
@@ -581,53 +581,53 @@ public class ContactListContactItem implements ContactListItem
 		case MESSAGE_PLAIN:
 			this
 					.setIntValue(
-							ContactListContactItem.CONTACTITEM_PLAINMESSAGES,
+							ContactItem.CONTACTITEM_PLAINMESSAGES,
 							this
-									.getIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES) + 1);
+									.getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) + 1);
 			break;
 		case MESSAGE_URL:
 			this
 					.setIntValue(
-							ContactListContactItem.CONTACTITEM_URLMESSAGES,
+							ContactItem.CONTACTITEM_URLMESSAGES,
 							this
-									.getIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES) + 1);
+									.getIntValue(ContactItem.CONTACTITEM_URLMESSAGES) + 1);
 			break;
 		case MESSAGE_SYS_NOTICE:
 			this
 					.setIntValue(
-							ContactListContactItem.CONTACTITEM_SYSNOTICES,
+							ContactItem.CONTACTITEM_SYSNOTICES,
 							this
-									.getIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES) + 1);
+									.getIntValue(ContactItem.CONTACTITEM_SYSNOTICES) + 1);
 			break;
 		case MESSAGE_AUTH_REQUEST:
 			this
 					.setIntValue(
-							ContactListContactItem.CONTACTITEM_AUTREQUESTS,
+							ContactItem.CONTACTITEM_AUTREQUESTS,
 							this
-									.getIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS) + 1);
+									.getIntValue(ContactItem.CONTACTITEM_AUTREQUESTS) + 1);
 		}
 	}
 
 	public synchronized void resetUnreadMessages()
 	{
-		setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
-		setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES, 0);
+		setIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
+		setIntValue(ContactItem.CONTACTITEM_URLMESSAGES, 0);
+		setIntValue(ContactItem.CONTACTITEM_SYSNOTICES, 0);
 	}
 
 	/* Checks whether some other object is equal to this one */
 	public boolean equals(Object obj)
 	{
-		if (!(obj instanceof ContactListContactItem))
+		if (!(obj instanceof ContactItem))
 			return (false);
-		ContactListContactItem ci = (ContactListContactItem) obj;
+		ContactItem ci = (ContactItem) obj;
 		return (this
-				.getStringValue(ContactListContactItem.CONTACTITEM_UIN)
+				.getStringValue(ContactItem.CONTACTITEM_UIN)
 				.equals(
 						ci
-								.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) && (this
-				.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP) == ci
-				.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)));
+								.getStringValue(ContactItem.CONTACTITEM_UIN)) && (this
+				.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP) == ci
+				.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP)));
 	}
 
 
@@ -635,7 +635,7 @@ public class ContactListContactItem implements ContactListItem
 	public void showHistory()
 	{
 		HistoryStorage.showHistoryList(
-				getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+				getStringValue(ContactItem.CONTACTITEM_UIN), name);
 	}
 
 	//#sijapp cond.end#
@@ -678,8 +678,8 @@ public class ContactListContactItem implements ContactListItem
 				Jimm.jimm
 						.getIcqRef()
 						.beginTyping(
-								ContactListContactItem.this
-										.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+								ContactItem.this
+										.getStringValue(ContactItem.CONTACTITEM_UIN),
 								false);
 			} catch (JimmException e)
 			{
@@ -718,16 +718,16 @@ public class ContactListContactItem implements ContactListItem
 		}
 
 		ContactList.contactChanged(this, true, true);
-		ChatHistory.contactRenamed(getStringValue(ContactListContactItem.CONTACTITEM_UIN), name);
+		ChatHistory.contactRenamed(getStringValue(ContactItem.CONTACTITEM_UIN), name);
 	}
 
 	/* Activates the contact item menu */
 	public void activate()
 	{
-		String currentUin = getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		String currentUin = getStringValue(ContactItem.CONTACTITEM_UIN);
 
 		/* Display chat history */
-		if (getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
+		if (getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT))
 		{
 			ChatTextList chat = ChatHistory.getChatHistoryAt(currentUin);
 			chat.buildMenu();

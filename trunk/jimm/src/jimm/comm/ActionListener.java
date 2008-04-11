@@ -27,17 +27,19 @@ import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 
 import jimm.ContactList;
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import jimm.DebugLog;
 import jimm.Jimm;
-//#sijapp cond.if modules_FILES is "true"#
-import jimm.FileTransfer;
-//#sijapp cond.end#
 import jimm.RunnableImpl;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
 import jimm.util.ResourceBundle;
+
+//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+import jimm.FileTransfer;
+//#sijapp cond.end#
+
 
 public class ActionListener
 {
@@ -206,7 +208,7 @@ public class ActionListener
 				}
 
 				// Update contact list
-				ContactListContactItem item = ContactList.getItembyUIN(uin);
+				ContactItem item = ContactList.getItembyUIN(uin);
 				//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
 				int xStatus = -1;
 				if (item != null)
@@ -772,20 +774,20 @@ public class ActionListener
 									System.arraycopy(msg2Buf, 0, ip, 0, 4);
 								msgMarker += 4 + msg2Buf.length;
 
-								ContactListContactItem sender = ContactList
+								ContactItem sender = ContactList
 										.getItembyUIN(uin);
 
 								sender
 										.setIPValue(
-												ContactListContactItem.CONTACTITEM_INTERNAL_IP,
+												ContactItem.CONTACTITEM_INTERNAL_IP,
 												ip);
 								sender
 										.setIPValue(
-												ContactListContactItem.CONTACTITEM_EXTERNAL_IP,
+												ContactItem.CONTACTITEM_EXTERNAL_IP,
 												extIP);
 								sender
 										.setIntValue(
-												ContactListContactItem.CONTACTITEM_DC_PORT,
+												ContactItem.CONTACTITEM_DC_PORT,
 												Integer.parseInt(port));
 
 								//System.out.println("Filetransfer ack: "+text+" "+filename+" "+filesize+" "+Util.ipToString(ip)+" "+Util.ipToString(extIP)+" "+port);

@@ -23,7 +23,7 @@
 
 package jimm.comm;
 
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
@@ -71,7 +71,7 @@ public class UpdateContactListAction extends Action
 	/** ************************************************************************* */
 
 	/* Contact item */
-	private ContactListContactItem cItem;
+	private ContactItem cItem;
 
 	/* Group item */
 	private ContactListGroupItem gItem, newGItem;
@@ -93,9 +93,9 @@ public class UpdateContactListAction extends Action
 	{
 		super(false, true);
 		this.action = _action;
-		if (cItem instanceof ContactListContactItem)
+		if (cItem instanceof ContactItem)
 		{
-			this.cItem = (ContactListContactItem) cItem;
+			this.cItem = (ContactItem) cItem;
 			this.gItem = null;
 		} else
 		{
@@ -104,7 +104,7 @@ public class UpdateContactListAction extends Action
 		}
 	}
 
-	public UpdateContactListAction(ContactListContactItem cItem, ContactListGroupItem oldGroup, ContactListGroupItem newGroup)
+	public UpdateContactListAction(ContactItem cItem, ContactListGroupItem oldGroup, ContactListGroupItem newGroup)
 	{
 		super(false, true);
 		this.cItem = cItem;
@@ -148,9 +148,9 @@ public class UpdateContactListAction extends Action
 			if (cItem != null)
 			{
 				int groupId = cItem
-						.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
+						.getIntValue(ContactItem.CONTACTITEM_GROUP);
 				gItem = ContactList.getGroupById(groupId);
-				cItem.setIntValue(ContactListContactItem.CONTACTITEM_ID, Util
+				cItem.setIntValue(ContactItem.CONTACTITEM_ID, Util
 						.createRandomId());
 				RunnableImpl.addContact(cItem);
 				buf = packRosterItem(cItem, groupId);
@@ -285,10 +285,10 @@ public class UpdateContactListAction extends Action
 					{
 						sendGroup(gItem);
 						cItem.setBooleanValue(
-								ContactListContactItem.CONTACTITEM_IS_TEMP,
+								ContactItem.CONTACTITEM_IS_TEMP,
 								false);
 						cItem.setBooleanValue(
-								ContactListContactItem.CONTACTITEM_NO_AUTH,
+								ContactItem.CONTACTITEM_NO_AUTH,
 								false);
 					}
 
@@ -317,8 +317,8 @@ public class UpdateContactListAction extends Action
                           )
                      );
 
-                     cItem.setIntValue(ContactListContactItem.CONTACTITEM_GROUP, newGItem.getId());
-                     cItem.setIntValue(ContactListContactItem.CONTACTITEM_ID, Util.createRandomId());
+                     cItem.setIntValue(ContactItem.CONTACTITEM_GROUP, newGItem.getId());
+                     cItem.setIntValue(ContactItem.CONTACTITEM_ID, Util.createRandomId());
 
                      state = STATE_MOVE2;
                      break;
@@ -352,7 +352,7 @@ public class UpdateContactListAction extends Action
 				case STATE_DELETE_CONTACT1:
 					ContactListGroupItem group = ContactList
 							.getGroupById(cItem
-									.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
+									.getIntValue(ContactItem.CONTACTITEM_GROUP));
 					ContactList.removeContactItem(this.cItem);
 					sendGroup(group);
 					state = STATE_DELETE_CONTACT2;
@@ -473,24 +473,24 @@ public class UpdateContactListAction extends Action
 		return (this.state == ConnectAction.STATE_ERROR);
 	}
 
-	private byte[] packRosterItem(ContactListContactItem cItem, int groupID)
+	private byte[] packRosterItem(ContactItem cItem, int groupID)
 	{
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 		if (groupID == 0)
 			groupID = cItem
-					.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
+					.getIntValue(ContactItem.CONTACTITEM_GROUP);
 
 		/* Name */
 		Util.writeLenAndString(stream, cItem
-				.getStringValue(ContactListContactItem.CONTACTITEM_UIN), true);
+				.getStringValue(ContactItem.CONTACTITEM_UIN), true);
 
 		/* Group ID */
 		Util.writeWord(stream, groupID, true);
 
 		/* ID */
 		Util.writeWord(stream, cItem
-				.getIntValue(ContactListContactItem.CONTACTITEM_ID), true);
+				.getIntValue(ContactItem.CONTACTITEM_ID), true);
 
 		/* Type (Buddy record ) */
 		Util.writeWord(stream, 0, true);
@@ -503,7 +503,7 @@ public class UpdateContactListAction extends Action
 		{
 			Util.writeWord(addData, 0x0131, true);
 			Util.writeLenAndString(addData, cItem
-					.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+					.getStringValue(ContactItem.CONTACTITEM_NAME),
 					true);
 		}
 
@@ -546,7 +546,7 @@ public class UpdateContactListAction extends Action
 		Util.writeWord(stream, 1, true);
 
 		/* Contact items */
-		ContactListContactItem[] items = ContactList.getItems(gItem);
+		ContactItem[] items = ContactList.getItems(gItem);
 
 		if (items.length != 0)
 		{
@@ -558,7 +558,7 @@ public class UpdateContactListAction extends Action
 			Util.writeWord(stream, items.length * 2, true);
 			for (int i = 0; i < items.length; i++)
 				Util.writeWord(stream, items[i]
-						.getIntValue(ContactListContactItem.CONTACTITEM_ID),
+						.getIntValue(ContactItem.CONTACTITEM_ID),
 						true);
 		} else
 			Util.writeWord(stream, 0, true);

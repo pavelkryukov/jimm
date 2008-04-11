@@ -92,12 +92,12 @@ public class FileTransfer implements CommandListener, Runnable
 
 	private TextField descriptionField;
 
-	// Type and ContactListContactItem
+	// Type and ContactItem
 	private int type;
 	
 	private Alert alert;
 
-	private ContactListContactItem cItem;
+	private ContactItem cItem;
 	
 	private String fileName, shortFileName;
 	private FileSystem2 fileSystem;
@@ -110,14 +110,14 @@ public class FileTransfer implements CommandListener, Runnable
 			Command.OK, 1);
 
 	// Constructor
-	public FileTransfer(int ftType, ContactListContactItem _cItem)
+	public FileTransfer(int ftType, ContactItem _cItem)
 	{
 		type = ftType;
 		cItem = _cItem;
 	}
 
 	// Return the cItem belonging to this FileTransfer
-	public ContactListContactItem getCItem()
+	public ContactItem getCItem()
 	{
 		return (this.cItem);
 	}

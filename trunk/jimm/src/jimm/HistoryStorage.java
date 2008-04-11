@@ -48,7 +48,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
 //#sijapp cond.end#
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 
 //#sijapp cond.end#
 // Class to cache one line in messages list
@@ -243,7 +243,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		case MODE_EXPORT_HISTORY:
 			System.out.println("Start history export!");
 			if (exportUin == null) startExport(null);
-			else startExport(new ContactListContactItem[]{ ContactList.getItembyUIN(exportUin) });
+			else startExport(new ContactItem[]{ ContactList.getItembyUIN(exportUin) });
 			break;
 			
 		case MODE_SHOW_EH_MESSAGE:
@@ -259,18 +259,18 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		}
 	}
 
-	private void exportUinToStream(ContactListContactItem item, OutputStream os)
+	private void exportUinToStream(ContactItem item, OutputStream os)
 			throws IOException
 	{
 		CachedRecord record;
 		String uin = item
-				.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+				.getStringValue(ContactItem.CONTACTITEM_UIN);
 		int max = HistoryStorage.getRecordCount(uin);
 		if (max > 0)
 		{
 			String nick = (item.getStringValue(
-					ContactListContactItem.CONTACTITEM_NAME).length() > 0) ? item
-					.getStringValue(ContactListContactItem.CONTACTITEM_NAME)
+					ContactItem.CONTACTITEM_NAME).length() > 0) ? item
+					.getStringValue(ContactItem.CONTACTITEM_NAME)
 					: uin;
 			SplashCanvas.setMessage(nick);
 			SplashCanvas.setProgress(0);
@@ -322,9 +322,9 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		}
 	}
 
-	private void exportUinToFile(ContactListContactItem item, String filename) throws IOException
+	private void exportUinToFile(ContactItem item, String filename) throws IOException
 	{
-		if (HistoryStorage.getRecordCount(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN)) > 0)
+		if (HistoryStorage.getRecordCount(item.getStringValue(ContactItem.CONTACTITEM_UIN)) > 0)
 		{
 			FileSystem2 fs = null;
 			OutputStream os = null;
@@ -344,7 +344,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		}
 	}
 
-	public void startExport(ContactListContactItem[] citems)
+	public void startExport(ContactItem[] citems)
 	{
 		cp1251 = Options.getBoolean(Options.OPTION_CP1251_HACK);
 		SplashCanvas.setMessage(ResourceBundle.getString("exporting",
@@ -362,7 +362,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 						directory
 								+ "jimm_hist_"
 								+ citems[i]
-										.getStringValue(ContactListContactItem.CONTACTITEM_UIN)
+										.getStringValue(ContactItem.CONTACTITEM_UIN)
 								+ ".txt");
 			
 			

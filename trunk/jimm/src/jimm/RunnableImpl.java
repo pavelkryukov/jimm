@@ -28,7 +28,7 @@ import javax.microedition.lcdui.*;
 
 import DrawControls.VirtualList;
 import jimm.comm.Message;
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 
 public class RunnableImpl implements Runnable
 {
@@ -102,7 +102,7 @@ public class RunnableImpl implements Runnable
 			break;
 
 		case TYPE_ADDCONTACT:
-			ContactList.addContactItem((ContactListContactItem) data[0]);
+			ContactList.addContactItem((ContactItem) data[0]);
 			break;
 
 		case TYPE_RESET_CONTACTS:
@@ -114,7 +114,7 @@ public class RunnableImpl implements Runnable
 			break;
 			
 		case TYPE_ADD_CONTACT:
-			ContactListContactItem citem = (ContactListContactItem)data[0];
+			ContactItem citem = (ContactItem)data[0];
 			ContactList.addContactItem(citem);
 			ChatHistory.updateChatIfExists(citem);
 			break;
@@ -222,7 +222,7 @@ public class RunnableImpl implements Runnable
 		callSerially(TYPE_SHOW_TIME, time);
 	}
 	
-	static public void addContact(ContactListContactItem cItem)
+	static public void addContact(ContactItem cItem)
 	{
 		callSerially(TYPE_ADD_CONTACT, cItem);
 	}

@@ -23,7 +23,7 @@
 
 package jimm.comm;
 
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 
 public class PlainMessage extends Message
 {
@@ -40,7 +40,7 @@ public class PlainMessage extends Message
 	}
 
 	// Constructs an outgoing message
-	public PlainMessage(String sndrUin, ContactListContactItem rcvr,
+	public PlainMessage(String sndrUin, ContactItem rcvr,
 			int _messageType, long date, String text)
 	{
 		super(date, null, sndrUin, _messageType);
