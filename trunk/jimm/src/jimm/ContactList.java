@@ -1192,12 +1192,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					lastUnknownStatus = STATUS_NONE;
 				}
 
-				// Request contact status
-				else
-				{
-					Icq.addLocalContacts(new String[] { cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN) });
-				}
-
 				// Update visual list
 				contactChanged(cItem, true, true);
 
@@ -1274,7 +1268,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			}
 			cItems.addElement(cItem);
 			cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, true);
-			Icq.addLocalContacts(new String[] { uin });
 			return cItem;
 		}
 	}

@@ -227,6 +227,7 @@ public class JimmUI implements CommandListener
 					Icq.requestAction(sysNotAct);
 					if (authContactItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
 						Icq.requestAction(updateAct);
+					ChatHistory.rebuildMenu(authContactItem);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
@@ -1543,9 +1544,7 @@ public class JimmUI implements CommandListener
 	public static void showContactMenu(ContactListContactItem contact)
 	{
 		clciContactMenu = contact;
-		
-		System.out.println("clciContactMenu = contact");
-		
+	
 		tlContactMenu = new TextList(ResourceBundle.getString("user_menu"));
 		JimmUI.setColorScheme(tlContactMenu, false);
 		tlContactMenu.setMode(VirtualList.MODE_TEXT);
