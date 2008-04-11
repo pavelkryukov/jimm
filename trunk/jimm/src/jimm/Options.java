@@ -1443,7 +1443,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 			setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
 			
 			colorScheme = createSelector("color_scheme", "black_on_white"
-					+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme" + "|" + "Green",
+					+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme" + "|" + "Green"+ "|" + "Sand",
 					Options.OPTION_COLOR_SCHEME);
 
 			chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
