@@ -207,13 +207,13 @@ public class JimmUI implements CommandListener
 				case AUTH_TYPE_DENY:
 					notice = new SystemNotice(
 							SystemNotice.SYS_NOTICE_AUTHORISE,
-							authContactItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+							authContactItem.getStringValue(ContactItem.CONTACTITEM_UIN),
 							false, reasonText);
 					break;
 				case AUTH_TYPE_REQ_AUTH:
 					notice = new SystemNotice(
 							SystemNotice.SYS_NOTICE_REQUAUTH,
-							authContactItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+							authContactItem.getStringValue(ContactItem.CONTACTITEM_UIN),
 							false, reasonText);
 					authRequested = true;
 					break;
@@ -227,19 +227,22 @@ public class JimmUI implements CommandListener
 				try
 				{
 					Icq.requestAction(sysNotAct);
-					if (authContactItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
+					
+					if (authContactItem.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP))
 						Icq.requestAction(updateAct);
+					
 					ChatHistory.rebuildMenu(authContactItem);
+					
 					if (authRequested) 
-						authContactItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, false);
-				} catch (JimmException e)
+						authContactItem.setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, false);
+					
+					authContactItem.setIntValue(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
+				} 
+				catch (JimmException e)
 				{
 					JimmException.handleException(e);
-					if (e.isCritical())
-						return;
+					if (e.isCritical()) return;
 				}
-				
-				authContactItem.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
 			}
 
 			boolean activated = ChatHistory.activateIfExists(authContactItem);
@@ -351,7 +354,7 @@ public class JimmUI implements CommandListener
 			// User have selected new group for contact
 			if ((curScreenTag == GROUP_SELECTOR_MOVE_TAG) && ((c == cmdOk) || (c == List.SELECT_COMMAND)))
 			{
-				int currGroupId = clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
+				int currGroupId = clciContactMenu.getIntValue(ContactItem.CONTACTITEM_GROUP);
 				int newGroupId = groupList[JimmUI.getLastSelIndex()];
 				ContactListGroupItem oldGroup = ContactList.getGroupById(currGroupId);
 				ContactListGroupItem newGroup = ContactList.getGroupById(newGroupId);
@@ -723,7 +726,7 @@ public class JimmUI implements CommandListener
 	//    Hotkeys    //
 	//               //
 	///////////////////
-	static public void execHotKey(ContactListContactItem cItem, int keyCode,
+	static public void execHotKey(ContactItem cItem, int keyCode,
 			int type)
 	{
 		switch (keyCode)
@@ -765,7 +768,7 @@ public class JimmUI implements CommandListener
 	private static long lockPressedTime = -1;
 
 	static private void execHotKeyAction(int actionNum,
-			ContactListContactItem item, int keyType)
+			ContactItem item, int keyType)
 	{
 		if (keyType == VirtualList.KEY_PRESSED)
 		{
@@ -785,9 +788,9 @@ public class JimmUI implements CommandListener
 				if (item != null)
 					requiestUserInfo(
 							item
-									.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+									.getStringValue(ContactItem.CONTACTITEM_UIN),
 							item
-									.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+									.getStringValue(ContactItem.CONTACTITEM_NAME));
 				break;
 
 			case Options.HOTKEY_NEWMSG:
@@ -1304,7 +1307,7 @@ public class JimmUI implements CommandListener
 			switch (type)
 			{
 			case SHS_TYPE_EMPTY:
-				ContactListContactItem[] cItems = ContactList
+				ContactItem[] cItems = ContactList
 						.getGroupItems(groupId);
 				if (cItems.length != 0)
 					continue;
@@ -1365,7 +1368,7 @@ public class JimmUI implements CommandListener
 	private static TextBox messageTextbox;
 	
 	/* receiver for text message */
-	private static ContactListContactItem textMessReceiver;
+	private static ContactItem textMessReceiver;
 	
 	/* Modes constant for text editor */
 	final private static int EDITOR_MODE_MESSAGE = 200001;
@@ -1380,7 +1383,7 @@ public class JimmUI implements CommandListener
 	}
 	
 	/* Write message */
-	public static void writeMessage(ContactListContactItem receiver, String initText)
+	public static void writeMessage(ContactItem receiver, String initText)
 	{
 		if (messageTextbox == null)
 		{
@@ -1424,14 +1427,14 @@ public class JimmUI implements CommandListener
 			try
 			{
 				System.out.println("sendTypeingNotify()");
-				Icq.beginTyping(textMessReceiver.getStringValue(ContactListContactItem.CONTACTITEM_UIN), value);
+				Icq.beginTyping(textMessReceiver.getStringValue(ContactItem.CONTACTITEM_UIN), value);
 			} catch (JimmException e)
 			{}
 		}
 		//#sijapp cond.end#
 	}
 
-	public static void sendMessage(String text, ContactListContactItem textMessReceiver)
+	public static void sendMessage(String text, ContactItem textMessReceiver)
 	{
 		/* Construct plain message object and request new SendMessageAction
 		 Add the new message to the chat history */
@@ -1453,11 +1456,11 @@ public class JimmUI implements CommandListener
 			if (e.isCritical())
 				return;
 		}
-		ChatHistory.addMyMessage(textMessReceiver, text, plainMsg.getNewDate(), textMessReceiver.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+		ChatHistory.addMyMessage(textMessReceiver, text, plainMsg.getNewDate(), textMessReceiver.getStringValue(ContactItem.CONTACTITEM_NAME));
 
 		//#sijapp cond.if modules_HISTORY is "true" #
 		if (Options.getBoolean(Options.OPTION_HISTORY))
-			HistoryStorage.addText(textMessReceiver.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+			HistoryStorage.addText(textMessReceiver.getStringValue(ContactItem.CONTACTITEM_UIN),
 					text, (byte) 1, ResourceBundle.getString("me"), plainMsg
 							.getNewDate());
 		//#sijapp cond.end#
@@ -1500,12 +1503,12 @@ public class JimmUI implements CommandListener
 	
 	private static int authType;
 	private static TextBox authTextbox;
-	private static ContactListContactItem authContactItem;
+	private static ContactItem authContactItem;
 
 	public static final int AUTH_TYPE_DENY = 10001;
 	public static final int AUTH_TYPE_REQ_AUTH = 10002;
 	
-	public static void authMessage(int authType, ContactListContactItem contactItem, String caption, String text)
+	public static void authMessage(int authType, ContactItem contactItem, String caption, String text)
 	{
 		JimmUI.authType = authType;
 		authContactItem = contactItem;
@@ -1539,12 +1542,12 @@ public class JimmUI implements CommandListener
 	private static final int USER_MENU_MOVE_TO_GROUP = 15;
 	
 	private static TextList tlContactMenu;
-	private static ContactListContactItem clciContactMenu;
+	private static ContactItem clciContactMenu;
 	private static TextList removeContactMessageBox;
 	private static TextList removeMeMessageBox;
 	private static TextBox renameTextbox;
 	
-	public static void showContactMenu(ContactListContactItem contact)
+	public static void showContactMenu(ContactItem contact)
 	{
 		clciContactMenu = contact;
 	
@@ -1557,11 +1560,11 @@ public class JimmUI implements CommandListener
 		tlContactMenu.setCommandListener(_this);
 		tlContactMenu.setCyclingCursor(true);
 		
-		long status = contact.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+		long status = contact.getIntValue(ContactItem.CONTACTITEM_STATUS);
 		
 		if (Icq.isConnected())
 		{
-			if (contact.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
+			if (contact.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH))
 				addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH, true);
 			
 			addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE, true);
@@ -1572,9 +1575,9 @@ public class JimmUI implements CommandListener
 		
 		addTextListItem(tlContactMenu, "info", null, USER_MENU_USER_INFO, true);
 		
-		//#sijapp cond.if modules_HISTORY is "true" #
+//#sijapp cond.if modules_HISTORY is "true" #
 		addTextListItem(tlContactMenu, "history", null, USER_MENU_HISTORY, true);
-		//#sijapp cond.end#
+//#sijapp cond.end#
 		
 		if (Icq.isConnected())
 		{
@@ -1583,18 +1586,17 @@ public class JimmUI implements CommandListener
 					&& (status != ContactList.STATUS_INVISIBLE))
 				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true);		
 			
-			//#sijapp cond.if modules_FILES is "true"#
-			
+//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
 			if (((status != ContactList.STATUS_OFFLINE) 
-					&& contact.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
+					&& contact.getIntValue(ContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
 					(Options.getInt(Options.OPTION_FT_MODE) == Options.FS_MODE_WEB))
 			{
 				addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS, true);
-				//#sijapp cond.if target isnot "MOTOROLA"#
+//#sijapp cond.if target isnot "MOTOROLA"#
 				addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS, true);
-				//#sijapp cond.end#
+//#sijapp cond.end#
 			}
-			//#sijapp cond.end#
+//#sijapp cond.end#
 			
 			addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE, true);
 			addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true);
@@ -1625,7 +1627,7 @@ public class JimmUI implements CommandListener
 			break;
 			
 		case USER_MENU_STATUS_MESSAGE:
-			long status = clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+			long status = clciContactMenu.getIntValue(ContactItem.CONTACTITEM_STATUS);
 			if (!((status == ContactList.STATUS_ONLINE)
 					|| (status == ContactList.STATUS_OFFLINE) || (status == ContactList.STATUS_INVISIBLE)))
 			{
@@ -1701,7 +1703,7 @@ public class JimmUI implements CommandListener
 				removeContactMessageBox = showMessageBox
 				(
 					ResourceBundle.getString("remove") + "?", 
-					ResourceBundle.getString("remove") + " " + clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME) + "?", 
+					ResourceBundle.getString("remove") + " " + clciContactMenu.getStringValue(ContactItem.CONTACTITEM_NAME) + "?", 
 					JimmUI.MESBOX_OKCANCEL
 				);
 				break;
@@ -1710,7 +1712,7 @@ public class JimmUI implements CommandListener
 				removeMeMessageBox = showMessageBox
 				(
 					ResourceBundle.getString("remove_me") + "?",
-					ResourceBundle.getString("remove_me_from") + clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME) + "?", 
+					ResourceBundle.getString("remove_me_from") + clciContactMenu.getStringValue(ContactItem.CONTACTITEM_NAME) + "?", 
 					JimmUI.MESBOX_OKCANCEL
 				); 
 				break;
@@ -1719,7 +1721,7 @@ public class JimmUI implements CommandListener
 				renameTextbox = new TextBox
 				(
 					ResourceBundle.getString("rename"),
-					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_NAME),
 					64,
 					TextField.ANY
 				);
@@ -1732,8 +1734,8 @@ public class JimmUI implements CommandListener
 			case USER_MENU_USER_INFO:
 				JimmUI.requiestUserInfo
 				(
-					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN), 
-					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME)
+					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_UIN), 
+					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_NAME)
 				);
 				break;
 				
@@ -1748,7 +1750,7 @@ public class JimmUI implements CommandListener
 					GROUP_SELECTOR_MOVE_TAG, 
 					_this, 
 					SHS_TYPE_ALL, 
-					clciContactMenu.getIntValue(ContactListContactItem.CONTACTITEM_GROUP)
+					clciContactMenu.getIntValue(ContactItem.CONTACTITEM_GROUP)
 				);
 				break;
 				
@@ -1756,59 +1758,59 @@ public class JimmUI implements CommandListener
 			case USER_MENU_HISTORY:
 				HistoryStorage.showHistoryList
 				(
-					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN), 
-					clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_NAME)
+					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_UIN), 
+					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_NAME)
 				);
 				break;
 			//#sijapp cond.end#
 		}
 	}
 	
-	public static void showClientInfo(ContactListContactItem cItem)
+	public static void showClientInfo(ContactItem cItem)
 	{
 		TextList tlist = JimmUI.getInfoTextList(
-				cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN), true);
+				cItem.getStringValue(ContactItem.CONTACTITEM_UIN), true);
 		String[] clInfoData = new String[JimmUI.UI_LAST_ID];
 
 		/* sign on time */
-		long signonTime = cItem.getIntValue(ContactListContactItem.CONTACTITEM_SIGNON);
+		long signonTime = cItem.getIntValue(ContactItem.CONTACTITEM_SIGNON);
 		if (signonTime > 0)
 			clInfoData[JimmUI.UI_SIGNON] = Util
 					.getDateString(false, signonTime);
 
 		/* online time */
-		long onlineTime = cItem.getIntValue(ContactListContactItem.CONTACTITEM_ONLINE);
+		long onlineTime = cItem.getIntValue(ContactItem.CONTACTITEM_ONLINE);
 		if (onlineTime > 0)
 			clInfoData[JimmUI.UI_ONLINETIME] = Util
 					.longitudeToString(onlineTime);
 
 		/* idle time */
-		int idleTime = cItem.getIntValue(ContactListContactItem.CONTACTITEM_IDLE);
+		int idleTime = cItem.getIntValue(ContactItem.CONTACTITEM_IDLE);
 		if (idleTime > 0)
 			clInfoData[JimmUI.UI_IDLE_TIME] = Util.longitudeToString(idleTime);
 		
 		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
 
 		/* Client version */
-		int clientVers = cItem.getIntValue(ContactListContactItem.CONTACTITEM_CLIENT);
+		int clientVers = cItem.getIntValue(ContactItem.CONTACTITEM_CLIENT);
 		if (clientVers != Icq.CLI_NONE)
 			clInfoData[JimmUI.UI_ICQ_CLIENT] = Icq.getClientString((byte) clientVers)
-					+ " " + cItem.getStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION);
+					+ " " + cItem.getStringValue(ContactItem.CONTACTITEM_CLIVERSION);
 
 		/* ICQ protocol version */
 		clInfoData[JimmUI.UI_ICQ_VERS] = Integer
-				.toString(cItem.getIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT));
+				.toString(cItem.getIntValue(ContactItem.CONTACTITEM_ICQ_PROT));
 
 		/* Internal IP */
 		clInfoData[JimmUI.UI_INT_IP] = Util
-				.ipToString(cItem.getIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP));
+				.ipToString(cItem.getIPValue(ContactItem.CONTACTITEM_INTERNAL_IP));
 
 		/* External IP */
 		clInfoData[JimmUI.UI_EXT_IP] = Util
-				.ipToString(cItem.getIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP));
+				.ipToString(cItem.getIPValue(ContactItem.CONTACTITEM_EXTERNAL_IP));
 
 		/* Port */
-		int port = cItem.getIntValue(ContactListContactItem.CONTACTITEM_DC_PORT);
+		int port = cItem.getIntValue(ContactItem.CONTACTITEM_DC_PORT);
 		if (port != 0)
 			clInfoData[JimmUI.UI_PORT] = Integer.toString(port);
 		//#sijapp cond.end#
@@ -1820,7 +1822,7 @@ public class JimmUI implements CommandListener
 	private static void menuRemoveContactSelected()
 	{
 		System.out.println("clciContactMenu="+clciContactMenu);
-		String uin = clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		String uin = clciContactMenu.getStringValue(ContactItem.CONTACTITEM_UIN);
 		ChatHistory.chatHistoryDelete(uin);
 		boolean ok = Icq.delFromContactList(clciContactMenu);
 		if (ok)
@@ -1833,7 +1835,7 @@ public class JimmUI implements CommandListener
 	
 	private static void menuRemoveMeSelected()
 	{
-		RemoveMeAction remAct = new RemoveMeAction(clciContactMenu.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+		RemoveMeAction remAct = new RemoveMeAction(clciContactMenu.getStringValue(ContactItem.CONTACTITEM_UIN));
 
 		try
 		{
@@ -1882,13 +1884,13 @@ public class JimmUI implements CommandListener
 		Jimm.getTimerRef().schedule(flashTimerTask, interval, interval);
 	}
 	
-	public static void showCreepingLine(Object control, String text, ContactListContactItem cItem)
+	public static void showCreepingLine(Object control, String text, ContactItem cItem)
 	{
 		if ((text == null) || (control == null))
 		if (!Options.getBoolean(Options.OPTION_CREEPING_LINE)) return;
 		ChatTextList curChat = ChatHistory.getCurrent(); 
 		if ((curChat != null) && (curChat.getUIControl() == control) && (curChat.isVisible())) return;
-		String name = cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME);
+		String name = cItem.getStringValue(ContactItem.CONTACTITEM_NAME);
 		String creepingText = name+": "+text;
 		showCapText(control, creepingText, TimerTasks.TYPE_CREEPING);
 	}

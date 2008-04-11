@@ -113,13 +113,13 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	private static final Command cmdContactMenu = new Command(ResourceBundle.getString("user_menu"), Command.ITEM, 7);
 	
 	public String ChatName;
-	ContactListContactItem contact;
+	ContactItem contact;
 
 	private Vector messData = new Vector();
 
 	private int messTotalCounter = 0; 
 
-	ChatTextList(String name, ContactListContactItem contact)
+	ChatTextList(String name, ContactItem contact)
 	{
 		textList = new TextList(null);
 
@@ -133,7 +133,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		textList.setVLCommands(this);
 	}
 	
-	public ContactListContactItem getContact()
+	public ContactItem getContact()
 	{
 		return contact;
 	}
@@ -152,7 +152,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		textList.addCommandEx(cmdDelChat, VirtualList.MENU_TYPE_RIGHT);
 		textList.addCommandEx(cmdCopyText, VirtualList.MENU_TYPE_RIGHT);
 		
-		if (contact.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP)) 
+		if (contact.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP)) 
 			textList.addCommandEx(cmdAddUrs, VirtualList.MENU_TYPE_RIGHT);
 		
 		if (JimmUI.getClipBoardText() != null) textList.addCommandEx(cmdReplWithQuota, VirtualList.MENU_TYPE_RIGHT);
@@ -161,7 +161,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		if (!Options.getBoolean(Options.OPTION_HISTORY)) textList.addCommandEx(cmdAddToHistory, VirtualList.MENU_TYPE_RIGHT);
 		//#sijapp cond.end#
 		
-		if (contact.getBooleanValue(ContactListContactItem.CONTACTITEM_NO_AUTH))
+		if (contact.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH))
 			textList.addCommandEx(cmdReqAuth, VirtualList.MENU_TYPE_RIGHT);
 		
 		textList.addCommandEx(cmdContactMenu, VirtualList.MENU_TYPE_RIGHT);
@@ -204,7 +204,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 					break;
 				}
 
-				ChatHistory.chatHistoryDelete(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), delType);
+				ChatHistory.chatHistoryDelete(contact.getStringValue(ContactItem.CONTACTITEM_UIN), delType);
 				ContactList.activate();
 				return;
 			}
@@ -233,7 +233,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		/* Copy selected text to clipboard */
 		else if (c == cmdCopyText)
 		{
-			ChatHistory.copyText(contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN), ChatName);
+			ChatHistory.copyText(contact.getStringValue(ContactItem.CONTACTITEM_UIN), ChatName);
 			textList.addCommandEx(cmdReplWithQuota, VirtualList.MENU_TYPE_RIGHT);
 		}
 		
@@ -256,7 +256,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		{
 			Search search = new Search(true);
 			String data[] = new String[Search.LAST_INDEX];
-			data[Search.UIN] = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+			data[Search.UIN] = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 
 			SearchAction act = new SearchAction(search, data, SearchAction.CALLED_BY_ADDUSER);
 
@@ -283,7 +283,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 			if (text == null)
 				return;
 
-			String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+			String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 			HistoryStorage.addText(uin, text, data.getIncoming() ? (byte) 0
 					: (byte) 1, data.getIncoming() ? ChatName : ResourceBundle
 					.getString("me"), data.getTime());
@@ -295,14 +295,14 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		{
 			SystemNotice notice = new SystemNotice(
 					SystemNotice.SYS_NOTICE_AUTHORISE,
-					contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
+					contact.getStringValue(ContactItem.CONTACTITEM_UIN),
 					true, "");
 			SysNoticeAction sysNotAct = new SysNoticeAction(notice);
 			try
 			{
 				Icq.requestAction(sysNotAct);
 			
-				contact.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
+				contact.setIntValue(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
 				buildMenu();
 			} catch (JimmException e)
 			{
@@ -363,7 +363,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	
 	void checkForAuthReply()
 	{
-		if (contact.isMessageAvailable(ContactListContactItem.MESSAGE_AUTH_REQUEST))
+		if (contact.isMessageAvailable(ContactItem.MESSAGE_AUTH_REQUEST))
 		{
 			textList.addCommandEx(cmdGrantAuth, VirtualList.MENU_TYPE_RIGHT);
 			textList.addCommandEx(cmdDenyAuth, VirtualList.MENU_TYPE_RIGHT);
@@ -513,13 +513,13 @@ public class ChatHistory
 	}
 
 	/* Adds a message to the message display */
-	static protected void addMessage(ContactListContactItem contact, Message message)
+	static protected void addMessage(ContactItem contact, Message message)
 	{
 		synchronized (_this)
 		{
-			String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+			String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 			if (!historyTable.containsKey(uin))
-				newChatForm(contact, contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME));
+				newChatForm(contact, contact.getStringValue(ContactItem.CONTACTITEM_NAME));
 			
 			ChatTextList chat = (ChatTextList) historyTable.get(uin);
 
@@ -531,10 +531,10 @@ public class ChatHistory
 			{
 				PlainMessage plainMsg = (PlainMessage) message;
 
-				if (!visible) contact.increaseMessageCount(ContactListContactItem.MESSAGE_PLAIN);
+				if (!visible) contact.increaseMessageCount(ContactItem.MESSAGE_PLAIN);
 
 				addTextToForm(uin, contact
-						.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+						.getStringValue(ContactItem.CONTACTITEM_NAME),
 						plainMsg.getText(), "", plainMsg.getNewDate(), true,
 						offline);
 				
@@ -545,7 +545,7 @@ public class ChatHistory
 						uin,
 						plainMsg.getText(),
 						(byte) 0,
-						contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+						contact.getStringValue(ContactItem.CONTACTITEM_NAME),
 						plainMsg.getNewDate()
 					);
 				//#sijapp cond.end#
@@ -559,9 +559,9 @@ public class ChatHistory
 			else if (message instanceof UrlMessage)
 			{
 				UrlMessage urlMsg = (UrlMessage) message;
-				if (!chat.isVisible()) contact .increaseMessageCount(ContactListContactItem.MESSAGE_URL);
+				if (!chat.isVisible()) contact .increaseMessageCount(ContactItem.MESSAGE_URL);
 				addTextToForm(uin, contact
-						.getStringValue(ContactListContactItem.CONTACTITEM_NAME),
+						.getStringValue(ContactItem.CONTACTITEM_NAME),
 						urlMsg.getText(), urlMsg.getUrl(), urlMsg.getNewDate(),
 						false, offline);
 			} else if (message instanceof SystemNotice)
@@ -569,7 +569,7 @@ public class ChatHistory
 				SystemNotice notice = (SystemNotice) message;
 				if (!visible)
 					contact
-							.increaseMessageCount(ContactListContactItem.MESSAGE_SYS_NOTICE);
+							.increaseMessageCount(ContactItem.MESSAGE_SYS_NOTICE);
 
 				if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
 				{
@@ -580,7 +580,7 @@ public class ChatHistory
 				} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
 				{
 					contact
-							.increaseMessageCount(ContactListContactItem.MESSAGE_AUTH_REQUEST);
+							.increaseMessageCount(ContactItem.MESSAGE_AUTH_REQUEST);
 					addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 							notice.getSndrUin()
 									+ ResourceBundle.getString("wantsyourauth")
@@ -591,7 +591,7 @@ public class ChatHistory
 					if (notice.isAUTH_granted())
 					{
 						contact.setBooleanValue(
-								ContactListContactItem.CONTACTITEM_NO_AUTH, false);
+								ContactItem.CONTACTITEM_NO_AUTH, false);
 						addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 								ResourceBundle.getString("grantedby")
 										+ notice.getSndrUin() + ".", "", notice
@@ -617,10 +617,10 @@ public class ChatHistory
 		}
 	}
 
-	static protected synchronized void addMyMessage(ContactListContactItem contact, String message,
+	static protected synchronized void addMyMessage(ContactItem contact, String message,
 			long time, String ChatName)
 	{
-		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		if (!historyTable.containsKey(uin)) newChatForm(contact, ChatName);
 		addTextToForm(uin, ResourceBundle.getString("me"), message, "", time, false, false);
 	}
@@ -678,14 +678,14 @@ public class ChatHistory
 
 	static public void chatHistoryDelete(String uin)
 	{
-		ContactListContactItem cItem = ContactList.getItembyUIN(uin);
+		ContactItem cItem = ContactList.getItembyUIN(uin);
 		historyTable.remove(uin);
 
-		cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT,
+		cItem.setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT,
 				false);
-		cItem.setIntValue(ContactListContactItem.CONTACTITEM_PLAINMESSAGES, 0);
-		cItem.setIntValue(ContactListContactItem.CONTACTITEM_URLMESSAGES, 0);
-		cItem.setIntValue(ContactListContactItem.CONTACTITEM_SYSNOTICES, 0);
+		cItem.setIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
+		cItem.setIntValue(ContactItem.CONTACTITEM_URLMESSAGES, 0);
+		cItem.setIntValue(ContactItem.CONTACTITEM_SYSNOTICES, 0);
 	}
 
 	// Delete the chat history for uin
@@ -729,22 +729,22 @@ public class ChatHistory
 	}
 
 	// Creates a new chat form
-	static private void newChatForm(ContactListContactItem contact, String name)
+	static private void newChatForm(ContactItem contact, String name)
 	{
 		ChatTextList chatForm = new ChatTextList(name, contact);
-		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		historyTable.put(uin, chatForm);
 		UpdateCaption(uin);
 		ContactList.getItembyUIN(uin).setBooleanValue(
-				ContactListContactItem.CONTACTITEM_HAS_CHAT, true); ///
+				ContactItem.CONTACTITEM_HAS_CHAT, true); ///
 		//#sijapp cond.if modules_HISTORY is "true" #
 		fillFormHistory(contact);
 		//#sijapp cond.end#
 	}
 	
-	static public void updateChatIfExists(ContactListContactItem contact)
+	static public void updateChatIfExists(ContactItem contact)
 	{
-		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		ChatTextList chat = (ChatTextList) historyTable.get(uin);
 		if (chat == null) return;
 		chat.contact = contact;
@@ -754,10 +754,10 @@ public class ChatHistory
 	//#sijapp cond.if modules_HISTORY is "true" #
 	final static private int MAX_HIST_LAST_MESS = 5;
 
-	static public void fillFormHistory(ContactListContactItem contact)
+	static public void fillFormHistory(ContactItem contact)
 	{
-		String name = contact.getStringValue(ContactListContactItem.CONTACTITEM_NAME);
-		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		String name = contact.getStringValue(ContactItem.CONTACTITEM_NAME);
+		String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		if (Options.getBoolean(Options.OPTION_SHOW_LAST_MESS))
 		{
 			int recCount = HistoryStorage.getRecordCount(uin);
@@ -833,17 +833,17 @@ public class ChatHistory
 		}
 	}
 	
-	public static void rebuildMenu(ContactListContactItem item)
+	public static void rebuildMenu(ContactItem item)
 	{
-		ChatTextList chat = getChatHistoryAt(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+		ChatTextList chat = getChatHistoryAt(item.getStringValue(ContactItem.CONTACTITEM_UIN));
 		if (chat != null) chat.buildMenu();
 	}
 	
-	public static boolean activateIfExists(ContactListContactItem item)
+	public static boolean activateIfExists(ContactItem item)
 	{
 		if (item == null) return false;
 		
-		ChatTextList chat = getChatHistoryAt(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+		ChatTextList chat = getChatHistoryAt(item.getStringValue(ContactItem.CONTACTITEM_UIN));
 		if (chat != null)
 		{
 			chat.buildMenu();

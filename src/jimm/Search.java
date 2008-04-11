@@ -456,17 +456,17 @@ public class Search
 			} else if (c == this.addCommand && d == this.groupList)
 			{
 				String[] resultData = getResult(selectedIndex);
-				ContactListContactItem cItem = new ContactListContactItem(-1,
+				ContactItem cItem = new ContactItem(-1,
 						ContactList.getGroupItems()[groupList
 								.getSelectedIndex()].getId(),
 						resultData[JimmUI.UI_UIN_LIST],
 						resultData[JimmUI.UI_NICK], false, false);
 				cItem.setBooleanValue(
-						ContactListContactItem.CONTACTITEM_NO_AUTH,
+						ContactItem.CONTACTITEM_NO_AUTH,
 						resultData[JimmUI.UI_AUTH].equals("1"));
 				cItem.setBooleanValue(
-						ContactListContactItem.CONTACTITEM_IS_TEMP, true);
-				cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
+						ContactItem.CONTACTITEM_IS_TEMP, true);
+				cItem.setIntValue(ContactItem.CONTACTITEM_STATUS,
 						ContactList.STATUS_OFFLINE);
 				Icq.addToContactList(cItem);
 			}
@@ -476,10 +476,10 @@ public class Search
 			{
 				String[] resultData = getResult(selectedIndex);
 
-				ContactListContactItem cItem = ContactList
+				ContactItem cItem = ContactList
 						.createTempContact(resultData[JimmUI.UI_UIN_LIST]);
-				//ContactListContactItem.CONTACTITEM_HAS_CHAT
-				cItem.setStringValue(ContactListContactItem.CONTACTITEM_NAME,
+				//ContactItem.CONTACTITEM_HAS_CHAT
+				cItem.setStringValue(ContactItem.CONTACTITEM_NAME,
 						resultData[JimmUI.UI_NICK]);
 				JimmUI.writeMessage(cItem, new String());
 			}

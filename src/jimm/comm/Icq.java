@@ -41,7 +41,7 @@ import javax.microedition.io.SocketConnection;
 //# import javax.microedition.io.StreamConnection;
 //#sijapp cond.end#
 
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.JimmException;
@@ -142,9 +142,9 @@ public class Icq implements Runnable
 		}
 	}
 
-	// Adds a ContactListContactItem to the server saved contact list
+	// Adds a ContactItem to the server saved contact list
 	static public synchronized void addToContactList(
-			ContactListContactItem cItem)
+			ContactItem cItem)
 	{
 		// Request contact item adding
 		UpdateContactListAction act = new UpdateContactListAction(cItem,
@@ -240,16 +240,16 @@ public class Icq implements Runnable
 		RunnableImpl.resetContactsOffline();
 	}
 
-	// Dels a ContactListContactItem to the server saved contact list
+	// Dels a ContactItem to the server saved contact list
 	static public synchronized boolean delFromContactList(
-			ContactListContactItem cItem)
+			ContactItem cItem)
 	{
 		// Check whether contact item is temporary
-		if (cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP))
+		if (cItem.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP))
 		{
 			// Remove this temporary contact item
 			removeLocalContact(cItem
-					.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+					.getStringValue(ContactItem.CONTACTITEM_UIN));
 			ContactList.removeContactItem(cItem);
 
 			// Activate contact list
@@ -3078,7 +3078,7 @@ public class Icq implements Runnable
 		return -1;
 	}
 	
-	public static void detectUserClientAndParseCaps(ContactListContactItem item, int dwFP1, int dwFP2, int dwFP3, byte[] capabilities, int wVersion, boolean statusChange)
+	public static void detectUserClientAndParseCaps(ContactItem item, int dwFP1, int dwFP2, int dwFP3, byte[] capabilities, int wVersion, boolean statusChange)
 	{
 		//System.out.println("uin - " + uin + " found capabilities count:" + capabilities.length/16);
 		//PrintCapabilities("cap - ", capabilities);
@@ -3492,12 +3492,12 @@ public class Icq implements Runnable
 			}
 			if (client != CLI_NONE)
 			{
-				item.setIntValue(ContactListContactItem.CONTACTITEM_CLIENT, client);
-				item.setStringValue(ContactListContactItem.CONTACTITEM_CLIVERSION, szVersion);
+				item.setIntValue(ContactItem.CONTACTITEM_CLIENT, client);
+				item.setStringValue(ContactItem.CONTACTITEM_CLIVERSION, szVersion);
 			}
 		}
 
-		item.setIntValue(ContactListContactItem.CONTACTITEM_CAPABILITIES, caps);
+		item.setIntValue(ContactItem.CONTACTITEM_CAPABILITIES, caps);
 	}
 
 	public static String getClientString(int cli)

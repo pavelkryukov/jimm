@@ -23,7 +23,7 @@
 
 package jimm.comm;
 
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 
 public abstract class Message
 {
@@ -69,7 +69,7 @@ public abstract class Message
 	private String rcvrUin;
 
 	// Receiver object (set only for outgoing messages)
-	protected ContactListContactItem rcvr;
+	protected ContactItem rcvr;
 
 	// Date of dispatch
 	private long newDate;
@@ -97,7 +97,7 @@ public abstract class Message
 		} else
 		{
 			return (this.rcvr
-					.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+					.getStringValue(ContactItem.CONTACTITEM_UIN));
 		}
 	}
 
@@ -108,7 +108,7 @@ public abstract class Message
 	}
 
 	// Returns the receiver
-	public ContactListContactItem getRcvr()
+	public ContactItem getRcvr()
 	{
 		return (this.rcvr);
 	}

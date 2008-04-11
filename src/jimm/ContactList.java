@@ -83,7 +83,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		, PlayerListener
 //#sijapp cond.end#
 {
-	/* Status (all are mutual exclusive) TODO: move status to ContactListContactItem */
+	/* Status (all are mutual exclusive) TODO: move status to ContactItem */
 	public static final int STATUS_EVIL = 0x00003000;
 
 	public static final int STATUS_DEPRESSION = 0x00004000;
@@ -349,15 +349,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		return cItems.size();
 	}
 
-	static private ContactListContactItem getCItem(int index)
+	static private ContactItem getCItem(int index)
 	{
-		return (ContactListContactItem) cItems.elementAt(index);
+		return (ContactItem) cItems.elementAt(index);
 	}
 
 	// Returns all contact items as array
-	static public synchronized ContactListContactItem[] getContactItems()
+	static public synchronized ContactItem[] getContactItems()
 	{
-		ContactListContactItem[] cItems_ = new ContactListContactItem[cItems
+		ContactItem[] cItems_ = new ContactItem[cItems
 				.size()];
 		ContactList.cItems.copyInto(cItems_);
 		return (cItems_);
@@ -494,8 +494,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					if (type == 0)
 					{
 
-						// Instantiate ContactListContactItem object and add to vector
-						ContactListContactItem ci = new ContactListContactItem();
+						// Instantiate ContactItem object and add to vector
+						ContactItem ci = new ContactItem();
 						ci.loadFromStream(dis);
 						ContactList.cItems.addElement(ci);
 					}
@@ -606,7 +606,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		onlineCounter = 0;
 		for (int i = cItems.size() - 1; i >= 0; i--)
 		{
-			ContactListContactItem item = getCItem(i);
+			ContactItem item = getCItem(i);
 			item.setOfflineStatus();
 		}
 
@@ -621,11 +621,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		for (int i = cItems.size() - 1; i >= 0; i--)
 		{
 			if (getCItem(i).getBooleanValue(
-					ContactListContactItem.CONTACTITEM_NO_AUTH)
+					ContactItem.CONTACTITEM_NO_AUTH)
 					|| getCItem(i).getBooleanValue(
-							ContactListContactItem.CONTACTITEM_IS_TEMP))
+							ContactItem.CONTACTITEM_IS_TEMP))
 				data.addElement(getCItem(i).getStringValue(
-						ContactListContactItem.CONTACTITEM_UIN));
+						ContactItem.CONTACTITEM_UIN));
 		}
 		String result[] = new String[data.size()];
 		data.copyInto(result);
@@ -659,7 +659,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			// Add new contact items and group items
 			for (int i = 0; i < items.length; i++)
 			{
-				if (items[i] instanceof ContactListContactItem)
+				if (items[i] instanceof ContactItem)
 				{
 					cItems.addElement(items[i]);
 				} else if (items[i] instanceof ContactListGroupItem)
@@ -679,11 +679,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				// Which contacts already have chats?
 				for (int i = getSize() - 1; i >= 0; i--)
 				{
-					ContactListContactItem cItem = getCItem(i);
+					ContactItem cItem = getCItem(i);
 					cItem.setBooleanValue
 					(
-						ContactListContactItem.CONTACTITEM_HAS_CHAT,
-						ChatHistory.chatHistoryExists(cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN))
+						ContactItem.CONTACTITEM_HAS_CHAT,
+						ChatHistory.chatHistoryExists(cItem.getStringValue(ContactItem.CONTACTITEM_UIN))
 					);
 				}
 			}
@@ -760,11 +760,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		// add contacts
 		for (i = 0; i < cCount; i++)
 		{
-			ContactListContactItem cItem = getCItem(i);
+			ContactItem cItem = getCItem(i);
 
 			if (only_online
 					&& (cItem
-							.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) == STATUS_OFFLINE)
+							.getIntValue(ContactItem.CONTACTITEM_STATUS) == STATUS_OFFLINE)
 					&& !cItem.mustBeShownAnyWay())
 				continue;
 
@@ -773,7 +773,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				TreeNode groupNode = (TreeNode) gNodes
 						.get(new Integer(
 								cItem
-										.getIntValue(ContactListContactItem.CONTACTITEM_GROUP)));
+										.getIntValue(ContactItem.CONTACTITEM_GROUP)));
 				tree.addNode(groupNode, cItem);
 			} else
 			{
@@ -797,7 +797,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	}
 
 	// Returns reference to contact item with uin or null if not found  
-	static public ContactListContactItem getItembyUIN(String uin)
+	static public ContactItem getItembyUIN(String uin)
 	{
 		int uinInt;
 		try {
@@ -808,24 +808,24 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 		for (int i = cItems.size() - 1; i >= 0; i--)
 		{
-			ContactListContactItem citem = getCItem(i);
+			ContactItem citem = getCItem(i);
 			if (citem.getUIN() == uinInt)
 				return citem;
 		}
 		return null;
 	}
 
-	static public ContactListContactItem[] getGroupItems(int groupId)
+	static public ContactItem[] getGroupItems(int groupId)
 	{
 		Vector vect = new Vector();
 		for (int i = 0; i < cItems.size(); i++)
 		{
-			ContactListContactItem cItem = getCItem(i);
-			if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == groupId)
+			ContactItem cItem = getCItem(i);
+			if (cItem.getIntValue(ContactItem.CONTACTITEM_GROUP) == groupId)
 				vect.addElement(cItem);
 		}
 
-		ContactListContactItem[] result = new ContactListContactItem[vect
+		ContactItem[] result = new ContactItem[vect
 				.size()];
 		vect.copyInto(result);
 
@@ -839,23 +839,23 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		if ((group == null) || (groupNode == null))
 			return;
 
-		ContactListContactItem cItem;
+		ContactItem cItem;
 		int onlineCount = 0;
 
 		int count = groupNode.size();
 		for (int i = 0; i < count; i++)
 		{
-			if (!(groupNode.elementAt(i).getData() instanceof ContactListContactItem))
+			if (!(groupNode.elementAt(i).getData() instanceof ContactItem))
 				continue; // TODO: must be removed
-			cItem = (ContactListContactItem) groupNode.elementAt(i).getData();
-			if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
+			cItem = (ContactItem) groupNode.elementAt(i).getData();
+			if (cItem.getIntValue(ContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
 				onlineCount++;
 		}
 		group.setCounters(onlineCount, count);
 	}
 
 	// Must be called after any changes in contacts
-	public static void contactChanged(ContactListContactItem item,
+	public static void contactChanged(ContactItem item,
 			boolean setCurrent, boolean needSorting)
 	{
 		if (!treeBuilt)
@@ -866,13 +866,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		int i, count, groupId;
 
 		int status = item
-				.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+				.getIntValue(ContactItem.CONTACTITEM_STATUS);
 
 		String uin = item
-				.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+				.getStringValue(ContactItem.CONTACTITEM_UIN);
 
 		// which group id ?
-		groupId = item.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
+		groupId = item.getIntValue(ContactItem.CONTACTITEM_GROUP);
 
 		boolean only_online = Options
 				.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
@@ -888,10 +888,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		{
 			cItemNode = groupNode.elementAt(i);
 			Object data = cItemNode.getData();
-			if (!(data instanceof ContactListContactItem))
+			if (!(data instanceof ContactItem))
 				continue;
-			if (!((ContactListContactItem) data).getStringValue(
-					ContactListContactItem.CONTACTITEM_UIN).equals(uin))
+			if (!((ContactItem) data).getStringValue(
+					ContactItem.CONTACTITEM_UIN).equals(uin))
 				continue;
 			contactExistInTree = true;
 			break;
@@ -940,7 +940,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			for (int j = 0; j < contCount; j++)
 			{
 				TreeNode testNode = groupNode.elementAt(j);
-				if (!(testNode.getData() instanceof ContactListContactItem))
+				if (!(testNode.getData() instanceof ContactItem))
 					continue;
 				if (_this.vtCompareNodes(cItemNode, testNode) < 0)
 				{
@@ -977,7 +977,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			byte[] internalIP, byte[] externalIP, int dcPort, int dcType,
 			int icqProt, int authCookie, int signon, int online, int idle)
 	{
-		ContactListContactItem cItem = getItembyUIN(uin);
+		ContactItem cItem = getItembyUIN(uin);
 
 		int trueStatus = Util.translateStatusReceived(status);
 
@@ -987,8 +987,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			return;
 		}
 
-		long oldStatus = cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
-		long oldXStatus = cItem.getIntValue(ContactListContactItem.CONTACTITEM_XSTATUS);
+		long oldStatus = cItem.getIntValue(ContactItem.CONTACTITEM_STATUS);
+		long oldXStatus = cItem.getIntValue(ContactItem.CONTACTITEM_XSTATUS);
 
 		boolean statusChanged = (oldStatus != trueStatus) || (xStatus != oldXStatus);
 		boolean wasOnline = (oldStatus != STATUS_OFFLINE);
@@ -1005,37 +1005,37 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		statusChanged(cItem, wasOnline, nowOnline, 0);
 
 		// Set Status
-		cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS, trueStatus);
+		cItem.setIntValue(ContactItem.CONTACTITEM_STATUS, trueStatus);
 		
 		// Set x-status
-		cItem.setIntValue(ContactListContactItem.CONTACTITEM_XSTATUS, xStatus);
+		cItem.setIntValue(ContactItem.CONTACTITEM_XSTATUS, xStatus);
 
 		if (treeBuilt && statusChanged)
-			ContactListContactItem.statusChanged(uin, trueStatus);
+			ContactItem.statusChanged(uin, trueStatus);
 
 		// Update DC values
 		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
 		if (dcType != -1)
 		{
-			cItem.setIPValue(ContactListContactItem.CONTACTITEM_INTERNAL_IP,
+			cItem.setIPValue(ContactItem.CONTACTITEM_INTERNAL_IP,
 					internalIP);
-			cItem.setIPValue(ContactListContactItem.CONTACTITEM_EXTERNAL_IP,
+			cItem.setIPValue(ContactItem.CONTACTITEM_EXTERNAL_IP,
 					externalIP);
-			cItem.setIntValue(ContactListContactItem.CONTACTITEM_DC_PORT,
+			cItem.setIntValue(ContactItem.CONTACTITEM_DC_PORT,
 					(int) dcPort);
-			cItem.setIntValue(ContactListContactItem.CONTACTITEM_DC_TYPE,
+			cItem.setIntValue(ContactItem.CONTACTITEM_DC_TYPE,
 					dcType);
-			cItem.setIntValue(ContactListContactItem.CONTACTITEM_ICQ_PROT,
+			cItem.setIntValue(ContactItem.CONTACTITEM_ICQ_PROT,
 					icqProt);
-			cItem.setIntValue(ContactListContactItem.CONTACTITEM_AUTH_COOKIE,
+			cItem.setIntValue(ContactItem.CONTACTITEM_AUTH_COOKIE,
 					authCookie);
 		}
 		//#sijapp cond.end#
 
 		// Update time values
-		cItem.setIntValue(ContactListContactItem.CONTACTITEM_SIGNON, signon);
-		cItem.setIntValue(ContactListContactItem.CONTACTITEM_ONLINE, online);
-		cItem.setIntValue(ContactListContactItem.CONTACTITEM_IDLE, idle);
+		cItem.setIntValue(ContactItem.CONTACTITEM_SIGNON, signon);
+		cItem.setIntValue(ContactItem.CONTACTITEM_ONLINE, online);
+		cItem.setIntValue(ContactItem.CONTACTITEM_IDLE, idle);
 
 		// Play sound notice if selected
 		if ((trueStatus == STATUS_ONLINE) && statusChanged && !treeBuilt)
@@ -1052,20 +1052,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			String text = null;
 			if (oldStatus != trueStatus) text = JimmUI.getStatusString(trueStatus);
 			if ((xStatus != oldXStatus) && (xStatus >= 0)) text = ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]);
-			if (text != null) JimmUI.showCapText(curScr, cItem.getStringValue(ContactListContactItem.CONTACTITEM_NAME)+": "+text, TimerTasks.TYPE_FLASH);
+			if (text != null) JimmUI.showCapText(curScr, cItem.getStringValue(ContactItem.CONTACTITEM_NAME)+": "+text, TimerTasks.TYPE_FLASH);
 		}
 	}
 
 	//#sijapp cond.if target isnot "DEFAULT" #
 	static public void checkAndPlayOnlineSound(String uin, int newStatus)
 	{
-		ContactListContactItem cItem = getItembyUIN(uin);
+		ContactItem cItem = getItembyUIN(uin);
 		if (cItem == null)
 			return;
 		int trueStatus = Util.translateStatusReceived(newStatus);
 		if ((trueStatus == STATUS_ONLINE)
 				&& (cItem
-						.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_ONLINE))
+						.getIntValue(ContactItem.CONTACTITEM_STATUS) != STATUS_ONLINE))
 			playSoundNotification(SOUND_TYPE_ONLINE);
 	}
 
@@ -1077,14 +1077,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		update(uin, status, -1, null, null, 0, 0, -1, 0, -1, -1, -1);
 	}
 
-	static private void statusChanged(ContactListContactItem cItem,
+	static private void statusChanged(ContactItem cItem,
 			boolean wasOnline, boolean nowOnline, int tolalChanges)
 	{
 		boolean changed = false;
 
 		// which group id ?
 		int groupId = cItem
-				.getIntValue(ContactListContactItem.CONTACTITEM_GROUP);
+				.getIntValue(ContactItem.CONTACTITEM_GROUP);
 
 		// which group ?
 		ContactListGroupItem group = getGroupById(groupId);
@@ -1133,7 +1133,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	}
 
 	// Removes a contact list item
-	static public void removeContactItem(ContactListContactItem cItem)
+	static public void removeContactItem(ContactItem cItem)
 	{
 		synchronized (_this)
 		{
@@ -1146,7 +1146,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			// Update online counters
 			statusChanged(
 					cItem,
-					cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE,
+					cItem.getIntValue(ContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE,
 					false, -1);
 
 			// Save list
@@ -1155,39 +1155,39 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	}
 
 	// Adds a contact list item
-	static public void addContactItem(ContactListContactItem cItem)
+	static public void addContactItem(ContactItem cItem)
 	{
 		synchronized (_this)
 		{
-			if (!cItem.getBooleanValue(ContactListContactItem.CONTACTITEM_ADDED))
+			if (!cItem.getBooleanValue(ContactItem.CONTACTITEM_ADDED))
 			{
 				// does contact already exists or temporary ?
-				ContactListContactItem oldItem = getItembyUIN(cItem
-						.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+				ContactItem oldItem = getItembyUIN(cItem
+						.getStringValue(ContactItem.CONTACTITEM_UIN));
 				if (oldItem != null)
 				{
 					removeContactItem(oldItem);
 					lastUnknownStatus = oldItem
-							.getIntValue(ContactListContactItem.CONTACTITEM_STATUS);
+							.getIntValue(ContactItem.CONTACTITEM_STATUS);
 				}
 
 				// Add given contact item
 				cItems.addElement(cItem);
-				cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_ADDED,
+				cItem.setBooleanValue(ContactItem.CONTACTITEM_ADDED,
 						true);
 
 				// Check is chat availible 
 				cItem
 						.setBooleanValue(
-								ContactListContactItem.CONTACTITEM_HAS_CHAT,
+								ContactItem.CONTACTITEM_HAS_CHAT,
 								ChatHistory
 										.chatHistoryExists(cItem
-												.getStringValue(ContactListContactItem.CONTACTITEM_UIN)));
+												.getStringValue(ContactItem.CONTACTITEM_UIN)));
 
 				// Set contact status (if already received)
 				if (lastUnknownStatus != STATUS_NONE)
 				{
-					cItem.setIntValue(ContactListContactItem.CONTACTITEM_STATUS,
+					cItem.setIntValue(ContactItem.CONTACTITEM_STATUS,
 							lastUnknownStatus);
 					lastUnknownStatus = STATUS_NONE;
 				}
@@ -1200,7 +1200,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 						cItem,
 						false,
 						cItem
-								.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE,
+								.getIntValue(ContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE,
 						1);
 
 				// Save list
@@ -1230,10 +1230,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		{
 			for (int i = cItems.size()-1; i >= 0; i--)
 			{
-				ContactListContactItem cItem = getCItem(i);
-				if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == gItem.getId())
+				ContactItem cItem = getCItem(i);
+				if (cItem.getIntValue(ContactItem.CONTACTITEM_GROUP) == gItem.getId())
 				{
-					if (cItem.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
+					if (cItem.getIntValue(ContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
 						onlineCounter--;
 					cItems.removeElementAt(i);
 				}
@@ -1250,24 +1250,24 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 	}
 
-	static public ContactListContactItem createTempContact(String uin)
+	static public ContactItem createTempContact(String uin)
 	{
 		synchronized (_this)
 		{
-			ContactListContactItem cItem = getItembyUIN(uin);
+			ContactItem cItem = getItembyUIN(uin);
 
 			if (cItem != null) return cItem;
 
 			try
 			{
-				cItem = new ContactListContactItem(0, 0, uin, uin, false, true);
+				cItem = new ContactItem(0, 0, uin, uin, false, true);
 			} catch (Exception e)
 			{
 				// Message from non-icq contact
 				return null;
 			}
 			cItems.addElement(cItem);
-			cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_IS_TEMP, true);
+			cItem.setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, true);
 			return cItem;
 		}
 	}
@@ -1280,7 +1280,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		{
 			String uin = message.getSndrUin();
 
-			ContactListContactItem cItem = getItembyUIN(uin);
+			ContactItem cItem = getItembyUIN(uin);
 
 			/* Create a temporary contact entry if no contact entry could be found
 			 do we have a new temp contact */
@@ -1302,11 +1302,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			//#sijapp cond.end #
 
 			/* Flag contact as having chat */
-			cItem.setBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT, true);
+			cItem.setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT, true);
 
 			/* Increment messages count for group */
 			ContactListGroupItem gItem = getGroupById(cItem
-					.getIntValue(ContactListContactItem.CONTACTITEM_GROUP));
+					.getIntValue(ContactItem.CONTACTITEM_GROUP));
 			if (gItem != null)
 				gItem.changeMessCount(+1);
 
@@ -1428,7 +1428,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	//#sijapp cond.if target isnot "DEFAULT"#
 	synchronized static public void BeginTyping(String uin, boolean type)
 	{
-		ContactListContactItem item = getItembyUIN(uin);
+		ContactItem item = getItembyUIN(uin);
 		if (item == null) return;
 
 		// If the user does not have it add the typing capability
@@ -1627,7 +1627,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	//#sijapp cond.end#
 
-	static ContactListContactItem lastChatItem = null;
+	static ContactItem lastChatItem = null;
 
 	public void vtGetItemDrawData(TreeNode src, ListItem dst)
 	{
@@ -1659,7 +1659,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
 		TreeNode node = tree.getCurrentItem();
-		ContactListContactItem item = ((node != null) && (node.getData() instanceof ContactListContactItem)) ? (ContactListContactItem) node
+		ContactItem item = ((node != null) && (node.getData() instanceof ContactItem)) ? (ContactItem) node
 				.getData()
 				: null;
 		JimmUI.execHotKey(item, keyCode, type);
@@ -1683,13 +1683,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			if (i == index)
 				break;
 
-			ContactListContactItem cItem = getCItem(i);
+			ContactItem cItem = getCItem(i);
 			if (cItem
-					.getBooleanValue(ContactListContactItem.CONTACTITEM_HAS_CHAT))
+					.getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT))
 			{
 				lastChatItem = cItem;
 				cItem.activate();
-				return cItem.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+				return cItem.getStringValue(ContactItem.CONTACTITEM_UIN);
 			}
 		}
 		return null;
@@ -1705,18 +1705,18 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		return result;
 	}
 
-	static public ContactListContactItem[] getItems(ContactListGroupItem group)
+	static public ContactItem[] getItems(ContactListGroupItem group)
 	{
 		Vector data = new Vector();
 		int gid = group.getId();
 		int size = getSize();
 		for (int i = 0; i < size; i++)
 		{
-			ContactListContactItem item = getCItem(i);
-			if (item.getIntValue(ContactListContactItem.CONTACTITEM_GROUP) == gid)
+			ContactItem item = getCItem(i);
+			if (item.getIntValue(ContactItem.CONTACTITEM_GROUP) == gid)
 				data.addElement(item);
 		}
-		ContactListContactItem[] result = new ContactListContactItem[data
+		ContactItem[] result = new ContactItem[data
 				.size()];
 		data.copyInto(result);
 		return result;
@@ -1738,14 +1738,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			if (node == null) return;
 			ContactListItem item = (ContactListItem) node.getData();
 			
-			if (item instanceof ContactListContactItem)
+			if (item instanceof ContactItem)
 			{
 				// Activate the contact item menu
 				//#sijapp cond.if target is "RIM"#
 				//#			LED.setState(LED.STATE_OFF);
 				//#sijapp cond.end#
 
-				lastChatItem = (ContactListContactItem) item;
+				lastChatItem = (ContactItem) item;
 				lastChatItem.activate();
 			}
 			
@@ -1755,7 +1755,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				if (!newExpanded)
 				{
 					ContactListGroupItem gItem = (ContactListGroupItem)item;
-					ContactListContactItem[] cItems = getItems(gItem);
+					ContactItem[] cItems = getItems(gItem);
 					int unreadCounter = 0;
 					for (int i = 0; i < cItems.length; i++) unreadCounter += cItems[i].getUnreadMessCount();
 					gItem.setMessCount(unreadCounter);

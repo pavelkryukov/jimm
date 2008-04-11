@@ -24,7 +24,7 @@
 package jimm.comm;
 
 import jimm.ContactList;
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
@@ -83,7 +83,7 @@ public class SendMessageAction extends Action
 	{
 
 		// Get receiver object
-		ContactListContactItem rcvr;
+		ContactItem rcvr;
 
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
@@ -100,13 +100,13 @@ public class SendMessageAction extends Action
 		// What message format/encoding should we use?
 		int type = 1;
 		boolean utf8;
-		utf8 = (rcvr.getIntValue (ContactListContactItem.CONTACTITEM_STATUS) == 
+		utf8 = (rcvr.getIntValue (ContactItem.CONTACTITEM_STATUS) == 
 			ContactList.STATUS_OFFLINE) ? false : 
 			rcvr.hasCapability(Icq.CAPF_UTF8_INTERNAL);
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
 		if ((this.fileTrans != null)
-				&& (rcvr.getIntValue(ContactListContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
+				&& (rcvr.getIntValue(ContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
 				&& rcvr.hasCapability(Icq.CAPF_AIM_SERVERRELAY_INTERNAL))
 		{
 			type = 2;
@@ -129,7 +129,7 @@ public class SendMessageAction extends Action
 
 			// Get UIN
 			byte[] uinRaw = Util.stringToByteArray(rcvr
-					.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+					.getStringValue(ContactItem.CONTACTITEM_UIN));
 
 			// Get text
 			byte[] textRaw;
@@ -204,7 +204,7 @@ public class SendMessageAction extends Action
 			// System.out.println("Send TYPE 2");
 			// Get UIN
 			byte[] uinRaw = Util.stringToByteArray(rcvr
-					.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+					.getStringValue(ContactItem.CONTACTITEM_UIN));
 
 			// Get text
 			byte[] textRaw;

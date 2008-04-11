@@ -27,7 +27,7 @@ package jimm.comm;
 import java.io.*;
 import java.util.*;
 
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactList;
 import jimm.Options;
@@ -811,7 +811,7 @@ public class Util
 		int range = 0x6FFF;
 
 		ContactListGroupItem[] gItems = ContactList.getGroupItems();
-		ContactListContactItem[] cItems = ContactList.getContactItems();
+		ContactItem[] cItems = ContactList.getContactItems();
 		int randint;
 		boolean found;
 
@@ -839,7 +839,7 @@ public class Util
 				for (int j = 0; j < cItems.length; j++)
 				{
 					if (cItems[j]
-							.getIntValue(ContactListContactItem.CONTACTITEM_ID) == randint)
+							.getIntValue(ContactItem.CONTACTITEM_ID) == randint)
 					{
 						randint = rand.nextInt() % range + 4096;
 						found = true;
@@ -1592,7 +1592,8 @@ public class Util
 		if (before)
 			return ((chr >= 'A') && (chr <= 'Z'))
 					|| ((chr >= 'a') && (chr <= 'z'))
-					|| ((chr >= '0') && (chr <= '9'));
+					|| ((chr >= '0') && (chr <= '9')) 
+					|| (chr == '-');
 		if ((chr <= ' ') || (chr == '\"'))
 			return false;
 		return ((chr & 0xFF00) == 0);

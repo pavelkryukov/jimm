@@ -31,7 +31,7 @@ import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 
 import jimm.ContactList;
-import jimm.ContactListContactItem;
+import jimm.ContactItem;
 import jimm.Jimm;
 import jimm.FileTransfer;
 import jimm.JimmException;
@@ -84,10 +84,10 @@ public class DirectConnectionAction extends Action
 		// Make a new peer connection and connect to the adress and port we got from the FileTransferRequest
 		Icq.peerC = icq.new PeerConnection();
 		Icq.peerC.connect(Util.ipToString(ft.getRcvr().getIPValue(
-				ContactListContactItem.CONTACTITEM_INTERNAL_IP))
+				ContactItem.CONTACTITEM_INTERNAL_IP))
 				+ ":"
 				+ ft.getRcvr().getIntValue(
-						ContactListContactItem.CONTACTITEM_DC_PORT));
+						ContactItem.CONTACTITEM_DC_PORT));
 
 		// Send a DC init packet
 		byte[] dcpacket = new byte[48];
@@ -141,7 +141,7 @@ public class DirectConnectionAction extends Action
 
 		// connection cookie
 		Util.putDWord(dcpacket, marker, ft.getRcvr().getIntValue(
-				ContactListContactItem.CONTACTITEM_AUTH_COOKIE), false);
+				ContactItem.CONTACTITEM_AUTH_COOKIE), false);
 		marker += 4;
 
 		// some unknown stuff

@@ -1623,10 +1623,11 @@ class OptionsForm implements CommandListener, ItemStateListener
 		//#sijapp cond.end#
 
 		case OPTIONS_TIMEZONE:
+			int choiceType;
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			int choiceType = Choice.POPUP;
+			choiceType = Choice.POPUP;
 			//#sijapp cond.else#
-			//# 				choiceType = Choice.EXCLUSIVE;
+			choiceType = Choice.EXCLUSIVE;
 			//#sijapp cond.end#
 
 			chsTimeZone = new ChoiceGroup(ResourceBundle
