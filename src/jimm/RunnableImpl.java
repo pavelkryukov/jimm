@@ -38,25 +38,17 @@ public class RunnableImpl implements Runnable
 
 	private static MIDlet midlet;
 
-	final static private int TYPE_ADD_MSG = 1;
-
-	final static public int TYPE_SET_CAPTION = 3;
-
-	final static public int TYPE_USER_OFFLINE = 4;
-
+	final static private int TYPE_ADD_MSG            = 1;
+	final static public int TYPE_SET_CAPTION         = 3;
+	final static public int TYPE_USER_OFFLINE        = 4;
 	final static public int TYPE_UPDATE_CONTACT_LIST = 5;
-
-	final static public int TYPE_SHOW_USER_INFO = 6;
-
-	final static public int TYPE_UPDATE_CL_CAPTION = 7;
-
-	final static public int TYPE_ADDCONTACT = 8;
-
-	final static public int TYPE_USER_IS_TYPING = 9;
-
-	final static public int TYPE_RESET_CONTACTS = 10;
-	
-	final static public int TYPE_SHOW_TIME = 11;
+	final static public int TYPE_SHOW_USER_INFO      = 6;
+	final static public int TYPE_UPDATE_CL_CAPTION   = 7;
+	final static public int TYPE_ADDCONTACT          = 8;
+	final static public int TYPE_USER_IS_TYPING      = 9;
+	final static public int TYPE_RESET_CONTACTS      = 10;
+	final static public int TYPE_SHOW_TIME           = 11;
+	final static public int TYPE_ADD_CONTACT         = 12;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -119,6 +111,12 @@ public class RunnableImpl implements Runnable
 			
 		case TYPE_SHOW_TIME:
 			VirtualList.setBottomText((String)data[0]);
+			break;
+			
+		case TYPE_ADD_CONTACT:
+			ContactListContactItem citem = (ContactListContactItem)data[0];
+			ContactList.addContactItem(citem);
+			ChatHistory.updateChatIfExists(citem);
 			break;
 		}
 	}
@@ -222,6 +220,11 @@ public class RunnableImpl implements Runnable
 	static public void showTime(String time)
 	{
 		callSerially(TYPE_SHOW_TIME, time);
+	}
+	
+	static public void addContact(ContactListContactItem cItem)
+	{
+		callSerially(TYPE_ADD_CONTACT, cItem);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

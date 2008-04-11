@@ -293,7 +293,6 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		/* Grant authorization */
 		else if (c == cmdGrantAuth)
 		{
-			contact.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
 			SystemNotice notice = new SystemNotice(
 					SystemNotice.SYS_NOTICE_AUTHORISE,
 					contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN),
@@ -302,6 +301,9 @@ class ChatTextList implements VirtualListCommands, CommandListener
 			try
 			{
 				Icq.requestAction(sysNotAct);
+			
+				contact.setIntValue(ContactListContactItem.CONTACTITEM_AUTREQUESTS, 0);
+				buildMenu();
 			} catch (JimmException e)
 			{
 				JimmException.handleException(e);
@@ -608,6 +610,7 @@ public class ChatHistory
 										+ ResourceBundle.getString("noreason"), "",
 								notice.getNewDate(), false, offline);
 				}
+				chat.buildMenu();
 			}
 			chat.checkTextForURL();
 			chat.checkForAuthReply();
@@ -738,6 +741,14 @@ public class ChatHistory
 		fillFormHistory(contact);
 		//#sijapp cond.end#
 	}
+	
+	static public void updateChatIfExists(ContactListContactItem contact)
+	{
+		String uin = contact.getStringValue(ContactListContactItem.CONTACTITEM_UIN);
+		ChatTextList chat = (ChatTextList) historyTable.get(uin);
+		if (chat == null) return;
+		chat.contact = contact;
+	}
 
 	// fill chat with last history lines
 	//#sijapp cond.if modules_HISTORY is "true" #
@@ -820,6 +831,12 @@ public class ChatHistory
 			if (AllChats.nextElement() == chat) break;
 			counter++;
 		}
+	}
+	
+	public static void rebuildMenu(ContactListContactItem item)
+	{
+		ChatTextList chat = getChatHistoryAt(item.getStringValue(ContactListContactItem.CONTACTITEM_UIN));
+		if (chat != null) chat.buildMenu();
 	}
 	
 	public static boolean activateIfExists(ContactListContactItem item)
