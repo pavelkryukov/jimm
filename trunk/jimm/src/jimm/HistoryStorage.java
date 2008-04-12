@@ -405,8 +405,8 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		else
 		{
 			URLList = JimmUI.getInfoTextList(ResourceBundle.getString("goto_url"), false);
-			URLList.addCommandEx(cmdurlSelect, VirtualList.MENU_TYPE_RIGHT);
-			URLList.addCommandEx(cmdurlBack, VirtualList.MENU_TYPE_RIGHT);
+			URLList.addCommandEx(cmdurlSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+			URLList.addCommandEx(cmdurlBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 			URLList.setCommandListener(this);
 			for (int i = 0; i < urls.size(); i++)
 			{
