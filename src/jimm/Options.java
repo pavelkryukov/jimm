@@ -53,7 +53,6 @@ import java.util.*;
 import DrawControls.*;
 
 import javax.microedition.lcdui.*;
-import javax.microedition.lcdui.List;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 
@@ -722,7 +721,7 @@ public class Options
 		0xE0FFE0, 0x000000, 0x008000, 0xC0FFC0, 0xC0FFC0, 0xFF0000, 0x000000, 0x00A000,
 		0xF9F3EF, 0xD60000, 0x3A6793, 0xE3BFA1, 0xC37D3F, 0xDB8941, 0xFFFFF0, 0xD26464, // Sand
 		0x000000, 0x00D000, 0xD0D0D0, 0x005000, 0x007000, 0x00FF00, 0x80FF80, 0x008000, // Hacker
-		0xD5FDFD, 0x000000, 0x009090, 0xC0FFFF, 0xC0FFFF, 0x0000FF, 0x000000, 0x00A0A0, // Aqua
+		0xD5FDFD, 0x000000, 0x009090, 0xB0FFFF, 0xA0FFFF, 0x0000FF, 0x000000, 0x00A0A0, // Aqua
 	};
 
 	/* Retrieves color value from color scheme */
@@ -1062,6 +1061,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	
 	private void InitColorThemeUI()
 	{
+		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
 		tlColorScheme = new TextList(ResourceBundle.getString("color_scheme"));
 		JimmUI.setColorScheme(tlColorScheme, false, -1);
 		JimmUI.addTextListItem(tlColorScheme, "black_on_white", null, 0, true);
@@ -1272,7 +1272,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 		lastGroupsUsed = Options.getBoolean(Options.OPTION_USER_GROUPS);
 		lastSortMethod = Options.getInt(Options.OPTION_CL_SORT_BY);
-		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
 		Options.getBoolean(Options.OPTION_CL_CLIENTS);
 		Options.getBoolean(Options.OPTION_XSTATUSES);
 
@@ -1947,7 +1946,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				if (theme == -1) return;
 				Options.setInt(Options.OPTION_COLOR_SCHEME, theme);
 				Options.safe_save();
-				
 				if (theme != lastColorScheme) JimmUI.setColorScheme();
 			}
 			activate();
