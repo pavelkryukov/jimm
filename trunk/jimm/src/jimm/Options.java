@@ -412,7 +412,7 @@ public class Options
 		setBoolean(Options.OPTION_CHAT_SMALL_FONT, true);
 		setBoolean(Options.OPTION_USER_GROUPS, false);
 		setBoolean(Options.OPTION_HISTORY, false);
-		setInt(Options.OPTION_COLOR_SCHEME, CLRSCHHEME_BOW);
+		setInt(Options.OPTION_COLOR_SCHEME, 0);
 		setBoolean(Options.OPTION_USE_SMILES, true);
 		setBoolean(Options.OPTION_SHOW_LAST_MESS, false);
 		//#sijapp cond.if modules_PROXY is "true" #
@@ -698,11 +698,6 @@ public class Options
 
 	/**************************************************************************/
 
-	/* Constants for color scheme */
-	private static final int CLRSCHHEME_BOW = 0; // black on white
-	private static final int CLRSCHHEME_WOB = 1; // white on black
-	private static final int CLRSCHHEME_WOBL = 2; // white on blue
-
 	/* Constants for method getSchemeColor to retrieving color from color scheme */
 	public static final int CLRSCHHEME_BACK = 1; // retrieving background color
 	public static final int CLRSCHHEME_TEXT = 2; // retrieving text color
@@ -731,9 +726,10 @@ public class Options
 	};
 
 	/* Retrieves color value from color scheme */
-	static public int getSchemeColor(int type)
+	static public int getSchemeColor(int type, int theme)
 	{
-		return (colors[getInt(OPTION_COLOR_SCHEME) * 8 + type - 1]);
+		if (theme == -1) theme = getInt(OPTION_COLOR_SCHEME);
+		return (colors[theme * 8 + type - 1]);
 	}
 
 	static public void editOptions()
@@ -774,7 +770,7 @@ public class Options
 
 /* Form for editing option values */
 
-class OptionsForm implements CommandListener, ItemStateListener
+class OptionsForm implements CommandListener, ItemStateListener, VirtualListCommands
 {
 	private boolean lastGroupsUsed, lastHideOffline;
 
@@ -813,6 +809,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 	//#sijapp cond.end#
 
 	private static final int OPTIONS_TIMEZONE = 7;
+	
+	private static final int OPTIONS_COLOR_THEME = 8;
 
 	// Options
 	private TextField[] uinTextField;
@@ -901,8 +899,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 	//#sijapp cond.end#
 	private ChoiceGroup choiceContactList;
 
-	private ChoiceGroup colorScheme;
-
 	//#sijapp cond.if target is "MOTOROLA"#
 	//#    private TextField lightTimeout;
 	//#    private ChoiceGroup lightManual;
@@ -926,6 +922,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 	private TextList keysMenu;
 
 	private TextList actionMenu;
+	
+	private TextList tlColorScheme;
 
 	final private String[] hotkeyActionNames = Util.explode(
 			"ext_hotkey_action_none" + "|" + "info" + "|" + "send_message"
@@ -976,11 +974,11 @@ class OptionsForm implements CommandListener, ItemStateListener
 		// Initialize hotkeys
 		keysMenu = new TextList(ResourceBundle.getString("ext_listhotkeys"));
 		keysMenu.setCyclingCursor(true);
-		JimmUI.setColorScheme(keysMenu, false);
+		JimmUI.setColorScheme(keysMenu, false, -1);
 		keysMenu.setCommandListener(this);
 		keysMenu.setCyclingCursor(true);
 		actionMenu = new TextList(ResourceBundle.getString("ext_actionhotkeys"));
-		JimmUI.setColorScheme(actionMenu, false);
+		JimmUI.setColorScheme(actionMenu, false, -1);
 		actionMenu.setCommandListener(this);
 
 		/*************************************************************************/
@@ -990,7 +988,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 
 		optionsMenu = new TextList(ResourceBundle.getString("options_lng"));
 		
-		JimmUI.setColorScheme(optionsMenu, false);
+		JimmUI.setColorScheme(optionsMenu, false, -1);
 
 		optionsMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
 		optionsMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR); 
@@ -1023,6 +1021,8 @@ class OptionsForm implements CommandListener, ItemStateListener
 		
 		JimmUI.addTextListItem(optionsMenu, "options_interface", null, OPTIONS_INTERFACE, true);
 		
+		JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true); 
+		
 		JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true);
 		
 		JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true);
@@ -1031,7 +1031,9 @@ class OptionsForm implements CommandListener, ItemStateListener
 		JimmUI.addTextListItem(optionsMenu, "traffic_lng", null, OPTIONS_TRAFFIC, true); 
 		//#sijapp cond.end#
 
-		JimmUI.addTextListItem(optionsMenu, "time_zone", null, OPTIONS_TIMEZONE, true); 
+		JimmUI.addTextListItem(optionsMenu, "time_zone", null, OPTIONS_TIMEZONE, true);
+		
+		JimmUI.setColorScheme(optionsMenu, false, -1);
 	}
 
 	private String getHotKeyActName(String langStr, int option)
@@ -1044,6 +1046,42 @@ class OptionsForm implements CommandListener, ItemStateListener
 						+ ResourceBundle.getString(hotkeyActionNames[i]);
 		}
 		return ResourceBundle.getString(langStr) + ": <???>";
+	}
+	
+	public void vlKeyPress(VirtualList sender, int keyCode, int type) {}
+	public void vlItemClicked(VirtualList sender) {}
+	
+	public void vlCursorMoved(VirtualList sender) 
+	{
+		if (tlColorScheme == sender)
+		{
+			int index = tlColorScheme.getCurrTextIndex();
+			JimmUI.setColorScheme(tlColorScheme, false, index);
+		}
+	}
+	
+	private void InitColorThemeUI()
+	{
+		tlColorScheme = new TextList(ResourceBundle.getString("color_scheme"));
+		JimmUI.setColorScheme(tlColorScheme, false, -1);
+		JimmUI.addTextListItem(tlColorScheme, "black_on_white", null, 0, true);
+		JimmUI.addTextListItem(tlColorScheme, "white_on_black", null, 1, true);
+		JimmUI.addTextListItem(tlColorScheme, "white_on_blue",  null, 2, true);
+		JimmUI.addTextListItem(tlColorScheme, "pink_scheme",    null, 3, true);
+		JimmUI.addTextListItem(tlColorScheme, "Green",          null, 4, true);
+		JimmUI.addTextListItem(tlColorScheme, "Sand",           null, 5, true);
+		JimmUI.addTextListItem(tlColorScheme, "Hacker :)",      null, 6, true);
+		JimmUI.addTextListItem(tlColorScheme, "Aqua",           null, 7, true);
+		
+		tlColorScheme.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
+		tlColorScheme.addCommandEx(JimmUI.cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
+		
+		tlColorScheme.selectTextByIndex(Options.getInt(Options.OPTION_COLOR_SCHEME));
+		
+		tlColorScheme.setVLCommands(this);
+		tlColorScheme.setCommandListener(this);
+		
+		tlColorScheme.activate(Jimm.display);
 	}
 
 	private void InitHotkeyMenuUI()
@@ -1443,10 +1481,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 			setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
 			setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
 			setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
-			
-			colorScheme = createSelector("color_scheme", "black_on_white"
-					+ "|" + "white_on_black" + "|" + "white_on_blue" + "|" + "pink_scheme" + "|" + "Green"+ "|" + "Sand" + "|" + "Hacker :)"+"|"+"Aqua",
-					Options.OPTION_COLOR_SCHEME);
 
 			chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
 					Choice.MULTIPLE);
@@ -1484,7 +1518,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 			if (chrgChat.size() != 0) optionsForm.append(chrgChat);
 			optionsForm.append(chrgMessFormat);
 
-			optionsForm.append(colorScheme);
 			//#sijapp cond.if target is "MOTOROLA"#
 			//#					optionsForm.append(lightTimeout);
 			//#					optionsForm.append(lightManual);
@@ -1498,6 +1531,10 @@ class OptionsForm implements CommandListener, ItemStateListener
 
 		case OPTIONS_HOTKEYS:
 			InitHotkeyMenuUI();
+			return;
+			
+		case OPTIONS_COLOR_THEME:
+			InitColorThemeUI();
 			return;
 
 		case OPTIONS_SIGNALING:
@@ -1753,7 +1790,7 @@ class OptionsForm implements CommandListener, ItemStateListener
 			Options.setInt(Options.OPTION_CAMERAURI, clCamDevGroup
 					.getSelectedIndex());
 			int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
-			int newColorScheme = colorScheme.getSelectedIndex();
+			
 			
 			idx = 0;
 			boolean newUseGroups = choiceContactList.isSelected(idx++);
@@ -1790,7 +1827,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 			Options.setBoolean(Options.OPTION_MESS_COLORED_TEXT, chrgMessFormat.isSelected(idx++));
 
 			Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
-			Options.setInt(Options.OPTION_COLOR_SCHEME, newColorScheme);
 
 			// Set UI options for existing controls
 			ContactList.optionsChanged
@@ -1799,8 +1835,6 @@ class OptionsForm implements CommandListener, ItemStateListener
 				(newSortMethod != lastSortMethod)
 			);
 
-			if (lastColorScheme != newColorScheme)
-				JimmUI.setColorScheme();
 			//#sijapp cond.if target is "MOTOROLA"#
 			//#					Options.setInt(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(lightTimeout.getString()));
 			//#					Options.setBoolean(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
@@ -1905,8 +1939,23 @@ class OptionsForm implements CommandListener, ItemStateListener
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
+		if (JimmUI.isControlActive(tlColorScheme))
+		{
+			if (c == JimmUI.cmdOk)
+			{
+				int theme = tlColorScheme.getCurrTextIndex();
+				if (theme == -1) return;
+				Options.setInt(Options.OPTION_COLOR_SCHEME, theme);
+				Options.safe_save();
+				
+				if (theme != lastColorScheme) JimmUI.setColorScheme();
+			}
+			activate();
+			return;
+		}
+		
 		/* Command handler for hotkeys list in Options... */
-		if (keysMenu.isActive())
+		else if (keysMenu.isActive())
 		{
 			if (c == JimmUI.cmdSelect)
 			{

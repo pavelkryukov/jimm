@@ -128,7 +128,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 		this.contact = contact;
 		ChatName = name;
-		JimmUI.setColorScheme(textList, true);
+		JimmUI.setColorScheme(textList, true, -1);
 
 		textList.setVLCommands(this);
 	}
@@ -334,8 +334,8 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	static int getInOutColor(boolean incoming)
 	{
 		return incoming 
-			? Options.getSchemeColor(Options.CLRSCHHEME_INCOMING)
-			: Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING);
+			? Options.getSchemeColor(Options.CLRSCHHEME_INCOMING, -1)
+			: Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
 	}
 
 	Vector getMessData()
@@ -816,7 +816,7 @@ public class ChatHistory
 		Enumeration AllChats = historyTable.elements();
 		while (AllChats.hasMoreElements())
 			JimmUI
-					.setColorScheme(((ChatTextList) AllChats.nextElement()).textList, false);
+					.setColorScheme(((ChatTextList) AllChats.nextElement()).textList, false, -1);
 	}
 
 	// Sets the counter for the ChatHistory

@@ -301,7 +301,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		Emotions.textBox = textBox;
 		//selList = new TextList(null);
 		selector = new Selector();
-		JimmUI.setColorScheme(selector, false);
+		JimmUI.setColorScheme(selector, false, -1);
 
 		selector.addCommandEx(cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
 		selector.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);

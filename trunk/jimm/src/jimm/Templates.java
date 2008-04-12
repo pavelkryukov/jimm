@@ -83,7 +83,7 @@ public class Templates implements VirtualListCommands, CommandListener
 		caretPos = textBox.getCaretPosition();
 		
 		templateList = new TextList(null);
-		JimmUI.setColorScheme(templateList, false);
+		JimmUI.setColorScheme(templateList, false, -1);
 		templateList.setCaption(ResourceBundle.getString("templates"));
 		
 		templateList.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);

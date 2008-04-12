@@ -486,7 +486,7 @@ public class JimmUI implements CommandListener
 	{
 		msgBoxList = new TextList(cap);
 		msgBoxList.setMode(TextList.MODE_TEXT);
-		setColorScheme(msgBoxList, false);
+		setColorScheme(msgBoxList, false, -1);
 		msgBoxList.setFontSize(Font.SIZE_LARGE);
 		msgBoxList.addBigText(text, msgBoxList.getTextColor(), Font.STYLE_PLAIN, -1);
 		
@@ -525,7 +525,7 @@ public class JimmUI implements CommandListener
 		aboutTextList.lock();
 		aboutTextList.clear();
 		aboutTextList.setMode(TextList.MODE_TEXT);
-		setColorScheme(aboutTextList, false);
+		setColorScheme(aboutTextList, false, -1);
 		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1,
 				0xffffff, 0);
 
@@ -645,18 +645,18 @@ public class JimmUI implements CommandListener
 	//                    //
 	////////////////////////
 
-	static public void setColorScheme(VirtualList vl, boolean setFullScreen)
+	static public void setColorScheme(VirtualList vl, boolean setFullScreen, int theme)
 	{
 		if (vl == null) return;
 
 		vl.setColors
 		(
-			Options.getSchemeColor(Options.CLRSCHHEME_CAP_TEXT), 
-			Options.getSchemeColor(Options.CLRSCHHEME_CAP), 
-			Options.getSchemeColor(Options.CLRSCHHEME_BACK), 
-			Options.getSchemeColor(Options.CLRSCHHEME_CURS), 
-			Options.getSchemeColor(Options.CLRSCHHEME_TEXT),
-			Options.getSchemeColor(Options.CLRSCHHEME_CURS_FRAME)
+			Options.getSchemeColor(Options.CLRSCHHEME_CAP_TEXT, theme), 
+			Options.getSchemeColor(Options.CLRSCHHEME_CAP, theme), 
+			Options.getSchemeColor(Options.CLRSCHHEME_BACK, theme), 
+			Options.getSchemeColor(Options.CLRSCHHEME_CURS, theme), 
+			Options.getSchemeColor(Options.CLRSCHHEME_TEXT, theme),
+			Options.getSchemeColor(Options.CLRSCHHEME_CURS_FRAME, theme)
 		);
 		
 		if (setFullScreen) 
@@ -672,7 +672,7 @@ public class JimmUI implements CommandListener
 		//#sijapp cond.end#
 
 		ChatHistory.setColorScheme();
-		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), true);
+		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), true, -1);
 	}
 
 	/*****************************************************************************/
@@ -965,7 +965,7 @@ public class JimmUI implements CommandListener
 		list.addBigText(ResourceBundle.getString(langStr) + ": ",
 				list.getTextColor(), Font.STYLE_PLAIN, uiBigTextIndex)
 				.addBigText(str,
-						Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING),
+						Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1),
 						Font.STYLE_PLAIN, uiBigTextIndex)
 				.doCRLF(uiBigTextIndex);
 		uiBigTextIndex++;
@@ -1119,7 +1119,7 @@ public class JimmUI implements CommandListener
 
 		infoTextList.setCaption(caption);
 
-		JimmUI.setColorScheme(infoTextList, false);
+		JimmUI.setColorScheme(infoTextList, false, -1);
 		infoTextList.setMode(TextList.MODE_TEXT);
 
 		if (addCommands)
@@ -1155,7 +1155,7 @@ public class JimmUI implements CommandListener
 	{
 		curScreenTag = tag;
 		lstSelector = new TextList (ResourceBundle.getString(caption));
-		JimmUI.setColorScheme(lstSelector, false);
+		JimmUI.setColorScheme(lstSelector, false, -1);
 		lstSelector.setMode(VirtualList.MODE_TEXT);
 		lstSelector.setFontSize(Font.SIZE_LARGE);
 		for (int i = 0; i < elements.length; i++) JimmUI.addTextListItem(lstSelector, elements[i], null, i, translateWords);
@@ -1552,7 +1552,7 @@ public class JimmUI implements CommandListener
 		clciContactMenu = contact;
 	
 		tlContactMenu = new TextList(ResourceBundle.getString("user_menu"));
-		JimmUI.setColorScheme(tlContactMenu, false);
+		JimmUI.setColorScheme(tlContactMenu, false, -1);
 		tlContactMenu.setMode(VirtualList.MODE_TEXT);
 		tlContactMenu.activate(Jimm.display);
 		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
