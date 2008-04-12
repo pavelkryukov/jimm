@@ -496,6 +496,16 @@ public class Options
 				.getString("status_message_text"));
 	}
 
+	/* Delete all record stores */
+	static public void reset_rms() throws RecordStoreException
+	{
+	    String[] stores = RecordStore.listRecordStores();
+	    for (int i = 0;i < stores.length;i++)
+	    {
+		RecordStore.deleteRecordStore(stores[i]);
+	    }
+	}
+	
 	/* Load option values from record store */
 	static public void load() throws IOException, RecordStoreException
 	{
@@ -728,6 +738,11 @@ public class Options
 	static public int getSchemeColor(int type, int theme)
 	{
 		if (theme == -1) theme = getInt(OPTION_COLOR_SCHEME);
+		if ((theme + 1) * 8 > colors.length)
+		{
+		    setInt(OPTION_COLOR_SCHEME, 0);
+		    theme = 0;
+		}
 		return (colors[theme * 8 + type - 1]);
 	}
 
@@ -787,6 +802,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	/* Options form */
 	private Form optionsForm;
 
+	private static final int RMS_ASK_RESULT_YES = 30000;
+	private static final int RMS_ASK_RESULT_NO  = 30001;
+
 	// Static constants for menu actios
 	private static final int OPTIONS_ACCOUNT = 0;
 
@@ -810,6 +828,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private static final int OPTIONS_TIMEZONE = 7;
 	
 	private static final int OPTIONS_COLOR_THEME = 8;
+
+	private static final int OPTIONS_RESET_RMS = 9;
 
 	// Options
 	private TextField[] uinTextField;
@@ -924,6 +944,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	
 	private TextList tlColorScheme;
 
+	private TextList tlRmsAsk;
+
 	final private String[] hotkeyActionNames = Util.explode(
 			"ext_hotkey_action_none" + "|" + "info" + "|" + "send_message"
 					//#sijapp cond.if modules_HISTORY is "true"#
@@ -1032,6 +1054,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 		JimmUI.addTextListItem(optionsMenu, "time_zone", null, OPTIONS_TIMEZONE, true);
 		
+		JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", null, OPTIONS_RESET_RMS, true);
+
 		JimmUI.setColorScheme(optionsMenu, false, -1);
 	}
 
@@ -1059,6 +1083,27 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		}
 	}
 	
+	private void InitResetRmsUI()
+	{
+		tlRmsAsk = new TextList(ResourceBundle.getString("reset_rms_caption"));
+		JimmUI.setColorScheme(tlRmsAsk, true, -1);
+
+		tlRmsAsk.addBigText(ResourceBundle.getString("reset_rms_ask"), tlRmsAsk.getTextColor(), Font.STYLE_PLAIN, -1);
+		tlRmsAsk.doCRLF(-1);
+		tlRmsAsk.doCRLF(-1);
+		tlRmsAsk.addBigText(ResourceBundle.getString("reset_rms_no"), tlRmsAsk.getTextColor(), Font.STYLE_BOLD, RMS_ASK_RESULT_NO);
+		tlRmsAsk.doCRLF(1);
+		tlRmsAsk.addBigText(ResourceBundle.getString("reset_rms_yes"), tlRmsAsk.getTextColor(), Font.STYLE_BOLD, RMS_ASK_RESULT_YES);
+		tlRmsAsk.doCRLF(2);
+		tlRmsAsk.selectTextByIndex(RMS_ASK_RESULT_NO);
+		tlRmsAsk.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+
+		tlRmsAsk.setVLCommands(this);
+		tlRmsAsk.setCommandListener(this);
+
+		tlRmsAsk.activate(Jimm.display);
+	}
+
 	private void InitColorThemeUI()
 	{
 		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
@@ -1701,6 +1746,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			optionsForm.append(chsDayLight);
 
 			break;
+		case OPTIONS_RESET_RMS:
+			InitResetRmsUI();
+			return;
 		}
 
 		/* Activate options form */
@@ -1952,6 +2000,42 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			return;
 		}
 		
+		else if (JimmUI.isControlActive(tlRmsAsk))
+		{
+			if (c == JimmUI.cmdSelect)
+			{
+			    int index = tlRmsAsk.getCurrTextIndex(); 
+			    switch (index)
+			    {
+			    case RMS_ASK_RESULT_NO:
+				    break;
+			    case RMS_ASK_RESULT_YES:
+				    Icq.disconnect();
+				    try
+				    {
+					    Thread.sleep(500);
+				    } catch (InterruptedException e1)
+				    {
+					    /* Do nothing */
+				    }
+				    try
+				    {
+					Options.reset_rms();
+				    } catch (RecordStoreException re) {}
+				    /* Exit app */
+				    try
+				    {
+					    Jimm.jimm.destroyApp(true);
+				    } catch (Exception e)
+				    { /* Do nothing */
+				    }
+				default:
+			    }
+			}
+			activate();
+			return;
+		}
+
 		/* Command handler for hotkeys list in Options... */
 		else if (keysMenu.isActive())
 		{
