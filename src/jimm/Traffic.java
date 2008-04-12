@@ -376,7 +376,7 @@ public class Traffic
 		public void activate()
 		{
 			this.update(true);
-			JimmUI.setColorScheme(this.trafficTextList, false);
+			JimmUI.setColorScheme(this.trafficTextList, false, -1);
 			this.trafficTextList.activate(Jimm.display);
 		}
 

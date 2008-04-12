@@ -140,7 +140,7 @@ public class MainMenu implements CommandListener
 	/* Builds the main menu (visual list) */
 	public static void build()
 	{
-		JimmUI.setColorScheme(list, false);
+		JimmUI.setColorScheme(list, false, -1);
 		
 		boolean connected = Icq.isConnected();
 			
@@ -495,7 +495,7 @@ public class MainMenu implements CommandListener
 				
 				MainMenu.statusList.selectTextByIndex(stValue);
 			
-				JimmUI.setColorScheme(statusList, false);
+				JimmUI.setColorScheme(statusList, false, -1);
 				
 				MainMenu.statusList.setCommandListener(_this);
 				MainMenu.statusList.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
@@ -510,7 +510,7 @@ public class MainMenu implements CommandListener
 
 				MainMenu.groupMenu.selectTextByIndex(0);
 			
-				JimmUI.setColorScheme(groupMenu, false);
+				JimmUI.setColorScheme(groupMenu, false, -1);
 				
 				MainMenu.groupMenu.setCommandListener(_this);
 				MainMenu.groupMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);

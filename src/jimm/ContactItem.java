@@ -475,8 +475,8 @@ public class ContactItem implements ContactListItem
 		if (getBooleanValue(CONTACTITEM_IS_TEMP))
 			return 0x808080;
 		int color = getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT) ? Options
-				.getSchemeColor(Options.CLRSCHHEME_OUTGOING)
-				: Options.getSchemeColor(Options.CLRSCHHEME_TEXT);
+				.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1)
+				: Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
 		return color;
 	}
 

@@ -112,7 +112,7 @@ public class ContactListGroupItem implements ContactListItem
 
 	public int getTextColor()
 	{
-		return Options.getSchemeColor(Options.CLRSCHHEME_TEXT);
+		return Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
 	}
 
 	// Returns the group item id

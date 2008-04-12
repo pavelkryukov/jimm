@@ -155,7 +155,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		//addCommand(cmdGotoURL);
 		setCommandListener(this);
 		setVLCommands(this);
-		JimmUI.setColorScheme(this, false);
+		JimmUI.setColorScheme(this, false, -1);
 	}
 
 	// VirtualList command impl.
@@ -248,7 +248,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			
 		case MODE_SHOW_EH_MESSAGE:
 			messTextList = new TextList(currName);
-			JimmUI.setColorScheme(messTextList, false);
+			JimmUI.setColorScheme(messTextList, false, -1);
 			messTextList.setFontSize(Font.SIZE_LARGE);
 			messTextList.setMode(VirtualList.MODE_TEXT);
 			messTextList.addBigText(currMessage, messTextList.getTextColor(), Font.STYLE_PLAIN, -1);
@@ -636,7 +636,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			messText.addCommandEx(cmdMsgPrev, VirtualList.MENU_TYPE_RIGHT);
 			messText.addCommandEx(cmdMsgCopyText, VirtualList.MENU_TYPE_RIGHT);
 			messText.setVLCommands(this);
-			JimmUI.setColorScheme(messText, false);
+			JimmUI.setColorScheme(messText, false, -1);
 		}
 
 		CachedRecord record = HistoryStorage.getRecord(currUin, this
@@ -694,7 +694,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			return;
 		item.text = record.shortText;
 		item.color = (record.type == 0) ? getTextColor() : Options
-				.getSchemeColor(Options.CLRSCHHEME_OUTGOING);
+				.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
 	}
 }
 
@@ -970,9 +970,9 @@ public class HistoryStorage
 	{
 		if (list != null)
 		{
-			JimmUI.setColorScheme(list, false);
+			JimmUI.setColorScheme(list, false, -1);
 			if (HistoryStorageList.messText != null)
-				JimmUI.setColorScheme(HistoryStorageList.messText, false);
+				JimmUI.setColorScheme(HistoryStorageList.messText, false, -1);
 		}
 	}
 

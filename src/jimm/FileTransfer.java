@@ -137,7 +137,7 @@ public class FileTransfer implements CommandListener, Runnable
 		   && (Options.getInt(Options.OPTION_FT_MODE) == Options.FS_MODE_WEB))
 		{
 			tlWebAsk = new TextList(ResourceBundle.getString("ft_caption"));
-			JimmUI.setColorScheme(tlWebAsk, true);
+			JimmUI.setColorScheme(tlWebAsk, true, -1);
 			
 			tlWebAsk.addBigText(ResourceBundle.getString("ft_web_ask"), tlWebAsk.getTextColor(), Font.STYLE_PLAIN, -1);
 			tlWebAsk.doCRLF(-1);
