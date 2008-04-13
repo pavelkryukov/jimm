@@ -51,33 +51,12 @@ public class ConnectAction extends Action
 
     // CLI_SETICBM packet data
     public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,0,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
-    
-    // CLI_SETSTATUS packet data
-    public static final byte[] CLI_SETSTATUS_DATA =
-    	Util.explodeToBytes
-    	(
-    		"00,06,00,04,"+
-    		"11,00,00,00,"+ // Online status
-    		"00,0C,00,25,"+ // TLV(C)
-    		"C0,A8,00,01,"+ // 192.168.0.1, cannot get own IP address
-    		"00,00,AB,CD,"+ // Port 43981
-    		"00,"+          // Firewall
-    		"00,08,"+       // Support protocol version 8
-    		"00,00,00,00,"+
-    		"00,00,00,50,"+
-    		"00,00,00,03,"+
-    		"FF,FF,FF,FE,"+ // Timestamp 1
-    		"00,01,00,00,"+ // Timestamp 2
-    		"FF,FF,FF,FE,"+ // Timestamp 3
-    		"00,00",
-    		',', 16
-    	);
 
     // CLI_READY packet data
     public static final byte[] CLI_READY_DATA =
     	Util.explodeToBytes
     	(
-    		//"00,22,00,01,01,10,08,e4,"+
+    		"00,22,00,01,01,10,08,e4,"+
     		"00,01,00,04,01,10,08,e4,"+ 
 			"00,13,00,04,01,10,08,e4,"+
 			"00,02,00,01,01,10,08,e4,"+
@@ -513,10 +492,8 @@ public class ConnectAction extends Action
 						//#sijapp cond.end#
 						Icq.c.sendPacket(reply1);
 
-						// Send a CLI_SETSTATUS packet
-						Util.putDWord(ConnectAction.CLI_SETSTATUS_DATA, 4, (0x10<<24)|Util.translateStatusSend((int)Options.getLong(Options.OPTION_ONLINE_STATUS)));
-						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETSTATUS_DATA);
-						Icq.c.sendPacket(reply2);
+						// Send a client status packet
+						Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS), Options.getInt(Options.OPTION_XSTATUS));
 
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_COOKIE_SENT;

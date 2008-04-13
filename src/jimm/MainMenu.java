@@ -598,7 +598,7 @@ public class MainMenu implements CommandListener
 			{
 				try
 				{
-					Icq.setOnlineStatus(onlineStatus);
+					Icq.setOnlineStatus(onlineStatus, 255);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
@@ -633,11 +633,13 @@ public class MainMenu implements CommandListener
 			break;
 	
 		case SELECT_XSTATUS:
-			Options.setInt(Options.OPTION_XSTATUS, statusList.getCurrTextIndex()-1);
+			int xStatus = statusList.getCurrTextIndex()-1;
+			Options.setInt(Options.OPTION_XSTATUS, xStatus);
 			if (Icq.isConnected())
 			{
 				try
 				{
+					Icq.setOnlineStatus(-1, xStatus);
 					Icq.sendUserUnfoPacket();
 				} catch (JimmException e)
 				{
