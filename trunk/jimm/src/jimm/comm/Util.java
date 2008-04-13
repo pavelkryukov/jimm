@@ -197,7 +197,7 @@ public class Util
 			stream.write(array);
 		} catch (Exception e)
 		{
-			System.out.println("Util.writeByteArray: " + e.toString());
+			e.printStackTrace();
 		}
 	}
 
@@ -1640,6 +1640,21 @@ public class Util
 		}
 
 		return (result.size() == 0) ? null : result;
+	}
+	
+	static public int indexOf(byte[] array, byte[] elem)
+	{
+		int arrayLen = array.length;
+		int elemLen = elem.length;
+		if (elemLen > arrayLen) return -1;
+		int searchLen = arrayLen-elemLen; 
+		for (int i = 0; i < searchLen; i++)
+		{
+			int counter = 0;
+			for (int j = 0; j < elemLen; j++, counter++) if (array[i+j] != elem[j]) break;
+			if (counter == elemLen) return i;
+		}
+		return -1;
 	}
 
 	static public int strToIntDef(String str, int defValue)

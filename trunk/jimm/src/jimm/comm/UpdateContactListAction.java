@@ -193,12 +193,30 @@ public class UpdateContactListAction extends Action
                  new SnacPacket
                  (
                       SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-                      SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-                      Util.getCounter(), new byte[0],
+                      SnacPacket.CLI_ROSTERDELETE_COMMAND,
+                      SnacPacket.CLI_ROSTERDELETE_COMMAND|((Util.createRandomId() << 16)&0x7FFF0000), 
+                      new byte[0],
                       packRosterItem(cItem, gItem.getId())
                  )
             );
-            state = STATE_MOVE1;
+
+            cItem.setIntValue(ContactItem.CONTACTITEM_GROUP, newGItem.getId());
+            cItem.setIntValue(ContactItem.CONTACTITEM_ID, Util.createRandomId());
+
+            Icq.c.sendPacket
+            (
+                 new SnacPacket
+                 (
+                      SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+                      SnacPacket.CLI_ROSTERADD_COMMAND,
+                      SnacPacket.CLI_ROSTERADD_COMMAND|((Util.createRandomId() << 16)&0x7FFF0000),
+                      new byte[0],
+                      packRosterItem(cItem, newGItem.getId())
+                 )
+            );
+            
+            state = STATE_MOVE3;
+            
             break;
 		}
 	}
@@ -305,39 +323,6 @@ public class UpdateContactListAction extends Action
 					break;
 					
                 /* STATE_MOVE */
-                case STATE_MOVE1:
-                     Icq.c.sendPacket
-                     (
-                          new SnacPacket
-                          (
-                               SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-                               SnacPacket.CLI_ROSTERDELETE_COMMAND,
-                               Util.getCounter(), new byte[0],
-                               packRosterItem(cItem, gItem.getId())
-                          )
-                     );
-
-                     cItem.setIntValue(ContactItem.CONTACTITEM_GROUP, newGItem.getId());
-                     cItem.setIntValue(ContactItem.CONTACTITEM_ID, Util.createRandomId());
-
-                     state = STATE_MOVE2;
-                     break;
-
-                case STATE_MOVE2:
-                     Icq.c.sendPacket
-                     (
-                          new SnacPacket
-                          (
-                               SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-                               SnacPacket.CLI_ROSTERADD_COMMAND,
-                               Util.getCounter(),
-                               new byte[0],
-                               packRosterItem(cItem, newGItem.getId())
-                          )
-                     );
-                     state = STATE_MOVE3;
-                     break;
-
                 case STATE_MOVE3:
                      sendGroup(newGItem);
                      state = STATE_MOVE4;
@@ -380,14 +365,14 @@ public class UpdateContactListAction extends Action
 	private void sendCLI_ADDSTART() throws JimmException
 	{
 		Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY,
-				SnacPacket.CLI_ADDSTART_COMMAND, Util.getCounter(),
+				SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND,
 				new byte[0], new byte[0]));
 	}
 
 	private void sendCLI_ADDEND() throws JimmException
 	{
 		Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-				SnacPacket.CLI_ADDEND_COMMAND, Util.getCounter(), new byte[0],
+				SnacPacket.CLI_ADDEND_COMMAND, SnacPacket.CLI_ADDEND_COMMAND, new byte[0],
 				new byte[0]));
 	}
 
@@ -502,16 +487,16 @@ public class UpdateContactListAction extends Action
 		if (action != ACTION_DEL)
 		{
 			Util.writeWord(addData, 0x0131, true);
-			Util.writeLenAndString(addData, cItem
-					.getStringValue(ContactItem.CONTACTITEM_NAME),
-					true);
+			Util.writeLenAndString(addData, cItem.getStringValue(ContactItem.CONTACTITEM_NAME), true);
 		}
 
-		// /* Server-side additional data */
-		//if (cItem.ssData != null)
-		//{
-		//	Util.writeByteArray(addData, cItem.ssData);
-		//}
+		/* Server-side additional data */
+		byte[] ssData = cItem.getBytesArray(ContactItem.CONTACTITEM_SS_DATA);
+		if (ssData != null)
+		{
+			System.out.println("ssData != null");
+			Util.writeByteArray(addData, ssData);
+		}
 
 		/* TLV(0x0066) - you are awaiting authorization for this buddy */
 		if (action == ACTION_REQ_AUTH)
@@ -523,9 +508,7 @@ public class UpdateContactListAction extends Action
 		/* Append additional data to stream */
 		Util.writeWord(stream, addData.size(), true);
 		stream.write(addData.toByteArray(), 0, addData.size());
-
-		// Util.showBytes(stream.toByteArray());
-
+		
 		return stream.toByteArray();
 	}
 

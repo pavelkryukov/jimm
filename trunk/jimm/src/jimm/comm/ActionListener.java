@@ -96,6 +96,7 @@ public class ActionListener
 			if ((snacPacket.getFamily() == SnacPacket.SRV_USERONLINE_FAMILY)
 					&& (snacPacket.getCommand() == SnacPacket.SRV_USERONLINE_COMMAND))
 			{
+				int xStatus = -1;
 
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 				//#sijapp cond.if modules_FILES is "true"#
@@ -150,6 +151,11 @@ public class ActionListener
 					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
 					//#sijapp cond.if modules_FILES is "true"#
 
+					/* Standart ICQ x-statuses */
+					else if (tlvType == 0x001D)
+					{
+						xStatus = Icq.detectStandartXStatus(tlvData);
+					}
 					else if (tlvType == 0x000A) // External IP
 					{
 						System.arraycopy(tlvData, 0, externalIP, 0, 4);
@@ -210,8 +216,8 @@ public class ActionListener
 				// Update contact list
 				ContactItem item = ContactList.getItembyUIN(uin);
 				//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
-				int xStatus = -1;
-				if (item != null)
+
+				if ((item != null) && (xStatus == -1))
 				{
 					byte[] capsArray = Icq.mergeCapabilities(capabilities_old, capabilities_new);
 					Icq.detectUserClientAndParseCaps(item, dwFT1, dwFT2, dwFT3, capsArray, icqProt, statusChange);
@@ -778,11 +784,11 @@ public class ActionListener
 										.getItembyUIN(uin);
 
 								sender
-										.setIPValue(
+										.setBytesArray(
 												ContactItem.CONTACTITEM_INTERNAL_IP,
 												ip);
 								sender
-										.setIPValue(
+										.setBytesArray(
 												ContactItem.CONTACTITEM_EXTERNAL_IP,
 												extIP);
 								sender

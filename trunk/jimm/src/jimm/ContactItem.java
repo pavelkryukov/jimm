@@ -59,6 +59,7 @@ public class ContactItem implements ContactListItem
 	private byte xStatusId;
 
 	private String name, clientVersion, lowerText;
+	private byte[] ssData; // server-size raw data
 
 	///////////////////////////////////////////////////////////////////////////
 
@@ -287,7 +288,7 @@ public class ContactItem implements ContactListItem
 				| (((int) array[3] & 0xFF) << 24);
 	}
 
-	synchronized public void setIPValue(int key, byte[] value)
+	synchronized public void setBytesArray(int key, byte[] value)
 	{
 		switch (key)
 		{
@@ -297,10 +298,13 @@ public class ContactItem implements ContactListItem
 		case CONTACTITEM_EXTERNAL_IP:
 			extIP = arrayToLongIP(value);
 			break;
+		case CONTACTITEM_SS_DATA:
+			ssData = value;
+			break;
 		}
 	}
 
-	synchronized public byte[] getIPValue(int key)
+	synchronized public byte[] getBytesArray(int key)
 	{
 		switch (key)
 		{
@@ -308,6 +312,8 @@ public class ContactItem implements ContactListItem
 			return longIPToByteAray(intIP);
 		case CONTACTITEM_EXTERNAL_IP:
 			return longIPToByteAray(extIP);
+		case CONTACTITEM_SS_DATA:
+			return ssData;
 		}
 		return null;
 	}
@@ -374,6 +380,8 @@ public class ContactItem implements ContactListItem
 	public static final int CONTACTITEM_INTERNAL_IP = 225; /* IP address */
 
 	public static final int CONTACTITEM_EXTERNAL_IP = 226; /* IP address */
+	
+	public static final int CONTACTITEM_SS_DATA = 227; /* bytes[] */
 
 	public static final int CONTACTITEM_AUTH_COOKIE = 193; /* Integer */
 
@@ -418,8 +426,8 @@ public class ContactItem implements ContactListItem
 		setIntValue(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		//#sijapp cond.if modules_FILES is "true"#
-		setIPValue(ContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
-		setIPValue(ContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
+		setBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
+		setBytesArray(ContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
 		setIntValue(ContactItem.CONTACTITEM_DC_PORT, 0);
 		setIntValue(ContactItem.CONTACTITEM_DC_TYPE, 0);
 		setIntValue(ContactItem.CONTACTITEM_ICQ_PROT, 0);
@@ -663,31 +671,6 @@ public class ContactItem implements ContactListItem
 		setIntValue(CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
 		setIntValue(CONTACTITEM_XSTATUS, -1);
 	}
-
-	/*
-	public void commandAction(Command c, Displayable d)
-	{
-		//#sijapp cond.if target isnot "DEFAULT"#
-		if (((c == textboxCancelCommand) || (c == JimmUI.cmdOk) || (c == textboxSendCommand))
-				&& (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
-				&& ((caps & Icq.CAPF_TYPING) != 0)
-				&& ((Options.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVISIBLE) && (Options
-						.getLong(Options.OPTION_ONLINE_STATUS) != ContactList.STATUS_INVIS_ALL)))
-			try
-			{
-				Jimm.jimm
-						.getIcqRef()
-						.beginTyping(
-								ContactItem.this
-										.getStringValue(ContactItem.CONTACTITEM_UIN),
-								false);
-			} catch (JimmException e)
-			{
-			}
-		//#sijapp cond.end#
-	
-		 */
-
 
 	/* Sets new contact name */
 	public void rename(String newName)
