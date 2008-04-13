@@ -2685,68 +2685,77 @@ public class Icq implements Runnable
 				: ContactList.STATUS_OFFLINE;
 	}
 
-	static public void setOnlineStatus(int status) throws JimmException
+	static public void setOnlineStatus(int status, int xStatus) throws JimmException
 	{
-		byte[] CLI_SETSTATUS_DATA = ConnectAction.CLI_SETSTATUS_DATA;
-
-		// Convert online status
+		ByteArrayOutputStream statBuffer = new ByteArrayOutputStream();
+		ByteArrayOutputStream visBuffer = new ByteArrayOutputStream();
+		
 		int onlineStatus = Util.translateStatusSend(status);
-
+		int icqXStatus = convertJimmXStatToIcqXStat(xStatus);
+		
+		/* Visiblity */
 		int visibilityItemId = Options.getInt(Options.OPTION_VISIBILITY_ID);
-		byte[] buf = new byte[15];
-		byte bCode = 0;
 		if (visibilityItemId != 0)
 		{
-			// Build packet for privacy setting changing
-			int marker = 0;
-
+			byte bCode = 0;
 			if (onlineStatus == Util.SET_STATUS_INVISIBLE)
-				bCode = (status == ContactList.STATUS_INVIS_ALL) ? (byte) 2
-						: (byte) 3;
+				bCode = (status == ContactList.STATUS_INVIS_ALL) ? (byte) 2 : (byte) 3;
 			else
 				bCode = (byte) 4;
-
-			Util.putWord(buf, marker, 0);
-			marker += 2; // name (null)
-			Util.putWord(buf, marker, 0);
-			marker += 2; // GroupID
-			Util.putWord(buf, marker, visibilityItemId);
-			marker += 2; // EntryID
-			Util.putWord(buf, marker, 4);
-			marker += 2; // EntryType
-			Util.putWord(buf, marker, 5);
-			marker += 2; // Length in bytes of following TLV
-			Util.putWord(buf, marker, 0xCA);
-			marker += 2; // TLV Type
-			Util.putWord(buf, marker, 1);
-			marker += 2; // TLV Length
-			Util.putByte(buf, marker, bCode); // TLV Value
-
+			Util.writeWord(visBuffer, 0, true);
+			Util.writeWord(visBuffer, 0, true);
+			Util.writeWord(visBuffer, visibilityItemId, true);
+			Util.writeWord(visBuffer, 4, true);
+			Util.writeWord(visBuffer, 5, true);
+			Util.writeWord(visBuffer, 0xCA, true);
+			Util.writeWord(visBuffer, 1, true);
+			Util.writeByte(visBuffer, bCode);
+			
 			// Change privacy setting according to new status
 			if (onlineStatus == Util.SET_STATUS_INVISIBLE)
 			{
 				SnacPacket reply2pre = new SnacPacket(
 						SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 						SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-						SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], buf);
+						SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], visBuffer.toByteArray());
 				c.sendPacket(reply2pre);
 			}
 		}
+		
+		/* Main status */
+		if (status != -1)
+		{
+			Util.writeWord(statBuffer, 0x06, true); // TLV (0x06)
+			Util.writeWord(statBuffer, 4, true); // TLV len
+			Util.writeDWord(statBuffer, onlineStatus|0x10000000, true);
+		}
 
-		// Send a CLI_SETSTATUS packet
-		Util.putDWord(CLI_SETSTATUS_DATA, 4, 0x10000000 + onlineStatus);
-		SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY,
-				SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0],
-				CLI_SETSTATUS_DATA);
-		c.sendPacket(packet);
-
+		/* xStatus */
+		if (xStatus != 255)
+		{
+			Util.writeWord(statBuffer, 0x1D, true);  // TLV (0x1D)
+			String message = icqXStatus != -1 ? ("icqmood"+icqXStatus) : "";
+			int len = message.length()+4;
+			Util.writeWord(statBuffer, len, true);
+			Util.writeWord(statBuffer, 0x000E, true);
+			Util.writeLenAndString(statBuffer, message, false);
+		}
+		
+		if (statBuffer.size() != 0)
+		{
+			SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY,
+					SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0],
+					statBuffer.toByteArray());
+			c.sendPacket(packet);
+		}
+		
 		// Change privacy setting according to new status
 		if (visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
 		{
 			SnacPacket reply2post = new SnacPacket(
 					SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-					SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], buf);
+					SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], visBuffer.toByteArray());
 			c.sendPacket(reply2post);
 		}
 
@@ -2773,8 +2782,9 @@ public class Icq implements Runnable
 			capsStream.write(new byte[] {(byte)0x00, (byte)0x05, (byte)0x00, (byte)0x00});
 			capsStream.write(CAP_AIM_SERVERRELAY);
 			capsStream.write(CAP_AIM_ISICQ);
-			capsStream.write(CAP_UNKNOWN);
+			capsStream.write(CAP_ICHAT);
 			capsStream.write(CAP_UTF8);
+			capsStream.write(CAP_AVATAR);
 			capsStream.write(CAP_VERSION);
 			
 			//#sijapp cond.if target isnot  "DEFAULT"#
@@ -2782,10 +2792,10 @@ public class Icq implements Runnable
 			//#sijapp cond.end#
 			
 			int xStatus = Options.getInt(Options.OPTION_XSTATUS);
-			for (int i = 0; i < XSTATUS_CONSTS.length; i += 17)
+			for (int i = 0; i < XSTATUS_CONSTS.length; i += 18)
 			{
 				if (XSTATUS_CONSTS[i] == xStatus)
-				capsStream.write(XSTATUS_CONSTS, i+1, 16);
+				capsStream.write(XSTATUS_CONSTS, i+2, 16);
 			}
 			
 			packet = capsStream.toByteArray();
@@ -2793,58 +2803,59 @@ public class Icq implements Runnable
 		}
 		catch (Exception e) {}
 		
-		c.sendPacket(new SnacPacket(0x0002, 0x0004, 0, new byte[0], packet));
+		c.sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 0, new byte[0], packet));
 	}
 	
 	////////////////
 	
 	// CAPS
 	public static final byte[] CAP_AIM_ISICQ       = Util.explodeToBytes("09,46,13,44,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
-	public static final byte[] CAP_UNKNOWN         = Util.explodeToBytes("09,46,00,00,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	public static final byte[] CAP_ICHAT           = Util.explodeToBytes("09,46,00,00,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
 	public static final byte[] CAP_VERSION         = Util.explodeToBytes("*Jimm,20,00,00,00,00,00,00,00,00,00,00,00", ',', 16);
 	public static final byte[] CAP_MTN             = Util.explodeToBytes("56,3f,c8,09,0b,6f,41,bd,9f,79,42,26,09,df,a2,f3", ',', 16);
 	public static final byte[] CAP_AIM_SERVERRELAY = Util.explodeToBytes("09,46,13,49,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
 	public static final byte[] CAP_UTF8            = Util.explodeToBytes("09,46,13,4E,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
 	public static final byte[] CAP_UTF8_GUID       = Util.explodeToBytes("7b,30,39,34,36,31,33,34,45,2D,34,43,37,46,2D,31,31,44,31,2D,38,32,32,32,2D,34,34,34,35,35,33,35,34,30,30,30,30,7D", ',', 16);
 	
-	private static final byte[] CAP_QIPINFIUM = Util.explodeToBytes("7c,73,75,02,c3,be,4f,3e,a6,9f,01,53,13,43,1e,1a", ',', 16);
-//	private static final byte[] CAP_QIPPLUGINS = Util.explodeToBytes("7C,53,3F,FA,68,00,4F,21,BC,FB,C7,D2,43,9A,AD,31", ',', 16);
-//	private static final byte[] CAP_AUDIO = Util.explodeToBytes("09,46,01,04,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
-//	private static final byte[] CAP_VIDEO = Util.explodeToBytes("09,46,01,01,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
-	private static final byte[] CAP_HTMLMESSAGES = Util.explodeToBytes("01,38,ca,7b,76,9a,49,15,88,f2,13,fc,00,97,9e,a8", ',', 16);
+	
+	private static final byte[] CAP_QIPINFIUM      = Util.explodeToBytes("7c,73,75,02,c3,be,4f,3e,a6,9f,01,53,13,43,1e,1a", ',', 16);
+//	private static final byte[] CAP_QIPPLUGINS     = Util.explodeToBytes("7C,53,3F,FA,68,00,4F,21,BC,FB,C7,D2,43,9A,AD,31", ',', 16);
+//	private static final byte[] CAP_AUDIO          = Util.explodeToBytes("09,46,01,04,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+//	private static final byte[] CAP_VIDEO          = Util.explodeToBytes("09,46,01,01,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_HTMLMESSAGES   = Util.explodeToBytes("01,38,ca,7b,76,9a,49,15,88,f2,13,fc,00,97,9e,a8", ',', 16);
 //	private static final byte[] CAP_XMultiUserChat = Util.explodeToBytes("67,36,15,15,61,2d,4c,07,8f,3d,bd,e6,40,8e,a0,41", ',', 16);
-//	private static final byte[] CAP_XtZers = Util.explodeToBytes("b2,ec,8f,16,7c,6f,45,1b,bd,79,dc,58,49,78,88,b9", ',', 16);
-	private static final byte[] CAP_IsICQLITE = Util.explodeToBytes("17,8c,2d,9b,da,a5,45,bb,8d,db,f3,bd,bd,53,a1,0a", ',', 16);
-	private static final byte[] CAP_MIRANDAIM = Util.explodeToBytes("4D,69,72,61,6E,64,61,4D,00,00,00,00,00,00,00,00", ',', 16);
-	private static final byte[] CAP_TRILLIAN = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,09", ',', 16);
-	private static final byte[] CAP_TRILCRYPT = Util.explodeToBytes("f2,e7,c7,f4,fe,ad,4d,fb,b2,35,36,79,8b,df,00,00", ',', 16);
-	private static final byte[] CAP_SIM = Util.explodeToBytes("*SIM client  ,0,0,0,0", ',', 16);
-	private static final byte[] CAP_SIMOLD = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,00", ',', 16);
-	private static final byte[] CAP_LICQ = Util.explodeToBytes("*Licq client ',0,0,0,0", ',', 16);
-	private static final byte[] CAP_KOPETE = Util.explodeToBytes("*Kopete ICQ  ',0,0,0,0", ',', 16);
-	private static final byte[] CAP_MICQ = Util.explodeToBytes("*mICQ ,A9,* R.K. ',0,0,0,0", ',', 16);
-	private static final byte[] CAP_ANDRQ = Util.explodeToBytes("*&RQinside,0,0,0,0,0,0,0", ',', 16);
-	private static final byte[] CAP_QIP = Util.explodeToBytes("56,3F,C8,09,0B,6F,41,*QIP 2005a", ',', 16);
-	private static final byte[] CAP_IM2 = Util.explodeToBytes("74,ED,C3,36,44,DF,48,5B,8B,1C,67,1A,1F,86,09,9F", ',', 16);
-	private static final byte[] CAP_MACICQ = Util.explodeToBytes("dd,16,f2,02,84,e6,11,d4,90,db,00,10,4b,9b,4b,7d", ',', 16);
-	private static final byte[] CAP_RICHTEXT = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,92", ',', 16);
-	private static final byte[] CAP_IS2001 = Util.explodeToBytes("2e,7a,64,75,fa,df,4d,c8,88,6f,ea,35,95,fd,b6,df", ',', 16);
-	private static final byte[] CAP_IS2002 = Util.explodeToBytes("10,cf,40,d1,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
-	private static final byte[] CAP_STR20012 = Util.explodeToBytes("a0,e9,3f,37,4f,e9,d3,11,bc,d2,00,04,ac,96,dd,96", ',', 16);
-	private static final byte[] CAP_AIMICON = Util.explodeToBytes("09,46,13,46,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
-	private static final byte[] CAP_AIMIMIMAGE = Util.explodeToBytes("09,46,13,45,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
-	private static final byte[] CAP_AIMCHAT = Util.explodeToBytes("74,8F,24,20,62,87,11,D1,82,22,44,45,53,54,00,00", ',', 16);
-	private static final byte[] CAP_UIM = Util.explodeToBytes("A7,E4,0A,96,B3,A0,47,9A,B8,45,C9,E4,67,C5,6B,1F", ',', 16);
-	private static final byte[] CAP_RAMBLER = Util.explodeToBytes("7E,11,B7,78,A3,53,49,26,A8,02,44,73,52,08,C4,2A", ',', 16);
-	private static final byte[] CAP_ABV = Util.explodeToBytes("00,E7,E0,DF,A9,D0,4F,e1,91,62,C8,90,9A,13,2A,1B", ',', 16);
-	private static final byte[] CAP_NETVIGATOR = Util.explodeToBytes("4C,6B,90,A3,3D,2D,48,0E,89,D6,2E,4B,2C,10,D9,9F", ',', 16);
-	private static final byte[] CAP_XTRAZ = Util.explodeToBytes("1A,09,3C,6C,D7,FD,4E,C5,9D,51,A6,47,4E,34,F5,A0", ',', 16);
-	private static final byte[] CAP_AIMFILE = Util.explodeToBytes("09,46,13,43,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
-	private static final byte[] CAP_DIRECT = Util.explodeToBytes("09,46,13,44,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
-	private static final byte[] CAP_JIMM = Util.explodeToBytes("*Jimm ", ',', 16);
-	private static final byte[] CAP_AVATAR = Util.explodeToBytes("09,46,13,4C,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
-	private static final byte[] CAP_TYPING = Util.explodeToBytes("56,3f,c8,09,0b,6f,41,bd,9f,79,42,26,09,df,a2,f3", ',', 16);
-	private static final byte[] CAP_MCHAT = Util.explodeToBytes("*mChat icq", ',', 16);
+//	private static final byte[] CAP_XtZers         = Util.explodeToBytes("b2,ec,8f,16,7c,6f,45,1b,bd,79,dc,58,49,78,88,b9", ',', 16);
+	private static final byte[] CAP_IsICQLITE      = Util.explodeToBytes("17,8c,2d,9b,da,a5,45,bb,8d,db,f3,bd,bd,53,a1,0a", ',', 16);
+	private static final byte[] CAP_MIRANDAIM      = Util.explodeToBytes("4D,69,72,61,6E,64,61,4D,00,00,00,00,00,00,00,00", ',', 16);
+	private static final byte[] CAP_TRILLIAN       = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,09", ',', 16);
+	private static final byte[] CAP_TRILCRYPT      = Util.explodeToBytes("f2,e7,c7,f4,fe,ad,4d,fb,b2,35,36,79,8b,df,00,00", ',', 16);
+	private static final byte[] CAP_SIM            = Util.explodeToBytes("*SIM client  ,0,0,0,0", ',', 16);
+	private static final byte[] CAP_SIMOLD         = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,00", ',', 16);
+	private static final byte[] CAP_LICQ           = Util.explodeToBytes("*Licq client ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_KOPETE         = Util.explodeToBytes("*Kopete ICQ  ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_MICQ           = Util.explodeToBytes("*mICQ ,A9,* R.K. ',0,0,0,0", ',', 16);
+	private static final byte[] CAP_ANDRQ          = Util.explodeToBytes("*&RQinside,0,0,0,0,0,0,0", ',', 16);
+	private static final byte[] CAP_QIP            = Util.explodeToBytes("56,3F,C8,09,0B,6F,41,*QIP 2005a", ',', 16);
+	private static final byte[] CAP_IM2            = Util.explodeToBytes("74,ED,C3,36,44,DF,48,5B,8B,1C,67,1A,1F,86,09,9F", ',', 16);
+	private static final byte[] CAP_MACICQ         = Util.explodeToBytes("dd,16,f2,02,84,e6,11,d4,90,db,00,10,4b,9b,4b,7d", ',', 16);
+	private static final byte[] CAP_RICHTEXT       = Util.explodeToBytes("97,b1,27,51,24,3c,43,34,ad,22,d6,ab,f7,3f,14,92", ',', 16);
+	private static final byte[] CAP_IS2001         = Util.explodeToBytes("2e,7a,64,75,fa,df,4d,c8,88,6f,ea,35,95,fd,b6,df", ',', 16);
+	private static final byte[] CAP_IS2002         = Util.explodeToBytes("10,cf,40,d1,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_STR20012       = Util.explodeToBytes("a0,e9,3f,37,4f,e9,d3,11,bc,d2,00,04,ac,96,dd,96", ',', 16);
+	private static final byte[] CAP_AIMICON        = Util.explodeToBytes("09,46,13,46,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_AIMIMIMAGE     = Util.explodeToBytes("09,46,13,45,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_AIMCHAT        = Util.explodeToBytes("74,8F,24,20,62,87,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_UIM            = Util.explodeToBytes("A7,E4,0A,96,B3,A0,47,9A,B8,45,C9,E4,67,C5,6B,1F", ',', 16);
+	private static final byte[] CAP_RAMBLER        = Util.explodeToBytes("7E,11,B7,78,A3,53,49,26,A8,02,44,73,52,08,C4,2A", ',', 16);
+	private static final byte[] CAP_ABV            = Util.explodeToBytes("00,E7,E0,DF,A9,D0,4F,e1,91,62,C8,90,9A,13,2A,1B", ',', 16);
+	private static final byte[] CAP_NETVIGATOR     = Util.explodeToBytes("4C,6B,90,A3,3D,2D,48,0E,89,D6,2E,4B,2C,10,D9,9F", ',', 16);
+	private static final byte[] CAP_XTRAZ          = Util.explodeToBytes("1A,09,3C,6C,D7,FD,4E,C5,9D,51,A6,47,4E,34,F5,A0", ',', 16);
+	private static final byte[] CAP_AIMFILE        = Util.explodeToBytes("09,46,13,43,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_DIRECT         = Util.explodeToBytes("09,46,13,44,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_JIMM           = Util.explodeToBytes("*Jimm ", ',', 16);
+	private static final byte[] CAP_AVATAR         = Util.explodeToBytes("09,46,13,4C,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
+	private static final byte[] CAP_TYPING         = Util.explodeToBytes("56,3f,c8,09,0b,6f,41,bd,9f,79,42,26,09,df,a2,f3", ',', 16);
+	private static final byte[] CAP_MCHAT          = Util.explodeToBytes("*mChat icq", ',', 16);
 	
 	// Arrays for new capability blowup
 	private static final byte[] CAP_OLD_HEAD = { (byte) 0x09, (byte) 0x46 };
@@ -3084,6 +3095,14 @@ public class Icq implements Runnable
 		vNames.addElement(name);
 		vIndexes.addElement(new Integer(index));
 		vImg.addElement(new Integer(imageIndex-1));
+	}
+	
+	private static int convertJimmXStatToIcqXStat(int jimmValue)
+	{
+		for (int i = 0; i < XSTATUS_CONSTS.length; i += 18) 
+			if (XSTATUS_CONSTS[i] == (byte)jimmValue) 
+				return XSTATUS_CONSTS[i+1] == 255 ? -1 : XSTATUS_CONSTS[i+1]; 
+		return -1;
 	}
 	
 	private static final byte[] xStWord = {'i', 'c', 'q', 'm', 'o', 'o', 'd' };
