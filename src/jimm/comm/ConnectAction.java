@@ -77,26 +77,17 @@ public class ConnectAction extends Action
     public static final byte[] CLI_READY_DATA =
     	Util.explodeToBytes
     	(
-    		"00,01,00,04,"+ 
-			"01,10,08,e4,"+ 
-			"00,13,00,04,"+
-			"01,10,08,e4,"+
-			"00,02,00,01,"+
-			"01,10,08,e4,"+
-			"00,03,00,01,"+
-			"01,10,08,e4,"+
-			"00,15,00,01,"+ 
-			"01,10,08,e4,"+
-			"00,04,00,01,"+
-			"01,10,08,e4,"+
-			"00,06,00,01,"+
-			"01,10,08,e4,"+
-			"00,09,00,01,"+
-			"01,10,08,e4,"+
-			"00,0a,00,01,"+
-			"01,10,08,e4,"+
-			"00,0b,00,01,"+
-			"01,10,08,e4",
+    		//"00,22,00,01,01,10,08,e4,"+
+    		"00,01,00,04,01,10,08,e4,"+ 
+			"00,13,00,04,01,10,08,e4,"+
+			"00,02,00,01,01,10,08,e4,"+
+			"00,03,00,01,01,10,08,e4,"+
+			"00,15,00,01,01,10,08,e4,"+
+			"00,04,00,01,01,10,08,e4,"+
+			"00,06,00,01,01,10,08,e4,"+
+			"00,09,00,01,01,10,08,e4,"+
+			"00,0a,00,01,01,10,08,e4,"+
+			"00,0b,00,01,01,10,08,e4",
 			',', 16
     	);
 //    {(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x03,
@@ -646,7 +637,7 @@ public class ConnectAction extends Action
 							// Normal contact
 							if (type == 0x0000)
 							{
-								// ByteArrayOutputStream serverData = new ByteArrayOutputStream();
+								ByteArrayOutputStream serverData = new ByteArrayOutputStream();
 								
 								// Get nick
 								String nick = new String(name);
@@ -666,14 +657,13 @@ public class ConnectAction extends Action
 										noAuth = true;
 									}
 									
-									//else if (tlvType == 0x006D) /* Server-side additional data */
-									//{
-									//	Util.writeWord(serverData, tlvType, true);
-									//	Util.writeWord(serverData, tlvData.length, true);
-									//	Util.writeByteArray(serverData, tlvData);
-									//	
-									//	Util.showBytes(serverData.toByteArray());
-									//}
+									/* Server-side additional data */
+									else if ((tlvType == 0x006D) || (tlvType == 0x015c) || (tlvType == 0x015d))
+									{
+										Util.writeWord(serverData, tlvType, true);
+										Util.writeWord(serverData, tlvData.length, true);
+										Util.writeByteArray(serverData, tlvData);
+									}
 									
 									len -= 4;
 									len -= tlvData.length;
@@ -685,7 +675,7 @@ public class ConnectAction extends Action
 								try
 								{
 									ContactItem item = new ContactItem(id, group, name, nick, noAuth, true);
-									// if (serverData.size() != 0) item.ssData = serverData.toByteArray();
+									//item.setBytesArray(ContactItem.CONTACTITEM_SS_DATA, (serverData.size() != 0) ? serverData.toByteArray() : null);
 									items.addElement(item);
 								}
 								catch (NumberFormatException ne)

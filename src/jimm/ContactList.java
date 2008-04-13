@@ -1017,9 +1017,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
 		if (dcType != -1)
 		{
-			cItem.setIPValue(ContactItem.CONTACTITEM_INTERNAL_IP,
+			cItem.setBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP,
 					internalIP);
-			cItem.setIPValue(ContactItem.CONTACTITEM_EXTERNAL_IP,
+			cItem.setBytesArray(ContactItem.CONTACTITEM_EXTERNAL_IP,
 					externalIP);
 			cItem.setIntValue(ContactItem.CONTACTITEM_DC_PORT,
 					(int) dcPort);

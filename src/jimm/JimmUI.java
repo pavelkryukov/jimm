@@ -1803,11 +1803,11 @@ public class JimmUI implements CommandListener
 
 		/* Internal IP */
 		clInfoData[JimmUI.UI_INT_IP] = Util
-				.ipToString(cItem.getIPValue(ContactItem.CONTACTITEM_INTERNAL_IP));
+				.ipToString(cItem.getBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP));
 
 		/* External IP */
 		clInfoData[JimmUI.UI_EXT_IP] = Util
-				.ipToString(cItem.getIPValue(ContactItem.CONTACTITEM_EXTERNAL_IP));
+				.ipToString(cItem.getBytesArray(ContactItem.CONTACTITEM_EXTERNAL_IP));
 
 		/* Port */
 		int port = cItem.getIntValue(ContactItem.CONTACTITEM_DC_PORT);
