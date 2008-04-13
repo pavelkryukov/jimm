@@ -217,11 +217,12 @@ public class ActionListener
 				ContactItem item = ContactList.getItembyUIN(uin);
 				//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
 
-				if ((item != null) && (xStatus == -1))
+				if (item != null)
 				{
 					byte[] capsArray = Icq.mergeCapabilities(capabilities_old, capabilities_new);
 					Icq.detectUserClientAndParseCaps(item, dwFT1, dwFT2, dwFT3, capsArray, icqProt, statusChange);
-					xStatus = Icq.detectXStatus(capsArray);
+					if (xStatus == -1)
+						xStatus = Icq.detectXStatus(capsArray);
 				}
 				RunnableImpl.updateContactList(uin, status, xStatus, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle);
 				//#sijapp cond.else#
