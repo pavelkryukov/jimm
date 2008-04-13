@@ -873,81 +873,47 @@ public class JimmUI implements CommandListener
 
 	// Information about the user
 	final public static int UI_UIN = 0;
-
 	final public static int UI_NICK = 1;
-
 	final public static int UI_NAME = 2;
-
 	final public static int UI_EMAIL = 3;
-
 	final public static int UI_CITY = 4;
-
 	final public static int UI_STATE = 5;
-
 	final public static int UI_PHONE = 6;
-
 	final public static int UI_FAX = 7;
-
 	final public static int UI_ADDR = 8;
-
 	final public static int UI_CPHONE = 9;
-
 	final public static int UI_AGE = 10;
-
 	final public static int UI_GENDER = 11;
-
 	final public static int UI_HOME_PAGE = 12;
-
 	final public static int UI_BDAY = 13;
-
 	final public static int UI_W_CITY = 14;
-
 	final public static int UI_W_STATE = 15;
-
 	final public static int UI_W_PHONE = 16;
-
 	final public static int UI_W_FAX = 17;
-
 	final public static int UI_W_ADDR = 18;
-
 	final public static int UI_W_NAME = 19;
-
 	final public static int UI_W_DEP = 20;
-
 	final public static int UI_W_POS = 21;
-
 	final public static int UI_ABOUT = 22;
-
 	final public static int UI_INETRESTS = 23;
-
 	final public static int UI_AUTH = 24;
-
 	final public static int UI_STATUS = 25;
-
 	final public static int UI_ICQ_CLIENT = 26;
-
 	final public static int UI_SIGNON = 27;
-
 	final public static int UI_ONLINETIME = 28;
-
 	final public static int UI_IDLE_TIME = 29;
-
 	final public static int UI_ICQ_VERS = 31;
-
 	final public static int UI_INT_IP = 32;
-
 	final public static int UI_EXT_IP = 33;
-
 	final public static int UI_PORT = 34;
-
 	final public static int UI_UIN_LIST = 35;
-
 	final public static int UI_FIRST_NAME = 36;
-
 	final public static int UI_LAST_NAME = 37;
+	final public static int UI_ONLINE_STATUS = 38;
+	final public static int UI_XSTATUS = 39;
 
 	//////
-	final public static int UI_LAST_ID = 38;
+	final public static int UI_LAST_ID = 40;
 
 	static private int uiBigTextIndex;
 
@@ -1037,6 +1003,8 @@ public class JimmUI implements CommandListener
 		addToTextList(UI_W_FAX, data, "fax", list);
 
 		uiSectName = "dc_info";
+		addToTextList(UI_ONLINE_STATUS, data, "status", list);
+		addToTextList(UI_XSTATUS, data, "xstatus", list);
 		addToTextList(UI_ICQ_CLIENT, data, "icq_client", list);
 		addToTextList(UI_SIGNON, data, "li_signon_time", list);
 		addToTextList(UI_ONLINETIME, data, "li_online_time", list);
@@ -1771,6 +1739,10 @@ public class JimmUI implements CommandListener
 		TextList tlist = JimmUI.getInfoTextList(
 				cItem.getStringValue(ContactItem.CONTACTITEM_UIN), true);
 		String[] clInfoData = new String[JimmUI.UI_LAST_ID];
+		
+		clInfoData[JimmUI.UI_ONLINE_STATUS] = JimmUI.getStatusString(cItem.getIntValue(ContactItem.CONTACTITEM_STATUS));
+		int xStatus = cItem.getIntValue(ContactItem.CONTACTITEM_XSTATUS);
+		clInfoData[JimmUI.UI_XSTATUS] = (xStatus <= 0) ? null : ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]); 
 
 		/* sign on time */
 		long signonTime = cItem.getIntValue(ContactItem.CONTACTITEM_SIGNON);
