@@ -117,7 +117,11 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 	private Vector messData = new Vector();
 
-	private int messTotalCounter = 0; 
+	private int messTotalCounter = 0;
+
+	private long lastMsgTime = 0;
+
+	private boolean lastDirection;
 
 	ChatTextList(String name, ContactItem contact)
 	{
@@ -419,6 +423,12 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 	//#sijapp cond.end#
 
+	boolean inOneMinute (long time1, long time2) {
+
+		return ( ((time1 / 60) % 60 == (time2 / 60) % 60) ? true : false );
+
+	}
+
 	void addTextToForm(String from, String message, String url, long time,
 			boolean red, boolean offline)
 	{
@@ -426,23 +436,25 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 		textList.lock();
 	
+		boolean shortMsg = (inOneMinute (lastMsgTime, time)) && (lastDirection == red);
+
 		int lastSize = textList.getSize();
 		
 		StringBuffer messHeader = new StringBuffer();
 		
-		if (Options.getBoolean(Options.OPTION_SHOW_MESS_ICON))
+		if ((Options.getBoolean(Options.OPTION_SHOW_MESS_ICON)) && (!shortMsg))
 		{
 			textList.addImage(ContactList.imageList.elementAt(13), "", messTotalCounter);
 			messHeader.append(' ');
 		}
 		
-		if (Options.getBoolean(Options.OPTION_SHOW_NICK))
+		if ((Options.getBoolean(Options.OPTION_SHOW_NICK)) && (!shortMsg))
 		{
 			messHeader.append(from);
 			messHeader.append(' ');
 		}
 		
-		if (Options.getBoolean(Options.OPTION_SHOW_MESS_DATE))
+		if ((Options.getBoolean(Options.OPTION_SHOW_MESS_DATE)) && (!shortMsg))
 		{
 			messHeader.append('(');
 			messHeader.append(Util.getDateString(!offline, time));
@@ -481,6 +493,8 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		getMessData().addElement(
 				new MessData(red, time, texOffset, contains_url));
 		messTotalCounter++;
+		lastMsgTime = (shortMsg) ? lastMsgTime : time;
+		lastDirection = red;
 
 		textList.setTopItem(lastSize);
 		textList.unlock();
