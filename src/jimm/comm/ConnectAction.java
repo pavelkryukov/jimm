@@ -45,9 +45,13 @@ public class ConnectAction extends Action
     public static final int STATE_CLI_IDENT_SENT = 2;
     public static final int STATE_CLI_DISCONNECT_SENT = 3;
     public static final int STATE_CLI_COOKIE_SENT = 4;
-    public static final int STATE_CLI_CHECKROSTER_SENT = 5;
-    public static final int STATE_CLI_REQOFFLINEMSGS_SENT = 6;
-    public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 7;
+    public static final int STATE_CLI_WANT_CAPS_SENT = 5;
+    public static final int STATE_CLI_CHECKROSTER_SENT = 6;
+    public static final int STATE_CLI_STATUS_INFO_SENT = 7;
+    public static final int STATE_CLI_REQOFFLINEMSGS_SENT = 8;
+    public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 9;
+    
+    public static final int STATE_MAX = 9;
 
     // CLI_SETICBM packet data
     public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,0,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
@@ -69,6 +73,22 @@ public class ConnectAction extends Action
 			"00,0b,00,01,01,10,08,e4",
 			',', 16
     	);
+    
+    public static final short[] FAMILIES_AND_VER_LIST =
+    {
+    	0x0022, 0x0001,
+    	0x0001, 0x0004,
+    	0x0013, 0x0004,
+    	0x0002, 0x0001,
+    	0x0003, 0x0001,
+    	0x0015, 0x0001,
+    	0x0004, 0x0001,
+    	0x0006, 0x0001,
+    	0x0009, 0x0001,
+    	0x000a, 0x0001,
+    	0x000b, 0x0001,
+    };
+    
 //    {(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x03,
 //	 (byte) 0x01, (byte) 0x10, (byte) 0x04,	(byte) 0x7B,
 //	 (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x02,
@@ -457,7 +477,6 @@ public class ConnectAction extends Action
 			// Watch out for STATE_CLI_DISCONNECT_SENT
 			else if (this.state == ConnectAction.STATE_CLI_DISCONNECT_SENT)
 			{
-
 				// Watch out for SRV_HELLO packet
 				if (packet instanceof ConnectPacket)
 				{
@@ -468,47 +487,41 @@ public class ConnectAction extends Action
 						ConnectPacket reply = new ConnectPacket(this.cookie);
 						Icq.c.sendPacket(reply);
 						
-						// Send CLI_SETUSERINFO packet
-						Icq.sendUserUnfoPacket();
-					    
-						byte[] tmp_packet;
-
-						// Send a CLI_SETICBM packet
-						SnacPacket reply1;
-						
-						//#sijapp cond.if target isnot "DEFAULT"#
-						if (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
-						{
-							reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
-						}
-						else
-						{
-							//#sijapp cond.end#
-							tmp_packet = ConnectAction.CLI_SETICBM_DATA;
-							tmp_packet[5] = 0x03;
-							reply1 = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], tmp_packet);
-							//#sijapp cond.if target isnot "DEFAULT"#
-						}
-						//#sijapp cond.end#
-						Icq.c.sendPacket(reply1);
-
-						// Send a client status packet
-						Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS), Options.getInt(Options.OPTION_XSTATUS));
-
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_COOKIE_SENT;
 
 						// Packet has been consumed
 						consumed = true;
-
 					}
 				}
-
 			}
-			// Watch out for STATE_CLI_COOKIE_SENT
+            
+            // STATE_CLI_COOKIE_SENT
 			else if (this.state == ConnectAction.STATE_CLI_COOKIE_SENT)
 			{
-
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				
+				for (int i = 0; i < FAMILIES_AND_VER_LIST.length; i++) 
+					Util.writeWord(stream, FAMILIES_AND_VER_LIST[i], true);
+				
+				Icq.c.sendPacket
+				(
+					new SnacPacket
+					(
+						SnacPacket.CLI_FAMILIES_FAMILY, 
+						SnacPacket.CLI_FAMILIES_COMMAND, 
+						0x00000000, 
+						new byte[0], 
+						stream.toByteArray()
+					)
+				);
+				
+				this.state = ConnectAction.STATE_CLI_WANT_CAPS_SENT;
+			}
+       
+			// Watch out for STATE_CLI_COOKIE_SENT
+			else if (this.state == ConnectAction.STATE_CLI_WANT_CAPS_SENT)
+			{
 				// Send a CLI_REQROSTER or
 				// CLI_CHECKROSTER packet
 				long versionId1 = ContactList.getSsiListLastChangeTime();
@@ -723,7 +736,6 @@ public class ConnectAction extends Action
 
 						// Packet has been consumed
 						consumed = true;
-
 					}
 
 					// Check if all required packets have been received
@@ -731,72 +743,56 @@ public class ConnectAction extends Action
 					{
 
 						// Send a CLI_ROSTERACK packet
-						SnacPacket reply1 = new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply1);
+						Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]));
+			
+						// Send CLI_SETUSERINFO packet
+						Icq.sendUserUnfoPacket();
+					    
+						byte[] tmp_packet;
 
-						int onlineStatusOpt = (int)Options.getLong(Options.OPTION_ONLINE_STATUS);
-						int onlineStatus = Util.translateStatusSend(onlineStatusOpt);
-						int visibilityItemId = Options.getInt(Options.OPTION_VISIBILITY_ID);
-						byte[] buf = new byte[15];
-						byte bCode = 0;
-						if(visibilityItemId != 0)
+						/* TODO: make better :) */
+						// Send a CLI_SETICBM packet
+						SnacPacket reply;
+						
+						//#sijapp cond.if target isnot "DEFAULT"#
+						if (Options.getInt(Options.OPTION_TYPING_MODE) > 0)
 						{
-							// Build packet for privacy setting changing
-							int marker = 0;
-
-							if(onlineStatus == Util.SET_STATUS_INVISIBLE)
-								bCode = (onlineStatusOpt == ContactList.STATUS_INVIS_ALL)?(byte)2:(byte)3;
-							else
-								bCode = (byte)4;
-
-							Util.putWord(buf, marker,    0); marker += 2; // name (null)
-							Util.putWord(buf, marker,    0); marker += 2; // GroupID
-							Util.putWord(buf, marker,  visibilityItemId); marker += 2; // EntryID
-							Util.putWord(buf, marker,    4); marker += 2; // EntryType
-							Util.putWord(buf, marker,    5); marker += 2; // Length in bytes of following TLV
-							Util.putWord(buf, marker, 0xCA); marker += 2; // TLV Type
-							Util.putWord(buf, marker,    1); marker += 2; // TLV Length
-							Util.putByte(buf, marker,bCode);              // TLV Value
-
-							// Change privacy setting according to new status
-							if(onlineStatus == Util.SET_STATUS_INVISIBLE)
-							{
-								SnacPacket reply2pre = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-														   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-														   SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-														   new byte[0],
-														   buf);
-								Icq.c.sendPacket(reply2pre);
-							}
+							reply = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_SETICBM_DATA);
 						}
-
-						// Change privacy setting according to new status
-						if(visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
+						else
 						{
-							SnacPacket reply2post = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-														SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-														SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-														new byte[0],
-														buf);
-							Icq.c.sendPacket(reply2post);
+							//#sijapp cond.end#
+							tmp_packet = ConnectAction.CLI_SETICBM_DATA;
+							tmp_packet[5] = 0x03;
+							reply = new SnacPacket(SnacPacket.CLI_SETICBM_FAMILY, SnacPacket.CLI_SETICBM_COMMAND, 0x00000000, new byte[0], tmp_packet);
+							//#sijapp cond.if target isnot "DEFAULT"#
 						}
+						//#sijapp cond.end#
+						Icq.c.sendPacket(reply);
 
-						// Send a CLI_READY packet
-						SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
-						Icq.c.sendPacket(reply2);
-
-						// Send a CLI_TOICQSRV/CLI_REQOFFLINEMSGS packet
-						ToIcqSrvPacket reply3 = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_REQOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
-						Icq.c.sendPacket(reply3);
+						// Send a client status packet
+						Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS), Options.getInt(Options.OPTION_XSTATUS));
 
 						// Move to next state
-						this.state = ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT;
-
+						this.state = ConnectAction.STATE_CLI_STATUS_INFO_SENT;
 					}
-
 				}
-
 			}
+            
+            // STATE_CLI_STATUS_INFO_SENT
+			else if (this.state == ConnectAction.STATE_CLI_STATUS_INFO_SENT)
+			{
+				// Send a CLI_READY packet
+				SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
+				Icq.c.sendPacket(reply2);
+
+				// Send a CLI_TOICQSRV/CLI_REQOFFLINEMSGS packet
+				ToIcqSrvPacket reply3 = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_REQOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reply3);
+				
+				this.state = ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT;
+			}
+            
 			// Watch out for STATE_CLI_REQOFFLINEMSGS_SENT
 			else if (this.state == ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT)
 			{
@@ -959,27 +955,7 @@ public class ConnectAction extends Action
     // Returns a number between 0 and 100 (inclusive) which indicates the current progress
     public int getProgress()
     {
-        switch (this.state)
-        {
-        case ConnectAction.STATE_INIT_DONE:
-            return 12;
-		case STATE_AUTHKEY_REQUESTED:
-			return 25;
-        case ConnectAction.STATE_CLI_IDENT_SENT:
-            return 37;
-        case ConnectAction.STATE_CLI_DISCONNECT_SENT:
-            return 50;
-        case ConnectAction.STATE_CLI_COOKIE_SENT:
-            return 62;
-        case ConnectAction.STATE_CLI_CHECKROSTER_SENT:
-            return 75;
-        case ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT:
-            return 87;
-        case ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT:
-            return 100;
-        default:
-            return (0);
-        }
+    	return (state > 0) ? 100*state/STATE_MAX : 0;
     }
     
     public void onEvent(int eventType)

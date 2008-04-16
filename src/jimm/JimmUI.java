@@ -1569,7 +1569,7 @@ public class JimmUI implements CommandListener
 			addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE, true);
 			addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true);
 			addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true);
-			//addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true);
+			addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true);
 		}
 
 		if (status != ContactList.STATUS_OFFLINE)
