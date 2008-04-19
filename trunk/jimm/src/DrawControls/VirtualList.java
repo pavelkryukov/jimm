@@ -656,8 +656,8 @@ public abstract class VirtualList
 		if (!moveOnlyView)
 		{
 			curMenuItemIndex += offset;
-			if (curMenuItemIndex >= size) curMenuItemIndex = size-1;
-			if (curMenuItemIndex < 0) curMenuItemIndex = 0;
+			if (curMenuItemIndex >= size) curMenuItemIndex = 0;
+			if (curMenuItemIndex < 0) curMenuItemIndex = size-1;
 			if (curMenuItemIndex >= topMenuItem+visibleItemsMenuCount) 
 				topMenuItem = curMenuItemIndex-visibleItemsMenuCount+1;
 			if (curMenuItemIndex < topMenuItem) 
