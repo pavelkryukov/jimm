@@ -192,7 +192,7 @@ public class FileTransfer implements CommandListener, Runnable
 		case MODE_CHECK_FILE_LEN:
 			try
 			{
-				fileSystem.openFile(fileName);
+				fileSystem.openFile(fileName, Connector.READ);
 				fsize = (int)fileSystem.fileSize();
 				fis = fileSystem.openInputStream();
 				curMode = MODE_SHOW_DESC_FORM;

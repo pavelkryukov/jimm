@@ -267,7 +267,7 @@ class FileSystem2 implements CommandListener, Runnable
 		//#sijapp cond.if target="SIEMENS2"#
 		fileconn = (FileConnection) Connector.open("file://" + fileName);
 		//#sijapp cond.else#
-		fileconn = (FileConnection) Connector.open("file://localhost"+fileName);
+		fileconn = (FileConnection) Connector.open("file://localhost"+fileName, Connector.READ);
 		//#sijapp cond.end#
 
 		Enumeration list = fileconn.list();
@@ -401,13 +401,13 @@ class FileSystem2 implements CommandListener, Runnable
 		return selectedItem;
 	}
 	
-	public void openFile(String fileName) throws IOException
+	public void openFile(String fileName, int mode) throws IOException
 	{
 		close();
 		//#sijapp cond.if target="MOTOROLA"#
 		motoFileConnection.open(fileName);
 		//#sijapp cond.else#
-		fileConnection = (FileConnection) Connector.open("file://" + fileName);		
+		fileConnection = (FileConnection) Connector.open("file://" + fileName, mode);
 		//#sijapp cond.end#
 	}
 	
