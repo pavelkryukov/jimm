@@ -338,8 +338,8 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			}
 			finally
 			{
-				if (os != null) os.close();
-				if (fs != null) fs.close();
+				if (os != null) try { os.close(); } catch (Exception e) {}
+				if (fs != null) try { fs.close(); } catch (Exception e) {}
 			}
 		}
 	}
