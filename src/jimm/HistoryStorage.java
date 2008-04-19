@@ -331,7 +331,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			try
 			{
 				fs = (FileSystem2)fileSystem;
-				fs.openFile(filename);
+				fs.openFile(filename, Connector.WRITE);
 				os = fs.openOutputStream();
 				if (!cp1251) os.write(new byte[]{ (byte) 0xef, (byte) 0xbb, (byte) 0xbf });
 				exportUinToStream(item, os);
