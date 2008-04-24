@@ -235,9 +235,7 @@ public class FileTransfer implements CommandListener, Runnable
 		
 		exceptionText = null;
 		
-		//String host = "www.jimm.org";
-		//String url = "http://"+host+"/ft_alpha/__receive_file.php";
-		String host = "artden.homeftp.net";
+		String host = "filetransfer.jimm.org";
 		String url = "http://"+host+"/__receive_file.php";
 		
 		try

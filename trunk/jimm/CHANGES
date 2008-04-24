@@ -316,6 +316,7 @@ VERSION 0.5.1
 _______________________________________________________________________________
 VERSION 0.5.2beta (0.6.0?)
   * NEW FEATURE: Client icon is shown in contact list
+  * NEW FEATURE: file transfer through web server
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * Modified user interface
   * Classic chat is removed
@@ -330,4 +331,5 @@ VERSION 0.5.2beta (0.6.0?)
   * Creeping text line is returned back again
   * Another optimization for lower memory usage in chat
   * More options added to customize chat
+  
 
