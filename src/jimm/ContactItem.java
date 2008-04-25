@@ -375,14 +375,14 @@ public class ContactItem implements ContactListItem
 
 	public static final int CONTACTITEM_ONLINE = 195; /* Integer */
 
+	public static final int CONTACTITEM_SS_DATA = 227; /* bytes[] */
+
 	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	//#sijapp cond.if modules_FILES is "true"#
 	public static final int CONTACTITEM_INTERNAL_IP = 225; /* IP address */
 
 	public static final int CONTACTITEM_EXTERNAL_IP = 226; /* IP address */
 	
-	public static final int CONTACTITEM_SS_DATA = 227; /* bytes[] */
-
 	public static final int CONTACTITEM_AUTH_COOKIE = 193; /* Integer */
 
 	public static final int CONTACTITEM_DC_TYPE = 72; /* Integer */
