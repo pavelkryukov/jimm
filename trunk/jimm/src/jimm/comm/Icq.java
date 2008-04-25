@@ -44,6 +44,7 @@ import javax.microedition.io.SocketConnection;
 import jimm.ContactItem;
 import jimm.DebugLog;
 import jimm.Jimm;
+import jimm.JimmUI;
 import jimm.JimmException;
 import jimm.MainMenu;
 import jimm.Options;
@@ -2685,13 +2686,12 @@ public class Icq implements Runnable
 				: ContactList.STATUS_OFFLINE;
 	}
 
-	static public void setOnlineStatus(int status, int xStatus) throws JimmException
+	static public void setOnlineStatus(int status) throws JimmException
 	{
 		ByteArrayOutputStream statBuffer = new ByteArrayOutputStream();
 		ByteArrayOutputStream visBuffer = new ByteArrayOutputStream();
 		
 		int onlineStatus = Util.translateStatusSend(status);
-		int icqXStatus = convertJimmXStatToIcqXStat(xStatus);
 		
 		/* Visiblity */
 		int visibilityItemId = Options.getInt(Options.OPTION_VISIBILITY_ID);
@@ -2730,21 +2730,10 @@ public class Icq implements Runnable
 			Util.writeDWord(statBuffer, onlineStatus|0x10000000, true);
 		}
 
-		/* xStatus */
-		if (xStatus != 255)
-		{
-			Util.writeWord(statBuffer, 0x1D, true);  // TLV (0x1D)
-			String message = icqXStatus != -1 ? ("icqmood"+icqXStatus) : "";
-			int len = message.length()+4;
-			Util.writeWord(statBuffer, len, true);
-			Util.writeWord(statBuffer, 0x000E, true);
-			Util.writeLenAndString(statBuffer, message, false);
-		}
-		
 		if (statBuffer.size() != 0)
 		{
 			SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY,
-					SnacPacket.CLI_SETSTATUS_COMMAND, 0x00000000, new byte[0],
+					SnacPacket.CLI_SETSTATUS_COMMAND, SnacPacket.CLI_SETSTATUS_COMMAND, new byte[0],
 					statBuffer.toByteArray());
 			c.sendPacket(packet);
 		}
@@ -2784,7 +2773,7 @@ public class Icq implements Runnable
 			capsStream.write(CAP_AIM_ISICQ);
 			capsStream.write(CAP_ICHAT);
 			capsStream.write(CAP_UTF8);
-			capsStream.write(CAP_AVATAR);
+//			capsStream.write(CAP_AVATAR);
 			capsStream.write(CAP_VERSION);
 			
 			//#sijapp cond.if target isnot  "DEFAULT"#
@@ -2803,9 +2792,47 @@ public class Icq implements Runnable
 		}
 		catch (Exception e) {}
 		
-		c.sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 0, new byte[0], packet));
+		c.sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 4, new byte[0], packet));
 	}
 	
+	static public void setExtStatus(int xStatus) throws JimmException
+	{
+		ByteArrayOutputStream statBuffer = new ByteArrayOutputStream();
+		byte[] tlvpacket = null;
+		
+		int icqXStatus = convertJimmXStatToIcqXStat(xStatus);
+		byte[] szMoodId = Util.stringToByteArray(ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]), true);
+
+		/* xStatus */
+		if (xStatus != 255)
+		{
+			Util.writeWord(statBuffer, 0x1D, true);  // TLV (0x1D)
+
+			String message = icqXStatus != -1 ? ("icqmood"+icqXStatus) : "";
+
+			Util.writeWord(statBuffer, 0x0000, true);   // TLV Length
+			Util.writeWord(statBuffer, 0x0002, true);   // Text Status
+			Util.writeByte(statBuffer, 0x04);
+			Util.writeByte(statBuffer, szMoodId.length + 0x04);
+
+			Util.writeWord(statBuffer, szMoodId.length, true);
+			Util.writeByteArray(statBuffer, szMoodId);
+			Util.writeWord(statBuffer, 0x0000, true);
+
+			Util.writeWord(statBuffer, 0x000E, true);
+			Util.writeLenAndString(statBuffer, message, false);
+		}
+		
+		if (statBuffer.size() != 0)
+		{
+			tlvpacket = statBuffer.toByteArray();
+			Util.putWord(tlvpacket, 2, tlvpacket.length-4);
+			SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND,
+				SnacPacket.CLI_SETSTATUS_COMMAND, new byte[0], tlvpacket);
+			c.sendPacket(packet);
+		}
+	}
+
 	////////////////
 	
 	// CAPS

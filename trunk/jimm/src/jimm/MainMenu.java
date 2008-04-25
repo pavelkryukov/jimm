@@ -598,7 +598,7 @@ public class MainMenu implements CommandListener
 			{
 				try
 				{
-					Icq.setOnlineStatus(onlineStatus, 255);
+					Icq.setOnlineStatus(onlineStatus);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
@@ -639,8 +639,8 @@ public class MainMenu implements CommandListener
 			{
 				try
 				{
-					Icq.setOnlineStatus(-1, xStatus);
 					Icq.sendUserUnfoPacket();
+					Icq.setExtStatus (xStatus);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
