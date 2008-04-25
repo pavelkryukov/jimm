@@ -54,24 +54,24 @@ public class ConnectAction extends Action
     public static final int STATE_MAX = 9;
 
     // CLI_SETICBM packet data
-    public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,0,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
+    public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,7,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
 
     // CLI_READY packet data
     public static final byte[] CLI_READY_DATA =
     	Util.explodeToBytes
     	(
-    		"00,22,00,01,01,10,08,e4,"+
-    		"00,01,00,04,01,10,08,e4,"+ 
-			"00,13,00,04,01,10,08,e4,"+
-			"00,02,00,01,01,10,08,e4,"+
-			"00,03,00,01,01,10,08,e4,"+
-			"00,15,00,01,01,10,08,e4,"+
-			"00,04,00,01,01,10,08,e4,"+
-			"00,06,00,01,01,10,08,e4,"+
-			"00,09,00,01,01,10,08,e4,"+
-			"00,0a,00,01,01,10,08,e4,"+
-			"00,0b,00,01,01,10,08,e4",
-			',', 16
+    		"00,22,00,01,01,10,16,4f,"+
+    		"00,01,00,04,01,10,16,4f,"+ 
+		"00,13,00,04,01,10,16,4f,"+
+		"00,02,00,01,01,10,16,4f,"+
+		"00,03,00,01,01,10,16,4f,"+
+		"00,15,00,01,01,10,16,4f,"+
+		"00,04,00,01,01,10,16,4f,"+
+		"00,06,00,01,01,10,16,4f,"+
+		"00,09,00,01,01,10,16,4f,"+
+		"00,0a,00,01,01,10,16,4f,"+
+		"00,0b,00,01,01,10,16,4f",
+		',', 16
     	);
     
     public static final short[] FAMILIES_AND_VER_LIST =
@@ -522,6 +522,41 @@ public class ConnectAction extends Action
 			// Watch out for STATE_CLI_COOKIE_SENT
 			else if (this.state == ConnectAction.STATE_CLI_WANT_CAPS_SENT)
 			{
+
+				SnacPacket reqp = new SnacPacket(SnacPacket.CLI_REQINFO_FAMILY, SnacPacket.CLI_REQINFO_COMMAND,
+									SnacPacket.CLI_REQINFO_COMMAND, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reqp);
+
+				byte[] rdata = new byte[6];
+				Util.putDWord(rdata, 0, 0x000B0002);
+				Util.putWord(rdata, 4, 0x000F);
+				reqp = new SnacPacket(SnacPacket.CLI_REQLISTS_FAMILY, SnacPacket.CLI_REQLISTS_COMMAND,
+							SnacPacket.CLI_REQLISTS_COMMAND, new byte[0], rdata);
+				Icq.c.sendPacket(reqp);
+
+				reqp = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND,
+							SnacPacket.CLI_REQROSTER_COMMAND, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reqp);
+
+				reqp = new SnacPacket(SnacPacket.CLI_REQLOCATION_FAMILY, SnacPacket.CLI_REQLOCATION_COMMAND,
+							SnacPacket.CLI_REQLOCATION_COMMAND, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reqp);
+
+				rdata = new byte[6];
+				Util.putDWord(rdata, 0, 0x00050002);
+				Util.putWord(rdata, 4, 0x0003);
+				reqp = new SnacPacket(SnacPacket.CLI_REQBUDDY_FAMILY, SnacPacket.CLI_REQBUDDY_COMMAND,
+							SnacPacket.CLI_REQBUDDY_COMMAND, new byte[0], rdata);
+				Icq.c.sendPacket(reqp);
+
+				reqp = new SnacPacket(SnacPacket.CLI_REQICBM_FAMILY, SnacPacket.CLI_REQICBM_COMMAND,
+							SnacPacket.CLI_REQICBM_COMMAND, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reqp);
+
+				reqp = new SnacPacket(SnacPacket.CLI_REQBOS_FAMILY, SnacPacket.CLI_REQBOS_COMMAND,
+							SnacPacket.CLI_REQBOS_COMMAND, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reqp);
+
 				// Send a CLI_REQROSTER or
 				// CLI_CHECKROSTER packet
 				long versionId1 = ContactList.getSsiListLastChangeTime();
@@ -743,7 +778,7 @@ public class ConnectAction extends Action
 					{
 
 						// Send a CLI_ROSTERACK packet
-						Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000000, new byte[0], new byte[0]));
+						Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000007, new byte[0], new byte[0]));
 			
 						// Send CLI_SETUSERINFO packet
 						Icq.sendUserUnfoPacket();
@@ -771,7 +806,8 @@ public class ConnectAction extends Action
 						Icq.c.sendPacket(reply);
 
 						// Send a client status packet
-						Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS), Options.getInt(Options.OPTION_XSTATUS));
+						Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS));
+						Icq.setExtStatus (Options.getInt(Options.OPTION_XSTATUS));
 
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_STATUS_INFO_SENT;
