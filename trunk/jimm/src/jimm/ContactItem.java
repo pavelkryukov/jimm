@@ -267,8 +267,7 @@ public class ContactItem implements ContactListItem
 
 	///////////////////////////////////////////////////////////////////////////
 
-	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-	//#sijapp cond.if modules_FILES is "true"#
+	//#sijapp cond.if (target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2") & modules_FILES is "true"#
 	public static byte[] longIPToByteAray(int value)
 	{
 		if (value == 0)
@@ -288,16 +287,21 @@ public class ContactItem implements ContactListItem
 				| (((int) array[3] & 0xFF) << 24);
 	}
 
+	//#sijapp cond.end #
+	
 	synchronized public void setBytesArray(int key, byte[] value)
 	{
 		switch (key)
 		{
+		//#sijapp cond.if (target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2") & modules_FILES is "true"#
 		case CONTACTITEM_INTERNAL_IP:
 			intIP = arrayToLongIP(value);
 			break;
 		case CONTACTITEM_EXTERNAL_IP:
 			extIP = arrayToLongIP(value);
 			break;
+		//#sijapp cond.end #
+			
 		case CONTACTITEM_SS_DATA:
 			ssData = value;
 			break;
@@ -308,18 +312,18 @@ public class ContactItem implements ContactListItem
 	{
 		switch (key)
 		{
+		//#sijapp cond.if (target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2") & modules_FILES is "true"#
 		case CONTACTITEM_INTERNAL_IP:
 			return longIPToByteAray(intIP);
 		case CONTACTITEM_EXTERNAL_IP:
 			return longIPToByteAray(extIP);
+		//#sijapp cond.end #
+			
 		case CONTACTITEM_SS_DATA:
 			return ssData;
 		}
 		return null;
 	}
-
-	//#sijapp cond.end #
-	//#sijapp cond.end #
 
 	public void saveToStream(DataOutputStream stream) throws IOException
 	{
