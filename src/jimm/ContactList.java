@@ -493,7 +493,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					// Normal contact
 					if (type == 0)
 					{
-
 						// Instantiate ContactItem object and add to vector
 						ContactItem ci = new ContactItem();
 						ci.loadFromStream(dis);

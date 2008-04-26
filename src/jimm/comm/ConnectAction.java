@@ -700,7 +700,7 @@ public class ConnectAction extends Action
 								try
 								{
 									ContactItem item = new ContactItem(id, group, name, nick, noAuth, true);
-									//item.setBytesArray(ContactItem.CONTACTITEM_SS_DATA, (serverData.size() != 0) ? serverData.toByteArray() : null);
+									item.setBytesArray(ContactItem.CONTACTITEM_SS_DATA, (serverData.size() != 0) ? serverData.toByteArray() : null);
 									items.addElement(item);
 								}
 								catch (NumberFormatException ne)
@@ -776,7 +776,6 @@ public class ConnectAction extends Action
 					// Check if all required packets have been received
 					if (this.srvReplyRosterRcvd)
 					{
-
 						// Send a CLI_ROSTERACK packet
 						Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERACK_FAMILY, SnacPacket.CLI_ROSTERACK_COMMAND, 0x00000007, new byte[0], new byte[0]));
 			
@@ -832,8 +831,27 @@ public class ConnectAction extends Action
 			// Watch out for STATE_CLI_REQOFFLINEMSGS_SENT
 			else if (this.state == ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT)
 			{
+				if (packet instanceof SnacPacket)
+				{
+					SnacPacket snPacket = (SnacPacket)packet;
+					
+					// Error after requesting offline messages?
+					if ((snPacket.getFamily() == 0x0015) && (snPacket.getCommand() == 0x0001))
+					{
+						System.out.println("Error after requesting offline messages");
+						
+						// Move to next state
+						this.state = ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT;
 
-				if (packet instanceof FromIcqSrvPacket)
+						// Move to STATE_CONNECTED
+						Icq.setConnected();
+
+						// Packet has been consumed
+						consumed = true;
+					}
+				}
+
+				if ((packet instanceof FromIcqSrvPacket) && !consumed)
 				{
 					FromIcqSrvPacket fromIcqSrvPacket = (FromIcqSrvPacket) packet;
 
@@ -918,12 +936,11 @@ public class ConnectAction extends Action
 
 						// Packet has been consumed
 						consumed = true;
-
 					}
+					
 					// Watch out for SRV_DONEOFFLINEMSGS
 					else if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_DONEOFFLINEMSGS_SUBCMD)
 					{
-
 						// Send a CLI_TOICQSRV/CLI_ACKOFFLINEMSGS packet
 						ToIcqSrvPacket reply = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_ACKOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
 						Icq.c.sendPacket(reply);
@@ -936,9 +953,7 @@ public class ConnectAction extends Action
 
 						// Packet has been consumed
 						consumed = true;
-
 					}
-
 				}
 
 			}

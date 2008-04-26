@@ -493,10 +493,7 @@ public class UpdateContactListAction extends Action
 		/* Server-side additional data */
 		byte[] ssData = cItem.getBytesArray(ContactItem.CONTACTITEM_SS_DATA);
 		if (ssData != null)
-		{
-			System.out.println("ssData != null");
 			Util.writeByteArray(addData, ssData);
-		}
 
 		/* TLV(0x0066) - you are awaiting authorization for this buddy */
 		if (action == ACTION_REQ_AUTH)
