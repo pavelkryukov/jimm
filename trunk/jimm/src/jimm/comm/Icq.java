@@ -2728,6 +2728,20 @@ public class Icq implements Runnable
 			Util.writeWord(statBuffer, 0x06, true); // TLV (0x06)
 			Util.writeWord(statBuffer, 4, true); // TLV len
 			Util.writeDWord(statBuffer, onlineStatus|0x10000000, true);
+
+			Util.writeWord(statBuffer, 0x0C, true);		// TLV (0x0C)
+			Util.writeWord(statBuffer, 0x25, true);		// TLV len
+			Util.writeDWord(statBuffer, 0xC0A80001, true);	// 192.168.0.1, cannot get own IP address
+			Util.writeDWord(statBuffer, 0x0000ABCD, true);	// Port 43981
+			Util.writeByte(statBuffer, 0x00);		// Firewall
+			Util.writeWord(statBuffer, 0x08, true);		// Support protocol version 8
+			Util.writeDWord(statBuffer, 0x00000000, true);
+			Util.writeDWord(statBuffer, 0x00000050, true);
+			Util.writeDWord(statBuffer, 0x00000003, true);
+			Util.writeDWord(statBuffer, 0xFFFFFFFE, true);
+			Util.writeDWord(statBuffer, 0x00010000, true);
+			Util.writeDWord(statBuffer, 0xFFFFFFFE, true);
+			Util.writeWord(statBuffer, 0x0000, true);		
 		}
 
 		if (statBuffer.size() != 0)

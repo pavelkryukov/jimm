@@ -54,7 +54,7 @@ public class ConnectAction extends Action
     public static final int STATE_MAX = 9;
 
     // CLI_SETICBM packet data
-    public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,7,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
+    public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,0,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
 
     // CLI_READY packet data
     public static final byte[] CLI_READY_DATA =
