@@ -482,7 +482,6 @@ public class ActionListener
 					byte[] extIP = new byte[4];
 					byte[] ip = new byte[4];
 					String port = "0";
-					int status = -1;
 					//#sijapp cond.end#
 					//#sijapp cond.end#
 
@@ -538,7 +537,7 @@ public class ActionListener
 
 					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 					//#sijapp cond.if modules_FILES is "true"#
-					status = Util.getWord(msg2Buf, msg2Marker);
+					Util.getWord(msg2Buf, msg2Marker);
 					//#sijapp cond.end#
 					//#sijapp cond.end#
 					msg2Marker += 2;

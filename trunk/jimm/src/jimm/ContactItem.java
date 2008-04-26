@@ -333,6 +333,12 @@ public class ContactItem implements ContactListItem
 				& (CONTACTITEM_IS_TEMP | CONTACTITEM_NO_AUTH));
 		stream.writeInt(uinLong);
 		stream.writeUTF(name);
+		if (ssData != null)
+		{
+			stream.writeShort(ssData.length);
+			stream.write(ssData);
+		}
+		else stream.writeShort(0);
 	}
 
 	public void loadFromStream(DataInputStream stream) throws IOException
@@ -341,6 +347,13 @@ public class ContactItem implements ContactListItem
 		booleanValues = stream.readByte();
 		uinLong = stream.readInt();
 		name = stream.readUTF();
+		int ssInfoLen = stream.readShort();
+		if (ssInfoLen != 0)
+		{
+			ssData = new byte[ssInfoLen];
+			stream.read(ssData);
+		}
+		else ssData = null;
 	}
 
 	/* Variable keys */
