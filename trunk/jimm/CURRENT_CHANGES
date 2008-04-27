@@ -1,0 +1,18 @@
+VERSION 0.6.0beta
+  * NEW FEATURE: Client icon is shown in contact list
+  * NEW FEATURE: file transfer through web server
+  * BUGFIX: When invisible Jimm is no longer sending out typing notify
+  * Modified user interface
+  * More color schemes
+  * Classic chat is removed
+  * It is possible to send messages to contact and view information about 
+    contact at search form without adding it to contact list
+  * It is possible to see short contact info withowt connecting to server
+  * Speed of parsing message text for smiles (emotions) is increased
+  * New test status icons were added (from Miranda set)
+  * MIDP2 build contains mp3 sounds now. Jimm automatically select sound type
+    on startup
+  * Is possible fast to swicth sound off and on
+  * Creeping text line is returned back again
+  * Another optimization for lower memory usage in chat
+  * More options added to customize chat
