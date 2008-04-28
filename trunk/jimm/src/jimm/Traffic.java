@@ -359,7 +359,7 @@ public class Traffic
 			// Initialize traffic screen
 			this.trafficTextList = new TextList(ResourceBundle
 					.getString("traffic_lng"));
-			this.trafficTextList.setMode(TextList.MODE_TEXT);
+			this.trafficTextList.setMode(TextList.CURSOR_MODE_DISABLED);
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			trafficTextList.setFontSize(Font.SIZE_MEDIUM);

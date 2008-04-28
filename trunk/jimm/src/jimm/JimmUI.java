@@ -485,7 +485,7 @@ public class JimmUI implements CommandListener
 	static private TextList showMessageBox(String cap, String text, int type)
 	{
 		msgBoxList = new TextList(cap);
-		msgBoxList.setMode(TextList.MODE_TEXT);
+		msgBoxList.setMode(TextList.CURSOR_MODE_DISABLED);
 		setColorScheme(msgBoxList, false, -1);
 		msgBoxList.setFontSize(Font.SIZE_LARGE);
 		msgBoxList.addBigText(text, msgBoxList.getTextColor(), Font.STYLE_PLAIN, -1);
@@ -524,7 +524,7 @@ public class JimmUI implements CommandListener
 
 		aboutTextList.lock();
 		aboutTextList.clear();
-		aboutTextList.setMode(TextList.MODE_TEXT);
+		aboutTextList.setMode(TextList.CURSOR_MODE_DISABLED);
 		setColorScheme(aboutTextList, false, -1);
 		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1,
 				0xffffff, 0);
@@ -1088,7 +1088,7 @@ public class JimmUI implements CommandListener
 		infoTextList.setCaption(caption);
 
 		JimmUI.setColorScheme(infoTextList, false, -1);
-		infoTextList.setMode(TextList.MODE_TEXT);
+		infoTextList.setMode(TextList.CURSOR_MODE_DISABLED);
 
 		if (addCommands)
 		{
@@ -1124,7 +1124,7 @@ public class JimmUI implements CommandListener
 		curScreenTag = tag;
 		lstSelector = new TextList (ResourceBundle.getString(caption));
 		JimmUI.setColorScheme(lstSelector, false, -1);
-		lstSelector.setMode(VirtualList.MODE_TEXT);
+		lstSelector.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		lstSelector.setFontSize(Font.SIZE_LARGE);
 		for (int i = 0; i < elements.length; i++) JimmUI.addTextListItem(lstSelector, elements[i], null, i, translateWords);
 		lstSelector.addCommandEx(cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
@@ -1521,7 +1521,7 @@ public class JimmUI implements CommandListener
 	
 		tlContactMenu = new TextList(ResourceBundle.getString("user_menu"));
 		JimmUI.setColorScheme(tlContactMenu, false, -1);
-		tlContactMenu.setMode(VirtualList.MODE_TEXT);
+		tlContactMenu.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		tlContactMenu.activate(Jimm.display);
 		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
 		tlContactMenu.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);

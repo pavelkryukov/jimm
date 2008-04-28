@@ -227,7 +227,7 @@ class FileSystem2 implements CommandListener, Runnable
 		else list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 		
 		JimmUI.setColorScheme(list, false, -1);
-		list.setMode(VirtualList.MODE_TEXT);
+		list.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		list.activate(Jimm.display);
 		list.setCommandListener(this);
 		showFolder(root);

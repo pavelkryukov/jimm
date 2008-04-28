@@ -76,7 +76,7 @@ public class VirtualTree extends VirtualList
 					 for caption and text in tree nodes */
 		boolean autoExpand)
 	{
-		super(capt, capTextColor, backColor, fontSize, VirtualList.MODE_LIST);
+		super(capt, capTextColor, backColor, fontSize, VirtualList.CURSOR_MODE_ENABLED);
 		this.autoExpand = autoExpand;
 	}
 
