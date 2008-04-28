@@ -821,53 +821,57 @@ public abstract class VirtualList
 	// Thanks for Aspro for source examples
 	private int getExtendedGameAction(int keyCode)
 	{
-        String strCode = null;
-        
-        try
-        {
-        	int gameAct = virtualCanvas.getGameAction(keyCode);
-        	if (gameAct > 0) return gameAct;
-        }
-        catch (Exception e) {} // Do nothing
-        
-        try 
-        {
-            strCode = virtualCanvas.getKeyName(keyCode).toLowerCase();
-        } 
-        catch(IllegalArgumentException e) {} // Do nothing
-        
-        if (strCode != null) 
-        {
-            if ("soft1".equals(strCode) || "soft 1".equals(strCode)
-                    || "soft_1".equals(strCode) || "softkey 1".equals(strCode)
-                    || strCode.startsWith("left soft")) 
-            {
-                return KEY_CODE_LEFT_MENU;
-            }
-            if ("soft2".equals(strCode) || "soft 2".equals(strCode)
-                    || "soft_2".equals(strCode) || "softkey 4".equals(strCode)
-                    || strCode.startsWith("right soft")) {
-                return KEY_CODE_RIGHT_MENU;
-            }
-            
-            if ("on/off".equals(strCode) || "back".equals(strCode)) {
-                return KEY_CODE_BACK_BUTTON;
-            }
-        }
-        
-        switch (keyCode)
-        {
-        case -6: case -21: case 21: case 105: case -202: case 113: case 57345:
-        	return KEY_CODE_LEFT_MENU;
-        	
-        case -7: case -22: case 22: case 106: case -203: case 112: case 57346:
-        	return KEY_CODE_RIGHT_MENU;
-        	
-        case -11: 
-        	return KEY_CODE_BACK_BUTTON;
-        }
-        
-        return KEY_CODE_UNKNOWN;
+		String strCode = null;
+
+		try
+		{
+			strCode = virtualCanvas.getKeyName(keyCode).toLowerCase();
+		}
+		catch (IllegalArgumentException e) {}
+
+		if (strCode != null)
+		{
+			if ("soft1".equals(strCode) || "soft 1".equals(strCode) || "soft_1".equals(strCode) || "softkey 1".equals(strCode) || "sk2(left)".equals(strCode)
+					|| strCode.startsWith("left soft")) { return KEY_CODE_LEFT_MENU; }
+
+			if ("soft2".equals(strCode) || "soft 2".equals(strCode) || "soft_2".equals(strCode) || "softkey 4".equals(strCode) || "sk1(right)".equals(strCode)
+					|| strCode.startsWith("right soft")) { return KEY_CODE_RIGHT_MENU; }
+
+			if ("on/off".equals(strCode) || "back".equals(strCode)) { return KEY_CODE_BACK_BUTTON; }
+		}
+
+		switch (keyCode)
+		{
+		case -6:
+		case -21:
+		case 21:
+		case 105:
+		case -202:
+		case 113:
+		case 57345:
+			return KEY_CODE_LEFT_MENU;
+
+		case -7:
+		case -22:
+		case 22:
+		case 106:
+		case -203:
+		case 112:
+		case 57346:
+			return KEY_CODE_RIGHT_MENU;
+
+		case -11:
+			return KEY_CODE_BACK_BUTTON;
+		}
+
+		try
+		{
+			int gameAct = virtualCanvas.getGameAction(keyCode);
+			if (gameAct > 0) return gameAct;
+		}
+		catch (Exception e) {}
+
+		return KEY_CODE_UNKNOWN;
 	}
 
 	protected void keyPressed(int keyCode)
