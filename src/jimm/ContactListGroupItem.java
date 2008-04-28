@@ -107,7 +107,7 @@ public class ContactListGroupItem implements ContactListItem
 
 	public int getLeftImageIndex(boolean expanded)
 	{
-		return (messCount == 0) ? -1 : (expanded ? -1 : 8);
+		return (messCount == 0) ? -1 : (expanded ? -1 : 13);
 	}
 
 	public int getTextColor()
