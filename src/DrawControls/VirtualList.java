@@ -145,10 +145,10 @@ public abstract class VirtualList
 	
 	/*! Use dotted mode of cursor. If item of list 
 	 is selected, dotted rectangle drawn around  it*/
-	public final static int MODE_LIST = 2;
+	public final static int CURSOR_MODE_ENABLED = 2;
 
 	/*! Does't show cursor at selected item. */
-	public final static int MODE_TEXT = 3;
+	public final static int CURSOR_MODE_DISABLED = 3;
 
 	/*! Constant for medium sized font of caption and item text */
 	public final static int MEDIUM_FONT = Font.SIZE_MEDIUM;
@@ -218,7 +218,7 @@ public abstract class VirtualList
 	private int textColor = 0x000000; // Default text color.
 	private int capBkCOlor = 0xC0C0C0;
 	private int capTxtColor = 0x00; // Color of caprion text
-	private int cursorMode = MODE_LIST; // Cursor mode
+	private int cursorMode = CURSOR_MODE_ENABLED; // Cursor mode
 
 	static
 	{
@@ -263,7 +263,7 @@ public abstract class VirtualList
 		this.fontSize = Font.SIZE_MEDIUM;
 		//#sijapp cond.end#
 		
-		this.cursorMode = MODE_LIST;
+		this.cursorMode = CURSOR_MODE_ENABLED;
 		initVirtualList();
 	}
 
@@ -561,7 +561,7 @@ public abstract class VirtualList
 	protected void moveCursor(int step, boolean moveTop)
 	{
 		storelastItemIndexes();
-		if (moveTop && (cursorMode == MODE_TEXT)) topItem += step;
+		if (moveTop && (cursorMode == CURSOR_MODE_DISABLED)) topItem += step;
 		currItem += step;
 		checkCurrItem();
 		checkTopItem();
@@ -1070,7 +1070,7 @@ public abstract class VirtualList
 
 	protected boolean isItemSelected(int index)
 	{
-		return ((currItem == index) && (cursorMode != MODE_TEXT));
+		return ((currItem == index) && (cursorMode != CURSOR_MODE_DISABLED));
 	}
 
 	private static int srcollerY1 = -1;
@@ -1138,6 +1138,13 @@ public abstract class VirtualList
 	{
 		return getQuickFont(Font.STYLE_PLAIN).getHeight();
 	}
+	
+	static private int[] curXVals = new int[2];  
+	protected void getCurXVals(int[] values)
+	{
+		values[0] = curFrameWidth+1;
+		values[1] = getWidthInternal() - scrollerWidth - curFrameWidth;
+	}
 
 	// private boolean drawItems(Graphics g, int top_y)
 	private boolean drawItems(Graphics g, int top_y, int fontHeight, int menuBarHeight, int mode, int mouseX, int mouseY)
@@ -1151,6 +1158,10 @@ public abstract class VirtualList
 		
 		if (mode == DMS_DRAW)
 		{
+			getCurXVals(curXVals);
+			int curX1 = curXVals[0];
+			int curX2 = curXVals[1];
+			
 			// Fill background
 			g.setColor(bkgrndColor);
 			g.fillRect(0, top_y, itemWidth, height);
@@ -1174,31 +1185,29 @@ public abstract class VirtualList
 				grCursorY1--;
 				grCursorY2++;
 				
-				int leftLayer = (curFrameWidth >= 2) ? 1 : 0;
-				
 				g.setColor(cursorColor);
-				g.fillRect(curFrameWidth+leftLayer, grCursorY1, itemWidth-2*curFrameWidth-leftLayer, grCursorY2-grCursorY1);
+				g.fillRect(curX1, grCursorY1, curX2-curX1, grCursorY2-grCursorY1);
 				g.setColor(cursorFrameColor);
 				boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1) : false;
 				
 				if (!isCursorUpper)
-					g.fillRect(leftLayer+1, grCursorY1-curFrameWidth+1, itemWidth - 2-leftLayer, curFrameWidth);
+					g.fillRect(curX1-curFrameWidth+1, grCursorY1-curFrameWidth+1, curX2-curX1+2*curFrameWidth-2, curFrameWidth);
 				
-				g.fillRect(leftLayer, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
+				g.fillRect(curX1-curFrameWidth, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
 				
-				g.fillRect(itemWidth - curFrameWidth, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
+				g.fillRect(curX2, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
 				
-				g.fillRect(leftLayer+1, grCursorY2, itemWidth-2-leftLayer, curFrameWidth);
+				g.fillRect(curX1-curFrameWidth+1, grCursorY2, curX2-curX1+2*curFrameWidth-2, curFrameWidth);
 				
 				g.setColor(mergeColors(cursorFrameColor, cursorColor, 50));
 				if (!isCursorUpper)
 				{
-					g.fillRect(curFrameWidth+leftLayer, grCursorY1+1, 1, 1);
-					g.fillRect(curFrameWidth+leftLayer, grCursorY2-1, 1, 1);
+					g.fillRect(curX1, grCursorY1+1, 1, 1);
+					g.fillRect(curX1, grCursorY2-1, 1, 1);
 				}
 				
-				g.fillRect(itemWidth-curFrameWidth-1, grCursorY1+1, 1, 1);
-				g.fillRect(itemWidth-curFrameWidth-1, grCursorY2-1, 1, 1);
+				g.fillRect(curX2-1, grCursorY1+1, 1, 1);
+				g.fillRect(curX2-1, grCursorY2-1, 1, 1);
 			}
 		}
 
@@ -1501,7 +1510,6 @@ public abstract class VirtualList
 		int y2 = getHeightInternal();
 		int width = getWidthInternal();
 		int layer = height/4;
-		boolean defaultMenu = false;
 		
 		if ((style == DMS_DBLCLICK) || fullScreen) return false;
 		
@@ -1533,7 +1541,6 @@ public abstract class VirtualList
 			String text = leftMenu.getLabel();
 			g.setColor(capTxtColor);
 			g.drawString(text, layer, textY, Graphics.TOP|Graphics.LEFT);
-			if (leftMenu.getCommandType() == Command.OK) defaultMenu = true;   
 		}
 		
 		if (rightMenu != null)
@@ -1563,7 +1570,6 @@ public abstract class VirtualList
 				textY, 
 				Graphics.TOP|Graphics.LEFT
 			);
-			if (rightMenu.getCommandType() == Command.OK) defaultMenu = true;
 		}
 		
 		if (!menuItemsVisible && (bottomText != null))

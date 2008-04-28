@@ -250,7 +250,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			messTextList = new TextList(currName);
 			JimmUI.setColorScheme(messTextList, false, -1);
 			messTextList.setFontSize(Font.SIZE_LARGE);
-			messTextList.setMode(VirtualList.MODE_TEXT);
+			messTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 			messTextList.addBigText(currMessage, messTextList.getTextColor(), Font.STYLE_PLAIN, -1);
 			messTextList.setCommandListener(this);
 			messTextList.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
@@ -628,7 +628,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		if (messText == null)
 		{
 			messText = new TextList(null);
-			messText.setMode(TextList.MODE_TEXT);
+			messText.setMode(TextList.CURSOR_MODE_DISABLED);
 			messText.setCommandListener(this);
 			messText.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
 			messText.addCommandEx(cmdMsgBack, VirtualList.MENU_TYPE_RIGHT);

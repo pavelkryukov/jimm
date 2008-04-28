@@ -362,10 +362,10 @@ public class Emotions implements VirtualListCommands, CommandListener
 			super(null);
 			_this = this;
 			setVLCommands(this);
+			
+			int drawWidth = getWidthInternal()-2*borderWidth-scrollerWidth;
 
-			int drawWidth = getWidth() - scrollerWidth - 2;
-
-			setMode(MODE_TEXT);
+			setMode(CURSOR_MODE_ENABLED);
 
 			int imgHeight = images.getHeight();
 
@@ -376,6 +376,12 @@ public class Emotions implements VirtualListCommands, CommandListener
 			curCol = 0;
 
 			showCurrSmileName();
+		}
+		
+		protected void getCurXVals(int[] values)
+		{
+			values[0] = borderWidth+curCol*itemHeight;
+			values[1] = borderWidth+(curCol+1)*itemHeight;
 		}
 
 		//#sijapp cond.if target is "MIDP2"#
@@ -403,7 +409,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 			int xa, xb;
 			int startIdx = cols * index;
 			int imagesCount = images.size();
-			boolean isSelected = (index == getCurrIndex());
+			//boolean isSelected = (index == getCurrIndex());
 			xa = x1;
 			for (int i = 0; i < cols; i++, startIdx++)
 			{
@@ -414,15 +420,12 @@ public class Emotions implements VirtualListCommands, CommandListener
 				xb = xa + itemHeight;
 
 				if (smileIdx < imagesCount)
-					g.drawImage(images.elementAt(smileIdx), xa + 3, y1 + 3,
-							Graphics.TOP | Graphics.LEFT);
-
-				if (isSelected && (i == curCol))
 				{
-					g.setColor(this.getTextColor());
-					g.setStrokeStyle(Graphics.DOTTED);
-					g.drawRect(xa, y1, itemHeight - 1, y2 - y1 - 1);
+					Image img = images.elementAt(smileIdx);
+					g.drawImage(img, (xa+xb-img.getWidth()+1)/2, (y1+y2-img.getWidth()+1)/2,
+							Graphics.TOP | Graphics.LEFT);
 				}
+
 				xa = xb;
 			}
 		}

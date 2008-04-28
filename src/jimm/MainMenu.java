@@ -122,7 +122,7 @@ public class MainMenu implements CommandListener
 
 	static
 	{
-		list.setMode(VirtualList.MODE_TEXT);
+		list.setMode(VirtualList.CURSOR_MODE_DISABLED);
 	}
 	
 	public MainMenu()
@@ -275,7 +275,7 @@ public class MainMenu implements CommandListener
 	private static void initStatusList()
 	{
 		statusList = new TextList(ResourceBundle.getString("set_status"));
-		statusList.setMode(TextList.MODE_TEXT);
+		statusList.setMode(TextList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.addTextListItem(statusList, "status_online", ContactList.statusOnlineImg,    ContactList.STATUS_ONLINE, true);
@@ -298,7 +298,7 @@ public class MainMenu implements CommandListener
 	private static void initXStatusList()
 	{
 		statusList = new TextList(ResourceBundle.getString("set_xstatus"));
-		statusList.setMode(TextList.MODE_TEXT);
+		statusList.setMode(TextList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
@@ -312,7 +312,7 @@ public class MainMenu implements CommandListener
 	{
 		groupMenu = new TextList(ResourceBundle.getString("manage_contact_list"));
 		groupMenu.setCyclingCursor(true);
-		groupMenu.setMode(TextList.MODE_TEXT);
+		groupMenu.setMode(TextList.CURSOR_MODE_DISABLED);
 		groupMenu.lock();
 		JimmUI.addTextListItem(groupMenu, "add_user", null, 0, true);
 		JimmUI.addTextListItem(groupMenu, "search_user", null, 1, true);

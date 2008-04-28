@@ -248,7 +248,7 @@ public class Search
 			screen.addCommandEx(this.addCommand, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.cmdSendMessage, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.cmdShowInfo, VirtualList.MENU_TYPE_RIGHT);
-			screen.setMode(TextList.MODE_TEXT);
+			screen.setMode(TextList.CURSOR_MODE_DISABLED);
 			JimmUI.setColorScheme(screen, false, -1);
 		}
 

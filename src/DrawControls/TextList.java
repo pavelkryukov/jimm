@@ -296,7 +296,7 @@ public class TextList extends VirtualList
 
 	public int getItemHeight(int itemIndex)
 	{
-		if (getCursorMode() != MODE_TEXT) return super.getItemHeight(itemIndex);
+		if (getCursorMode() != CURSOR_MODE_DISABLED) return super.getItemHeight(itemIndex);
 		if (itemIndex >= lines.size()) return 1;
 		return getLine(itemIndex).getHeight(getFontSize());
 	}
@@ -304,7 +304,7 @@ public class TextList extends VirtualList
 	// Overrides VirtualList.drawItemData
 	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight)
 	{
-		if (getCursorMode() != MODE_TEXT)
+		if (getCursorMode() != CURSOR_MODE_DISABLED)
 		{
 			super.drawItemData(g, index, x1, y1, x2, y2, fontHeight);
 			return;
