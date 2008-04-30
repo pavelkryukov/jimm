@@ -33,7 +33,6 @@ import jimm.comm.UpdateContactListAction;
 import jimm.util.ResourceBundle;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
-import DrawControls.VirtualListCommands;
 
 public class MainMenu implements CommandListener
 {
@@ -50,32 +49,27 @@ public class MainMenu implements CommandListener
 	private static MainMenu _this;
 
 	/* Static constants for menu actios */
-	private static final int MENU_CONNECT = 1;
-
-	private static final int MENU_DISCONNECT = 2;
-
-	private static final int MENU_LIST = 3;
-
-	private static final int MENU_OPTIONS = 4;
-
-	private static final int MENU_TRAFFIC = 5;
-
-	private static final int MENU_KEYLOCK = 6;
-
-	private static final int MENU_STATUS = 7;
-	private static final int MENU_XSTATUS = 8;
-
-	private static final int MENU_GROUPS = 9;
-
-	private static final int MENU_ABOUT = 10;
-
-	private static final int MENU_MINIMIZE = 11;
-
-	private static final int MENU_SOUND = 12;
-
-	private static final int MENU_MYSELF = 13;
-
-	private static final int MENU_EXIT = 14; /* Exit has to be biggest element cause it also marks the size */
+	private static final int MENU_CONNECT      = 1;
+	private static final int MENU_DISCONNECT   = 2;
+	private static final int MENU_LIST         = 3;
+	private static final int MENU_OPTIONS      = 4;
+	private static final int MENU_TRAFFIC      = 5;
+	private static final int MENU_KEYLOCK      = 6;
+	private static final int MENU_STATUS       = 7;
+	private static final int MENU_XSTATUS      = 8;
+	private static final int MENU_MANAGE_CL       = 9;
+	private static final int MENU_ABOUT        = 10;
+	private static final int MENU_MINIMIZE     = 11;
+	private static final int MENU_SOUND        = 12;
+	private static final int MENU_MYSELF       = 13;
+	private static final int MENU_EXIT         = 14;
+	
+	/* Constants for constact list management menu */
+	private static final int MENU_ADD_USER     = 15;
+	private static final int MENU_SEARCH_USER  = 16;
+	private static final int MENU_ADD_GROUP    = 17;
+	private static final int MENU_RENAME_GROUP = 18;
+	private static final int MENU_DELETE_GROUP = 19;
 
 	/* Send command */
 	private static Command sendCommand = new Command(ResourceBundle
@@ -88,9 +82,6 @@ public class MainMenu implements CommandListener
 	/* List for selecting a online status */
 	//private static List statusList;
 	private static TextList statusList;
-	private static TextList groupMenu;
-
-	private static List groupActList;
 
 	/////////////////////////////////////////////////////////////////
 	private static final int STATUS_NONE = 0;
@@ -169,7 +160,7 @@ public class MainMenu implements CommandListener
 		
 		if (connected)
 		{
-			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_GROUPS, true);
+			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_MANAGE_CL, true);
 			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF, true);
 		}
 		
@@ -308,18 +299,19 @@ public class MainMenu implements CommandListener
 		statusSelection = SELECT_XSTATUS;
 	}
 
-	private static void initGroupMenu()
+	private static void initManageCLMenu()
 	{
-		groupMenu = new TextList(ResourceBundle.getString("manage_contact_list"));
-		groupMenu.setCyclingCursor(true);
-		groupMenu.setMode(TextList.CURSOR_MODE_DISABLED);
-		groupMenu.lock();
-		JimmUI.addTextListItem(groupMenu, "add_user", null, 0, true);
-		JimmUI.addTextListItem(groupMenu, "search_user", null, 1, true);
-		JimmUI.addTextListItem(groupMenu, "add_group", null, 2, true);
-		JimmUI.addTextListItem(groupMenu, "rename_group", null, 3, true);
-		JimmUI.addTextListItem(groupMenu, "del_group", null, 4, true);
-		groupMenu.unlock();
+		list.clear();
+		list.lock();
+		JimmUI.addTextListItem(list, "add_user",     null, MENU_ADD_USER,     true);
+		JimmUI.addTextListItem(list, "search_user",  null, MENU_SEARCH_USER,  true);
+		JimmUI.addTextListItem(list, "add_group",    null, MENU_ADD_GROUP,    true);
+		JimmUI.addTextListItem(list, "rename_group", null, MENU_RENAME_GROUP, true);
+		JimmUI.addTextListItem(list, "del_group",    null, MENU_DELETE_GROUP, true);
+		list.removeAllCommands();
+		list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		list.unlock();
 	}
 	
 	/* Command listener */
@@ -333,18 +325,8 @@ public class MainMenu implements CommandListener
 		//#			return;
 		//#		}
 		//#sijapp cond.end#
-		if ((groupMenu != null) && (JimmUI.isControlActive(groupMenu)))
-		{
-			if ((c == JimmUI.cmdSelect) || (c == List.SELECT_COMMAND))
-				CLManagementItemSelected(groupMenu.getCurrTextIndex());
-			else if (c == JimmUI.cmdBack) {
-				MainMenu.activate();
-				groupMenu = null;
-			}
-			return;
-		}
 		
-		else if (JimmUI.getCurScreenTag() == TAG_RENAME_GROUPS)
+		if (JimmUI.getCurScreenTag() == TAG_RENAME_GROUPS)
 		{
 			if (c == JimmUI.cmdOk)
 			{
@@ -374,12 +356,12 @@ public class MainMenu implements CommandListener
 			else activate();
 		}
 
-		// Return to works screen after canceling status selection 
-		else if ((c == JimmUI.cmdBack) && JimmUI.isControlActive(statusList))
+		// Return to works screen after canceling 
+		else if ((c == JimmUI.cmdBack) && (JimmUI.isControlActive(statusList) || JimmUI.isControlActive(list)))
 		{
 			Jimm.showWorkScreen();
 			statusList = null;
-		} 
+		}
 		
 		// Activate contact list after pressing "List" menu
 		else if (c == JimmUI.cmdList)
@@ -389,7 +371,7 @@ public class MainMenu implements CommandListener
 		
 		else if ((c == JimmUI.cmdBack) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
 		{
-			MainMenu.groupMenu.activate(Jimm.display);
+			MainMenu.list.activate(Jimm.display);
 		}
 		
 		else if ((c == sendCommand) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
@@ -504,19 +486,9 @@ public class MainMenu implements CommandListener
 			
 				break;
 
-			case MENU_GROUPS:
-
-				initGroupMenu ();
-
-				MainMenu.groupMenu.selectTextByIndex(0);
-			
-				JimmUI.setColorScheme(groupMenu, false, -1);
-				
-				MainMenu.groupMenu.setCommandListener(_this);
-				MainMenu.groupMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
-				MainMenu.groupMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
-				MainMenu.groupMenu.activate(Jimm.display);
-
+			case MENU_MANAGE_CL:
+				initManageCLMenu();
+				list.activate(Jimm.display);
 				break;
 
 			case MENU_OPTIONS:
@@ -557,6 +529,32 @@ public class MainMenu implements CommandListener
 			case MENU_EXIT:
 				/* Exit */
 				doExit(false);
+				break;
+				
+			case MENU_ADD_USER:
+				status = STATUS_ADD_CONTACT;
+				showTextBoxForm("add_user", "uin", null, TextField.NUMERIC);
+				break;
+
+			case MENU_SEARCH_USER:
+				Search searchf = new Search(false);
+				searchf.getSearchForm().activate(Search.SearchForm.ACTIV_JUST_SHOW);
+				break;
+
+			case MENU_ADD_GROUP:
+				status = STATUS_ADD_GROUP;
+				showTextBoxForm("add_group", "group_name", null, TextField.ANY);
+				break;
+
+			case MENU_RENAME_GROUP:
+				status = STATUS_RENAME_GROUP;
+				groupIds = JimmUI.showGroupSelector("rename_group",
+						TAG_RENAME_GROUPS, this, JimmUI.SHS_TYPE_ALL, -1);
+				break;
+
+			case MENU_DELETE_GROUP:
+				groupIds = JimmUI.showGroupSelector("del_group", TAG_DELETE_GROUPS,
+						this, JimmUI.SHS_TYPE_EMPTY, -1);
 				break;
 			}
 		}
@@ -664,31 +662,6 @@ public class MainMenu implements CommandListener
 	{
 		switch (index)
 		{
-		case 0: /* Add user */
-			status = STATUS_ADD_CONTACT;
-			showTextBoxForm("add_user", "uin", null, TextField.NUMERIC);
-			break;
-
-		case 1: /* Search for User */
-			Search searchf = new Search(false);
-			searchf.getSearchForm().activate(Search.SearchForm.ACTIV_JUST_SHOW);
-			break;
-
-		case 2: /* Add group */
-			status = STATUS_ADD_GROUP;
-			showTextBoxForm("add_group", "group_name", null, TextField.ANY);
-			break;
-
-		case 3: /* Rename group */
-			status = STATUS_RENAME_GROUP;
-			groupIds = JimmUI.showGroupSelector("rename_group",
-					TAG_RENAME_GROUPS, this, JimmUI.SHS_TYPE_ALL, -1);
-			break;
-
-		case 4: /* Delete group */
-			groupIds = JimmUI.showGroupSelector("del_group", TAG_DELETE_GROUPS,
-					this, JimmUI.SHS_TYPE_EMPTY, -1);
-			break;
 		}
 	}
 
