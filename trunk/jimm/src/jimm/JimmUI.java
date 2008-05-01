@@ -1577,22 +1577,22 @@ public class JimmUI implements CommandListener
 			addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true);
 			addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true);
 			addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true);
+			
+			if (contact.getIntValue(ContactItem.CONTACTITEM_IGN_ID) != 0)
+				addTextListItem(tlContactMenu, "privacy_rem_ign", null, USER_MENU_REM_IGN_LIST, true);
+			else 
+				addTextListItem(tlContactMenu, "privacy_to_ign", null, USER_MENU_TO_IGN_LIST, true);
+			
+			if (contact.getIntValue(ContactItem.CONTACTITEM_INV_ID) != 0)
+				addTextListItem(tlContactMenu, "privacy_rem_inv", null, USER_MENU_REM_INV_LIST, true);
+			else 
+				addTextListItem(tlContactMenu, "privacy_to_inv", null, USER_MENU_TO_INV_LIST, true);
+			
+			if (contact.getIntValue(ContactItem.CONTACTITEM_VIS_ID) != 0)
+				addTextListItem(tlContactMenu, "privacy_rem_vis", null, USER_MENU_REM_VIS_LIST, true);
+			else 
+				addTextListItem(tlContactMenu, "privacy_to_vis", null, USER_MENU_TO_VIS_LIST, true);
 		}
-		
-		if (contact.getIntValue(ContactItem.CONTACTITEM_IGN_ID) != 0)
-			addTextListItem(tlContactMenu, "privacy_rem_ign", null, USER_MENU_REM_IGN_LIST, true);
-		else 
-			addTextListItem(tlContactMenu, "privacy_to_ign", null, USER_MENU_TO_IGN_LIST, true);
-		
-		if (contact.getIntValue(ContactItem.CONTACTITEM_INV_ID) != 0)
-			addTextListItem(tlContactMenu, "privacy_rem_inv", null, USER_MENU_REM_INV_LIST, true);
-		else 
-			addTextListItem(tlContactMenu, "privacy_to_inv", null, USER_MENU_TO_INV_LIST, true);
-		
-		if (contact.getIntValue(ContactItem.CONTACTITEM_VIS_ID) != 0)
-			addTextListItem(tlContactMenu, "privacy_rem_vis", null, USER_MENU_REM_VIS_LIST, true);
-		else 
-			addTextListItem(tlContactMenu, "privacy_to_vis", null, USER_MENU_TO_VIS_LIST, true);
 
 		if (status != ContactList.STATUS_OFFLINE)
 			addTextListItem(tlContactMenu, "dc_info", null, USER_MENU_LOCAL_INFO, true);

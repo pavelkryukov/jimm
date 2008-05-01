@@ -33,7 +33,26 @@ public class PlivateListsForm extends VirtualList implements VirtualListCommands
 		setCommandListener(this);
 		
 		JimmUI.setColorScheme(this, false, -1);
+		
 		items = ContactList.getContactItems();
+		// Sort list
+		for (;;)
+		{
+			boolean sorted = true;
+			int len = items.length-1;
+			for (int i = 0; i < len; i++)
+			{
+				if (items[i].getSortText().compareTo(items[i+1].getSortText()) > 0)
+				{
+					ContactItem tmp = items[i+1];
+					items[i+1] = items[i];
+					items[i] = tmp;
+					sorted = false;
+				}
+			}
+			if (sorted) break;
+		}
+		
 		values = new short[items.length];
 		for (int i = items.length-1; i >= 0; i--)
 		{
