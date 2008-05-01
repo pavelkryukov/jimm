@@ -2787,7 +2787,6 @@ public class Icq implements Runnable
 			capsStream.write(CAP_AIM_ISICQ);
 			capsStream.write(CAP_ICHAT);
 			capsStream.write(CAP_UTF8);
-//			capsStream.write(CAP_AVATAR);
 			capsStream.write(CAP_VERSION);
 			
 			//#sijapp cond.if target isnot  "DEFAULT"#
@@ -3747,6 +3746,63 @@ public class Icq implements Runnable
 			}
 		}
 		return extended_new;
+	}
+	
+	static public void sendCLI_ADDSTART() throws JimmException
+	{
+		c.sendPacket(new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY,
+				SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND,
+				new byte[0], new byte[0]));
+	}
+
+	static public void sendCLI_ADDEND() throws JimmException
+	{
+		c.sendPacket(new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
+				SnacPacket.CLI_ADDEND_COMMAND, SnacPacket.CLI_ADDEND_COMMAND, new byte[0],
+				new byte[0]));
+	}
+	
+	static public final int PROCESS_BUDDY_ADD = 10000;
+	static public final int PROCESS_BUDDY_DELETE = 10001;
+	
+	static public void sendProcessBuddy(int mode, String name, int id, int groupId, int buddyType) throws JimmException
+	{
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		
+		/* Name */
+		Util.writeLenAndString(buffer, name, true);
+
+		/* Group ID */
+		Util.writeWord(buffer, groupId, true);
+
+		/* ID */
+		Util.writeWord(buffer, id, true);
+
+		/* Type */
+		Util.writeWord(buffer, buddyType, true);
+		
+		/* No additional data */
+		Util.writeWord(buffer, 0, true);
+		
+		int command = -1;
+		
+		switch (mode)
+		{
+		case PROCESS_BUDDY_ADD:
+			command = SnacPacket.CLI_ROSTERADD_COMMAND;
+			break;
+			
+		case PROCESS_BUDDY_DELETE:
+			command = SnacPacket.CLI_ROSTERDELETE_COMMAND;
+			break;
+		
+		default:
+			throw new JimmException(0, 0);
+		}
+		
+		SnacPacket packet = new SnacPacket(0x0013, command, Util.getCounter(), new byte[0], buffer.toByteArray());
+		
+		c.sendPacket(packet);
 	}
 	
 }

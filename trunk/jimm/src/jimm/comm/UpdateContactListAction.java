@@ -31,6 +31,7 @@ import jimm.JimmException;
 import jimm.RunnableImpl;
 
 import java.io.ByteArrayOutputStream;
+import java.util.*;
 
 public class UpdateContactListAction extends Action
 {
@@ -39,31 +40,25 @@ public class UpdateContactListAction extends Action
 	private static final int STATE_ERROR = -1;
 
 	private static final int STATE_CLI_ROSTERMODIFY_SENT = 1;
-
 	private static final int STATE_COMPLETED = 2;
-
 	private static final int STATE_MOVE1 = 3;
 	private static final int STATE_MOVE2 = 4;
-	private static final int STATE_MOVE3 = 5;
-	private static final int STATE_MOVE4 = 6;
-	
-	private static final int STATE_ADD1 = 7;
-	private static final int STATE_ADD2 = 8;
-
-	private static final int STATE_DELETE_CONTACT1 = 9;
-	private static final int STATE_DELETE_CONTACT2 = 10;
-	private static final int STATE_DELETE_GROUP1 = 11;
-	private static final int STATE_DELETE_GROUP2 = 12;
-	
-	private static final int STATE_ADD_GROUP1 = 13;
-	private static final int STATE_ADD_GROUP2 = 14;
+	private static final int STATE_ADD1 = 5;
+	private static final int STATE_ADD2 = 6;
+	private static final int STATE_DELETE_CONTACT1 = 7;
+	private static final int STATE_DELETE_CONTACT2 = 8;
+	private static final int STATE_DELETE_GROUP1 = 9;
+	private static final int STATE_DELETE_GROUP2 = 10;
+	private static final int STATE_ADD_GROUP1 = 11;
+	private static final int STATE_ADD_GROUP2 = 12;
 
 	/* Action types */
-	public static final int ACTION_ADD = 1;
-	public static final int ACTION_DEL = 2;
-	public static final int ACTION_RENAME = 3;
-	public static final int ACTION_MOVE = 4;
-	public static final int ACTION_REQ_AUTH = 5;
+	public static final int ACTION_ADD        = 1;
+	public static final int ACTION_DEL        = 2;
+	public static final int ACTION_RENAME     = 3;
+	public static final int ACTION_MOVE       = 4;
+	public static final int ACTION_REQ_AUTH   = 5;
+	public static final int ACTION_PRIV_LISTS = 6;
 
 	/* Timeout */
 	public static final int TIMEOUT = 10 * 1000; // milliseconds
@@ -112,6 +107,11 @@ public class UpdateContactListAction extends Action
 		this.newGItem = newGroup;
 		action = ACTION_MOVE;
 	}
+	
+	public UpdateContactListAction(Vector privacyChanges)
+	{
+		super(false, true);
+	}
 
 
 	/* Init action */
@@ -123,7 +123,7 @@ public class UpdateContactListAction extends Action
 		if (this.action != ACTION_RENAME)
 		{
 			/* Send a CLI_ADDSTART packet */
-			sendCLI_ADDSTART();
+			Icq.sendCLI_ADDSTART();
 		}
 
 		switch (action)
@@ -150,8 +150,7 @@ public class UpdateContactListAction extends Action
 				int groupId = cItem
 						.getIntValue(ContactItem.CONTACTITEM_GROUP);
 				gItem = ContactList.getGroupById(groupId);
-				cItem.setIntValue(ContactItem.CONTACTITEM_ID, Util
-						.createRandomId());
+				cItem.setIntValue(ContactItem.CONTACTITEM_ID, ContactList.generateNewIdForBuddy());
 				RunnableImpl.addContact(cItem);
 				buf = packRosterItem(cItem, groupId);
 				if (action == ACTION_REQ_AUTH)
@@ -194,14 +193,14 @@ public class UpdateContactListAction extends Action
                  (
                       SnacPacket.CLI_ROSTERUPDATE_FAMILY,
                       SnacPacket.CLI_ROSTERDELETE_COMMAND,
-                      SnacPacket.CLI_ROSTERDELETE_COMMAND|((Util.createRandomId() << 16)&0x7FFF0000), 
+                      SnacPacket.CLI_ROSTERDELETE_COMMAND|((ContactList.generateNewIdForBuddy() << 16)&0x7FFF0000), 
                       new byte[0],
                       packRosterItem(cItem, gItem.getId())
                  )
             );
 
             cItem.setIntValue(ContactItem.CONTACTITEM_GROUP, newGItem.getId());
-            cItem.setIntValue(ContactItem.CONTACTITEM_ID, Util.createRandomId());
+            cItem.setIntValue(ContactItem.CONTACTITEM_ID, ContactList.generateNewIdForBuddy());
 
             Icq.c.sendPacket
             (
@@ -209,13 +208,13 @@ public class UpdateContactListAction extends Action
                  (
                       SnacPacket.CLI_ROSTERUPDATE_FAMILY,
                       SnacPacket.CLI_ROSTERADD_COMMAND,
-                      SnacPacket.CLI_ROSTERADD_COMMAND|((Util.createRandomId() << 16)&0x7FFF0000),
+                      SnacPacket.CLI_ROSTERADD_COMMAND|((ContactList.generateNewIdForBuddy() << 16)&0x7FFF0000),
                       new byte[0],
                       packRosterItem(cItem, newGItem.getId())
                  )
             );
             
-            state = STATE_MOVE3;
+            state = STATE_MOVE1;
             
             break;
 		}
@@ -276,7 +275,7 @@ public class UpdateContactListAction extends Action
 				case STATE_DELETE_GROUP2:
 					ContactList.removeGroup(this.gItem);
 					this.state = STATE_COMPLETED;
-					sendCLI_ADDEND();
+					Icq.sendCLI_ADDEND();
 					break;
 
 				/* STATE_ADD_GROUP */
@@ -287,14 +286,14 @@ public class UpdateContactListAction extends Action
 
 				case STATE_ADD_GROUP2:
 					ContactList.addGroup(this.gItem);
-					sendCLI_ADDEND();
+					Icq.sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
 
 				/* STATE_ADD */
 				case STATE_ADD1:
 					sendGroup(gItem);
-					sendCLI_ADDEND();
+					Icq.sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
 
@@ -310,26 +309,26 @@ public class UpdateContactListAction extends Action
 								false);
 					}
 
-					sendCLI_ADDEND();
+					Icq.sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
 
 				/* STATE_CLI_ROSTERMODIFY_SENT */
 				case STATE_CLI_ROSTERMODIFY_SENT:
 					if (this.action != ACTION_RENAME)
-						sendCLI_ADDEND();
+						Icq.sendCLI_ADDEND();
 
 					this.state = STATE_COMPLETED;
 					break;
 					
                 /* STATE_MOVE */
-                case STATE_MOVE3:
+                case STATE_MOVE1:
                      sendGroup(newGItem);
-                     state = STATE_MOVE4;
+                     state = STATE_MOVE2;
                      break;
 
-                case STATE_MOVE4:
-                     sendCLI_ADDEND();
+                case STATE_MOVE2:
+                	 Icq.sendCLI_ADDEND();
                      state = STATE_COMPLETED;
                      break;					
 
@@ -344,7 +343,7 @@ public class UpdateContactListAction extends Action
 					break;
 
 				case STATE_DELETE_CONTACT2:
-					sendCLI_ADDEND();
+					Icq.sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
 				}
@@ -362,19 +361,6 @@ public class UpdateContactListAction extends Action
 		return (consumed);
 	}
 
-	private void sendCLI_ADDSTART() throws JimmException
-	{
-		Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY,
-				SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND,
-				new byte[0], new byte[0]));
-	}
-
-	private void sendCLI_ADDEND() throws JimmException
-	{
-		Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
-				SnacPacket.CLI_ADDEND_COMMAND, SnacPacket.CLI_ADDEND_COMMAND, new byte[0],
-				new byte[0]));
-	}
 
 	private void sendGroupsList() throws JimmException
 	{
@@ -400,7 +386,7 @@ public class UpdateContactListAction extends Action
 		{
 			/* Send a CLI_ADDEND packet */
 			if (/*(action != ACTION_MOVE) && */(action != ACTION_RENAME))
-				sendCLI_ADDEND();
+				Icq.sendCLI_ADDEND();
 
 			/* Update activity timestamp */
 			lastActivity = System.currentTimeMillis();

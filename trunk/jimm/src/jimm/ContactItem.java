@@ -37,16 +37,50 @@ import jimm.SplashCanvas;
 /* TODO: remove UI code to ChatHistory */
 public class ContactItem implements ContactListItem
 {
+	/* Variable keys */
+	public static final int CONTACTITEM_UIN           = 0; /* String */
+	public static final int CONTACTITEM_NAME          = 1; /* String */
+	public static final int CONTACTITEM_CLIVERSION    = 2; /* String */	
+	
+	public static final int CONTACTITEM_ID            = 64; /* Integer */
+	public static final int CONTACTITEM_GROUP         = 65; /* Integer */
+	public static final int CONTACTITEM_PLAINMESSAGES = 67; /* Integer */
+	public static final int CONTACTITEM_URLMESSAGES   = 68; /* Integer */
+	public static final int CONTACTITEM_SYSNOTICES    = 69; /* Integer */
+	public static final int CONTACTITEM_AUTREQUESTS   = 70; /* Integer */
+	public static final int CONTACTITEM_IDLE          = 71; /* Integer */
+	public static final int CONTACTITEM_DC_TYPE       = 72; /* Integer */
+	public static final int CONTACTITEM_ICQ_PROT      = 73; /* Integer */
+	public static final int CONTACTITEM_DC_PORT       = 74; /* Integer */
+	public static final int CONTACTITEM_CAPABILITIES  = 75; /* Integer */
+	public static final int CONTACTITEM_CLIENT        = 76; /* Integer */
+	public static final int CONTACTITEM_XSTATUS       = 78; /* Integer */
+	public static final int CONTACTITEM_STATUS        = 79; /* Integer */
+	public static final int CONTACTITEM_AUTH_COOKIE   = 80; /* Integer */
+	public static final int CONTACTITEM_SIGNON        = 81; /* Integer */
+	public static final int CONTACTITEM_ONLINE        = 82; /* Integer */
+	public static final int CONTACTITEM_INV_ID        = 83; /* Integer */
+	public static final int CONTACTITEM_VIS_ID        = 84; /* Integer */
+	public static final int CONTACTITEM_IGN_ID        = 85; /* Integer */
+
+	public static final int CONTACTITEM_ADDED         = 1 << 0; /* Boolean */
+	public static final int CONTACTITEM_NO_AUTH       = 1 << 1; /* Boolean */
+	public static final int CONTACTITEM_CHAT_SHOWN    = 1 << 2; /* Boolean */
+	public static final int CONTACTITEM_IS_TEMP       = 1 << 3; /* Boolean */
+	public static final int CONTACTITEM_HAS_CHAT      = 1 << 4; /* Boolean */
+	
+	public static final int CONTACTITEM_SS_DATA       = 227; /* bytes[] */
+	public static final int CONTACTITEM_INTERNAL_IP   = 225; /* bytes[] */
+	public static final int CONTACTITEM_EXTERNAL_IP   = 226; /* bytes[] */
+	
+	
 	/* No capability */
 	public static final int CAP_NO_INTERNAL = 0x00000000;
 
 	/* Message types */
 	public static final int MESSAGE_PLAIN = 1;
-
 	public static final int MESSAGE_URL = 2;
-
 	public static final int MESSAGE_SYS_NOTICE = 3;
-
 	public static final int MESSAGE_AUTH_REQUEST = 4;
 
 	private int idAndGropup, caps, idle, booleanValues, messCounters;
@@ -55,6 +89,7 @@ public class ContactItem implements ContactListItem
 	private int typeAndClientId, portAndProt, intIP, extIP, authCookie;
 	//#sijapp cond.end #
 
+	private long privacyData;
 	private int uinLong, online, signOn, status;
 	private byte xStatusId;
 
@@ -113,18 +148,18 @@ public class ContactItem implements ContactListItem
 
 		switch (status)
 		{
-			case ContactList.STATUS_ONLINE:		return 0;
-			case ContactList.STATUS_CHAT:		return 1;
-			case ContactList.STATUS_EVIL:		return 2;
-			case ContactList.STATUS_DEPRESSION:	return 3;
-			case ContactList.STATUS_HOME:		return 4;
-			case ContactList.STATUS_WORK:		return 5;
-			case ContactList.STATUS_LUNCH:		return 6;
-			case ContactList.STATUS_AWAY:		return 7;
-			case ContactList.STATUS_NA:		return 8;
-			case ContactList.STATUS_OCCUPIED:	return 9;
-			case ContactList.STATUS_DND:		return 10;
-			case ContactList.STATUS_INVISIBLE:	return 11;
+			case ContactList.STATUS_ONLINE:     return 0;
+			case ContactList.STATUS_CHAT:       return 1;
+			case ContactList.STATUS_EVIL:       return 2;
+			case ContactList.STATUS_DEPRESSION: return 3;
+			case ContactList.STATUS_HOME:       return 4;
+			case ContactList.STATUS_WORK:       return 5;
+			case ContactList.STATUS_LUNCH:      return 6;
+			case ContactList.STATUS_AWAY:       return 7;
+			case ContactList.STATUS_NA:         return 8;
+			case ContactList.STATUS_OCCUPIED:   return 9;
+			case ContactList.STATUS_DND:        return 10;
+			case ContactList.STATUS_INVISIBLE:  return 11;
 
 			case ContactList.STATUS_OFFLINE:
 				if (getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP))
@@ -183,7 +218,7 @@ public class ContactItem implements ContactListItem
 			portAndProt = (portAndProt & 0xffff0000) | (value & 0xffff);
 			return;
 		case CONTACTITEM_DC_PORT:
-			portAndProt = (portAndProt & 0xffff) | ((value & 0xffff) << 16);
+			portAndProt = (portAndProt & 0x0000ffff) | ((value & 0xffff) << 16);
 			return;
 		case CONTACTITEM_CLIENT:
 			typeAndClientId = (typeAndClientId & 0xff00) | (value & 0xff);
@@ -204,7 +239,21 @@ public class ContactItem implements ContactListItem
 		case CONTACTITEM_XSTATUS:
 			xStatusId = (byte)value;
 			return;
+			
+		case CONTACTITEM_INV_ID:
+			privacyData = (privacyData & 0xFFFFFFFFFFFF0000l) | (long)(value);
+			return;
+			
+		case CONTACTITEM_VIS_ID:
+			privacyData = (privacyData & 0xFFFFFFFF0000FFFFl) | ((long)(value) << 16);
+			return;
+			
+		case CONTACTITEM_IGN_ID:
+			privacyData = (privacyData & 0xFFFF0000FFFFFFFFl) | ((long)value << 32);
+			return;
 		}
+		
+		//throw new Exception("setIntValue");
 	}
 
 	synchronized public int getIntValue(int key)
@@ -248,7 +297,11 @@ public class ContactItem implements ContactListItem
 		case CONTACTITEM_SIGNON:
 			return signOn;
 		case CONTACTITEM_XSTATUS:
-			return xStatusId; 
+			return xStatusId;
+			
+		case CONTACTITEM_INV_ID: return (int)(privacyData&0xFFFF);
+		case CONTACTITEM_VIS_ID: return (int)((privacyData >> 16)&0xFFFF);
+		case CONTACTITEM_IGN_ID: return (int)((privacyData >> 32)&0xFFFF);
 		}
 		return 0;
 	}
@@ -329,8 +382,7 @@ public class ContactItem implements ContactListItem
 	{
 		stream.writeByte(0);
 		stream.writeInt(idAndGropup);
-		stream.writeByte(booleanValues
-				& (CONTACTITEM_IS_TEMP | CONTACTITEM_NO_AUTH));
+		stream.writeInt(booleanValues & (CONTACTITEM_IS_TEMP | CONTACTITEM_NO_AUTH));
 		stream.writeInt(uinLong);
 		stream.writeUTF(name);
 		if (ssData != null)
@@ -339,12 +391,13 @@ public class ContactItem implements ContactListItem
 			stream.write(ssData);
 		}
 		else stream.writeShort(0);
+		stream.writeLong(privacyData);
 	}
 
 	public void loadFromStream(DataInputStream stream) throws IOException
 	{
 		idAndGropup = stream.readInt();
-		booleanValues = stream.readByte();
+		booleanValues = stream.readInt();
 		uinLong = stream.readInt();
 		name = stream.readUTF();
 		int ssInfoLen = stream.readShort();
@@ -354,76 +407,16 @@ public class ContactItem implements ContactListItem
 			stream.read(ssData);
 		}
 		else ssData = null;
+		privacyData = stream.readLong();
+		
+		if (privacyData != 0) System.out.println(getIntValue(CONTACTITEM_IGN_ID)+","+getIntValue(CONTACTITEM_INV_ID)+","+getIntValue(CONTACTITEM_VIS_ID));
 	}
-
-	/* Variable keys */
-	public static final int CONTACTITEM_UIN = 0; /* String */
-
-	public static final int CONTACTITEM_NAME = 1; /* String */
-
-	public static final int CONTACTITEM_ID = 64; /* Integer */
-
-	public static final int CONTACTITEM_GROUP = 65; /* Integer */
-
-	public static final int CONTACTITEM_PLAINMESSAGES = 67; /* Integer */
-
-	public static final int CONTACTITEM_URLMESSAGES = 68; /* Integer */
-
-	public static final int CONTACTITEM_SYSNOTICES = 69; /* Integer */
-
-	public static final int CONTACTITEM_AUTREQUESTS = 70; /* Integer */
-
-	public static final int CONTACTITEM_IDLE = 71; /* Integer */
-
-	public static final int CONTACTITEM_ADDED = 1 << 0; /* Boolean */
-
-	public static final int CONTACTITEM_NO_AUTH = 1 << 1; /* Boolean */
-
-	public static final int CONTACTITEM_CHAT_SHOWN = 1 << 2; /* Boolean */
-
-	public static final int CONTACTITEM_IS_TEMP = 1 << 3; /* Boolean */
-
-	public static final int CONTACTITEM_HAS_CHAT = 1 << 4; /* Boolean */
-
-
-	public static final int CONTACTITEM_STATUS = 192; /* Integer */
-
-	public static final int CONTACTITEM_SIGNON = 194; /* Integer */
-
-	public static final int CONTACTITEM_ONLINE = 195; /* Integer */
-
-	public static final int CONTACTITEM_SS_DATA = 227; /* bytes[] */
-
-	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-	//#sijapp cond.if modules_FILES is "true"#
-	public static final int CONTACTITEM_INTERNAL_IP = 225; /* IP address */
-
-	public static final int CONTACTITEM_EXTERNAL_IP = 226; /* IP address */
-	
-	public static final int CONTACTITEM_AUTH_COOKIE = 193; /* Integer */
-
-	public static final int CONTACTITEM_DC_TYPE = 72; /* Integer */
-
-	public static final int CONTACTITEM_ICQ_PROT = 73; /* Integer */
-
-	public static final int CONTACTITEM_DC_PORT = 74; /* Integer */
-
-	//#sijapp cond.end#
-	//#sijapp cond.end#
-	public static final int CONTACTITEM_CAPABILITIES = 75; /* Integer */
-
-	public static final int CONTACTITEM_CLIENT = 76; /* Integer */
-
-	public static final int CONTACTITEM_CLIVERSION = 2; /* String */
-	
-	public static final int CONTACTITEM_XSTATUS = 78;
 
 	public void init(int id, int group, String uin, String name,
 			boolean noAuth, boolean added)
 	{
 		if (id == -1)
-			setIntValue(ContactItem.CONTACTITEM_ID, Util
-					.createRandomId());
+			setIntValue(ContactItem.CONTACTITEM_ID, ContactList.generateNewIdForBuddy());
 		else
 			setIntValue(ContactItem.CONTACTITEM_ID, id);
 		setIntValue(ContactItem.CONTACTITEM_GROUP, group);
@@ -746,85 +739,6 @@ public class ContactItem implements ContactListItem
 	/****************************************************************************/
 	/****************************************************************************/
 	/****************************************************************************/
-
-	/* Shows popup window with text of received message */
-	static public void showPopupWindow(String uin, String name, String text)
-	{
-		/*
-		if (SplashCanvas.locked())
-			return;
-
-		boolean haveToShow = false;
-		boolean chatVisible = ChatHistory.chatHistoryShown(uin);
-		boolean uinEquals = uin.equals(JimmUI.getLastUin());
-
-		switch (Options.getInt(Options.OPTION_POPUP_WIN2))
-		{
-		case 0:
-			return;
-		case 1:
-			haveToShow = !chatVisible & uinEquals;
-			break;
-		case 2:
-			haveToShow = !chatVisible || (chatVisible && !uinEquals);
-			break;
-		}
-
-		if (!haveToShow)
-			return;
-
-		String textToAdd = "[" + name + "]\n" + text;
-
-		if (Jimm.display.getCurrent() instanceof Alert)
-		{
-			Alert currAlert = (Alert) Jimm.display.getCurrent();
-			if (currAlert.getImage() != null)
-				currAlert.setImage(null);
-			currAlert.setString(currAlert.getString() + "\n\n" + textToAdd);
-			return;
-		}
-
-		//#sijapp cond.if target is "MIDP2"#
-		String oldText = messageTextbox.isShown() ? messageTextbox.getString()
-				: null;
-		//#sijapp cond.end#
-
-		Alert alert = new Alert(ResourceBundle.getString("message"), textToAdd,
-				null, null);
-		alert.setTimeout(Alert.FOREVER);
-
-		Jimm.display.setCurrent(alert);
-
-		//#sijapp cond.if target is "MIDP2"#
-		if (Jimm.is_phone_SE() && (oldText != null))
-			messageTextbox.setString(oldText);
-		//#sijapp cond.end#
-		 */
-	}
-
-	/* flashs form caption when current contact have changed status */
-	static synchronized public void statusChanged(String uin, long status)
-	{
-		/*
-		String lastUin = JimmUI.getLastUin();
-		if (lastUin == null) return;
-		if (lastUin.equals(uin)) // TODO: add x-status!
-			showTopLine(uin, JimmUI.getStatusString(status), 8, FlashCapClass.TYPE_FLASH);
-			*/
-	}
-
-	/* Shows creeping line whan user is typing text and message has received */
-	static synchronized public void showCreepingLine(String uin, String text)
-	{
-		/*
-		String lastUin = JimmUI.getLastUin();
-		if (lastUin == null) return;
-		if (Options.getBoolean(Options.OPTION_CREEPING_LINE) && 
-			lastUin.equals(uin) && 
-			messageTextbox.isShown())
-			showTopLine(uin, text, 0, FlashCapClass.TYPE_CREEPING);
-			*/
-	}
 
 	public void setStatusImage()
 	{
