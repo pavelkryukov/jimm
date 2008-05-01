@@ -1509,6 +1509,12 @@ public class JimmUI implements CommandListener
 	private static final int USER_MENU_USER_INFO = 12;
 	private static final int USER_MENU_QUOTA = 14;
 	private static final int USER_MENU_MOVE_TO_GROUP = 15;
+	private static final int USER_MENU_TO_IGN_LIST = 16;
+	private static final int USER_MENU_REM_IGN_LIST = 17;
+	private static final int USER_MENU_TO_INV_LIST = 18;
+	private static final int USER_MENU_REM_INV_LIST = 19;
+	private static final int USER_MENU_TO_VIS_LIST = 20;
+	private static final int USER_MENU_REM_VIS_LIST = 21;
 	
 	private static TextList tlContactMenu;
 	private static ContactItem clciContactMenu;
@@ -1572,6 +1578,21 @@ public class JimmUI implements CommandListener
 			addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true);
 			addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true);
 		}
+		
+		if (contact.getIntValue(ContactItem.CONTACTITEM_IGN_ID) != 0)
+			addTextListItem(tlContactMenu, "privacy_rem_ign", null, USER_MENU_REM_IGN_LIST, true);
+		else 
+			addTextListItem(tlContactMenu, "privacy_to_ign", null, USER_MENU_TO_IGN_LIST, true);
+		
+		if (contact.getIntValue(ContactItem.CONTACTITEM_INV_ID) != 0)
+			addTextListItem(tlContactMenu, "privacy_rem_inv", null, USER_MENU_REM_INV_LIST, true);
+		else 
+			addTextListItem(tlContactMenu, "privacy_to_inv", null, USER_MENU_TO_INV_LIST, true);
+		
+		if (contact.getIntValue(ContactItem.CONTACTITEM_VIS_ID) != 0)
+			addTextListItem(tlContactMenu, "privacy_rem_vis", null, USER_MENU_REM_VIS_LIST, true);
+		else 
+			addTextListItem(tlContactMenu, "privacy_to_vis", null, USER_MENU_TO_VIS_LIST, true);
 
 		if (status != ContactList.STATUS_OFFLINE)
 			addTextListItem(tlContactMenu, "dc_info", null, USER_MENU_LOCAL_INFO, true);
@@ -1723,6 +1744,15 @@ public class JimmUI implements CommandListener
 				);
 				break;
 				
+			case USER_MENU_TO_IGN_LIST:
+			case USER_MENU_REM_IGN_LIST:
+			case USER_MENU_TO_INV_LIST:
+			case USER_MENU_REM_INV_LIST:
+			case USER_MENU_TO_VIS_LIST:
+			case USER_MENU_REM_VIS_LIST:
+				processPrivateRequest(index);
+				break;
+				
 			//#sijapp cond.if modules_HISTORY is "true" #
 			case USER_MENU_HISTORY:
 				HistoryStorage.showHistoryList
@@ -1733,6 +1763,75 @@ public class JimmUI implements CommandListener
 				break;
 			//#sijapp cond.end#
 		}
+	}
+	
+	private static void processPrivateRequest(int commandId)
+	{
+		int ingnoreId = clciContactMenu.getIntValue(ContactItem.CONTACTITEM_IGN_ID);
+		int visibleId = clciContactMenu.getIntValue(ContactItem.CONTACTITEM_VIS_ID);
+		int invisId = clciContactMenu.getIntValue(ContactItem.CONTACTITEM_INV_ID);
+		int ingnoreNew = ingnoreId;
+		int visibleNew = visibleId;
+		int invisNew = invisId;
+		String uin = clciContactMenu.getStringValue(ContactItem.CONTACTITEM_UIN);
+		
+		switch (commandId)
+		{
+		case USER_MENU_TO_IGN_LIST:
+			ingnoreNew = ContactList.generateNewIdForBuddy();
+			break;
+			
+		case USER_MENU_REM_IGN_LIST:
+			ingnoreNew = 0;
+			break;
+			
+		case USER_MENU_TO_INV_LIST:
+			invisNew = ContactList.generateNewIdForBuddy();
+			visibleNew = 0;
+			break;
+			
+		case USER_MENU_REM_INV_LIST:
+			invisNew = 0;
+			break;
+			
+		case USER_MENU_TO_VIS_LIST:
+			visibleNew = ContactList.generateNewIdForBuddy();
+			invisNew = 0;
+			break;
+			
+		case USER_MENU_REM_VIS_LIST:
+			visibleNew = 0;
+			break;
+		}
+		
+		try
+		{
+			Icq.sendCLI_ADDSTART();
+			processPrivateChange(ingnoreId, ingnoreNew, 0x000E, uin);
+			processPrivateChange(visibleId, visibleNew, 0x0002, uin);
+			processPrivateChange(invisId, invisNew, 0x0003, uin);
+			Icq.sendCLI_ADDEND();
+			
+			clciContactMenu.setIntValue(ContactItem.CONTACTITEM_IGN_ID, ingnoreNew);
+			clciContactMenu.setIntValue(ContactItem.CONTACTITEM_VIS_ID, visibleNew);
+			clciContactMenu.setIntValue(ContactItem.CONTACTITEM_INV_ID, invisNew);
+			
+			ContactList.safeSave();
+			ContactList.activate();
+		}
+		catch (JimmException e)
+		{
+			try { Icq.sendCLI_ADDEND(); } catch (Exception e2) {}
+			JimmException.handleException(e);
+		}
+	}
+	
+	private static void processPrivateChange(int oldId, int newId, int type, String uin) throws JimmException
+	{
+		if (oldId == newId) return;
+		if ((oldId != 0) && (newId != 0)) throw new JimmException(230, 1);
+		if (oldId != 0) Icq.sendProcessBuddy(Icq.PROCESS_BUDDY_DELETE, uin, oldId, 0, type);
+		if (newId != 0) Icq.sendProcessBuddy(Icq.PROCESS_BUDDY_ADD, uin, newId, 0, type);
 	}
 	
 	public static void showClientInfo(ContactItem cItem)

@@ -1,7 +1,5 @@
 package jimm;
 
-import java.util.Vector;
-
 import javax.microedition.lcdui.*;
 
 import jimm.comm.Icq;
@@ -159,7 +157,14 @@ public class PlivateListsForm extends VirtualList implements VirtualListCommands
 		{
 			int index = getCurrIndex();
 			if ((index >= getSize()) || (index < 0)) return;
-			values[index] ^= (1 << curCol); 
+			int mask = (1 << curCol);
+			values[index] ^= mask;
+			
+			if ((values[index] & mask) != 0)
+			{
+				if (curCol == 1) values[index] &= ~4;
+				else if (curCol == 2) values[index] &= ~2;
+			}
 			invalidate();
 		}
 		
@@ -195,8 +200,6 @@ public class PlivateListsForm extends VirtualList implements VirtualListCommands
 			return;
 		}
 		
-		System.out.println("Go!");
-		
 		try
 		{
 			int[] types = {0x000E, 0x0003, 0x0002};
@@ -228,6 +231,7 @@ public class PlivateListsForm extends VirtualList implements VirtualListCommands
 			
 			Icq.sendCLI_ADDEND();
 			
+			ContactList.safeSave();
 			Jimm.showWorkScreen();
 		}
 		catch (Exception e) { }
