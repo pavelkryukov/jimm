@@ -3,6 +3,7 @@ Implemented:
   * NEW FEATURE: Client icon is shown in contact list
   * NEW FEATURE: file transfer through web server
   * NEW FEATURE: Private lists management
+  * NEW FEATURE: Personal statuses support
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * Modified user interface
   * More color schemes
