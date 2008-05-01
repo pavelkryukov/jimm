@@ -549,33 +549,6 @@ public class FileTransfer implements CommandListener, Runnable
 			this.setCommandListener(this);
 		}
 
-	      private Image createThumbnail(Image image) {
-		sourceWidth = image.getWidth();
-		sourceHeight = image.getHeight();
-
-		int thumbWidth = this.getWidth();
-		int thumbHeight = this.getHeight();
-		if (sourceHeight >= sourceWidth)
-		    thumbWidth = thumbHeight * sourceWidth / sourceHeight;
-		else
-		    thumbHeight = thumbWidth * sourceHeight / sourceWidth;
-		
-		Image thumb = Image.createImage(thumbWidth, thumbHeight);
-		Graphics g = thumb.getGraphics();
-
-		for (int y = 0; y < thumbHeight; y++) {
-		  for (int x = 0; x < thumbWidth; x++) {
-		    g.setClip(x, y, 1, 1);
-		    int dx = x * sourceWidth / thumbWidth;
-		    int dy = y * sourceHeight / thumbHeight;
-		    g.drawImage(image, x - dx, y - dy, Graphics.LEFT | Graphics.TOP);
-		  }
-		}
-
-		Image immutableThumb = Image.createImage(thumb);
-
-		return immutableThumb;
-	      }
 		private void reset()
 		{
 			img = null;
@@ -721,7 +694,10 @@ public class FileTransfer implements CommandListener, Runnable
 					JimmException.handleException(new JimmException(183, 0,
 							true));
 				// this.stop();
-				img = createThumbnail(Image.createImage(data, 0, data.length));
+				img = Image.createImage(data, 0, data.length);
+				sourceWidth = img.getWidth();
+				sourceHeight = img.getHeight();
+				img = Util.createThumbnail(img, this.getWidth(), this.getHeight());
 				viewfinder = false;
 				vc.setVisible(false);
 				repaint();
