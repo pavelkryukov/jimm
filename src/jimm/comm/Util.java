@@ -27,6 +27,9 @@ package jimm.comm;
 import java.io.*;
 import java.util.*;
 
+import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.Graphics;
+
 import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactList;
@@ -35,6 +38,37 @@ import jimm.util.ResourceBundle;
 
 public class Util
 {
+
+	public static Image createThumbnail(Image image, int width, int height) {
+
+		int sourceWidth = image.getWidth();
+		int sourceHeight = image.getHeight();
+
+		if ((height == 0) && (width != 0))
+			height = width * sourceHeight / sourceWidth;
+		else if ((width == 0) && (height != 0))
+			width = height * sourceWidth / sourceHeight;
+		else if (sourceHeight >= sourceWidth)
+			width = height * sourceWidth / sourceHeight;
+		else
+			height = width * sourceHeight / sourceWidth;
+		
+		Image thumb = Image.createImage(width, height);
+		Graphics g = thumb.getGraphics();
+
+		for (int y = 0; y < height; y++) {
+		  for (int x = 0; x < width; x++) {
+		    g.setClip(x, y, 1, 1);
+		    int dx = x * sourceWidth / width;
+		    int dy = y * sourceHeight / height;
+		    g.drawImage(image, x - dx, y - dy, Graphics.LEFT | Graphics.TOP);
+		  }
+		}
+
+		Image immutableThumb = Image.createImage(thumb);
+
+		return immutableThumb;
+	}
 
 	public static void PrintCapabilities(String caption, byte[] caps)
 	{
