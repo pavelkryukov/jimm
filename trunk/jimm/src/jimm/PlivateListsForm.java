@@ -167,14 +167,40 @@ public class PlivateListsForm extends VirtualList implements VirtualListCommands
 		{
 			processChanges();
 		}
+		
+		else if (c == JimmUI.cmdCancel)
+		{
+			Jimm.showWorkScreen();
+		}
 	}
 	
 	private void processChanges()
 	{
-		int[] types = {0x000E, 0x0003, 0x0002};
+		boolean wasChanges = false;
+		for (int i = items.length-1; i >= 0; i--)
+		{
+			ContactItem ci = items[i];
+			for (int col = 0; col < COL_COUNT; col++)
+			{
+				boolean newVal = ((values[i] & (1 << col)) != 0);
+				boolean oldVal = ci.getIntValue(props[col]) != 0;
+				if (newVal != oldVal) wasChanges = true;
+			}
+			if (wasChanges) break;
+		}
+		
+		if (!wasChanges)
+		{
+			Jimm.showWorkScreen();
+			return;
+		}
+		
+		System.out.println("Go!");
 		
 		try
 		{
+			int[] types = {0x000E, 0x0003, 0x0002};
+			
 			Icq.sendCLI_ADDSTART();
 			
 			for (int i = items.length-1; i >= 0; i--)
@@ -201,8 +227,10 @@ public class PlivateListsForm extends VirtualList implements VirtualListCommands
 			}
 			
 			Icq.sendCLI_ADDEND();
+			
+			Jimm.showWorkScreen();
 		}
-		catch (Exception e) {}
+		catch (Exception e) { }
 		
 		Jimm.showWorkScreen();
 	}

@@ -158,9 +158,8 @@ public class MainMenu implements CommandListener
 		
 		if (ContactList.getSize() != 0)
 			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST, true);
-		
-		//TODO: commented only for debug  
-		//if (connected)
+ 
+		if (connected)
 		{
 			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_MANAGE_CL, true);
 			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF, true);
