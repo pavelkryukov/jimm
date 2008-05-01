@@ -394,6 +394,11 @@ public abstract class VirtualList
 	{
 		return textColor;
 	}
+	
+	public int getBkgrndColor()
+	{
+		return bkgrndColor;
+	}
 
 	//! Returns number of visibled lines of text which fits in screen 
 	public int getVisCount()
@@ -1040,6 +1045,8 @@ public abstract class VirtualList
 
 		return capHeight + 1;
 	}
+	
+	protected void afterDrawCaption(Graphics g, int height) {}
 
 	// private int drawCaption(Graphics g)
 	protected int drawCaption(Graphics g, int mode, int curX, int curY)
@@ -1069,6 +1076,9 @@ public abstract class VirtualList
 
 		g.setColor(capTxtColor);
 		g.drawString(caption, x, (height - capFont.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
+		
+		afterDrawCaption(g, height);
+		
 		return height;
 	}
 
@@ -1111,7 +1121,7 @@ public abstract class VirtualList
 		}
 	}
 
-	static private void drawRect(Graphics g, int color1, int color2, int x1, int y1, int x2, int y2)
+	static protected void drawRect(Graphics g, int color1, int color2, int x1, int y1, int x2, int y2)
 	{
 		int r1 = ((color1 & 0xFF0000) >> 16);
 		int g1 = ((color1 & 0x00FF00) >> 8);
@@ -1271,7 +1281,7 @@ public abstract class VirtualList
 	}
 
 	// change light of color 
-	static private int transformColorLight(int color, int light)
+	static protected int transformColorLight(int color, int light)
 	{
 		int r = (color & 0xFF) + light;
 		int g = ((color & 0xFF00) >> 8) + light;
@@ -1285,7 +1295,7 @@ public abstract class VirtualList
 		return r | (g << 8) | (b << 16);
 	}
 	
-	static private int mergeColors(int color1, int color2, int value)
+	static protected int mergeColors(int color1, int color2, int value)
 	{
 		int r1 = (color1 & 0xFF);
 		int g1 = ((color1 & 0xFF00) >> 8);

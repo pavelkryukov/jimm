@@ -49,27 +49,28 @@ public class MainMenu implements CommandListener
 	private static MainMenu _this;
 
 	/* Static constants for menu actios */
-	private static final int MENU_CONNECT      = 1;
-	private static final int MENU_DISCONNECT   = 2;
-	private static final int MENU_LIST         = 3;
-	private static final int MENU_OPTIONS      = 4;
-	private static final int MENU_TRAFFIC      = 5;
-	private static final int MENU_KEYLOCK      = 6;
-	private static final int MENU_STATUS       = 7;
-	private static final int MENU_XSTATUS      = 8;
-	private static final int MENU_MANAGE_CL       = 9;
-	private static final int MENU_ABOUT        = 10;
-	private static final int MENU_MINIMIZE     = 11;
-	private static final int MENU_SOUND        = 12;
-	private static final int MENU_MYSELF       = 13;
-	private static final int MENU_EXIT         = 14;
+	private static final int MENU_CONNECT       = 1;
+	private static final int MENU_DISCONNECT    = 2;
+	private static final int MENU_LIST          = 3;
+	private static final int MENU_OPTIONS       = 4;
+	private static final int MENU_TRAFFIC       = 5;
+	private static final int MENU_KEYLOCK       = 6;
+	private static final int MENU_STATUS        = 7;
+	private static final int MENU_XSTATUS       = 8;
+	private static final int MENU_MANAGE_CL     = 9;
+	private static final int MENU_ABOUT         = 10;
+	private static final int MENU_MINIMIZE      = 11;
+	private static final int MENU_SOUND         = 12;
+	private static final int MENU_MYSELF        = 13;
+	private static final int MENU_EXIT          = 14;
 	
 	/* Constants for constact list management menu */
-	private static final int MENU_ADD_USER     = 15;
-	private static final int MENU_SEARCH_USER  = 16;
-	private static final int MENU_ADD_GROUP    = 17;
-	private static final int MENU_RENAME_GROUP = 18;
-	private static final int MENU_DELETE_GROUP = 19;
+	private static final int MENU_ADD_USER      = 15;
+	private static final int MENU_SEARCH_USER   = 16;
+	private static final int MENU_ADD_GROUP     = 17;
+	private static final int MENU_RENAME_GROUP  = 18;
+	private static final int MENU_DELETE_GROUP  = 19;
+	private static final int MENU_PRIVATE_LISTS = 20;
 
 	/* Send command */
 	private static Command sendCommand = new Command(ResourceBundle
@@ -158,7 +159,8 @@ public class MainMenu implements CommandListener
 		if (ContactList.getSize() != 0)
 			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST, true);
 		
-		if (connected)
+		//TODO: commented only for debug  
+		//if (connected)
 		{
 			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_MANAGE_CL, true);
 			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF, true);
@@ -308,6 +310,7 @@ public class MainMenu implements CommandListener
 		JimmUI.addTextListItem(list, "add_group",    null, MENU_ADD_GROUP,    true);
 		JimmUI.addTextListItem(list, "rename_group", null, MENU_RENAME_GROUP, true);
 		JimmUI.addTextListItem(list, "del_group",    null, MENU_DELETE_GROUP, true);
+		JimmUI.addTextListItem(list, "priv_lists",   null, MENU_PRIVATE_LISTS, true);
 		list.removeAllCommands();
 		list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
@@ -555,6 +558,10 @@ public class MainMenu implements CommandListener
 			case MENU_DELETE_GROUP:
 				groupIds = JimmUI.showGroupSelector("del_group", TAG_DELETE_GROUPS,
 						this, JimmUI.SHS_TYPE_EMPTY, -1);
+				break;
+				
+			case MENU_PRIVATE_LISTS:
+				new PlivateListsForm().execute();
 				break;
 			}
 		}

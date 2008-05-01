@@ -37,6 +37,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Random;
 import java.util.Vector;
 import java.util.Date;
 
@@ -85,80 +86,46 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 {
 	/* Status (all are mutual exclusive) TODO: move status to ContactItem */
 	public static final int STATUS_EVIL = 0x00003000;
-
 	public static final int STATUS_DEPRESSION = 0x00004000;
-
 	public static final int STATUS_HOME = 0x00005000;
-
 	public static final int STATUS_WORK = 0x00006000;
-
 	public static final int STATUS_LUNCH = 0x00002001;
-
 	public static final int STATUS_AWAY = 0x00000001;
-
 	public static final int STATUS_CHAT = 0x00000020;
-
 	public static final int STATUS_DND = 0x00000002;
-
 	public static final int STATUS_INVISIBLE = 0x00000100;
-
 	public static final int STATUS_INVIS_ALL = 0x00000200;
-
 	public static final int STATUS_NA = 0x00000004;
-
 	public static final int STATUS_OCCUPIED = 0x00000010;
-
 	public static final int STATUS_OFFLINE = 0xFFFFFFFF;
-
 	public static final int STATUS_NONE = 0x10000000;
-
 	public static final int STATUS_ONLINE = 0x00000000;
 
 	/* Sound notification typs */
 	public static final int SOUND_TYPE_MESSAGE = 1;
-
 	public static final int SOUND_TYPE_ONLINE = 2;
-
 	public static final int SOUND_TYPE_TYPING = 3;
 
 	public static Image statusEvilImg;
-
 	public static Image statusDepressionImg;
-
 	public static Image statusHomeImg;
-
 	public static Image statusWorkImg;
-
 	public static Image statusLunchImg;
-
 	public static Image statusAwayImg;
-
 	public static Image statusChatImg;
-
 	public static Image statusDndImg;
-
 	public static Image statusInvisibleImg;
-
 	public static Image statusNaImg;
-
 	public static Image statusOccupiedImg;
-
 	public static Image statusOfflineImg;
-
 	public static Image statusOnlineImg;
-
 	public static Image eventPlainMessageImg;
-
 	public static Image eventUrlMessageImg;
-
 	public static Image eventSystemNoticeImg;
-
 	public static Image eventSysActionImg;
-
+	
 	public static boolean playerFree = true;
-
 	private static boolean needPlayOnlineNotif = false;
-
 	private static boolean needPlayMessNotif = false;
 
 	private static ContactList _this;
@@ -633,7 +600,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	// Updates the client-side contact list (called when a new roster has been
 	// received)
-	static public void update(int flags, int versionId1_, int versionId2_, ContactListItem[] items)
+	static public void update(int flags, int versionId1_, int versionId2_, ContactListItem[] items, Vector privData)
 	{
 		synchronized (_this)
 		{
@@ -667,6 +634,27 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				}
 			}
 			ssiNumberOfItems += versionId2_;
+			
+			// Privacy data
+			if (privData != null)
+			{
+				Hashtable list = new Hashtable();
+				
+				for (int i = cItems.size()-1; i >= 0; i--) 
+					list.put(((ContactItem)cItems.elementAt(i)).getStringValue(ContactItem.CONTACTITEM_UIN), cItems.elementAt(i));
+				
+				int size = privData.size();
+				for (int i = 0; i < size; i += 2)
+				{
+					String uin = (String)privData.elementAt(i);
+					int[] data = (int[]) privData.elementAt(i+1);
+					
+					ContactItem ci = (ContactItem)list.get(uin);
+					if (ci == null) continue;
+
+					ci.setIntValue(data[0], data[1]);
+				}
+			}
 
 			// Save new contact list
 			if (versionId1_ != 0)
@@ -1008,9 +996,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		
 		// Set x-status
 		cItem.setIntValue(ContactItem.CONTACTITEM_XSTATUS, xStatus);
-
-		if (treeBuilt && statusChanged)
-			ContactItem.statusChanged(uin, trueStatus);
 
 		// Update DC values
 		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
@@ -1769,6 +1754,43 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			DebugLog.activate();
 		}
 		//#sijapp cond.end#
+	}
+	
+	static private boolean checkIfIdExists(int id)
+	{
+		for (int i = cItems.size()-1; i >= 0; i--)
+		{
+			ContactItem ci = getCItem(i);
+			if (ci.getIntValue(ContactItem.CONTACTITEM_ID) == id) return true;
+			if (ci.getIntValue(ContactItem.CONTACTITEM_INV_ID) == id) return true;
+			if (ci.getIntValue(ContactItem.CONTACTITEM_VIS_ID) == id) return true;
+			if (ci.getIntValue(ContactItem.CONTACTITEM_IGN_ID) == id) return true;
+		}
+		
+		for (int i = gItems.size()-1; i >= 0; i--)
+		{
+			ContactListGroupItem gi = (ContactListGroupItem)gItems.elementAt(i);
+			if (gi.getId() == id) return true;
+		}
+	
+		return false;
+	}
+	
+	static public int generateNewIdForBuddy()
+	{
+		int range = 0x6FFF;
+		Random rand = new Random(System.currentTimeMillis());
+		int randint = 0;
+		
+		do
+		{
+			randint = rand.nextInt();
+			if (randint < 0) randint = randint * (-1);
+			randint = randint % range + 4096;
+		} 
+		while ( checkIfIdExists(randint) );
+		
+		return randint;
 	}
 
 }

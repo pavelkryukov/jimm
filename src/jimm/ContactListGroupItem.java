@@ -75,7 +75,7 @@ public class ContactListGroupItem implements ContactListItem
 	// Constructor for a new group item
 	public ContactListGroupItem(String name)
 	{
-		this.id = Util.createRandomId();
+		this.id = ContactList.generateNewIdForBuddy();
 		this.name = new String(name);
 		onlineCount = totalCount = 0;
 	}

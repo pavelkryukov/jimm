@@ -602,6 +602,8 @@ public class ConnectAction extends Action
 					// packet
 					else if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYROSTER_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYROSTER_COMMAND))
 					{
+						Vector privacyLists = new Vector(); 
+						
 						if (snacPacket.getFlags() != 1) this.srvReplyRosterRcvd = true;
 
 						// System.out.println("Flag:
@@ -658,6 +660,8 @@ public class ConnectAction extends Action
 
 							// Check length
 							if (buf.length < marker + len) { throw (new JimmException(115, 3)); }
+							
+							int privacyMode = -1;
 
 							// Normal contact
 							if (type == 0x0000)
@@ -725,8 +729,8 @@ public class ConnectAction extends Action
 								{
 									items.addElement(new ContactListGroupItem(group, name));
 								}
-
 							}
+						
 							// My visibility settings
 							else if (type == 0x0004)
 							{
@@ -747,15 +751,29 @@ public class ConnectAction extends Action
 								}
 								if (len != 0) { throw (new JimmException(115, 111)); }
 							}
+							
+							// visible. item
+							else if (type == 0x0002) privacyMode = ContactItem.CONTACTITEM_VIS_ID;
+							
+							// invis.
+							else if (type == 0x0003) privacyMode = ContactItem.CONTACTITEM_INV_ID;
+							
+							// ignore
+							else if (type == 0x000E) privacyMode = ContactItem.CONTACTITEM_IGN_ID;
+							
 							// All other item types
 							else
 							{
-								//System.out.println("x "+i+": ");
 								// Skip TLVs
 								marker += len;
-
 							}
-
+							
+							if (privacyMode != -1)
+							{
+								privacyLists.addElement(name);
+								privacyLists.addElement(new int[] { privacyMode, id });
+								marker += len;
+							}
 						}
 
 						// Check length
@@ -767,7 +785,9 @@ public class ConnectAction extends Action
 						// Update contact list
 						ContactListItem[] itemsAsArray = new ContactListItem[items.size()];
 						items.copyInto(itemsAsArray);
-						ContactList.update(snacPacket.getFlags(), timestamp, count, itemsAsArray);
+						
+						// Save values into contact list
+						ContactList.update(snacPacket.getFlags(), timestamp, count, itemsAsArray, privacyLists);
 
 						// Packet has been consumed
 						consumed = true;

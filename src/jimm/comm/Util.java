@@ -809,56 +809,6 @@ public class Util
 
 	//#sijapp cond.end #
 
-	// Create a random id which is not used yet
-	public static int createRandomId()
-	{
-		// Max value is probably 0x7FFF, lowest value is unknown.
-		// We use range 0x1000-0x7FFF.
-		// From miranda source
-
-		int range = 0x6FFF;
-
-		ContactListGroupItem[] gItems = ContactList.getGroupItems();
-		ContactItem[] cItems = ContactList.getContactItems();
-		int randint;
-		boolean found;
-
-		Random rand = new Random(System.currentTimeMillis());
-		randint = rand.nextInt();
-		if (randint < 0)
-			randint = randint * (-1);
-		randint = randint % range + 4096;
-
-		//DebugLog.addText("rand: 0x"+Integer.toHexString(randint));
-
-		do
-		{
-			found = false;
-			for (int i = 0; i < gItems.length; i++)
-			{
-				if (gItems[i].getId() == randint)
-				{
-					randint = rand.nextInt() + 4096 % range;
-					found = true;
-					break;
-				}
-			}
-			if (!found)
-				for (int j = 0; j < cItems.length; j++)
-				{
-					if (cItems[j]
-							.getIntValue(ContactItem.CONTACTITEM_ID) == randint)
-					{
-						randint = rand.nextInt() % range + 4096;
-						found = true;
-						break;
-					}
-				}
-		} while (found == true);
-
-		return randint;
-	}
-
 	// Check is data array utf-8 string
 	public static boolean isDataUTF8(byte[] array, int start, int lenght)
 	{

@@ -90,6 +90,7 @@ public class JimmUI implements CommandListener
 	final public static int CMD_BACK = 6;
 
 	// Commands
+	public final static Command cmdSave = new Command(ResourceBundle.getString("save"), Command.ITEM, 1);
 	public final static Command cmdOk = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
 	public final static Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Command.BACK, 5);
 	public final static Command cmdYes = new Command(ResourceBundle.getString("yes"), Command.OK, 1);
