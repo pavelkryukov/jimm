@@ -408,8 +408,6 @@ public class ContactItem implements ContactListItem
 		}
 		else ssData = null;
 		privacyData = stream.readLong();
-		
-		if (privacyData != 0) System.out.println(getIntValue(CONTACTITEM_IGN_ID)+","+getIntValue(CONTACTITEM_INV_ID)+","+getIntValue(CONTACTITEM_VIS_ID));
 	}
 
 	public void init(int id, int group, String uin, String name,
