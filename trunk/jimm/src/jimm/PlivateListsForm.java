@@ -166,7 +166,7 @@ public class PlivateListsForm extends VirtualList implements VirtualListCommands
 	
 	protected void get(int index, ListItem item)
 	{
-		item.text = items[index].getText();
+		item.text = items[index].getStringValue(ContactItem.CONTACTITEM_NAME);
 		item.color = getTextColor();
 	}
 	

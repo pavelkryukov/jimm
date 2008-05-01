@@ -541,10 +541,36 @@ public class ContactItem implements ContactListItem
 		return Icq.getClientImageID(getIntValue(CONTACTITEM_CLIENT)); 
 	}
 
+	static private StringBuffer tmpStringBuffer = new StringBuffer();	
+	
 	public String getText()
 	{
-		if (getBooleanValue(CONTACTITEM_NO_AUTH))
-			return "[!] " + name;
+		tmpStringBuffer.setLength(0);
+		if (getBooleanValue(CONTACTITEM_NO_AUTH)) tmpStringBuffer.append("!");
+		
+		if (getIntValue(CONTACTITEM_IGN_ID) != 0)
+		{
+			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
+			tmpStringBuffer.append('d');
+		}
+		
+		if (getIntValue(CONTACTITEM_INV_ID) != 0)
+		{
+			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
+			tmpStringBuffer.append('i');
+		}
+		
+		if (getIntValue(CONTACTITEM_VIS_ID) != 0)
+		{
+			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
+			tmpStringBuffer.append('v');
+		}
+		
+		if (tmpStringBuffer.length() != 0)
+		{
+			return "["+tmpStringBuffer.toString()+"] "+name;
+		}
+		
 		return name;
 	}
 
