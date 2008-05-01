@@ -583,10 +583,6 @@ public class MainMenu implements CommandListener
 				MainMenu.activate();
 			}
 		}
-
-		/* Contact list management group */
-		else if (JimmUI.getCommandType(c, TAG_CL) == JimmUI.CMD_OK)
-			CLManagementItemSelected(JimmUI.getLastSelIndex());
 	}
 	
 	private void userSelectStatus()
@@ -663,12 +659,4 @@ public class MainMenu implements CommandListener
 			else MainMenu.activate();
 		}
 	}
-
-	private void CLManagementItemSelected(int index)
-	{
-		switch (index)
-		{
-		}
-	}
-
 }
