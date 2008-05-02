@@ -290,6 +290,7 @@ public class FileTransfer implements CommandListener, Runnable
 			{
 				int read = is.read();
 				if (read == -1) break;
+				if ((read == 0x0A) || (read == 0x0D)) continue; 
 				response.append((char)(read & 0xFF));
 			}
 			String respString = response.toString();
