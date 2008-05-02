@@ -494,6 +494,9 @@
   "error_191"                   "Error reading the file. Possibly not supported (#191.EXT)"
   "error_192"                   "Error reading the file. File not found, or not supported (#192.EXT)"
   "error_193"                   "Error accessing file system for browsing. Security error (#193.EXT)"
+  "error_194"                   "Wrong answer from filetransfer server (#194.EXT)"
+  "error_195"                   "Impossible to parse filetransfer server data (#195.EXT)"
+  "error_196"                   "I/O error during filetransfer (#196.EXT)"
   //#sijapp cond.end#
   
   // HTTP Connection erros
