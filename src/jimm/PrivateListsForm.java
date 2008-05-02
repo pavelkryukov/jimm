@@ -6,7 +6,7 @@ import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 import DrawControls.*;
 
-public class PlivateListsForm extends VirtualList implements VirtualListCommands, CommandListener
+public class PrivateListsForm extends VirtualList implements VirtualListCommands, CommandListener
 {
 	private short[] values;
 	private ContactItem[] items;
@@ -22,7 +22,7 @@ public class PlivateListsForm extends VirtualList implements VirtualListCommands
 	int rectColor;
 	private final String[] names = {"D", "I", "V"};
 	
-	public PlivateListsForm()
+	public PrivateListsForm()
 	{
 		super(ResourceBundle.getString("priv_lists"));
 		
