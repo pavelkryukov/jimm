@@ -208,7 +208,18 @@ public class FileTransfer implements CommandListener, Runnable
 			break;
 			
 		case MODE_SEND_THROUGH_WEB:
-			sendFileThroughWebThread();
+			try
+			{
+				sendFileThroughWebThread();
+			}
+			catch (JimmException e)
+			{
+				exceptionText = e.getMessage();
+			}
+			
+			curMode = MODE_BACK_TO_MENU;
+			Jimm.display.callSerially(this);
+			
 			break;
 			
 		case MODE_BACK_TO_MENU:
@@ -227,7 +238,7 @@ public class FileTransfer implements CommandListener, Runnable
 		}
 	}
 	
-	private void sendFileThroughWebThread()
+	private void sendFileThroughWebThread() throws JimmException
 	{
 		InputStream is;
 		OutputStream os;
@@ -280,7 +291,7 @@ public class FileTransfer implements CommandListener, Runnable
 			os.flush();
 
 			int respCode = sc.getResponseCode();
-			if (respCode != HttpConnection.HTTP_OK) throw new Exception("Server error: "+respCode+"\r\n"+sc.getResponseMessage());
+			if (respCode != HttpConnection.HTTP_OK) throw new JimmException(194, respCode);
 			
 			// Read response
 			is = sc.openInputStream();
@@ -289,21 +300,27 @@ public class FileTransfer implements CommandListener, Runnable
 			for (;;)
 			{
 				int read = is.read();
-				if (read == -1) break;
-				if ((read == 0x0A) || (read == 0x0D)) continue; 
+				if (read == -1) break; 
 				response.append((char)(read & 0xFF));
 			}
+			
 			String respString = response.toString();
-			int dataPos = respString.indexOf("\r\n\r\n");
-			if (dataPos == -1) {} // TODO: show error!
-			else respString = Util.replaceStr(respString.substring(dataPos+4), "\r\n", "");
+			
+			System.out.println(respString);
+			
+			int dataPos = respString.indexOf("http://");
+			if (dataPos == -1) throw new JimmException(195, 0);
+			
+			respString = Util.replaceStr(respString, "\r\n", "");
+			respString = Util.replaceStr(respString, "\r", "");
+			respString = Util.replaceStr(respString, "\n", "");
+			
+			System.out.println(respString);
 
 			// Close all http connection headers 
 			os.close();
 			is.close();
 			sc.close();
-			
-			System.out.println(respString);
 		
 			// Send info about file
 			StringBuffer messText = new StringBuffer();
@@ -314,12 +331,10 @@ public class FileTransfer implements CommandListener, Runnable
 			PlainMessage plainMsg = new PlainMessage(Options.getString(Options.OPTION_UIN), cItem, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(false), messText.toString());
 			Icq.requestAction(new SendMessageAction(plainMsg));
 		}
-		catch (Exception e)
+		catch (IOException e)
 		{
-			exceptionText = e.toString();
+			throw new JimmException(196, 0);
 		}
-		curMode = MODE_BACK_TO_MENU;
-		Jimm.display.callSerially(this);
 	}
 	
 	public static FileTransferMessage getFTM()
