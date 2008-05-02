@@ -453,7 +453,9 @@ public class Jimm extends MIDlet
 					(status != ContactList.STATUS_AWAY) && 
 					(status != ContactList.STATUS_NA) &&
 					(status != ContactList.STATUS_DND) &&
-					(status != ContactList.STATUS_OCCUPIED))
+					(status != ContactList.STATUS_OCCUPIED) &&
+					(status != ContactList.STATUS_INVIS_ALL) &&
+					(status != ContactList.STATUS_INVISIBLE))
 				{
 					try { Icq.setOnlineStatus(ContactList.STATUS_AWAY); } catch (Exception e) {}
 					ContactList.showStatusInCaption(ContactList.STATUS_AWAY);
