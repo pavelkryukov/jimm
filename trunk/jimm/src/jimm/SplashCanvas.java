@@ -217,6 +217,8 @@ public class SplashCanvas extends Canvas
 			t2 = null;
 		}
 		Jimm.display.setCurrent(_this);
+		
+		Jimm.aaUserActivity();
 	}
 
 	static public void addCmd(Command cmd)

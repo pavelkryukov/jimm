@@ -889,15 +889,16 @@ public class ActionListener
 
 						long currStatus = Options
 								.getLong(Options.OPTION_ONLINE_STATUS);
-						if ((currStatus != ContactList.STATUS_ONLINE)
+						if (((currStatus != ContactList.STATUS_ONLINE)
 								&& (currStatus != ContactList.STATUS_CHAT)
 								&& (currStatus != ContactList.STATUS_INVISIBLE)
 								&& (currStatus != ContactList.STATUS_INVIS_ALL))
+							|| (Jimm.aaGetMode() != Jimm.AA_MODE_NONE))
 							statusMess = Util.replaceStr(Options
 									.getString(Options.OPTION_STATUS_MESSAGE),
 									"%TIME%", Icq.getLastStatusChangeTime());
 						else
-							statusMess = new String();
+							statusMess = "---";
 
 						// Acknowledge message with away message
 						final byte[] statusMessBytes = Util.stringToByteArray(

@@ -189,6 +189,8 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		/* User selected chat to delete */
 		if (JimmUI.getCurScreenTag() == UI_MODE_DEL_CHAT)
 		{
@@ -349,6 +351,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 	public void vlCursorMoved(VirtualList sender)
 	{
+		Jimm.aaUserActivity();
 		checkTextForURL();
 	}
 	

@@ -39,7 +39,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Random;
 import java.util.Vector;
-import java.util.Date;
 
 import javax.microedition.lcdui.*;
 
@@ -60,9 +59,7 @@ import javax.microedition.rms.RecordStoreNotFoundException;
 
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.media.PlayerListener;
-import javax.microedition.lcdui.game.Sprite;
 import javax.microedition.media.Manager;
-import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.control.ToneControl;
 import javax.microedition.media.control.VolumeControl;
@@ -346,12 +343,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		ContactList.tree.activate(Jimm.display, alert);
 	}
+	
+	static public void showStatusInCaption(int status)
+	{
+		tree.setCapImage(smallIcons.elementAt
+		(
+			JimmUI.getStatusImageIndex(status == -1 ? Icq.getCurrentStatus() : status)
+		));
+	}
 
 	// Request display of the main menu
 	static public void activate()
 	{
-		tree.setCapImage(smallIcons.elementAt(JimmUI.getStatusImageIndex(Icq
-				.getCurrentStatus())));
+		Jimm.aaUserActivity();
+		showStatusInCaption(-1);
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		updateTitle(Traffic.getSessionTraffic());
 		//#sijapp cond.else #
@@ -1632,13 +1637,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		dst.fontStyle = item.getFontStyle();
 	}
 
-	public void vlCursorMoved(VirtualList sender) 
-	{
-	}
-
-	public void vlItemClicked(VirtualList sender) 
-	{
-	}
+	public void vlCursorMoved(VirtualList sender)  {}
+	public void vlItemClicked(VirtualList sender)  {}
 
 	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
@@ -1647,6 +1647,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				.getData()
 				: null;
 		JimmUI.execHotKey(item, keyCode, type);
+		
+		if (type == VirtualList.KEY_PRESSED) Jimm.aaUserActivity();
 	}
 
 	// shows next or previos chat 
@@ -1709,6 +1711,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Command listener
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		// Activate main menu
 		if (c == JimmUI.cmdMenu)
 		{

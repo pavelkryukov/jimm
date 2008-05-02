@@ -741,6 +741,8 @@ public class ContactItem implements ContactListItem
 	/* Activates the contact item menu */
 	public void activate()
 	{
+		Jimm.aaUserActivity();
+		
 		String currentUin = getStringValue(ContactItem.CONTACTITEM_UIN);
 
 		/* Display chat history */

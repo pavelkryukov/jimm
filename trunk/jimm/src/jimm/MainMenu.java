@@ -205,6 +205,7 @@ public class MainMenu implements CommandListener
 	/* Activates the main menu */
 	static public void activate()
 	{
+		Jimm.aaUserActivity();
 		MainMenu.build();
 		MainMenu.list.activate(Jimm.display);
 		JimmUI.setLastScreen(MainMenu.list);
@@ -319,6 +320,8 @@ public class MainMenu implements CommandListener
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		//#sijapp cond.if target is "MOTOROLA" #
 		/* Exit by soft button */
 		//#		if (c == MainMenu.exitCommand)

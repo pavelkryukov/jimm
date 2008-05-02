@@ -158,6 +158,8 @@ public class JimmUI implements CommandListener
 
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		if (isControlActive(removeContactMessageBox))
 		{
 			if (c == cmdOk) menuRemoveContactSelected();
