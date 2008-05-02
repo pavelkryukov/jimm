@@ -241,6 +241,10 @@ public class Options
 	
 	public static final int OPTION_FT_MODE = 94; /* int     */
 	
+	public static final int OPTION_USE_AUTOAWAY = 161; /* boolean */
+	public static final int OPTION_AUTOAWAY_TIME1 = 96; /* int     */
+	public static final int OPTION_AUTOAWAY_TIME2 = 97; /* int     */
+	
 	// Filetransfer modes
 	public static final int FS_MODE_WEB = 0;
 	public static final int FS_MODE_NET = 1;
@@ -488,6 +492,10 @@ public class Options
 		//#sijapp cond.end#
 		
 		setInt(OPTION_FT_MODE, FS_MODE_WEB);
+		
+		setBoolean(OPTION_USE_AUTOAWAY, true);
+		setInt(OPTION_AUTOAWAY_TIME1, 5);
+		setInt(OPTION_AUTOAWAY_TIME2, 15);
 	}
 
 	static public void resetLangDependedOpts()
@@ -807,29 +815,16 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 	// Static constants for menu actios
 	private static final int OPTIONS_ACCOUNT = 0;
-
 	private static final int OPTIONS_NETWORK = 1;
-
-	//#sijapp cond.if modules_PROXY is "true"#       
 	private static final int OPTIONS_PROXY = 2;
-
-	//#sijapp cond.end#
 	private static final int OPTIONS_INTERFACE = 3;
-
 	private static final int OPTIONS_HOTKEYS = 4;
-
 	private static final int OPTIONS_SIGNALING = 5;
-
-	//#sijapp cond.if modules_TRAFFIC is "true"#
 	private static final int OPTIONS_TRAFFIC = 6;
-
-	//#sijapp cond.end#
-
 	private static final int OPTIONS_TIMEZONE = 7;
-	
 	private static final int OPTIONS_COLOR_THEME = 8;
-
-	private static final int OPTIONS_RESET_RMS = 9;
+	private static final int OPTIONS_AUTOAWAY = 9;
+	private static final int OPTIONS_RESET_RMS = 10;
 
 	// Options
 	private TextField[] uinTextField;
@@ -937,6 +932,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private TextField connAutoRetryTextField;
 
 	//#sijapp cond.end#
+	
+	private ChoiceGroup chgrUseAutoAway;
+	private TextField tfAutoAwayTime1;
+	private TextField tfAutoAwayTime2;
 
 	private TextList keysMenu;
 
@@ -1047,6 +1046,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true);
 		
 		JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true);
+		
+		JimmUI.addTextListItem(optionsMenu, "auto_away", null, OPTIONS_AUTOAWAY, true);
 		
 		//#sijapp cond.if modules_TRAFFIC is "true"#
 		JimmUI.addTextListItem(optionsMenu, "traffic_lng", null, OPTIONS_TRAFFIC, true); 
@@ -1678,6 +1679,19 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 
 			break;
+			
+		case OPTIONS_AUTOAWAY:
+			chgrUseAutoAway = new ChoiceGroup(ResourceBundle.getString("auto_away"), Choice.MULTIPLE);
+			setChecked(chgrUseAutoAway, "yes", Options.OPTION_USE_AUTOAWAY);
+			optionsForm.append(chgrUseAutoAway);
+			
+			tfAutoAwayTime1 = new TextField(ResourceBundle.getString("auto_away_time1"), Integer.toString(Options.getInt(Options.OPTION_AUTOAWAY_TIME1)), 2, TextField.NUMERIC);
+			optionsForm.append(tfAutoAwayTime1);
+			
+			tfAutoAwayTime2 = new TextField(ResourceBundle.getString("auto_away_time2"), Integer.toString(Options.getInt(Options.OPTION_AUTOAWAY_TIME2)), 2, TextField.NUMERIC);
+			optionsForm.append(tfAutoAwayTime2);
+			
+			break;
 
 		//#sijapp cond.if modules_TRAFFIC is "true"#
 		case OPTIONS_TRAFFIC:
@@ -1937,6 +1951,16 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 
 			break;
+			
+		case OPTIONS_AUTOAWAY:
+			Options.setBoolean(Options.OPTION_USE_AUTOAWAY, chgrUseAutoAway.isSelected(0));
+			int time1 = Util.strToIntDef(tfAutoAwayTime1.getString(), 5);
+			int time2 = Util.strToIntDef(tfAutoAwayTime2.getString(), 5);
+			if (time1 < 2) time1 = 2;
+			if (time2 <= time1) time2 = time1+1;
+			Options.setInt(Options.OPTION_AUTOAWAY_TIME1, time1);
+			Options.setInt(Options.OPTION_AUTOAWAY_TIME2, time2);
+			break;
 
 		//#sijapp cond.if modules_TRAFFIC is "true"#
 		case OPTIONS_TRAFFIC:
@@ -1986,6 +2010,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		if (JimmUI.isControlActive(tlColorScheme))
 		{
 			if (c == JimmUI.cmdOk)

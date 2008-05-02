@@ -363,6 +363,8 @@ class FileSystem2 implements CommandListener, Runnable
 	
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		if ((c == JimmUI.cmdSelect) || (c == JimmUI.cmdOk)) 
 		{
 			int index = list.getCurrTextIndex();

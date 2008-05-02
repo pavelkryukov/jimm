@@ -22,6 +22,7 @@ public class TimerTasks extends TimerTask implements
 	public static final int SC_RESET_TEXT_AND_IMG = 3;
 	final static public int TYPE_FLASH = 4;
 	final static public int TYPE_CREEPING = 5;
+	final static public int TYPE_MINUTE = 6;
 
 	//#sijapp cond.if target="MOTOROLA"#
 	//#	public static final int VL_SWITCHOFF_BKLT = 10;
@@ -180,7 +181,10 @@ public class TimerTasks extends TimerTask implements
 				JimmUI.setCaption(flashDispl, flashText.substring(flashCounter));
 				flashCounter++;
 				if (flashCounter > flashText.length() - 5) flashCounter = 0;
-				break;				
+				break;
+				
+			case TYPE_MINUTE:
+				RunnableImpl.minuteTask();
 			}
 			return;
 		}

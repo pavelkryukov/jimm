@@ -49,6 +49,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_RESET_CONTACTS      = 10;
 	final static public int TYPE_SHOW_TIME           = 11;
 	final static public int TYPE_ADD_CONTACT         = 12;
+	final static public int TYPE_MINUTE_TASK         = 14;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -117,6 +118,10 @@ public class RunnableImpl implements Runnable
 			ContactItem citem = (ContactItem)data[0];
 			ContactList.addContactItem(citem);
 			ChatHistory.updateChatIfExists(citem);
+			break;
+			
+		case TYPE_MINUTE_TASK:
+			Jimm.aaNextMinute();
 			break;
 		}
 	}
@@ -225,6 +230,11 @@ public class RunnableImpl implements Runnable
 	static public void addContact(ContactItem cItem)
 	{
 		callSerially(TYPE_ADD_CONTACT, cItem);
+	}
+	
+	static public void minuteTask()
+	{
+		callSerially(TYPE_MINUTE_TASK);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

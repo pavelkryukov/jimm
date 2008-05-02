@@ -110,7 +110,11 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		}
 	}
 	
-	public void vlCursorMoved(VirtualList sender) {}
+	public void vlCursorMoved(VirtualList sender) 
+	{
+		Jimm.aaUserActivity();
+	}
+	
 	public void vlItemClicked(VirtualList sender) {}
 
 	protected void afterDrawCaption(Graphics g, int height)
@@ -172,6 +176,8 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 	
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		if (c == cmdChange)
 		{
 			int index = getCurrIndex();

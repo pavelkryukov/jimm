@@ -108,6 +108,7 @@ public class Templates implements VirtualListCommands, CommandListener
 
 	public void vlCursorMoved(VirtualList sender)
 	{
+		Jimm.aaUserActivity();
 	}
 
 	public void vlItemClicked(VirtualList sender)
@@ -117,6 +118,8 @@ public class Templates implements VirtualListCommands, CommandListener
 
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		if (c == backCommand)
 		{
 			JimmUI.selectScreen(lastScreen);

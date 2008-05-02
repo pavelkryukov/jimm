@@ -7,12 +7,14 @@ Implemented:
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * Modified user interface
   * More color schemes
-  * New statuses: Evil, Depression, At home, At work, Lunch 
+  * New statuses: Evil, Depression, At home, At work, Lunch
+  * Auto away status
+  * New test status icons were added (from Miranda set)
   * Classic chat is removed
+  * Added cycling scrolling in some screens
   * It is possible to send messages to contact and view information about contact at search form without adding it to contact list
   * It is possible to see short contact info without connecting to server
   * Speed of parsing message text for smiles (emotions) is increased
-  * New test status icons were added (from Miranda set)
   * MIDP2 build contains mp3 sounds now. Jimm automatically select sound type on startup
   * Is possible fast to swicth sound off and on
   * Creeping text line is returned back again
@@ -22,5 +24,4 @@ Implemented:
 Planned:
   * Messages delivery notification
   * Changes graphics and sounds directly form Jimm
-  * Auto away status
   * New account registration

@@ -421,6 +421,8 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
+		
 		//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
 		
 		if (JimmUI.isControlActive(messTextList))
