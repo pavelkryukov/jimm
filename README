@@ -164,6 +164,9 @@ If you want to build the Jimm release achrive with the build.xml script provided
 in the util/build-release folder you also need the '7z' (http://www.7-zip.org/)
 program in the path of the console you run ant in.
 
+Also for release only you need 'svnant' which you can obtain at http://subclipse.tigris.org/svnant.html
+follow the installation instructions and make sure the .jar files are on your PATH.
+
 At first, open the Apache ant buildfile (build.xml) and change the properties in
 the configuration/customization section. You can use both the slash and the
 backslash for separating path components.
