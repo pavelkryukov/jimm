@@ -1,7 +1,7 @@
 <!--
 ********************************************************************************
 Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-06  Jimm Project
+Copyright (C) 2003-08  Jimm Project
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -51,8 +51,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<tstamp>
 		<format property="date" pattern="yyMMdd" timezone="GMT+00:00" />
 	</tstamp>
-	<property name="version/jimm"      value="0.5.2_${date}"            />
-	<property name="version/java"      value="0.5.2"                      />
+	<property name="version/jimm"      value="0.6.0${date}"            />
+	<property name="version/java"      value="0.6.0"                      />
 	<!-- ******************************************************************* -->
 	
 	<!-- ******************************************************************* -->
@@ -72,14 +72,16 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 
 	<!-- Set global properties for this build -->
-	<property name="cvsroot" value=":pserver:anonymous@jimm.cvs.sourceforge.net:/cvsroot/jimm"/>
+	<property name="svnURL" value="https://jimm.svn.sourceforge.net/svnroot/jimm/trunk"/>
+	<property name="user" value="anonymous"/>
+	<property name="password" value="anonymous"/>
 	
-	<property name="cvsdir" location="nightly-cvs"/>
 	<property name="package" value="jimm"/>
+	<property name="cvsdir" location="nightly-cvs"/>
 	<property name="bin" value="bin"/>
 	
-	<property name="midp1-targetlist"  value="DEFAULT;SIEMENS1"/>
-	<property name="midp2-targetlist"  value="MIDP2;SIEMENS2;MOTOROLA"/>
+	<property name="midp1-targetlist"  value="DEFAULT"/>
+	<property name="midp2-targetlist"  value="MIDP2;MOTOROLA"/>
 	<property name="midp1-moduleslist-full" value="TRAFFIC,HISTORY,SMILES"/>
 	<property name="midp2-moduleslist-full" value="TRAFFIC,HISTORY,FILES,SMILES,PROXY"/>
 	<property name="modulelist-light" value="NO_MODULES"/>
@@ -91,6 +93,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 	<!-- Include Ant-Contrib Tasks -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
+	
+	<!-- SVN task -->
+	<taskdef resource="svntask.properties"/>
 
 	<!-- Internal target: init -->
 	<target name="init">
@@ -137,12 +142,10 @@ ${modulelist-light}
 	<!-- Internal target: export -->
 	<target name="export" depends="init">
 		<mkdir dir="${cvsdir}"/>
-		<cvs command="checkout"
-			cvsRoot="${cvsroot}"
-			dest="${cvsdir}"
-	        package="${package}"
-			date="tomorrow"			
-			failonerror="true"/>
+		<svn username="${user}" password="${password}" javahl="true">
+			<checkout url="${svnURL}" destPath="${cvsdir}" />
+		</svn> 
+
 	</target>
 
 	<!-- Internal targets: build/build-target/build-target-connection/build-target-connection-lang -->

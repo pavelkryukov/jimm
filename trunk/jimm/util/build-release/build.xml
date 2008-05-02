@@ -1,7 +1,7 @@
 <!--
 ********************************************************************************
 Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-05  Jimm Project
+Copyright (C) 2003-08  Jimm Project
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -54,7 +54,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- ******************************************************************* -->
 	<!-- CVS TAG SECTION - CHOOSE WHICH CVS TAG SHOULD BE CHECKED OUT        -->
 	<!-- ******************************************************************* -->
-	<property name="cvstag"           value="release_0_4_1"                        />
+	<property name="svntag"           value="release_0_4_1"                        />
 	<!-- ******************************************************************* -->
 	
 	<!-- ******************************************************************* -->
@@ -65,9 +65,14 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- Buildfile description -->
 	<description>This buildfile is used to build a Jimm release.</description>
 
-
 	<!-- Set global properties for this build -->
-	<property name="cvsroot" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/jimm"/>	
+	<property name="svnURL" value="https://jimm.svn.sourceforge.net/svnroot/jimm/tags"/>
+	<property name="user" value="anonymous"/>
+	<property name="password" value="anonymous"/>
+	
+	<property name="package" value="jimm"/>
+	
+	
 	<property name="cvsdir" location="release-cvs"/>
 	<property name="package" value="jimm"/>
 	<property name="bin" value="bin"/>
@@ -84,7 +89,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 	<!-- Include Ant-Contrib Tasks -->
 	<taskdef resource="net/sf/antcontrib/antlib.xml"/>
-
+	
+	<!-- SVN task -->
+	<taskdef resource="svntask.properties"/>	
 
 	<!-- Internal target: init -->
 	<target name="init">
@@ -104,12 +111,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- Internal target: export -->
 	<target name="export" depends="init">
 		<mkdir dir="${cvsdir}"/>
-		<cvs command="checkout"
-			cvsRoot="${cvsroot}"
-			dest="${cvsdir}"
-			package="${package}"
-			tag="${cvstag}"
-			failonerror="true"/>
+		<svn username="${user}" password="${password}" javahl="true">
+			<checkout url="${svnURL}/${svntag}" destPath="${cvsdir}" />
+		</svn> 
 	</target>
 
 
