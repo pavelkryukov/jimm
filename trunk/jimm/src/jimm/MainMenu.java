@@ -560,7 +560,7 @@ public class MainMenu implements CommandListener
 				break;
 				
 			case MENU_PRIVATE_LISTS:
-				new PlivateListsForm().execute();
+				new PrivateListsForm().execute();
 				break;
 			}
 		}
