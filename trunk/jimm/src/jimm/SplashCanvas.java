@@ -266,6 +266,7 @@ public class SplashCanvas extends Canvas
 		//  #sijapp cond.if target is "MOTOROLA"#
 		//#		VirtualList.setBkltOn(false);
 		//  #sijapp cond.end#
+		setProgress(0);
 		setMessage(ResourceBundle.getString("keylock_enabled"));
 		setStatusToDraw(JimmUI.getStatusImageIndex(Icq.getCurrentStatus()));
 		Jimm.display.setCurrent(_this);
