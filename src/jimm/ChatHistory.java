@@ -351,7 +351,6 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 	public void vlCursorMoved(VirtualList sender)
 	{
-		Jimm.aaUserActivity();
 		checkTextForURL();
 	}
 	
@@ -388,6 +387,8 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
+		Jimm.aaUserActivity();
+		
 		try
 		// getGameAction can raise exception
 		{

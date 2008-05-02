@@ -419,7 +419,6 @@ public class Jimm extends MIDlet
 			
 			if (Icq.isConnected() && (aaMode != AA_MODE_NONE))
 			{
-				System.out.println("aaUserActivity2");
 				aaMode = AA_MODE_NONE;
 				try { Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS)); } catch (Exception e) {}
 				ContactList.showStatusInCaption(-1);
