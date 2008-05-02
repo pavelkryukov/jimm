@@ -7,6 +7,7 @@ Implemented:
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * Modified user interface
   * More color schemes
+  * New statuses: Evil, Depression, At home, At work, Lunch 
   * Classic chat is removed
   * It is possible to send messages to contact and view information about contact at search form without adding it to contact list
   * It is possible to see short contact info without connecting to server
