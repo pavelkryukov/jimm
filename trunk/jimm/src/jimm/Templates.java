@@ -186,7 +186,7 @@ public class Templates implements VirtualListCommands, CommandListener
 	static private void select()
 	{
 		String selectedTemplate = null;
-		if (templateList.getSize() != 0) selectedTemplate = getRecord(templateList.getCurrIndex());
+		if (templateList.getSize() != 0) selectedTemplate = getRecord(templateList.getCurrTextIndex());
 		templateList = null;
 		JimmUI.selectScreen(lastScreen);
 		if (selectedTemplate != null) textBox.insert(selectedTemplate, caretPos);
