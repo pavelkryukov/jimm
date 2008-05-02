@@ -1031,31 +1031,31 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	{
 		optionsMenu.clear();
 		
-		JimmUI.addTextListItem(optionsMenu, "options_account", null, OPTIONS_ACCOUNT, true);
-		JimmUI.addTextListItem(optionsMenu, "options_network", null, OPTIONS_NETWORK, true);
+		JimmUI.addTextListItem(optionsMenu, "options_account", null, OPTIONS_ACCOUNT, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(optionsMenu, "options_network", null, OPTIONS_NETWORK, true, -1, Font.STYLE_PLAIN);
 		
 		//#sijapp cond.if modules_PROXY is "true"#
 		if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
-			JimmUI.addTextListItem(optionsMenu, "proxy", null, OPTIONS_PROXY, true); 
+			JimmUI.addTextListItem(optionsMenu, "proxy", null, OPTIONS_PROXY, true, -1, Font.STYLE_PLAIN); 
 		//#sijapp cond.end#
 		
-		JimmUI.addTextListItem(optionsMenu, "options_interface", null, OPTIONS_INTERFACE, true);
+		JimmUI.addTextListItem(optionsMenu, "options_interface", null, OPTIONS_INTERFACE, true, -1, Font.STYLE_PLAIN);
 		
-		JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true); 
+		JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN); 
 		
-		JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true);
+		JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true, -1, Font.STYLE_PLAIN);
 		
-		JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true);
+		JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true, -1, Font.STYLE_PLAIN);
 		
-		JimmUI.addTextListItem(optionsMenu, "auto_away", null, OPTIONS_AUTOAWAY, true);
+		JimmUI.addTextListItem(optionsMenu, "auto_away", null, OPTIONS_AUTOAWAY, true, -1, Font.STYLE_PLAIN);
 		
 		//#sijapp cond.if modules_TRAFFIC is "true"#
-		JimmUI.addTextListItem(optionsMenu, "traffic_lng", null, OPTIONS_TRAFFIC, true); 
+		JimmUI.addTextListItem(optionsMenu, "traffic_lng", null, OPTIONS_TRAFFIC, true, -1, Font.STYLE_PLAIN); 
 		//#sijapp cond.end#
 
-		JimmUI.addTextListItem(optionsMenu, "time_zone", null, OPTIONS_TIMEZONE, true);
+		JimmUI.addTextListItem(optionsMenu, "time_zone", null, OPTIONS_TIMEZONE, true, -1, Font.STYLE_PLAIN);
 		
-		JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", null, OPTIONS_RESET_RMS, true);
+		JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", null, OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
 
 		JimmUI.setColorScheme(optionsMenu, false, -1);
 	}
@@ -1110,14 +1110,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
 		tlColorScheme = new TextList(ResourceBundle.getString("color_scheme"));
 		JimmUI.setColorScheme(tlColorScheme, false, -1);
-		JimmUI.addTextListItem(tlColorScheme, "black_on_white", null, 0, true);
-		JimmUI.addTextListItem(tlColorScheme, "white_on_black", null, 1, true);
-		JimmUI.addTextListItem(tlColorScheme, "white_on_blue",  null, 2, true);
-		JimmUI.addTextListItem(tlColorScheme, "pink_scheme",    null, 3, true);
-		JimmUI.addTextListItem(tlColorScheme, "Green",          null, 4, true);
-		JimmUI.addTextListItem(tlColorScheme, "Sand",           null, 5, true);
-		JimmUI.addTextListItem(tlColorScheme, "Hacker :)",      null, 6, true);
-		JimmUI.addTextListItem(tlColorScheme, "Aqua",           null, 7, true);
+		JimmUI.addTextListItem(tlColorScheme, "black_on_white", null, 0, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "white_on_black", null, 1, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "white_on_blue",  null, 2, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "pink_scheme",    null, 3, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "Green",          null, 4, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "Sand",           null, 5, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "Hacker :)",      null, 6, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "Aqua",           null, 7, true, -1, Font.STYLE_PLAIN);
 		
 		tlColorScheme.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
 		tlColorScheme.addCommandEx(JimmUI.cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
@@ -1135,20 +1135,20 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		int lastItemIndex = keysMenu.getCurrTextIndex();
 		keysMenu.clear();
 		
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey0", Options.OPTION_EXT_CLKEY0), null, Options.OPTION_EXT_CLKEY0, false);
+		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey0", Options.OPTION_EXT_CLKEY0), null, Options.OPTION_EXT_CLKEY0, false, -1, Font.STYLE_PLAIN);
 		
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey4", Options.OPTION_EXT_CLKEY4), null, Options.OPTION_EXT_CLKEY4, false);
+		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey4", Options.OPTION_EXT_CLKEY4), null, Options.OPTION_EXT_CLKEY4, false, -1, Font.STYLE_PLAIN);
 		
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey6", Options.OPTION_EXT_CLKEY6), null, Options.OPTION_EXT_CLKEY6, false);
+		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey6", Options.OPTION_EXT_CLKEY6), null, Options.OPTION_EXT_CLKEY6, false, -1, Font.STYLE_PLAIN);
 		
 		//#sijapp cond.if target isnot "MOTOROLA"#
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeystar", Options.OPTION_EXT_CLKEYSTAR), null, Options.OPTION_EXT_CLKEYSTAR, false);
+		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeystar", Options.OPTION_EXT_CLKEYSTAR), null, Options.OPTION_EXT_CLKEYSTAR, false, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
 		
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeypound", Options.OPTION_EXT_CLKEYPOUND), null, Options.OPTION_EXT_CLKEYPOUND, false);
+		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeypound", Options.OPTION_EXT_CLKEYPOUND), null, Options.OPTION_EXT_CLKEYPOUND, false, -1, Font.STYLE_PLAIN);
 		
 		// #sijapp cond.if target is "SIEMENS2"#
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeycall", Options.OPTION_EXT_CLKEYCALL), null, Options.OPTION_EXT_CLKEYCALL, false);
+		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeycall", Options.OPTION_EXT_CLKEYCALL), null, Options.OPTION_EXT_CLKEYCALL, false, -1, Font.STYLE_PLAIN);
 		// #sijapp cond.end#
 
 		keysMenu.selectTextByIndex(lastItemIndex);
@@ -2070,7 +2070,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				if (actionMenu.getSize() == 0)
 				{
 					for (int i = 0; i < hotkeyActionNames.length; i++)
-						JimmUI.addTextListItem(actionMenu, hotkeyActionNames[i], null, hotkeyActions[i], true);
+						JimmUI.addTextListItem(actionMenu, hotkeyActionNames[i], null, hotkeyActions[i], true, -1, Font.STYLE_PLAIN);
 				}
 				
 				actionMenu.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);

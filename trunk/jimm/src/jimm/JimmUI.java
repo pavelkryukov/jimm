@@ -1129,7 +1129,7 @@ public class JimmUI implements CommandListener
 		JimmUI.setColorScheme(lstSelector, false, -1);
 		lstSelector.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		lstSelector.setFontSize(Font.SIZE_LARGE);
-		for (int i = 0; i < elements.length; i++) JimmUI.addTextListItem(lstSelector, elements[i], null, i, translateWords);
+		for (int i = 0; i < elements.length; i++) JimmUI.addTextListItem(lstSelector, elements[i], null, i, translateWords, -1, Font.STYLE_PLAIN);
 		lstSelector.addCommandEx(cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
 		lstSelector.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
 		lstSelector.setCommandListener(_this);
@@ -1312,11 +1312,11 @@ public class JimmUI implements CommandListener
 	
 	///////
 	
-	public static void addTextListItem(TextList list, String text, Image image, int value, boolean translate)
+	public static void addTextListItem(TextList list, String text, Image image, int value, boolean translate, int textColor, int fontStyle)
 	{
 		if (image != null) list.addImage(image, null, value);
 		String textToAdd = translate ? ResourceBundle.getString(text) : text; 
-		list.addBigText((image != null) ? (" "+textToAdd) : textToAdd, list.getTextColor(), Font.STYLE_PLAIN, value);
+		list.addBigText((image != null) ? (" "+textToAdd) : textToAdd, textColor != -1 ? textColor : list.getTextColor(), fontStyle, value);
 		list.doCRLF(value);
 	}
 	
@@ -1535,69 +1535,78 @@ public class JimmUI implements CommandListener
 		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
 		tlContactMenu.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 		tlContactMenu.setCommandListener(_this);
-		tlContactMenu.setCyclingCursor(true);
 		
 		long status = contact.getIntValue(ContactItem.CONTACTITEM_STATUS);
+		int groupsColor = Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
+		
+		addTextListItem(tlContactMenu, "group_message", null, -1, true, groupsColor, Font.STYLE_BOLD);
 		
 		if (Icq.isConnected())
 		{
 			if (contact.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH))
-				addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH, true);
+				addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH, true, -1, Font.STYLE_PLAIN);
 			
-			addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE, true);
+			addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE, true, -1, Font.STYLE_PLAIN);
 			
 			if (JimmUI.getClipBoardText() != null)
-				addTextListItem(tlContactMenu, "quote", null, USER_MENU_QUOTA, true);
+				addTextListItem(tlContactMenu, "quote", null, USER_MENU_QUOTA, true, -1, Font.STYLE_PLAIN);
 		}
 		
-		addTextListItem(tlContactMenu, "info", null, USER_MENU_USER_INFO, true);
+		//#sijapp cond.if modules_HISTORY is "true" #
+		addTextListItem(tlContactMenu, "history", null, USER_MENU_HISTORY, true, -1, Font.STYLE_PLAIN);
+		//#sijapp cond.end#
 		
-//#sijapp cond.if modules_HISTORY is "true" #
-		addTextListItem(tlContactMenu, "history", null, USER_MENU_HISTORY, true);
-//#sijapp cond.end#
+		addTextListItem(tlContactMenu, "group_info", null, -1, true, groupsColor, Font.STYLE_BOLD);
+		
+		addTextListItem(tlContactMenu, "info", null, USER_MENU_USER_INFO, true, -1, Font.STYLE_PLAIN);
+		if (status != ContactList.STATUS_OFFLINE)
+			addTextListItem(tlContactMenu, "dc_info", null, USER_MENU_LOCAL_INFO, true, -1, Font.STYLE_PLAIN);
+
 		
 		if (Icq.isConnected())
 		{
+			addTextListItem(tlContactMenu, "ft_caption", null, -1, true, groupsColor, Font.STYLE_BOLD);
+			
 			if ((status != ContactList.STATUS_ONLINE)
 					&& (status != ContactList.STATUS_OFFLINE)
 					&& (status != ContactList.STATUS_INVISIBLE))
-				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true);		
+				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true, -1, Font.STYLE_PLAIN);		
 			
 //#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
 			if (((status != ContactList.STATUS_OFFLINE) 
 					&& contact.getIntValue(ContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
 					(Options.getInt(Options.OPTION_FT_MODE) == Options.FS_MODE_WEB))
 			{
-				addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS, true);
+				addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.if target isnot "MOTOROLA"#
-				addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS, true);
+				addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#
 			}
 //#sijapp cond.end#
 			
-			addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE, true);
-			addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true);
-			addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true);
-			addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true);
+			addTextListItem(tlContactMenu, "group_lists", null, -1, true, groupsColor, Font.STYLE_BOLD);
+			addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE, true, -1, Font.STYLE_PLAIN);
+			addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true, -1, Font.STYLE_PLAIN);
+			addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true, -1, Font.STYLE_PLAIN);
+			addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true, -1, Font.STYLE_PLAIN);
 			
 			if (contact.getIntValue(ContactItem.CONTACTITEM_IGN_ID) != 0)
-				addTextListItem(tlContactMenu, "privacy_rem_ign", null, USER_MENU_REM_IGN_LIST, true);
+				addTextListItem(tlContactMenu, "privacy_rem_ign", null, USER_MENU_REM_IGN_LIST, true, -1, Font.STYLE_PLAIN);
 			else 
-				addTextListItem(tlContactMenu, "privacy_to_ign", null, USER_MENU_TO_IGN_LIST, true);
+				addTextListItem(tlContactMenu, "privacy_to_ign", null, USER_MENU_TO_IGN_LIST, true, -1, Font.STYLE_PLAIN);
 			
 			if (contact.getIntValue(ContactItem.CONTACTITEM_INV_ID) != 0)
-				addTextListItem(tlContactMenu, "privacy_rem_inv", null, USER_MENU_REM_INV_LIST, true);
+				addTextListItem(tlContactMenu, "privacy_rem_inv", null, USER_MENU_REM_INV_LIST, true, -1, Font.STYLE_PLAIN);
 			else 
-				addTextListItem(tlContactMenu, "privacy_to_inv", null, USER_MENU_TO_INV_LIST, true);
+				addTextListItem(tlContactMenu, "privacy_to_inv", null, USER_MENU_TO_INV_LIST, true, -1, Font.STYLE_PLAIN);
 			
 			if (contact.getIntValue(ContactItem.CONTACTITEM_VIS_ID) != 0)
-				addTextListItem(tlContactMenu, "privacy_rem_vis", null, USER_MENU_REM_VIS_LIST, true);
+				addTextListItem(tlContactMenu, "privacy_rem_vis", null, USER_MENU_REM_VIS_LIST, true, -1, Font.STYLE_PLAIN);
 			else 
-				addTextListItem(tlContactMenu, "privacy_to_vis", null, USER_MENU_TO_VIS_LIST, true);
+				addTextListItem(tlContactMenu, "privacy_to_vis", null, USER_MENU_TO_VIS_LIST, true, -1, Font.STYLE_PLAIN);
 		}
-
-		if (status != ContactList.STATUS_OFFLINE)
-			addTextListItem(tlContactMenu, "dc_info", null, USER_MENU_LOCAL_INFO, true);
+		
+		tlContactMenu.selectFirstTextIndex();
 	}
 	
 	private static int[] groupList;

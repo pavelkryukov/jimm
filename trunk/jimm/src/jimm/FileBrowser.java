@@ -36,6 +36,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 
 import jimm.util.ResourceBundle;
 import java.util.Enumeration;
@@ -347,7 +348,7 @@ class FileSystem2 implements CommandListener, Runnable
 			{
 				String itemText = (String)items.elementAt(i);
 				if (!itemText.endsWith("/")) continue;
-				JimmUI.addTextListItem(list, itemText, imageList.elementAt(0), i, true);
+				JimmUI.addTextListItem(list, itemText, imageList.elementAt(0), i, true, -1, Font.STYLE_PLAIN);
 			}
 			
 			// Show files
@@ -355,7 +356,7 @@ class FileSystem2 implements CommandListener, Runnable
 			{
 				String itemText = (String)items.elementAt(i);
 				if (itemText.endsWith("/")) continue;
-				JimmUI.addTextListItem(list, itemText, imageList.elementAt(1), i, true);
+				JimmUI.addTextListItem(list, itemText, imageList.elementAt(1), i, true, -1, Font.STYLE_PLAIN);
 			}
 			break;
 		}

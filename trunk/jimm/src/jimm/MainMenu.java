@@ -145,41 +145,41 @@ public class MainMenu implements CommandListener
 		
 		if (connected)
 		{
-			JimmUI.addTextListItem(list, "keylock_enable", null, MENU_KEYLOCK, true);
-			JimmUI.addTextListItem(list, "disconnect", null, MENU_DISCONNECT, true);
+			JimmUI.addTextListItem(list, "keylock_enable", null, MENU_KEYLOCK, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(list, "disconnect", null, MENU_DISCONNECT, true, -1, Font.STYLE_PLAIN);
 		}
 		else
 		{
-			JimmUI.addTextListItem(list, "connect", null, MENU_CONNECT, true);
+			JimmUI.addTextListItem(list, "connect", null, MENU_CONNECT, true, -1, Font.STYLE_PLAIN);
 		}
 		
-		JimmUI.addTextListItem(list, "set_status", getStatusImage(), MENU_STATUS, true);
-		JimmUI.addTextListItem(list, "set_xstatus", ContactList.xStatusImages.elementAt(Options.getInt(Options.OPTION_XSTATUS)), MENU_XSTATUS, true);
+		JimmUI.addTextListItem(list, "set_status", getStatusImage(), MENU_STATUS, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "set_xstatus", ContactList.xStatusImages.elementAt(Options.getInt(Options.OPTION_XSTATUS)), MENU_XSTATUS, true, -1, Font.STYLE_PLAIN);
 		
 		if (ContactList.getSize() != 0)
-			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST, true);
+			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST, true, -1, Font.STYLE_PLAIN);
  
 		if (connected)
 		{
-			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_MANAGE_CL, true);
-			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF, true);
+			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_MANAGE_CL, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF, true, -1, Font.STYLE_PLAIN);
 		}
 		
-		JimmUI.addTextListItem(list, "options_lng",  null, MENU_OPTIONS, true);
+		JimmUI.addTextListItem(list, "options_lng",  null, MENU_OPTIONS, true, -1, Font.STYLE_PLAIN);
 		
 		//#sijapp cond.if target isnot "DEFAULT"#
-		JimmUI.addTextListItem(list, getSoundValue(Options.getBoolean(Options.OPTION_SILENT_MODE)), null, MENU_SOUND, true);
+		JimmUI.addTextListItem(list, getSoundValue(Options.getBoolean(Options.OPTION_SILENT_MODE)), null, MENU_SOUND, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#    	
 			
 		//#sijapp cond.if modules_TRAFFIC is "true" #
-		JimmUI.addTextListItem(list, "traffic_lng", null, MENU_TRAFFIC, true);
+		JimmUI.addTextListItem(list, "traffic_lng", null, MENU_TRAFFIC, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
 			
-		JimmUI.addTextListItem(list, "about", null, MENU_ABOUT, true);
+		JimmUI.addTextListItem(list, "about", null, MENU_ABOUT, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.if target is "MIDP2" #
-		if (Jimm.is_phone_SE()) JimmUI.addTextListItem(list, "minimize", null, MENU_MINIMIZE, true);
+		if (Jimm.is_phone_SE()) JimmUI.addTextListItem(list, "minimize", null, MENU_MINIMIZE, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
-		JimmUI.addTextListItem(list, "exit", null, MENU_EXIT, true);
+		JimmUI.addTextListItem(list, "exit", null, MENU_EXIT, true, -1, Font.STYLE_PLAIN);
 
 		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
 		if (ContactList.getSize() != 0)
@@ -271,19 +271,19 @@ public class MainMenu implements CommandListener
 		statusList.setMode(TextList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
-		JimmUI.addTextListItem(statusList, "status_online", ContactList.statusOnlineImg,    ContactList.STATUS_ONLINE, true);
-		JimmUI.addTextListItem(statusList, "status_chat", ContactList.statusChatImg,      ContactList.STATUS_CHAT, true);
-		JimmUI.addTextListItem(statusList, "status_evil", ContactList.statusEvilImg,	 ContactList.STATUS_EVIL,true);
-		JimmUI.addTextListItem(statusList, "status_depression",	ContactList.statusDepressionImg, ContactList.STATUS_DEPRESSION,true);
-		JimmUI.addTextListItem(statusList, "status_home", ContactList.statusHomeImg,	 ContactList.STATUS_HOME,true);
-		JimmUI.addTextListItem(statusList, "status_work", ContactList.statusWorkImg,	 ContactList.STATUS_WORK,true);
-		JimmUI.addTextListItem(statusList, "status_lunch", ContactList.statusLunchImg,	 ContactList.STATUS_LUNCH,true);
-		JimmUI.addTextListItem(statusList, "status_away", ContactList.statusAwayImg,      ContactList.STATUS_AWAY, true);
-		JimmUI.addTextListItem(statusList, "status_na", ContactList.statusNaImg,        ContactList.STATUS_NA, true);
-		JimmUI.addTextListItem(statusList, "status_occupied", ContactList.statusOccupiedImg,  ContactList.STATUS_OCCUPIED, true);
-		JimmUI.addTextListItem(statusList, "status_dnd", ContactList.statusDndImg,       ContactList.STATUS_DND, true);
-		JimmUI.addTextListItem(statusList, "status_invisible", ContactList.statusInvisibleImg, ContactList.STATUS_INVISIBLE, true);
-		JimmUI.addTextListItem(statusList, "status_invis_all", ContactList.statusInvisibleImg, ContactList.STATUS_INVIS_ALL, true);
+		JimmUI.addTextListItem(statusList, "status_online", ContactList.statusOnlineImg,    ContactList.STATUS_ONLINE, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_chat", ContactList.statusChatImg,      ContactList.STATUS_CHAT, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_evil", ContactList.statusEvilImg,	 ContactList.STATUS_EVIL,true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_depression",	ContactList.statusDepressionImg, ContactList.STATUS_DEPRESSION,true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_home", ContactList.statusHomeImg,	 ContactList.STATUS_HOME,true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_work", ContactList.statusWorkImg,	 ContactList.STATUS_WORK,true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_lunch", ContactList.statusLunchImg,	 ContactList.STATUS_LUNCH,true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_away", ContactList.statusAwayImg,      ContactList.STATUS_AWAY, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_na", ContactList.statusNaImg,        ContactList.STATUS_NA, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_occupied", ContactList.statusOccupiedImg,  ContactList.STATUS_OCCUPIED, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_dnd", ContactList.statusDndImg,       ContactList.STATUS_DND, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_invisible", ContactList.statusInvisibleImg, ContactList.STATUS_INVISIBLE, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_invis_all", ContactList.statusInvisibleImg, ContactList.STATUS_INVIS_ALL, true, -1, Font.STYLE_PLAIN);
 		statusList.unlock();
 		statusSelection = SELECT_STATUS;
 	}
@@ -295,7 +295,7 @@ public class MainMenu implements CommandListener
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
-			JimmUI.addTextListItem(statusList, JimmUI.xStatusStrings[i], ContactList.xStatusImages.elementAt(i-1), i, true);
+			JimmUI.addTextListItem(statusList, JimmUI.xStatusStrings[i], ContactList.xStatusImages.elementAt(i-1), i, true, -1, Font.STYLE_PLAIN);
 		
 		statusList.unlock();
 		statusSelection = SELECT_XSTATUS;
@@ -305,12 +305,12 @@ public class MainMenu implements CommandListener
 	{
 		list.clear();
 		list.lock();
-		JimmUI.addTextListItem(list, "add_user",     null, MENU_ADD_USER,     true);
-		JimmUI.addTextListItem(list, "search_user",  null, MENU_SEARCH_USER,  true);
-		JimmUI.addTextListItem(list, "add_group",    null, MENU_ADD_GROUP,    true);
-		JimmUI.addTextListItem(list, "rename_group", null, MENU_RENAME_GROUP, true);
-		JimmUI.addTextListItem(list, "del_group",    null, MENU_DELETE_GROUP, true);
-		JimmUI.addTextListItem(list, "priv_lists",   null, MENU_PRIVATE_LISTS, true);
+		JimmUI.addTextListItem(list, "add_user",     null, MENU_ADD_USER,     true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "search_user",  null, MENU_SEARCH_USER,  true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "add_group",    null, MENU_ADD_GROUP,    true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "rename_group", null, MENU_RENAME_GROUP, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "del_group",    null, MENU_DELETE_GROUP, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "priv_lists",   null, MENU_PRIVATE_LISTS, true, -1, Font.STYLE_PLAIN);
 		list.removeAllCommands();
 		list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
 		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);

@@ -317,7 +317,8 @@ public class TextList extends VirtualList
 	// Overrides VirtualList.moveCursor
 	protected void moveCursor(int step, boolean moveTop)
 	{
-		int size, changeCounter = 0, currTextIndex, i, halfSize = getVisCount() / 2;
+		int size, changeCounter = 0, currTextIndex, i, prevIndex;
+		int halfSize = (getDrawHeight()/getFontHeight())/2;
 
 		switch (step)
 		{
@@ -325,6 +326,7 @@ public class TextList extends VirtualList
 		case 1:
 			currTextIndex = getCurrTextIndex();
 			size = getSize();
+			prevIndex = currItem;
 
 			storelastItemIndexes();
 
@@ -333,20 +335,28 @@ public class TextList extends VirtualList
 				currItem += step;
 				if ((currItem < 0) || (currItem >= size))
 				{
-					if (changeCounter != 0) currItem -= step;
+					if (changeCounter != 0) currItem = prevIndex;
 					break;
 				}
 				
 				TextLine item = getLine(currItem);
-				if (currTextIndex != item.bigTextIndex)
+				if ((currTextIndex != item.bigTextIndex) && (item.bigTextIndex != -1))
 				{
 					currTextIndex = item.bigTextIndex;
 					changeCounter++;
-					if ((changeCounter == 2) || (!visibleItem(currItem) && (i > 0)))
+					if (changeCounter == 2)
+					{
+						currItem = prevIndex;
+						break;
+					}
+					
+					if (!visibleItem(currItem) && (i > 0))
 					{
 						currItem -= step;
 						break;
 					}
+					
+					prevIndex = currItem;
 				}
 
 				if (!visibleItem(currItem) || (changeCounter != 0)) i++;
@@ -361,6 +371,18 @@ public class TextList extends VirtualList
 		default:
 			super.moveCursor(step, moveTop);
 			return;
+		}
+	}
+	
+	public void selectFirstTextIndex()
+	{
+		int size = lines.size();
+		for (int i = 0; i < size; i++)
+		{
+			TextLine line = getLine(i);
+			if (line.bigTextIndex == -1) continue;
+			setCurrentItem(i);
+			break;
 		}
 	}
 	
