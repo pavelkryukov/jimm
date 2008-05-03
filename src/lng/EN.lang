@@ -378,6 +378,7 @@
   "register_new"		"Register"
   "register_request_image"	"Req.image"
   "register_request_send"	"Send"
+  "register_notice"		"Warning! On registration complete, you need to fill userdata. Else other peoples can't add/find you."
 
   // MOTOROLA strings
   //#sijapp cond.if target is "MOTOROLA"#

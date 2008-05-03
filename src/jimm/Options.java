@@ -2228,12 +2228,15 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		} 
 		else if (c == cmdRequestCaptchaImage)
 		{
+			optionsForm.append(ResourceBundle.getString("wait"));
 			Icq.connect(newPassword.getString());
 			return;
 		} 
 		else if (c == cmdRequestRegistration)
 		{
 			try {
+				optionsForm.append(ResourceBundle.getString("wait"));
+				optionsForm.append(ResourceBundle.getString("register_notice"));
 				RegisterNewUinAction.requestRegistration (newPassword.getString(), captchaCode.getString());
 			} catch (Exception e) {
 				System.out.println (e.getMessage());
