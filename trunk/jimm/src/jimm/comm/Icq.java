@@ -219,7 +219,7 @@ public class Icq implements Runnable
 	// Connects to the ICQ network for register new uin
 	static public synchronized void connect(String newPassword)
 	{
-		Icq.connecting = true;
+//		Icq.connecting = true;
 
 		// Connect
 		RegisterNewUinAction act = new RegisterNewUinAction(newPassword, Options
@@ -241,6 +241,7 @@ public class Icq implements Runnable
 	/* Disconnects from the ICQ network */
 	static public synchronized void disconnect()
 	{
+//		connecting = false;
 		/* Disconnect */
 		if (c != null)
 			c.close();
