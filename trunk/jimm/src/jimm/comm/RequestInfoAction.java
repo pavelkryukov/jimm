@@ -26,8 +26,6 @@ package jimm.comm;
 import java.util.Date;
 import java.io.DataInputStream;
 
-import jimm.comm.Util;
-import jimm.DebugLog;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.JimmUI;
@@ -53,6 +51,8 @@ public class RequestInfoAction extends Action
 	private Date init;
 
 	private int packetCounter;
+
+	private boolean notFound = false;
 
 	private String existingNick;
 
@@ -106,7 +106,7 @@ public class RequestInfoAction extends Action
 			try
 			{
 				int type = Util.getWord(stream, false);
-				stream.readByte(); // Success byte
+				int successByte = stream.readByte(); // Success byte
 
 				switch (type)
 				{
@@ -191,6 +191,15 @@ public class RequestInfoAction extends Action
 					consumed = true;
 					break;
 				}
+
+				case 0x00FA: // end snac
+				{
+					if (successByte != 0x0A)
+						notFound = true;
+					packetCounter++;
+					consumed = true;
+					break;
+				}
 				}
 
 			} catch (Exception e)
@@ -229,7 +238,7 @@ public class RequestInfoAction extends Action
 	// Returns true if the action is completed
 	public synchronized boolean isCompleted()
 	{
-		return (packetCounter >= 5);
+		return ((packetCounter >= 5) || notFound);
 	}
 
 	// Returns true if an error has occured
