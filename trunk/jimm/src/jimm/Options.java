@@ -1231,7 +1231,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				.getString("password"), "", 8, TextField.PASSWORD);
 		captchaCode = new TextField(ResourceBundle
 				.getString("captcha"), "", 8, TextField.ANY);
-//		optionsForm.removeCommand(saveCommand);
+		optionsForm.removeCommand(saveCommand);
 		optionsForm.append(newPassword);
 		if (!Icq.isConnected())
 			optionsForm.addCommand(cmdRequestCaptchaImage);
@@ -1255,7 +1255,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			uins.addElement(uin);
 			passwords.addElement(password);
 		}
-//		optionsForm.addCommand(saveCommand);
+		optionsForm.addCommand(saveCommand);
 		clearForm();
 		showAccountControls();
 	}
@@ -1420,6 +1420,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	{
 		// Delete all items
 		clearForm();
+		optionsForm.addCommand(saveCommand);
 
 		// Add elements, depending on selected option menu item
 		switch (optionsMenu.getCurrTextIndex())
