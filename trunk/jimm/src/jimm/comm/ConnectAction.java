@@ -534,10 +534,6 @@ public class ConnectAction extends Action
 							SnacPacket.CLI_REQLISTS_COMMAND, new byte[0], rdata);
 				Icq.c.sendPacket(reqp);
 
-				reqp = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND,
-							SnacPacket.CLI_REQROSTER_COMMAND, new byte[0], new byte[0]);
-				Icq.c.sendPacket(reqp);
-
 				reqp = new SnacPacket(SnacPacket.CLI_REQLOCATION_FAMILY, SnacPacket.CLI_REQLOCATION_COMMAND,
 							SnacPacket.CLI_REQLOCATION_COMMAND, new byte[0], new byte[0]);
 				Icq.c.sendPacket(reqp);
