@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-05  Jimm Project
+ Copyright (C) 2003-08  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -46,6 +46,7 @@ package jimm;
 import jimm.ContactList;
 import jimm.comm.Util;
 import jimm.comm.Icq;
+import jimm.comm.RegisterNewUinAction;
 import jimm.util.ResourceBundle;
 
 import java.io.*;
@@ -761,6 +762,18 @@ public class Options
 		optionsForm.activate();
 	}
 
+	static public void setCaptchaImage(Image img)
+	{
+		img = Util.createThumbnail(img, 176, 0);
+		optionsForm.addCaptchaToForm(img);
+		img = null;
+	}
+
+	static public void submitNewUinPassword(String uin, String password)
+	{
+		optionsForm.addAccount(uin, password);
+	}
+
 	//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 	private static void selectSoundType(String name, int option)
 	{
@@ -1167,6 +1180,15 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private Command cmdDeleteAccount = new Command(ResourceBundle.getString(
 			"delete", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
 
+	private Command cmdRegisterAccount = new Command(ResourceBundle.getString(
+			"register_new", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
+
+	private Command cmdRequestCaptchaImage = new Command(ResourceBundle.getString(
+			"register_request_image", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
+
+	private Command cmdRequestRegistration = new Command(ResourceBundle.getString(
+			"register_request_send", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
+
 	private int currAccount;
 
 	private Vector uins = new Vector();
@@ -1174,6 +1196,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private Vector passwords = new Vector();
 
 	private int maxAccountsCount = Options.accountKeys.length / 2;
+
+	private TextField captchaCode;
+
+	private TextField newPassword;
 
 	private void readAccontsData()
 	{
@@ -1197,6 +1223,41 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		if ((value == null) || (value.length() == 0))
 			return "---";
 		return value;
+	}
+
+	private void showRegisterControls()
+	{
+		newPassword = new TextField(ResourceBundle
+				.getString("password"), "", 8, TextField.PASSWORD);
+		captchaCode = new TextField(ResourceBundle
+				.getString("captcha"), "", 8, TextField.ANY);
+//		optionsForm.removeCommand(saveCommand);
+		optionsForm.append(newPassword);
+		if (!Icq.isConnected())
+			optionsForm.addCommand(cmdRequestCaptchaImage);
+	}
+
+	public void addCaptchaToForm (Image img)
+	{
+		clearForm();
+		optionsForm.append(img);
+		optionsForm.append(captchaCode);
+		optionsForm.addCommand(cmdRequestRegistration);
+	}
+
+	public void addAccount (String uin, String password)
+	{
+		readAccontsControls();
+		if (checkUin((String) uins.elementAt(currAccount)) == "---") {
+			uins.setElementAt(uin, currAccount);
+			passwords.setElementAt(password, currAccount);
+		} else {
+			uins.addElement(uin);
+			passwords.addElement(password);
+		}
+//		optionsForm.addCommand(saveCommand);
+		clearForm();
+		showAccountControls();
 	}
 
 	private void showAccountControls()
@@ -1246,8 +1307,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			passwordTextField[i] = passFld;
 		}
 
-		if (size != maxAccountsCount)
+		if (size != maxAccountsCount) {
 			optionsForm.addCommand(cmdAddNewAccount);
+			if (!Icq.isConnected())
+				optionsForm.addCommand(cmdRegisterAccount);
+		}
 		if (size != 1)
 			optionsForm.addCommand(cmdDeleteAccount);
 	}
@@ -2155,6 +2219,26 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 					false);
 			return;
 		} 
+		else if (c == cmdRegisterAccount)
+		{
+			clearForm();
+			showRegisterControls();
+			return;
+		} 
+		else if (c == cmdRequestCaptchaImage)
+		{
+			Icq.connect(newPassword.getString());
+			return;
+		} 
+		else if (c == cmdRequestRegistration)
+		{
+			try {
+				RegisterNewUinAction.requestRegistration (newPassword.getString(), captchaCode.getString());
+			} catch (Exception e) {
+				System.out.println (e.getMessage());
+			}
+			return;
+		} 
 		else if (JimmUI.getCurScreenTag() == TAG_DELETE_ACCOUNT)
 		{
 			if (c == JimmUI.cmdOk)
@@ -2173,6 +2257,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private void clearForm()
 	{
 		optionsForm.removeCommand(cmdAddNewAccount);
+		optionsForm.removeCommand(cmdRegisterAccount);
+		optionsForm.removeCommand(cmdRequestCaptchaImage);
+		optionsForm.removeCommand(cmdRequestRegistration);
 		optionsForm.removeCommand(cmdDeleteAccount);
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		optionsForm.deleteAll();

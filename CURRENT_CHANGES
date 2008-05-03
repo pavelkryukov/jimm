@@ -4,6 +4,7 @@ Implemented:
   * NEW FEATURE: file transfer through web server
   * NEW FEATURE: Private lists management
   * NEW FEATURE: Personal statuses support
+  * NEW FEATURE: Registration of new ICQ account
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * Modified user interface
   * More color schemes
@@ -24,4 +25,3 @@ Implemented:
 Planned:
   * Messages delivery notification
   * Changes graphics and sounds directly form Jimm
-  * New account registration

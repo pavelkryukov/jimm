@@ -213,6 +213,7 @@
   "options_signaling"           "Signaling"
   "opt_camerauri"               "Capture device"
   "password"                    "Password"
+  "captcha"			"Enter code:"
   "phone"                       "Tel."
   "pink_scheme"                 "Pink"
   "plength"                     "Length of charge packet in kB"
@@ -373,6 +374,11 @@
   "yes"                         "Yes"
   "youwereadded"                "You were added by UIN: "
 
+  // Registration strings
+  "register_new"		"Register"
+  "register_request_image"	"Req.image"
+  "register_request_send"	"Send"
+
   // MOTOROLA strings
   //#sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Backlight timeout (sec)"
@@ -436,6 +442,7 @@
   "error_116"                   "Offline message could not be parsed (#116.EXT)"
   "error_117"                   "Empty UIN and/or password (#117.EXT)"
   "error_118"                   "No response from server (#118.EXT)"
+  "error_119"                   "Connection timed out (#119.EXT)"
 
   // Network communication specific exceptions
   // Connection to server
@@ -502,6 +509,11 @@
   "error_196"                   "I/O error during filetransfer (#196.EXT)"
   //#sijapp cond.end#
   
-  // HTTP Connection erros
+  // HTTP Connection errors
   "error_220"					"Server did not accept HTTP request (#220.EXT)"
   "error_221"					"Connection via HTTP proxy closed unrequested (#221.EXT)"
+
+  // Registration errors
+  "error_230"			"Registration refused (#230.EXT)"
+  "error_231"			"Sending registration request failed (#231.EXT)"
+  "error_232"			"Wrong registration meta-data received (#232.EXT)"
