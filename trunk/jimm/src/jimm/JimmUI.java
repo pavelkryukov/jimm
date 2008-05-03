@@ -1561,18 +1561,16 @@ public class JimmUI implements CommandListener
 		addTextListItem(tlContactMenu, "info", null, USER_MENU_USER_INFO, true, -1, Font.STYLE_PLAIN);
 		if (status != ContactList.STATUS_OFFLINE)
 			addTextListItem(tlContactMenu, "dc_info", null, USER_MENU_LOCAL_INFO, true, -1, Font.STYLE_PLAIN);
-
 		
 		if (Icq.isConnected())
 		{
-			addTextListItem(tlContactMenu, "ft_caption", null, -1, true, groupsColor, Font.STYLE_BOLD);
-			
 			if ((status != ContactList.STATUS_ONLINE)
 					&& (status != ContactList.STATUS_OFFLINE)
 					&& (status != ContactList.STATUS_INVISIBLE))
 				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true, -1, Font.STYLE_PLAIN);		
 			
 //#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+			addTextListItem(tlContactMenu, "ft_caption", null, -1, true, groupsColor, Font.STYLE_BOLD);
 			if (((status != ContactList.STATUS_OFFLINE) 
 					&& contact.getIntValue(ContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
 					(Options.getInt(Options.OPTION_FT_MODE) == Options.FS_MODE_WEB))

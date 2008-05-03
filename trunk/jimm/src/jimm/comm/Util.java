@@ -1107,8 +1107,6 @@ public class Util
 			}
 		}
 		
-		System.out.println("byteArray1251ToString!");
-		
 		return stringbuffer.toString();
 	}
 
