@@ -1242,6 +1242,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		clearForm();
 		optionsForm.append(img);
 		optionsForm.append(captchaCode);
+		optionsForm.append(ResourceBundle.getString("register_notice"));
 		optionsForm.addCommand(cmdRequestRegistration);
 	}
 
@@ -2236,7 +2237,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		{
 			try {
 				optionsForm.append(ResourceBundle.getString("wait"));
-				optionsForm.append(ResourceBundle.getString("register_notice"));
 				RegisterNewUinAction.requestRegistration (newPassword.getString(), captchaCode.getString());
 			} catch (Exception e) {
 				System.out.println (e.getMessage());
