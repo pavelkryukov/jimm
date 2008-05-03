@@ -261,7 +261,7 @@ public class Jimm extends MIDlet
 		JimmUI.startTaskForTimeString();
 		
 		// Start one minute task 
-		timer.schedule(new TimerTasks(TimerTasks.TYPE_MINUTE), 60*1000, 60*1000);
+		new Timer().schedule(new TimerTasks(TimerTasks.TYPE_MINUTE), 60*1000, 60*1000);
 	}
 
 	// Pause
