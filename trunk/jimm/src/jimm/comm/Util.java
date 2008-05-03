@@ -1048,58 +1048,67 @@ public class Util
 	// Converts an CP1251 byte array into an Unicode string
 	public static String byteArray1251ToString(byte abyte0[], int i, int j)
 	{
-		String s = new String(abyte0, i, j);
 		StringBuffer stringbuffer = new StringBuffer(j);
 		for (int k = 0; k < j; k++)
 		{
 			int l = abyte0[k + i] & 0xff;
-			switch (l)
+			try
 			{
-			case 168:
-				stringbuffer.append('\u0401');
-				break;
-			case 184:
-				stringbuffer.append('\u0451');
-				break;
-
-			/* Ukrainian CP1251 chars section */
-			case 165:
-				stringbuffer.append('\u0490');
-				break;
-			case 170:
-				stringbuffer.append('\u0404');
-				break;
-			case 175:
-				stringbuffer.append('\u0407');
-				break;
-			case 178:
-				stringbuffer.append('\u0406');
-				break;
-			case 179:
-				stringbuffer.append('\u0456');
-				break;
-			case 180:
-				stringbuffer.append('\u0491');
-				break;
-			case 186:
-				stringbuffer.append('\u0454');
-				break;
-			case 191:
-				stringbuffer.append('\u0457');
-				break;
-			/* end of section */
-
-			default:
-				if (l >= 192 && l <= 255)
+				switch (l)
 				{
-					stringbuffer.append((char) ((1040 + l) - 192));
-				} else
-				{
-					stringbuffer.append(s.charAt(k));
+				case 168:
+					stringbuffer.append('\u0401');
+					break;
+				case 184:
+					stringbuffer.append('\u0451');
+					break;
+
+				/* Ukrainian CP1251 chars section */
+				case 165:
+					stringbuffer.append('\u0490');
+					break;
+				case 170:
+					stringbuffer.append('\u0404');
+					break;
+				case 175:
+					stringbuffer.append('\u0407');
+					break;
+				case 178:
+					stringbuffer.append('\u0406');
+					break;
+				case 179:
+					stringbuffer.append('\u0456');
+					break;
+				case 180:
+					stringbuffer.append('\u0491');
+					break;
+				case 186:
+					stringbuffer.append('\u0454');
+					break;
+				case 191:
+					stringbuffer.append('\u0457');
+					break;
+				/* end of section */
+
+				default:
+					if (l >= 192 && l <= 255)
+					{
+						stringbuffer.append((char) ((1040 + l) - 192));
+					} else
+					{
+						stringbuffer.append((char)(l&0xFF));
+					}
+					break;
 				}
-				break;
+			}
+			catch (Exception e)
+			{
+				stringbuffer.append('?');
 			}
 		}
+		
+		System.out.println("byteArray1251ToString!");
+		
 		return stringbuffer.toString();
 	}
 
