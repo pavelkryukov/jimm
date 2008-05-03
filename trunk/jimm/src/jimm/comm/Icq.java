@@ -113,7 +113,7 @@ public class Icq implements Runnable
 		}
 
 		// Connect?
-		if (act instanceof ConnectAction)
+		if ((act instanceof ConnectAction) || (act instanceof RegisterNewUinAction))
 		{
 			// Create new thread and start
 			thread = new Thread(_this);
@@ -212,6 +212,29 @@ public class Icq implements Runnable
 		// Start timer
 		SplashCanvas.addTimerTask("connecting", act, true);
 
+		lastStatusChangeTime = Util.getDateString(true);
+	}
+
+
+	// Connects to the ICQ network for register new uin
+	static public synchronized void connect(String newPassword)
+	{
+		Icq.connecting = true;
+
+		// Connect
+		RegisterNewUinAction act = new RegisterNewUinAction(newPassword, Options
+					.getString(Options.OPTION_SRV_HOST), Options
+					.getString(Options.OPTION_SRV_PORT));
+		try
+		{
+			requestAction(act);
+
+		} catch (JimmException e)
+		{
+			JimmException.handleException(e);
+		}
+
+		RegisterNewUinAction.addTimerTask (act);
 		lastStatusChangeTime = Util.getDateString(true);
 	}
 

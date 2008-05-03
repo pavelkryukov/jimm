@@ -1,4 +1,3 @@
-// Labels
 // MOTOROLA target special strings
 //#sijapp cond.if target is "MOTOROLA"#
 "backlight_timeout"			"Время подсветки (сек)"
@@ -107,8 +106,8 @@
 "attention"					"Внимание!"
 "auth"						"Авторизация"
 "auto_away"                 "Автоматический статус"
-"auto_away_time1"           "Время до стауса Отсутствую (минут)"
-"auto_away_time2"           "Время до стауса Недоступен (минут)"
+"auto_away_time1"           "Время до статуса Отсутствую (минут)"
+"auto_away_time2"           "Время до статуса Недоступен (минут)"
 "auto_connect"				"Подключаться автоматически"
 "beep"						"Гудок"
 "birth_day"					"День рождения"
@@ -439,6 +438,13 @@
 "yes"						"Да"
 "youwereadded"				"Вас добавил: "
 
+
+ // Registration strings
+"register_new"				"Зарег.новый"
+"register_request_image"		"Запр.карт."
+"register_request_send"			"Отправить"
+"captcha"				"Введите код:"
+
  // Generic errors
 "error_100"					"Неизвестная ошибка (#100.EXT)"
 
@@ -452,6 +458,7 @@
 "error_116"					"Оффлайн сообщение не может быть обработано (#116.EXT)"
 "error_117"					"Нет UIN и/или пароля (#117.EXT)"
 "error_118"					"Сервер не отвечает (#118.EXT)"
+"error_119"					"Время соединения истекло (#119.EXT)"
 
  // Network communication specific exceptions (first half main connection second half peer)
 "error_120"					"Произошла ошибка ввода-вывода (#120.EXT)"
@@ -502,3 +509,8 @@
  // HTTP Connection errors
 "error_220"					"Сервер не прининял HTTP-запрос (#220.EXT)"
 "error_221"					"Connection via HTTP proxy closed unrequested (#221.EXT)"
+
+// Registration errors
+"error_230"					"Регистрация не удалась (#230.EXT)"
+"error_231"					"Ошибка при отправке запроса на регистрацию (#231.EXT)"
+"error_232"					"Получены неверные данные от сервера (#232.EXT)"
