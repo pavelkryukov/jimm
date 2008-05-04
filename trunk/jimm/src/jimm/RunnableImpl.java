@@ -50,6 +50,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_SHOW_TIME           = 11;
 	final static public int TYPE_ADD_CONTACT         = 12;
 	final static public int TYPE_MINUTE_TASK         = 14;
+	final static public int TYPE_MESS_DELIVERED      = 15;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -123,6 +124,9 @@ public class RunnableImpl implements Runnable
 		case TYPE_MINUTE_TASK:
 			Jimm.aaNextMinute();
 			break;
+			
+		case TYPE_MESS_DELIVERED:
+			ChatHistory.messageIsDelivered((String)data[0], getInt(data, 1));
 		}
 	}
 
@@ -235,6 +239,11 @@ public class RunnableImpl implements Runnable
 	static public void minuteTask()
 	{
 		callSerially(TYPE_MINUTE_TASK);
+	}
+	
+	static public void messageIsDelevered(String uin, int messId)
+	{
+		callSerially(TYPE_MESS_DELIVERED, uin, new Integer(messId));
 	}
 
 	///////////////////////////////////////////////////////////////////////////

@@ -1418,6 +1418,10 @@ public class JimmUI implements CommandListener
 		PlainMessage plainMsg = new PlainMessage(Options.getString(Options.OPTION_UIN), textMessReceiver, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(false), text);
 
 		SendMessageAction sendMsgAct = new SendMessageAction(plainMsg);
+		
+		int messId = sendMsgAct.getMessId();
+		ChatHistory.addMyMessage(textMessReceiver, text, plainMsg.getNewDate(), textMessReceiver.getStringValue(ContactItem.CONTACTITEM_NAME), messId);
+		
 		try
 		{
 			Icq.requestAction(sendMsgAct);
@@ -1427,7 +1431,6 @@ public class JimmUI implements CommandListener
 			if (e.isCritical())
 				return;
 		}
-		ChatHistory.addMyMessage(textMessReceiver, text, plainMsg.getNewDate(), textMessReceiver.getStringValue(ContactItem.CONTACTITEM_NAME));
 
 		//#sijapp cond.if modules_HISTORY is "true" #
 		if (Options.getBoolean(Options.OPTION_HISTORY))

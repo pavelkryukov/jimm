@@ -154,6 +154,10 @@ public class SnacPacket extends Packet
 	// CLI_ACKMSG packet family and command
 	public static final int CLI_ACKMSG_FAMILY = 0x0004;
 	public static final int CLI_ACKMSG_COMMAND = 0x000B;
+	
+	// SRV_MSG_ACK packet family and command
+	public static final int SRV_MSG_ACK_FAMILY = 0x0004;
+	public static final int SRV_MSG_ACK_COMMAND = 0x000C;
 
 
 	/**********************/

@@ -252,6 +252,67 @@ public class Util
 			stream.write(((value & 0xFF000000) >> 24) & 0xFF);
 		}
 	}
+	
+	public static int getDWord(ByteArrayInputStream stream, boolean bigEndian)
+	{
+		try
+		{
+			int byte1 = stream.read()&0xFF;
+			int byte2 = stream.read()&0xFF;
+			int byte3 = stream.read()&0xFF;
+			int byte4 = stream.read()&0xFF;
+			return 
+				bigEndian
+					? (byte1 << 24) | (byte2 << 16) | (byte3 << 8) | (byte4)
+					: (byte4 << 24) | (byte3 << 16) | (byte2 << 8) | (byte1);
+		}
+		catch (Exception e) { }
+		return -1;
+	}
+	
+	public static long getQWord(ByteArrayInputStream stream, boolean bigEndian)
+	{
+		try
+		{
+			long result = 0;
+			for (int i = 0; i < 8; i++)
+			{
+				if (bigEndian) result <<= 8;
+				else result >>= 8;
+				long value = stream.read()&0xFF;
+				if (bigEndian) result |= value;
+				else result |= (value << 56);
+			}
+			return result;
+		}
+		catch (Exception e) { }
+		return -1;
+	}
+	
+	
+	public static int getWord(ByteArrayInputStream stream, boolean bigEndian)
+	{
+		try
+		{
+			int byte1 = stream.read()&0xFF;
+			int byte2 = stream.read()&0xFF;
+			return 
+				bigEndian 
+					? (byte1 << 8) | (byte2) 
+					: (byte2 << 8) | (byte1);
+		}
+		catch (Exception e) {}
+		return -1;
+	}
+	
+	public static String getLenAndString(ByteArrayInputStream stream, int lenLen)
+	{
+		int len = (lenLen == 2) ? getWord(stream, true) : stream.read();
+		if (len == 0) return new String();
+		byte[] data = new byte[len];
+		try {stream.read(data);} catch (Exception e) { return new String(); }
+		return byteArrayToString(data);
+	}
 
 	static public void writeByte(ByteArrayOutputStream stream, int value)
 	{
@@ -291,20 +352,16 @@ public class Util
 	{
 		writeAsciizTLV(type, stream, value, true);
 	}
-
-	static public void writeTLV(int type, ByteArrayOutputStream stream,
-			ByteArrayOutputStream data)
+	
+	static public void writeTLV(ByteArrayOutputStream stream, int type, byte[] data)
 	{
-		writeTLV(type, stream, data, true);
-	}
-
-	static public void writeTLV(int type, ByteArrayOutputStream stream,
-			ByteArrayOutputStream data, boolean bigEndian)
-	{
-		byte[] raw = data.toByteArray();
-		writeWord(stream, type, bigEndian);
-		writeWord(stream, raw.length, false);
-		stream.write(raw, 0, raw.length);
+		writeWord(stream, type, true);
+		if (data != null)
+		{
+			writeWord(stream, data.length, true);
+			stream.write(data, 0, data.length);
+		}
+		else writeWord(stream, 0, true);
 	}
 
 	// Extracts the word from the buffer (buf) at position off using big endian byte ordering

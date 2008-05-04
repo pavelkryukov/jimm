@@ -83,6 +83,17 @@ class TextItem
 	{
 		fontAndColor = (fontAndColor&0x00FFFFFF)|((value&0xFF) << 24);
 	}
+	
+	public boolean replaceImage(Image from, Image to)
+	{
+		if (image == null) return false;
+		if (image == from)
+		{
+			image = to;
+			return true;
+		}
+		return false;
+	}
 }
 
 class TextLine
@@ -168,6 +179,14 @@ class TextLine
 	void readText(StringBuffer buffer)
 	{
 		for (int i = 0; i < items.size(); i++) buffer.append(elementAt(i).text);
+	}
+	
+	boolean replaceImages(Image from, Image to)
+	{
+		boolean replaced = false;
+		for (int i = items.size()-1; i >= 0; i--) 
+			replaced |= elementAt(i).replaceImage(from, to);
+		return replaced;
 	}
 	
 }
@@ -617,6 +636,18 @@ public class TextList extends VirtualList
 		addBigTextInternal(text, color, fontStyle, textIndex, getTextAreaWidth());
 		invalidate();
 		return this;
+	}
+	
+	public boolean replaceImages(int textIndex, Image from, Image to)
+	{
+		boolean replaced = false;
+		for (int i = getSize()-1; i >= 0; i--)
+		{
+			TextLine textLine = (TextLine) lines.elementAt(i);
+			if (textLine.bigTextIndex != textIndex) continue;
+			replaced |= textLine.replaceImages(from, to);
+		}
+		return replaced;
 	}
 
 	// TODO: full rewrite code below!

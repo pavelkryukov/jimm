@@ -23,6 +23,8 @@
 
 package jimm.comm;
 
+import java.io.ByteArrayInputStream;
+
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 
@@ -256,14 +258,27 @@ public class ActionListener
 			{
 				// Get raw data
 				byte[] buf = snacPacket.getData();
-
-				// Get length of the uin (needed for skipping)
+				
+				int msgId1 = (int)Util.getDWord(buf, 0);
+				int msgId2 = (int)Util.getDWord(buf, 4);
+				
+				// Get length of the uin 
 				int uinLen = Util.getByte(buf, 10);
+				String uin = Util.byteArrayToString(buf, 11, uinLen);
 
 				// Get message type
 				int msgType = Util.getWord(buf, 58 + uinLen, false);
 				boolean gotStausMsg = false;
 				int skip = 0;
+
+				if (((msgType == Message.MESSAGE_TYPE_NORM) || (msgType == 26)) // 26 is sended from ICQ6
+					&& (msgId2 == 0x0002) 
+					&& Options.getBoolean(Options.OPTION_DELIV_MES_INFO))
+				{
+					RunnableImpl.messageIsDelevered(uin, msgId1);
+					return;
+				}
+				
 				if ((msgType >= Message.MESSAGE_TYPE_AWAY)	&& (msgType <= Message.MESSAGE_TYPE_FFC))
 				{
 					skip = 64;
@@ -1115,9 +1130,22 @@ public class ActionListener
 				// Handle the new system notice
 				RunnableImpl.addMessageSerially(notice);
 			}
+			
+			else if ((snacPacket.getFamily() == SnacPacket.SRV_MSG_ACK_FAMILY)
+					&& (snacPacket.getCommand() == SnacPacket.SRV_MSG_ACK_COMMAND))
+			{
+				ByteArrayInputStream stream = new ByteArrayInputStream(snacPacket.getData());
+				int messId1 = Util.getDWord(stream, true);
+				int messId2 = Util.getDWord(stream, true);
+				Util.getWord(stream, true);
+				if ((messId2 == 0x0001) && Options.getBoolean(Options.OPTION_DELIV_MES_INFO))
+				{
+					String uin = Util.getLenAndString(stream, 1);
+					RunnableImpl.messageIsDelevered(uin, messId1);
+				}
+			}
 
 		}
-
 	}
 
 }

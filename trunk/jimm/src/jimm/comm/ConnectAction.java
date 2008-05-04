@@ -964,6 +964,8 @@ public class ConnectAction extends Action
 
 							// Packet has been consumed
 							consumed = true;
+							
+							System.out.println("CLI_ACKOFFLINEMSGS_SUBCMD");
 						}
 					}
 				}

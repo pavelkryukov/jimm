@@ -246,6 +246,8 @@ public class Options
 	public static final int OPTION_AUTOAWAY_TIME1 = 96; /* int     */
 	public static final int OPTION_AUTOAWAY_TIME2 = 97; /* int     */
 	
+	public static final int OPTION_DELIV_MES_INFO = 162; /* boolean */
+	
 	// Filetransfer modes
 	public static final int FS_MODE_WEB = 0;
 	public static final int FS_MODE_NET = 1;
@@ -497,6 +499,8 @@ public class Options
 		setBoolean(OPTION_USE_AUTOAWAY, true);
 		setInt(OPTION_AUTOAWAY_TIME1, 5);
 		setInt(OPTION_AUTOAWAY_TIME2, 15);
+		
+		setBoolean(OPTION_DELIV_MES_INFO, true); 
 	}
 
 	static public void resetLangDependedOpts()
@@ -949,7 +953,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private ChoiceGroup chgrUseAutoAway;
 	private TextField tfAutoAwayTime1;
 	private TextField tfAutoAwayTime2;
-
+	
 	private TextList keysMenu;
 
 	private TextList actionMenu;
@@ -1601,6 +1605,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(chrgChat, "show_prev_mess", Options.OPTION_SHOW_LAST_MESS);
 			//#sijapp cond.end#
 			setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
+			setChecked(chrgChat, "deliv_info", Options.OPTION_DELIV_MES_INFO);
 
 			//#sijapp cond.if target is "MOTOROLA"#
 			//#					lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
@@ -1939,8 +1944,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 					.isSelected(idx++));
 			//#sijapp cond.end#
 
-			Options.setBoolean(Options.OPTION_CP1251_HACK, chrgChat
-					.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_CP1251_HACK, chrgChat.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_DELIV_MES_INFO, chrgChat.isSelected(idx++));
 			
 			idx = 0;
 			Options.setBoolean(Options.OPTION_CHAT_SMALL_FONT, chrgMessFormat.isSelected(idx++));
