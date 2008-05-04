@@ -826,6 +826,20 @@ public abstract class VirtualList
 	// Thanks for Aspro for source examples
 	private int getExtendedGameAction(int keyCode)
 	{
+		try
+		{
+			int gameAct = virtualCanvas.getGameAction(keyCode);
+			switch (gameAct)
+			{
+			case Canvas.UP:
+			case Canvas.DOWN:
+			case Canvas.LEFT:
+			case Canvas.RIGHT:
+				return gameAct;
+			}
+		}
+		catch (Exception e) {}
+		
 		String strCode = null;
 
 		try
