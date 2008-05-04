@@ -1337,23 +1337,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		if (!playerFree)
 			return null;
 
-		String ext, mediaType;
+		String url, mediaType;
 		Player p;
 
-		/* What is file extention? */
-		int point = source.lastIndexOf('.');
-		if (point != -1)
-			ext = source.substring(point + 1, source.length()).toLowerCase();
-		else
-			ext = "wav";
+		url = source.toLowerCase();
 
 		/* What is media type? */
-		if (ext.equals("mp3"))
+		if (url.endsWith("mp3")) 
 			mediaType = "audio/mpeg";
-		else if (ext.equals("mid") || ext.equals("midi"))
-			mediaType = "audio/midi";
-		else if (ext.equals("amr"))
+		else if (url.endsWith("amr"))
 			mediaType = "audio/amr";
+		else if (url.endsWith("jts")) {
+			mediaType = "audio/x-tone-seq";
+		else if (url.endsWith("mid") || url.endsWith("midi")) {
+			mediaType = "audio/midi";
 		else
 			mediaType = "audio/X-wav";
 
