@@ -847,7 +847,9 @@ public abstract class VirtualList
 
 		switch (keyCode)
 		{
+//#sijapp cond.if target is "MIDP2"#
 		case -6:
+//#sijapp cond.end#
 		case -21:
 		case 21:
 		case 105:
@@ -855,8 +857,10 @@ public abstract class VirtualList
 		case 113:
 		case 57345:
 			return KEY_CODE_LEFT_MENU;
-
+			
+//#sijapp cond.if target is "MIDP2"#
 		case -7:
+//#sijapp cond.end#
 		case -22:
 		case 22:
 		case 106:
@@ -865,8 +869,10 @@ public abstract class VirtualList
 		case 57346:
 			return KEY_CODE_RIGHT_MENU;
 
+//#sijapp cond.if target isnot "SIEMENS2"#
 		case -11:
 			return KEY_CODE_BACK_BUTTON;
+//#sijapp cond.end#
 		}
 
 		try
