@@ -23,6 +23,8 @@
 
 package jimm.comm;
 
+import java.io.ByteArrayOutputStream;
+
 import jimm.ContactList;
 import jimm.ContactItem;
 import jimm.Jimm;
@@ -42,11 +44,21 @@ public class SendMessageAction extends Action
 	//#sijapp cond.end# 
 	//#sijapp cond.end#  
 	private int SEQ1 = 0xffff;
+	
+	private int messId = -1;
+	
+	public int getMessId()
+	{
+		return messId;
+	}
 
 	// Constructor
 	public SendMessageAction(Message msg)
 	{
 		super(false, true);
+		
+		messId = (int)System.currentTimeMillis();
+		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (msg instanceof PlainMessage)
 		{
@@ -115,84 +127,84 @@ public class SendMessageAction extends Action
 		//#sijapp cond.end#
 
 		if ((this.plainMsg != null)
-				&& ((this.plainMsg.getMessageType() >= Message.MESSAGE_TYPE_AWAY) && (this.plainMsg
-						.getMessageType() <= Message.MESSAGE_TYPE_FFC)))
+			&& ((this.plainMsg.getMessageType() >= Message.MESSAGE_TYPE_AWAY) 
+			&& (this.plainMsg.getMessageType() <= Message.MESSAGE_TYPE_FFC)))
 		{
 			type = 2;
 		}
+		
+		if (Options.getBoolean(Options.OPTION_DELIV_MES_INFO)
+			&& rcvr.hasCapability(Icq.CAPF_AIM_SERVERRELAY_INTERNAL)
+			&& (rcvr.getIntValue(ContactItem.CONTACTITEM_CLIENT) != Icq.CLI_STICQ)
+			&& (rcvr.getIntValue(ContactItem.CONTACTITEM_CLIENT) != Icq.CLI_TRILLIAN)
+			&& (rcvr.getIntValue(ContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE))
+		{
+			type = 2;
+		}
+
 		//////////////////////
 		// Message format 1 //
 		//////////////////////
-
+		
 		if (type == 1)
 		{
-
-			// Get UIN
-			byte[] uinRaw = Util.stringToByteArray(rcvr
-					.getStringValue(ContactItem.CONTACTITEM_UIN));
-
-			// Get text
-			byte[] textRaw;
+			byte[] textRaw = 
+				utf8 ? 
+				Util.stringToUcs2beByteArray(Util.restoreCrLf(this.plainMsg.getText())) 
+				: Util.stringToByteArray(Util.restoreCrLf(this.plainMsg.getText()));
+				
+			String uin = rcvr.getStringValue(ContactItem.CONTACTITEM_UIN);
+			
+			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+			ByteArrayOutputStream tlvBuffer = new ByteArrayOutputStream();
+			
+			// msg-id cookie 
+			Util.writeDWord(buffer, messId, true);
+			Util.writeDWord(buffer, type, true);
+			
+			// message channel
+			Util.writeWord(buffer, type, true);
+			
+			// UIN
+			Util.writeByte(buffer, uin.length());
+			Util.writeByteArray(buffer, uin.getBytes());
+			
+			// ---------- message data TLV ------------- 
+			tlvBuffer.reset();
+			
+			// Capabilities
+			Util.writeWord(tlvBuffer, 0x0501, true);
 			if (utf8)
 			{
-				textRaw = Util.stringToUcs2beByteArray(Util
-						.restoreCrLf(this.plainMsg.getText()));
+				Util.writeWord(tlvBuffer, 0x0002, true);
+				Util.writeWord(tlvBuffer, 0x0106, true);
 			} else
 			{
-				textRaw = Util.stringToByteArray(Util.restoreCrLf(this.plainMsg
-						.getText()));
+				Util.writeWord(tlvBuffer, 0x0001, true);
+				Util.writeByte(tlvBuffer, 0x01);
 			}
-			// Pack data
-			byte[] buf = new byte[10 + 1 + uinRaw.length + 4 + (utf8 ? 6 : 5)
-					+ 4 + 4 + textRaw.length + 4];
-			int marker = 0;
-			Util.putDWord(buf, marker, 0x00000000); // CLI_SENDMSG.TIME
-			marker += 4;
-			Util.putDWord(buf, marker, 0x00000000); // CLI_SENDMSG.ID
-			marker += 4;
-			Util.putWord(buf, marker, 0x0001); // CLI_SENDMSG.FORMAT
-			marker += 2;
-			Util.putByte(buf, marker, uinRaw.length); // CLI_SENDMSG.UIN
-			System.arraycopy(uinRaw, 0, buf, marker + 1, uinRaw.length);
-			marker += 1 + uinRaw.length;
-			Util.putWord(buf, marker, 0x0002); // CLI_SENDMSG.SUB_MSG_TYPE1
-			Util.putWord(buf, marker + 2, (utf8 ? 6 : 5) + 4 + 4
-					+ textRaw.length);
-			marker += 4;
-			Util.putWord(buf, marker, 0x0501); // SUB_MSG_TYPE1.CAPABILITIES
-			if (utf8)
-			{
-				Util.putWord(buf, marker + 2, 0x0002);
-				Util.putWord(buf, marker + 4, 0x0106);
-				marker += 6;
-			} else
-			{
-				Util.putWord(buf, marker + 2, 0x0001);
-				Util.putByte(buf, marker + 4, 0x01);
-				marker += 5;
-			}
-			Util.putWord(buf, marker, 0x0101); // SUB_MSG_TYPE1.MESSAGE
-			Util.putWord(buf, marker + 2, 4 + textRaw.length);
-			marker += 4;
-			if (utf8)
-			{
-				Util.putDWord(buf, marker, 0x00020000); // MESSAGE.ENCODING
-			} else
-			{
-				Util.putDWord(buf, marker, 0x00000000); // MESSAGE.ENCODING
-			}
-			marker += 4;
-			System.arraycopy(textRaw, 0, buf, marker, textRaw.length); // MESSAGE.MESSAGE
-			marker += textRaw.length;
-			Util.putWord(buf, marker, 0x0006); // CLI_SENDMSG.UNKNOWN
-			Util.putWord(buf, marker + 2, 0x0000);
-			marker += 4;
-
-			// Send packet
+			
+			// Type: message
+			Util.writeWord(tlvBuffer, 0x0101, true);
+			
+			// Mess data len
+			Util.writeWord(tlvBuffer, 4+textRaw.length, true);
+			
+			// MESSAGE.ENCODING
+			Util.writeDWord(tlvBuffer, utf8 ? 0x00020000 : 0x00000000, true);
+			Util.writeByteArray(tlvBuffer, textRaw);
+			Util.writeTLV(buffer, 0x0002, tlvBuffer.toByteArray());
+			
+			// ---------- Store offline TLV ------------- 
+			Util.writeTLV(buffer, 0x0006, null);
+			
+			// ---------- req. serv delivery TLV ----------
+			if (Options.getBoolean(Options.OPTION_DELIV_MES_INFO)) Util.writeTLV(buffer, 0x0003, null);
+			
+			// ----------- Send packet --------------
 			SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY,
-					SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-			Jimm.jimm.getIcqRef().c.sendPacket(snacPkt);
-
+					SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buffer.toByteArray());
+			Icq.c.sendPacket(snacPkt);
 		}
 
 		//////////////////////
@@ -218,7 +230,7 @@ public class SendMessageAction extends Action
 			{
 
 				textRaw = Util.stringToByteArray(Util.restoreCrLf(this.plainMsg
-						.getText()));
+						.getText()), true);
 				filenameRaw = new byte[0];
 			} else
 			{
@@ -266,10 +278,9 @@ public class SendMessageAction extends Action
 			// Build the packet
 			byte[] buf = new byte[p_sz];
 			int marker = 0;
-			long tim = System.currentTimeMillis();
-			Util.putDWord(buf, marker, tim); // CLI_SENDMSG.TIME
+			Util.putDWord(buf, marker, messId); // CLI_SENDMSG.TIME
 			marker += 4;
-			Util.putDWord(buf, marker, 0x00000000); // CLI_SENDMSG.ID
+			Util.putDWord(buf, marker, type); // CLI_SENDMSG.ID
 			marker += 4;
 			Util.putWord(buf, marker, 0x0002); // CLI_SENDMSG.FORMAT
 			marker += 2;
@@ -303,7 +314,7 @@ public class SendMessageAction extends Action
 			Util.putWord(buf, marker, 0x0000);
 			marker += 2;
 
-			Util.putDWord(buf, marker, tim);
+			Util.putDWord(buf, marker, messId);
 			marker += 4;
 
 			Util.putDWord(buf, marker, 0x00000000);

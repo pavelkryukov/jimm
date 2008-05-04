@@ -67,6 +67,7 @@
   "name_desc"                   "File name and description"
   "user_menu"                   "User Menu"
   "dc_info"                     "Client info"
+  "deliv_info"                  "Message delivery info"
   "depart"                      "Department"
   "disconnect"                  "Disconnect"
   "disconnecting"               "Disconnecting"

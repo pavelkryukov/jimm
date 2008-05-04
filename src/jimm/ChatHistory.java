@@ -48,10 +48,12 @@ class MessData
 	private long time;
 
 	private int rowData;
+	private int messId;
 
 	public MessData(boolean incoming, long time, int textOffset,
-			boolean contains_url)
+			boolean contains_url, int messId)
 	{
+		this.messId = messId;
 		this.time = time;
 		this.rowData = (textOffset & 0xFFFFFF) | (contains_url ? 0x8000000 : 0)
 				| (incoming ? 0x4000000 : 0);
@@ -70,6 +72,11 @@ class MessData
 	public int getOffset()
 	{
 		return (rowData & 0xFFFFFF);
+	}
+	
+	public int getMessId()
+	{
+		return messId;
 	}
 
 	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
@@ -434,19 +441,22 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	}
 
 	void addTextToForm(String from, String message, String url, long time,
-			boolean red, boolean offline)
+			boolean red, boolean offline, int messId)
 	{
 		int texOffset = 0;
+		boolean deliveryReqOn = Options.getBoolean(Options.OPTION_DELIV_MES_INFO); 
 
 		textList.lock();
 	
-		boolean shortMsg = (inOneMinute (lastMsgTime, time)) && (lastDirection == red);
+		boolean shortMsg = (inOneMinute (lastMsgTime, time)) 
+			&& (lastDirection == red) 
+			&& !deliveryReqOn;
 
 		int lastSize = textList.getSize();
 		
 		StringBuffer messHeader = new StringBuffer();
 		
-		if ((Options.getBoolean(Options.OPTION_SHOW_MESS_ICON)) && (!shortMsg))
+		if (((Options.getBoolean(Options.OPTION_SHOW_MESS_ICON)) && (!shortMsg)) || deliveryReqOn)
 		{
 			textList.addImage(ContactList.imageList.elementAt(13), "", messTotalCounter);
 			messHeader.append(' ');
@@ -495,7 +505,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		}
 		//#sijapp cond.end#
 		getMessData().addElement(
-				new MessData(red, time, texOffset, contains_url));
+				new MessData(red, time, texOffset, contains_url, messId));
 		messTotalCounter++;
 		lastMsgTime = (shortMsg) ? lastMsgTime : time;
 		lastDirection = red;
@@ -509,6 +519,20 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		textList.activate(Jimm.display);
 		JimmUI.setLastScreen(textList);
 		ChatHistory.currentChat = this;
+	}
+	
+	public void messageIsDelivered(int messId)
+	{
+		for (int i = messData.size()-1; i >= 0; i--)
+		{
+			MessData data = (MessData)messData.elementAt(i);
+			if (data.getMessId() == messId)
+			{
+				boolean ok = textList.replaceImages(i, ContactList.imageList.elementAt(13), ContactList.imageList.elementAt(18));
+				if (ok) textList.repaint();
+				break;
+			}
+		}
 	}
 }
 
@@ -554,7 +578,7 @@ public class ChatHistory
 				addTextToForm(uin, contact
 						.getStringValue(ContactItem.CONTACTITEM_NAME),
 						plainMsg.getText(), "", plainMsg.getNewDate(), true,
-						offline);
+						offline, -1);
 				
 				//#sijapp cond.if modules_HISTORY is "true" #
 				if (Options.getBoolean(Options.OPTION_HISTORY))
@@ -581,7 +605,7 @@ public class ChatHistory
 				addTextToForm(uin, contact
 						.getStringValue(ContactItem.CONTACTITEM_NAME),
 						urlMsg.getText(), urlMsg.getUrl(), urlMsg.getNewDate(),
-						false, offline);
+						false, offline, -1);
 			} else if (message instanceof SystemNotice)
 			{
 				SystemNotice notice = (SystemNotice) message;
@@ -594,7 +618,7 @@ public class ChatHistory
 					addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 							ResourceBundle.getString("youwereadded")
 									+ notice.getSndrUin(), "", notice.getNewDate(),
-							false, offline);
+							false, offline, -1);
 				} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
 				{
 					contact
@@ -603,7 +627,7 @@ public class ChatHistory
 							notice.getSndrUin()
 									+ ResourceBundle.getString("wantsyourauth")
 									+ notice.getReason(), "", notice.getNewDate(),
-							false, offline);
+							false, offline, -1);
 				} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
 				{
 					if (notice.isAUTH_granted())
@@ -613,20 +637,20 @@ public class ChatHistory
 						addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 								ResourceBundle.getString("grantedby")
 										+ notice.getSndrUin() + ".", "", notice
-										.getNewDate(), false, offline);
+										.getNewDate(), false, offline, -1);
 					} else if (notice.getReason() != null)
 						addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 								ResourceBundle.getString("denyedby")
 										+ notice.getSndrUin() + ". "
 										+ ResourceBundle.getString("reason") + ": "
 										+ notice.getReason(), "", notice
-										.getNewDate(), false, offline);
+										.getNewDate(), false, offline, -1);
 					else
 						addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 								ResourceBundle.getString("denyedby")
 										+ notice.getSndrUin() + ". "
 										+ ResourceBundle.getString("noreason"), "",
-								notice.getNewDate(), false, offline);
+								notice.getNewDate(), false, offline, -1);
 				}
 				chat.buildMenu();
 			}
@@ -636,20 +660,20 @@ public class ChatHistory
 	}
 
 	static protected synchronized void addMyMessage(ContactItem contact, String message,
-			long time, String ChatName)
+			long time, String ChatName, int messId)
 	{
 		String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		if (!historyTable.containsKey(uin)) newChatForm(contact, ChatName);
-		addTextToForm(uin, ResourceBundle.getString("me"), message, "", time, false, false);
+		addTextToForm(uin, ResourceBundle.getString("me"), message, "", time, false, false, messId);
 	}
 
 	// Add text to message form
 	static synchronized private void addTextToForm(String uin, String from,
-			String message, String url, long time, boolean red, boolean offline)
+			String message, String url, long time, boolean red, boolean offline, int messId)
 	{
 		ChatTextList msgDisplay = (ChatTextList) historyTable.get(uin);
 
-		msgDisplay.addTextToForm(from, message, url, time, red, offline);
+		msgDisplay.addTextToForm(from, message, url, time, red, offline, messId);
 	}
 
 	static private MessData getCurrentMessData(String uin)
@@ -875,5 +899,12 @@ public class ChatHistory
 	public static ChatTextList getCurrent()
 	{
 		return currentChat;
+	}
+	
+	public static void messageIsDelivered(String uin, int messId)
+	{
+		ChatTextList msgDisplay = (ChatTextList) historyTable.get(uin);
+		if (msgDisplay == null) return;
+		msgDisplay.messageIsDelivered(messId);
 	}
 }
