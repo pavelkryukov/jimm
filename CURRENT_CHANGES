@@ -1,6 +1,6 @@
 VERSION 0.6.0beta
 Implemented:
-  * NEW FEATURE: Client icon is shown in contact list
+  * NEW FEATURE: Client icon and extended status icon are shown in contact list
   * NEW FEATURE: file transfer through web server
   * NEW FEATURE: Private lists management
   * NEW FEATURE: Personal statuses support
