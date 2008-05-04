@@ -1347,9 +1347,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			mediaType = "audio/mpeg";
 		else if (url.endsWith("amr"))
 			mediaType = "audio/amr";
-		else if (url.endsWith("jts")) {
+		else if (url.endsWith("jts"))
 			mediaType = "audio/x-tone-seq";
-		else if (url.endsWith("mid") || url.endsWith("midi")) {
+		else if (url.endsWith("mid") || url.endsWith("midi"))
 			mediaType = "audio/midi";
 		else
 			mediaType = "audio/X-wav";
