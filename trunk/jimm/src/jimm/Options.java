@@ -768,7 +768,8 @@ public class Options
 
 	static public void setCaptchaImage(Image img)
 	{
-		img = Util.createThumbnail(img, 176, 0);
+		int width = 9*SplashCanvas.getAreaWidth()/10-2;
+		img = Util.createThumbnail(img, width, 0);
 		optionsForm.addCaptchaToForm(img);
 		img = null;
 	}

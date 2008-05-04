@@ -543,7 +543,11 @@ public class SplashCanvas extends Canvas
 					.getHeight()
 					- (height / 2), Graphics.VCENTER | Graphics.RIGHT);
 		}
-
+	}
+	
+	public static int getAreaWidth()
+	{
+		return _this.getWidth();
 	}
 
 	public static void startTimer()
