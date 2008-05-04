@@ -5,6 +5,7 @@ Implemented:
   * NEW FEATURE: Private lists management
   * NEW FEATURE: Personal statuses support
   * NEW FEATURE: Registration of new ICQ account
+  * Messages delivery notification
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * Modified user interface
   * More color schemes
@@ -23,5 +24,4 @@ Implemented:
   * More options added to customize chat
 
 Planned:
-  * Messages delivery notification
   * Changes graphics and sounds directly form Jimm
