@@ -1205,6 +1205,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 	private TextField newPassword;
 
+	private boolean registration_connected = false;
+
 	private void readAccontsData()
 	{
 		uins.removeAllElements();
@@ -1237,8 +1239,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				.getString("captcha"), "", 8, TextField.ANY);
 		optionsForm.removeCommand(saveCommand);
 		optionsForm.append(newPassword);
-		if (!Icq.isConnected())
+		if (!Icq.isConnected()) {
+			registration_connected = false;
 			optionsForm.addCommand(cmdRequestCaptchaImage);
+		}
 	}
 
 	public void addCaptchaToForm (Image img)
@@ -1248,6 +1252,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		optionsForm.append(captchaCode);
 		optionsForm.append(ResourceBundle.getString("register_notice"));
 		optionsForm.addCommand(cmdRequestRegistration);
+		registration_connected = true;
 	}
 
 	public void addAccount (String uin, String password)
@@ -2183,6 +2188,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			} 
 			else
 			{
+				if (registration_connected)
+					Icq.disconnect();
 				Options.optionsForm = null;
 				Jimm.showWorkScreen(); /* Active MM/CL */
 				return;
