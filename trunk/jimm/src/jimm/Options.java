@@ -2107,25 +2107,26 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			    case RMS_ASK_RESULT_NO:
 				    break;
 			    case RMS_ASK_RESULT_YES:
-				    Icq.disconnect();
-				    try
-				    {
-					    Thread.sleep(500);
-				    } catch (InterruptedException e1)
-				    {
-					    /* Do nothing */
-				    }
-				    try
-				    {
+				Icq.connecting = false;
+				Icq.disconnect();
+				try
+				{
+					Thread.sleep(500);
+				} catch (InterruptedException e1)
+				{
+					/* Do nothing */
+				}
+				try
+				{
 					Options.reset_rms();
-				    } catch (RecordStoreException re) {}
-				    /* Exit app */
-				    try
-				    {
-					    Jimm.jimm.destroyApp(true);
-				    } catch (Exception e)
-				    { /* Do nothing */
-				    }
+				} catch (RecordStoreException re) {}
+					/* Exit app */
+				try
+				{
+					Jimm.jimm.destroyApp(true);
+				} catch (Exception e)
+				{ /* Do nothing */
+				}
 				default:
 			    }
 			}

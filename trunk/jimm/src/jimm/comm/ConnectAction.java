@@ -1032,6 +1032,7 @@ public class ConnectAction extends Action
     		break;
     		
     	case ON_CANCEL:
+		Icq.connecting = false;
     		Icq.disconnect();
     		MainMenu.activate();
     		break;

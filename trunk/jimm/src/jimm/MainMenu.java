@@ -239,6 +239,7 @@ public class MainMenu implements CommandListener
 					JimmUI.MESBOX_YESNO, _this, TAG_EXIT);
 		} else
 		{
+			Icq.connecting = false;
 			Icq.disconnect();
 			try
 			{
@@ -449,6 +450,7 @@ public class MainMenu implements CommandListener
 
 			case MENU_DISCONNECT:
 				/* Disconnect */
+				Icq.connecting = false;
 				Icq.disconnect();
 				Thread.yield();
 				/* Show the main menu */
