@@ -1304,8 +1304,8 @@ public class Util
 
 	public static long gmtTimeToLocalTime(long gmtTime)
 	{
-		long diff = Options.getInt(Options.OPTIONS_GMT_OFFSET);
-		long dl = Options.getInt(Options.OPTIONS_DAYLIGHT_SAVING);
+		long diff = Options.getInt(Options.OPTION_GMT_OFFSET);
+		long dl = Options.getInt(Options.OPTION_DAYLIGHT_SAVING);
 		return gmtTime + (diff + dl) * 3600L;
 	}
 
