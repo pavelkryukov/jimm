@@ -327,7 +327,9 @@ public class Options
 		setString (Options.OPTION_TYPING_FILE,		  "typing.mp3");
 		setInt	  (Options.OPTION_TYPING_MODE,		  0);
 		setBoolean(Options.OPTION_LIGHT_MANUAL,       true);
-		//#sijapp cond.else#
+		//#sijapp cond.end#
+
+		//#sijapp cond.if target="MIDP2"#
 		setBoolean(Options.OPTION_LIGHT_MANUAL,       false);
 		//#sijapp cond.end#
 
