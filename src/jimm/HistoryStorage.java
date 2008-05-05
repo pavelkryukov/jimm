@@ -351,6 +351,8 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 				ResourceBundle.FLAG_ELLIPSIS));
 		SplashCanvas.setProgress(0);
 		Jimm.display.setCurrent(Jimm.jimm.getSplashCanvasRef());
+		Jimm.setBkltOn(true);
+		
 		if (citems == null)
 			citems = ContactList.getContactItems();
 		
@@ -584,6 +586,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 				frmFind.setCommandListener(this);
 			}
 			Jimm.display.setCurrent(frmFind);
+			Jimm.setBkltOn(true);
 		}
 
 		// user select ok command in find screen
@@ -616,6 +619,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 						.append("\n").toString(), null, AlertType.INFO);
 				alert.setTimeout(Alert.FOREVER);
 				Jimm.display.setCurrent(alert);
+				Jimm.setBkltOn(false);
 			} catch (Exception e)
 			{
 			}

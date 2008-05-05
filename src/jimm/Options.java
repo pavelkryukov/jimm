@@ -163,11 +163,8 @@ public class Options
 
 	public static final int OPTION_STATUS_MESSAGE = 7; /* String  */
 
-	//#sijapp cond.if target is "MOTOROLA"#
-	//#	public static final int OPTION_LIGHT_TIMEOUT       =  74;   /* int     */
-	//# public static final int OPTION_LIGHT_MANUAL	       = 140;   /* boolean */
-	//#	public static final int OPTION_FLASH_BACKLIGHT     = 147;   /* boolean */
-	//#sijapp cond.end#
+	public static final int OPTION_LIGHT_TIMEOUT       =  74;   /* int     */
+	public static final int OPTION_LIGHT_MANUAL	       = 140;   /* boolean */
 
 	public static final int OPTION_USE_SMILES = 141; /* boolean */
 
@@ -390,18 +387,23 @@ public class Options
 		setString(Options.OPTION_TYPING_FILE, "typing.wav");
 		setInt(Options.OPTION_TYPING_MODE, 0);
 		//#sijapp cond.elseif target is "MOTOROLA"#
-		//#        setInt    (Options.OPTION_MESS_NOTIF_MODE,    0);
-		//#		setString (Options.OPTION_MESS_NOTIF_FILE,    "message.mp3");
-		//#		setInt    (Options.OPTION_MESS_NOTIF_VOL,     50);
-		//#		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  0);
-		//#		setString (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mp3");
-		//#		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
-		//#		setInt	  (Options.OPTION_TYPING_VOL,	 	  50);
-		//#		setString (Options.OPTION_TYPING_FILE,		  "typing.mp3");
-		//#		setInt	  (Options.OPTION_TYPING_MODE,		  0);
-		//#		setInt    (Options.OPTION_LIGHT_TIMEOUT,      5);
-		//#		setBoolean(Options.OPTION_LIGHT_MANUAL,       false);	
+		setInt    (Options.OPTION_MESS_NOTIF_MODE,    0);
+		setString (Options.OPTION_MESS_NOTIF_FILE,    "message.mp3");
+		setInt    (Options.OPTION_MESS_NOTIF_VOL,     50);
+		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  0);
+		setString (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mp3");
+		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
+		setInt	  (Options.OPTION_TYPING_VOL,	 	  50);
+		setString (Options.OPTION_TYPING_FILE,		  "typing.mp3");
+		setInt	  (Options.OPTION_TYPING_MODE,		  0);
+		setBoolean(Options.OPTION_LIGHT_MANUAL,       true);
+		//#sijapp cond.else#
+		setBoolean(Options.OPTION_LIGHT_MANUAL,       false);
 		//#sijapp cond.end#
+
+		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		setInt    (Options.OPTION_LIGHT_TIMEOUT,      5);
+		//#sijapp cond.end #
 
 		setBoolean(Options.OPTION_CP1251_HACK, ResourceBundle.langAvailable[0]
 				.equals("RU"));
@@ -470,10 +472,6 @@ public class Options
 
 		/* DayLightSaving (int) */
 		setInt(Options.OPTIONS_DAYLIGHT_SAVING, 0);
-
-		//#sijapp cond.if target="MOTOROLA"#
-		//#		setBoolean(OPTION_FLASH_BACKLIGHT,            true);
-		//#sijapp cond.end#
 
 		setBoolean(OPTIONS_LANG_CHANGED, false);
 		setBoolean(OPTION_CREEPING_LINE, false);
@@ -931,11 +929,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	//#sijapp cond.end#
 	private ChoiceGroup choiceContactList;
 
-	//#sijapp cond.if target is "MOTOROLA"#
-	//#    private TextField lightTimeout;
-	//#    private ChoiceGroup lightManual;
-	//#	private ChoiceGroup flashBkltChoiceGroup;
-	//#sijapp cond.end#       
+	//#sijapp cond.if target="MOTOROLA" | target="MIDP2" #
+	private TextField lightTimeout;
+	private ChoiceGroup lightManual;
+	//#sijapp cond.end#
+	
 	//#sijapp cond.if modules_PROXY is "true"#
 	private ChoiceGroup srvProxyType;
 
@@ -1613,10 +1611,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
 			setChecked(chrgChat, "deliv_info", Options.OPTION_DELIV_MES_INFO);
 
-			//#sijapp cond.if target is "MOTOROLA"#
-			//#					lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
-			//#					lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
-			//#					setChecked(lightManual, "yes", Options.OPTION_LIGHT_MANUAL);
+			//#sijapp cond.if target="MOTOROLA" | target="MIDP2" #
+			lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
+			lightTimeout = new TextField(ResourceBundle.getString("backlight_timeout"), String.valueOf(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)), 2, TextField.NUMERIC);
+			setChecked(lightManual, "yes", Options.OPTION_LIGHT_MANUAL);
 			//#sijapp cond.end#
 			
 			// OPTION_SHOW_MESS_ICON
@@ -1640,9 +1638,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (chrgChat.size() != 0) optionsForm.append(chrgChat);
 			optionsForm.append(chrgMessFormat);
 
-			//#sijapp cond.if target is "MOTOROLA"#
-			//#					optionsForm.append(lightTimeout);
-			//#					optionsForm.append(lightManual);
+			//#sijapp cond.if target="MOTOROLA" | target="MIDP2" #
+			optionsForm.append(lightTimeout);
+			optionsForm.append(lightManual);
 			//#sijapp cond.end #
 			clCamDevGroup = new ChoiceGroup(ResourceBundle.getString("opt_camerauri"), Choice.EXCLUSIVE);
 			addStr(clCamDevGroup, "camera://video" + "|" + "camera://image");
@@ -1710,10 +1708,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			vibratorChoiceGroup = createSelector("vibration", "no" + "|"
 					+ "yes" + "|" + "when_locked", Options.OPTION_VIBRATOR);
 
-			//#sijapp cond.if target="MOTOROLA"#
-			//#					flashBkltChoiceGroup = new ChoiceGroup(ResourceBundle.getString("flash_backight"), Choice.MULTIPLE);
-			//#					setChecked(flashBkltChoiceGroup, "yes", Options.OPTION_FLASH_BACKLIGHT);
-			//#sijapp cond.end#
 			//#sijapp cond.end#
 
 			chrgPopupWin = createSelector("popup_win", "no" + "|"
@@ -1729,10 +1723,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 
 			optionsForm.append(vibratorChoiceGroup);
-			//#sijapp cond.if target="MOTOROLA"#
-			//#					if (Jimm.funlight_device_type != -1)
-			//#						optionsForm.append(flashBkltChoiceGroup);
-			//#sijapp cond.end#
 			optionsForm.append(onlineNotificationModeChoiceGroup);
 
 			//#sijapp cond.if target isnot "RIM"#                          
@@ -1844,6 +1834,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 		/* Activate options form */
 		Jimm.display.setCurrent(optionsForm);
+		Jimm.setBkltOn(true);
 	}
 	
 	private void readDataFromForm()
@@ -1973,11 +1964,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				(newSortMethod != lastSortMethod)
 			);
 
-			//#sijapp cond.if target is "MOTOROLA"#
-			//#					Options.setInt(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(lightTimeout.getString()));
-			//#					Options.setBoolean(Options.OPTION_LIGHT_MANUAL, lightManual.isSelected(0));
+			//#sijapp cond.if target="MOTOROLA" | target="MIDP2" #
+			boolean useBackLight = lightManual.isSelected(0);
+			Options.setInt(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(lightTimeout.getString()));
+			Options.setBoolean(Options.OPTION_LIGHT_MANUAL, useBackLight);
+			VirtualList.setBackLightData(useBackLight, Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
+			if (!useBackLight) Jimm.display.flashBacklight(1);
 			//#sijapp cond.end#
-
+			
 			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 
 			if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
@@ -2015,10 +2009,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end# <===
 			Options.setInt(Options.OPTION_POPUP_WIN2, chrgPopupWin
 					.getSelectedIndex());
-
-			//#sijapp cond.if target="MOTOROLA"#
-			//#					Options.setBoolean(Options.OPTION_FLASH_BACKLIGHT, flashBkltChoiceGroup.isSelected(0));
-			//#sijapp cond.end#
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp
@@ -2269,6 +2259,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			clearForm();
 			showAccountControls();
 			Jimm.display.setCurrent(optionsForm);
+			Jimm.setBkltOn(true);
 		}
 	}
 

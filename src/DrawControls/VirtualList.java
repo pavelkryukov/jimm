@@ -32,22 +32,6 @@ import java.util.Vector;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
 
-
-//#sijapp cond.if target is "MOTOROLA"#
-//# import jimm.TimerTasks;
-//# import jimm.Jimm;
-//# import jimm.Options;
-//# import com.motorola.funlight.*;
-//#sijapp cond.end#
-
-//! This class is base class of owner draw list controls
-/*!
- It allows you to create list with different colors and images. 
- Base class of VirtualDrawList if Canvas, so it draw itself when
- paint event is heppen. VirtualList have cursor controlled of
- user
- */
-
 class VirtualCanvas extends Canvas implements Runnable
 {
 	VirtualList currentControl;
@@ -60,6 +44,11 @@ class VirtualCanvas extends Canvas implements Runnable
 	public void setDisplay(Display display)
 	{
 		this.display = display;
+	}
+	
+	public Display getDisplay()
+	{
+		return display;
 	}
 	
 	public VirtualCanvas()
@@ -458,6 +447,10 @@ public abstract class VirtualList
 		virtualCanvas.cancelKeyRepeatTask();
 		display.setCurrent(virtualCanvas);
 		repaint();
+		
+		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		setBackLightOn();
+		//#sijapp cond.end#
 	}
 	
 	public void activate(Display display, Alert alert)
@@ -792,12 +785,6 @@ public abstract class VirtualList
 			case Canvas.KEY_NUM9:
 				moveCursor(getVisCount(), false);
 				break;
-
-			//#sijapp cond.if target is "MOTOROLA"#
-			//#		case Canvas.KEY_STAR: 
-			//#		setBkltOn(!bklt_on);
-			//#		break;
-			//#sijapp cond.end#
 			}
 		}
 
@@ -808,10 +795,6 @@ public abstract class VirtualList
 		switch (type)
 		{
 		case KEY_PRESSED:
-			//#sijapp cond.if target="MOTOROLA"#
-			//#			if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL))
-			//#				flashBklt(Options.getInt(Options.OPTION_LIGHT_TIMEOUT)*1000);
-			//#sijapp cond.end#
 			keyReaction(keyCode, type);
 			break;
 		case KEY_REPEATED:
@@ -820,6 +803,10 @@ public abstract class VirtualList
 		}
 
 		if (vlCommands != null) vlCommands.vlKeyPress(this, keyCode, type);
+		
+		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		setBackLightOn();
+		//#sijapp cond.end#
 	}
 	
 	// Return game action or extended codes
@@ -1902,113 +1889,22 @@ public abstract class VirtualList
 		}
 		while (swaped);
 	}
-
-	//#sijapp cond.if target="MOTOROLA"#
-	//#	private static boolean bklt_on = true;
-	//#	private static java.util.Timer switchoffTimer;
-	//#
-	//#	public static void setBkltOn(boolean on)
-	//#	{
-	//#		if (on != bklt_on)
-	//#		{
-	//#			bklt_on = on;
-	//#			Jimm.display.flashBacklight(bklt_on ? Integer.MAX_VALUE : 1);
-	//#		}
-	//#	}
-	//#	public static void flashBklt(int msec)
-	//#	{
-	//#		try
-	//#		{
-	//#			setBkltOn(true);
-	//#	
-	//#			if (switchoffTimer != null)
-	//#			{
-	//#				switchoffTimer.cancel();
-	//#			}
-	//#
-	//#			(switchoffTimer = new java.util.Timer()).schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_BKLT), msec);
-	//#		}
-	//#		catch (Exception e) {}
-	//#	}
-	//#	protected void hideNotify()
-	//#	{
-	//#		if (!Options.getBoolean(Options.OPTION_LIGHT_MANUAL) & !(Jimm.display.getCurrent() instanceof Canvas))
-	//#		{
-	//#			if (switchoffTimer != null) switchoffTimer.cancel();
-	//#			setBkltOn(true);
-	//#		}
-	//#	}
-	//#
-	//#	public static final int BKLT_TYPE_BLINKING = 1;
-	//#	public static final int BKLT_TYPE_LIGHTING = 2;
-	//#
-	//#	private static java.util.Timer ledTimer;
-	//#	private static Region[] currentRegions;
-	//#	public static void setLEDmode(int type, int duration, int color)
-	//#	{
-	//#		int t = Jimm.funlight_device_type;
-	//#		if ((t == -1) | !Options.getBoolean(Options.OPTION_FLASH_BACKLIGHT))
-	//#		{
-	//#			return;
-	//#		}
-	//#		disableLED();
-	//#		Region[] regions = null;
-	//#		switch (t)
-	//#		{
-	//#			case Jimm.FUNLIGHT_DEVICE_E390:
-	//#				regions = new Region[]
-	//#				{
-	//#					FunLight.getRegion(3),
-	//#					FunLight.getRegion(4)
-	//#				};
-	//#				break;
-	//#			case Jimm.FUNLIGHT_DEVICE_E380:
-	//#				regions = new Region[]
-	//#				{
-	//#					FunLight.getRegion(4),
-	//#					null
-	//#				};
-	//#				break;
-	//#		}
-	//#		currentRegions = regions;
-	//#		switch (type)
-	//#		{
-	//#			case BKLT_TYPE_LIGHTING:
-	//#				regions[0].setColor(color);
-	//#				if (regions[1] != null)
-	//#				{
-	//#					regions[1].setColor(color);
-	//#					regions[1].getControl();
-	//#				}
-	//#				regions[0].getControl();
-	//#				if (duration >= 200)
-	//#				{
-	//#					(ledTimer = new java.util.Timer()).schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_SWITCHOFF_LED), duration);
-	//#				}
-	//#				break;
-	//#			default:
-	//#				regions[0].setColor(color);
-	//#				if (regions[1] != null) regions[1].setColor(color);
-	//#				int tries = duration / 250;
-	//#				(ledTimer = new java.util.Timer())
-	//#					.schedule(new jimm.TimerTasks(jimm.TimerTasks.VL_LED_CHANGE_STATE, regions, tries), 0, 250);
-	//#				break;
-	//#		}
-	//#	}
-	//#	public static void disableLED()
-	//#	{
-	//#		if (ledTimer != null)
-	//#		{
-	//#			ledTimer.cancel();
-	//#			ledTimer = null;
-	//#		}
-	//#
-	//#		if (currentRegions != null)
-	//#		{
-	//#			currentRegions[0].releaseControl();
-	//#			if (currentRegions[1] != null) currentRegions[1].releaseControl();
-	//#			currentRegions = null;
-	//#		}
-	//#	}
-	//#sijapp cond.end#	
+	
+	//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+	private static boolean manualBackLight = false;
+	private static int backLightTimeOut = 5;
+	
+	public static void setBackLightData(boolean manualBackLight, int backLightTimeOut)
+	{
+		VirtualList.manualBackLight = manualBackLight;
+		VirtualList.backLightTimeOut = backLightTimeOut;
+	}
+	
+	private static void setBackLightOn()
+	{
+		if (!manualBackLight) return;
+		virtualCanvas.getDisplay().flashBacklight(1000*backLightTimeOut);
+	}
+	
+	//#sijapp cond.end #
 }

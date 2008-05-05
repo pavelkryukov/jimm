@@ -1607,7 +1607,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		alert.setTimeout(1500);
 		
 		if (activate) tree.activate(Jimm.display, alert);
-		else  Jimm.display.setCurrent(alert, Jimm.display.getCurrent());
+		else 
+		{
+			Jimm.display.setCurrent(alert, Jimm.display.getCurrent());
+			Jimm.setBkltOn(false);
+		}
 		return newValue;
 	}
 

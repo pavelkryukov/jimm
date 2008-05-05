@@ -1,7 +1,7 @@
 // MOTOROLA target special strings
 //#sijapp cond.if target is "MOTOROLA"#
 "backlight_timeout"			"Время подсветки (сек)"
-"backlight_manual"			"Ручная подсветка (*)"
+"backlight_manual"			"Управлять подсветкой"
 "exit_button"				"Выход"
 "menu_button"				"Меню"
 "flash_backlight"			"Мигать светодиодами"

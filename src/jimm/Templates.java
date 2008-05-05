@@ -139,6 +139,7 @@ public class Templates implements VirtualListCommands, CommandListener
 			templateTextbox.addCommand(cancelCommand);
 			templateTextbox.setCommandListener(_this);
 			Jimm.display.setCurrent(templateTextbox);
+			Jimm.setBkltOn(true);
 		}
 
 		if (c == addCommand)

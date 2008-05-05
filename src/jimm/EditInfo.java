@@ -96,12 +96,16 @@ public class EditInfo extends Form implements CommandListener
 		editInfoForm._CityItem.setString(userInfo[JimmUI.UI_CITY]);
 
 		Jimm.display.setCurrent(editInfoForm);
+		Jimm.setBkltOn(true);
 	}
 
 	public void commandAction(Command c, Displayable d)
 	{
 		if (c == _CmdCancel)
+		{
 			Jimm.display.setCurrent(_PreviousForm);
+			Jimm.setBkltOn(true);
+		}
 
 		if (c == _CmdSave)
 		{

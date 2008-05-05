@@ -29,12 +29,16 @@ import jimm.JimmUI;
 
 import java.util.Timer;
 
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
-import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
-import javax.microedition.lcdui.Displayable;
+
+//#sijapp cond.if target is "MOTOROLA"#
+//# import jimm.TimerTasks;
+//# import jimm.Jimm;
+//# import jimm.Options;
+//# import com.motorola.funlight.*;
+//#sijapp cond.end#
 
 public class Jimm extends MIDlet
 {
@@ -71,12 +75,6 @@ public class Jimm extends MIDlet
 	//#sijapp cond.end #
 	//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
 	//#	static public final boolean supports_JSR75;
-	//#sijapp cond.end#
-	//#sijapp cond.if target="MOTOROLA"#
-	//#	static public final int funlight_device_type;
-	//#	
-	//#	public static final int FUNLIGHT_DEVICE_E380 = 2;
-	//#	public static final int FUNLIGHT_DEVICE_E390 = 3;
 	//#sijapp cond.end#
 
 	// Timer object
@@ -125,23 +123,6 @@ public class Jimm extends MIDlet
 		//#		finally
 		//#		{
 		//#			supports_JSR75 = jsr75;
-		//#		}
-		//#sijapp cond.end#
-
-		//#sijapp cond.if target="MOTOROLA"#
-		//#		String funlightsProduct = System.getProperty("funlights.product");
-		//#		System.out.println("funlights.product = " + funlightsProduct);
-		//#		if (funlightsProduct == null)
-		//#		{
-		//#			funlight_device_type = -1;
-		//#		}
-		//#		else if (funlightsProduct.equals("E380"))
-		//#		{
-		//#			funlight_device_type = FUNLIGHT_DEVICE_E380;
-		//#		}
-		//#		else
-		//#		{
-		//#			funlight_device_type = FUNLIGHT_DEVICE_E390;
 		//#		}
 		//#sijapp cond.end#
 	}
@@ -255,6 +236,14 @@ public class Jimm extends MIDlet
 			// Activate main menu
 			MainMenu.activate();
 		}
+
+		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		DrawControls.VirtualList.setBackLightData
+		(
+			Options.getBoolean(Options.OPTION_LIGHT_MANUAL),
+			Options.getInt(Options.OPTION_LIGHT_TIMEOUT)
+		);
+		//#sijapp cond.end#
 		
 		DrawControls.VirtualList.setDisplay(Jimm.display);
 		
@@ -474,4 +463,25 @@ public class Jimm extends MIDlet
 			}
 		}
 	}
+	
+/* ************************************************************************** */
+	
+	public static void setBkltOn(boolean ferever)
+	{
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		if ( !Options.getBoolean(Options.OPTION_LIGHT_MANUAL) ) return;
+		Jimm.display.flashBacklight(ferever ? Integer.MAX_VALUE : Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
+		System.out.println("setBkltOn, ferever="+ferever);
+//#sijapp cond.end#
+	}
+	
+	public static void setBkltOff()
+	{
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		if ( !Options.getBoolean(Options.OPTION_LIGHT_MANUAL) ) return;
+		Jimm.display.flashBacklight(1);
+		System.out.println("setBkltOff");
+//#sijapp cond.end#
+	}
+	
 }

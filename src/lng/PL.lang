@@ -1,7 +1,7 @@
   // Labels
   // MOTOROLA formatted buttons
   // #sijapp cond.if target is "MOTOROLA"#
-  "backlight_manual"            "W��czenie pod�wietlania  (Klawisz *)"
+  "backlight_manual"            "W��czenie pod�wietlania"
   "backlight_timeout"           "Automatyczne wy��czenie  pod�wietlania (w sekundach)" 
   "select"                      "Zaznacz     "
   "reset"                       "       Reset"

@@ -166,6 +166,7 @@ public class FileTransfer implements CommandListener, Runnable
 			{
 				vf = new ViewFinder();
 				Display.getDisplay(Jimm.jimm).setCurrent(vf);
+				Jimm.setBkltOn(true);
 				vf.start();
 			}
 		}
@@ -231,6 +232,7 @@ public class FileTransfer implements CommandListener, Runnable
 				alert.setTimeout(Alert.FOREVER);
 				System.out.println(exceptionText);
 				Jimm.display.setCurrent(alert);
+				Jimm.setBkltOn(false);
 				System.out.println("END");
 			}
 			else cItem.activate();
@@ -408,6 +410,7 @@ public class FileTransfer implements CommandListener, Runnable
 		name_Desc.setCommandListener(this);
 
 		Jimm.display.setCurrent(name_Desc);
+		Jimm.setBkltOn(true);
 	}
 
 	// Command listener

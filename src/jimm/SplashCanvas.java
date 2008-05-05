@@ -24,9 +24,6 @@
 package jimm;
 
 import DrawControls.TextList;
-//  #sijapp cond.if target is "MOTOROLA"#
-//# import DrawControls.VirtualList;
-//  #sijapp cond.end#
 import jimm.comm.ConnectAction;
 //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 //  #sijapp cond.if modules_FILES is "true"#
@@ -39,15 +36,7 @@ import jimm.comm.Action;
 import jimm.util.ResourceBundle;
 
 import java.io.IOException;
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Font;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDletStateChangeException;
 import java.util.Date;
 import java.util.TimerTask;
@@ -263,13 +252,12 @@ public class SplashCanvas extends Canvas
 			return;
 
 		isLocked = true;
-		//  #sijapp cond.if target is "MOTOROLA"#
-		//#		VirtualList.setBkltOn(false);
-		//  #sijapp cond.end#
+		Jimm.setBkltOn(false);
 		setProgress(0);
 		setMessage(ResourceBundle.getString("keylock_enabled"));
 		setStatusToDraw(JimmUI.getStatusImageIndex(Icq.getCurrentStatus()));
 		Jimm.display.setCurrent(_this);
+		Jimm.setBkltOff();
 
 		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
 		{
@@ -290,8 +278,7 @@ public class SplashCanvas extends Canvas
 		//#        LED.setState(LED.STATE_OFF);
 		//  #sijapp cond.end#
 		//  #sijapp cond.if target is "MOTOROLA"#
-		//#		if (Options.getBoolean(Options.OPTION_LIGHT_MANUAL)) VirtualList.setBkltOn(true);
-		//#		VirtualList.disableLED();
+		//#		if (Options.getBoolean(Options.OPTION_LIGHT_MANUAL)) Jimm.setBkltOn(true);
 		//  #sijapp cond.end#
 		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE) && (t2 != null))
 			t2.cancel();
@@ -321,16 +308,6 @@ public class SplashCanvas extends Canvas
 			//#	        LED.setConfiguration(500, 250, LED.BRIGHTNESS_50);
 			//#	        LED.setState(LED.STATE_BLINKING);
 			//#sijapp cond.end#
-			//#sijapp cond.if target is "MOTOROLA"#
-			//#			if (Jimm.funlight_device_type != 0)
-			//#			{
-			//#				VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, 1000, 0xFFAA00);
-			//#			}
-			//#			else
-			//#			{
-			//#				VirtualList.flashBklt(1000);
-			//#			}
-			//#sijapp cond.end#
 			_this.repaint();
 		}
 	}
@@ -349,10 +326,6 @@ public class SplashCanvas extends Canvas
 					t1.cancel();
 				showKeylock = true;
 				this.repaint();
-				//#sijapp cond.if target is "MOTOROLA"#
-				//#				VirtualList.flashBklt(2500);
-				//#				VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, 2500, JimmUI.st_colors[JimmUI.getStatusIndex(Icq.getCurrentStatus())]);
-				//#sijapp cond.end#
 			}
 		}
 	}
@@ -556,13 +529,6 @@ public class SplashCanvas extends Canvas
 		{
 			new Timer().schedule(new TimerTasks(
 					TimerTasks.SC_RESET_TEXT_AND_IMG), 3000);
-			//#sijapp cond.if target="MOTOROLA"#
-			//#			VirtualList.setLEDmode(VirtualList.BKLT_TYPE_BLINKING, 3000, JimmUI.st_colors[status_index]);
-			//#		}
-			//#		else
-			//#		{
-			//#			VirtualList.setLEDmode(VirtualList.BKLT_TYPE_LIGHTING, -1, JimmUI.st_colors[9]);
-			//#sijapp cond.end#
 		}
 	}
 
