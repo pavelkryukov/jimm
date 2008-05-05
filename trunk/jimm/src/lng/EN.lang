@@ -384,7 +384,7 @@
   // MOTOROLA strings
   //#sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Backlight timeout (sec)"
-  "backlight_manual"            "Manual backlight (* key)"
+  "backlight_manual"            "Manual backlight"
   "exit_button"                 "Exit"
   "menu_button"                 "Menu"
   "flash_backlight"             "Flash LEDs"

@@ -74,6 +74,7 @@ public class JimmUI implements CommandListener
 		else if (screen instanceof Displayable)
 		{
 			Jimm.display.setCurrent((Displayable)screen);
+			Jimm.setBkltOn(false);
 		}
 		else
 		{
@@ -483,6 +484,7 @@ public class JimmUI implements CommandListener
 		JimmUI.listener = listener;
 		msgForm.setCommandListener(_this);
 		Jimm.display.setCurrent(msgForm);
+		Jimm.setBkltOn(true);
 	}
 	
 	static private TextList showMessageBox(String cap, String text, int type)
@@ -1295,6 +1297,7 @@ public class JimmUI implements CommandListener
 			Alert alert = new Alert("", ResourceBundle.getString("no_availible_groups"), null, AlertType.INFO);
 			alert.setTimeout(Alert.FOREVER);
 			Jimm.display.setCurrent(alert);
+			Jimm.setBkltOn(false);
 			return null;
 		}
 
@@ -1382,6 +1385,7 @@ public class JimmUI implements CommandListener
 		if (initText != null) messageTextbox.setString(initText);
 		messageTextbox.setCommandListener(_this);
 		Jimm.display.setCurrent(messageTextbox);
+		Jimm.setBkltOn(true);
 		
 		sendTypeingNotify(true);
 	}
@@ -1497,6 +1501,7 @@ public class JimmUI implements CommandListener
 		authTextbox.addCommand(cmdCancel);
 		authTextbox.setCommandListener(_this);
 		Jimm.display.setCurrent(authTextbox);
+		Jimm.setBkltOn(true);
 	}
 	
 	/////////////////////////////////////////////////////////////
@@ -1731,6 +1736,7 @@ public class JimmUI implements CommandListener
 				renameTextbox.addCommand(cmdCancel);
 				renameTextbox.setCommandListener(_this);
 				Jimm.display.setCurrent(renameTextbox);
+				Jimm.setBkltOn(true);
 				break;
 				
 			case USER_MENU_USER_INFO:

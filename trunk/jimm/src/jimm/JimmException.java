@@ -159,9 +159,6 @@ public class JimmException extends Exception
 			ContactList.setStatusesOffline();
 			SplashCanvas.setStatusToDraw(JimmUI
 					.getStatusImageIndex(ContactList.STATUS_OFFLINE));
-			//#sijapp cond.if target="MOTOROLA"#
-			//#			DrawControls.VirtualList.setLEDmode(DrawControls.VirtualList.BKLT_TYPE_LIGHTING, -1, 0xFF0000);
-			//#sijapp cond.end#
 
 			// Unlock splash (if locked)
 			if (SplashCanvas.locked())
@@ -205,7 +202,6 @@ public class JimmException extends Exception
 	//#sijapp cond.if target="MOTOROLA"#
 	//#	public void commandAction(Command c, Displayable d)
 	//#	{
-	//#		DrawControls.VirtualList.disableLED();
 	//#		MainMenu.activate();
 	//#	}
 	//#sijapp cond.end#

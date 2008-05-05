@@ -272,6 +272,7 @@ public class Search
 				this.searchForm.addCommand(this.searchCommand);
 				this.searchForm.addCommand(this.backCommand);
 				Jimm.display.setCurrent(this.searchForm);
+				Jimm.setBkltOn(true);
 				break;
 
 			case ACTIV_SHOW_NORESULTS:
@@ -281,6 +282,7 @@ public class Search
 						.getString("no_results"), null, null);
 				alert.setTimeout(Alert.FOREVER);
 				Jimm.display.setCurrent(alert, this.searchForm);
+				Jimm.setBkltOn(false);
 				break;
 			}
 		}
@@ -452,6 +454,7 @@ public class Search
 					groupList.addCommand(addCommand);
 					groupList.setCommandListener(this);
 					Jimm.display.setCurrent(groupList);
+					Jimm.setBkltOn(true);
 				}
 			} else if (c == this.addCommand && d == this.groupList)
 			{

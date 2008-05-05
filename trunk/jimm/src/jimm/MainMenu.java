@@ -228,6 +228,7 @@ public class MainMenu implements CommandListener
 		textBoxForm.addCommand(JimmUI.cmdBack);
 		textBoxForm.setCommandListener(_this);
 		Jimm.display.setCurrent(textBoxForm);
+		Jimm.setBkltOn(true);
 	}
 
 	private void doExit(boolean anyway)
@@ -633,6 +634,7 @@ public class MainMenu implements CommandListener
 				statusMessage.addCommand(JimmUI.cmdSelect);
 				statusMessage.setCommandListener(_this);
 				Jimm.display.setCurrent(statusMessage);
+				Jimm.setBkltOn(true);
 			} 
 			else activateMenu = true;
 			break;

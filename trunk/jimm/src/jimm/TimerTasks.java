@@ -10,10 +10,6 @@ import DrawControls.VirtualList;
 import jimm.comm.Action;
 import jimm.comm.Icq;
 
-//#sijapp cond.if target="MOTOROLA"#
-//# import com.motorola.funlight.*;
-//#sijapp cond.end#
-
 public class TimerTasks extends TimerTask implements
 		javax.microedition.lcdui.CommandListener
 {
@@ -24,18 +20,7 @@ public class TimerTasks extends TimerTask implements
 	final static public int TYPE_CREEPING = 5;
 	final static public int TYPE_MINUTE = 6;
 
-	//#sijapp cond.if target="MOTOROLA"#
-	//#	public static final int VL_SWITCHOFF_BKLT = 10;
-	//#	public static final int VL_SWITCHOFF_LED    = 11;
-	//#	public static final int VL_LED_CHANGE_STATE = 12;
-	//#sijapp cond.end#
 	public static final int ICQ_KEEPALIVE = 100;
-
-	//#sijapp cond.if target="MOTOROLA"#
-	//#	Region[] regions;
-	//#	int tries;
-	//#	int cmode;
-	//#sijapp cond.end#
 
 	private int type = -1;
 
@@ -43,8 +28,6 @@ public class TimerTasks extends TimerTask implements
 
 	boolean wasError = false;
 	boolean canceled = false;
-	
-
 
 	private Object flashDispl;
 	private String flashText, flashOldText;
@@ -85,15 +68,6 @@ public class TimerTasks extends TimerTask implements
 		return type;
 	}
 
-	//#sijapp cond.if target="MOTOROLA"#
-	//#	public TimerTasks(int type, Region[] regions, int tries)
-	//#	{
-	//#		this.type = type;
-	//#		this.regions = regions;
-	//#		this.tries = tries;
-	//#	}
-	//#sijapp cond.end#
-
 	public void run()
 	{
 		if (wasError)
@@ -118,33 +92,6 @@ public class TimerTasks extends TimerTask implements
 						.getCurrentStatus()));
 				SplashCanvas.Repaint();
 				break;
-			//#sijapp cond.if target="MOTOROLA"#
-			//#			case VL_SWITCHOFF_BKLT:
-			//#				DrawControls.VirtualList.setBkltOn(false);
-			//#				break;
-			//#			case VL_SWITCHOFF_LED:
-			//#				DrawControls.VirtualList.disableLED();
-			//#				break;
-			//#			case VL_LED_CHANGE_STATE:
-			//#				if (((cmode % 2) == 0) & (tries != 1))
-			//#				{
-			//#					regions[0].getControl();
-			//#					if (regions[1] != null) regions[1].getControl();
-			//#				}
-			//#				else
-			//#				{
-			//#					regions[0].releaseControl();
-			//#					if (regions[1] != null) regions[1].releaseControl();
-			//#				}
-			//#				tries--;
-			//#				cmode = (cmode++ % 2);
-			//#				if (tries < 1)
-			//#				{
-			//#					DrawControls.VirtualList.disableLED();
-			//#					cancel();
-			//#				}
-			//#				break;
-			//#sijapp cond.end#
 
 			case ICQ_KEEPALIVE:
 				if (Icq.isConnected()
