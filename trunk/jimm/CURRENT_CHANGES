@@ -7,6 +7,7 @@ Implemented:
   * NEW FEATURE: Registration of new ICQ account
   * Messages delivery notification
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
+  * BUGFIX: Reconnect to server feature, cancel of connecting
   * Modified user interface
   * More color schemes
   * New statuses: Evil, Depression, At home, At work, Lunch
