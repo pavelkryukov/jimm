@@ -16,7 +16,7 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
- File: src/jimm/comm/RegisterNewUin.java
+ File: src/jimm/comm/RegisterNewUinAction.java
  Version: ###VERSION###  Date: ###DATE###
  Author(s): Ivan Mikitevich
  *******************************************************************************/
@@ -356,12 +356,12 @@ public class RegisterNewUinAction extends Action
     // Returns true if an error has occured
     public boolean isError()
     {
-    	if ((this.state != RegisterNewUinAction.STATE_ERROR) && !this.active && (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
-        {
-    		JimmException e = new JimmException(119, 0);
-		JimmException.handleException(e);
-		this.state = RegisterNewUinAction.STATE_ERROR;
-        }
+//    	if ((this.state != RegisterNewUinAction.STATE_ERROR) && !this.active && (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
+//        {
+//    		JimmException e = new JimmException(119, 0);
+//		JimmException.handleException(e);
+//		this.state = RegisterNewUinAction.STATE_ERROR;
+//        }
         return (this.state == RegisterNewUinAction.STATE_ERROR);
     }
 
