@@ -261,6 +261,7 @@ public class RegisterNewUinAction extends Action
 							}
 						}
 
+						Icq.setConnected();
 			                        // Move to next state
 			                        this.state = RegisterNewUinAction.STATE_WAITING_FOR_CONFIRM;
 			                        // Packet has been consumed
