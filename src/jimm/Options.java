@@ -178,6 +178,35 @@ public class Options
 	public static final int HOTKEY_CLI_INFO = 10;
 	public static final int HOTKEY_FULLSCR  = 11;
 	public static final int HOTKEY_SOUNDOFF = 12;
+	
+	/* Constants for connection type */
+	public static final int CONN_TYPE_SOCKET = 0;
+	public static final int CONN_TYPE_HTTP = 1;
+	public static final int CONN_TYPE_PROXY = 2;
+	
+	/* Constants for method getSchemeColor to retrieving color from color scheme */
+	public static final int CLRSCHHEME_BACK       = 1; // retrieving background color
+	public static final int CLRSCHHEME_TEXT       = 2; // retrieving text color
+	public static final int CLRSCHHEME_OUTGOING   = 3; // retrieving highlight color
+	public static final int CLRSCHHEME_CURS       = 4; // retrieving cursor background color
+	public static final int CLRSCHHEME_CAP        = 5; // retrieving caption background color
+	public static final int CLRSCHHEME_INCOMING   = 6; // retrieving highlight color
+	public static final int CLRSCHHEME_CAP_TEXT   = 7; // retrieving caption text color
+	public static final int CLRSCHHEME_CURS_FRAME = 8; // retrieving cursor flame color
+
+	/* Color schemes values */
+	final static private int[] colors =
+	{// back      text      out text  cursor    caption   in text   cap text  curs.brd.
+		0xFFFFFF, 0x000000, 0x0000FF, 0xE8E8FF, 0xF0F0F0, 0xFF0000, 0x000000, 0x6060A0,
+		0x000000, 0xFFFFFF, 0x00FFFF, 0x0000C0, 0x505050, 0xFF0000, 0xFFFFFF, 0x0000FF,
+		0x000080, 0xFFFFFF, 0x00FFFF, 0x0000D0, 0x0000B0, 0xFF0000, 0xFFFFFF, 0x0000FF,
+		0xFFA0C0, 0x000000, 0x4000C0, 0xFFE0D0, 0xFFE0D0, 0xC00040, 0x000000, 0xA02020,
+		0xE0FFE0, 0x000000, 0x008000, 0xC0FFC0, 0xC0FFC0, 0xFF0000, 0x000000, 0x00A000,
+		0xF9F3EF, 0xD60000, 0x3A6793, 0xE3BFA1, 0xC37D3F, 0xDB8941, 0xFFFFF0, 0xD26464, // Sand
+		0x000000, 0x00D000, 0xD0D0D0, 0x005000, 0x007000, 0x00FF00, 0x80FF80, 0x008000, // Hacker
+		0xD5FDFD, 0x000000, 0x009090, 0xB0FFFF, 0xA0FFFF, 0x0000FF, 0x000000, 0x00A0A0, // Aqua
+	};
+	
 
 	//#sijapp cond.if modules_DEBUGLOG is "true" #
 	private static boolean checkKeys = false;
@@ -619,32 +648,6 @@ public class Options
 
 	/**************************************************************************/
 
-	/* Constants for method getSchemeColor to retrieving color from color scheme */
-	public static final int CLRSCHHEME_BACK = 1; // retrieving background color
-	public static final int CLRSCHHEME_TEXT = 2; // retrieving text color
-	public static final int CLRSCHHEME_OUTGOING = 3; // retrieving highlight color
-	public static final int CLRSCHHEME_CURS = 4; // retrieving curr mess highlight color
-	public static final int CLRSCHHEME_CAP  = 5; // retrieving caption background color
-	public static final int CLRSCHHEME_INCOMING = 6; // retrieving highlight color
-	public static final int CLRSCHHEME_CAP_TEXT = 7; // retrieving caption text color
-	public static final int CLRSCHHEME_CURS_FRAME = 8;
-
-	/* Constants for connection type */
-	public static final int CONN_TYPE_SOCKET = 0;
-	public static final int CONN_TYPE_HTTP = 1;
-	public static final int CONN_TYPE_PROXY = 2;
-
-	final static private int[] colors =
-	{// back      text      out text  cursor    caption   in text   cap text  curs.brd.
-		0xFFFFFF, 0x000000, 0x0000FF, 0xE8E8FF, 0xF0F0F0, 0xFF0000, 0x000000, 0x6060A0,
-		0x000000, 0xFFFFFF, 0x00FFFF, 0x0000C0, 0x505050, 0xFF0000, 0xFFFFFF, 0x0000FF,
-		0x000080, 0xFFFFFF, 0x00FFFF, 0x0000D0, 0x0000B0, 0xFF0000, 0xFFFFFF, 0x0000FF,
-		0xFFA0C0, 0x000000, 0x4000C0, 0xFFE0D0, 0xFFE0D0, 0xC00040, 0x000000, 0xA02020,
-		0xE0FFE0, 0x000000, 0x008000, 0xC0FFC0, 0xC0FFC0, 0xFF0000, 0x000000, 0x00A000,
-		0xF9F3EF, 0xD60000, 0x3A6793, 0xE3BFA1, 0xC37D3F, 0xDB8941, 0xFFFFF0, 0xD26464, // Sand
-		0x000000, 0x00D000, 0xD0D0D0, 0x005000, 0x007000, 0x00FF00, 0x80FF80, 0x008000, // Hacker
-		0xD5FDFD, 0x000000, 0x009090, 0xB0FFFF, 0xA0FFFF, 0x0000FF, 0x000000, 0x00A0A0, // Aqua
-	};
 
 	/* Retrieves color value from color scheme */
 	static public int getSchemeColor(int type, int theme)
