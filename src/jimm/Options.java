@@ -61,225 +61,126 @@ import DrawControls.VirtualList;
 
 public class Options
 {
+	/* Not stored in RMS */
+	public static final int OPTION_UIN      = 254;    
+	public static final int OPTION_PASSWORD = 255;
+	
 	/* Option keys */
-	static final int OPTION_UIN1 = 0; /* String */
-
-	static final int OPTION_PASSWORD1 = 228; /* String  */
-
-	static final int OPTION_UIN2 = 14; /* String  */
-
-	static final int OPTION_PASSWORD2 = 229; /* String  */
-
-	static final int OPTION_UIN3 = 15; /* String  */
-
-	static final int OPTION_PASSWORD3 = 230; /* String  */
-
-	static final int OPTIONS_CURR_ACCOUNT = 86; /* int     */
-
-	// Theese two options are not stored in RMS 
-	public static final int OPTION_UIN = 254; /* String  */
-
-	public static final int OPTION_PASSWORD = 255; /* String  */
-
-	public static final int OPTION_SRV_HOST = 1; /* String  */
-
-	public static final int OPTION_SRV_PORT = 2; /* String  */
-
-	public static final int OPTION_KEEP_CONN_ALIVE = 128; /* boolean */
-
-	public static final int OPTION_CONN_ALIVE_INVTERV = 13; /* String  */
-
-	public static final int OPTION_CONN_PROP = 64; /* int     */
-
-	public static final int OPTION_CONN_TYPE = 83; /* int     */
-
-	public static final int OPTION_AUTO_CONNECT = 138; /* boolean */
-
-	//#sijapp cond.if target isnot  "MOTOROLA"#
-	public static final int OPTION_SHADOW_CON = 139; /* boolean */
-
-	//#sijapp cond.end#
-	public static final int OPTION_RECONNECT = 149; /* boolean */
-
-	public static final int OPTION_RECONNECT_NUMBER = 91; /* int */
-
-	public static final int OPTION_HTTP_USER_AGENT = 17; /* String  */
-
-	public static final int OPTION_HTTP_WAP_PROFILE = 18; /* String  */
-
-	public static final int OPTION_UI_LANGUAGE = 3; /* String  */
-
-	public static final int OPTION_DISPLAY_DATE = 129; /* boolean */
-
-	public static final int OPTION_CL_SORT_BY = 65; /* int     */
-
-	public static final int OPTION_CL_HIDE_OFFLINE = 130; /* boolean */
-
-	//#sijapp cond.if target isnot  "DEFAULT"#	
-	public static final int OPTION_MESS_NOTIF_MODE = 66; /* int     */
-
-	public static final int OPTION_MESS_NOTIF_FILE = 4; /* String  */
-
-	public static final int OPTION_MESS_NOTIF_VOL = 67; /* int     */
-
-	public static final int OPTION_ONLINE_NOTIF_MODE = 68; /* int     */
-
-	public static final int OPTION_ONLINE_NOTIF_FILE = 5; /* String  */
-
-	public static final int OPTION_ONLINE_NOTIF_VOL = 69; /* int     */
-
-	public static final int OPTION_VIBRATOR = 75; /* integer */
-
-	public static final int OPTION_TYPING_MODE = 88; /* integer */
-
-	public static final int OPTION_TYPING_FILE = 16; /* String */
-
-	public static final int OPTION_TYPING_VOL = 89;
-
-	//#sijapp cond.end #	
-	public static final int OPTION_CP1251_HACK = 133; /* boolean */
-
-	//#sijapp cond.if modules_TRAFFIC is "true" #
-	public static final int OPTION_COST_PER_PACKET = 70; /* int     */
-
-	public static final int OPTION_COST_PER_DAY = 71; /* int     */
-
-	public static final int OPTION_COST_PACKET_LENGTH = 72; /* int     */
-
-	public static final int OPTION_CURRENCY = 6; /* String  */
-
-	//#sijapp cond.end #
-	public static final int OPTION_ONLINE_STATUS = 192; /* long    */
-
-	public static final int OPTION_CHAT_SMALL_FONT = 135; /* boolean */
-
-	public static final int OPTION_USER_GROUPS = 136; /* boolean */
-
-	public static final int OPTION_HISTORY = 137; /* boolean */
-
-	public static final int OPTION_SHOW_LAST_MESS = 142; /* boolean */
-
-	public static final int OPTION_COLOR_SCHEME = 73; /* int     */
-
-	public static final int OPTION_STATUS_MESSAGE = 7; /* String  */
-
-	public static final int OPTION_LIGHT_TIMEOUT       =  74;   /* int     */
-	public static final int OPTION_LIGHT_MANUAL	       = 140;   /* boolean */
-
-	public static final int OPTION_USE_SMILES = 141; /* boolean */
-
-	public static final int OPTION_MD5_LOGIN = 144; /* boolean */
-
-	//#sijapp cond.if modules_PROXY is "true" #
-	public static final int OPTION_PRX_TYPE = 76; /* int     */
-
-	public static final int OPTION_PRX_SERV = 8; /* String  */
-
-	public static final int OPTION_PRX_PORT = 9; /* String  */
-
-	public static final int OPTION_AUTORETRY_COUNT = 10; /* String  */
-
-	public static final int OPTION_PRX_NAME = 11; /* String  */
-
-	public static final int OPTION_PRX_PASS = 12; /* String  */
-
-	//#sijapp cond.end#
-
-	public static final int OPTIONS_GMT_OFFSET = 87; /* int     */
-
-	public static final int OPTIONS_LOCAL_OFFSET = 90; /* int     */
-
-	public static final int OPTIONS_DAYLIGHT_SAVING = 93; /* int     */
-
-	public static final int OPTION_FULL_SCREEN = 145; /* boolean */
-
-	public static final int OPTION_SILENT_MODE = 150; /* boolean */
-
-	public static final int OPTION_BRING_UP = 151; /* boolean */
-
-	public static final int OPTION_CREEPING_LINE = 152; /* boolean */
+	static final int        OPTION_UIN1               = 0;
+	public static final int OPTION_SRV_HOST           = 1;
+	public static final int OPTION_SRV_PORT           = 2;
+	public static final int OPTION_UI_LANGUAGE        = 3;
+	public static final int OPTION_MESS_NOTIF_FILE    = 4;
+	public static final int OPTION_ONLINE_NOTIF_FILE  = 5;
+	public static final int OPTION_CURRENCY           = 6;
+	public static final int OPTION_STATUS_MESSAGE     = 7;
+	public static final int OPTION_PRX_SERV           = 8;
+	public static final int OPTION_PRX_PORT           = 9;
+	public static final int OPTION_AUTORETRY_COUNT    = 10;
+	public static final int OPTION_PRX_NAME           = 11;
+	public static final int OPTION_PRX_PASS           = 12;
+	public static final int OPTION_CONN_ALIVE_INVTERV = 13;
+	static final int        OPTION_UIN2               = 14;
+	static final int        OPTION_UIN3               = 15;
+	public static final int OPTION_TYPING_FILE        = 16;
+	public static final int OPTION_HTTP_USER_AGENT    = 17;
+	public static final int OPTION_HTTP_WAP_PROFILE   = 18;
 	
-	// Show icon "message" at start of message 
-	public static final int OPTION_SHOW_MESS_ICON = 153; /* boolean */
+	/* Passwords */
+	static final int OPTION_PASSWORD1 = 228;
+	static final int OPTION_PASSWORD2 = 229;
+	static final int OPTION_PASSWORD3 = 230;
 	
-	// Show nick in message
-	public static final int OPTION_SHOW_NICK = 154; /* boolean */
+	/* int */
+	public static final int OPTION_CONN_PROP          = 64;
+	public static final int OPTION_CL_SORT_BY         = 65;
+	public static final int OPTION_MESS_NOTIF_MODE    = 66;
+	public static final int OPTION_MESS_NOTIF_VOL     = 67;
+	public static final int OPTION_ONLINE_NOTIF_MODE  = 68;
+	public static final int OPTION_ONLINE_NOTIF_VOL   = 69;
+	public static final int OPTION_COST_PER_PACKET    = 70;
+	public static final int OPTION_COST_PER_DAY       = 71;
+	public static final int OPTION_COST_PACKET_LENGTH = 72;
+	public static final int OPTION_COLOR_SCHEME       = 73;
+	public static final int OPTION_LIGHT_TIMEOUT      = 74;
+	public static final int OPTION_VIBRATOR           = 75;
+	public static final int OPTION_PRX_TYPE           = 76;
+	public static final int OPTION_EXT_CLKEY0         = 77; 
+	public static final int OPTION_EXT_CLKEYSTAR      = 78;
+	public static final int OPTION_EXT_CLKEY4         = 79;
+	public static final int OPTION_EXT_CLKEY6         = 80; 
+	public static final int OPTION_EXT_CLKEYCALL      = 81; 
+	public static final int OPTION_EXT_CLKEYPOUND     = 82;
+	public static final int OPTION_CONN_TYPE          = 83;
+	public static final int OPTION_VISIBILITY_ID      = 85;
+	public static final int OPTION_POPUP_WIN2         = 84;
+	static final int        OPTION_CURR_ACCOUNT       = 86;
+	public static final int OPTION_GMT_OFFSET         = 87;
+	public static final int OPTION_TYPING_MODE        = 88;
+	public static final int OPTION_TYPING_VOL         = 89;
+	public static final int OPTION_LOCAL_OFFSET       = 90;
+	public static final int OPTION_RECONNECT_NUMBER   = 91;
+	public static final int OPTION_XSTATUS            = 92; 
+	public static final int OPTION_DAYLIGHT_SAVING    = 93;
+	public static final int OPTION_FT_MODE            = 94;
+	public static final int OPTION_CAMERAURI          = 95;
+	public static final int OPTION_AUTOAWAY_TIME1     = 96;
+	public static final int OPTION_AUTOAWAY_TIME2     = 97;
 	
-	// Show date of message at message text
-	public static final int OPTION_SHOW_MESS_DATE = 155; /* boolean */
+	/* boolean */
+	public static final int OPTION_KEEP_CONN_ALIVE   = 128; 
+	public static final int OPTION_DISPLAY_DATE      = 129;
+	public static final int OPTION_CL_HIDE_OFFLINE   = 130;
+	public static final int OPTION_CP1251_HACK       = 133;
+	public static final int OPTION_CHAT_SMALL_FONT   = 135;
+	public static final int OPTION_USER_GROUPS       = 136;
+	public static final int OPTION_HISTORY           = 137;
+	public static final int OPTION_AUTO_CONNECT      = 138;
+	public static final int OPTION_SHADOW_CON        = 139;
+	public static final int OPTION_LIGHT_MANUAL      = 140;
+	public static final int OPTION_USE_SMILES        = 141;
+	public static final int OPTION_SHOW_LAST_MESS    = 142;
+	public static final int OPTION_MD5_LOGIN         = 144;
+	public static final int OPTION_FULL_SCREEN       = 145;
+	static final int        OPTION_LANG_CHANGED      = 148;
+	public static final int OPTION_RECONNECT         = 149;
+	public static final int OPTION_SILENT_MODE       = 150;
+	public static final int OPTION_BRING_UP          = 151;
+	public static final int OPTION_CREEPING_LINE     = 152;
+	public static final int OPTION_SHOW_MESS_ICON    = 153;
+	public static final int OPTION_SHOW_NICK         = 154;
+	public static final int OPTION_SHOW_MESS_DATE    = 155;
+	public static final int OPTION_SHOW_MESS_CLRF    = 156;
+	public static final int OPTION_MESS_COLORED_TEXT = 157;
+	public static final int OPTION_CL_CLIENTS        = 158;
+	public static final int OPTION_XSTATUSES         = 159;
+	public static final int OPTION_ASK_FOR_WEB_FT    = 160;
+	public static final int OPTION_USE_AUTOAWAY      = 161;
+	public static final int OPTION_DELIV_MES_INFO    = 162;
 	
-	public static final int OPTION_SHOW_MESS_CLRF = 156; /* boolean */
+	/* long */
+	public static final int OPTION_ONLINE_STATUS = 192; 
 	
-	public static final int OPTION_MESS_COLORED_TEXT = 157; /* boolean */
-	
-	public static final int OPTION_CL_CLIENTS = 158; /* boolean */
-	public static final int OPTION_XSTATUSES = 159; /* boolean */
-	
-	public static final int OPTION_ASK_FOR_WEB_FT = 160; /* boolean */
-
-	protected static final int OPTIONS_LANG_CHANGED = 148;
-
-	public static final int OPTION_POPUP_WIN2 = 84; /* int     */
-
-	public static final int OPTION_EXT_CLKEY0 = 77; /* int     */
-
-	public static final int OPTION_EXT_CLKEYSTAR = 78; /* int     */
-
-	public static final int OPTION_EXT_CLKEY4 = 79; /* int     */
-
-	public static final int OPTION_EXT_CLKEY6 = 80; /* int     */
-
-	public static final int OPTION_EXT_CLKEYCALL = 81; /* int     */
-
-	public static final int OPTION_EXT_CLKEYPOUND = 82; /* int     */
-
-	public static final int OPTION_VISIBILITY_ID = 85; /* int     */
-	
-	public static final int OPTION_XSTATUS = 92; /* int     */
-	
-	public static final int OPTION_FT_MODE = 94; /* int     */
-	
-	public static final int OPTION_USE_AUTOAWAY = 161; /* boolean */
-	public static final int OPTION_AUTOAWAY_TIME1 = 96; /* int     */
-	public static final int OPTION_AUTOAWAY_TIME2 = 97; /* int     */
-	
-	public static final int OPTION_DELIV_MES_INFO = 162; /* boolean */
-	
-	// Filetransfer modes
+	/* Filetransfer modes */
 	public static final int FS_MODE_WEB = 0;
 	public static final int FS_MODE_NET = 1;
 	
-	public static final int OPTION_CAMERAURI = 95; /* int     */
-
-
-	//Hotkey Actions
-	public static final int HOTKEY_NONE = 0;
-
-	public static final int HOTKEY_INFO = 2;
-
-	public static final int HOTKEY_NEWMSG = 3;
-
-	public static final int HOTKEY_ONOFF = 4;
-
-	public static final int HOTKEY_OPTIONS = 5;
-
-	public static final int HOTKEY_MENU = 6;
-
-	public static final int HOTKEY_LOCK = 7;
-
-	public static final int HOTKEY_HISTORY = 8;
-
+	/* Hotkey Actions */
+	public static final int HOTKEY_NONE     = 0;
+	public static final int HOTKEY_INFO     = 2;
+	public static final int HOTKEY_NEWMSG   = 3;
+	public static final int HOTKEY_ONOFF    = 4;
+	public static final int HOTKEY_OPTIONS  = 5;
+	public static final int HOTKEY_MENU     = 6;
+	public static final int HOTKEY_LOCK     = 7;
+	public static final int HOTKEY_HISTORY  = 8;
 	public static final int HOTKEY_MINIMIZE = 9;
-
 	public static final int HOTKEY_CLI_INFO = 10;
-
-	public static final int HOTKEY_FULLSCR = 11;
-
+	public static final int HOTKEY_FULLSCR  = 11;
 	public static final int HOTKEY_SOUNDOFF = 12;
 
 	//#sijapp cond.if modules_DEBUGLOG is "true" #
 	private static boolean checkKeys = false;
-
 	//#sijapp cond.end #
 
 	static int accountKeys[] =
@@ -316,9 +217,9 @@ public class Options
 
 			load();
 
-			if (getBoolean(OPTIONS_LANG_CHANGED))
+			if (getBoolean(OPTION_LANG_CHANGED))
 			{
-				setBoolean(OPTIONS_LANG_CHANGED, false);
+				setBoolean(OPTION_LANG_CHANGED, false);
 				resetLangDependedOpts();
 				//System.out.println("Options.resetLangDependedOpts()");
 			}
@@ -454,7 +355,7 @@ public class Options
 		setString(Options.OPTION_PASSWORD2, emptyString);
 		setString(Options.OPTION_UIN3, emptyString);
 		setString(Options.OPTION_PASSWORD3, emptyString);
-		setInt(Options.OPTIONS_CURR_ACCOUNT, 0);
+		setInt(Options.OPTION_CURR_ACCOUNT, 0);
 
 		setBoolean(Options.OPTION_FULL_SCREEN, false);
 
@@ -464,16 +365,16 @@ public class Options
 
 		/* Offset (in hours) between GMT time and local zone time 
 		 GMT_time + GMT_offset + DayLightSaving = Local_time */
-		setInt(Options.OPTIONS_GMT_OFFSET, 0);
+		setInt(Options.OPTION_GMT_OFFSET, 0);
 
 		/* Offset (in hours) between GMT time and phone clock 
 		 Phone_clock + Local_offset - DayLightSaving = GMT_time */
-		setInt(Options.OPTIONS_LOCAL_OFFSET, 0);
+		setInt(Options.OPTION_LOCAL_OFFSET, 0);
 
 		/* DayLightSaving (int) */
-		setInt(Options.OPTIONS_DAYLIGHT_SAVING, 0);
+		setInt(Options.OPTION_DAYLIGHT_SAVING, 0);
 
-		setBoolean(OPTIONS_LANG_CHANGED, false);
+		setBoolean(OPTION_LANG_CHANGED, false);
 		setBoolean(OPTION_CREEPING_LINE, false);
 		setBoolean(OPTION_SHOW_MESS_ICON, true);
 		setBoolean(OPTION_SHOW_NICK, true);
@@ -654,7 +555,7 @@ public class Options
 		{
 		case OPTION_UIN:
 		case OPTION_PASSWORD:
-			int index = getInt(Options.OPTIONS_CURR_ACCOUNT) * 2;
+			int index = getInt(Options.OPTION_CURR_ACCOUNT) * 2;
 			return getString(accountKeys[key == OPTION_UIN ? index : index + 1]);
 		}
 		return ((String) options.get(new Integer(key)));
@@ -1220,7 +1121,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			passwords.addElement(Options
 					.getString(Options.accountKeys[index + 1]));
 		}
-		currAccount = Options.getInt(Options.OPTIONS_CURR_ACCOUNT);
+		currAccount = Options.getInt(Options.OPTION_CURR_ACCOUNT);
 	}
 
 	private String checkUin(String value)
@@ -1345,7 +1246,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 		if (currAccount >= size)
 			currAccount = size - 1;
-		Options.setInt(Options.OPTIONS_CURR_ACCOUNT, currAccount);
+		Options.setInt(Options.OPTION_CURR_ACCOUNT, currAccount);
 	}
 
 	private void readAccontsControls()
@@ -1799,7 +1700,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				chsTimeZone.append("GMT" + (i < 0 ? "" : "+") + i + ":00",
 						null);
 			chsTimeZone.setSelectedIndex(Options
-					.getInt(Options.OPTIONS_GMT_OFFSET) + 12, true);
+					.getInt(Options.OPTION_GMT_OFFSET) + 12, true);
 
 			int[] currDateTime = Util.createDate(Util
 					.createCurrentDate(false));
@@ -1821,7 +1722,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			chsDayLight.append(ResourceBundle
 					.getString("daylight_saving"), null);
 			chsDayLight.setSelectedIndex(Options
-					.getInt(Options.OPTIONS_DAYLIGHT_SAVING), true);
+					.getInt(Options.OPTION_DAYLIGHT_SAVING), true);
 			optionsForm.append(chsTimeZone);
 			optionsForm.append(chsCurrTime);
 			optionsForm.append(chsDayLight);
@@ -1976,7 +1877,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
 			{
-				Options.setBoolean(Options.OPTIONS_LANG_CHANGED, true);
+				Options.setBoolean(Options.OPTION_LANG_CHANGED, true);
 			}
 
 			break;
@@ -2051,10 +1952,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		case OPTIONS_TIMEZONE:
 			/* Set up time zone*/
 			int timeZone = chsTimeZone.getSelectedIndex() - 12;
-			Options.setInt(Options.OPTIONS_GMT_OFFSET, timeZone);
+			Options.setInt(Options.OPTION_GMT_OFFSET, timeZone);
 
 			int dayLight = chsDayLight.getSelectedIndex();
-			Options.setInt(Options.OPTIONS_DAYLIGHT_SAVING, dayLight);
+			Options.setInt(Options.OPTION_DAYLIGHT_SAVING, dayLight);
 			/* Translate selected time to GMT */
 			int selHour = chsCurrTime.getSelectedIndex() - timeZone;
 			if (selHour < 0)
@@ -2068,7 +1969,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				localOffset -= 24;
 			while (localOffset < -12)
 				localOffset += 24;
-			Options.setInt(Options.OPTIONS_LOCAL_OFFSET, localOffset);
+			Options.setInt(Options.OPTION_LOCAL_OFFSET, localOffset);
 			break;
 		}
 	}
