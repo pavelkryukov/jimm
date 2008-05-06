@@ -785,11 +785,13 @@ public abstract class VirtualList
 			case Canvas.KEY_NUM9:
 				moveCursor(getVisCount(), false);
 				break;
-				
+
+//#sijapp cond.if target="MOTOROLA"#
 			case Canvas.KEY_STAR:
 				virtualCanvas.getDisplay().flashBacklight(backLightIsOn ? 1 : Integer.MAX_VALUE);
 				backLightIsOn = !backLightIsOn;
 				break;
+//#sijapp cond.end#
 			}
 		}
 
