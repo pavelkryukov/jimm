@@ -233,7 +233,6 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		/* Close current chat */
 		else if (c == cmdCloseChat)
 		{
-			contact.resetUnreadMessages();
 			ContactList.activate();
 		}
 		
@@ -405,13 +404,11 @@ class ChatTextList implements VirtualListCommands, CommandListener
 				switch (sender.getGameAction(keyCode))
 				{
 				case Canvas.LEFT:
-					contact.resetUnreadMessages();
 					currUin = ContactList.showNextPrevChat(false);
 					ChatHistory.calcCounter(currUin);
 					return;
 
 				case Canvas.RIGHT:
-					contact.resetUnreadMessages();
 					currUin = ContactList.showNextPrevChat(true);
 					ChatHistory.calcCounter(currUin);
 					return;
@@ -519,6 +516,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		textList.activate(Jimm.display);
 		JimmUI.setLastScreen(textList);
 		ChatHistory.currentChat = this;
+		contact.resetUnreadMessages();
 	}
 	
 	public void messageIsDelivered(int messId)
@@ -893,6 +891,7 @@ public class ChatHistory
 			chat.buildMenu();
 			chat.activate(false, false);
 		}
+		
 		return (chat != null);
 	}
 	
