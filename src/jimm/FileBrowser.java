@@ -48,7 +48,7 @@ import DrawControls.*;
 
 interface MotoFileSystem
 {
-	public void open(String fileName) throws IOException;
+	public void open(String fileName, int mode) throws IOException;
 	public void enumRoots(Vector result) throws IOException;
 	public void enumFiles(Vector result, String fileName) throws IOException;
 	public void closeFileConn() throws IOException;
@@ -61,7 +61,7 @@ class MotoFileSystemHelper implements MotoFileSystem
 {
 	private com.motorola.io.FileConnection fileConn;
 	
-	public void open(String fileName) throws IOException
+	public void open(String fileName, int mode) throws IOException
 	{
 		fileConn = (com.motorola.io.FileConnection)Connector.open("file://" + fileName);
 	}
@@ -114,9 +114,9 @@ class StdFileSystemHelper implements MotoFileSystem
 {
 	private FileConnection fileConn;
 	
-	public void open(String fileName) throws IOException
+	public void open(String fileName, int mode) throws IOException
 	{
-		fileConn = (FileConnection)Connector.open("file://" + fileName);
+		fileConn = (FileConnection)Connector.open("file://" + fileName, mode);
 	}
 	
 	public void enumRoots(Vector result)
@@ -127,7 +127,7 @@ class StdFileSystemHelper implements MotoFileSystem
 	
 	public void enumFiles(Vector result, String fileName) throws IOException
 	{
-		FileConnection fileconn = (FileConnection) Connector.open("file://" + fileName);
+		FileConnection fileconn = (FileConnection) Connector.open("file://" + fileName, Connector.READ);
 		Enumeration list = fileconn.list();
 		fileconn.close();
 		
@@ -408,7 +408,7 @@ class FileSystem2 implements CommandListener, Runnable
 	{
 		close();
 		//#sijapp cond.if target="MOTOROLA"#
-		motoFileConnection.open(fileName);
+		motoFileConnection.open(fileName, mode);
 		//#sijapp cond.else#
 		fileConnection = (FileConnection) Connector.open("file://" + fileName, mode);
 		//#sijapp cond.end#
@@ -454,7 +454,7 @@ class FileSystem2 implements CommandListener, Runnable
 	{
 		long result = 0;
 		//#sijapp cond.if target="MOTOROLA"#
-		motoFileConnection.fileSize();
+		result = motoFileConnection.fileSize();
 		//#sijapp cond.else#
 		result = (fileConnection == null) ? -1 : fileConnection.fileSize();
 		//#sijapp cond.end#

@@ -1525,6 +1525,7 @@ public class JimmUI implements CommandListener
 	private static final int USER_MENU_REM_INV_LIST = 19;
 	private static final int USER_MENU_TO_VIS_LIST = 20;
 	private static final int USER_MENU_REM_VIS_LIST = 21;
+	private static final int USER_MENU_FILE_TRANS_LINK = 22;
 	
 	private static TextList tlContactMenu;
 	private static ContactItem clciContactMenu;
@@ -1584,6 +1585,10 @@ public class JimmUI implements CommandListener
 					(Options.getInt(Options.OPTION_FT_MODE) == Options.FS_MODE_WEB))
 			{
 				addTextListItem(tlContactMenu, "ft_name", null, USER_MENU_FILE_TRANS, true, -1, Font.STYLE_PLAIN);
+				
+				if (lastFileTransferLink != null)
+					addTextListItem(tlContactMenu, "ft_link", null, USER_MENU_FILE_TRANS_LINK, true, -1, Font.STYLE_PLAIN); 
+				
 //#sijapp cond.if target isnot "MOTOROLA"#
 				addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#
@@ -1691,6 +1696,11 @@ public class JimmUI implements CommandListener
 					FileTransfer ft = new FileTransfer(FileTransfer.FT_TYPE_FILE_BY_NAME, clciContactMenu);
 					ft.startFT();
 				}
+				break;
+				
+			case USER_MENU_FILE_TRANS_LINK:
+				sendMessage(lastFileTransferLink, clciContactMenu);
+				ChatHistory.activateIfExists(clciContactMenu);
 				break;
 
 			//#sijapp cond.if target isnot "MOTOROLA" #
@@ -1985,7 +1995,7 @@ public class JimmUI implements CommandListener
 		showCapText(control, creepingText, TimerTasks.TYPE_CREEPING);
 	}
 	
-	//////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
 	
 	public static void startTaskForTimeString()
 	{
@@ -1997,6 +2007,16 @@ public class JimmUI implements CommandListener
 			}
 		};
 		new Timer().schedule(task, 500, 10000);
+	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	
+	private static String lastFileTransferLink = null;
+	
+	public static void setLastFileTransferLink(String value)
+	{
+		lastFileTransferLink = value;
+		System.out.println("setLastFileTransferLink, value="+value);
 	}
 	
 }
