@@ -599,7 +599,6 @@ public class Options
 
 	static public synchronized boolean getBoolean(int key)
 	{
-		System.out.println("getBoolean, key="+key);
 		return (((Boolean) options.get(new Integer(key))).booleanValue());
 	}
 
