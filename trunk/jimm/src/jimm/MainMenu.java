@@ -181,9 +181,9 @@ public class MainMenu implements CommandListener
 		//#sijapp cond.end#
 		JimmUI.addTextListItem(list, "exit", null, MENU_EXIT, true, -1, Font.STYLE_PLAIN);
 
-		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 		if (ContactList.getSize() != 0)
-			list.addCommandEx(JimmUI.cmdList, VirtualList.MENU_TYPE_RIGHT_BAR);
+			list.addCommandEx(JimmUI.cmdList, VirtualList.MENU_TYPE_LEFT_BAR);
 
 		list.selectTextByIndex(lastIndex);
 		
@@ -314,8 +314,8 @@ public class MainMenu implements CommandListener
 		JimmUI.addTextListItem(list, "del_group",    null, MENU_DELETE_GROUP, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(list, "priv_lists",   null, MENU_PRIVATE_LISTS, true, -1, Font.STYLE_PLAIN);
 		list.removeAllCommands();
-		list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
-		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 		list.unlock();
 	}
 	
@@ -488,8 +488,8 @@ public class MainMenu implements CommandListener
 				JimmUI.setColorScheme(statusList, false, -1);
 				
 				MainMenu.statusList.setCommandListener(_this);
-				MainMenu.statusList.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
-				MainMenu.statusList.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+				MainMenu.statusList.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+				MainMenu.statusList.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 				MainMenu.statusList.activate(Jimm.display);
 			
 				break;

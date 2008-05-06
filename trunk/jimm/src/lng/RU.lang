@@ -1,11 +1,9 @@
 // MOTOROLA target special strings
-//#sijapp cond.if target is "MOTOROLA"#
 "backlight_timeout"			"Время подсветки (сек)"
 "backlight_manual"			"Управлять подсветкой"
 "exit_button"				"Выход"
 "menu_button"				"Меню"
 "flash_backlight"			"Мигать светодиодами"
-//#sijapp cond.end#
 
 // PROXY module strings
 //#sijapp cond.if modules_PROXY is "true" #
@@ -116,6 +114,7 @@
 "bring_up"					"Активировать при входящем сообщении"
 "byte"						"Байт"
 "cell_phone"				"Сотовый"
+"change"                    "Измен."
 "chat"						"Настройки чата"
 "chat_small_font"			"Мелкий шрифт"
 "city"						"Город"
@@ -261,6 +260,7 @@
 "midp_info"                 "MIDP инфо"
 "minimize"					"Свернуть приложение"
 "minutes"					"мин"
+"mirror_menu"               "'Зеркальные' меню"
 "misc"						"Разное"
 "move_to_group"				"Перен. в группу"
 "myself"					"Мои данные"

@@ -157,9 +157,10 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	void buildMenu()
 	{
 		textList.removeAllCommands();
-		textList.addCommandEx(cmdMsgReply, VirtualList.MENU_TYPE_LEFT_BAR);
+		
 		textList.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
-		textList.addCommandEx(cmdCloseChat, VirtualList.MENU_TYPE_RIGHT);
+		
+		textList.addCommandEx(cmdMsgReply, VirtualList.MENU_TYPE_RIGHT);
 		textList.addCommandEx(cmdDelChat, VirtualList.MENU_TYPE_RIGHT);
 		textList.addCommandEx(cmdCopyText, VirtualList.MENU_TYPE_RIGHT);
 		
@@ -176,6 +177,8 @@ class ChatTextList implements VirtualListCommands, CommandListener
 			textList.addCommandEx(cmdReqAuth, VirtualList.MENU_TYPE_RIGHT);
 		
 		textList.addCommandEx(cmdContactMenu, VirtualList.MENU_TYPE_RIGHT);
+		
+		textList.addCommandEx(cmdCloseChat, VirtualList.MENU_TYPE_LEFT_BAR);
 		
 		checkTextForURL();
 		checkForAuthReply();

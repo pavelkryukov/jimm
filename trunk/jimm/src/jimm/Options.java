@@ -157,6 +157,7 @@ public class Options
 	public static final int OPTION_ASK_FOR_WEB_FT    = 160;
 	public static final int OPTION_USE_AUTOAWAY      = 161;
 	public static final int OPTION_DELIV_MES_INFO    = 162;
+	public static final int OPTION_MIRROR_MENU       = 163;
 	
 	/* long */
 	public static final int OPTION_ONLINE_STATUS = 192; 
@@ -430,7 +431,8 @@ public class Options
 		setInt(OPTION_AUTOAWAY_TIME1, 5);
 		setInt(OPTION_AUTOAWAY_TIME2, 15);
 		
-		setBoolean(OPTION_DELIV_MES_INFO, true); 
+		setBoolean(OPTION_DELIV_MES_INFO, true);
+		setBoolean(OPTION_MIRROR_MENU, false);
 	}
 
 	static public void resetLangDependedOpts()
@@ -932,8 +934,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		
 		JimmUI.setColorScheme(optionsMenu, false, -1);
 
-		optionsMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
-		optionsMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR); 
+		optionsMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+		optionsMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR); 
 		optionsMenu.setCommandListener(this);
 		optionsMenu.setCyclingCursor(true);
 
@@ -1041,8 +1043,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		JimmUI.addTextListItem(tlColorScheme, "Hacker :)",      null, 6, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(tlColorScheme, "Aqua",           null, 7, true, -1, Font.STYLE_PLAIN);
 		
-		tlColorScheme.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
-		tlColorScheme.addCommandEx(JimmUI.cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tlColorScheme.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tlColorScheme.addCommandEx(JimmUI.cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
 		
 		tlColorScheme.selectTextByIndex(Options.getInt(Options.OPTION_COLOR_SCHEME));
 		
@@ -1075,8 +1077,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 		keysMenu.selectTextByIndex(lastItemIndex);
 
-		keysMenu.addCommandEx(saveCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
-		keysMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		keysMenu.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+		keysMenu.addCommandEx(saveCommand, VirtualList.MENU_TYPE_RIGHT);
+		keysMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT);
 		keysMenu.activate(Jimm.display);
 	}
 
@@ -1488,14 +1491,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				}
 			}
 
-			choiceInterfaceMisc = new ChoiceGroup(ResourceBundle
-					.getString("misc"), Choice.MULTIPLE);
-			setChecked(choiceInterfaceMisc, "display_date",
-					Options.OPTION_DISPLAY_DATE);
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			setChecked(choiceInterfaceMisc, "full_screen",
-					Options.OPTION_FULL_SCREEN);
-			//#sijapp cond.end#
+			choiceInterfaceMisc = new ChoiceGroup(ResourceBundle.getString("misc"), Choice.MULTIPLE);
+			setChecked(choiceInterfaceMisc, "display_date", Options.OPTION_DISPLAY_DATE);
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			setChecked(choiceInterfaceMisc, "full_screen", Options.OPTION_FULL_SCREEN);
+//#sijapp cond.end#
+			setChecked(choiceInterfaceMisc, "mirror_menu", Options.OPTION_MIRROR_MENU);
 
 			clSortByChoiceGroup = createSelector("sort_by",
 					"sort_by_status" + "|" + "sort_by_name",
@@ -1818,13 +1819,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			int idx = 0;
 
-			Options.setBoolean(Options.OPTION_DISPLAY_DATE,
-					choiceInterfaceMisc.isSelected(idx++));
-
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			Options.setBoolean(Options.OPTION_FULL_SCREEN,
-					choiceInterfaceMisc.isSelected(idx++));
-			//#sijapp cond.end#
+			Options.setBoolean(Options.OPTION_DISPLAY_DATE, choiceInterfaceMisc.isSelected(idx++));
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			Options.setBoolean(Options.OPTION_FULL_SCREEN, choiceInterfaceMisc.isSelected(idx++));
+//#sijapp cond.end#
+			Options.setBoolean(Options.OPTION_MIRROR_MENU, choiceInterfaceMisc.isSelected(idx++));
 
 			Options.setInt(Options.OPTION_CAMERAURI, clCamDevGroup
 					.getSelectedIndex());
@@ -1883,6 +1882,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 			
 			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
+			VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
 
 			if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
 			{
@@ -2052,8 +2052,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 						JimmUI.addTextListItem(actionMenu, hotkeyActionNames[i], null, hotkeyActions[i], true, -1, Font.STYLE_PLAIN);
 				}
 				
-				actionMenu.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
-				actionMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+				actionMenu.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
+				actionMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 
 				int optValue = Options.getInt(keysMenu.getCurrTextIndex());
 				actionMenu.selectTextByIndex(optValue);
