@@ -599,6 +599,7 @@ public class Options
 
 	static public synchronized boolean getBoolean(int key)
 	{
+		System.out.println("getBoolean, key="+key);
 		return (((Boolean) options.get(new Integer(key))).booleanValue());
 	}
 
@@ -1645,7 +1646,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			chsBringUp = new ChoiceGroup(ResourceBundle.getString("misc"),
 					Choice.MULTIPLE);
-			setChecked(chsBringUp, "bring_up", Options.OPTION_BRING_UP);
+			//#sijapp cond.if target is "MIDP2"#
+			if (Jimm.is_phone_SE())
+				setChecked(chsBringUp, "bring_up", Options.OPTION_BRING_UP);
+			//#sijapp cond.end#
+			
 			setChecked(chsBringUp, "creeping_line",
 					Options.OPTION_CREEPING_LINE);
 			optionsForm.append(chsBringUp);
@@ -1917,10 +1922,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 					.getSelectedIndex());
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp
-					.isSelected(0));
-			Options.setBoolean(Options.OPTION_CREEPING_LINE, chsBringUp
-					.isSelected(1));
+			idx = 0;
+			//#sijapp cond.if target is "MIDP2"#
+			if (Jimm.is_phone_SE()) Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp.isSelected(idx++));
+			//#sijapp cond.end#
+			Options.setBoolean(Options.OPTION_CREEPING_LINE, chsBringUp.isSelected(idx++));
 			//#sijapp cond.end#
 
 			break;
