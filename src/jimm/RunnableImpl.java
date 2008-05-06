@@ -28,6 +28,7 @@ import javax.microedition.lcdui.*;
 
 import DrawControls.VirtualList;
 import jimm.comm.Message;
+import jimm.comm.Util;
 import jimm.ContactItem;
 
 public class RunnableImpl implements Runnable
@@ -226,9 +227,9 @@ public class RunnableImpl implements Runnable
 		callSerially(TYPE_RESET_CONTACTS);
 	}
 	
-	static public void showTime(String time)
+	static public void showTime()
 	{
-		callSerially(TYPE_SHOW_TIME, time);
+		callSerially(TYPE_SHOW_TIME, Util.getDateString(true));
 	}
 	
 	static public void addContact(ContactItem cItem)

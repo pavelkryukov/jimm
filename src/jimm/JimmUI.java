@@ -1993,10 +1993,10 @@ public class JimmUI implements CommandListener
 		{
 			public void run()
 			{
-				RunnableImpl.showTime(Util.getDateString(true));
+				RunnableImpl.showTime();
 			}
 		};
-		Jimm.getTimerRef().schedule(task, 500, 10000);
+		new Timer().schedule(task, 500, 10000);
 	}
 	
 }
