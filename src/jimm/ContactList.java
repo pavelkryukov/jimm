@@ -238,8 +238,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		//#sijapp cond.else #
 		//#        updateTitle(0);
 		//#sijapp cond.end#
-		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
-		tree.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_LEFT_BAR);
+		tree.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
 		tree.addCommandEx(debugListCommand, VirtualList.MENU_TYPE_RIGHT);

@@ -33,6 +33,8 @@ import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+import DrawControls.VirtualList;
+
 //#sijapp cond.if target is "MOTOROLA"#
 //# import jimm.TimerTasks;
 //# import jimm.Jimm;
@@ -223,6 +225,17 @@ public class Jimm extends MIDlet
 
 		// set color scheme for all forms
 		JimmUI.setColorScheme();
+		
+		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		DrawControls.VirtualList.setBackLightData
+		(
+			Options.getBoolean(Options.OPTION_LIGHT_MANUAL),
+			Options.getInt(Options.OPTION_LIGHT_TIMEOUT)
+		);
+		//#sijapp cond.end#
+		
+		DrawControls.VirtualList.setDisplay(Jimm.display);
+		VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
 
 		if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
 		{
@@ -236,16 +249,6 @@ public class Jimm extends MIDlet
 			// Activate main menu
 			MainMenu.activate();
 		}
-
-		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		DrawControls.VirtualList.setBackLightData
-		(
-			Options.getBoolean(Options.OPTION_LIGHT_MANUAL),
-			Options.getInt(Options.OPTION_LIGHT_TIMEOUT)
-		);
-		//#sijapp cond.end#
-		
-		DrawControls.VirtualList.setDisplay(Jimm.display);
 		
 		JimmUI.startTaskForTimeString();
 		

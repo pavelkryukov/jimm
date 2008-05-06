@@ -143,9 +143,11 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	public HistoryStorageList()
 	{
 		super(null);
+		
+		addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+		
 		addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
-		addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
-		addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT);
+		addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT);
 		addCommandEx(cmdClear, VirtualList.MENU_TYPE_RIGHT);
 		addCommandEx(cmdFind, VirtualList.MENU_TYPE_RIGHT);
 		addCommandEx(cmdInfo, VirtualList.MENU_TYPE_RIGHT);
@@ -253,7 +255,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			messTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 			messTextList.addBigText(currMessage, messTextList.getTextColor(), Font.STYLE_PLAIN, -1);
 			messTextList.setCommandListener(this);
-			messTextList.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
+			messTextList.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
 			messTextList.activate(Jimm.display);
 			break;
 		}
@@ -407,8 +409,8 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		else
 		{
 			URLList = JimmUI.getInfoTextList(ResourceBundle.getString("goto_url"), false);
-			URLList.addCommandEx(cmdurlSelect, VirtualList.MENU_TYPE_LEFT_BAR);
-			URLList.addCommandEx(cmdurlBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+			URLList.addCommandEx(cmdurlSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+			URLList.addCommandEx(cmdurlBack, VirtualList.MENU_TYPE_LEFT_BAR);
 			URLList.setCommandListener(this);
 			for (int i = 0; i < urls.size(); i++)
 			{
@@ -636,8 +638,12 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			messText = new TextList(null);
 			messText.setMode(TextList.CURSOR_MODE_DISABLED);
 			messText.setCommandListener(this);
+			
+			
+			messText.addCommandEx(cmdMsgBack, VirtualList.MENU_TYPE_LEFT_BAR);
+			
 			messText.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
-			messText.addCommandEx(cmdMsgBack, VirtualList.MENU_TYPE_RIGHT);
+			
 			messText.addCommandEx(cmdMsgNext, VirtualList.MENU_TYPE_RIGHT);
 			messText.addCommandEx(cmdMsgPrev, VirtualList.MENU_TYPE_RIGHT);
 			messText.addCommandEx(cmdMsgCopyText, VirtualList.MENU_TYPE_RIGHT);

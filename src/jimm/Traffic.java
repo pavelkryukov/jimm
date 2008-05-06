@@ -341,20 +341,11 @@ public class Traffic
 		// Constructor
 		public TrafficScreen()
 		{
-			// super(ResourceBundle.getString("traffic_lng"),Options.)
 			updateThreshold = 1;
 			compareTraffic = (byte) Traffic.getSessionTraffic();
 
 			// Initialize command
-			//#sijapp cond.if target is "MOTOROLA" # 
-			//#			this.resetCommand = new Command(ResourceBundle.getString("reset"), Command.BACK, 2);
-			//#			this.okCommand = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
-			//#sijapp cond.else #
-			this.resetCommand = new Command(ResourceBundle.getString("reset"),
-					Command.SCREEN, 2);
-			this.okCommand = new Command(ResourceBundle.getString("ok"),
-					Command.BACK, 1);
-			//#sijapp cond.end #
+			this.resetCommand = new Command(ResourceBundle.getString("reset"), Command.SCREEN, 2);
 
 			// Initialize traffic screen
 			this.trafficTextList = new TextList(ResourceBundle
@@ -368,7 +359,7 @@ public class Traffic
 			//#sijapp cond.end#
 
 			this.trafficTextList.addCommandEx(this.resetCommand, TextList.MENU_TYPE_RIGHT_BAR);
-			this.trafficTextList.addCommandEx(this.okCommand, TextList.MENU_TYPE_LEFT_BAR);
+			this.trafficTextList.addCommandEx(JimmUI.cmdBack, TextList.MENU_TYPE_LEFT_BAR);
 			this.trafficTextList.setCommandListener(this);
 		}
 

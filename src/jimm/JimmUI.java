@@ -498,13 +498,13 @@ public class JimmUI implements CommandListener
 		switch (type)
 		{
 		case MESBOX_YESNO:
-			msgBoxList.addCommandEx(cmdYes, TextList.MENU_TYPE_LEFT_BAR);
-			msgBoxList.addCommandEx(cmdNo, TextList.MENU_TYPE_RIGHT_BAR);
+			msgBoxList.addCommandEx(cmdYes, TextList.MENU_TYPE_RIGHT_BAR);
+			msgBoxList.addCommandEx(cmdNo, TextList.MENU_TYPE_LEFT_BAR);
 			break;
 
 		case MESBOX_OKCANCEL:
-			msgBoxList.addCommandEx(cmdOk, TextList.MENU_TYPE_LEFT_BAR);
-			msgBoxList.addCommandEx(cmdCancel, TextList.MENU_TYPE_RIGHT_BAR);
+			msgBoxList.addCommandEx(cmdOk, TextList.MENU_TYPE_RIGHT_BAR);
+			msgBoxList.addCommandEx(cmdCancel, TextList.MENU_TYPE_LEFT_BAR);
 			break;
 		}
 		
@@ -577,7 +577,7 @@ public class JimmUI implements CommandListener
 					.addImage(image, null, -1).doCRLF(-1).addBigText(str.toString(), 0xffffff,
 							Font.STYLE_PLAIN, -1);
 
-			aboutTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+			aboutTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 			aboutTextList.setCommandListener(_this);
 
 			// Set the color sceme (background would not fit otherwise)
@@ -1132,8 +1132,8 @@ public class JimmUI implements CommandListener
 		lstSelector.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		lstSelector.setFontSize(Font.SIZE_LARGE);
 		for (int i = 0; i < elements.length; i++) JimmUI.addTextListItem(lstSelector, elements[i], null, i, translateWords, -1, Font.STYLE_PLAIN);
-		lstSelector.addCommandEx(cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
-		lstSelector.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
+		lstSelector.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
+		lstSelector.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
 		lstSelector.setCommandListener(_this);
 		JimmUI.listener = listener;
 		lstSelector.activate(Jimm.display);
@@ -1464,8 +1464,8 @@ public class JimmUI implements CommandListener
 		else
 		{
 			URLList = JimmUI.getInfoTextList(ResourceBundle.getString("goto_url"), false);
-			URLList.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
-			URLList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+			URLList.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+			URLList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 			URLList.setCommandListener(_this);
 			for (int i = 0; i < v.size(); i++)
 			{
@@ -1541,8 +1541,8 @@ public class JimmUI implements CommandListener
 		JimmUI.setColorScheme(tlContactMenu, false, -1);
 		tlContactMenu.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		tlContactMenu.activate(Jimm.display);
-		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
-		tlContactMenu.addCommandEx(cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tlContactMenu.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 		tlContactMenu.setCommandListener(_this);
 		
 		long status = contact.getIntValue(ContactItem.CONTACTITEM_STATUS);

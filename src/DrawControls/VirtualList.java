@@ -197,6 +197,7 @@ public abstract class VirtualList
 	
 	private static int curMenuItemIndex; 
 	
+	private static boolean mirrorMenu = false;
 	protected int borderWidth = 0;
 	protected int curFrameWidth = 1;
 	private int topItem = 0; // Index of top visilbe item 
@@ -221,6 +222,11 @@ public abstract class VirtualList
 		paintedItem = new ListItem();
 	}
 
+	public static void setMirrorMenu(boolean value)
+	{
+		mirrorMenu = value;
+	}
+	
 	static public void setDisplay(Display display)
 	{
 		virtualCanvas.setDisplay(display);
@@ -238,7 +244,6 @@ public abstract class VirtualList
 		if (virtualCanvas.currentControl != null) 
 			virtualCanvas.currentControl.setFullScreen(value);
 	}
-	
 
 	//! Create new virtual list with default values  
 	public VirtualList(String capt //!< Caption text of new virtual list
@@ -1650,6 +1655,17 @@ public abstract class VirtualList
 	
 	public void addCommandEx(Command cmd, int type)
 	{
+		if (mirrorMenu)
+		{
+			switch (type)
+			{
+			case MENU_TYPE_LEFT_BAR:  type = MENU_TYPE_RIGHT_BAR; break;
+			case MENU_TYPE_RIGHT_BAR: type = MENU_TYPE_LEFT_BAR;  break;
+			case MENU_TYPE_LEFT:      type = MENU_TYPE_RIGHT;     break;
+			case MENU_TYPE_RIGHT:     type = MENU_TYPE_LEFT;      break;
+			}
+		}
+		
 		switch (type)
 		{
 		case MENU_TYPE_LEFT_BAR:

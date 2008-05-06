@@ -36,6 +36,7 @@
   "byte"                        "Byte"
   "cancel"                      "Cancel"  
   "cell_phone"                  "Cell Tel." // ???
+  "change"                      "Change"
   "chat"                        "Chat"
   "chat_small_font"             "Small font"
   "city"                        "City"
@@ -182,6 +183,7 @@
   "midp_info"					"MIDP info"
   "minimize"                    "Minimize"
   "minutes"						"m"
+  "mirror_menu"                 "'Mirror' menu"
   "misc"                        "Misc"
   "move_to_group"               "Move to group"
   "myself"						"My details"
@@ -383,13 +385,11 @@
   "register_notice"		"Warning! On registration complete, you need to fill userdata. Else other peoples can't add/find you."
 
   // MOTOROLA strings
-  //#sijapp cond.if target is "MOTOROLA"#
   "backlight_timeout"           "Backlight timeout (sec)"
   "backlight_manual"            "Manual backlight"
   "exit_button"                 "Exit"
   "menu_button"                 "Menu"
   "flash_backlight"             "Flash LEDs"
-  // #sijapp cond.end#
 
   //#sijapp cond.if modules_PROXY is "true" #
   "proxy"                       "Proxy"
