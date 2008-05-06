@@ -314,7 +314,11 @@ public class Emotions implements VirtualListCommands, CommandListener
 	{
 		Jimm.aaUserActivity();
 		if (c == cmdOk) select();
-		else if (c == cmdCancel) JimmUI.selectScreen(lastScreen);
+		else if (c == cmdCancel)
+		{
+			JimmUI.selectScreen(lastScreen);
+			Jimm.setBkltOn(true);
+		}
 	}
 
 	public void vlKeyPress(VirtualList sender, int keyCode, int type)
@@ -334,6 +338,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 	{
 		textBox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
 		JimmUI.selectScreen(lastScreen);
+		Jimm.setBkltOn(true);
+		
 	}
 
 	static public String getSelectedEmotion()

@@ -99,6 +99,7 @@
   "free_heap"                   "Free heap"
   "ft_caption"                  "Filetransfer"
   "ft_cam"                      "Send camera image"
+  "ft_link"                     "Last file link"
   "ft_name"                     "Send file"  
   "ft_transfer"                 "Transferring..."
   "ft_type"                     "File transfer"

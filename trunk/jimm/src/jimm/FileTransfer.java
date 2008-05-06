@@ -101,6 +101,8 @@ public class FileTransfer implements CommandListener, Runnable
 	
 	private String fileName, shortFileName;
 	private FileSystem2 fileSystem;
+	
+	private String lastWebLink;
 
 	// Commands
 	private Command backCommand = new Command(ResourceBundle.getString("back"),
@@ -235,7 +237,11 @@ public class FileTransfer implements CommandListener, Runnable
 				Jimm.setBkltOn(false);
 				System.out.println("END");
 			}
-			else cItem.activate();
+			else 
+			{
+				cItem.activate();
+				JimmUI.setLastFileTransferLink(lastWebLink);
+			}
 			break;
 		}
 	}
@@ -330,7 +336,8 @@ public class FileTransfer implements CommandListener, Runnable
 			messText.append("Filesize: ").append(fsize/1024).append("KB\n");
 			messText.append("Link: ").append(respString);
 		
-			PlainMessage plainMsg = new PlainMessage(Options.getString(Options.OPTION_UIN), cItem, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(false), messText.toString());
+			lastWebLink = messText.toString();
+			PlainMessage plainMsg = new PlainMessage(Options.getString(Options.OPTION_UIN), cItem, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(false), lastWebLink);
 			Icq.requestAction(new SendMessageAction(plainMsg));
 		}
 		catch (IOException e)

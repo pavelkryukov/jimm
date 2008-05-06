@@ -785,6 +785,11 @@ public abstract class VirtualList
 			case Canvas.KEY_NUM9:
 				moveCursor(getVisCount(), false);
 				break;
+				
+			case Canvas.KEY_STAR:
+				virtualCanvas.getDisplay().flashBacklight(backLightIsOn ? 1 : Integer.MAX_VALUE);
+				backLightIsOn = !backLightIsOn;
+				break;
 			}
 		}
 
@@ -792,13 +797,12 @@ public abstract class VirtualList
 
 	public void doKeyreaction(int keyCode, int type)
 	{
-//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		setBackLightOn();
-//#sijapp cond.end#
-		
 		switch (type)
 		{
 		case KEY_PRESSED:
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+			setBackLightOn();
+//#sijapp cond.end#
 			keyReaction(keyCode, type);
 			break;
 		case KEY_REPEATED:
@@ -1893,6 +1897,7 @@ public abstract class VirtualList
 	//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
 	private static boolean manualBackLight = false;
 	private static int backLightTimeOut = 5;
+	private static boolean backLightIsOn = false;
 	
 	public static void setBackLightData(boolean manualBackLight, int backLightTimeOut)
 	{
