@@ -233,6 +233,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		/* Close current chat */
 		else if (c == cmdCloseChat)
 		{
+			contact.resetUnreadMessages();
 			ContactList.activate();
 		}
 		
