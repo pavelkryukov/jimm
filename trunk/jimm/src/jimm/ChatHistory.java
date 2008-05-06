@@ -557,6 +557,8 @@ public class ChatHistory
 	/* Adds a message to the message display */
 	static protected void addMessage(ContactItem contact, Message message)
 	{
+		RunnableImpl.showTime();
+		
 		synchronized (_this)
 		{
 			String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);

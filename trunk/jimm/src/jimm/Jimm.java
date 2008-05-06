@@ -471,7 +471,7 @@ public class Jimm extends MIDlet
 //#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
 		if ( !Options.getBoolean(Options.OPTION_LIGHT_MANUAL) ) return;
 		Jimm.display.flashBacklight(ferever ? Integer.MAX_VALUE : Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
-		System.out.println("setBkltOn, ferever="+ferever);
+		//System.out.println("setBkltOn, ferever="+ferever);
 //#sijapp cond.end#
 	}
 	
@@ -480,7 +480,7 @@ public class Jimm extends MIDlet
 //#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
 		if ( !Options.getBoolean(Options.OPTION_LIGHT_MANUAL) ) return;
 		Jimm.display.flashBacklight(1);
-		System.out.println("setBkltOff");
+		//System.out.println("setBkltOff");
 //#sijapp cond.end#
 	}
 	

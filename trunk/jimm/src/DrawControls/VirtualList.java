@@ -792,6 +792,10 @@ public abstract class VirtualList
 
 	public void doKeyreaction(int keyCode, int type)
 	{
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		setBackLightOn();
+//#sijapp cond.end#
+		
 		switch (type)
 		{
 		case KEY_PRESSED:
@@ -803,10 +807,6 @@ public abstract class VirtualList
 		}
 
 		if (vlCommands != null) vlCommands.vlKeyPress(this, keyCode, type);
-		
-		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		setBackLightOn();
-		//#sijapp cond.end#
 	}
 	
 	// Return game action or extended codes
@@ -1904,6 +1904,7 @@ public abstract class VirtualList
 	{
 		if (!manualBackLight) return;
 		virtualCanvas.getDisplay().flashBacklight(1000*backLightTimeOut);
+		//System.out.println("VirtualList.setBackLightOn()");
 	}
 	
 	//#sijapp cond.end #
