@@ -521,10 +521,12 @@ public class TextList extends VirtualList
 		boolean lineBreak, wordEnd, textEnd, divideLineToWords;
 		String testString = null;
 
-		// Replase '\r\n' charasters with '\n'
+		if (text == null)
+			return;
+		// Replace '\r\n' charasters with '\n'
 		text = replace(text, "\r\n", "\n");
 
-		// Replase '\r' charasters with '\n'
+		// Replace '\r' charasters with '\n'
 		text = replace(text, "\r\n", "\n");
 
 		font = getQuickFont(fontStyle);
