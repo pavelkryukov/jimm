@@ -1728,9 +1728,9 @@ public class Util
 				+ original.substring(index + from.length(), original.length());
 	}
 
-	static public byte[] explodeToBytes(String text, char serparator, int radix)
+	static public byte[] explodeToBytes(String text, char separator, int radix)
 	{
-		String[] strings = explode(text, serparator);
+		String[] strings = explode(text, separator);
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
 		for (int i = 0; i < strings.length; i++)
@@ -1746,8 +1746,8 @@ public class Util
 		return bytes.toByteArray();
 	}
 
-	/* Divide text to array of parts using serparator charaster */
-	static public String[] explode(String text, char serparator)
+	/* Divide text to array of parts using separator character */
+	static public String[] explode(String text, char separator)
 	{
 		Vector tmp = new Vector();
 		StringBuffer strBuf = new StringBuffer();
@@ -1755,7 +1755,7 @@ public class Util
 		for (int i = 0; i < len; i++)
 		{
 			char chr = text.charAt(i);
-			if (chr == serparator)
+			if (chr == separator)
 			{
 				tmp.addElement(strBuf.toString());
 				strBuf.delete(0, strBuf.length());
