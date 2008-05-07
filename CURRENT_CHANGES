@@ -7,6 +7,7 @@ Implemented:
   * NEW FEATURE: Registration of new ICQ account
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * BUGFIX: Reconnect to server feature, cancel of connecting
+  * Settings for snapshots by build-in camera device, depend on phone model (JSR-135)
   * Messages delivery notification
   * Motorola backlight support (not tested yet)
   * Modified user interface
@@ -30,4 +31,3 @@ Planned:
   * Full extended status support
   * Sending SMS and dialing 
   * Manage saved backup list of deleted contacts
-  * Settings for snapshots by build-in camera device
