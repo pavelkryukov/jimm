@@ -659,8 +659,11 @@ public class ConnectAction extends Action
 							
 							int privacyMode = -1;
 
-							// Normal contact
-							if (type == 0x0000)
+							// Normal contact 	// Deleted contact
+							if //(
+								(type == 0x0000)
+							//	 || (Options.getBoolean(Options.OPTION_SHOW_DELETED_CONT) && (type == 0x0019)))
+
 							{
 								ByteArrayOutputStream serverData = new ByteArrayOutputStream();
 								

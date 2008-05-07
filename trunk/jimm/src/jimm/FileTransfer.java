@@ -529,12 +529,6 @@ public class FileTransfer implements CommandListener, Runnable
 	public class ViewFinder extends Canvas implements CommandListener
 	{
 
-		// Resolution matrix
-		private final String res[][] =
-		{
-		{ "80", "160", "320", "640" },
-		{ "60", "120", "240", "480" } };
-
 		// Variables
 		private Player p = null;
 
@@ -548,18 +542,18 @@ public class FileTransfer implements CommandListener, Runnable
 
 		private byte[] data;
 
-		private int res_marker = 0;
-
 		private int sourceWidth = 0;
 
 		private int sourceHeight = 0;
+
+		private String encoding = null;
+
+		private String extension = "jpeg";
 
 		// Commands
 		private Command backCommand;
 
 		private Command okCommand;
-
-		private Command resCommand;
 
 		public ViewFinder()
 		{
@@ -571,7 +565,6 @@ public class FileTransfer implements CommandListener, Runnable
 
 			this.addCommand(backCommand);
 			this.addCommand(okCommand);
-			// this.addCommand(resCommand);
 			this.setCommandListener(this);
 		}
 
@@ -633,10 +626,55 @@ public class FileTransfer implements CommandListener, Runnable
 			{
 				try
 				{
-					// Create the player
-					String cam_dev = Options.getInt(Options.OPTION_CAMERAURI) == 0 ? "capture://video" : "capture://image";
-					p = Manager.createPlayer(cam_dev);
+					//#sijapp cond.if modules_DEBUGLOG is "true" #
+					String contentTypes[]=Manager.getSupportedContentTypes("capture");
+					DebugLog.addText(">>" + "capture" + "<<");
+					for (int i = 0; i < contentTypes.length; i++)
+						DebugLog.addText(contentTypes[i]);
+					//#sijapp cond.end#
+
+					String cam_dev = "capture://image";
+					try {
+						p = Manager.createPlayer(cam_dev);
+					} catch (Exception mxe) {
+						cam_dev = "capture://video";
+						p = Manager.createPlayer(cam_dev);
+					}
+
 					p.realize();
+
+					int curRes = Options.getInt(Options.OPTION_CAMERA_RES);
+					int curEnc = Options.getInt(Options.OPTION_CAMERA_ENCODING);
+					encoding = null;
+
+					int key1 = 0;
+					int key2 = 0;
+					String[] imageTypes = Util.explode(System.getProperty("video.snapshot.encodings"), ' ');
+					for (int i = 0; i < imageTypes.length; i++) {
+						String[] params = Util.explode(imageTypes[i], '&');
+						String width = null;
+						String height = null;
+						for (int j = 0; j < params.length; j++) {
+							String[] values = Util.explode(params[j], '=');
+							if (values[0].equals("encoding")) {
+								if (key1 == curEnc) {
+									encoding = "encoding="+values[1];
+									extension = values[1];
+								}
+								key1++;
+							} else if (values[0].equals("width")) {
+								width = values[1];
+							} else if (values[0].equals("height")) {
+								height = values[1];
+							}
+						}
+						if ((width != null) && (height != null)) {
+							if (key2 == curRes) {
+								encoding = encoding + "&" + "width=" + width + "&" + "height=" + height;
+							}
+							key2++;
+						}
+					}
 
 					// Get the video control
 					vc = (VideoControl) p.getControl("VideoControl");
@@ -656,13 +694,6 @@ public class FileTransfer implements CommandListener, Runnable
 						  try { vc.setDisplayFullScreen(true); }
 						  catch (MediaException me2) {}
 						}
-
-//						int displayWidth = vc.getDisplayWidth();
-//						int displayHeight = vc.getDisplayHeight();
-//						int x = (canvasWidth - displayWidth) / 2;
-//						int y = (canvasHeight - displayHeight) / 2;
-
-//						vc.setDisplayLocation(x, y);
 
 						vc.setVisible(true);
 						p.start();
@@ -711,15 +742,17 @@ public class FileTransfer implements CommandListener, Runnable
 		{
 			if (p != null)
 			{
-				data = getSnapshot("encoding=jpeg");
-				if (data == null)
-					data = getSnapshot("JPEG");
-				if (data == null)
-					data = getSnapshot(null);
+				//#sijapp cond.if modules_DEBUGLOG is "true" #
+				DebugLog.addText (encoding);
+				//#sijapp cond.end#
+				data = getSnapshot(encoding);
+//				if (data == null)
+//					data = getSnapshot("JPEG");
+//				if (data == null)
+//					data = getSnapshot(null);
 				if (data == null)
 					JimmException.handleException(new JimmException(183, 0,
 							true));
-				// this.stop();
 				img = Image.createImage(data, 0, data.length);
 				sourceWidth = img.getWidth();
 				sourceHeight = img.getHeight();
@@ -761,7 +794,7 @@ public class FileTransfer implements CommandListener, Runnable
 							data.length);
 					FileTransfer.this.askForNameDesc("jimm_cam_"
 							+ Util.getDateString(false,Util.createCurrentDate(true))
-							+ "_" + Util.getCounter() + ".jpeg", "");
+							+ "_" + Util.getCounter() + "." + extension, "");
 				} else
 				this.takeSnapshot();
 			} else if (c == this.backCommand)
@@ -778,11 +811,6 @@ public class FileTransfer implements CommandListener, Runnable
 					ContactList.activate();
 					FileTransfer.this.vf = null;
 				}
-			} else if (c == this.resCommand)
-			{
-				this.res_marker++;
-				this.res_marker = this.res_marker % this.res[0].length;
-				//this.repaint();
 			}
 		}
 
