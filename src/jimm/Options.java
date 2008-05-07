@@ -123,9 +123,11 @@ public class Options
 	public static final int OPTION_XSTATUS            = 92; 
 	public static final int OPTION_DAYLIGHT_SAVING    = 93;
 	public static final int OPTION_FT_MODE            = 94;
-	public static final int OPTION_CAMERAURI          = 95;
+//	public static final int OPTION_CAMERA_LOCATOR     = 95;
 	public static final int OPTION_AUTOAWAY_TIME1     = 96;
 	public static final int OPTION_AUTOAWAY_TIME2     = 97;
+	public static final int OPTION_CAMERA_ENCODING    = 98;
+	public static final int OPTION_CAMERA_RES         = 99;
 	
 	/* boolean */
 	public static final int OPTION_KEEP_CONN_ALIVE   = 128; 
@@ -158,6 +160,7 @@ public class Options
 	public static final int OPTION_USE_AUTOAWAY      = 161;
 	public static final int OPTION_DELIV_MES_INFO    = 162;
 	public static final int OPTION_MIRROR_MENU       = 163;
+//	public static final int OPTION_SHOW_DELETED_CONT = 164;
 	
 	/* long */
 	public static final int OPTION_ONLINE_STATUS = 192; 
@@ -417,7 +420,12 @@ public class Options
 		setBoolean(OPTION_XSTATUSES, true);
 		setBoolean(OPTION_ASK_FOR_WEB_FT, true);
 		setInt(OPTION_XSTATUS, -1);
-		setInt(OPTION_CAMERAURI, 0);
+
+		//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//		setInt(OPTION_CAMERA_LOCATOR, 0);
+		setInt(OPTION_CAMERA_RES, 0);
+		setInt(OPTION_CAMERA_ENCODING, 0);
+		//#sijapp cond.end#
 
 		//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 		selectSoundType("online.", OPTION_ONLINE_NOTIF_FILE);
@@ -433,6 +441,7 @@ public class Options
 		
 		setBoolean(OPTION_DELIV_MES_INFO, true);
 		setBoolean(OPTION_MIRROR_MENU, false);
+//		setBoolean(OPTION_SHOW_DELETED_CONT, false);
 	}
 
 	static public void resetLangDependedOpts()
@@ -742,13 +751,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private static final int OPTIONS_NETWORK = 1;
 	private static final int OPTIONS_PROXY = 2;
 	private static final int OPTIONS_INTERFACE = 3;
-	private static final int OPTIONS_HOTKEYS = 4;
-	private static final int OPTIONS_SIGNALING = 5;
-	private static final int OPTIONS_TRAFFIC = 6;
-	private static final int OPTIONS_TIMEZONE = 7;
-	private static final int OPTIONS_COLOR_THEME = 8;
-	private static final int OPTIONS_AUTOAWAY = 9;
-	private static final int OPTIONS_RESET_RMS = 10;
+	private static final int OPTIONS_CAMERA = 4;
+	private static final int OPTIONS_HOTKEYS = 5;
+	private static final int OPTIONS_SIGNALING = 6;
+	private static final int OPTIONS_TRAFFIC = 7;
+	private static final int OPTIONS_TIMEZONE = 8;
+	private static final int OPTIONS_COLOR_THEME = 9;
+	private static final int OPTIONS_AUTOAWAY = 10;
+	private static final int OPTIONS_RESET_RMS = 11;
 
 	// Options
 	private TextField[] uinTextField;
@@ -800,7 +810,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private ChoiceGroup chsCurrTime;
 
 	private ChoiceGroup chsDayLight;
-	private ChoiceGroup clCamDevGroup;
+	//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//	private ChoiceGroup clCamDevGroup;
+	private ChoiceGroup camRes;
+	private ChoiceGroup camEnc;
+	//#sijapp cond.end#
 
 	//#sijapp cond.if target isnot "DEFAULT"#
 	private ChoiceGroup messageNotificationModeChoiceGroup;
@@ -965,6 +979,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		
 		JimmUI.addTextListItem(optionsMenu, "options_interface", null, OPTIONS_INTERFACE, true, -1, Font.STYLE_PLAIN);
 		
+		JimmUI.addTextListItem(optionsMenu, "options_camera", null, OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
+
 		JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN); 
 		
 		JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true, -1, Font.STYLE_PLAIN);
@@ -1507,6 +1523,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
 			setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
 			setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
+//			setChecked(choiceContactList, "show_deleted_contacts", Options.OPTION_SHOW_DELETED_CONT);
 
 			chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
 					Choice.MULTIPLE);
@@ -1549,12 +1566,50 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			optionsForm.append(lightTimeout);
 			optionsForm.append(lightManual);
 			//#sijapp cond.end #
-			clCamDevGroup = new ChoiceGroup(ResourceBundle.getString("opt_camerauri"), Choice.EXCLUSIVE);
-			addStr(clCamDevGroup, "camera://video" + "|" + "camera://image");
-			clCamDevGroup.setSelectedIndex(Options.getInt(Options.OPTION_CAMERAURI), true);
-			optionsForm.append(clCamDevGroup);
 
 			break;
+
+		//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+		case OPTIONS_CAMERA:
+//			clCamDevGroup = new ChoiceGroup(ResourceBundle.getString("opt_camerauri"), Choice.EXCLUSIVE);
+//			addStr(clCamDevGroup, "camera://video" + "|" + "camera://image" + "|" + "camera://devcam0" +"|" + "camera://devcam1");
+//			optionsForm.append(clCamDevGroup);
+
+			camEnc = new ChoiceGroup(ResourceBundle.getString("opt_camenc"), Choice.EXCLUSIVE);
+			camRes = new ChoiceGroup(ResourceBundle.getString("opt_camres"), Choice.EXCLUSIVE);
+			String[] imageTypes = Util.explode(System.getProperty("video.snapshot.encodings"), ' ');
+		//#sijapp cond.if modules_DEBUGLOG is "true"#
+			System.out.println ("video.snapshot.encodings = " + System.getProperty("video.snapshot.encodings"));
+		//#sijapp cond.end #
+			for (int i = 0; i < imageTypes.length; i++) {
+				String[] params = Util.explode(imageTypes[i], '&');
+				String width = null;
+				String height = null;
+				for (int j = 0; j < params.length; j++) {
+					String[] values = Util.explode(params[j], '=');
+					if (values[0].equals("encoding")) {
+						camEnc.append (values[1], null);
+					} else if (values[0].equals("width")) {
+						width = values[1];
+					} else if (values[0].equals("height")) {
+						height = values[1];
+					}
+					
+				}
+				if ((width != null) && (height != null)) {
+					camRes.append (width + " x " + height, null);
+				}
+			}
+			try {
+				if (camRes.size() > 0) camRes.setSelectedIndex(Options.getInt(Options.OPTION_CAMERA_RES), true);
+				if (camEnc.size() > 0) camEnc.setSelectedIndex(Options.getInt(Options.OPTION_CAMERA_ENCODING), true);
+			} catch (Exception e) {}
+//			clCamDevGroup.setSelectedIndex(Options.getInt(Options.OPTION_CAMERA_LOCATOR), true);
+			
+			optionsForm.append(camEnc);
+			optionsForm.append(camRes);
+			break;
+		//#sijapp cond.end #
 
 		case OPTIONS_HOTKEYS:
 			InitHotkeyMenuUI();
@@ -1825,8 +1880,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 //#sijapp cond.end#
 			Options.setBoolean(Options.OPTION_MIRROR_MENU, choiceInterfaceMisc.isSelected(idx++));
 
-			Options.setInt(Options.OPTION_CAMERAURI, clCamDevGroup
-					.getSelectedIndex());
 			int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
 			
 			
@@ -1835,12 +1888,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			boolean newHideOffline = choiceContactList.isSelected(idx++);
 			boolean newShowXStatuses = choiceContactList.isSelected(idx++);
 			boolean newShowClients = choiceContactList.isSelected(idx++);
+//			boolean newShowDeletedCont = choiceContactList.isSelected(idx++);
 
 			Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
 			Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
 			//setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
 			Options.setBoolean(Options.OPTION_XSTATUSES, newShowXStatuses);
 			Options.setBoolean(Options.OPTION_CL_CLIENTS, newShowClients); 
+//			Options.setBoolean(Options.OPTION_SHOW_DELETED_CONT, newShowDeletedCont); 
 
 			idx = 0;
 			//#sijapp cond.if modules_HISTORY is "true"#
@@ -1893,6 +1948,17 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			}
 
 			break;
+
+		//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+		case OPTIONS_CAMERA:
+//			Options.setInt(Options.OPTION_CAMERA_LOCATOR, clCamDevGroup
+//					.getSelectedIndex());
+			Options.setInt(Options.OPTION_CAMERA_ENCODING, camEnc
+					.getSelectedIndex());
+			Options.setInt(Options.OPTION_CAMERA_RES, camRes
+					.getSelectedIndex());
+			break;
+		//#sijapp cond.end#
 
 		case OPTIONS_SIGNALING:
 			//#sijapp cond.if target isnot "DEFAULT"# ===>
