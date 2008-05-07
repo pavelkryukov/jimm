@@ -1878,7 +1878,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setInt(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(lightTimeout.getString()));
 			Options.setBoolean(Options.OPTION_LIGHT_MANUAL, useBackLight);
 			VirtualList.setBackLightData(useBackLight, Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
+			
+			//#sijapp cond.if target="MOTOROLA"#
 			if (!useBackLight) Jimm.display.flashBacklight(1);
+			//#sijapp cond.end#
 			//#sijapp cond.end#
 			
 			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));

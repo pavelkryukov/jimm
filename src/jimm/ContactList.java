@@ -238,12 +238,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		//#sijapp cond.else #
 		//#        updateTitle(0);
 		//#sijapp cond.end#
-		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_LEFT_BAR);
-		tree.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
-
-		//#sijapp cond.if modules_DEBUGLOG is "true" #
-		tree.addCommandEx(debugListCommand, VirtualList.MENU_TYPE_RIGHT);
-		//#sijapp cond.end#
 
 		tree.setCommandListener(this);
 	}
@@ -357,16 +351,27 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		Jimm.aaUserActivity();
 		showStatusInCaption(-1);
+		
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		updateTitle(Traffic.getSessionTraffic());
 		//#sijapp cond.else #
-		//#		updateTitle(0);
+		updateTitle(0);
 		//#sijapp cond.end#
+		
 		// show contact list
 		tree.lock();
 		buildTree();
 		sortAll();
 		tree.unlock();
+		
+		tree.removeAllCommands();
+		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_LEFT_BAR);
+		tree.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+
+		//#sijapp cond.if modules_DEBUGLOG is "true" #
+		tree.addCommandEx(debugListCommand, VirtualList.MENU_TYPE_RIGHT);
+		//#sijapp cond.end#
+		
 		ContactList.tree.activate(Jimm.display);
 		JimmUI.setLastScreen(ContactList.tree);
 
