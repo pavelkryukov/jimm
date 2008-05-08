@@ -75,6 +75,7 @@ class VirtualCanvas extends Canvas implements Runnable
 	protected void hideNotify()
 	{
 		cancelKeyRepeatTask();
+		currentControl.resetUiState();
 	}
 	
 	public void run()
@@ -448,6 +449,7 @@ public abstract class VirtualList
 	public void activate(Display display)
 	{
 		if (isActive()) return;
+		resetUiState();
 		virtualCanvas.currentControl = this;
 		virtualCanvas.cancelKeyRepeatTask();
 		display.setCurrent(virtualCanvas);
@@ -1535,6 +1537,11 @@ public abstract class VirtualList
 	private Vector rightMenuItems = new Vector();
 	private boolean leftMenuItemsSorted = true;
 	private boolean rightMenuItemsSorted = true;
+	
+	void resetUiState()
+	{
+		uiState = UI_STATE_NORMAL; 
+	}
 	
 	public static void drawFramedString (Graphics g, String text, int left, int top, int style, int textColor, int frameColor){
 		g.setColor(frameColor);

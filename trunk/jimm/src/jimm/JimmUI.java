@@ -1362,9 +1362,9 @@ public class JimmUI implements CommandListener
 		if (messageTextbox == null)
 		{
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			messageTextbox = new TextBox(ResourceBundle.getString("message"), null, MAX_EDITOR_TEXT_SIZE, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
+			messageTextbox = new TextBox(receiver.getStringValue(ContactItem.CONTACTITEM_NAME)+" - "+ResourceBundle.getString("message"), null, MAX_EDITOR_TEXT_SIZE, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
 			//#sijapp cond.else#
-			messageTextbox = new TextBox(ResourceBundle.getString("message"), null, MAX_EDITOR_TEXT_SIZE, TextField.ANY);
+			messageTextbox = new TextBox(receiver.getStringValue(ContactItem.CONTACTITEM_NAME)+" - "+ResourceBundle.getString("message"), null, MAX_EDITOR_TEXT_SIZE, TextField.ANY);
 			//#sijapp cond.end#
 		}
 		
@@ -1978,7 +1978,11 @@ public class JimmUI implements CommandListener
 			!flashTimerTask.isCanceled() && 
 			(flashTimerTask.getType() == TimerTasks.TYPE_CREEPING)) return;
 		
-		if (flashTimerTask != null) flashTimerTask.flashRestoreOldCaption();
+		if (flashTimerTask != null)
+		{
+			flashTimerTask.flashRestoreOldCaption();
+			flashTimerTask.cancel();
+		}
 		flashTimerTask = new TimerTasks(control, text, (type == TimerTasks.TYPE_FLASH) ? 10 : 0, type);
 		int interval = (type == TimerTasks.TYPE_FLASH) ? 500 : 300;
 		Jimm.getTimerRef().schedule(flashTimerTask, interval, interval);
