@@ -1578,6 +1578,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			camEnc = new ChoiceGroup(ResourceBundle.getString("opt_camenc"), Choice.EXCLUSIVE);
 			camRes = new ChoiceGroup(ResourceBundle.getString("opt_camres"), Choice.EXCLUSIVE);
 			String[] imageTypes = Util.explode(System.getProperty("video.snapshot.encodings"), ' ');
+
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 			System.out.println ("video.snapshot.encodings = " + System.getProperty("video.snapshot.encodings"));
 		//#sijapp cond.end #
@@ -1588,7 +1589,13 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				for (int j = 0; j < params.length; j++) {
 					String[] values = Util.explode(params[j], '=');
 					if (values[0].equals("encoding")) {
-						camEnc.append (values[1], null);
+						boolean found = false;
+						for (int k = 0; k < camEnc.size(); k++) {
+							if (camEnc.getString(k).equals(values[1]))
+								found = true;
+						}
+						if (!found)
+							camEnc.append (values[1], null);
 					} else if (values[0].equals("width")) {
 						width = values[1];
 					} else if (values[0].equals("height")) {

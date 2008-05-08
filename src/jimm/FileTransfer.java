@@ -650,6 +650,7 @@ public class FileTransfer implements CommandListener, Runnable
 					int key1 = 0;
 					int key2 = 0;
 					String[] imageTypes = Util.explode(System.getProperty("video.snapshot.encodings"), ' ');
+					String tmp = "";
 					for (int i = 0; i < imageTypes.length; i++) {
 						String[] params = Util.explode(imageTypes[i], '&');
 						String width = null;
@@ -657,11 +658,14 @@ public class FileTransfer implements CommandListener, Runnable
 						for (int j = 0; j < params.length; j++) {
 							String[] values = Util.explode(params[j], '=');
 							if (values[0].equals("encoding")) {
-								if (key1 == curEnc) {
-									encoding = "encoding="+values[1];
-									extension = values[1];
+								if (Util.strCountOccur(tmp, values[1]) == 0){
+									if (key1 == curEnc) {
+										encoding = "encoding="+values[1];
+										extension = values[1];
+									}
+									tmp += values[1];
+									key1++;
 								}
-								key1++;
 							} else if (values[0].equals("width")) {
 								width = values[1];
 							} else if (values[0].equals("height")) {
@@ -670,7 +674,8 @@ public class FileTransfer implements CommandListener, Runnable
 						}
 						if ((width != null) && (height != null)) {
 							if (key2 == curRes) {
-								encoding = encoding + "&" + "width=" + width + "&" + "height=" + height;
+								encoding += "&" + "width=" + width + "&" + "height=" + height;
+								break;
 							}
 							key2++;
 						}
