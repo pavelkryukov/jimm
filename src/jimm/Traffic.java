@@ -322,12 +322,8 @@ public class Traffic
 	// Screen for Traffic information
 	public class TrafficScreen implements CommandListener
 	{
-
 		// Form elements
 		private Command resetCommand;
-
-		private Command okCommand;
-
 		private TextList trafficTextList;
 
 		//private Form trafficScreen;
@@ -419,7 +415,7 @@ public class Traffic
 				this.update(true);
 				this.trafficTextList.repaint();
 			}
-			if (c == this.okCommand)
+			if (c == JimmUI.cmdBack)
 			{
 				if (Icq.isConnected())
 				{
