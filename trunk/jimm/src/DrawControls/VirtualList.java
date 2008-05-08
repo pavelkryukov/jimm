@@ -1536,6 +1536,16 @@ public abstract class VirtualList
 	private boolean leftMenuItemsSorted = true;
 	private boolean rightMenuItemsSorted = true;
 	
+	public static void drawFramedString (Graphics g, String text, int left, int top, int style, int textColor, int frameColor){
+		g.setColor(frameColor);
+		g.drawString(text, left-1, top, style);
+		g.drawString(text, left+1, top, style);
+		g.drawString(text, left, top-1, style);
+		g.drawString(text, left, top+1, style);
+		g.setColor(textColor);
+		g.drawString(text, left, top, style);
+	}
+
 	private boolean drawMenuBar(Graphics g, int height, int style, int curX, int curY)
 	{
 		int y1 = getHeightInternal()-height;
@@ -1606,13 +1616,15 @@ public abstract class VirtualList
 		
 		if (!menuItemsVisible && (bottomText != null))
 		{
-			g.setColor(capTxtColor);
-			g.drawString
+
+			drawFramedString
 			(
-				bottomText, 
+			 	g, bottomText,
 				(width-menuBarFont.stringWidth(bottomText))/2, 
 				textY, 
-				Graphics.TOP|Graphics.LEFT
+				Graphics.TOP|Graphics.LEFT,
+				capTxtColor, getInverseColor(capTxtColor)
+
 			);
 		}
 		
