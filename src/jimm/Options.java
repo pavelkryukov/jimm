@@ -200,7 +200,7 @@ public class Options
 
 	/* Color schemes values */
 	final static private int[] colors =
-	{// back      text      out text  cursor    caption   in text   cap text  curs.brd.
+	{//	back      text      out text  cursor    caption   in text   cap text  curs.brd.
 		0xFFFFFF, 0x000000, 0x0000FF, 0xE8E8FF, 0xF0F0F0, 0xFF0000, 0x000000, 0x6060A0,
 		0x000000, 0xFFFFFF, 0x00FFFF, 0x0000C0, 0x505050, 0xFF0000, 0xFFFFFF, 0x0000FF,
 		0x000080, 0xFFFFFF, 0x00FFFF, 0x0000D0, 0x0000B0, 0xFF0000, 0xFFFFFF, 0x0000FF,
@@ -209,6 +209,7 @@ public class Options
 		0xF9F3EF, 0xD60000, 0x3A6793, 0xE3BFA1, 0xC37D3F, 0xDB8941, 0xFFFFF0, 0xD26464, // Sand
 		0x000000, 0x00D000, 0xD0D0D0, 0x005000, 0x007000, 0x00FF00, 0x80FF80, 0x008000, // Hacker
 		0xD5FDFD, 0x000000, 0x009090, 0xB0FFFF, 0xA0FFFF, 0x0000FF, 0x000000, 0x00A0A0, // Aqua
+		0xFFFFFF, 0x0000AA, 0xFF7700, 0xDBE1E7, 0x648C64, 0x00D200, 0x000000, 0xB4B4B4, //
 	};
 	
 
@@ -1058,6 +1059,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		JimmUI.addTextListItem(tlColorScheme, "Sand",           null, 5, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(tlColorScheme, "Hacker :)",      null, 6, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(tlColorScheme, "Aqua",           null, 7, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "Jungle",         null, 8, true, -1, Font.STYLE_PLAIN);
 		
 		tlColorScheme.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
 		tlColorScheme.addCommandEx(JimmUI.cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
