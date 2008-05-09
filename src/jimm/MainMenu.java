@@ -27,9 +27,6 @@ import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 import jimm.comm.Icq;
-import jimm.comm.SearchAction;
-import jimm.comm.Action;
-import jimm.comm.UpdateContactListAction;
 import jimm.util.ResourceBundle;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
@@ -37,9 +34,6 @@ import DrawControls.VirtualList;
 public class MainMenu implements CommandListener
 {
 	private static final int TAG_EXIT = 1;
-	private static final int TAG_RENAME_GROUPS = 2;
-	private static final int TAG_DELETE_GROUPS = 3;
-	private static final int TAG_CL = 4;
 	
 	private static final int SELECT_STATUS = 1;
 	private static final int SELECT_XSTATUS = 2;
@@ -57,57 +51,19 @@ public class MainMenu implements CommandListener
 	private static final int MENU_KEYLOCK       = 6;
 	private static final int MENU_STATUS        = 7;
 	private static final int MENU_XSTATUS       = 8;
-	private static final int MENU_MANAGE_CL     = 9;
 	private static final int MENU_ABOUT         = 10;
 	private static final int MENU_MINIMIZE      = 11;
 	private static final int MENU_SOUND         = 12;
-	private static final int MENU_MYSELF        = 13;
 	private static final int MENU_EXIT          = 14;
-	
-	/* Constants for constact list management menu */
-	private static final int MENU_ADD_USER      = 15;
-	private static final int MENU_SEARCH_USER   = 16;
-	private static final int MENU_ADD_GROUP     = 17;
-	private static final int MENU_RENAME_GROUP  = 18;
-	private static final int MENU_DELETE_GROUP  = 19;
-	private static final int MENU_PRIVATE_LISTS = 20;
-
-	/* Send command */
-	private static Command sendCommand = new Command(ResourceBundle
-			.getString("send"), Command.OK, 1);
-
-	//#sijapp cond.if target is "MOTOROLA" #
-	//#	private static Command exitCommand = new Command(ResourceBundle.getString("exit_button"), Command.EXIT, 1);
-	//#sijapp cond.end#
 
 	/* List for selecting a online status */
-	//private static List statusList;
 	private static TextList statusList;
-
-	/////////////////////////////////////////////////////////////////
-	private static final int STATUS_NONE = 0;
-
-	private static final int STATUS_ADD_CONTACT = 1;
-
-	private static final int STATUS_ADD_GROUP = 2;
-
-	private static final int STATUS_RENAME_GROUP = 3;
-
-	private static int status = STATUS_NONE;
-
-	/** ************************************************************************* */
 
 	/* Visual list */
 	static private TextList list = new TextList(ResourceBundle.getString("menu"));
 
-	/* Groups list */
-	static private int[] groupIds;
-
 	/* Form for the adding users dialog */
 	static public Form textBoxForm;
-
-	/* Text box for adding users to the contact list */
-	static private TextField uinTextField;
 
 	/* Textbox for  Status messages */
 	static private TextBox statusMessage;
@@ -158,12 +114,6 @@ public class MainMenu implements CommandListener
 		
 		if (ContactList.getSize() != 0)
 			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST, true, -1, Font.STYLE_PLAIN);
- 
-		if (connected)
-		{
-			JimmUI.addTextListItem(list, "manage_contact_list", null, MENU_MANAGE_CL, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(list, "myself", null, MENU_MYSELF, true, -1, Font.STYLE_PLAIN);
-		}
 		
 		JimmUI.addTextListItem(list, "options_lng",  null, MENU_OPTIONS, true, -1, Font.STYLE_PLAIN);
 		
@@ -197,7 +147,6 @@ public class MainMenu implements CommandListener
 	/* Displays the given alert and activates the main menu afterwards */
 	static public void activate(Alert alert)
 	{
-		status = STATUS_NONE;
 		MainMenu.build();
 		MainMenu.list.activate(Jimm.display, alert);
 	}
@@ -214,21 +163,6 @@ public class MainMenu implements CommandListener
 	public static TextList getUIConrol()
 	{
 		return MainMenu.list;
-	}
-
-	/* Show form for adding user */
-	static public void showTextBoxForm(String caption, String label,
-			String text, int fieldType)
-	{
-		textBoxForm = new Form(ResourceBundle.getString(caption));
-		uinTextField = new TextField(ResourceBundle.getString(label), text, 16, fieldType);
-		textBoxForm.append(uinTextField);
-
-		textBoxForm.addCommand(sendCommand);
-		textBoxForm.addCommand(JimmUI.cmdBack);
-		textBoxForm.setCommandListener(_this);
-		Jimm.display.setCurrent(textBoxForm);
-		Jimm.setBkltOn(true);
 	}
 
 	private void doExit(boolean anyway)
@@ -302,69 +236,14 @@ public class MainMenu implements CommandListener
 		statusList.unlock();
 		statusSelection = SELECT_XSTATUS;
 	}
-
-	private static void initManageCLMenu()
-	{
-		list.clear();
-		list.lock();
-		JimmUI.addTextListItem(list, "add_user",     null, MENU_ADD_USER,     true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(list, "search_user",  null, MENU_SEARCH_USER,  true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(list, "add_group",    null, MENU_ADD_GROUP,    true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(list, "rename_group", null, MENU_RENAME_GROUP, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(list, "del_group",    null, MENU_DELETE_GROUP, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(list, "priv_lists",   null, MENU_PRIVATE_LISTS, true, -1, Font.STYLE_PLAIN);
-		list.removeAllCommands();
-		list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
-		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
-		list.unlock();
-	}
 	
 	/* Command listener */
 	public void commandAction(Command c, Displayable d)
 	{
 		Jimm.aaUserActivity();
 		
-		//#sijapp cond.if target is "MOTOROLA" #
-		/* Exit by soft button */
-		//#		if (c == MainMenu.exitCommand)
-		//#		{
-		//#			doExit(false);
-		//#			return;
-		//#		}
-		//#sijapp cond.end#
-		
-		if (JimmUI.getCurScreenTag() == TAG_RENAME_GROUPS)
-		{
-			if (c == JimmUI.cmdOk)
-			{
-				String groupName = ContactList.getGroupById(groupIds[JimmUI.getLastSelIndex()]).getName();
-				showTextBoxForm("rename_group", "group_name", groupName, TextField.ANY);
-			}
-			else activate();
-		}
-		
-		else if (JimmUI.getCurScreenTag() == TAG_DELETE_GROUPS)
-		{
-			if (c == JimmUI.cmdOk)
-			{
-				UpdateContactListAction deleteGroupAct = new UpdateContactListAction(
-						ContactList
-								.getGroupById(groupIds[JimmUI.getLastSelIndex()]),
-						UpdateContactListAction.ACTION_DEL);
-				try
-				{
-					Icq.requestAction(deleteGroupAct);
-					SplashCanvas.addTimerTask("wait", deleteGroupAct, false);
-				} catch (JimmException e)
-				{
-					JimmException.handleException(e);
-				}
-			}
-			else activate();
-		}
-
 		// Return to works screen after canceling 
-		else if ((c == JimmUI.cmdBack) && (JimmUI.isControlActive(statusList) || JimmUI.isControlActive(list)))
+		if ((c == JimmUI.cmdBack) && (JimmUI.isControlActive(statusList) || JimmUI.isControlActive(list)))
 		{
 			Jimm.showWorkScreen();
 			statusList = null;
@@ -374,53 +253,6 @@ public class MainMenu implements CommandListener
 		else if (c == JimmUI.cmdList)
 		{
 			ContactList.activate();
-		}
-		
-		else if ((c == JimmUI.cmdBack) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
-		{
-			MainMenu.list.activate(Jimm.display);
-		}
-		
-		else if ((c == sendCommand) && (d == MainMenu.textBoxForm) && (MainMenu.textBoxForm != null))
-		{
-			Action act = null;
-
-			switch (status)
-			{
-			case STATUS_ADD_GROUP:
-				ContactListGroupItem newGroup = new ContactListGroupItem(uinTextField.getString());
-				act = new UpdateContactListAction(newGroup, UpdateContactListAction.ACTION_ADD);
-				break;
-
-			case STATUS_RENAME_GROUP:
-				ContactListGroupItem group = ContactList.getGroupById(groupIds[JimmUI.getLastSelIndex()]);
-				group.setName(uinTextField.getString());
-				ContactList.safeSave();
-				act = new UpdateContactListAction(group, UpdateContactListAction.ACTION_RENAME);
-				break;
-
-			case STATUS_ADD_CONTACT:
-				Search search = new Search(true);
-				String data[] = new String[Search.LAST_INDEX];
-				data[Search.UIN] = uinTextField.getString();
-				act = new SearchAction(search, data,
-						SearchAction.CALLED_BY_ADDUSER);
-				break;
-			}
-
-			status = STATUS_NONE;
-
-			try
-			{
-				Icq.requestAction(act);
-			} catch (JimmException e)
-			{
-				JimmException.handleException(e);
-				if (e.isCritical())
-					return;
-			}
-			// Start timer
-			SplashCanvas.addTimerTask("wait", act, false);
 		}
 
 		/* User select OK in exit questiom message box */
@@ -491,12 +323,6 @@ public class MainMenu implements CommandListener
 				MainMenu.statusList.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 				MainMenu.statusList.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 				MainMenu.statusList.activate(Jimm.display);
-			
-				break;
-
-			case MENU_MANAGE_CL:
-				initManageCLMenu();
-				list.activate(Jimm.display);
 				break;
 
 			case MENU_OPTIONS:
@@ -529,44 +355,9 @@ public class MainMenu implements CommandListener
 				break;
 			//#sijapp cond.end#				
 
-			case MENU_MYSELF:
-				JimmUI.requiestUserInfo(Options.getString(Options.OPTION_UIN),
-						"");
-				break;
-
 			case MENU_EXIT:
 				/* Exit */
 				doExit(false);
-				break;
-				
-			case MENU_ADD_USER:
-				status = STATUS_ADD_CONTACT;
-				showTextBoxForm("add_user", "uin", null, TextField.NUMERIC);
-				break;
-
-			case MENU_SEARCH_USER:
-				Search searchf = new Search(false);
-				searchf.getSearchForm().activate(Search.SearchForm.ACTIV_JUST_SHOW);
-				break;
-
-			case MENU_ADD_GROUP:
-				status = STATUS_ADD_GROUP;
-				showTextBoxForm("add_group", "group_name", null, TextField.ANY);
-				break;
-
-			case MENU_RENAME_GROUP:
-				status = STATUS_RENAME_GROUP;
-				groupIds = JimmUI.showGroupSelector("rename_group",
-						TAG_RENAME_GROUPS, this, JimmUI.SHS_TYPE_ALL, -1);
-				break;
-
-			case MENU_DELETE_GROUP:
-				groupIds = JimmUI.showGroupSelector("del_group", TAG_DELETE_GROUPS,
-						this, JimmUI.SHS_TYPE_EMPTY, -1);
-				break;
-				
-			case MENU_PRIVATE_LISTS:
-				new PrivateListsForm().execute();
 				break;
 			}
 		}

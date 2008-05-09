@@ -379,7 +379,7 @@ public class Search
 				} else
 				{
 					searchForm = null;
-					MainMenu.activate();
+					Options.editOptions();
 				}
 			} else if (c == this.searchCommand)
 			{
@@ -492,7 +492,7 @@ public class Search
 			{
 				String[] resultData = getResult(selectedIndex);
 				JimmUI.requiestUserInfo(resultData[JimmUI.UI_UIN_LIST],
-						resultData[JimmUI.UI_NICK]);
+						resultData[JimmUI.UI_NICK], false);
 			}
 		}
 

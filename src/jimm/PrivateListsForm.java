@@ -201,7 +201,7 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		
 		else if (c == JimmUI.cmdCancel)
 		{
-			Jimm.showWorkScreen();
+			Options.editOptions();
 		}
 	}
 	
@@ -222,7 +222,7 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		
 		if (!wasChanges)
 		{
-			Jimm.showWorkScreen();
+			Options.editOptions();
 			return;
 		}
 		
@@ -262,7 +262,7 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		}
 		catch (Exception e) { }
 		
-		Jimm.showWorkScreen();
+		Options.editOptions();
 	}
 }
 
