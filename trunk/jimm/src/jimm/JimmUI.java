@@ -791,11 +791,12 @@ public class JimmUI implements CommandListener
 
 			case Options.HOTKEY_INFO:
 				if (item != null)
-					requiestUserInfo(
-							item
-									.getStringValue(ContactItem.CONTACTITEM_UIN),
-							item
-									.getStringValue(ContactItem.CONTACTITEM_NAME));
+					requiestUserInfo
+					(
+						item.getStringValue(ContactItem.CONTACTITEM_UIN),
+						item.getStringValue(ContactItem.CONTACTITEM_NAME), 
+						false
+					);
 				break;
 
 			case Options.HOTKEY_NEWMSG:
@@ -1028,14 +1029,14 @@ public class JimmUI implements CommandListener
 
 	static private TextList infoTextList = null;
 
-	static public void requiestUserInfo(String uin, String name)
+	static public void requiestUserInfo(String uin, String name, boolean allowToEdit)
 	{
 		infoTextList = getInfoTextList(uin, false);
 		infoTextList.setCommandListener(_this);
 
 		if (Icq.isConnected())
 		{
-			if (uin == Options.getString(Options.OPTION_UIN))
+			if (allowToEdit)
 				infoTextList.addCommandEx(cmdEdit, VirtualList.MENU_TYPE_RIGHT);
 
 			RequestInfoAction act = new RequestInfoAction(uin, name);
@@ -1261,8 +1262,47 @@ public class JimmUI implements CommandListener
 	}
 
 	public static final int SHS_TYPE_ALL = 1;
-
 	public static final int SHS_TYPE_EMPTY = 2;
+	
+	public static TextList showGroupSelector(String caption, CommandListener listener, int type, int excludeGroupId)
+	{
+		TextList tlGroups = new TextList (ResourceBundle.getString(caption));
+		
+		tlGroups.lock();
+		JimmUI.setColorScheme(tlGroups, false, -1);
+		tlGroups.setMode(VirtualList.CURSOR_MODE_DISABLED);
+		
+		tlGroups.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
+		tlGroups.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
+		
+		ContactListGroupItem[] groups = ContactList.getGroupItems();
+		
+		boolean found = false;
+		for (int i = 0; i < groups.length; i++)
+		{
+			int id = groups[i].getId();
+			if (id == excludeGroupId) continue;
+			
+			if (type == SHS_TYPE_EMPTY)
+			{
+				ContactItem[] cItems = ContactList.getGroupItems(id);
+				if (cItems.length != 0)continue;
+			}
+			
+			addTextListItem(tlGroups, groups[i].getName(), null, id, false, -1, Font.STYLE_PLAIN);
+			found = true;
+		}
+		
+		if (!found)
+			addTextListItem(tlGroups, "No groups found", null, -1, false, -1, Font.STYLE_PLAIN);
+		
+		tlGroups.setCommandListener(listener);
+		tlGroups.activate(Jimm.display);
+		
+		tlGroups.unlock();
+
+		return tlGroups;
+	}
 
 	public static int[] showGroupSelector(String caption, int tag,
 			CommandListener listener, int type, int excludeGroupId)
@@ -1753,7 +1793,8 @@ public class JimmUI implements CommandListener
 				JimmUI.requiestUserInfo
 				(
 					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_UIN), 
-					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_NAME)
+					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_NAME), 
+					false
 				);
 				break;
 				

@@ -3825,5 +3825,21 @@ public class Icq implements Runnable
 		
 		c.sendPacket(packet);
 	}
+
+	public static boolean runActionAndProcessError(Action act) 
+	{
+		try
+		{
+			Icq.requestAction(act);
+		} catch (JimmException e)
+		{
+			JimmException.handleException(e);
+			return false;
+		}
+		
+		SplashCanvas.addTimerTask("wait", act, false);
+		
+		return true;
+	}
 	
 }

@@ -527,7 +527,7 @@ public class TextList extends VirtualList
 		text = replace(text, "\r\n", "\n");
 
 		// Replace '\r' charasters with '\n'
-		text = replace(text, "\r\n", "\n");
+		text = replace(text, "\r", "\n");
 
 		font = getQuickFont(fontStyle);
 

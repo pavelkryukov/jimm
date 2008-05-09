@@ -751,10 +751,10 @@ public class FileTransfer implements CommandListener, Runnable
 				DebugLog.addText (encoding);
 				//#sijapp cond.end#
 				data = getSnapshot(encoding);
-//				if (data == null)
-//					data = getSnapshot("JPEG");
-//				if (data == null)
-//					data = getSnapshot(null);
+				if (data == null)
+					data = getSnapshot("JPEG");
+				if (data == null)
+					data = getSnapshot(null);
 				if (data == null)
 					JimmException.handleException(new JimmException(183, 0,
 							true));

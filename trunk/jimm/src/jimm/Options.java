@@ -44,6 +44,9 @@
 package jimm;
 
 import jimm.ContactList;
+import jimm.comm.Action;
+import jimm.comm.SearchAction;
+import jimm.comm.UpdateContactListAction;
 import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.comm.RegisterNewUinAction;
@@ -185,8 +188,8 @@ public class Options
 	
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
-	public static final int CONN_TYPE_HTTP = 1;
-	public static final int CONN_TYPE_PROXY = 2;
+	public static final int CONN_TYPE_HTTP   = 1;
+	public static final int CONN_TYPE_PROXY  = 2;
 	
 	/* Constants for method getSchemeColor to retrieving color from color scheme */
 	public static final int CLRSCHHEME_BACK       = 1; // retrieving background color
@@ -733,10 +736,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private int lastSortMethod, lastColorScheme;
 
 	private int currentHour;
+	
+	private int currOptMode;
+	private int currOptType;
 
 	private String lastUILang;
-
-	private Command saveCommand;
 
 	/* Options menu */
 	private TextList optionsMenu;
@@ -746,143 +750,113 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 	private static final int RMS_ASK_RESULT_YES = 30000;
 	private static final int RMS_ASK_RESULT_NO  = 30001;
+	
+	private static final int TYPE_TOP_OPTIONS = 10000;
+	private static final int TYPE_MCL_OPTIONS = 10001;
 
-	// Static constants for menu actios
-	private static final int OPTIONS_ACCOUNT = 0;
-	private static final int OPTIONS_NETWORK = 1;
-	private static final int OPTIONS_PROXY = 2;
-	private static final int OPTIONS_INTERFACE = 3;
-	private static final int OPTIONS_CAMERA = 4;
-	private static final int OPTIONS_HOTKEYS = 5;
-	private static final int OPTIONS_SIGNALING = 6;
-	private static final int OPTIONS_TRAFFIC = 7;
-	private static final int OPTIONS_TIMEZONE = 8;
+
+	// Constants for menu actios
+	private static final int OPTIONS_ACCOUNT     = 0;
+	private static final int OPTIONS_NETWORK     = 1;
+	private static final int OPTIONS_PROXY       = 2;
+	private static final int OPTIONS_INTERFACE   = 3;
+	private static final int OPTIONS_CAMERA      = 4;
+	private static final int OPTIONS_HOTKEYS     = 5;
+	private static final int OPTIONS_SIGNALING   = 6;
+	private static final int OPTIONS_TRAFFIC     = 7;
+	private static final int OPTIONS_TIMEZONE    = 8;
 	private static final int OPTIONS_COLOR_THEME = 9;
-	private static final int OPTIONS_AUTOAWAY = 10;
-	private static final int OPTIONS_RESET_RMS = 11;
+	private static final int OPTIONS_AUTOAWAY    = 10;
+	private static final int OPTIONS_MY_INFO     = 11;
+	private static final int OPTIONS_MANAGE_CL   = 12;
+	private static final int OPTIONS_RESET_RMS   = 14;
 
+	// Constants for contact list menu
+	private static final int OPTIONS_ADD_USER      = 15;
+	private static final int OPTIONS_SEARCH_USER   = 16;
+	private static final int OPTIONS_ADD_GROUP     = 17;
+	private static final int OPTIONS_RENAME_GROUP  = 18;
+	private static final int OPTIONS_DELETE_GROUP  = 19;
+	private static final int OPTIONS_PRIVATE_LISTS = 20;
+
+	
 	// Options
+	private TextField txtUIN;
 	private TextField[] uinTextField;
-
 	private TextField[] passwordTextField;
-
 	private TextField srvHostTextField;
-
 	private TextField srvPortTextField;
-
 	private TextField httpUserAgendTextField;
-
 	private TextField httpWAPProfileTextField;
-
 	private ChoiceGroup keepConnAliveChoiceGroup;
-
 	private TextField connAliveIntervTextField;
-
 	private ChoiceGroup connPropChoiceGroup;
-
 	private ChoiceGroup connTypeChoiceGroup;
-
 	private ChoiceGroup autoConnectChoiceGroup;
-
 	private TextField reconnectNumberTextField;
-
 	private ChoiceGroup uiLanguageChoiceGroup;
-
 	private ChoiceGroup choiceInterfaceMisc;
-
 	private ChoiceGroup clSortByChoiceGroup;
-
 	private ChoiceGroup chrgChat;
-	
 	private ChoiceGroup chrgMessFormat;
-
 	private ChoiceGroup chrgPopupWin;
-
 	private ChoiceGroup vibratorChoiceGroup;
-
 	private ChoiceGroup chsBringUp;
-	
 	private ChoiceGroup chsFSMode;
-
 	private ChoiceGroup choiceCurAccount;
-
 	private ChoiceGroup chsTimeZone;
-
 	private ChoiceGroup chsCurrTime;
-
 	private ChoiceGroup chsDayLight;
-	//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
-//	private ChoiceGroup clCamDevGroup;
+//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+	//	private ChoiceGroup clCamDevGroup;
 	private ChoiceGroup camRes;
 	private ChoiceGroup camEnc;
-	//#sijapp cond.end#
+//#sijapp cond.end#
 
-	//#sijapp cond.if target isnot "DEFAULT"#
+//#sijapp cond.if target isnot "DEFAULT"#
 	private ChoiceGroup messageNotificationModeChoiceGroup;
-
 	private ChoiceGroup onlineNotificationModeChoiceGroup;
-
 	private ChoiceGroup typingNotificationModeChoiceGroup;
-
-	//#sijapp cond.if target isnot "RIM"#
+//#sijapp cond.if target isnot "RIM"#
 	private TextField messageNotificationSoundfileTextField;
-
 	private Gauge messageNotificationSoundVolume;
-
 	private TextField onlineNotificationSoundfileTextField;
-
 	private TextField typingNotificationSoundfileTextField;
-
 	private Gauge onlineNotificationSoundVolume;
-
 	private Gauge typingNotificationSoundVolume;
+//#sijapp cond.end#
+//#sijapp cond.end#
 
-	//#sijapp cond.end#
-	//#sijapp cond.end#
-
-	//#sijapp cond.if modules_TRAFFIC is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
 	private TextField costPerPacketTextField;
-
 	private TextField costPerDayTextField;
-
 	private TextField costPacketLengthTextField;
-
 	private TextField currencyTextField;
-
-	//#sijapp cond.end#
+//#sijapp cond.end#
+	
 	private ChoiceGroup choiceContactList;
-
-	//#sijapp cond.if target="MOTOROLA" | target="MIDP2" #
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2" #
 	private TextField lightTimeout;
 	private ChoiceGroup lightManual;
-	//#sijapp cond.end#
+//#sijapp cond.end#
 	
-	//#sijapp cond.if modules_PROXY is "true"#
+//#sijapp cond.if modules_PROXY is "true"#
 	private ChoiceGroup srvProxyType;
-
 	private TextField srvProxyHostTextField;
-
 	private TextField srvProxyPortTextField;
-
 	private TextField srvProxyLoginTextField;
-
 	private TextField srvProxyPassTextField;
-
 	private TextField connAutoRetryTextField;
-
-	//#sijapp cond.end#
+//#sijapp cond.end#
 	
 	private ChoiceGroup chgrUseAutoAway;
 	private TextField tfAutoAwayTime1;
 	private TextField tfAutoAwayTime2;
-	
 	private TextList keysMenu;
-
 	private TextList actionMenu;
-	
 	private TextList tlColorScheme;
-
 	private TextList tlRmsAsk;
+	private TextList groupSelector;
 
 	final private String[] hotkeyActionNames = Util.explode(
 			"ext_hotkey_action_none" + "|" + "info" + "|" + "send_message"
@@ -941,9 +915,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		actionMenu.setCommandListener(this);
 
 		/*************************************************************************/
-		// Initialize commands
-		saveCommand = new Command(ResourceBundle.getString("save"),
-				Command.SCREEN, 1);
 
 		optionsMenu = new TextList(ResourceBundle.getString("options_lng"));
 		
@@ -956,8 +927,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 		// Initialize options form
 		optionsForm = new Form(ResourceBundle.getString("options_lng"));
-		optionsForm.addCommand(saveCommand);
-		optionsForm.addCommand(JimmUI.cmdBack);
 		optionsForm.setCommandListener(this);
 		optionsForm.setItemStateListener(this);
 
@@ -966,39 +935,55 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	}
 
 	// Initialize the kist for the Options menu
-	public void initOptionsList()
+	private void initOptionsList(int type)
 	{
+		currOptType = type;
+		
+		boolean connected = Icq.isConnected();
+		
 		optionsMenu.clear();
 		
-		JimmUI.addTextListItem(optionsMenu, "options_account", null, OPTIONS_ACCOUNT, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(optionsMenu, "options_network", null, OPTIONS_NETWORK, true, -1, Font.STYLE_PLAIN);
-		
-		//#sijapp cond.if modules_PROXY is "true"#
-		if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
-			JimmUI.addTextListItem(optionsMenu, "proxy", null, OPTIONS_PROXY, true, -1, Font.STYLE_PLAIN); 
-		//#sijapp cond.end#
-		
-		JimmUI.addTextListItem(optionsMenu, "options_interface", null, OPTIONS_INTERFACE, true, -1, Font.STYLE_PLAIN);
-		
-		JimmUI.addTextListItem(optionsMenu, "options_camera", null, OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
-
-		JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN); 
-		
-		JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true, -1, Font.STYLE_PLAIN);
-		
-		JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true, -1, Font.STYLE_PLAIN);
-		
-		JimmUI.addTextListItem(optionsMenu, "auto_away", null, OPTIONS_AUTOAWAY, true, -1, Font.STYLE_PLAIN);
-		
-		//#sijapp cond.if modules_TRAFFIC is "true"#
-		JimmUI.addTextListItem(optionsMenu, "traffic_lng", null, OPTIONS_TRAFFIC, true, -1, Font.STYLE_PLAIN); 
-		//#sijapp cond.end#
-
-		JimmUI.addTextListItem(optionsMenu, "time_zone", null, OPTIONS_TIMEZONE, true, -1, Font.STYLE_PLAIN);
-		
-		JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", null, OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
+		switch (type)
+		{
+		case TYPE_TOP_OPTIONS:
+			JimmUI.addTextListItem(optionsMenu, "options_account", null, OPTIONS_ACCOUNT, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "options_network", null, OPTIONS_NETWORK, true, -1, Font.STYLE_PLAIN);
+//#sijapp cond.if modules_PROXY is "true"#
+			if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
+				JimmUI.addTextListItem(optionsMenu, "proxy", null, OPTIONS_PROXY, true, -1, Font.STYLE_PLAIN); 
+//#sijapp cond.end#
+			JimmUI.addTextListItem(optionsMenu, "options_interface", null, OPTIONS_INTERFACE, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "options_camera", null, OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN); 
+			JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "auto_away", null, OPTIONS_AUTOAWAY, true, -1, Font.STYLE_PLAIN);
+//#sijapp cond.if modules_TRAFFIC is "true"#
+			JimmUI.addTextListItem(optionsMenu, "traffic_lng", null, OPTIONS_TRAFFIC, true, -1, Font.STYLE_PLAIN); 
+//#sijapp cond.end#
+			JimmUI.addTextListItem(optionsMenu, "time_zone", null, OPTIONS_TIMEZONE, true, -1, Font.STYLE_PLAIN);
+			
+			if (connected)
+			{
+				JimmUI.addTextListItem(optionsMenu, "myself", null, OPTIONS_MY_INFO, true, -1, Font.STYLE_PLAIN);
+				JimmUI.addTextListItem(optionsMenu, "manage_contact_list", null, OPTIONS_MANAGE_CL, true, -1, Font.STYLE_PLAIN);
+			}
+			
+			JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", null, OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
+			break;
+			
+		case TYPE_MCL_OPTIONS:
+			JimmUI.addTextListItem(optionsMenu, "add_user", null, OPTIONS_ADD_USER, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "add_group", null, OPTIONS_ADD_GROUP, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "search_user", null, OPTIONS_SEARCH_USER, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "del_group", null, OPTIONS_DELETE_GROUP, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "rename_group", null, OPTIONS_RENAME_GROUP, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "priv_lists", null, OPTIONS_PRIVATE_LISTS, true, -1, Font.STYLE_PLAIN);
+			break;
+		}
 
 		JimmUI.setColorScheme(optionsMenu, false, -1);
+		optionsMenu.activate(Jimm.display);
 	}
 
 	private String getHotKeyActName(String langStr, int option)
@@ -1096,10 +1081,20 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		keysMenu.selectTextByIndex(lastItemIndex);
 
 		keysMenu.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
-		keysMenu.addCommandEx(saveCommand, VirtualList.MENU_TYPE_RIGHT);
+		keysMenu.addCommandEx(JimmUI.cmdSave, VirtualList.MENU_TYPE_RIGHT);
 		keysMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT);
 		keysMenu.activate(Jimm.display);
 	}
+	
+	/* Show form for adding user */
+	private void showTextBoxForm(String caption, String label, String text, int fieldType)
+	{
+		txtUIN = new TextField(ResourceBundle.getString(label), text, 16, fieldType);
+		optionsForm.append(txtUIN);
+		Jimm.display.setCurrent(optionsForm);
+		Jimm.setBkltOn(true);
+	}
+	
 
 	///////////////////////////////////////////////////////////////////////////
 
@@ -1163,7 +1158,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				.getString("password"), "", 8, TextField.PASSWORD);
 		captchaCode = new TextField(ResourceBundle
 				.getString("captcha"), "", 8, TextField.ANY);
-		optionsForm.removeCommand(saveCommand);
+		optionsForm.removeCommand(JimmUI.cmdSave);
 		optionsForm.append(newPassword);
 		if (!Icq.isConnected()) {
 			registration_connected = false;
@@ -1191,7 +1186,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			uins.addElement(uin);
 			passwords.addElement(password);
 		}
-		optionsForm.addCommand(saveCommand);
+		optionsForm.addCommand(JimmUI.cmdSave);
 		clearForm();
 		showAccountControls();
 	}
@@ -1321,8 +1316,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		Options.getBoolean(Options.OPTION_CL_CLIENTS);
 		Options.getBoolean(Options.OPTION_XSTATUSES);
 
-		initOptionsList();
-		optionsMenu.activate(Jimm.display);
+		initOptionsList(TYPE_TOP_OPTIONS);
 	}
 
 	final private static int TAG_DELETE_ACCOUNT = 1;
@@ -1352,14 +1346,19 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		chs.setSelectedIndex(chs.size() - 1, Options.getBoolean(optValue));
 	}
 	
-	private void dataToForm()
+	private void dataToForm(int mode)
 	{
+		currOptMode = mode;
+		
+		optionsForm.removeCommand(JimmUI.cmdSave);
+		optionsForm.removeCommand(JimmUI.cmdBack);
+		optionsForm.removeCommand(JimmUI.cmdOk);
+		
 		// Delete all items
 		clearForm();
-		optionsForm.addCommand(saveCommand);
 
 		// Add elements, depending on selected option menu item
-		switch (optionsMenu.getCurrTextIndex())
+		switch (mode)
 		{
 		case OPTIONS_ACCOUNT:
 			readAccontsData();
@@ -1802,20 +1801,60 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			optionsForm.append(chsDayLight);
 
 			break;
+			
+		case OPTIONS_MY_INFO:
+			JimmUI.requiestUserInfo(Options.getString(Options.OPTION_UIN), "", true);
+			return;
+			
+		case OPTIONS_MANAGE_CL:
+			initOptionsList(TYPE_MCL_OPTIONS);
+			return;
+			
 		case OPTIONS_RESET_RMS:
 			InitResetRmsUI();
+			return;
+			
+		case OPTIONS_ADD_USER:
+			showTextBoxForm("add_user", "uin", null, TextField.NUMERIC);
+			optionsForm.addCommand(JimmUI.cmdOk);
+			optionsForm.addCommand(JimmUI.cmdBack);
+			return;
+			
+		case OPTIONS_ADD_GROUP:
+			showTextBoxForm("add_group", "group_name", null, TextField.ANY);
+			optionsForm.addCommand(JimmUI.cmdOk);
+			optionsForm.addCommand(JimmUI.cmdBack);
+			return;
+			
+		case OPTIONS_SEARCH_USER:
+			Search searchf = new Search(false);
+			searchf.getSearchForm().activate(Search.SearchForm.ACTIV_JUST_SHOW);
+			return;
+			
+		case OPTIONS_PRIVATE_LISTS:
+			new PrivateListsForm().execute();
+			return;
+			
+		case OPTIONS_DELETE_GROUP:
+			groupSelector = JimmUI.showGroupSelector("del_group", this, JimmUI.SHS_TYPE_EMPTY, -1);
+			return;
+			
+		case OPTIONS_RENAME_GROUP:
+			groupSelector = JimmUI.showGroupSelector("del_group", this, JimmUI.SHS_TYPE_ALL, -1);
 			return;
 		}
 
 		/* Activate options form */
+		optionsForm.addCommand(JimmUI.cmdSave);
+		optionsForm.addCommand(JimmUI.cmdBack);
 		Jimm.display.setCurrent(optionsForm);
 		Jimm.setBkltOn(true);
 	}
 	
-	private void readDataFromForm()
+	private boolean readDataFromForm()
 	{
 		// Save values, depending on selected option menu item
-		switch (optionsMenu.getCurrTextIndex())
+		switch (currOptMode)
 		{
 		case OPTIONS_ACCOUNT:
 			readAccontsControls();
@@ -2059,7 +2098,29 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				localOffset += 24;
 			Options.setInt(Options.OPTION_LOCAL_OFFSET, localOffset);
 			break;
+			
+		case OPTIONS_ADD_USER:
+			Search search = new Search(true);
+			String data[] = new String[Search.LAST_INDEX];
+			data[Search.UIN] = txtUIN.getString();
+			return Icq.runActionAndProcessError(new SearchAction(search, data, SearchAction.CALLED_BY_ADDUSER));
+			
+		case OPTIONS_ADD_GROUP:
+			ContactListGroupItem newGroup = new ContactListGroupItem(txtUIN.getString());
+			return Icq.runActionAndProcessError(new UpdateContactListAction(newGroup, UpdateContactListAction.ACTION_ADD));
+			
+		case OPTIONS_RENAME_GROUP:
+			ContactListGroupItem group = ContactList.getGroupById(groupSelector.getCurrTextIndex());
+			if (group != null)
+			{
+				group.setName(txtUIN.getString());
+				ContactList.safeSave();
+				return Icq.runActionAndProcessError(new UpdateContactListAction(group, UpdateContactListAction.ACTION_RENAME));
+			}
+			return false;
 		}
+		
+		return false;
 	}
 
 	
@@ -2068,7 +2129,36 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	{
 		Jimm.aaUserActivity();
 		
-		if (JimmUI.isControlActive(tlColorScheme))
+		if (JimmUI.isControlActive(groupSelector))
+		{
+			if (c == JimmUI.cmdOk)
+			{
+				switch (currOptMode)
+				{
+				case OPTIONS_RENAME_GROUP:
+					String groupName = groupSelector.getCurrText(0, false);
+					showTextBoxForm("rename_group", "group_name", groupName, TextField.ANY);
+					optionsForm.addCommand(JimmUI.cmdOk);
+					optionsForm.addCommand(JimmUI.cmdBack);
+					break;
+					
+				case OPTIONS_DELETE_GROUP:
+					int groupId = groupSelector.getCurrTextIndex();
+					if (groupId != -1)
+					{
+						Action act = new UpdateContactListAction(ContactList.getGroupById(groupId), UpdateContactListAction.ACTION_DEL);
+						Icq.runActionAndProcessError(act);
+					}
+					break;
+				}
+			}
+			else 
+			{
+				initOptionsList(TYPE_MCL_OPTIONS);
+			}
+		}
+		
+		else if (JimmUI.isControlActive(tlColorScheme))
 		{
 			if (c == JimmUI.cmdOk)
 			{
@@ -2140,10 +2230,15 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				
 				return;
 			}
+			else if (c == JimmUI.cmdSave)
+			{
+				Options.safe_save();
+				initOptionsList(TYPE_TOP_OPTIONS);
+			}
 		}
 
 		//Command handler for actions list in Hotkeys...
-		if (actionMenu.isActive())
+		else if (actionMenu.isActive())
 		{
 			if (c == JimmUI.cmdOk)
 			{
@@ -2154,22 +2249,22 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		}
 
 		// Look for select command
-		if ((c == JimmUI.cmdSelect) && JimmUI.isControlActive(optionsMenu))
+		else if ((c == JimmUI.cmdSelect) && JimmUI.isControlActive(optionsMenu))
 		{
-			dataToForm();
+			currOptMode = optionsMenu.getCurrTextIndex();
+			dataToForm(currOptMode);
 		}
 
 		/* Look for back command */
-		else if (c == JimmUI.cmdBack)
+		else if ((c == JimmUI.cmdBack) || (c == JimmUI.cmdCancel))
 		{
-			if (d == optionsForm || keysMenu.isActive())
+			if (d == optionsForm || keysMenu.isActive() || currOptType == TYPE_MCL_OPTIONS)
 			{
-				optionsMenu.activate(Jimm.display);
+				initOptionsList(TYPE_TOP_OPTIONS);
 			} 
 			else
 			{
-				if (registration_connected)
-					Icq.disconnect();
+				if (registration_connected) Icq.disconnect();
 				Options.optionsForm = null;
 				Jimm.showWorkScreen(); /* Active MM/CL */
 				return;
@@ -2177,20 +2272,22 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		}
 
 		// Look for save command
-		else if (c == saveCommand)
+		else if ((c == JimmUI.cmdSave || c == JimmUI.cmdOk) && d == optionsForm)
 		{
-			readDataFromForm();
+			boolean skipNextScreen = readDataFromForm();
 
 			/* Save options */
 			Options.safe_save();
 
-			/* Activate MM/CL */
-			if (Icq.isConnected())
+			if (!skipNextScreen)
 			{
-				Options.optionsForm = null;
-				ContactList.activate();
+				if (Icq.isConnected())
+				{
+					Options.optionsForm = null;
+					ContactList.activate();
+				}
+				else activate();
 			}
-			else activate();
 		}
 
 		/* Accounts */
@@ -2208,10 +2305,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			readAccontsControls();
 			int size = uins.size();
 			String items[] = new String[size];
-			for (int i = 0; i < size; i++)
-				items[i] = checkUin((String) uins.elementAt(i));
-			JimmUI.showSelector("delete", items, this, TAG_DELETE_ACCOUNT,
-					false);
+			for (int i = 0; i < size; i++) items[i] = checkUin((String) uins.elementAt(i));
+			JimmUI.showSelector("delete", items, this, TAG_DELETE_ACCOUNT, false);
 			return;
 		} 
 		else if (c == cmdRegisterAccount)
