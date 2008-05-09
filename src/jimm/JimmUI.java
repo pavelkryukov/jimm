@@ -1399,14 +1399,17 @@ public class JimmUI implements CommandListener
 	/* Write message */
 	public static void writeMessage(ContactItem receiver, String initText)
 	{
+		String formCap = receiver.getStringValue(ContactItem.CONTACTITEM_NAME)+" - "+ResourceBundle.getString("message");
+		
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (messageTextbox == null)
-		{
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			messageTextbox = new TextBox(receiver.getStringValue(ContactItem.CONTACTITEM_NAME)+" - "+ResourceBundle.getString("message"), null, MAX_EDITOR_TEXT_SIZE, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
-			//#sijapp cond.else#
-			messageTextbox = new TextBox(receiver.getStringValue(ContactItem.CONTACTITEM_NAME)+" - "+ResourceBundle.getString("message"), null, MAX_EDITOR_TEXT_SIZE, TextField.ANY);
-			//#sijapp cond.end#
-		}
+			messageTextbox = new TextBox(formCap, null, MAX_EDITOR_TEXT_SIZE, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
+		else
+			messageTextbox.setTitle(formCap);
+
+//#sijapp cond.else#
+		messageTextbox = new TextBox(formCap, null, MAX_EDITOR_TEXT_SIZE, TextField.ANY);
+//#sijapp cond.end#
 		
 		textMessReceiver = receiver;
 		textMessCurMode = EDITOR_MODE_MESSAGE;
