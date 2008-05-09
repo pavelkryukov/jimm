@@ -2136,7 +2136,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				switch (currOptMode)
 				{
 				case OPTIONS_RENAME_GROUP:
-					String groupName = Util.removeClRfAndTabs(groupSelector.getCurrText(0, false));
+					String groupName = Util.removeClRfAndTabs(groupSelector.getCurrText(0, false).trim());
 					showTextBoxForm("rename_group", "group_name", groupName, TextField.ANY);
 					optionsForm.addCommand(JimmUI.cmdOk);
 					optionsForm.addCommand(JimmUI.cmdBack);
