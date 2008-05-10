@@ -278,6 +278,7 @@
   "show_user_groups"            "Show user groups"
   "show_xstatuses"              "X-status" 
   "show_deleted_contacts"       "Show deleted contacts"
+  "phantoms"		        "Phantoms"
   "since"                       "Since"
   "size"                        "Size"
   "socket"						"Socket"

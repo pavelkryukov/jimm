@@ -35,6 +35,7 @@ import jimm.JimmException;
 import jimm.Options;
 import jimm.RunnableImpl;
 import jimm.comm.Icq.HTTPConnection;
+import jimm.util.ResourceBundle;
 
 public class ConnectAction extends Action
 {
@@ -660,9 +661,10 @@ public class ConnectAction extends Action
 							int privacyMode = -1;
 
 							// Normal contact 	// Deleted contact
-							if //(
+							if (
 								(type == 0x0000)
-							//	 || (Options.getBoolean(Options.OPTION_SHOW_DELETED_CONT) && (type == 0x0019)))
+								 || (Options.getBoolean(Options.OPTION_SHOW_DELETED_CONT) && (type == 0x0019))
+							)
 
 							{
 								ByteArrayOutputStream serverData = new ByteArrayOutputStream();
@@ -727,6 +729,9 @@ public class ConnectAction extends Action
 								if (group != 0x0000)
 								{
 									items.addElement(new ContactListGroupItem(group, name));
+								} else if (Options.getBoolean(Options.OPTION_SHOW_DELETED_CONT)) {
+									items.addElement(new ContactListGroupItem(group,
+											ResourceBundle.getString("phantoms")));
 								}
 							}
 						

@@ -1281,7 +1281,7 @@ public class JimmUI implements CommandListener
 		for (int i = 0; i < groups.length; i++)
 		{
 			int id = groups[i].getId();
-			if (id == excludeGroupId) continue;
+			if ((id == excludeGroupId) || (id == 0x0000)) continue;
 			
 			if (type == SHS_TYPE_EMPTY)
 			{
@@ -1641,19 +1641,20 @@ public class JimmUI implements CommandListener
 			addTextListItem(tlContactMenu, "group_lists", null, -1, true, groupsColor, Font.STYLE_BOLD);
 			addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE, true, -1, Font.STYLE_PLAIN);
 			addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true, -1, Font.STYLE_PLAIN);
-			addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true, -1, Font.STYLE_PLAIN);
-			addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true, -1, Font.STYLE_PLAIN);
-			
+			if (contact.getIntValue(ContactItem.CONTACTITEM_GROUP) != 0x0000) {
+				addTextListItem(tlContactMenu, "rename", null, USER_MENU_RENAME, true, -1, Font.STYLE_PLAIN);
+				addTextListItem(tlContactMenu, "move_to_group", null, USER_MENU_MOVE_TO_GROUP, true, -1, Font.STYLE_PLAIN);
+			}
 			if (contact.getIntValue(ContactItem.CONTACTITEM_IGN_ID) != 0)
 				addTextListItem(tlContactMenu, "privacy_rem_ign", null, USER_MENU_REM_IGN_LIST, true, -1, Font.STYLE_PLAIN);
 			else 
 				addTextListItem(tlContactMenu, "privacy_to_ign", null, USER_MENU_TO_IGN_LIST, true, -1, Font.STYLE_PLAIN);
-			
+		
 			if (contact.getIntValue(ContactItem.CONTACTITEM_INV_ID) != 0)
 				addTextListItem(tlContactMenu, "privacy_rem_inv", null, USER_MENU_REM_INV_LIST, true, -1, Font.STYLE_PLAIN);
 			else 
 				addTextListItem(tlContactMenu, "privacy_to_inv", null, USER_MENU_TO_INV_LIST, true, -1, Font.STYLE_PLAIN);
-			
+
 			if (contact.getIntValue(ContactItem.CONTACTITEM_VIS_ID) != 0)
 				addTextListItem(tlContactMenu, "privacy_rem_vis", null, USER_MENU_REM_VIS_LIST, true, -1, Font.STYLE_PLAIN);
 			else 

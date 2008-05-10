@@ -344,6 +344,7 @@
 "show_user_groups"			"Группы контактов"
 "show_xstatuses"			"X-Статусы"
 "show_deleted_contacts"			"Показывать удаленные контакты"
+"phantoms"				"Фантомы"
 "since"						"Начиная с"
 "size"						"Размер"
 "socket"					"Сокет"
