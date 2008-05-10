@@ -303,12 +303,12 @@ public class VirtualTree extends VirtualList
 
 	//! For internal use only
 	/*! Draw a tree node. Called by base class DrawControls#VirtualDrawList */
-	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight)
+	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight, int paintMode)
 	{
 		currFontHeight = fontHeight;
 		checkToRebuildTree();
 		
-		super.drawItemData(g, index, x1, y1, x2, y2, fontHeight);
+		super.drawItemData(g, index, x1, y1, x2, y2, fontHeight, paintMode);
 		
 		if (showButtons)
 		{

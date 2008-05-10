@@ -135,9 +135,9 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		}
 	}
 	
-	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight)
+	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight, int paintMode)
 	{
-		super.drawItemData(g, index, x1, y1, x2, y2, fontHeight);
+		super.drawItemData(g, index, x1, y1, x2, y2, fontHeight, paintMode);
 		for (int col = 0; col < COL_COUNT; col++)
 		{
 			int x = getGridX(col);

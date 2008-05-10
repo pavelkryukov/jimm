@@ -1552,7 +1552,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(chrgMessFormat, "show_mess_nick", Options.OPTION_SHOW_NICK);
 			setChecked(chrgMessFormat, "show_mess_date", Options.OPTION_SHOW_MESS_DATE);
 			setChecked(chrgMessFormat, "show_mess_clrf", Options.OPTION_SHOW_MESS_CLRF);
-			//#sijapp cond.if modules_SMILES is "true"#
+			//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 			setChecked(chrgMessFormat, "use_smiles", Options.OPTION_USE_SMILES);
 			//#sijapp cond.end#
 			setChecked(chrgMessFormat, "mess_colored_text", Options.OPTION_MESS_COLORED_TEXT);
@@ -1965,9 +1965,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setBoolean(Options.OPTION_SHOW_NICK, chrgMessFormat.isSelected(idx++));
 			Options.setBoolean(Options.OPTION_SHOW_MESS_DATE, chrgMessFormat.isSelected(idx++));
 			Options.setBoolean(Options.OPTION_SHOW_MESS_CLRF, chrgMessFormat.isSelected(idx++));
-			//#sijapp cond.if modules_SMILES is "true"#
+//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 			Options.setBoolean(Options.OPTION_USE_SMILES, chrgMessFormat.isSelected(idx++));
-			//#sijapp cond.end#
+//#sijapp cond.end#
 			Options.setBoolean(Options.OPTION_MESS_COLORED_TEXT, chrgMessFormat.isSelected(idx++));
 
 			Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
