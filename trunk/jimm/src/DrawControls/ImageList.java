@@ -28,7 +28,7 @@ import java.lang.String;
 import java.lang.Integer;
 import java.io.IOException;
 
-import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.*;
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.lcdui.game.Sprite;
 //#sijapp cond.end#
