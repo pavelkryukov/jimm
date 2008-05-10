@@ -132,8 +132,13 @@ public class UpdateContactListAction extends Action
 		case ACTION_RENAME:
 			if (cItem != null)
 				buf = packRosterItem(cItem, 0);
-			else
+			else if (gItem != null)
 				buf = packRosterItem(gItem);
+			else
+			{
+			    this.state = UpdateContactListAction.STATE_ERROR;
+			    break;
+			}
 
 			packet = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 					SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(),
@@ -157,10 +162,14 @@ public class UpdateContactListAction extends Action
 					state = STATE_ADD1;
 				else
 					state = STATE_ADD2;
-			} else
+			} else if (gItem != null)
 			{
 				buf = packRosterItem(gItem);
 				state = STATE_ADD_GROUP1;
+			} else
+			{
+			    this.state = UpdateContactListAction.STATE_ERROR;
+			    break;
 			}
 			packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY,
 					SnacPacket.CLI_ROSTERADD_COMMAND, Util.getCounter(),
@@ -174,10 +183,14 @@ public class UpdateContactListAction extends Action
 			{
 				buf = packRosterItem(cItem, 0);
 				this.state = STATE_DELETE_CONTACT1;
-			} else
+			} else if (gItem != null)
 			{
 				buf = packRosterItem(gItem);
 				this.state = STATE_DELETE_GROUP1;
+			} else
+			{
+			    this.state = UpdateContactListAction.STATE_ERROR;
+			    break;
 			}
 
 			packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY,
@@ -338,8 +351,14 @@ public class UpdateContactListAction extends Action
 							.getGroupById(cItem
 									.getIntValue(ContactItem.CONTACTITEM_GROUP));
 					ContactList.removeContactItem(this.cItem);
-					sendGroup(group);
-					state = STATE_DELETE_CONTACT2;
+					if (group != null) {
+					    sendGroup(group);
+					    state = STATE_DELETE_CONTACT2;
+					} else
+					{
+					    Icq.sendCLI_ADDEND();
+					    this.state = STATE_COMPLETED;
+					}
 					break;
 
 				case STATE_DELETE_CONTACT2:
@@ -469,25 +488,26 @@ public class UpdateContactListAction extends Action
 		/* Additional data */
 		ByteArrayOutputStream addData = new ByteArrayOutputStream();
 
-		/* TLV(0x0131) - name */
-		if (action != ACTION_DEL)
-		{
-			Util.writeWord(addData, 0x0131, true);
-			Util.writeLenAndString(addData, cItem.getStringValue(ContactItem.CONTACTITEM_NAME), true);
+		if (groupID != 0x0000) {
+			/* TLV(0x0131) - name */
+			if (action != ACTION_DEL)
+			{
+				Util.writeWord(addData, 0x0131, true);
+				Util.writeLenAndString(addData, cItem.getStringValue(ContactItem.CONTACTITEM_NAME), true);
+			}
+
+			/* Server-side additional data */
+			byte[] ssData = cItem.getBytesArray(ContactItem.CONTACTITEM_SS_DATA);
+			if (ssData != null)
+				Util.writeByteArray(addData, ssData);
+
+			/* TLV(0x0066) - you are awaiting authorization for this buddy */
+			if (action == ACTION_REQ_AUTH)
+			{
+				Util.writeWord(addData, 0x0066, true);
+				Util.writeWord(addData, 0x0000, true);
+			}
 		}
-
-		/* Server-side additional data */
-		byte[] ssData = cItem.getBytesArray(ContactItem.CONTACTITEM_SS_DATA);
-		if (ssData != null)
-			Util.writeByteArray(addData, ssData);
-
-		/* TLV(0x0066) - you are awaiting authorization for this buddy */
-		if (action == ACTION_REQ_AUTH)
-		{
-			Util.writeWord(addData, 0x0066, true);
-			Util.writeWord(addData, 0x0000, true);
-		}
-
 		/* Append additional data to stream */
 		Util.writeWord(stream, addData.size(), true);
 		stream.write(addData.toByteArray(), 0, addData.size());

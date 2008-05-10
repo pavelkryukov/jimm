@@ -163,7 +163,7 @@ public class Options
 	public static final int OPTION_USE_AUTOAWAY      = 161;
 	public static final int OPTION_DELIV_MES_INFO    = 162;
 	public static final int OPTION_MIRROR_MENU       = 163;
-//	public static final int OPTION_SHOW_DELETED_CONT = 164;
+	public static final int OPTION_SHOW_DELETED_CONT = 164;
 	
 	/* long */
 	public static final int OPTION_ONLINE_STATUS = 192; 
@@ -445,7 +445,7 @@ public class Options
 		
 		setBoolean(OPTION_DELIV_MES_INFO, true);
 		setBoolean(OPTION_MIRROR_MENU, false);
-//		setBoolean(OPTION_SHOW_DELETED_CONT, false);
+		setBoolean(OPTION_SHOW_DELETED_CONT, false);
 	}
 
 	static public void resetLangDependedOpts()
@@ -1527,7 +1527,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
 			setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
 			setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
-//			setChecked(choiceContactList, "show_deleted_contacts", Options.OPTION_SHOW_DELETED_CONT);
+			setChecked(choiceContactList, "show_deleted_contacts", Options.OPTION_SHOW_DELETED_CONT);
 
 			chrgChat = new ChoiceGroup(ResourceBundle.getString("chat"),
 					Choice.MULTIPLE);
@@ -1939,14 +1939,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			boolean newHideOffline = choiceContactList.isSelected(idx++);
 			boolean newShowXStatuses = choiceContactList.isSelected(idx++);
 			boolean newShowClients = choiceContactList.isSelected(idx++);
-//			boolean newShowDeletedCont = choiceContactList.isSelected(idx++);
+			boolean newShowDeletedCont = choiceContactList.isSelected(idx++);
 
 			Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
 			Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
 			//setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
 			Options.setBoolean(Options.OPTION_XSTATUSES, newShowXStatuses);
 			Options.setBoolean(Options.OPTION_CL_CLIENTS, newShowClients); 
-//			Options.setBoolean(Options.OPTION_SHOW_DELETED_CONT, newShowDeletedCont); 
+			Options.setBoolean(Options.OPTION_SHOW_DELETED_CONT, newShowDeletedCont); 
 
 			idx = 0;
 			//#sijapp cond.if modules_HISTORY is "true"#
@@ -2189,6 +2189,22 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				Icq.disconnect();
 				try
 				{
+					Options.reset_rms();
+				} catch (RecordStoreException re) {}
+
+				// Save traffic
+				//#sijapp cond.if modules_TRAFFIC is "true" #
+				try
+				{
+					Traffic.reset();
+				} catch (Exception e)
+				{ // Do nothing
+				}
+				//#sijapp cond.end#
+
+					/* Exit app */
+				try
+				{
 					Thread.sleep(500);
 				} catch (InterruptedException e1)
 				{
@@ -2196,16 +2212,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				}
 				try
 				{
-					Options.reset_rms();
-				} catch (RecordStoreException re) {}
-					/* Exit app */
-				try
-				{
 					Jimm.jimm.destroyApp(true);
 				} catch (Exception e)
 				{ /* Do nothing */
 				}
-				default:
+				break;
 			    }
 			}
 			activate();

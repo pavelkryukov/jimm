@@ -298,7 +298,7 @@ public class RegisterNewUinAction extends Action
 			                        this.state = RegisterNewUinAction.STATE_WELL_DONE;
 			                        // Packet has been consumed
 		        	                consumed = true;
-					}
+					} else
 					if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0001)) {
                         
 			                        // Move to next state
@@ -316,7 +316,7 @@ public class RegisterNewUinAction extends Action
 					// Watch out for SRV_GOODBYE packet
 					if (disconnectPacket.getType() == DisconnectPacket.TYPE_SRV_GOODBYE) {
 						// Send CLI_GOODBYE packet
-						Icq.c.sendPacket(new DisconnectPacket());
+//						Icq.c.sendPacket(new DisconnectPacket());
 					}
 					consumed = true;
 				}
