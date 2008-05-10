@@ -953,7 +953,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				JimmUI.addTextListItem(optionsMenu, "proxy", null, OPTIONS_PROXY, true, -1, Font.STYLE_PLAIN); 
 //#sijapp cond.end#
 			JimmUI.addTextListItem(optionsMenu, "options_interface", null, OPTIONS_INTERFACE, true, -1, Font.STYLE_PLAIN);
+//#sijapp cond.if modules_FILES is "true"#
+			if (System.getProperty("video.snapshot.encodings") != null)
 			JimmUI.addTextListItem(optionsMenu, "options_camera", null, OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
+//#sijapp cond.end#
 			JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN); 
 			JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true, -1, Font.STYLE_PLAIN);
 			JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true, -1, Font.STYLE_PLAIN);
