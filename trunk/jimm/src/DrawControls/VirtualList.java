@@ -76,6 +76,7 @@ class VirtualCanvas extends Canvas implements Runnable
 	{
 		cancelKeyRepeatTask();
 		currentControl.resetUiState();
+		currentControl.onHide();
 	}
 	
 	public void run()
@@ -454,7 +455,7 @@ public abstract class VirtualList
 		virtualCanvas.cancelKeyRepeatTask();
 		display.setCurrent(virtualCanvas);
 		repaint();
-		
+		onShow();
 		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
 		setBackLightOn();
 		//#sijapp cond.end#
@@ -474,6 +475,7 @@ public abstract class VirtualList
 		virtualCanvas.setCommandListener(commandListener);
 		forcedHeight = forcedWidth = -1;
 		uiState = UI_STATE_NORMAL;
+		onShow();
 	}
 
 	private static int maxInt(int value1, int value2)
@@ -795,13 +797,22 @@ public abstract class VirtualList
 
 //#sijapp cond.if target="MOTOROLA"#
 			case Canvas.KEY_STAR:
-				virtualCanvas.getDisplay().flashBacklight(backLightIsOn ? 1 : Integer.MAX_VALUE);
+				getDisplay().flashBacklight(backLightIsOn ? 1 : Integer.MAX_VALUE);
 				backLightIsOn = !backLightIsOn;
 				break;
 //#sijapp cond.end#
 			}
 		}
-
+	}
+	
+	protected Display getDisplay()
+	{
+		return virtualCanvas.getDisplay();
+	}
+	
+	protected Canvas getCanvas()
+	{
+		return virtualCanvas;
 	}
 
 	public void doKeyreaction(int keyCode, int type)
@@ -1050,7 +1061,7 @@ public abstract class VirtualList
 	}
 
 	// Return height of caption in pixels
-	private int getCapHeight()
+	protected final int getCapHeight()
 	{
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (fullScreen) return 0;
@@ -1180,8 +1191,16 @@ public abstract class VirtualList
 		values[1] = getWidthInternal() - scrollerWidth - curFrameWidth;
 	}
 
-	// private boolean drawItems(Graphics g, int top_y)
-	private boolean drawItems(Graphics g, int top_y, int fontHeight, int menuBarHeight, int mode, int mouseX, int mouseY)
+	protected final boolean drawItems
+	(
+		Graphics g, 
+		int top_y, 
+		int fontHeight, 
+		int menuBarHeight, 
+		int mode, 
+		int mouseX, 
+		int mouseY
+	)
 	{
 		int grCursorY1 = -1, grCursorY2 = -1;
 		int height = getDrawHeight();
@@ -1251,15 +1270,15 @@ public abstract class VirtualList
 		for (i = topItem; i < size; i++)
 		{
 			int itemHeight = getItemHeight(i);
-			g.setStrokeStyle(Graphics.SOLID);
+			if (g != null) g.setStrokeStyle(Graphics.SOLID);
 			
 			int x1 = borderWidth;
 			int x2 = itemWidth-2;
 			int y1 = y;
 			int y2 = y + itemHeight;
-			if (mode == DMS_DRAW)
+			if (mode == DMS_DRAW || mode == DMS_CUSTOM)
 			{
-				drawItemData(g, i, x1, y1, x2, y2, fontHeight);
+				drawItemData(g, i, x1, y1, x2, y2, fontHeight, mode);
 			}
 			
 			//#sijapp cond.if target is "MIDP2"#
@@ -1404,7 +1423,7 @@ public abstract class VirtualList
 	}
 
 	// protected void drawItemData
-	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight)
+	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight, int paintMode)
 	{
 		paintedItem.clear();
 		get(index, paintedItem);
@@ -1509,6 +1528,8 @@ public abstract class VirtualList
 		return virtualCanvas.getHeight();
 	}
 	
+	protected void onShow() {}
+	protected void onHide() {}
 	
 	///////////////////////////////
 	//                           //
@@ -1666,7 +1687,7 @@ public abstract class VirtualList
 		return (leftMenu != null) || (rightMenu != null);
 	}
 	
-	private int getMenuBarHeight()
+	protected final int getMenuBarHeight()
 	{
 		if (fullScreen) return 0;
 		return exMenuExists() ? menuBarFont.getHeight()+3 : 0;
@@ -1768,9 +1789,10 @@ public abstract class VirtualList
 		return (x1 <= ptX) && (ptX < x2) && (y1 <= ptY) && (ptY < y2); 
 	}
 	
-	private static final int DMS_DRAW = 1;
-	private static final int DMS_CLICK = 2;
-	private static final int DMS_DBLCLICK = 3;
+	protected static final int DMS_DRAW = 1;
+	protected static final int DMS_CLICK = 2;
+	protected static final int DMS_DBLCLICK = 3;
+	protected static final int DMS_CUSTOM = 4;
 	
 	private boolean paint3points(Graphics g, int x1, int y1, int x2, int y2, int mode, int curX, int curY, int moveOffset, int menuItemsCount)
 	{

@@ -24,6 +24,8 @@
 package DrawControls;
 
 import java.util.Enumeration;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 import javax.microedition.lcdui.*;
 
@@ -32,14 +34,17 @@ import DrawControls.ListItem;
 
 class TextItem
 {
-	public Image image;
-	public String text;
+	byte[] imgNumsAndTimes;
+	Image[] image;
+	byte aniStep, timeCounter;
+	
+	String text;
 	private int fontAndColor = 0;
 	private int itemHeigthAndWidth = 0;
 	
-	public int getHeight(int fontSize)
+	int getHeight(int fontSize)
 	{
-		if (image != null) return image.getHeight();
+		if (image != null) return image[0].getHeight();
 		if (text == null) return 0;
 		if ((itemHeigthAndWidth&0xFFFF) == 0)
 		{
@@ -49,11 +54,11 @@ class TextItem
 		return itemHeigthAndWidth&0xFFFF;
 	}
 	
-	public int getWidth(int fontSize)
+	int getWidth(int fontSize)
 	{
 		if (image != null)
 		{
-			return image.getWidth();
+			return image[0].getWidth();
 		}
 		if (text == null) return 0;
 		if ((itemHeigthAndWidth&0xFFFF0000) == 0)
@@ -64,32 +69,32 @@ class TextItem
 		return (itemHeigthAndWidth&0xFFFF0000) >> 16;
 	}
 	
-	public int getColor()
+	int getColor()
 	{
 		return fontAndColor&0xFFFFFF;
 	}
 	
-	public void setColor(int value)
+	void setColor(int value)
 	{
 		fontAndColor = (fontAndColor&0xFF000000) | (value&0x00FFFFFF); 
 	}
 	
-	public int getFontStyle()
+	int getFontStyle()
 	{
 		return (fontAndColor&0xFF000000) >> 24;
 	}
 	
-	public void setFontStyle(int value)
+	void setFontStyle(int value)
 	{
 		fontAndColor = (fontAndColor&0x00FFFFFF)|((value&0xFF) << 24);
 	}
 	
-	public boolean replaceImage(Image from, Image to)
+	boolean replaceImage(Image from, Image to)
 	{
 		if (image == null) return false;
-		if (image == from)
+		if (image[0] == from)
 		{
-			image = to;
+			image[0] = to;
 			return true;
 		}
 		return false;
@@ -147,20 +152,35 @@ class TextLine
 		}
 	}
 
-	void paint(int xpos, int ypos, Graphics g, int fontSize, VirtualList vl)
+	void paint(int xpos, int ypos, Graphics g, int fontSize, VirtualList vl, boolean ani)
 	{
 		int count = items.size();
-		int intemHeight = getHeight(fontSize);
+		int itemHeight = getHeight(fontSize);
 
 		for (int i = 0; i < count; i++)
 		{
 			TextItem item = elementAt(i);
-			int drawYPos = ypos + (intemHeight - item.getHeight(fontSize))/2;
+			int drawYPos = ypos + (itemHeight - item.getHeight(fontSize))/2;
 			if (item.image != null)
 			{
-				g.drawImage(item.image, xpos, drawYPos, Graphics.TOP | Graphics.LEFT);
+				int imgIndex = (item.imgNumsAndTimes == null) ? 0 : item.imgNumsAndTimes[2*item.aniStep];
+				Image img = item.image[imgIndex];
+				if (g != null) g.drawImage(img, xpos, drawYPos, Graphics.TOP | Graphics.LEFT);
+				
+				if (ani && item.image.length > 1)
+				{
+					item.timeCounter++;
+					if (item.timeCounter > item.imgNumsAndTimes[2*item.aniStep+1])
+					{
+						item.timeCounter = 0;
+						item.aniStep++;
+						if (item.aniStep >= item.imgNumsAndTimes.length/2) item.aniStep = 0;
+						vl.getCanvas().repaint(xpos, drawYPos, img.getWidth(), img.getHeight());
+					}
+				}
 			}
-			else if (item.text != null)
+			
+			else if (item.text != null && !ani && g != null)
 			{
 				g.setColor(item.getColor());
 				g.setFont(vl.getQuickFont(item.getFontStyle()));
@@ -194,8 +214,12 @@ class TextLine
 //! Text list
 /*! This class store text and data of lines internally
  You may use it to show text with colorised lines :) */
-public class TextList extends VirtualList
+public class TextList extends VirtualList implements Runnable
 {
+	private boolean animated;
+	private static TimerTask aniTimerTask;
+	private static Timer aniTimer = new Timer();
+	
 	//! Construct new text list 
 	public TextList
 	(
@@ -259,6 +283,7 @@ public class TextList extends VirtualList
 	{
 		lines.removeAllElements();
 		setCurrentItem(0);
+		animated = false;
 		invalidate();
 	}
 
@@ -321,16 +346,16 @@ public class TextList extends VirtualList
 	}
 
 	// Overrides VirtualList.drawItemData
-	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight)
+	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight, int paintMode)
 	{
 		if (getCursorMode() != CURSOR_MODE_DISABLED)
 		{
-			super.drawItemData(g, index, x1, y1, x2, y2, fontHeight);
+			super.drawItemData(g, index, x1, y1, x2, y2, fontHeight, paintMode);
 			return;
 		}
 
 		TextLine line = getLine(index);
-		line.paint(borderWidth, y1, g, getFontSize(), this);
+		line.paint(borderWidth, y1, g, getFontSize(), this, paintMode == DMS_CUSTOM);
 	}
 
 	// Overrides VirtualList.moveCursor
@@ -476,14 +501,14 @@ public class TextList extends VirtualList
 		lines.addElement(newLine);
 		return this;
 	}
-
-	public TextList addImage(Image image, String altarnateText, int blockTextIndex)
+	
+	public TextList addAniImage(Image[] image, byte[] imgNumsAndTimes, String altarnateText, int blockTextIndex)
 	{
 		if (lines.isEmpty()) lines.addElement(new TextLine());
 		TextLine textLine = (TextLine) lines.lastElement();
 		textLine.bigTextIndex = blockTextIndex;
 		
-		if ((textLine.getWidth(getFontSize()) + image.getWidth()) > getTextAreaWidth())
+		if ((textLine.getWidth(getFontSize()) + image[0].getWidth()) > getTextAreaWidth())
 		{
 			doCRLF(blockTextIndex);
 			textLine = (TextLine) lines.lastElement();
@@ -491,9 +516,18 @@ public class TextList extends VirtualList
 
 		TextItem newItem = new TextItem();
 		newItem.image = image;
+		newItem.imgNumsAndTimes = imgNumsAndTimes;
 		newItem.text = altarnateText;
 		textLine.add(newItem);
+		
+		animated |= (image.length > 1);
+		
 		return this;
+	}
+
+	public TextList addImage(Image image, String altarnateText, int blockTextIndex)
+	{
+		return addAniImage(new Image[] {image}, null, altarnateText, blockTextIndex);
 	}
 
 	private int getTextAreaWidth()
@@ -675,8 +709,50 @@ public class TextList extends VirtualList
 		int top = y + (height - textHeight) / 2;
 		for (line = 0; line < linesCount; line++)
 		{
-			paintList.getLine(line).paint(x, top, g, fontSize, paintList);
+			paintList.getLine(line).paint(x, top, g, fontSize, paintList, false);
 			top += paintList.getLine(line).getHeight(fontSize);
 		}
+	}
+	
+	protected void onShow() 
+	{
+		if (animated)
+		{
+			if (aniTimerTask != null) aniTimerTask.cancel();
+			
+			aniTimerTask = new TimerTask() 
+			{
+				public void run()
+				{
+					getDisplay().callSerially(TextList.this);
+				}
+			};
+			
+			aniTimer.schedule(aniTimerTask, 100, 100);
+		}
+		else if (!animated && (aniTimerTask != null))
+		{
+			aniTimerTask.cancel();
+			aniTimerTask = null;
+		}
+	}
+	
+	public void run()
+	{
+		drawItems(null, getCapHeight(), getFontHeight(), getMenuBarHeight(), DMS_CUSTOM, -1, -1);
+	}
+	
+	protected void onHide() 
+	{
+		if (aniTimerTask != null)
+		{
+			aniTimerTask.cancel();
+			aniTimerTask = null;
+		}
+	}
+	
+	protected void paint(Graphics g)
+	{
+		super.paint(g);
 	}
 }

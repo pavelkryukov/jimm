@@ -29,50 +29,31 @@ import java.lang.Integer;
 import java.io.IOException;
 
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.Graphics; //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.lcdui.game.Sprite;
-
 //#sijapp cond.end#
-
-//! Class for dividing one big image to several small with equal size
-/*!
- This class allow you to reduce images number, stored at res folder. 
- It can be uses only if all images have equal height and width. 
- For example, if you want use 10 images with size 16 x 16, you can
- store one 160 x 16 image and divide it with help of this class
- 
- \par Example
- \code
- ImageList images = new ImageList();
- images.load("/big160x16.png", 16);
- 
- // now you can retrive second image: 
- Image img1 = images.elementAt(1);
- 
- \endcode
- */
 
 public class ImageList
 {
-	private Vector items = new Vector();
+	private Image[] items;
 
 	private int width = 0, height = 0;
 
 	//! Return image by index
 	public Image elementAt(int index)
 	{
-		return ((index < 0) || (index >= items.size())) ? null : (Image) items.elementAt(index);
+		return (index < 0 || index >= items.length) ? null : items[index];
 	}
 
 	public void setImage(Image image, int index)
 	{
-		items.setElementAt(Image.createImage(image), index);
+		items[index] = image;
 	}
 
 	//! Return number of stored images
 	public int size()
 	{
-		return items.size();
+		return items.length;
 	}
 
 	//! Return width of each image
@@ -86,11 +67,16 @@ public class ImageList
 	{
 		return height;
 	}
+	
+	public Image[] getImages()
+	{
+		return items;
+	}
 
 	//! Remove all images from list
 	public void removeAllElements()
 	{
-		items.removeAllElements();
+		items = null;
 	}
 
 	//! Load and divide big image to several small and store it in object
@@ -102,6 +88,7 @@ public class ImageList
 		Image resImage = Image.createImage(resName);
 		int imgHeight = resImage.getHeight();
 		int imgWidth = resImage.getWidth();
+		Vector images = new Vector(); 
 
 		if (width == -1) width = imgHeight;
 		if (height == -1) height = imgHeight;
@@ -122,19 +109,22 @@ public class ImageList
 				//#						| Graphics.LEFT);
 				//#sijapp cond.end#
 				Image imImage = Image.createImage(newImage);
-				items.addElement(imImage);
+				images.addElement(imImage);
 			}
 		}
+		items = new Image[images.size()];
+		images.copyInto(items);
 	}
 
 	public void load(String firstLine, String extention, int from, int to) throws IOException
 	{
 		Image image = null;
+		Vector images = new Vector();
 
 		for (int i = from; i <= to; i++)
 		{
 			image = Image.createImage(firstLine + Integer.toString(i) + "." + extention);
-			items.addElement(image);
+			images.addElement(image);
 		}
 		if (image != null)
 		{
@@ -145,5 +135,7 @@ public class ImageList
 		{
 			height = width = 0;
 		}
+		items = new Image[images.size()];
+		images.copyInto(items);
 	}
 }

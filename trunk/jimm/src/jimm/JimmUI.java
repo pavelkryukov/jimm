@@ -106,7 +106,7 @@ public class JimmUI implements CommandListener
 	public final static Command cmdSend = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 	public final static Command cmdList = new Command(ResourceBundle.getString("contact_list"), Command.ITEM, 1);
 	
-	//#sijapp cond.if modules_SMILES is "true" #
+	//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 	public final static Command cmdInsertEmo = new Command(ResourceBundle.getString("insert_emotion"), Command.ITEM, 3);
 	//#sijapp cond.end#
 	
@@ -300,7 +300,7 @@ public class JimmUI implements CommandListener
 				}
 			}
 			
-			//#sijapp cond.if modules_SMILES is "true" #
+			//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 			else if (c == cmdInsertEmo)
 			{
 				Emotions.selectEmotion(messageTextbox, messageTextbox);
@@ -1152,7 +1152,7 @@ public class JimmUI implements CommandListener
 	static public void addMessageText(TextList textList, String text, int color,
 			int messTotalCounter)
 	{
-		//#sijapp cond.if modules_SMILES is "true" #
+		//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 		Emotions.addTextWithEmotions(textList, text, Font.STYLE_PLAIN, color, messTotalCounter);
 		//#sijapp cond.else#
 		//#		textList.addBigText(text, textList.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
@@ -1419,7 +1419,7 @@ public class JimmUI implements CommandListener
 		messageTextbox.addCommand(cmdCancel);
 		messageTextbox.addCommand(cmdClearText);
 
-		//#sijapp cond.if modules_SMILES is "true" #
+		//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 		messageTextbox.addCommand(cmdInsertEmo);
 		//#sijapp cond.end#
 		
