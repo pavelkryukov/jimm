@@ -43,7 +43,6 @@
 
 package jimm;
 
-import jimm.ContactList;
 import jimm.comm.Action;
 import jimm.comm.SearchAction;
 import jimm.comm.UpdateContactListAction;
@@ -1182,10 +1181,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	public void addAccount (String uin, String password)
 	{
 		readAccontsControls();
-		if (checkUin((String) uins.elementAt(currAccount)) == "---") {
+		if (checkUin((String) uins.elementAt(currAccount)).equals("---"))
+		{
 			uins.setElementAt(uin, currAccount);
 			passwords.setElementAt(password, currAccount);
-		} else {
+		} else
+		{
 			uins.addElement(uin);
 			passwords.addElement(password);
 		}
