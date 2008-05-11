@@ -218,14 +218,17 @@ class FileSystem2 implements CommandListener, Runnable
 		if (root == null) root = ROOT_DIRECTORY;
 		
 		list.removeAllCommands();
-		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
+		
+		list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+		
 		if (onlyDirs)
 		{
 			list.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
-			list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT);
+			list.addCommandEx(JimmUI.cmdSelect2, VirtualList.MENU_TYPE_RIGHT);
 			list.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT);
 		}
-		else list.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_RIGHT_BAR);
+		else
+			list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 		
 		JimmUI.setColorScheme(list, false, -1);
 		list.setMode(VirtualList.CURSOR_MODE_DISABLED);
@@ -366,7 +369,7 @@ class FileSystem2 implements CommandListener, Runnable
 	{
 		Jimm.aaUserActivity();
 		
-		if ((c == JimmUI.cmdSelect) || (c == JimmUI.cmdOk)) 
+		if (c == JimmUI.cmdSelect2 || c == JimmUI.cmdOk || c == JimmUI.cmdSelect) 
 		{
 			int index = list.getCurrTextIndex();
 			if (index < 0) return;
@@ -382,14 +385,18 @@ class FileSystem2 implements CommandListener, Runnable
 				}
 				if (parentDir != null) showFolder(parentDir);
 			}
-			else if (itemText.endsWith("/") && (c != JimmUI.cmdOk))
+			else if (itemText.endsWith("/"))
 			{
-				showFolder(selectedItem);
+				if (c == JimmUI.cmdOk || c == JimmUI.cmdSelect)
+					showFolder(selectedItem);
+				else if (c == JimmUI.cmdSelect2)
+					externalListener.commandAction(JimmUI.cmdOk, d);
 			}
 			else
 			{
-				if (externalListener != null) externalListener.commandAction(JimmUI.cmdOk, d);
+				externalListener.commandAction(JimmUI.cmdOk, d);
 			}
+				
 		}
 		else if (c == JimmUI.cmdBack) externalListener.commandAction(JimmUI.cmdBack, d);
 	}
