@@ -41,6 +41,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 	private static Vector timeData = new Vector();
 	private static Vector findedEmotions = new Vector();
 	private static boolean used;
+	private static boolean animated;
 	private static int[] selEmotionsIndexes, textCorrIndexes;
 	private static String[] selEmotionsWord;
 	private static String[] selEmotionsSmileNames;
@@ -57,6 +58,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 	static void load()
 	{
 		int iconsSize = -1;
+		animated = false;
 		
 		ImageList imageList = new ImageList(); 
 		Vector textCorr = new Vector();
@@ -65,8 +67,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		InputStream stream;
 		DataInputStream dos;
 		boolean eof = false;
-		boolean animated;
-
+		
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 		System.gc();
 		long mem = Runtime.getRuntime().freeMemory();
@@ -378,8 +379,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 		selector = new Selector();
 		JimmUI.setColorScheme(selector, false, -1);
 
-		selector.addCommandEx(cmdOk, VirtualList.MENU_TYPE_LEFT_BAR);
-		selector.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_RIGHT_BAR);
+		selector.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
+		selector.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
 		selector.setCommandListener(_this);
 
 		selector.activate(Jimm.display);

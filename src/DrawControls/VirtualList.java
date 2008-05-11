@@ -1363,20 +1363,30 @@ public abstract class VirtualList
 	
 	public void paintAllOnGraphics(Graphics graphics, int mode, int mouseX, int mouseY)
 	{
+		int clipY1 = graphics.getClipY();
+		int clipY2 = clipY1+graphics.getClipHeight();
+		
+		int height = getHeightInternal();
+		int capHeight = getCapHeight();
 		int visCount = getVisCount();
 		int menuBarHeight = getMenuBarHeight();
-		int y = drawCaption(graphics, mode, mouseX, mouseY);
+		int y = (clipY1 <= capHeight) ? drawCaption(graphics, mode, mouseX, mouseY) : capHeight;
 		
 		switch (mode)
 		{
 		case DMS_DRAW:
 			drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, mouseX, mouseY);
 			drawScroller(graphics, y, visCount, menuBarHeight);
-			if (menuBarHeight != 0) drawMenuBar(graphics, menuBarHeight, mode, mouseX, mouseY);
+			if (menuBarHeight != 0)
+			{
+				int barY = height-menuBarHeight;
+				if (clipY2 >= barY)
+					drawMenuBar(graphics, menuBarHeight, mode, mouseX, mouseY);
+			}
 			drawMenuItems(graphics, menuBarHeight, mode, mouseX, mouseY);
 			break;
 			
-		//#sijapp cond.if target is "MIDP2"#
+//#sijapp cond.if target is "MIDP2"#
 		case DMS_CLICK:
 		case DMS_DBLCLICK:
 			boolean clicked;
@@ -1391,7 +1401,7 @@ public abstract class VirtualList
 			clicked = drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, mouseX, mouseY);
 			if (clicked) return;
 			break;
-			//#sijapp cond.end#
+//#sijapp cond.end#
 		}
 
 	}
