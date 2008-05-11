@@ -39,12 +39,10 @@ public class RegisterNewUinAction extends Action
     public static final int STATE_INIT_DONE = 0;
     public static final int STATE_CAPTCHA_REQUESTED = 1;
     public static final int STATE_WAITING_FOR_CONFIRM = 2;
-    public static final int STATE_WELL_DONE = 3;
+    public static final int STATE_WAITING_GOODBYE = 3;
+    public static final int STATE_WELL_DONE = 4;
     
-    public static final int STATE_MAX = 3;
-
-    // Timeout
-    public int TIMEOUT = 60 * 1000; // milliseconds
+    public static final int STATE_MAX = 4;
 
     /** *********************************************************************** */
 
@@ -295,7 +293,7 @@ public class RegisterNewUinAction extends Action
 						this.uin = String.valueOf(uinL);
                         
 			                        // Move to next state
-			                        this.state = RegisterNewUinAction.STATE_WELL_DONE;
+			                        this.state = RegisterNewUinAction.STATE_WAITING_GOODBYE;
 			                        // Packet has been consumed
 		        	                consumed = true;
 					} else
@@ -309,20 +307,19 @@ public class RegisterNewUinAction extends Action
 					}
 				}
 				break;
-			default :
+			case RegisterNewUinAction.STATE_WAITING_GOODBYE :
 				// watch out for channel 4 packet
 				if (packet instanceof DisconnectPacket) {
 					DisconnectPacket disconnectPacket = (DisconnectPacket) packet;
-					// Watch out for SRV_GOODBYE packet
-					if (disconnectPacket.getType() == DisconnectPacket.TYPE_SRV_GOODBYE) {
-						// Send CLI_GOODBYE packet
-//						Icq.c.sendPacket(new DisconnectPacket());
+					// Watch out for CLI_GOODBYE packet
+					if (disconnectPacket.getType() == DisconnectPacket.TYPE_CLI_GOODBYE) {
+						Icq.c.close();
+			                        this.state = RegisterNewUinAction.STATE_WELL_DONE;
+						consumed = true;
 					}
-					consumed = true;
 				}
 		}
 
-	
 		// Update activity timestamp and reset activity flag
 		this.lastActivity = new Date();
 		this.active = false;
@@ -357,12 +354,6 @@ public class RegisterNewUinAction extends Action
     // Returns true if an error has occured
     public boolean isError()
     {
-//    	if ((this.state != RegisterNewUinAction.STATE_ERROR) && !this.active && (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
-//        {
-//    		JimmException e = new JimmException(119, 0);
-//		JimmException.handleException(e);
-//		this.state = RegisterNewUinAction.STATE_ERROR;
-//        }
         return (this.state == RegisterNewUinAction.STATE_ERROR);
     }
 
@@ -382,10 +373,10 @@ public class RegisterNewUinAction extends Action
 		Options.submitNewUinPassword (this.getUin(), this.getPassword());
     		Icq.disconnect();
     		break;
-    		
     	case ON_CANCEL:
+    	case ON_ERROR:
     		Icq.disconnect();
     		break;
-    	}
+	}
     }
 }
