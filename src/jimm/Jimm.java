@@ -55,6 +55,13 @@ public class Jimm extends MIDlet
 	public static Display display;
 
 	/****************************************************************************/
+	
+	private static StringBuffer loadError = new StringBuffer();
+	
+	public static void setLoadError(String value)
+	{
+		loadError.append(value).append("\n\n");
+	}
 
 	// ICQ object
 	private Icq icq;
@@ -237,18 +244,26 @@ public class Jimm extends MIDlet
 		DrawControls.VirtualList.setDisplay(Jimm.display);
 		VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
 
-		if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
+		if (loadError.length() == 0)
 		{
-			// Connect
-			Icq.reconnect_attempts = Options
-					.getInt(Options.OPTION_RECONNECT_NUMBER);
-			ContactList.beforeConnect();
-			Icq.connect();
-		} else
-		{
-			// Activate main menu
-			MainMenu.activate();
+			if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
+			{
+				// Connect
+				Icq.reconnect_attempts = Options.getInt(Options.OPTION_RECONNECT_NUMBER);
+				ContactList.beforeConnect();
+				Icq.connect();
+			} 
+			else
+			{
+				// Activate main menu
+				MainMenu.activate();
+			}
 		}
+		else
+		{
+			JimmUI.addLoadError(loadError.toString());
+		}
+		loadError = null;
 		
 		JimmUI.startTaskForTimeString();
 		
