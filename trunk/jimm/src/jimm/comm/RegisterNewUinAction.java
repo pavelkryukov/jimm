@@ -72,6 +72,7 @@ public class RegisterNewUinAction extends Action
         this.password = password;
         this.srvHost = srvHost;
         this.srvPort = srvPort;
+	this.uin = null;
     }
 
     // Returns the UID
@@ -111,7 +112,7 @@ public class RegisterNewUinAction extends Action
 		return;
 
 	byte[] paswdRaw = Util.stringToByteArray(password);
-	byte[] codeRaw = Util.stringToByteArray(captcha);
+	byte[] codeRaw = Util.stringToByteArray(captcha.toUpperCase());
 
 	int regCookie = 0;
 
@@ -299,11 +300,10 @@ public class RegisterNewUinAction extends Action
 					} else
 					if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0001)) {
                         
-			                        // Move to next state
-			                        this.state = RegisterNewUinAction.STATE_ERROR;
+						// Move to next state
+			                        this.state = RegisterNewUinAction.STATE_WAITING_GOODBYE;
 			                        // Packet has been consumed
 		        	                consumed = true;
-						throw (new JimmException(230, 0));
 					}
 				}
 				break;
@@ -314,8 +314,13 @@ public class RegisterNewUinAction extends Action
 					// Watch out for CLI_GOODBYE packet
 					if (disconnectPacket.getType() == DisconnectPacket.TYPE_CLI_GOODBYE) {
 						Icq.c.close();
-			                        this.state = RegisterNewUinAction.STATE_WELL_DONE;
 						consumed = true;
+						if (this.uin != null) {
+						    this.state = RegisterNewUinAction.STATE_WELL_DONE;
+						} else {
+						    this.state = RegisterNewUinAction.STATE_ERROR;
+						    throw (new JimmException(230, 0, true));
+						}
 					}
 				}
 		}
