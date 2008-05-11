@@ -19,6 +19,7 @@ public class TimerTasks extends TimerTask implements
 	final static public int TYPE_FLASH = 4;
 	final static public int TYPE_CREEPING = 5;
 	final static public int TYPE_MINUTE = 6;
+	final static public int TYPE_SMILES_SEL_ANI = 7;
 
 	public static final int ICQ_KEEPALIVE = 100;
 
@@ -132,6 +133,13 @@ public class TimerTasks extends TimerTask implements
 				
 			case TYPE_MINUTE:
 				RunnableImpl.minuteTask();
+				break;
+				
+//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #				
+			case TYPE_SMILES_SEL_ANI:
+				Emotions.aniEmoTimer();
+				break;
+//#sijapp cond.end#
 			}
 			return;
 		}

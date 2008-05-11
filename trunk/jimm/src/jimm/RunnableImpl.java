@@ -128,6 +128,7 @@ public class RunnableImpl implements Runnable
 			
 		case TYPE_MESS_DELIVERED:
 			ChatHistory.messageIsDelivered((String)data[0], getInt(data, 1));
+			break;
 		}
 	}
 

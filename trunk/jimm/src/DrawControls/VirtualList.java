@@ -450,6 +450,10 @@ public abstract class VirtualList
 	public void activate(Display display)
 	{
 		if (isActive()) return;
+		
+		if (virtualCanvas.currentControl != null)
+			virtualCanvas.currentControl.onHide();
+		
 		resetUiState();
 		virtualCanvas.currentControl = this;
 		virtualCanvas.cancelKeyRepeatTask();
