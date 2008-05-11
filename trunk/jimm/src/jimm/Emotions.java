@@ -37,9 +37,9 @@ import DrawControls.*;
 public class Emotions implements VirtualListCommands, CommandListener
 {
 	private static Emotions _this;
-	final private static Vector imagesData = new Vector();
-	final private static Vector timeData = new Vector();
-	final private static Vector findedEmotions = new Vector();
+	private static Vector imagesData = new Vector();
+	private static Vector timeData = new Vector();
+	private static Vector findedEmotions = new Vector();
 	private static boolean used;
 	private static int[] selEmotionsIndexes, textCorrIndexes;
 	private static String[] selEmotionsWord;
@@ -186,10 +186,33 @@ public class Emotions implements VirtualListCommands, CommandListener
 			}
 			
 			used = true;
-		} 
+		}
+		catch (OutOfMemoryError e)
+		{
+			imageList.removeAllElements();
+			imagesData.removeAllElements();
+			timeData.removeAllElements();
+			findedEmotions.removeAllElements();
+			
+			imageList = null;
+			imagesData = null;
+			timeData = null;
+			findedEmotions = null;
+			selEmotionsIndexes = null;
+			textCorrIndexes = null;
+			selEmotionsWord = null;
+			selEmotionsSmileNames = null;
+			textCorrWords = null;
+			emoFinded = null;
+			
+			System.gc();
+			
+			Jimm.setLoadError("No memory to load emotions images!");
+			return;
+		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			Jimm.setLoadError("Error while loading emotions: "+e.getMessage());
 			return;
 		}
 		

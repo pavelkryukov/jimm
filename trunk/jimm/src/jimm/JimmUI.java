@@ -162,7 +162,12 @@ public class JimmUI implements CommandListener
 	{
 		Jimm.aaUserActivity();
 		
-		if (isControlActive(removeContactMessageBox))
+		if (isControlActive(loadErrorTextList))
+		{
+			MainMenu.activate();
+		}
+		
+		else if (isControlActive(removeContactMessageBox))
 		{
 			if (c == cmdOk) menuRemoveContactSelected();
 			else backToLastScreen();
@@ -2067,6 +2072,20 @@ public class JimmUI implements CommandListener
 	{
 		lastFileTransferLink = value;
 		System.out.println("setLastFileTransferLink, value="+value);
+	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	
+	public static TextList loadErrorTextList;
+	public static void addLoadError(String text)
+	{
+		loadErrorTextList = new TextList("Load error");
+		loadErrorTextList.setMode(TextList.CURSOR_MODE_DISABLED);
+		setColorScheme(loadErrorTextList, false, -1);
+		loadErrorTextList.addBigText(text, loadErrorTextList.getTextColor(), Font.STYLE_PLAIN, -1);
+		loadErrorTextList.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
+		loadErrorTextList.setCommandListener(_this);
+		loadErrorTextList.activate(Jimm.display);
 	}
 	
 }
