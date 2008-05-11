@@ -152,7 +152,7 @@ class TextLine
 		}
 	}
 
-	void paint(int xpos, int ypos, Graphics g, int fontSize, VirtualList vl, boolean ani)
+	void paint(int xpos, int ypos, Graphics g, int fontSize, VirtualList vl, boolean nextAniStep)
 	{
 		int count = items.size();
 		int itemHeight = getHeight(fontSize);
@@ -167,7 +167,7 @@ class TextLine
 				Image img = item.image[imgIndex];
 				if (g != null) g.drawImage(img, xpos, drawYPos, Graphics.TOP | Graphics.LEFT);
 				
-				if (ani && item.image.length > 1)
+				if (nextAniStep && item.image.length > 1)
 				{
 					item.timeCounter++;
 					if (item.timeCounter > item.imgNumsAndTimes[2*item.aniStep+1])
@@ -180,7 +180,7 @@ class TextLine
 				}
 			}
 			
-			else if (item.text != null && !ani && g != null)
+			else if (item.text != null && !nextAniStep && g != null)
 			{
 				g.setColor(item.getColor());
 				g.setFont(vl.getQuickFont(item.getFontStyle()));
@@ -284,6 +284,7 @@ public class TextList extends VirtualList implements Runnable
 		lines.removeAllElements();
 		setCurrentItem(0);
 		animated = false;
+		resetAnimationTask();
 		invalidate();
 	}
 
@@ -520,7 +521,9 @@ public class TextList extends VirtualList implements Runnable
 		newItem.text = altarnateText;
 		textLine.add(newItem);
 		
+		boolean lastAnimated = animated; 
 		animated |= (image.length > 1);
+		if (lastAnimated != animated) startAnimationTask();
 		
 		return this;
 	}
@@ -718,17 +721,7 @@ public class TextList extends VirtualList implements Runnable
 	{
 		if (animated)
 		{
-			if (aniTimerTask != null) aniTimerTask.cancel();
-			
-			aniTimerTask = new TimerTask() 
-			{
-				public void run()
-				{
-					getDisplay().callSerially(TextList.this);
-				}
-			};
-			
-			aniTimer.schedule(aniTimerTask, 100, 100);
+			startAnimationTask();
 		}
 		else if (!animated && (aniTimerTask != null))
 		{
@@ -744,15 +737,30 @@ public class TextList extends VirtualList implements Runnable
 	
 	protected void onHide() 
 	{
+		resetAnimationTask();
+	}
+	
+	private void startAnimationTask()
+	{
+		if (aniTimerTask != null) aniTimerTask.cancel();
+		
+		aniTimerTask = new TimerTask() 
+		{
+			public void run()
+			{
+				getDisplay().callSerially(TextList.this);
+			}
+		};
+		
+		aniTimer.schedule(aniTimerTask, 100, 100);
+	}
+	
+	private void resetAnimationTask()
+	{
 		if (aniTimerTask != null)
 		{
 			aniTimerTask.cancel();
 			aniTimerTask = null;
 		}
-	}
-	
-	protected void paint(Graphics g)
-	{
-		super.paint(g);
 	}
 }
