@@ -52,7 +52,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 		used = false;
 		_this = this;
 		load();
-		used = true;
 	}
 	
 	static void load()
@@ -158,19 +157,18 @@ public class Emotions implements VirtualListCommands, CommandListener
 				
 				String[] lineItems = Util.explode(strBuffer.toString(), ' ');
 				
-				if (lineItems.length < 3) continue;
-				
-				Integer currIndex = Integer.valueOf(lineItems[0]);
-				String smileName = Util.replaceStr(lineItems[1], "_", " ");
-				 
-				timeingsValues.removeAllElements();
-				for (int i = 2; i < lineItems.length; i++)
+				if (lineItems.length >= 3)
 				{
-					String word = Util.replaceStr(lineItems[i], "_", " ");
-					if (word.length() == 0) continue;
-				
-					insertTextCorr(textCorr, word, currIndex);
-					if (i == 2) selEmotions.addElement(new Object[] { currIndex, word, smileName });
+					Integer currIndex = Integer.valueOf(lineItems[0]);
+					String smileName = Util.replaceStr(lineItems[1], "_", " ");
+
+					for (int i = 2; i < lineItems.length; i++)
+					{
+						String word = Util.replaceStr(lineItems[i], "_", " ");
+						if (word.length() == 0) continue;
+						insertTextCorr(textCorr, word, currIndex);
+						if (i == 2) selEmotions.addElement(new Object[] { currIndex, word, smileName });
+					}
 				}
 
 				if (eof) break;
@@ -184,8 +182,12 @@ public class Emotions implements VirtualListCommands, CommandListener
 				imageList.load("/smiles.png", iconsSize, iconsSize, -1);
 				for (int i = 0; i < imageList.size(); i++)
 					imagesData.addElement(new Image[] { imageList.elementAt(i) });
+				timeData.setSize(imagesData.size());
 			}
-		} catch (Exception e)
+			
+			used = true;
+		} 
+		catch (Exception e)
 		{
 			e.printStackTrace();
 			return;
@@ -296,7 +298,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 			int size = textCorrWords.length;
 			for (int i = 0; i < size; i++)
 				findEmotionInText(text, textCorrWords[i], textCorrIndexes[i], startIndex, i);
-
+			
 			if (findedEmotions.isEmpty()) break;
 			
 			int count = findedEmotions.size();
@@ -310,7 +312,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 					minArray = data;
 				}
 			}
-
+			
 			if (startIndex != minIndex)
 				textList.addBigText(text.substring(startIndex, minIndex), textColor, fontStyle, bigTextIndex);
 
