@@ -25,6 +25,8 @@ package jimm;
 
 //#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 import javax.microedition.lcdui.*;
 
@@ -369,13 +371,21 @@ public class Emotions implements VirtualListCommands, CommandListener
 	private static int caretPos;
 	private static Object lastScreen;
 	private static TextBox textBox;
+	private static TimerTask aniTask;
+	
+	static public void aniEmoTimer()
+	{
+		if (selector == null) return;
+		Selector.counter += 2;
+		Selector._this.repaint();
+	}
 
 	static public void selectEmotion(TextBox textBox, Object screen)
 	{
 		lastScreen = screen;
 		Emotions.caretPos = textBox.getCaretPosition();
 		Emotions.textBox = textBox;
-		//selList = new TextList(null);
+
 		selector = new Selector();
 		JimmUI.setColorScheme(selector, false, -1);
 
@@ -384,6 +394,11 @@ public class Emotions implements VirtualListCommands, CommandListener
 		selector.setCommandListener(_this);
 
 		selector.activate(Jimm.display);
+		if (animated)
+		{
+			aniTask = new TimerTasks(TimerTasks.TYPE_SMILES_SEL_ANI);
+			new Timer().schedule(aniTask, 100, 100);
+		}
 	}
 
 	public void commandAction(Command c, Displayable d)
@@ -395,6 +410,12 @@ public class Emotions implements VirtualListCommands, CommandListener
 			JimmUI.selectScreen(lastScreen);
 			Jimm.setBkltOn(true);
 		}
+		if (aniTask != null)
+		{
+			aniTask.cancel();
+			aniTask = null;
+		}
+		selector = null;
 	}
 
 	public void vlKeyPress(VirtualList sender, int keyCode, int type)
@@ -437,8 +458,9 @@ public class Emotions implements VirtualListCommands, CommandListener
 	static class Selector extends VirtualList implements VirtualListCommands
 	{
 		static private int cols, rows, itemHeight, itemWidth, curCol;
+		static int counter;
 
-		static private Selector _this;
+		static Selector _this;
 
 		Selector()
 		{
@@ -502,7 +524,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 			int xa, xb;
 			int startIdx = cols * index;
 			int imagesCount = imagesData.size();
-			//boolean isSelected = (index == getCurrIndex());
+
 			xa = x1;
 			for (int i = 0; i < cols; i++, startIdx++)
 			{
@@ -514,7 +536,16 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 				if (smileIdx < imagesCount)
 				{
-					Image img = ((Image[])imagesData.elementAt(smileIdx))[0];
+					int imgIndex;
+					if (animated)
+					{
+						byte[] timeSeq = (byte[])timeData.elementAt(smileIdx);
+						imgIndex = (timeSeq == null) ? 0 : 0xFF&(int)timeSeq[counter%timeSeq.length];
+						
+					}
+					else imgIndex = 0;
+					
+					Image img = ((Image[])imagesData.elementAt(smileIdx))[imgIndex];
 					g.drawImage(img, (xa+xb-img.getWidth()+1)/2, (y1+y2-img.getHeight()+1)/2,
 							Graphics.TOP | Graphics.LEFT);
 				}

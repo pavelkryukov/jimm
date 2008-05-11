@@ -753,6 +753,8 @@ public class TextList extends VirtualList implements Runnable
 		};
 		
 		aniTimer.schedule(aniTimerTask, 100, 100);
+		
+		//System.out.println("startAnimationTask");
 	}
 	
 	private void resetAnimationTask()
@@ -761,6 +763,7 @@ public class TextList extends VirtualList implements Runnable
 		{
 			aniTimerTask.cancel();
 			aniTimerTask = null;
+			//System.out.println("resetAnimationTask");
 		}
 	}
 }
