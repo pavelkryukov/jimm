@@ -389,13 +389,14 @@ public class MainMenu implements CommandListener
 		{
 		case SELECT_STATUS:
 			int onlineStatus = statusList.getCurrTextIndex();
+			long lastStatus = Options.getLong(Options.OPTION_ONLINE_STATUS);
 			Options.setLong(Options.OPTION_ONLINE_STATUS, onlineStatus);
 
 			if (Icq.isConnected())
 			{
 				try
 				{
-					Icq.setOnlineStatus(onlineStatus);
+					Icq.setOnlineStatus(onlineStatus, 255);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);
@@ -438,7 +439,7 @@ public class MainMenu implements CommandListener
 				try
 				{
 					Icq.sendUserUnfoPacket();
-					Icq.setExtStatus (xStatus);
+					Icq.setOnlineStatus (-1, xStatus);
 				} catch (JimmException e)
 				{
 					JimmException.handleException(e);

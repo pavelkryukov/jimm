@@ -428,7 +428,10 @@ public class Jimm extends MIDlet
 			if (Icq.isConnected() && (aaMode != AA_MODE_NONE))
 			{
 				aaMode = AA_MODE_NONE;
-				try { Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS)); } catch (Exception e) {}
+				try { 
+					Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS), 255);
+					Icq.setInactiveTime(0x00000000);
+				} catch (Exception e) {}
 				ContactList.showStatusInCaption(-1);
 			}
 		}
@@ -464,7 +467,10 @@ public class Jimm extends MIDlet
 					(status != ContactList.STATUS_INVIS_ALL) &&
 					(status != ContactList.STATUS_INVISIBLE))
 				{
-					try { Icq.setOnlineStatus(ContactList.STATUS_AWAY); } catch (Exception e) {}
+					try {
+						Icq.setOnlineStatus(ContactList.STATUS_AWAY, 255);
+						Icq.setInactiveTime(time1 * 60);
+					} catch (Exception e) {}
 					ContactList.showStatusInCaption(ContactList.STATUS_AWAY);
 					aaMode = AA_MODE_AWAY;
 				}
@@ -473,7 +479,7 @@ public class Jimm extends MIDlet
 			case AA_MODE_AWAY:
 				if (aaInactivityCounter >= time2)
 				{
-					try { Icq.setOnlineStatus(ContactList.STATUS_NA); } catch (Exception e) {}
+					try { Icq.setOnlineStatus(ContactList.STATUS_NA, 255); } catch (Exception e) {}
 					ContactList.showStatusInCaption(ContactList.STATUS_NA);
 					aaMode = AA_MODE_NA;
 				}
