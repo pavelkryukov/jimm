@@ -79,6 +79,9 @@ public class Icq implements Runnable
 	// FLAP sequence number
 	static int flapSEQ;
 
+	// Current visibility mode
+	static private int currentVisibility;
+
 	static String lastStatusChangeTime;
 
 	public Icq()
@@ -322,6 +325,16 @@ public class Icq implements Runnable
 	}
 
 	//#sijapp cond.end#
+
+	static public void setVisibility(int value)
+	{
+		currentVisibility = value;
+	}
+
+	static public int getVisibility()
+	{
+		return currentVisibility;
+	}
 
 	// Checks whether the comm. subsystem is in STATE_NOT_CONNECTED
 	static public synchronized boolean isNotConnected()
@@ -2707,62 +2720,98 @@ public class Icq implements Runnable
 				: ContactList.STATUS_OFFLINE;
 	}
 
-	static public void setOnlineStatus(int status) throws JimmException
+	static public void setInactiveTime(long inactiveTime) throws JimmException
+	{
+		byte[] buf = new byte[4];
+		
+		Util.putDWord(buf, 0, inactiveTime);
+		c.sendPacket(new SnacPacket(0x0001, 0x0011, 0x0011, new byte[0], buf));
+	}
+
+	static public void setOnlineStatus(int status, int xStatus) throws JimmException
 	{
 		ByteArrayOutputStream statBuffer = new ByteArrayOutputStream();
 		ByteArrayOutputStream visBuffer = new ByteArrayOutputStream();
 		
 		int onlineStatus = Util.translateStatusSend(status);
 		
-		/* Visiblity */
 		int visibilityItemId = Options.getInt(Options.OPTION_VISIBILITY_ID);
-		if (visibilityItemId != 0)
-		{
-			byte bCode = 0;
-			if (onlineStatus == Util.SET_STATUS_INVISIBLE)
-				bCode = (status == ContactList.STATUS_INVIS_ALL) ? (byte) 2 : (byte) 3;
-			else
-				bCode = (byte) 4;
-			Util.writeWord(visBuffer, 0, true);
-			Util.writeWord(visBuffer, 0, true);
-			Util.writeWord(visBuffer, visibilityItemId, true);
-			Util.writeWord(visBuffer, 4, true);
-			Util.writeWord(visBuffer, 5, true);
-			Util.writeWord(visBuffer, 0xCA, true);
-			Util.writeWord(visBuffer, 1, true);
-			Util.writeByte(visBuffer, bCode);
-			
-			// Change privacy setting according to new status
-			if (onlineStatus == Util.SET_STATUS_INVISIBLE)
-			{
-				SnacPacket reply2pre = new SnacPacket(
-						SnacPacket.CLI_ROSTERUPDATE_FAMILY,
-						SnacPacket.CLI_ROSTERUPDATE_COMMAND,
-						SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], visBuffer.toByteArray());
-				c.sendPacket(reply2pre);
-			}
-		}
-		
+		byte bCode = 0;
+
 		/* Main status */
 		if (status != -1)
 		{
+			/* Visiblity */
+			if (visibilityItemId != 0)
+			{
+				if (onlineStatus == Util.SET_STATUS_INVISIBLE)
+					bCode = (status == ContactList.STATUS_INVIS_ALL) ? (byte) 2 : (byte) 3;
+				else
+					bCode = (byte) 4;
+				Util.writeWord(visBuffer, 0, true);
+				Util.writeWord(visBuffer, 0, true);
+				Util.writeWord(visBuffer, visibilityItemId, true);
+				Util.writeWord(visBuffer, 4, true);
+				Util.writeWord(visBuffer, 5, true);
+				Util.writeWord(visBuffer, 0xCA, true);
+				Util.writeWord(visBuffer, 1, true);
+				Util.writeByte(visBuffer, bCode);
+			
+				// Change privacy setting according to new status
+				if ((getVisibility() != bCode) && (onlineStatus == Util.SET_STATUS_INVISIBLE))
+				{
+					setVisibility(bCode);
+					SnacPacket reply2pre = new SnacPacket(
+							SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+							SnacPacket.CLI_ROSTERUPDATE_COMMAND,
+							SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], visBuffer.toByteArray());
+					c.sendPacket(reply2pre);
+				}
+			}
+		
 			Util.writeWord(statBuffer, 0x06, true); // TLV (0x06)
 			Util.writeWord(statBuffer, 4, true); // TLV len
 			Util.writeDWord(statBuffer, onlineStatus|0x10000000, true);
 
-			Util.writeWord(statBuffer, 0x0C, true);		// TLV (0x0C)
-			Util.writeWord(statBuffer, 0x25, true);		// TLV len
-			Util.writeDWord(statBuffer, 0xC0A80001, true);	// 192.168.0.1, cannot get own IP address
-			Util.writeDWord(statBuffer, 0x0000ABCD, true);	// Port 43981
-			Util.writeByte(statBuffer, 0x00);		// Firewall
-			Util.writeWord(statBuffer, 0x08, true);		// Support protocol version 8
-			Util.writeDWord(statBuffer, 0x00000000, true);
-			Util.writeDWord(statBuffer, 0x00000050, true);
-			Util.writeDWord(statBuffer, 0x00000003, true);
-			Util.writeDWord(statBuffer, 0xFFFFFFFE, true);
-			Util.writeDWord(statBuffer, 0x00010000, true);
-			Util.writeDWord(statBuffer, 0xFFFFFFFE, true);
-			Util.writeWord(statBuffer, 0x0000, true);		
+			if (xStatus != 255)
+			{
+				Util.writeWord(statBuffer, 0x0C, true);		// TLV (0x0C)
+				Util.writeWord(statBuffer, 0x25, true);		// TLV len
+				Util.writeDWord(statBuffer, 0xC0A80001, true);	// 192.168.0.1, cannot get own IP address
+				Util.writeDWord(statBuffer, 0x0000ABCD, true);	// Port 43981
+				Util.writeByte(statBuffer, 0x00);		// Firewall
+				Util.writeWord(statBuffer, 0x08, true);		// Support protocol version 8
+				Util.writeDWord(statBuffer, 0x00000000, true);
+				Util.writeDWord(statBuffer, 0x00000050, true);
+				Util.writeDWord(statBuffer, 0x00000003, true);
+				Util.writeDWord(statBuffer, 0xFFFFFFFE, true);
+				Util.writeDWord(statBuffer, 0x00010000, true);
+				Util.writeDWord(statBuffer, 0xFFFFFFFE, true);
+				Util.writeWord(statBuffer, 0x0000, true);		
+			}
+		}
+
+		/* xStatus */
+		if (xStatus != 255)
+		{
+			int icqXStatus = convertJimmXStatToIcqXStat(xStatus);
+			byte[] szMoodId = Util.stringToByteArray(ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]), true);
+
+			Util.writeWord(statBuffer, 0x1D, true);  // TLV (0x1D)
+
+			String message = icqXStatus != -1 ? ("icqmood"+icqXStatus) : "";
+
+			Util.writeWord(statBuffer, 0x0000, true);   // TLV Length
+			Util.writeWord(statBuffer, 0x0002, true);   // Text Status
+			Util.writeByte(statBuffer, 0x04);
+			Util.writeByte(statBuffer, szMoodId.length + 0x04);
+
+			Util.writeWord(statBuffer, szMoodId.length, true);
+			Util.writeByteArray(statBuffer, szMoodId);
+			Util.writeWord(statBuffer, 0x0000, true);
+
+			Util.writeWord(statBuffer, 0x000E, true);
+			Util.writeLenAndString(statBuffer, message, false);
 		}
 
 		if (statBuffer.size() != 0)
@@ -2774,8 +2823,9 @@ public class Icq implements Runnable
 		}
 		
 		// Change privacy setting according to new status
-		if (visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE)
+		if ((status != -1) && (getVisibility() != bCode) && (visibilityItemId != 0 && onlineStatus != Util.SET_STATUS_INVISIBLE))
 		{
+			setVisibility(bCode);
 			SnacPacket reply2post = new SnacPacket(
 					SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
@@ -2827,46 +2877,12 @@ public class Icq implements Runnable
 		catch (Exception e) {}
 		
 		c.sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 4, new byte[0], packet));
+
+		byte[] buf = new byte[4];
+		Util.putDWord(buf, 0, 0x00040000);
+		c.sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 4, new byte[0], buf));
 	}
 	
-	static public void setExtStatus(int xStatus) throws JimmException
-	{
-		ByteArrayOutputStream statBuffer = new ByteArrayOutputStream();
-		byte[] tlvpacket = null;
-		
-		int icqXStatus = convertJimmXStatToIcqXStat(xStatus);
-		byte[] szMoodId = Util.stringToByteArray(ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]), true);
-
-		/* xStatus */
-		if (xStatus != 255)
-		{
-			Util.writeWord(statBuffer, 0x1D, true);  // TLV (0x1D)
-
-			String message = icqXStatus != -1 ? ("icqmood"+icqXStatus) : "";
-
-			Util.writeWord(statBuffer, 0x0000, true);   // TLV Length
-			Util.writeWord(statBuffer, 0x0002, true);   // Text Status
-			Util.writeByte(statBuffer, 0x04);
-			Util.writeByte(statBuffer, szMoodId.length + 0x04);
-
-			Util.writeWord(statBuffer, szMoodId.length, true);
-			Util.writeByteArray(statBuffer, szMoodId);
-			Util.writeWord(statBuffer, 0x0000, true);
-
-			Util.writeWord(statBuffer, 0x000E, true);
-			Util.writeLenAndString(statBuffer, message, false);
-		}
-		
-		if (statBuffer.size() != 0)
-		{
-			tlvpacket = statBuffer.toByteArray();
-			Util.putWord(tlvpacket, 2, tlvpacket.length-4);
-			SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY, SnacPacket.CLI_SETSTATUS_COMMAND,
-				SnacPacket.CLI_SETSTATUS_COMMAND, new byte[0], tlvpacket);
-			c.sendPacket(packet);
-		}
-	}
-
 	////////////////
 	
 	// CAPS

@@ -748,6 +748,7 @@ public class ConnectAction extends Action
 									if (tlvType == 0x00CA)
 									{
 										Options.setInt(Options.OPTION_VISIBILITY_ID, (int)id);
+										Icq.setVisibility (Util.getWord(buf, marker + 4));
 									}
 
 									len -= 4;
@@ -830,8 +831,7 @@ public class ConnectAction extends Action
 						Icq.c.sendPacket(reply);
 
 						// Send a client status packet
-						Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS));
-						Icq.setExtStatus (Options.getInt(Options.OPTION_XSTATUS));
+						Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS), Options.getInt(Options.OPTION_XSTATUS));
 
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_STATUS_INFO_SENT;
