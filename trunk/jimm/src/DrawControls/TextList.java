@@ -732,7 +732,7 @@ public class TextList extends VirtualList implements Runnable
 	
 	public void run()
 	{
-		drawItems(null, getCapHeight(), getFontHeight(), getMenuBarHeight(), DMS_CUSTOM, -1, -1);
+		drawItems(null, getCapHeight(), getFontHeight(), getMenuBarHeight(), DMS_CUSTOM, -1, -1, -1, -1);
 	}
 	
 	protected void onHide() 
