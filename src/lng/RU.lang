@@ -166,6 +166,7 @@
 "ext_clhotkeycall"			"Вызов"
 "ext_hotkey_action_none"	"Нет"
 "ext_hotkey_action_onoff"	"Показ./скр. отключенных"
+"ext_hotkey_action_groups"	"Показ./скр. группы"
 "fax"						"Факс"
 "female"					"Ж"
 "female_male"				"Любой"
