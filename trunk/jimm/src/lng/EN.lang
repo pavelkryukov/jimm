@@ -89,6 +89,7 @@
   "ext_clhotkeycall"            "Call"
   "ext_hotkey_action_none"      "None"
   "ext_hotkey_action_onoff"     "Show/hide offline"
+  "ext_hotkey_action_groups"	"Show/hide groups"
   "fax"                         "Fax"
   "female"                      "F"
   "female_male"                 "F/M"

@@ -809,6 +809,13 @@ public class JimmUI implements CommandListener
 				if (item != null) writeMessage(item, null);
 				break;
 
+			case Options.HOTKEY_USER_GROUPS:
+				Options.setBoolean(Options.OPTION_USER_GROUPS, !Options.getBoolean(Options.OPTION_USER_GROUPS));
+				Options.safe_save();
+				ContactList.optionsChanged(true, false);
+				ContactList.activate();
+				break;
+
 			case Options.HOTKEY_ONOFF:
 				if (Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE))
 					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);

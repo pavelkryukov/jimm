@@ -183,7 +183,8 @@ public class Options
 	public static final int HOTKEY_MINIMIZE = 9;
 	public static final int HOTKEY_CLI_INFO = 10;
 	public static final int HOTKEY_FULLSCR  = 11;
-	public static final int HOTKEY_SOUNDOFF = 12;
+	public static final int HOTKEY_SOUNDOFF	= 12;
+	public static final int HOTKEY_USER_GROUPS = 13;
 	
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
@@ -862,7 +863,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 					//#sijapp cond.if modules_HISTORY is "true"#
 					+ "|" + "history"
 					//#sijapp cond.end#
-					+ "|" + "ext_hotkey_action_onoff" + "|" + "options_lng"
+					+ "|" + "ext_hotkey_action_groups" + "|" + "ext_hotkey_action_onoff" + "|" + "options_lng"
 					+ "|" + "menu" + "|" + "keylock"
 					//#sijapp cond.if target is "MIDP2"#
 					+ "|" + "minimize"
@@ -884,7 +885,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.if modules_HISTORY is "true"#
 			Options.HOTKEY_HISTORY,
 			//#sijapp cond.end#
-			Options.HOTKEY_ONOFF, Options.HOTKEY_OPTIONS, Options.HOTKEY_MENU,
+			Options.HOTKEY_USER_GROUPS, Options.HOTKEY_ONOFF, Options.HOTKEY_OPTIONS, Options.HOTKEY_MENU,
 			Options.HOTKEY_LOCK,
 			//#sijapp cond.if target is "MIDP2"#
 			Options.HOTKEY_MINIMIZE,
