@@ -24,6 +24,7 @@
 package DrawControls;
 
 import javax.microedition.lcdui.*;
+import java.lang.Math;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -350,7 +351,7 @@ public abstract class VirtualList
 	{
 		if (capImage == image) return;
 		capImage = image;
-		invalidate();
+		invalidate(0, 0, getWidth(), getCapHeight());
 	}
 
 	public void setVLCommands(VirtualListCommands vlCommands)
@@ -510,6 +511,12 @@ public abstract class VirtualList
 	{
 		if (dontRepaint) return;
 		if (isActive()) virtualCanvas.repaint();
+	}
+	
+	protected void invalidate(int x1, int y1, int x2, int y2)
+	{
+		if (dontRepaint) return;
+		if (isActive()) virtualCanvas.repaint(x1, y1, x2-x1, y2-y1);
 	}
 
 	// protected void checkCurrItem()
@@ -1029,10 +1036,10 @@ public abstract class VirtualList
 		caption = capt;
 
 		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
-		if (fullScreen || exMenuExists()) invalidate();
+		if (fullScreen || exMenuExists()) invalidate(0, 0, getWidth(), getCapHeight());
 		else if (isActive()) virtualCanvas.setTitle(capt);
 		//#sijapp cond.else#
-		//# 	invalidate();
+		invalidate(0, 0, getWidth(), getCapHeight());
 		//#sijapp cond.end#
 	}
 
@@ -1198,7 +1205,7 @@ public abstract class VirtualList
 	protected final boolean drawItems
 	(
 		Graphics g, 
-		int top_y, 
+		int topY, 
 		int fontHeight, 
 		int menuBarHeight, 
 		int mode, 
@@ -1213,37 +1220,40 @@ public abstract class VirtualList
 		int size = getSize();
 		int i, y;
 		int itemWidth = getWidthInternal() - scrollerWidth;
-		int bottomY = top_y+height;
+		int bottomY = topY+height;
+		
+		if ((mode == DMS_DRAW) && (!crdIntersect(topY, bottomY, clipY1, clipY2))) return false;
 		
 		if (mode == DMS_DRAW)
 		{
+			//System.out.println("VirtualList.drawItems");
+			
 			getCurXVals(curXVals);
 			int curX1 = curXVals[0];
 			int curX2 = curXVals[1];
 			
 			// Fill background
 			g.setColor(bkgrndColor);
-			g.fillRect(0, top_y, itemWidth, height);
+			int realY1 = Math.max(topY, clipY1);
+			int realY2 = Math.min(bottomY, clipY2); 
+			g.fillRect(0, realY1, itemWidth, realY2-realY1);
 
 			// Draw cursor
-			y = top_y;
+			y = topY;
 			for (i = topItem; i < size; i++)
 			{
 				int itemHeight = getItemHeight(i);
 				if (isItemSelected(i))
 				{
-					if (grCursorY1 == -1) grCursorY1 = y;
-					grCursorY2 = y + itemHeight - 1;
+					if (grCursorY1 == -1) grCursorY1 = y-1;
+					grCursorY2 = y + itemHeight;
 				}
 				y += itemHeight;
 				if (y >= bottomY) break;
 			}
 
-			if (grCursorY1 != -1)
+			if ((grCursorY1 != -1) && crdIntersect(grCursorY1, grCursorY2, clipY1, clipY2))
 			{
-				grCursorY1--;
-				grCursorY2++;
-				
 				g.setColor(cursorColor);
 				g.fillRect(curX1, grCursorY1, curX2-curX1, grCursorY2-grCursorY1);
 				g.setColor(cursorFrameColor);
@@ -1272,7 +1282,7 @@ public abstract class VirtualList
 
 		// Draw items
 		paintedItem.clear();
-		y = top_y;
+		y = topY;
 		for (i = topItem; i < size; i++)
 		{
 			int itemHeight = getItemHeight(i);
