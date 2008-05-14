@@ -162,7 +162,7 @@ public class FileTransfer implements CommandListener, Runnable
 		//#sijapp cond.if target isnot "MOTOROLA" #
 		if (type == FileTransfer.FT_TYPE_CAMERA_SNAPSHOT)
 		{
-			if (!System.getProperty("supports.video.capture").equals("true"))
+			if (System.getProperty("video.snapshot.encodings") == null)
 				JimmException.handleException(new JimmException(185, 0, true));
 			else
 			{
