@@ -163,6 +163,7 @@ public class Options
 	public static final int OPTION_DELIV_MES_INFO    = 162;
 	public static final int OPTION_MIRROR_MENU       = 163;
 	public static final int OPTION_SHOW_DELETED_CONT = 164;
+	public static final int OPTION_SMALL_FONT        = 165;
 	
 	/* long */
 	public static final int OPTION_ONLINE_STATUS = 192; 
@@ -446,6 +447,8 @@ public class Options
 		setBoolean(OPTION_DELIV_MES_INFO, true);
 		setBoolean(OPTION_MIRROR_MENU, false);
 		setBoolean(OPTION_SHOW_DELETED_CONT, false);
+		
+		setBoolean(OPTION_SMALL_FONT, false);
 	}
 
 	static public void resetLangDependedOpts()
@@ -731,7 +734,7 @@ public class Options
 
 class OptionsForm implements CommandListener, ItemStateListener, VirtualListCommands
 {
-	private boolean lastGroupsUsed, lastHideOffline;
+	private boolean lastGroupsUsed, lastHideOffline, lastSmallFont;
 
 	private int lastSortMethod, lastColorScheme;
 
@@ -907,18 +910,18 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		// Initialize hotkeys
 		keysMenu = new TextList(ResourceBundle.getString("ext_listhotkeys"));
 		keysMenu.setCyclingCursor(true);
-		JimmUI.setColorScheme(keysMenu, false, -1);
+		JimmUI.setColorScheme(keysMenu, false, -1, true);
 		keysMenu.setCommandListener(this);
 		keysMenu.setCyclingCursor(true);
 		actionMenu = new TextList(ResourceBundle.getString("ext_actionhotkeys"));
-		JimmUI.setColorScheme(actionMenu, false, -1);
+		JimmUI.setColorScheme(actionMenu, false, -1, true);
 		actionMenu.setCommandListener(this);
 
 		/*************************************************************************/
 
 		optionsMenu = new TextList(ResourceBundle.getString("options_lng"));
 		
-		JimmUI.setColorScheme(optionsMenu, false, -1);
+		JimmUI.setColorScheme(optionsMenu, false, -1, true);
 
 		optionsMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 		optionsMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR); 
@@ -985,7 +988,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			break;
 		}
 
-		JimmUI.setColorScheme(optionsMenu, false, -1);
+		JimmUI.setColorScheme(optionsMenu, false, -1, true);
 		optionsMenu.activate(Jimm.display);
 	}
 
@@ -1009,14 +1012,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		if (tlColorScheme == sender)
 		{
 			int index = tlColorScheme.getCurrTextIndex();
-			JimmUI.setColorScheme(tlColorScheme, false, index);
+			JimmUI.setColorScheme(tlColorScheme, false, index, true);
 		}
 	}
 	
 	private void InitResetRmsUI()
 	{
 		tlRmsAsk = new TextList(ResourceBundle.getString("reset_rms_caption"));
-		JimmUI.setColorScheme(tlRmsAsk, true, -1);
+		JimmUI.setColorScheme(tlRmsAsk, true, -1, true);
 
 		tlRmsAsk.addBigText(ResourceBundle.getString("reset_rms_ask"), tlRmsAsk.getTextColor(), Font.STYLE_PLAIN, -1);
 		tlRmsAsk.doCRLF(-1);
@@ -1038,7 +1041,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	{
 		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
 		tlColorScheme = new TextList(ResourceBundle.getString("color_scheme"));
-		JimmUI.setColorScheme(tlColorScheme, false, -1);
+		JimmUI.setColorScheme(tlColorScheme, false, -1, true);
 		JimmUI.addTextListItem(tlColorScheme, "black_on_white", null, 0, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(tlColorScheme, "white_on_black", null, 1, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(tlColorScheme, "white_on_blue",  null, 2, true, -1, Font.STYLE_PLAIN);
@@ -1314,12 +1317,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	protected void activate()
 	{
 		// Store some last values
-		lastUILang = Options.getString(Options.OPTION_UI_LANGUAGE);
+		lastUILang      = Options.getString (Options.OPTION_UI_LANGUAGE);
 		lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
-		lastGroupsUsed = Options.getBoolean(Options.OPTION_USER_GROUPS);
-		lastSortMethod = Options.getInt(Options.OPTION_CL_SORT_BY);
-		Options.getBoolean(Options.OPTION_CL_CLIENTS);
-		Options.getBoolean(Options.OPTION_XSTATUSES);
+		lastGroupsUsed  = Options.getBoolean(Options.OPTION_USER_GROUPS);
+		lastSortMethod  = Options.getInt    (Options.OPTION_CL_SORT_BY);
+		lastSmallFont   = Options.getBoolean(Options.OPTION_SMALL_FONT);
 
 		initOptionsList(TYPE_TOP_OPTIONS);
 	}
@@ -1519,6 +1521,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(choiceInterfaceMisc, "full_screen", Options.OPTION_FULL_SCREEN);
 //#sijapp cond.end#
 			setChecked(choiceInterfaceMisc, "mirror_menu", Options.OPTION_MIRROR_MENU);
+			setChecked(choiceInterfaceMisc, "small_font", Options.OPTION_SMALL_FONT);
 
 			clSortByChoiceGroup = createSelector("sort_by",
 					"sort_by_status" + "|" + "sort_by_name",
@@ -1549,7 +1552,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			
 			// OPTION_SHOW_MESS_ICON
 			chrgMessFormat = new ChoiceGroup(ResourceBundle.getString("mess_format"), Choice.MULTIPLE);
-			setChecked(chrgMessFormat, "chat_small_font", Options.OPTION_CHAT_SMALL_FONT);
+			setChecked(chrgMessFormat, "small_font", Options.OPTION_CHAT_SMALL_FONT);
 			setChecked(chrgMessFormat, "show_mess_icon", Options.OPTION_SHOW_MESS_ICON);
 			setChecked(chrgMessFormat, "show_mess_nick", Options.OPTION_SHOW_NICK);
 			setChecked(chrgMessFormat, "show_mess_date", Options.OPTION_SHOW_MESS_DATE);
@@ -1927,14 +1930,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			int idx = 0;
 
+			
 			Options.setBoolean(Options.OPTION_DISPLAY_DATE, choiceInterfaceMisc.isSelected(idx++));
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			Options.setBoolean(Options.OPTION_FULL_SCREEN, choiceInterfaceMisc.isSelected(idx++));
 //#sijapp cond.end#
 			Options.setBoolean(Options.OPTION_MIRROR_MENU, choiceInterfaceMisc.isSelected(idx++));
-
-			int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
-			
+			boolean newSmallFont = choiceInterfaceMisc.isSelected(idx++);
+			Options.setBoolean(Options.OPTION_SMALL_FONT, newSmallFont);
 			
 			idx = 0;
 			boolean newUseGroups = choiceContactList.isSelected(idx++);
@@ -1943,6 +1946,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			boolean newShowClients = choiceContactList.isSelected(idx++);
 			boolean newShowDeletedCont = choiceContactList.isSelected(idx++);
 
+			int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
 			Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
 			Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
 			//setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
@@ -1992,13 +1996,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 			//#sijapp cond.end#
 			
+			if (lastSmallFont != newSmallFont) JimmUI.setColorScheme();
 			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 			VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
 
 			if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
-			{
 				Options.setBoolean(Options.OPTION_LANG_CHANGED, true);
-			}
 
 			break;
 

@@ -98,7 +98,7 @@
 "byte"						"Byte"
 "chat"						"Chat"
 "cell_phone"				"Číslo mob." // ??"
-"chat_small_font"			"Malé písmo"
+"small_font"			    "Malé písmo"
 "cancel"					"Zpět"
 "city"						"Město"
 "clear"						"Smazat"

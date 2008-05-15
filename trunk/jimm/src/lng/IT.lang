@@ -99,7 +99,7 @@
 "cancel"					"Annulla"
 "cell_phone"				"Cellulare"
 "chat"						"chat"
-"chat_small_font"			"Font piccolo nelle chat"
+"small_font"			    "Font piccolo nelle chat"
 "city"						"Citta'"
 "clear"						"Ripulisci"
 "cli_none"					"Non rilevato"

@@ -54,7 +54,7 @@ public class DebugLog
 	{
 		if (!wasShown)
 		{
-			JimmUI.setColorScheme(list, false, -1);
+			JimmUI.setColorScheme(list, false, -1, true);
 			wasShown = true;
 		}
 

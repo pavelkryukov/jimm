@@ -108,7 +108,7 @@
 "byte"						"Byte"
 "cell_phone"				"Handy Nr."
 "chat"						"Chat"
-"chat_small_font"			"Kleiner Font im Chat"
+"small_font"			    "Kleiner Font im Chat"
 "city"						"Stadt"
 "clear"						"Löschen"
 "cli_none"					"Nicht erkannt"

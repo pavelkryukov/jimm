@@ -88,7 +88,7 @@ public class MainMenu implements CommandListener
 	/* Builds the main menu (visual list) */
 	public static void build()
 	{
-		JimmUI.setColorScheme(list, false, -1);
+		JimmUI.setColorScheme(list, false, -1, true);
 		
 		boolean connected = Icq.isConnected();
 			
@@ -207,6 +207,7 @@ public class MainMenu implements CommandListener
 		statusList.setMode(TextList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
+		JimmUI.setColorScheme(statusList, false, -1, true);
 		JimmUI.addTextListItem(statusList, "status_online", ContactList.statusOnlineImg,    ContactList.STATUS_ONLINE, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(statusList, "status_chat", ContactList.statusChatImg,      ContactList.STATUS_CHAT, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(statusList, "status_evil", ContactList.statusEvilImg,	 ContactList.STATUS_EVIL,true, -1, Font.STYLE_PLAIN);
@@ -230,6 +231,7 @@ public class MainMenu implements CommandListener
 		statusList.setMode(TextList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
+		JimmUI.setColorScheme(statusList, false, -1, true);
 		for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
 			JimmUI.addTextListItem(statusList, JimmUI.xStatusStrings[i], ContactList.xStatusImages.elementAt(i-1), i, true, -1, Font.STYLE_PLAIN);
 		
@@ -316,9 +318,6 @@ public class MainMenu implements CommandListener
 				}
 				
 				MainMenu.statusList.selectTextByIndex(stValue);
-			
-				JimmUI.setColorScheme(statusList, false, -1);
-				
 				MainMenu.statusList.setCommandListener(_this);
 				MainMenu.statusList.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 				MainMenu.statusList.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);

@@ -116,7 +116,7 @@
 "cell_phone"				"Сотовый"
 "change"                    "Измен."
 "chat"						"Настройки чата"
-"chat_small_font"			"Мелкий шрифт"
+"small_font"			    "Мелкий шрифт"
 "city"						"Город"
 "clear"						"Стереть"
 "cli_none"					"Не определён"
