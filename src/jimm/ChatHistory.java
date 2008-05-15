@@ -139,7 +139,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 
 		this.contact = contact;
 		ChatName = name;
-		JimmUI.setColorScheme(textList, true, -1);
+		JimmUI.setColorScheme(textList, true, -1, false);
 
 		textList.setVLCommands(this);
 	}
@@ -862,7 +862,7 @@ public class ChatHistory
 		Enumeration AllChats = historyTable.elements();
 		while (AllChats.hasMoreElements())
 			JimmUI
-					.setColorScheme(((ChatTextList) AllChats.nextElement()).textList, false, -1);
+					.setColorScheme(((ChatTextList) AllChats.nextElement()).textList, false, -1, true);
 	}
 
 	// Sets the counter for the ChatHistory

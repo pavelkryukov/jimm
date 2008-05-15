@@ -99,7 +99,7 @@
 "cancel"					"Atsisakyti"
 "cell_phone"				"Mobilus"
 "chat"						"Pokalbis"
-"chat_small_font"			"Naudoti mažą šriftą dialogo lange"
+"small_font"			    "Naudoti mažą šriftą dialogo lange"
 "city"						"Miestas"
 "clear"						"Išvalyti"
 "cli_none"					"Nenustatyta"

@@ -33,7 +33,7 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		
 		setCommandListener(this);
 		
-		JimmUI.setColorScheme(this, false, -1);
+		JimmUI.setColorScheme(this, false, -1, true);
 		
 		items = ContactList.getContactItems();
 		// Sort list

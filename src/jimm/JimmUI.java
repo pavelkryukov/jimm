@@ -497,7 +497,7 @@ public class JimmUI implements CommandListener
 	{
 		msgBoxList = new TextList(cap);
 		msgBoxList.setMode(TextList.CURSOR_MODE_DISABLED);
-		setColorScheme(msgBoxList, false, -1);
+		setColorScheme(msgBoxList, false, -1, true);
 		msgBoxList.setFontSize(Font.SIZE_LARGE);
 		msgBoxList.addBigText(text, msgBoxList.getTextColor(), Font.STYLE_PLAIN, -1);
 		
@@ -536,7 +536,7 @@ public class JimmUI implements CommandListener
 		aboutTextList.lock();
 		aboutTextList.clear();
 		aboutTextList.setMode(TextList.CURSOR_MODE_DISABLED);
-		setColorScheme(aboutTextList, false, -1);
+		setColorScheme(aboutTextList, false, -1, true);
 		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1,
 				0xffffff, 0);
 
@@ -656,7 +656,7 @@ public class JimmUI implements CommandListener
 	//                    //
 	////////////////////////
 
-	static public void setColorScheme(VirtualList vl, boolean setFullScreen, int theme)
+	static public void setColorScheme(VirtualList vl, boolean setFullScreen, int theme, boolean changeFont)
 	{
 		if (vl == null) return;
 
@@ -674,6 +674,9 @@ public class JimmUI implements CommandListener
 			vl.setFullScreen(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 		else
 			vl.setFullScreen(false);
+		
+		if (changeFont)
+			vl.setFontSize(Options.getBoolean(Options.OPTION_SMALL_FONT) ? Font.SIZE_SMALL : Font.SIZE_MEDIUM);
 	}
 
 	static public void setColorScheme()
@@ -683,7 +686,7 @@ public class JimmUI implements CommandListener
 		//#sijapp cond.end#
 
 		ChatHistory.setColorScheme();
-		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), true, -1);
+		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), true, -1, true);
 	}
 
 	/*****************************************************************************/
@@ -1106,7 +1109,7 @@ public class JimmUI implements CommandListener
 
 		infoTextList.setCaption(caption);
 
-		JimmUI.setColorScheme(infoTextList, false, -1);
+		JimmUI.setColorScheme(infoTextList, false, -1, true);
 		infoTextList.setMode(TextList.CURSOR_MODE_DISABLED);
 
 		if (addCommands)
@@ -1142,7 +1145,7 @@ public class JimmUI implements CommandListener
 	{
 		curScreenTag = tag;
 		lstSelector = new TextList (ResourceBundle.getString(caption));
-		JimmUI.setColorScheme(lstSelector, false, -1);
+		JimmUI.setColorScheme(lstSelector, false, -1, true);
 		lstSelector.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		lstSelector.setFontSize(Font.SIZE_LARGE);
 		for (int i = 0; i < elements.length; i++) JimmUI.addTextListItem(lstSelector, elements[i], null, i, translateWords, -1, Font.STYLE_PLAIN);
@@ -1282,7 +1285,7 @@ public class JimmUI implements CommandListener
 		TextList tlGroups = new TextList (ResourceBundle.getString(caption));
 		
 		tlGroups.lock();
-		JimmUI.setColorScheme(tlGroups, false, -1);
+		JimmUI.setColorScheme(tlGroups, false, -1, true);
 		tlGroups.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		
 		tlGroups.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
@@ -1594,7 +1597,7 @@ public class JimmUI implements CommandListener
 		clciContactMenu = contact;
 	
 		tlContactMenu = new TextList(ResourceBundle.getString("user_menu"));
-		JimmUI.setColorScheme(tlContactMenu, false, -1);
+		JimmUI.setColorScheme(tlContactMenu, false, -1, true);
 		tlContactMenu.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		tlContactMenu.activate(Jimm.display);
 		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
@@ -2088,7 +2091,7 @@ public class JimmUI implements CommandListener
 	{
 		loadErrorTextList = new TextList("Load error");
 		loadErrorTextList.setMode(TextList.CURSOR_MODE_DISABLED);
-		setColorScheme(loadErrorTextList, false, -1);
+		setColorScheme(loadErrorTextList, false, -1, true);
 		loadErrorTextList.addBigText(text, loadErrorTextList.getTextColor(), Font.STYLE_PLAIN, -1);
 		loadErrorTextList.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
 		loadErrorTextList.setCommandListener(_this);

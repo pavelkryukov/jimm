@@ -108,7 +108,7 @@
 "byte"						"Byte"
 "cell_phone"				"Mobitel" // ??"
 "chat"						"Chat"
-"chat_small_font"			"Mala slova"
+"small_font"			    "Mala slova"
 "city"						"Grad"
 "clear"						"Obrisi"
 "cli_none"					"Nije pronadjeno"

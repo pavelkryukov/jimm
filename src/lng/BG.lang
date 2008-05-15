@@ -99,7 +99,7 @@
 "cancel"					"Отказ"
 "cell_phone"				"Моб. тел." // ??"
 "chat"						"Чат"
-"chat_small_font"			"Малки шрифтове за чат"
+"small_font"			    "Малки шрифтове за чат"
 "city"						"Град"
 "clear"						"Изчисти"
 "cli_none"					"Неоткрит"
