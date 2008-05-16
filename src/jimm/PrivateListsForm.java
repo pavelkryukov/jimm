@@ -166,7 +166,7 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 
 	protected int getSize()
 	{
-		return items.length;
+		return (items == null) ? 0 : items.length;
 	}
 	
 	protected void get(int index, ListItem item)

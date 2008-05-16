@@ -225,11 +225,20 @@ public abstract class VirtualList
 		paintedItem = new ListItem();
 	}
 
+	/**
+	 * Sets mirror-style for menues. If value is true, left and right menus is changed over 
+	 * @param value values for mirror-style of menus
+	 */
 	public static void setMirrorMenu(boolean value)
 	{
 		mirrorMenu = value;
 	}
 	
+	/**
+	 * Sets display reference for all VirtualList's instances. You have to set display
+	 * before usage of VirtualList objects
+	 * @param display reference to midlet's display
+	 */
 	static public void setDisplay(Display display)
 	{
 		virtualCanvas.setDisplay(display);
