@@ -49,17 +49,6 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
-//#sijapp cond.if target is "SIEMENS1"#
-//# import com.siemens.mp.game.Vibrator;
-//# import com.siemens.mp.game.Light;
-//# import com.siemens.mp.media.Manager;
-//# import com.siemens.mp.media.MediaException;
-//# import com.siemens.mp.media.Player;
-//# import com.siemens.mp.media.control.ToneControl;
-//# import com.siemens.mp.media.control.VolumeControl;
-//# import java.io.InputStream;
-//#sijapp cond.end#
-
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 import javax.microedition.media.PlayerListener;
 import javax.microedition.media.Manager;
@@ -1394,27 +1383,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 		return p;
 	}
-
 	//#sijapp cond.end#
 
-	//#sijapp cond.if target is"SIEMENS1"#
-	//#	static private Player createPlayer(String source)
-	//#	{
-	//#		Player p;
-	//#		
-	//#		try
-	//#		{
-	//#			p = Manager.createPlayer(source);
-	//#		}
-	//#		catch (Exception e)
-	//#		{
-	//#			return null;
-	//#		}
-	//#		return p;
-	//#	}
-	//#sijapp cond.end#
-
-	//#sijapp cond.if target is "MIDP2" | target is"SIEMENS1" | target is "MOTOROLA" | target is "SIEMENS2"#
+	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	// sets volume for player
 	static private void setVolume(Player p, int value)
 	{
@@ -1465,20 +1436,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				vibraKind = SplashCanvas.locked() ? 1 : 0;
 			if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
 			{
-				//#sijapp cond.if target is "SIEMENS1"#
-				//#    			Vibrator.triggerVibrator(500);
-				//#sijapp cond.else#
 				Jimm.display.vibrate(500);
-				//#sijapp cond.end#
 			}
 
 			if (Options.getBoolean(Options.OPTION_SILENT_MODE) == true)
 				return;
 
-			//#sijapp cond.if target is "SIEMENS1" | target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			//#sijapp cond.if target is "SIEMENS1"#
-			//#       		Light.setLightOn();
-			//#sijapp cond.end#
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 
 			int not_mode = 0;
 
@@ -1584,10 +1548,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				break;
 
 			}
-
-			//#sijapp cond.if target is "SIEMENS1"#
-			//#	        Light.setLightOff();
-			//#sijapp cond.end#
 
 			//#sijapp cond.end#
 

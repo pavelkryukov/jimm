@@ -35,7 +35,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="DEFAULT/midp"      value="CHANGE ME"                         />
 	<property name="MIDP2/midp"        value="CHANGE ME"                         />
 	<property name="RIM/midp"          value="CHANGE ME"                         />
-	<property name="SIEMENS1/midp"     value="CHANGE ME"                         />
 	<property name="SIEMENS2/midp"     value="CHANGE ME"                         />
 	<property name="MOTOROLA/midp"     value="CHANGE ME"                         />
 	<!--  *******************************************************************   -->
@@ -44,7 +43,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar"/>
 	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar"/>
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
-	<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp}/lib/API.jar"     />
 	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
 	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />
 	<!--  *******************************************************************   -->
@@ -60,7 +58,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  *******************************************************************   -->
 	<!--  Build target. Currently there are the following build available:      -->
 	<!--      DEFAULT  - Standard MIDP1                                         -->
-	<!--      SIEMENS1 - For Siemens MIDP1-devices (like the x55 series         -->
 	<!--      SIEMENS2 - For Siemens MIDP2-devices (like the x65 series         -->
 	<!--      MIDP2    - Standard MIDP2                                         -->
 	<!--      RIM      - For RIM Blackberry devices                             -->
@@ -135,9 +132,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp" value="${DEFAULT/midp}">
 			<equals arg1="${target}" arg2="DEFAULT" />
 		</condition>
-		<condition property="midp" value="${SIEMENS1/midp}">
-			<equals arg1="${target}" arg2="SIEMENS1" />
-		</condition>
 		<condition property="midp" value="${SIEMENS2/midp}">
 			<equals arg1="${target}" arg2="SIEMENS2" />
 		</condition>
@@ -153,9 +147,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp/lib" value="${DEFAULT/midp/lib}">
 			<equals arg1="${target}" arg2="DEFAULT" />
 		</condition>
-		<condition property="midp/lib" value="${SIEMENS1/midp/lib}">
-			<equals arg1="${target}" arg2="SIEMENS1" />
-		</condition>
 		<condition property="midp/lib" value="${SIEMENS2/midp/lib}">
 			<equals arg1="${target}" arg2="SIEMENS2" />
 		</condition>
@@ -170,9 +161,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</condition>
 		<condition property="midp_profile" value="MIDP-1.0">
 			<equals arg1="${target}" arg2="DEFAULT" />
-		</condition>
-		<condition property="midp_profile" value="MIDP-1.0">
-			<equals arg1="${target}" arg2="SIEMENS1" />
 		</condition>
 		<condition property="midp_profile" value="MIDP-2.0">
 			<equals arg1="${target}" arg2="SIEMENS2" />

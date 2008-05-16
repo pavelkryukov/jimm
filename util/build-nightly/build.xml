@@ -34,8 +34,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi10.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar"/>
 	<property name="RIM/midp"          value="CHANGE ME"                      />
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
-	<property name="SIEMENS1/midp"     value="CHANGE ME"                      />
-	<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp}/emulators/S55/lib/api.jar"     />
 	<property name="SIEMENS2/midp"     value="CHANGE ME"                      />
 	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/emulators/EL71/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
 	<property name="MOTOROLA/midp"     value="CHANGE ME"                        />
@@ -223,8 +221,6 @@ ${midp2-moduleslist-ani}
 			<property name="MIDP2/midp/lib"    value="${MIDP2/midp/lib}"/>
 			<property name="RIM/midp"          value="${RIM/midp}"/>
 			<property name="RIM/midp/lib"      value="${RIM/midp/lib}"/>
-			<property name="SIEMENS1/midp"     value="${SIEMENS1/midp}"/>
-			<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp/lib}"/>
 			<property name="SIEMENS2/midp"     value="${SIEMENS2/midp}"/>
 			<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp/lib}"/>
 			<property name="MOTOROLA/midp"     value="${MOTOROLA/midp}"/>
@@ -263,8 +259,6 @@ ${midp2-moduleslist-ani}
 			<property name="MIDP2/midp/lib"    value="${MIDP2/midp/lib}"/>
 			<property name="RIM/midp"          value="${RIM/midp}"/>
 			<property name="RIM/midp/lib"      value="${RIM/midp/lib}"/>
-			<property name="SIEMENS1/midp"     value="${SIEMENS1/midp}"/>
-			<property name="SIEMENS1/midp/lib" value="${SIEMENS1/midp/lib}"/>
 			<property name="proguard"          value="${proguard}"/>
 			<property name="proguard/lib"      value="${proguard/lib}"/>
 			<property name="target"            value="${target}"/>
