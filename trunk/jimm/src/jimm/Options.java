@@ -926,11 +926,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		// Initialize hotkeys
 		keysMenu = new TextList(ResourceBundle.getString("ext_listhotkeys"));
 		keysMenu.setCyclingCursor(true);
-		JimmUI.setColorScheme(keysMenu, false, -1, true);
+		
 		keysMenu.setCommandListener(this);
 		keysMenu.setCyclingCursor(true);
 		actionMenu = new TextList(ResourceBundle.getString("ext_actionhotkeys"));
-		JimmUI.setColorScheme(actionMenu, false, -1, true);
 		actionMenu.setCommandListener(this);
 
 		/*************************************************************************/
@@ -961,6 +960,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		boolean connected = Icq.isConnected();
 		
 		optionsMenu.clear();
+		JimmUI.setColorScheme(optionsMenu, false, -1, true);
 		
 		switch (type)
 		{
@@ -1007,7 +1007,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			break;
 		}
 
-		JimmUI.setColorScheme(optionsMenu, false, -1, true);
 		optionsMenu.activate(Jimm.display);
 	}
 
@@ -1086,6 +1085,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	{
 		int lastItemIndex = keysMenu.getCurrTextIndex();
 		keysMenu.clear();
+		JimmUI.setColorScheme(keysMenu, false, -1, true);
 		
 		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey0", Options.OPTION_EXT_CLKEY0), null, Options.OPTION_EXT_CLKEY0, false, -1, Font.STYLE_PLAIN);
 		
@@ -1108,6 +1108,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		keysMenu.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
 		keysMenu.addCommandEx(JimmUI.cmdSave, VirtualList.MENU_TYPE_RIGHT);
 		keysMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT);
+		
+		
 		keysMenu.activate(Jimm.display);
 	}
 	
@@ -2292,6 +2294,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 				int optValue = Options.getInt(keysMenu.getCurrTextIndex());
 				actionMenu.selectTextByIndex(optValue);
+				JimmUI.setColorScheme(actionMenu, false, -1, true);
 				
 				actionMenu.activate(Jimm.display);
 				
