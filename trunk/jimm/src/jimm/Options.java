@@ -308,17 +308,7 @@ public class Options
 		setBoolean(Options.OPTION_DISPLAY_DATE, false);
 		setInt(Options.OPTION_CL_SORT_BY, 0);
 		setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
-		//#sijapp cond.if target is "SIEMENS1"#
-		//#		setInt    (Options.OPTION_MESS_NOTIF_MODE,    0);
-		//#		setString (Options.OPTION_MESS_NOTIF_FILE,    "message.mmf");
-		//#		setInt    (Options.OPTION_MESS_NOTIF_VOL,     50);
-		//#		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  0);
-		//#		setString (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mmf");
-		//#		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
-		//#		setInt	  (Options.OPTION_TYPING_VOL,	 	  50);
-		//#		setString (Options.OPTION_TYPING_FILE,		  "typing.wav");
-		//#		setInt	  (Options.OPTION_TYPING_MODE,		  0);
-		//#sijapp cond.elseif target is "MIDP2" | target is "SIEMENS2"#
+		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
 		setInt(Options.OPTION_MESS_NOTIF_MODE, 0);
 		setString(Options.OPTION_MESS_NOTIF_FILE, "message.wav");
 		setInt(Options.OPTION_MESS_NOTIF_VOL, 50);

@@ -12,7 +12,7 @@ Implemented:
   * BUGFIX: Reconnect to server feature, cancel of connecting
   * Settings for snapshots by build-in camera device, depend on phone model (JSR-135)
   * Messages delivery notification
-  * Motorola backlight support (not tested yet)
+  * Motorola backlight support
   * Modified user interface
   * More color schemes
   * New statuses: Evil, Depression, At home, At work, Lunch
@@ -28,6 +28,7 @@ Implemented:
   * Creeping text line is returned back again
   * Another optimization for lower memory usage in chat
   * More options added to customize chat
+  * Build for Siemens 55-60 series will not released
 
 Planned:
   * Changes graphics and sounds directly form Jimm
