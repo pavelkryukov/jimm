@@ -77,7 +77,7 @@ public class RunnableImpl implements Runnable
 		//#sijapp cond.end#
 
 		case TYPE_ADD_MSG:
-			ContactList.addMessage((Message) data[0], getBoolean(data, 1));
+			ContactList.addMessage((Message) data[0]);
 			break;
 
 		case TYPE_USER_OFFLINE:
@@ -168,23 +168,10 @@ public class RunnableImpl implements Runnable
 
 	static public void addMessageSerially(Object message)
 	{
-		boolean haveToBeepNow;
-
-		//#sijapp cond.if target is "MIDP2" #
-		haveToBeepNow = Jimm.is_phone_SE();
-		//#sijapp cond.else#
-		//#		haveToBeepNow = false;
-		//#sijapp cond.end #
-
-		callSerially(TYPE_ADD_MSG, message, new Boolean(!haveToBeepNow));
-		//#sijapp cond.if target isnot "DEFAULT"#		
-		if (haveToBeepNow)
-			ContactList.playSoundNotification(ContactList.SOUND_TYPE_MESSAGE);
-		//#sijapp cond.end #
-		//#sijapp cond.if target is "MIDP2" #
-		if (Options.getBoolean(Options.OPTION_BRING_UP))
-			Jimm.setMinimized(false);
-		//#sijapp cond.end #
+		callSerially(TYPE_ADD_MSG, message);
+//#sijapp cond.if target is "MIDP2"#
+		if (Options.getBoolean(Options.OPTION_BRING_UP)) Jimm.setMinimized(false);
+//#sijapp cond.end #
 	}
 
 	static public void updateContactList(String uin, int status, int xStatus,

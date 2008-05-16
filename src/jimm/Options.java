@@ -67,7 +67,7 @@ public class Options
 	public static final int OPTION_UIN      = 254;    
 	public static final int OPTION_PASSWORD = 255;
 	
-	/* Option keys */
+	/* String */
 	static final int        OPTION_UIN1               = 0;
 	public static final int OPTION_SRV_HOST           = 1;
 	public static final int OPTION_SRV_PORT           = 2;
@@ -87,6 +87,8 @@ public class Options
 	public static final int OPTION_TYPING_FILE        = 16;
 	public static final int OPTION_HTTP_USER_AGENT    = 17;
 	public static final int OPTION_HTTP_WAP_PROFILE   = 18;
+	public static final int OPTION_ANTI_SPAM_QUESTION      = 19;
+	public static final int OPTION_ANTI_SPAM_ANS      = 20;
 	
 	/* Passwords */
 	static final int OPTION_PASSWORD1 = 228;
@@ -164,6 +166,7 @@ public class Options
 	public static final int OPTION_MIRROR_MENU       = 163;
 	public static final int OPTION_SHOW_DELETED_CONT = 164;
 	public static final int OPTION_SMALL_FONT        = 165;
+	public static final int OPTION_ANTI_SPAM         = 166;
 	
 	/* long */
 	public static final int OPTION_ONLINE_STATUS = 192; 
@@ -449,6 +452,12 @@ public class Options
 		setBoolean(OPTION_SHOW_DELETED_CONT, false);
 		
 		setBoolean(OPTION_SMALL_FONT, false);
+		
+//#sijapp cond.if modules_ANTISPAM="true"#		
+		setBoolean(OPTION_ANTI_SPAM, false);
+		setString(OPTION_ANTI_SPAM_QUESTION, "12-11");
+		setString(OPTION_ANTI_SPAM_ANS, "1");
+//#sijapp cond.end#		
 	}
 
 	static public void resetLangDependedOpts()
@@ -773,14 +782,15 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private static final int OPTIONS_MY_INFO     = 11;
 	private static final int OPTIONS_MANAGE_CL   = 12;
 	private static final int OPTIONS_RESET_RMS   = 14;
+	private static final int OPTIONS_ANTISPAM    = 15;
 
 	// Constants for contact list menu
-	private static final int OPTIONS_ADD_USER      = 15;
-	private static final int OPTIONS_SEARCH_USER   = 16;
-	private static final int OPTIONS_ADD_GROUP     = 17;
-	private static final int OPTIONS_RENAME_GROUP  = 18;
-	private static final int OPTIONS_DELETE_GROUP  = 19;
-	private static final int OPTIONS_PRIVATE_LISTS = 20;
+	private static final int OPTIONS_ADD_USER      = 100;
+	private static final int OPTIONS_SEARCH_USER   = 101;
+	private static final int OPTIONS_ADD_GROUP     = 102;
+	private static final int OPTIONS_RENAME_GROUP  = 103;
+	private static final int OPTIONS_DELETE_GROUP  = 104;
+	private static final int OPTIONS_PRIVATE_LISTS = 105;
 
 	
 	// Options
@@ -850,6 +860,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private TextField srvProxyLoginTextField;
 	private TextField srvProxyPassTextField;
 	private TextField connAutoRetryTextField;
+//#sijapp cond.end#
+	
+//#sijapp cond.if modules_ANTISPAM="true"#	
+	private ChoiceGroup chsUseAntispam;
+	private TextField txtfAntispamQ;
+	private TextField txtfAntispamA;
 //#sijapp cond.end#
 	
 	private ChoiceGroup chgrUseAutoAway;
@@ -974,6 +990,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				JimmUI.addTextListItem(optionsMenu, "myself", null, OPTIONS_MY_INFO, true, -1, Font.STYLE_PLAIN);
 				JimmUI.addTextListItem(optionsMenu, "manage_contact_list", null, OPTIONS_MANAGE_CL, true, -1, Font.STYLE_PLAIN);
 			}
+//#sijapp cond.if modules_ANTISPAM="true"#			
+			JimmUI.addTextListItem(optionsMenu, "antispam", null, OPTIONS_ANTISPAM, true, -1, Font.STYLE_PLAIN);
+//#sijapp cond.end#			
 			
 			JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", null, OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
 			break;
@@ -1850,6 +1869,27 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		case OPTIONS_RENAME_GROUP:
 			groupSelector = JimmUI.showGroupSelector("del_group", this, JimmUI.SHS_TYPE_ALL, -1);
 			return;
+			
+//#sijapp cond.if modules_ANTISPAM="true"#			
+		case OPTIONS_ANTISPAM:
+			chsUseAntispam = new ChoiceGroup(ResourceBundle.getString("antispam_use"), Choice.MULTIPLE);
+			setChecked(chsUseAntispam, "yes", Options.OPTION_ANTI_SPAM);
+			txtfAntispamQ = new TextField(
+					ResourceBundle.getString("antispam_question"),
+					Options.getString(Options.OPTION_ANTI_SPAM_QUESTION),
+					64, TextField.ANY);
+			
+			txtfAntispamA = new TextField(
+					ResourceBundle.getString("antispam_answer"),
+					Options.getString(Options.OPTION_ANTI_SPAM_ANS),
+					32, TextField.ANY);
+			
+			
+			optionsForm.append(chsUseAntispam);
+			optionsForm.append(txtfAntispamQ);
+			optionsForm.append(txtfAntispamA);
+			break;
+//#sijapp cond.end#
 		}
 
 		/* Activate options form */
@@ -2126,6 +2166,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				return Icq.runActionAndProcessError(new UpdateContactListAction(group, UpdateContactListAction.ACTION_RENAME));
 			}
 			return false;
+			
+//#sijapp cond.if modules_ANTISPAM="true"#			
+		case OPTIONS_ANTISPAM:
+			Options.setBoolean(Options.OPTION_ANTI_SPAM, chsUseAntispam.isSelected(0));
+			Options.setString(Options.OPTION_ANTI_SPAM_QUESTION, txtfAntispamQ.getString());
+			Options.setString(Options.OPTION_ANTI_SPAM_ANS, txtfAntispamA.getString());
+			break;
+//#sijapp cond.end#
 		}
 		
 		return false;
@@ -2376,7 +2424,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		optionsForm.deleteAll();
 		//#sijapp cond.else#
-		//#		while (optionsForm.size() > 0) { optionsForm.delete(0); }
+		while (optionsForm.size() > 0) { optionsForm.delete(0); }
 		//#sijapp cond.end#
 	}
 

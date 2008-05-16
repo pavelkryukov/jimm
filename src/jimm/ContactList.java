@@ -27,6 +27,8 @@ import jimm.DebugLog;
 
 import jimm.Jimm;
 import jimm.comm.Message;
+import jimm.comm.PlainMessage;
+import jimm.comm.SendMessageAction;
 import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
@@ -37,6 +39,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
 
@@ -223,6 +226,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			cItems = new Vector();
 			gItems = new Vector();
 		}
+		
+//#sijapp cond.if modules_ANTISPAM="true"#		
+		antiSpamLoadList();
+//#sijapp cond.end#
 
 		tree = new VirtualTree(null, false);
 		tree.setVTCommands(this);
@@ -1268,14 +1275,27 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	/* Adds the given message to the message queue of the contact item
 	 identified by the given UIN */
-	static public void addMessage(Message message, boolean haveToBeep)
+	static public void addMessage(Message message)
 	{
 		synchronized (_this)
 		{
 			String uin = message.getSndrUin();
-
+			
 			ContactItem cItem = getItembyUIN(uin);
-
+			
+//#sijapp cond.if modules_ANTISPAM="true"#			
+			if (cItem == null 
+				|| cItem.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH|ContactItem.CONTACTITEM_IS_TEMP) // This is hack. Don't do like this
+				|| cItem.getIntValue(ContactItem.CONTACTITEM_GROUP) == 0) 
+			{
+				if (message instanceof PlainMessage)
+				{
+					boolean checked = antiSpamCheckContactFor(uin, ((PlainMessage)message).getText());
+					if (!checked) return;
+				}
+			}
+//#sijapp cond.end#
+			
 			/* Create a temporary contact entry if no contact entry could be found
 			 do we have a new temp contact */
 			if (cItem == null)
@@ -1288,12 +1308,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			SplashCanvas.messageAvailable();
 
 			/* Notify user */
-			if (!treeBuilt)
-				needPlayMessNotif |= true;
-			//#sijapp cond.if target isnot "DEFAULT" #
-			else if (haveToBeep)
-				playSoundNotification(SOUND_TYPE_MESSAGE);
-			//#sijapp cond.end #
+			if (!treeBuilt) needPlayMessNotif |= true;
+//#sijapp cond.if target isnot "DEFAULT" #
+			else playSoundNotification(SOUND_TYPE_MESSAGE);
+//#sijapp cond.end #
 
 			/* Flag contact as having chat */
 			cItem.setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT, true);
@@ -1803,4 +1821,120 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		return randint;
 	}
 
+//#sijapp cond.if modules_ANTISPAM="true" #	
+	static private final String ANTISPAM_RMS_NAME = "antispam_";
+	static private final int ANTISPAM_RMS_VERS = 1;
+	
+	static private final Hashtable antiSpamList = new Hashtable();
+	static private final Object antiSpamTrue = new Object();
+	static private final Object antiSpamAnsSent = new Object();
+	
+	static public boolean antiSpamCheckContactFor(String uin, String message)
+	{
+		if (Options.getBoolean(Options.OPTION_ANTI_SPAM) == false) return true;
+		
+		Object state = antiSpamList.get(uin);
+		
+		if (state == antiSpamTrue) return true;
+		
+		if (state == antiSpamAnsSent)
+		{
+			if (message != null && Options.getString(Options.OPTION_ANTI_SPAM_ANS).equals(message.trim()))
+			{
+				antiSpamSendMess(uin, ResourceBundle.getString("antispam_good"));
+				antiSpamList.put(uin, antiSpamTrue);
+				antiSpamSaveList();
+			}
+			return false;
+		}
+		else
+		{
+			String messText = ResourceBundle.getString("antispam_mess")+Options.getString(Options.OPTION_ANTI_SPAM_QUESTION);
+			boolean ok = antiSpamSendMess(uin, messText);
+			if (ok) antiSpamList.put(uin, antiSpamAnsSent);
+		}
+		
+		return false;
+	}
+	
+	static private boolean antiSpamSendMess(String uin, String text)
+	{
+		ContactItem ci = new ContactItem();
+		ci.setStringValue(ContactItem.CONTACTITEM_UIN, uin);
+		PlainMessage plainMsg = new PlainMessage(Options.getString(Options.OPTION_UIN), ci, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(false), text);
+		try
+		{
+			Icq.requestAction(new SendMessageAction(plainMsg));
+		} catch (JimmException e)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	static public void antiSpamSaveList()
+	{
+		try
+		{
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DataOutputStream dos = new DataOutputStream(baos);
+			
+			dos.writeInt(ANTISPAM_RMS_VERS);
+			dos.writeInt(antiSpamList.size());
+			
+			Enumeration e = antiSpamList.keys();
+			while (e.hasMoreElements())
+			{
+				String uin = (String)e.nextElement();
+				if (antiSpamList.get(uin) == antiSpamTrue) dos.writeUTF(uin);
+			}
+			
+			RecordStore rs = RecordStore.openRecordStore(ANTISPAM_RMS_NAME, true);
+			while (rs.getNumRecords() < 1) rs.addRecord(null, 0, 0);
+			
+			dos.flush();
+			byte[] buf = baos.toByteArray();
+			rs.setRecord(1, buf, 0, buf.length);
+
+			dos.close();
+			baos.close();
+			rs.closeRecordStore();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	static public void antiSpamLoadList()
+	{
+		try
+		{
+			antiSpamList.clear();
+			
+			RecordStore account = RecordStore.openRecordStore(ANTISPAM_RMS_NAME, false);
+			byte[] buf = account.getRecord(1);
+			account.closeRecordStore();
+			
+			ByteArrayInputStream bais = new ByteArrayInputStream(buf);
+			DataInputStream dis = new DataInputStream(bais);
+			
+			int vers = dis.readInt();
+			
+			if (vers != ANTISPAM_RMS_VERS) return;
+			
+			int count = dis.readInt();
+			for (int i = 0; i < count; i++)
+			{
+				String uin = dis.readUTF();
+				antiSpamList.put(uin, antiSpamTrue);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+//#sijapp cond.end#
+	
 }
