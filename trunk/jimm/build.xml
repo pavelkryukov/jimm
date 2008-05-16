@@ -76,7 +76,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--      SMILES_ANI - module for using animated emotions int messages text --> 
 	<!--      PROXY      - module for connecting via a socks proxy              --> 
 	<!--      LOCATION   - module for location aware functionality              -->  
-	<property name="modules"           value="SMILES_STD,TRAFFIC,HISTORY,FILES,PROXY" />
+	<!--      ANTISPAM   - module for prevention of receiving spam messages     -->  
+	<property name="modules"           value="SMILES_STD,TRAFFIC,HISTORY,FILES,PROXY,ANTISPAM" />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of languages packs which         -->
 	<!--  should be included in the build. Currently, the distribution          -->
@@ -216,6 +217,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="modules/FILES" value="true">
 			<contains string="${modules}" substring="FILES" />
 		</condition>
+		<condition property="modules/ANTISPAM" value="true">
+			<contains string="${modules}" substring="ANTISPAM" />
+		</condition>
 		<condition property="files_dir" value="res/MODULES/FILES">
 			<and>
 			<contains string="${modules}" substring="FILES" />
@@ -261,6 +265,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="modules_SMILES_STD" value="${modules/SMILES_STD}" />
 			<define name="modules_SMILES_ANI" value="${modules/SMILES_ANI}" />
 			<define name="modules_LOCATION" value="${modules/LOCATION}" />
+			<define name="modules_ANTISPAM" value="${modules/ANTISPAM}" />
 		</sijapp>
 		<replace dir="${build}/init/src" encoding="UTF-8">
 			<replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" />

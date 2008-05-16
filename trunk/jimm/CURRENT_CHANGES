@@ -7,6 +7,7 @@ Implemented:
   * NEW FEATURE: Registration of new ICQ account
   * NEW FEATURE: Manage saved backup list of deleted contacts
   * NEW FEATURE: Animated emotions
+  * NEW FEATURE: Antispam filter
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * BUGFIX: Reconnect to server feature, cancel of connecting
   * Settings for snapshots by build-in camera device, depend on phone model (JSR-135)
@@ -32,5 +33,4 @@ Planned:
   * Changes graphics and sounds directly form Jimm
   * Full extended status support
   * Sending SMS and dialing 
-  * Antispam
 
