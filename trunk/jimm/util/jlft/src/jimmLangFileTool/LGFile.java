@@ -52,7 +52,8 @@ public class LGFile extends Vector
 			"File transfer errors",
 			"",
 			"",
-			"HTTP Connection errors"};
+			"HTTP Connection errors",
+			"Registration errors"};
 	
 	public LGFile(String _name)
 	{
