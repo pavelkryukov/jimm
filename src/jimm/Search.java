@@ -148,7 +148,7 @@ public class Search
 		private TextList screen;
 
 		/* List for group selection */
-		private List groupList;
+		private TextList groupList;
 
 		/* Textboxes for search */
 		private TextField uinSearchTextBox;
@@ -184,7 +184,7 @@ public class Search
 			this.backCommand = new Command(ResourceBundle.getString("back"),
 					Command.BACK, 2);
 			this.addCommand = new Command(ResourceBundle
-					.getString("add_to_list"), Command.ITEM, 1);
+					.getString("add_to_list"), Command.OK, 1);
 			this.previousCommand = new Command(
 					ResourceBundle.getString("prev"), Command.ITEM, 4);
 			this.nextCommand = new Command(ResourceBundle.getString("next"),
@@ -371,7 +371,7 @@ public class Search
 
 		public void commandAction(Command c, Displayable d)
 		{
-			if (c == this.backCommand)
+			if (c == this.backCommand || c == JimmUI.cmdCancel)
 			{
 				if (JimmUI.isControlActive(screen) && !liteVersion)
 				{
@@ -442,35 +442,17 @@ public class Search
 				} else
 				{
 					/* Show list of groups to select which group to add to */
-					groupList = new List(
-							ResourceBundle.getString("whichgroup"),
-							List.EXCLUSIVE);
-					for (int i = 0; i < ContactList.getGroupItems().length; i++)
-					{
-						groupList.append(ContactList.getGroupItems()[i]
-								.getName(), null);
-					}
-					groupList.addCommand(backCommand);
-					groupList.addCommand(addCommand);
-					groupList.setCommandListener(this);
-					Jimm.display.setCurrent(groupList);
-					Jimm.setBkltOn(true);
+					groupList = JimmUI.showGroupSelector("whichgroup", this, JimmUI.SHS_TYPE_ALL, -1); 
 				}
-			} else if (c == this.addCommand && d == this.groupList)
+			} else if (c == JimmUI.cmdOk && JimmUI.isControlActive(this.groupList))
 			{
+				int groupId = groupList.getCurrTextIndex();
+				if (groupId == -1) return;
 				String[] resultData = getResult(selectedIndex);
-				ContactItem cItem = new ContactItem(-1,
-						ContactList.getGroupItems()[groupList
-								.getSelectedIndex()].getId(),
-						resultData[JimmUI.UI_UIN_LIST],
-						resultData[JimmUI.UI_NICK], false, false);
-				cItem.setBooleanValue(
-						ContactItem.CONTACTITEM_NO_AUTH,
-						resultData[JimmUI.UI_AUTH].equals("1"));
-				cItem.setBooleanValue(
-						ContactItem.CONTACTITEM_IS_TEMP, true);
-				cItem.setIntValue(ContactItem.CONTACTITEM_STATUS,
-						ContactList.STATUS_OFFLINE);
+				ContactItem cItem = new ContactItem(-1, groupId, resultData[JimmUI.UI_UIN_LIST], resultData[JimmUI.UI_NICK], false, false);
+				cItem.setBooleanValue(ContactItem.CONTACTITEM_NO_AUTH, resultData[JimmUI.UI_AUTH].equals("1"));
+				cItem.setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, true);
+				cItem.setIntValue(ContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
 				Icq.addToContactList(cItem);
 			}
 
