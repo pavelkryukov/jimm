@@ -47,7 +47,7 @@ public class SysNoticeAction extends Action
 
 		//	Get byte Arrys from the stuff we need the length of
 		byte[] uinRaw = Util.stringToByteArray(this.notice.getSndrUin());
-		byte[] reasonRaw = Util.stringToByteArray(this.notice.getReason());
+		byte[] reasonRaw = Util.stringToByteArray(this.notice.getText());
 
 		// If system notice is a SYS_NOTICE_AUTHORISE
 		if (this.notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHORISE)

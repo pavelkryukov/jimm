@@ -68,7 +68,7 @@ public class SystemNotice extends Message
 	}
 
 	// Get Reason
-	public String getReason()
+	public String getText()
 	{
 		return reason;
 	}
