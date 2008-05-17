@@ -260,7 +260,7 @@ public class TextList extends VirtualList implements Runnable
 	protected boolean isItemSelected(int index)
 	{
 		int selIndex = getCurrIndex();
-		int textIndex = (selIndex >= lines.size()) ? -1 : getLine(selIndex).bigTextIndex;
+		int textIndex = (selIndex >= lines.size() || selIndex < 0) ? -1 : getLine(selIndex).bigTextIndex;
 		if (textIndex == -1) return false;
 		return (getLine(index).bigTextIndex == textIndex);
 	}
