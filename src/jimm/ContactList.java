@@ -29,6 +29,7 @@ import jimm.Jimm;
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.SendMessageAction;
+import jimm.comm.SystemNotice;
 import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
@@ -1277,9 +1278,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				|| cItem.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH|ContactItem.CONTACTITEM_IS_TEMP) // This is hack. Don't do like this
 				|| cItem.getIntValue(ContactItem.CONTACTITEM_GROUP) == 0) 
 			{
-				if (message instanceof PlainMessage)
+				if ((message instanceof PlainMessage) || (message instanceof SystemNotice)) 
 				{
-					boolean checked = antiSpamCheckContactFor(uin, ((PlainMessage)message).getText());
+					boolean checked = antiSpamCheckContactFor(uin, message.getText());
 					if (!checked) return;
 				}
 			}

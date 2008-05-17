@@ -630,7 +630,7 @@ public class ChatHistory
 					addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 							notice.getSndrUin()
 									+ ResourceBundle.getString("wantsyourauth")
-									+ notice.getReason(), "", notice.getNewDate(),
+									+ notice.getText(), "", notice.getNewDate(),
 							false, offline, -1);
 				} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
 				{
@@ -642,12 +642,12 @@ public class ChatHistory
 								ResourceBundle.getString("grantedby")
 										+ notice.getSndrUin() + ".", "", notice
 										.getNewDate(), false, offline, -1);
-					} else if (notice.getReason() != null)
+					} else if (notice.getText() != null)
 						addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 								ResourceBundle.getString("denyedby")
 										+ notice.getSndrUin() + ". "
 										+ ResourceBundle.getString("reason") + ": "
-										+ notice.getReason(), "", notice
+										+ notice.getText(), "", notice
 										.getNewDate(), false, offline, -1);
 					else
 						addTextToForm(uin, ResourceBundle.getString("sysnotice"),

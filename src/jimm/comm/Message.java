@@ -122,5 +122,10 @@ public abstract class Message
 	{
 		return newDate;
 	}
+	
+	public String getText()
+	{
+		return null;
+	}
 
 }
