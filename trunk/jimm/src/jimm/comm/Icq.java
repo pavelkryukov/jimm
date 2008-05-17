@@ -2975,10 +2975,17 @@ public class Icq implements Runnable
 		"20,FF,3F,B0,BD,36,AF,3B,4A,60,9E,EF,CF,19,0F,6A,5A,7E,"+ // CIGARETTE
 		"21,FF,E6,01,E4,1C,33,73,4B,D1,BC,06,81,1D,6C,32,3D,82,"+ // SEX
 		"22,FF,D4,E2,B0,BA,33,4E,4F,A5,98,D0,11,7D,BF,4D,3C,C8,"+ // SEARCH
-		//"1F,FF,CD,56,43,A2,C9,4C,47,24,B5,2C,DC,01,24,A1,D0,CD,"+ // LOVE
-		"24,FF,00,72,D9,08,4A,D1,43,DD,91,99,6F,02,69,66,02,6F",  // DIARY
+		"23,FF,00,72,D9,08,4A,D1,43,DD,91,99,6F,02,69,66,02,6F",  // DIARY
+		
+		/*"24,FF,64,43,c6,af,22,60,45,17,b5,8c,d7,df,8e,29,03,52,"+ // I'm hight (miranda)
+		"25,FF,63,14,36,ff,3f,8a,40,d0,a5,cb,7b,66,e0,51,b3,64,"+ // To be or not to be? (miranda)
+		"26,FF,10,11,17,c9,a3,b0,40,f9,81,ac,49,e1,59,fb,d5,d4",  // Cooking (miranda) */
 		',', 16);
 
+	public static boolean isXStatusStd(int index)
+	{
+		return (index < 0) ? true : (XSTATUS_CONSTS[index*18+1] != -1);
+	}
 
 	// No capability
 	public static final int CAPF_NO_INTERNAL = 0x00000000;

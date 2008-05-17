@@ -208,19 +208,19 @@ public class MainMenu implements CommandListener
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.setColorScheme(statusList, false, -1, true);
-		JimmUI.addTextListItem(statusList, "status_online", ContactList.statusOnlineImg,    ContactList.STATUS_ONLINE, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_chat", ContactList.statusChatImg,      ContactList.STATUS_CHAT, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_evil", ContactList.statusEvilImg,	 ContactList.STATUS_EVIL,true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_depression",	ContactList.statusDepressionImg, ContactList.STATUS_DEPRESSION,true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_home", ContactList.statusHomeImg,	 ContactList.STATUS_HOME,true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_work", ContactList.statusWorkImg,	 ContactList.STATUS_WORK,true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_lunch", ContactList.statusLunchImg,	 ContactList.STATUS_LUNCH,true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_away", ContactList.statusAwayImg,      ContactList.STATUS_AWAY, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_na", ContactList.statusNaImg,        ContactList.STATUS_NA, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_occupied", ContactList.statusOccupiedImg,  ContactList.STATUS_OCCUPIED, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_dnd", ContactList.statusDndImg,       ContactList.STATUS_DND, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_invisible", ContactList.statusInvisibleImg, ContactList.STATUS_INVISIBLE, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_invis_all", ContactList.statusInvisibleImg, ContactList.STATUS_INVIS_ALL, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_online",     ContactList.statusOnlineImg,     ContactList.STATUS_ONLINE,     true, -1, Font.STYLE_BOLD);
+		JimmUI.addTextListItem(statusList, "status_chat",       ContactList.statusChatImg,       ContactList.STATUS_CHAT,       true, -1, Font.STYLE_BOLD);
+		JimmUI.addTextListItem(statusList, "status_away",       ContactList.statusAwayImg,       ContactList.STATUS_AWAY,       true, -1, Font.STYLE_BOLD);
+		JimmUI.addTextListItem(statusList, "status_na",         ContactList.statusNaImg,         ContactList.STATUS_NA,         true, -1, Font.STYLE_BOLD);
+		JimmUI.addTextListItem(statusList, "status_occupied",   ContactList.statusOccupiedImg,   ContactList.STATUS_OCCUPIED,   true, -1, Font.STYLE_BOLD);
+		JimmUI.addTextListItem(statusList, "status_dnd",        ContactList.statusDndImg,        ContactList.STATUS_DND,        true, -1, Font.STYLE_BOLD);
+		JimmUI.addTextListItem(statusList, "status_invisible",  ContactList.statusInvisibleImg,  ContactList.STATUS_INVISIBLE,  true, -1, Font.STYLE_BOLD);
+		JimmUI.addTextListItem(statusList, "status_invis_all",  ContactList.statusInvisibleImg,  ContactList.STATUS_INVIS_ALL,  true, -1, Font.STYLE_BOLD);
+		JimmUI.addTextListItem(statusList, "status_evil",       ContactList.statusEvilImg,	     ContactList.STATUS_EVIL,       true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_depression",	ContactList.statusDepressionImg, ContactList.STATUS_DEPRESSION, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_home",       ContactList.statusHomeImg,	     ContactList.STATUS_HOME,       true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_work",       ContactList.statusWorkImg,	     ContactList.STATUS_WORK,       true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(statusList, "status_lunch",      ContactList.statusLunchImg,	     ContactList.STATUS_LUNCH,      true, -1, Font.STYLE_PLAIN);
 		statusList.unlock();
 		statusSelection = SELECT_STATUS;
 	}
@@ -232,8 +232,23 @@ public class MainMenu implements CommandListener
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.setColorScheme(statusList, false, -1, true);
-		for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
-			JimmUI.addTextListItem(statusList, JimmUI.xStatusStrings[i], ContactList.xStatusImages.elementAt(i-1), i, true, -1, Font.STYLE_PLAIN);
+		for (int s = 0; s < 2; s++)
+		{
+			for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
+			{
+				int xstatus = i-1;
+				boolean std = Icq.isXStatusStd(xstatus);
+				if ((std ? 0 : 1) == s)
+					JimmUI.addTextListItem
+					(
+						statusList, 
+						JimmUI.xStatusStrings[i], 
+						ContactList.xStatusImages.elementAt(xstatus), 
+						i, true, -1, 
+						std ? Font.STYLE_BOLD : Font.STYLE_PLAIN
+					);
+			}
+		}
 		
 		statusList.unlock();
 		statusSelection = SELECT_XSTATUS;
