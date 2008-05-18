@@ -79,4 +79,9 @@ public class SystemNotice extends Message
 		return sysnotetype;
 	}
 
+	public boolean needCheckForSpam()
+	{
+		return (sysnotetype == SYS_NOTICE_AUTHREQ);
+	}
+	
 }

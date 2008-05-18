@@ -53,5 +53,10 @@ public class PlainMessage extends Message
 	{
 		return this.text;
 	}
+	
+	public boolean needCheckForSpam()
+	{
+		return true;
+	}
 
 }
