@@ -264,6 +264,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	private void exportUinToStream(ContactItem item, OutputStream os)
 			throws IOException
 	{
+		String endl = "\r\n";
 		CachedRecord record;
 		String uin = item
 				.getStringValue(ContactItem.CONTACTITEM_UIN);
@@ -276,12 +277,12 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 					: uin;
 			SplashCanvas.setMessage(nick);
 			SplashCanvas.setProgress(0);
-			StringBuffer str_buf = new StringBuffer().append("\r\n").append(
+			StringBuffer str_buf = new StringBuffer().append(endl).append(
 					'\t').append(
 					ResourceBundle.getString("message_history_with")).append(
-					nick).append(" (").append(uin).append(")\r\n").append('\t')
+					nick).append(" (").append(uin).append(')').append(endl).append('\t')
 					.append(ResourceBundle.getString("export_date")).append(
-							Util.getDateString(false)).append("\r\n\r\n");
+							Util.getDateString(false)).append(endl).append(endl);
 			os.write(Util.stringToByteArray(str_buf.toString(), !cp1251));
 			for (int i = 0; i < max; i++)
 			{
@@ -291,33 +292,16 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 								.getString("me")) + " (" + record.date
 						+ "):\r\n", !cp1251));
 				String curr_msg_text = record.text.trim();
-				StringBuffer msg_str_buf = new StringBuffer(curr_msg_text
-						.length());
+				StringBuffer msg_str_buf = new StringBuffer(curr_msg_text.length());
 				for (int k = 0; k < curr_msg_text.length(); k++)
 				{
 					char cc = curr_msg_text.charAt(k);
-					char nc;
-					switch (cc)
-					{
-					case '\n':
-						nc = curr_msg_text.charAt(k++);
-						msg_str_buf = msg_str_buf.append('\r').append('\n');
-						if ((nc != '\r') & (nc != '\n'))
-							msg_str_buf = msg_str_buf.append(nc);
-						break;
-					case '\r':
-						nc = curr_msg_text.charAt(k++);
-						msg_str_buf = msg_str_buf.append('\r').append('\n');
-						if ((nc != '\n') & (nc != '\r'))
-							msg_str_buf = msg_str_buf.append(nc);
-						break;
-					default:
-						msg_str_buf = msg_str_buf.append(cc);
-					}
+					if (cc == '\r') continue;
+					else if (cc == '\n') msg_str_buf.append(endl);
+					else msg_str_buf.append(cc);
 				}
-				msg_str_buf = msg_str_buf.append('\r').append('\n');
-				os.write(Util
-						.stringToByteArray(msg_str_buf.toString(), !cp1251));
+				msg_str_buf.append(endl);
+				os.write(Util.stringToByteArray(msg_str_buf.toString(), !cp1251));
 				os.flush();
 				SplashCanvas.setProgress((100 * i) / max);
 			}
