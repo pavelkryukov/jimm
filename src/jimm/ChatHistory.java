@@ -134,8 +134,8 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	{
 		textList = new TextList(null);
 
-		textList.setMode(TextList.CURSOR_MODE_DISABLED);
-		textList.setFontSize(Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT) ? TextList.SMALL_FONT : TextList.MEDIUM_FONT);
+		textList.setMode(VirtualList.CURSOR_MODE_DISABLED);
+		textList.setFontSize(Options.getBoolean(Options.OPTION_CHAT_SMALL_FONT) ? VirtualList.SMALL_FONT : VirtualList.MEDIUM_FONT);
 
 		this.contact = contact;
 		ChatName = name;

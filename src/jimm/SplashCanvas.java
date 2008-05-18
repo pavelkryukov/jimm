@@ -24,6 +24,7 @@
 package jimm;
 
 import DrawControls.TextList;
+import DrawControls.VirtualList;
 import jimm.comm.ConnectAction;
 //  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 //  #sijapp cond.if modules_FILES is "true"#
@@ -454,7 +455,7 @@ public class SplashCanvas extends Canvas
 				g.drawRect(x + 2, y + 2, size_x - 5, size_y - 5);
 				TextList.showText(g, ResourceBundle
 						.getString("keylock_message"), x + 4, y + 4,
-						size_x - 8, size_y - 8, TextList.MEDIUM_FONT, 0, 0);
+						size_x - 8, size_y - 8, VirtualList.MEDIUM_FONT, 0, 0);
 
 				(t1 = new Timer()).schedule(new TimerTasks(
 						TimerTasks.SC_HIDE_KEYLOCK), 2000);

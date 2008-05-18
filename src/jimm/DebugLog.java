@@ -26,6 +26,7 @@ package jimm;
 import javax.microedition.lcdui.*;
 
 import DrawControls.TextList;
+import DrawControls.VirtualList;
 import jimm.Jimm;
 
 public class DebugLog
@@ -41,11 +42,11 @@ public class DebugLog
 	static
 	{
 		list = new TextList(null);
-		list.addCommandEx(backCommand, TextList.MENU_TYPE_RIGHT_BAR);
+		list.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
 		list.setCommandListener(new DebugLog());
-		list.setFontSize(TextList.SMALL_FONT);
+		list.setFontSize(VirtualList.SMALL_FONT);
 		list.setCaption("Debug log");
-		list.setMode(TextList.CURSOR_MODE_DISABLED);
+		list.setMode(VirtualList.CURSOR_MODE_DISABLED);
 	}
 
 	private static boolean wasShown = false;

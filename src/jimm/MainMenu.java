@@ -204,7 +204,7 @@ public class MainMenu implements CommandListener
 	private static void initStatusList()
 	{
 		statusList = new TextList(ResourceBundle.getString("set_status"));
-		statusList.setMode(TextList.CURSOR_MODE_DISABLED);
+		statusList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.setColorScheme(statusList, false, -1, true);
@@ -228,7 +228,7 @@ public class MainMenu implements CommandListener
 	private static void initXStatusList()
 	{
 		statusList = new TextList(ResourceBundle.getString("set_xstatus"));
-		statusList.setMode(TextList.CURSOR_MODE_DISABLED);
+		statusList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.setColorScheme(statusList, false, -1, true);

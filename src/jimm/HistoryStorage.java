@@ -636,7 +636,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		if (messText == null)
 		{
 			messText = new TextList(null);
-			messText.setMode(TextList.CURSOR_MODE_DISABLED);
+			messText.setMode(VirtualList.CURSOR_MODE_DISABLED);
 			messText.setCommandListener(this);
 			
 			

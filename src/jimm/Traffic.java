@@ -40,6 +40,7 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 
 import DrawControls.TextList;
+import DrawControls.VirtualList;
 
 import jimm.util.ResourceBundle;
 import jimm.comm.Icq;
@@ -346,7 +347,7 @@ public class Traffic
 			// Initialize traffic screen
 			this.trafficTextList = new TextList(ResourceBundle
 					.getString("traffic_lng"));
-			this.trafficTextList.setMode(TextList.CURSOR_MODE_DISABLED);
+			this.trafficTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
 			trafficTextList.setFontSize(Font.SIZE_MEDIUM);
@@ -354,8 +355,8 @@ public class Traffic
 			//#			trafficTextList.setFontSize(Font.SIZE_SMALL);
 			//#sijapp cond.end#
 
-			this.trafficTextList.addCommandEx(this.resetCommand, TextList.MENU_TYPE_RIGHT_BAR);
-			this.trafficTextList.addCommandEx(JimmUI.cmdBack, TextList.MENU_TYPE_LEFT_BAR);
+			this.trafficTextList.addCommandEx(this.resetCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
+			this.trafficTextList.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 			this.trafficTextList.setCommandListener(this);
 		}
 

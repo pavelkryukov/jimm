@@ -496,7 +496,7 @@ public class JimmUI implements CommandListener
 	static private TextList showMessageBox(String cap, String text, int type)
 	{
 		msgBoxList = new TextList(cap);
-		msgBoxList.setMode(TextList.CURSOR_MODE_DISABLED);
+		msgBoxList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		setColorScheme(msgBoxList, false, -1, true);
 		msgBoxList.setFontSize(Font.SIZE_LARGE);
 		msgBoxList.addBigText(text, msgBoxList.getTextColor(), Font.STYLE_PLAIN, -1);
@@ -504,13 +504,13 @@ public class JimmUI implements CommandListener
 		switch (type)
 		{
 		case MESBOX_YESNO:
-			msgBoxList.addCommandEx(cmdYes, TextList.MENU_TYPE_RIGHT_BAR);
-			msgBoxList.addCommandEx(cmdNo, TextList.MENU_TYPE_LEFT_BAR);
+			msgBoxList.addCommandEx(cmdYes, VirtualList.MENU_TYPE_RIGHT_BAR);
+			msgBoxList.addCommandEx(cmdNo, VirtualList.MENU_TYPE_LEFT_BAR);
 			break;
 
 		case MESBOX_OKCANCEL:
-			msgBoxList.addCommandEx(cmdOk, TextList.MENU_TYPE_RIGHT_BAR);
-			msgBoxList.addCommandEx(cmdCancel, TextList.MENU_TYPE_LEFT_BAR);
+			msgBoxList.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
+			msgBoxList.addCommandEx(cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
 			break;
 		}
 		
@@ -535,7 +535,7 @@ public class JimmUI implements CommandListener
 
 		aboutTextList.lock();
 		aboutTextList.clear();
-		aboutTextList.setMode(TextList.CURSOR_MODE_DISABLED);
+		aboutTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		setColorScheme(aboutTextList, false, -1, true);
 		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1,
 				0xffffff, 0);
@@ -1110,7 +1110,7 @@ public class JimmUI implements CommandListener
 		infoTextList.setCaption(caption);
 
 		JimmUI.setColorScheme(infoTextList, false, -1, true);
-		infoTextList.setMode(TextList.CURSOR_MODE_DISABLED);
+		infoTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 
 		if (addCommands)
 		{
@@ -2090,7 +2090,7 @@ public class JimmUI implements CommandListener
 	public static void addLoadError(String text)
 	{
 		loadErrorTextList = new TextList("Load error");
-		loadErrorTextList.setMode(TextList.CURSOR_MODE_DISABLED);
+		loadErrorTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		setColorScheme(loadErrorTextList, false, -1, true);
 		loadErrorTextList.addBigText(text, loadErrorTextList.getTextColor(), Font.STYLE_PLAIN, -1);
 		loadErrorTextList.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
