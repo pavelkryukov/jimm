@@ -2896,6 +2896,8 @@ public class Icq implements Runnable
 	
 	
 	private static final byte[] CAP_QIPINFIUM      = Util.explodeToBytes("7c,73,75,02,c3,be,4f,3e,a6,9f,01,53,13,43,1e,1a", ',', 16);
+	private static final byte[] CAP_QIPPDASYM      = Util.explodeToBytes("51,AD,D1,90,72,04,47,3D,A1,A1,49,F4,A3,97,A4,1F", ',', 16);
+	private static final byte[] CAP_QIPPDAWIN      = Util.explodeToBytes("56,3F,C8,09,0B,6F,41,51,49,50,20,20,20,20,20,21", ',', 16);
 //	private static final byte[] CAP_QIPPLUGINS     = Util.explodeToBytes("7C,53,3F,FA,68,00,4F,21,BC,FB,C7,D2,43,9A,AD,31", ',', 16);
 //	private static final byte[] CAP_AUDIO          = Util.explodeToBytes("09,46,01,04,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
 //	private static final byte[] CAP_VIDEO          = Util.explodeToBytes("09,46,01,01,4c,7f,11,d1,82,22,44,45,53,54,00,00", ',', 16);
@@ -3066,6 +3068,8 @@ public class Icq implements Runnable
 //	public static final int CAPF_XMultiUserChat	= 0x00000020;
 //	public static final int CAPF_XtZers		= 0x00000040;
 	public static final int CAPF_IsICQLITE		= 0x00000080;
+	public static final int CAPF_QIPPDASYM		= 0x00000100;
+	public static final int CAPF_QIPPDAWIN		= 0x00000200;
 
 	// Client IDs
 	public static final byte CLI_NONE = 0;
@@ -3110,6 +3114,8 @@ public class Icq implements Runnable
 	public static final byte CLI_MCHAT = 39;
 	public static final byte CLI_QIPINFIUM = 40;
 	public static final byte CLI_ICQ6 = 41;
+	public static final byte CLI_QIPPDASYM = 42;
+	public static final byte CLI_QIPPDAWIN = 43;
 	
 	private static int[] clientIndexes;
 	private static int[] clientImageIndexes;
@@ -3163,6 +3169,8 @@ public class Icq implements Runnable
 		initClientIndDataItem("MChat",                  CLI_MCHAT,         22, vInd, vImg, vNames);
 		initClientIndDataItem("QIP Infium",             CLI_QIPINFIUM,     15, vInd, vImg, vNames);
 		initClientIndDataItem("ICQ 6",                  CLI_ICQ6,          16, vInd, vImg, vNames);
+		initClientIndDataItem("QIP Mobile (Symbian)",   CLI_QIPPDASYM,     13, vInd, vImg, vNames);
+		initClientIndDataItem("QIP PDA (Windows)",      CLI_QIPPDAWIN,     14, vInd, vImg, vNames);
 		
 		clientNames = new String[vNames.size()];
 		vNames.copyInto(clientNames);
@@ -3360,6 +3368,14 @@ public class Icq implements Runnable
 				{
 					caps2 |= CAPF_QIPINFIUM;
 				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDASYM, 0, 16))
+				{
+					caps2 |= CAPF_QIPPDASYM;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDAWIN, 0, 16))
+				{
+					caps2 |= CAPF_QIPPDAWIN;
+				}
 //				else if (Util.byteArrayEquals(capabilities, j16, CAP_AUDIO, 0, 16))
 //				{
 //					caps2 |= CAPF_AUDIO;
@@ -3398,6 +3414,16 @@ public class Icq implements Runnable
 				{
 					client = CLI_QIPINFIUM;
 					szVersion += "(" + dwFP1 + ")" + ((dwFP2 == 0xB) ? " Beta" : "");
+					break;
+				}
+				if ((caps2 & CAPF_QIPPDASYM) != 0)
+				{
+					client = CLI_QIPPDASYM;
+					break;
+				}
+				if ((caps2 & CAPF_QIPPDAWIN) != 0)
+				{
+					client = CLI_QIPPDAWIN;
 					break;
 				}
 				if ((caps & CAPF_MCHAT) != 0)
