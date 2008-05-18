@@ -664,9 +664,8 @@ public class ConnectAction extends Action
 							if (
 								(type == 0x0000)
 								 || (Options.getBoolean(Options.OPTION_SHOW_DELETED_CONT) &&
-								((type == 0x0019) || (type == 0x001C)))
+								((type == 0x0019) || (type == 0x001B)))
 							)
-
 							{
 								ByteArrayOutputStream serverData = new ByteArrayOutputStream();
 								
