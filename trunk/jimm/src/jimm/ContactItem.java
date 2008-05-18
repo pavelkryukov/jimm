@@ -208,6 +208,11 @@ public class ContactItem implements ContactListItem
 			return;
 		case CONTACTITEM_STATUS:
 			status = value;
+			if (status != ContactList.STATUS_OFFLINE && getBooleanValue(CONTACTITEM_NO_AUTH)) 
+			{
+				setBooleanValue(CONTACTITEM_NO_AUTH, false);
+				ChatHistory.rebuildMenu(this);
+			}
 			return;
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			//#sijapp cond.if modules_FILES is "true"#
