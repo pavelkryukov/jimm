@@ -705,22 +705,6 @@ public class ContactItem implements ContactListItem
 		}
 	}
 
-	/* Checks whether some other object is equal to this one */
-	public boolean equals(Object obj)
-	{
-		if (!(obj instanceof ContactItem))
-			return (false);
-		ContactItem ci = (ContactItem) obj;
-		return (this
-				.getStringValue(ContactItem.CONTACTITEM_UIN)
-				.equals(
-						ci
-								.getStringValue(ContactItem.CONTACTITEM_UIN)) && (this
-				.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP) == ci
-				.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP)));
-	}
-
-
 	//#sijapp cond.if modules_HISTORY is "true" #
 	public void showHistory()
 	{
