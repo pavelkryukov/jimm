@@ -68,6 +68,7 @@ public class ContactItem implements ContactListItem
 	public static final int CONTACTITEM_CHAT_SHOWN    = 1 << 2; /* Boolean */
 	public static final int CONTACTITEM_IS_TEMP       = 1 << 3; /* Boolean */
 	public static final int CONTACTITEM_HAS_CHAT      = 1 << 4; /* Boolean */
+	public static final int CONTACTITEM_IS_PHANTOM    = 1 << 5; /* Boolean */
 	
 	public static final int CONTACTITEM_SS_DATA       = 227; /* bytes[] */
 	public static final int CONTACTITEM_INTERNAL_IP   = 225; /* bytes[] */
@@ -278,7 +279,9 @@ public class ContactItem implements ContactListItem
 		case CONTACTITEM_ID:
 			return ((idAndGropup & 0xFFFF0000) >> 16) & 0xFFFF;
 		case CONTACTITEM_GROUP:
-			return (idAndGropup & 0x0000FFFF);
+			int value = (idAndGropup & 0x0000FFFF);
+			if (value == 0 && !getBooleanValue_(CONTACTITEM_IS_PHANTOM)) value = -1; // Group is -1 for temporary contacts
+			return value; 
 		case CONTACTITEM_PLAINMESSAGES:
 			return ((messCounters & 0xFF000000) >> 24) & 0xFF;
 		case CONTACTITEM_URLMESSAGES:
@@ -414,7 +417,7 @@ public class ContactItem implements ContactListItem
 	{
 		stream.writeByte(0);
 		stream.writeInt(idAndGropup);
-		stream.writeInt(booleanValues & (CONTACTITEM_IS_TEMP | CONTACTITEM_NO_AUTH));
+		stream.writeInt(booleanValues & (CONTACTITEM_IS_TEMP | CONTACTITEM_NO_AUTH | CONTACTITEM_IS_PHANTOM));
 		stream.writeInt(uinLong);
 		stream.writeUTF(name);
 		if (ssData != null)
@@ -590,7 +593,7 @@ public class ContactItem implements ContactListItem
 		{
 			if (getBooleanValue_(CONTACTITEM_NO_AUTH)) tmpStringBuffer.append("!");
 			
-			if (getIntValue_(CONTACTITEM_GROUP) == 0)
+			if (getBooleanValue_(CONTACTITEM_IS_PHANTOM))
 			{
 				if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
 				tmpStringBuffer.append("f");

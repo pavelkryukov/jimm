@@ -743,8 +743,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		{
 			for (i = 0; i < gCount; i++)
 			{
-				ContactListGroupItem item = (ContactListGroupItem) gItems
-						.elementAt(i);
+				ContactListGroupItem item = (ContactListGroupItem) gItems.elementAt(i);
 				TreeNode groupNode = tree.addNode(null, item);
 				gNodes.put(new Integer(item.getId()), groupNode);
 			}
@@ -756,17 +755,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			ContactItem cItem = getCItem(i);
 
 			if (only_online
-					&& (cItem
-							.getIntValue(ContactItem.CONTACTITEM_STATUS) == STATUS_OFFLINE)
+					&& (cItem.getIntValue(ContactItem.CONTACTITEM_STATUS) == STATUS_OFFLINE)
 					&& !cItem.mustBeShownAnyWay())
 				continue;
 
 			if (use_groups)
 			{
-				TreeNode groupNode = (TreeNode) gNodes
-						.get(new Integer(
-								cItem
-										.getIntValue(ContactItem.CONTACTITEM_GROUP)));
+				int group = cItem.getIntValue(ContactItem.CONTACTITEM_GROUP);
+				TreeNode groupNode = (TreeNode) gNodes.get(new Integer(group));
 				tree.addNode(groupNode, cItem);
 			} else
 			{
