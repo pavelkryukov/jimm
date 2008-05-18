@@ -100,6 +100,11 @@ public class ContactItem implements ContactListItem
 
 	synchronized public void setStringValue(int key, String value)
 	{
+		setStringValue_(key, value);
+	}
+	
+	private void setStringValue_(int key, String value)
+	{
 		switch (key)
 		{
 		case CONTACTITEM_UIN:
@@ -172,7 +177,7 @@ public class ContactItem implements ContactListItem
 
 	///////////////////////////////////////////////////////////////////////////
 
-	synchronized public void setIntValue(int key, int value)
+	private void setIntValue_(int key, int value)
 	{
 		switch (key)
 		{
@@ -208,9 +213,9 @@ public class ContactItem implements ContactListItem
 			return;
 		case CONTACTITEM_STATUS:
 			status = value;
-			if (status != ContactList.STATUS_OFFLINE && getBooleanValue(CONTACTITEM_NO_AUTH)) 
+			if (status != ContactList.STATUS_OFFLINE && getBooleanValue_(CONTACTITEM_NO_AUTH)) 
 			{
-				setBooleanValue(CONTACTITEM_NO_AUTH, false);
+				setBooleanValue_(CONTACTITEM_NO_AUTH, false);
 				ChatHistory.rebuildMenu(this);
 			}
 			return;
@@ -260,8 +265,13 @@ public class ContactItem implements ContactListItem
 		
 		//throw new Exception("setIntValue");
 	}
+	
+	synchronized public void setIntValue(int key, int value)
+	{
+		setIntValue_(key, value);
+	}
 
-	synchronized public int getIntValue(int key)
+	private int getIntValue_(int key)
 	{
 		switch (key)
 		{
@@ -309,19 +319,36 @@ public class ContactItem implements ContactListItem
 		case CONTACTITEM_IGN_ID: return (int)((privacyData >> 32)&0xFFFF);
 		}
 		return 0;
+		
+	}
+	
+	synchronized public int getIntValue(int key)
+	{
+		return getIntValue_(key);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
 
 	synchronized public void setBooleanValue(int key, boolean value)
 	{
+		setBooleanValue_(key, value);
+	}
+	
+	private void setBooleanValue_(int key, boolean value)
+	{
 		booleanValues = (booleanValues & (~key)) | (value ? key : 0x00000000);
 	}
 
 	synchronized public boolean getBooleanValue(int key)
 	{
+		return getBooleanValue_(key);
+	}
+	
+	private boolean getBooleanValue_(int key)
+	{
 		return (booleanValues & key) != 0;
 	}
+	
 
 	///////////////////////////////////////////////////////////////////////////
 
@@ -418,41 +445,44 @@ public class ContactItem implements ContactListItem
 	public void init(int id, int group, String uin, String name,
 			boolean noAuth, boolean added)
 	{
-		if (id == -1)
-			setIntValue(ContactItem.CONTACTITEM_ID, ContactList.generateNewIdForBuddy());
-		else
-			setIntValue(ContactItem.CONTACTITEM_ID, id);
-		setIntValue(ContactItem.CONTACTITEM_GROUP, group);
-		setStringValue(ContactItem.CONTACTITEM_UIN, uin);
-		setStringValue(ContactItem.CONTACTITEM_NAME, name);
-		setBooleanValue(ContactItem.CONTACTITEM_NO_AUTH, noAuth);
-		setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, false);
-		setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT, false);
-		setBooleanValue(ContactItem.CONTACTITEM_ADDED, added);
-		setIntValue(ContactItem.CONTACTITEM_STATUS,
-				ContactList.STATUS_OFFLINE);
-		setIntValue(ContactItem.CONTACTITEM_CAPABILITIES,
-				Icq.CAPF_NO_INTERNAL);
-		setIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
-		setIntValue(ContactItem.CONTACTITEM_URLMESSAGES, 0);
-		setIntValue(ContactItem.CONTACTITEM_SYSNOTICES, 0);
-		setIntValue(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		//#sijapp cond.if modules_FILES is "true"#
-		setBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
-		setBytesArray(ContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
-		setIntValue(ContactItem.CONTACTITEM_DC_PORT, 0);
-		setIntValue(ContactItem.CONTACTITEM_DC_TYPE, 0);
-		setIntValue(ContactItem.CONTACTITEM_ICQ_PROT, 0);
-		setIntValue(ContactItem.CONTACTITEM_AUTH_COOKIE, 0);
-		//#sijapp cond.end#
-		//#sijapp cond.end#
-		setIntValue(ContactItem.CONTACTITEM_SIGNON, -1);
-		online = -1;
-		setIntValue(ContactItem.CONTACTITEM_IDLE, -1);
-		setIntValue(ContactItem.CONTACTITEM_CLIENT, Icq.CLI_NONE);
-		setStringValue(ContactItem.CONTACTITEM_CLIVERSION, "");
-		xStatusId = -1;
+		synchronized (this)
+		{
+			if (id == -1)
+				setIntValue_(ContactItem.CONTACTITEM_ID, ContactList.generateNewIdForBuddy());
+			else
+				setIntValue_(ContactItem.CONTACTITEM_ID, id);
+			setIntValue_(ContactItem.CONTACTITEM_GROUP, group);
+			setStringValue_(ContactItem.CONTACTITEM_UIN, uin);
+			setStringValue_(ContactItem.CONTACTITEM_NAME, name);
+			setBooleanValue_(ContactItem.CONTACTITEM_NO_AUTH, noAuth);
+			setBooleanValue_(ContactItem.CONTACTITEM_IS_TEMP, false);
+			setBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT, false);
+			setBooleanValue_(ContactItem.CONTACTITEM_ADDED, added);
+			setIntValue_(ContactItem.CONTACTITEM_STATUS,
+					ContactList.STATUS_OFFLINE);
+			setIntValue_(ContactItem.CONTACTITEM_CAPABILITIES,
+					Icq.CAPF_NO_INTERNAL);
+			setIntValue_(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
+			setIntValue_(ContactItem.CONTACTITEM_URLMESSAGES, 0);
+			setIntValue_(ContactItem.CONTACTITEM_SYSNOTICES, 0);
+			setIntValue_(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
+			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//#sijapp cond.if modules_FILES is "true"#
+			setBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
+			setBytesArray(ContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
+			setIntValue_(ContactItem.CONTACTITEM_DC_PORT, 0);
+			setIntValue_(ContactItem.CONTACTITEM_DC_TYPE, 0);
+			setIntValue_(ContactItem.CONTACTITEM_ICQ_PROT, 0);
+			setIntValue_(ContactItem.CONTACTITEM_AUTH_COOKIE, 0);
+			//#sijapp cond.end#
+			//#sijapp cond.end#
+			setIntValue_(ContactItem.CONTACTITEM_SIGNON, -1);
+			online = -1;
+			setIntValue_(ContactItem.CONTACTITEM_IDLE, -1);
+			setIntValue_(ContactItem.CONTACTITEM_CLIENT, Icq.CLI_NONE);
+			setStringValue_(ContactItem.CONTACTITEM_CLIVERSION, "");
+			xStatusId = -1;
+		}
 	}
 
 	/* Constructor for an existing contact item */
@@ -493,12 +523,15 @@ public class ContactItem implements ContactListItem
 	/* Returns color for contact name */
 	public int getTextColor()
 	{
-		if (getBooleanValue(CONTACTITEM_IS_TEMP))
-			return 0x808080;
-		int color = getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT) ? Options
-				.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1)
-				: Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
-		return color;
+		synchronized (this)
+		{
+			if (getBooleanValue_(CONTACTITEM_IS_TEMP))
+				return 0x808080;
+			int color = getBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT) ? Options
+					.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1)
+					: Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
+			return color;
+		}
 	}
 
 	/* Returns font style for contact name */
@@ -551,79 +584,80 @@ public class ContactItem implements ContactListItem
 	public String getText()
 	{
 		tmpStringBuffer.setLength(0);
-		if (getBooleanValue(CONTACTITEM_NO_AUTH)) tmpStringBuffer.append("!");
 		
-		if (getIntValue(CONTACTITEM_GROUP) == 0)
+		synchronized (this)
 		{
-			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
-			tmpStringBuffer.append("f");
+			if (getBooleanValue(CONTACTITEM_NO_AUTH)) tmpStringBuffer.append("!");
+			
+			if (getIntValue_(CONTACTITEM_GROUP) == 0)
+			{
+				if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
+				tmpStringBuffer.append("f");
+			}
+			
+			if (getIntValue_(CONTACTITEM_IGN_ID) != 0)
+			{
+				if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
+				tmpStringBuffer.append('d');
+			}
+			
+			if (getIntValue_(CONTACTITEM_INV_ID) != 0)
+			{
+				if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
+				tmpStringBuffer.append('i');
+			}
+			
+			if (getIntValue_(CONTACTITEM_VIS_ID) != 0)
+			{
+				if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
+				tmpStringBuffer.append('v');
+			}
+			
+			if (tmpStringBuffer.length() != 0)
+			{
+				return "["+tmpStringBuffer.toString()+"] "+name;
+			}
+			
+			return name;
 		}
-		
-		if (getIntValue(CONTACTITEM_IGN_ID) != 0)
-		{
-			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
-			tmpStringBuffer.append('d');
-		}
-		
-		if (getIntValue(CONTACTITEM_INV_ID) != 0)
-		{
-			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
-			tmpStringBuffer.append('i');
-		}
-		
-		if (getIntValue(CONTACTITEM_VIS_ID) != 0)
-		{
-			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
-			tmpStringBuffer.append('v');
-		}
-		
-		if (tmpStringBuffer.length() != 0)
-		{
-			return "["+tmpStringBuffer.toString()+"] "+name;
-		}
-		
-		return name;
 	}
 
 	/* Returns true if contact must be shown even user offline
 	 and "hide offline" is on */
 	protected boolean mustBeShownAnyWay()
 	{
-		return getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT)
-				|| getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP);
+		return getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT|ContactItem.CONTACTITEM_IS_TEMP);
 	}
 
 	/* Returns total count of all unread messages (messages, sys notices, urls, auths) */
 	protected int getUnreadMessCount()
 	{
-		return getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES)
-				+ getIntValue(ContactItem.CONTACTITEM_URLMESSAGES)
-				+ getIntValue(ContactItem.CONTACTITEM_SYSNOTICES)
-				+ getIntValue(ContactItem.CONTACTITEM_AUTREQUESTS);
+		synchronized (this)
+		{
+			return getIntValue_(ContactItem.CONTACTITEM_PLAINMESSAGES)
+				+ getIntValue_(ContactItem.CONTACTITEM_URLMESSAGES)
+				+ getIntValue_(ContactItem.CONTACTITEM_SYSNOTICES)
+				+ getIntValue_(ContactItem.CONTACTITEM_AUTREQUESTS);
+		}
 	}
 
 	/* Returns true if the next available message is a message of given type
 	 Returns false if no message at all is available, or if the next available
 	 message is of another type */
-	protected synchronized boolean isMessageAvailable(int type)
+	public boolean isMessageAvailable(int type)
 	{
 		switch (type)
 		{
 		case MESSAGE_PLAIN:
-			return (this
-					.getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
+			return (getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
 		case MESSAGE_URL:
-			return (this
-					.getIntValue(ContactItem.CONTACTITEM_URLMESSAGES) > 0);
+			return (getIntValue(ContactItem.CONTACTITEM_URLMESSAGES) > 0);
 		case MESSAGE_SYS_NOTICE:
-			return (this
-					.getIntValue(ContactItem.CONTACTITEM_SYSNOTICES) > 0);
+			return (getIntValue(ContactItem.CONTACTITEM_SYSNOTICES) > 0);
 		case MESSAGE_AUTH_REQUEST:
-			return (this
-					.getIntValue(ContactItem.CONTACTITEM_AUTREQUESTS) > 0);
+			return (getIntValue(ContactItem.CONTACTITEM_AUTREQUESTS) > 0);
 		}
-		return (this
-				.getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
+		return (getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
 	}
 
 	/* Increases the message count */
@@ -632,40 +666,43 @@ public class ContactItem implements ContactListItem
 		switch (type)
 		{
 		case MESSAGE_PLAIN:
-			this
-					.setIntValue(
-							ContactItem.CONTACTITEM_PLAINMESSAGES,
-							this
-									.getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) + 1);
+			setIntValue_(
+				ContactItem.CONTACTITEM_PLAINMESSAGES,
+				getIntValue_(ContactItem.CONTACTITEM_PLAINMESSAGES) + 1
+			);
 			break;
+			
 		case MESSAGE_URL:
-			this
-					.setIntValue(
-							ContactItem.CONTACTITEM_URLMESSAGES,
-							this
-									.getIntValue(ContactItem.CONTACTITEM_URLMESSAGES) + 1);
+			setIntValue_(
+				ContactItem.CONTACTITEM_URLMESSAGES,
+				getIntValue_(ContactItem.CONTACTITEM_URLMESSAGES) + 1
+			);
 			break;
+			
 		case MESSAGE_SYS_NOTICE:
-			this
-					.setIntValue(
-							ContactItem.CONTACTITEM_SYSNOTICES,
-							this
-									.getIntValue(ContactItem.CONTACTITEM_SYSNOTICES) + 1);
+			setIntValue_(
+				ContactItem.CONTACTITEM_SYSNOTICES,
+				getIntValue_(ContactItem.CONTACTITEM_SYSNOTICES) + 1
+			);
 			break;
+			
 		case MESSAGE_AUTH_REQUEST:
-			this
-					.setIntValue(
-							ContactItem.CONTACTITEM_AUTREQUESTS,
-							this
-									.getIntValue(ContactItem.CONTACTITEM_AUTREQUESTS) + 1);
+			setIntValue_(
+				ContactItem.CONTACTITEM_AUTREQUESTS,
+				getIntValue_(ContactItem.CONTACTITEM_AUTREQUESTS) + 1
+			);
+			break;
 		}
 	}
 
 	public synchronized void resetUnreadMessages()
 	{
-		setIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
-		setIntValue(ContactItem.CONTACTITEM_URLMESSAGES, 0);
-		setIntValue(ContactItem.CONTACTITEM_SYSNOTICES, 0);
+		synchronized (this)
+		{
+			setIntValue_(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
+			setIntValue_(ContactItem.CONTACTITEM_URLMESSAGES, 0);
+			setIntValue_(ContactItem.CONTACTITEM_SYSNOTICES, 0);
+		}
 	}
 
 	/* Checks whether some other object is equal to this one */
