@@ -341,14 +341,14 @@ public class SendMessageAction extends Action
 				// Set TLV 0x03 (IP)
 				Util.putWord(buf, marker, 0x0003);
 				Util.putWord(buf, marker + 2, 0x0004);
-				System.arraycopy(Jimm.jimm.getIcqRef().c.getLocalIP(), 0, buf,
+				System.arraycopy(Icq.c.getLocalIP(), 0, buf,
 						marker + 4, 4);
 				marker += 8;
 
 				// Set TLV 0x05 (port)
 				Util.putWord(buf, marker, 0x0005);
 				Util.putWord(buf, marker + 2, 0x0002);
-				Util.putWord(buf, marker + 4, Jimm.jimm.getIcqRef().c
+				Util.putWord(buf, marker + 4, Icq.c
 						.getLocalPort());
 				marker += 6;
 			}
@@ -611,7 +611,7 @@ public class SendMessageAction extends Action
 			// Send packet
 			SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY,
 					SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-			Jimm.jimm.getIcqRef().c.sendPacket(snacPkt);
+			Icq.c.sendPacket(snacPkt);
 			// System.out.println("SendMessageAction: Sent the packet");
 		}
 

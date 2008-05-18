@@ -52,7 +52,7 @@ public class EditInfo extends Form implements CommandListener
 			.getString("city"), null, 15, TextField.ANY);
 
 	private ChoiceGroup _SexItem = new ChoiceGroup(ResourceBundle
-			.getString("gender"), ChoiceGroup.EXCLUSIVE);
+			.getString("gender"), Choice.EXCLUSIVE);
 
 	private Command _CmdCancel = new Command(
 			ResourceBundle.getString("cancel"), Command.CANCEL, 0);
