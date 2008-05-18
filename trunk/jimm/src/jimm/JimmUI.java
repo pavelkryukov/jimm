@@ -541,7 +541,7 @@ public class JimmUI implements CommandListener
 				0xffffff, 0);
 
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-		aboutTextList.setFontSize(Font.SIZE_MEDIUM);
+		//		aboutTextList.setFontSize(Font.SIZE_MEDIUM);
 		//#sijapp cond.else#
 		//#		aboutTextList.setFontSize(Font.SIZE_SMALL);
 		//#sijapp cond.end#
