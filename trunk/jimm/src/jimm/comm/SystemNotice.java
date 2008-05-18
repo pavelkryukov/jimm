@@ -79,9 +79,10 @@ public class SystemNotice extends Message
 		return sysnotetype;
 	}
 
+//#sijapp cond.if modules_ANTISPAM="true"#	
 	public boolean needCheckForSpam()
 	{
 		return (sysnotetype == SYS_NOTICE_AUTHREQ);
 	}
-	
+//#sijapp cond.end#	
 }
