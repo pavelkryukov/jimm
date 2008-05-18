@@ -706,6 +706,7 @@ public class ConnectAction extends Action
 								try
 								{
 									ContactItem item = new ContactItem(id, group, name, nick, noAuth, true);
+									if (group == 0) item.setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, true); 
 									item.setBytesArray(ContactItem.CONTACTITEM_SS_DATA, (serverData.size() != 0) ? serverData.toByteArray() : null);
 									items.addElement(item);
 								}

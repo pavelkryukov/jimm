@@ -548,6 +548,12 @@ public class ContactItem implements ContactListItem
 		tmpStringBuffer.setLength(0);
 		if (getBooleanValue(CONTACTITEM_NO_AUTH)) tmpStringBuffer.append("!");
 		
+		if (getIntValue(CONTACTITEM_GROUP) == 0)
+		{
+			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
+			tmpStringBuffer.append("f");
+		}
+		
 		if (getIntValue(CONTACTITEM_IGN_ID) != 0)
 		{
 			if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');
