@@ -127,5 +127,12 @@ public abstract class Message
 	{
 		return null;
 	}
+	
+//#sijapp cond.if modules_ANTISPAM="true"#	
+	public boolean needCheckForSpam()
+	{
+		return false;
+	}
+//#sijapp cond.end#	
 
 }

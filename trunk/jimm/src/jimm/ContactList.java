@@ -29,7 +29,6 @@ import jimm.Jimm;
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
 import jimm.comm.SendMessageAction;
-import jimm.comm.SystemNotice;
 import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
@@ -1278,7 +1277,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				|| cItem.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH|ContactItem.CONTACTITEM_IS_TEMP) // This is hack. Don't do like this
 				|| cItem.getIntValue(ContactItem.CONTACTITEM_GROUP) == 0) 
 			{
-				if ((message instanceof PlainMessage) || (message instanceof SystemNotice)) 
+				if (message.needCheckForSpam()) 
 				{
 					boolean checked = antiSpamCheckContactFor(uin, message.getText());
 					if (!checked) return;
@@ -1841,9 +1840,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			DataOutputStream dos = new DataOutputStream(baos);
 			
 			dos.writeInt(ANTISPAM_RMS_VERS);
-			dos.writeInt(antiSpamList.size());
 			
+			int size = 0;
 			Enumeration e = antiSpamList.keys();
+			while (e.hasMoreElements())
+				if (antiSpamList.get(e.nextElement()) == antiSpamTrue) size++;
+			
+			System.out.println("antiSpamSaveList, size="+size);
+			dos.writeInt(size);
+			
+			e = antiSpamList.keys();
 			while (e.hasMoreElements())
 			{
 				String uin = (String)e.nextElement();

@@ -47,7 +47,7 @@ public class SysNoticeAction extends Action
 
 		//	Get byte Arrys from the stuff we need the length of
 		byte[] uinRaw = Util.stringToByteArray(this.notice.getSndrUin());
-		byte[] reasonRaw = Util.stringToByteArray(this.notice.getText());
+		byte[] reasonRaw = Util.stringToByteArray(this.notice.getText(), true);
 
 		// If system notice is a SYS_NOTICE_AUTHORISE
 		if (this.notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHORISE)
@@ -115,8 +115,7 @@ public class SysNoticeAction extends Action
 			SnacPacket packet = new SnacPacket(SnacPacket.CLI_REQAUTH_FAMILY,
 					SnacPacket.CLI_REQAUTH_COMMAND, 0x00000018, new byte[0],
 					buf);
-			Jimm.jimm.getIcqRef().c.sendPacket(packet);
-
+			Icq.c.sendPacket(packet);
 		}
 
 	}
