@@ -583,11 +583,12 @@ public class ContactItem implements ContactListItem
 	
 	public String getText()
 	{
-		tmpStringBuffer.setLength(0);
+		if (tmpStringBuffer.length() != 0)
+			tmpStringBuffer.delete(0, tmpStringBuffer.length());
 		
 		synchronized (this)
 		{
-			if (getBooleanValue(CONTACTITEM_NO_AUTH)) tmpStringBuffer.append("!");
+			if (getBooleanValue_(CONTACTITEM_NO_AUTH)) tmpStringBuffer.append("!");
 			
 			if (getIntValue_(CONTACTITEM_GROUP) == 0)
 			{
