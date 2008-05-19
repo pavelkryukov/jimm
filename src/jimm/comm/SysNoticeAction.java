@@ -91,7 +91,7 @@ public class SysNoticeAction extends Action
 			SnacPacket packet = new SnacPacket(SnacPacket.CLI_AUTHORIZE_FAMILY,
 					SnacPacket.CLI_AUTHORIZE_COMMAND, 0x0000001A, new byte[0],
 					buf);
-			Jimm.jimm.getIcqRef().c.sendPacket(packet);
+			Icq.c.sendPacket(packet);
 		}
 		//	If system notice is a SYS_NOTICE_REQUAUTH
 		else if (this.notice.getSysnotetype() == SystemNotice.SYS_NOTICE_REQUAUTH)
