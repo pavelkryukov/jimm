@@ -1,0 +1,25 @@
+<loader version="1.0">
+    <application id="Jimm">
+        <name>
+        	Jimm
+        </name>
+        <description >
+			ICQ for J2ME
+        </description>
+        <version>
+        	###VERSION###
+        </version>
+        <vendor >
+            Jimm development team
+        </vendor>
+        <copyright >
+            Copyright (c) 2008 Jimm developers
+        </copyright>
+
+        <fileset Java="1.5">
+            <files >
+                Jimm.cod
+            </files>
+        </fileset>
+    </application>
+</loader>
