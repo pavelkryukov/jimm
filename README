@@ -152,7 +152,6 @@ the selected target you also need the following:
   * RIM target: Latest version of the Blackberry SDK
       <http://www.blackberry.com/developers/>
   * SIEMENS target: Latest version of the Siemens Mobility Toolkit (SMTK)
-      <http://communication-market.siemens.de/>
 		
 By default, class files are obfuscated using ProGuard to reduce bytecode size.
 You can download ProGuard from <http://proguard.sourceforge.net/>. Follow the
@@ -166,6 +165,11 @@ program in the path of the console you run ant in.
 
 Also for release only you need 'svnant' which you can obtain at http://subclipse.tigris.org/svnant.html
 follow the installation instructions and make sure the .jar files are on your PATH.
+
+To build binaries for RIM Blackberry devices you need to have Antenna and the
+BlackBerry JDE Component Package installed on your system and configured via the
+build.xml script. You can download Antenna from http://antenna.sourceforge.net
+and the BlackBerry JDE Component Package from http://na.blackberry.com/eng/developers/downloads/.
 
 At first, open the Apache ant buildfile (build.xml) and change the properties in
 the configuration/customization section. You can use both the slash and the

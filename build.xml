@@ -1,7 +1,7 @@
 <!-- 
 ********************************************************************************
 Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-05  Jimm Project
+Copyright (C) 2003-08  Jimm Project
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -53,6 +53,21 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  This property must point at the ProGuard JAR file, normally found     -->
 	<!--  in the lib directory of the ProGuard distribution.                    -->
 	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"      />
+	<!--  *******************************************************************   -->	
+	<!--  Change this to the directory where Antenna is installed. You can      -->
+	<!--  use both the slash and the backslash for separating path components.  -->
+	<property name="antenna"           value="CHANGE ME"                         />
+	<!--  *******************************************************************   -->
+	<!--  This property must point at the Antenna JAR file, normally found      -->
+	<!--  directly in the directory where you installed Antenna.                -->
+	<!--  Please change if you are using a different version than 1.1.0         -->
+	<property name="antenna/lib"       value="${antenna}/antenna-bin-1.0.0.jar"  />
+	<!--  *******************************************************************   -->
+	<!--  This property is used for building binaries for RIM Blackberry.       -->
+	<!--  Set it to the location of the "rapc" binary which is part of the      -->
+	<!--  Blackberry JDE package which you need to have installed in order      -->
+	<!--  to generate Blackberry builds of Jimm .                               -->
+	<property name="bb.buildjars.home" location="${RIM/midp}\bin"                /> 
 	<!--  *******************************************************************   -->
 	<!--  CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD        -->
 	<!--  *******************************************************************   -->
@@ -62,7 +77,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--      MIDP2    - Standard MIDP2                                         -->
 	<!--      RIM      - For RIM Blackberry devices                             -->
 	<!--      MOTOROLA - For Motorola MIDP2 devices                             -->
-	<property name="target"            value="DEFAULT"                           />
+	<property name="target"            value="MIDP2"                           />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of modules which should be       -->
 	<!--  included in the build. Realised modules are:                          -->
@@ -89,7 +104,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="version/jimm"      value="###VERSION###"                     />
 	<!--  *******************************************************************   -->
 	<!--  Version number of the build in the standardized format                -->
-	<!--  <major>[.<minor>[.<micro>]] (e.g. 0.2.1). This value should           -->
+	<!--  <major>[.<minor>[.<micro>]] (e.g. 0.2). This value should             -->
 	<!--  correspond to the version property (see above).                       -->
 	<property name="version/java"      value="###VERSION-JAVA###"                />
 	<!--  *******************************************************************   -->
@@ -141,6 +156,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp" value="${RIM/midp}">
 			<equals arg1="${target}" arg2="RIM" />
 		</condition>
+		<condition property="is_bb_build" value="true">
+			<equals arg1="${target}" arg2="RIM" />
+		</condition>		
 		<condition property="midp" value="${MOTOROLA/midp}">
 			<equals arg1="${target}" arg2="MOTOROLA" />
 		</condition>
@@ -174,6 +192,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="midp_profile" value="MIDP-2.0">
 			<equals arg1="${target}" arg2="MOTOROLA" />
 		</condition>
+		<!-- Needed for antenna -->
+		<property name="wtk.home" value="${midp}"/>
 	</target>
 
 	<!--  Internal target: sijapp   -->
@@ -300,7 +320,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	</target>
 	
 	<!--  Internal target: preverify   -->
-	<target name="preverify" depends="obfuscate,skip-obfuscate">
+	<target name="preverify" depends="obfuscate,skip-obfuscate" unless="is_bb_build">
 		<mkdir dir="${build}/preverified/classes" />
 		<exec executable="${midp}/bin/preverify">
 			<arg line="-classpath '${midp/lib}'" />
@@ -309,6 +329,16 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<arg line="-cldc" />
 		</exec>
 	</target>
+	
+	<!--  Internal target: preverify_bb   -->
+	<target name="preverify_bb" depends="obfuscate,skip-obfuscate" if="is_bb_build">
+		<mkdir dir="${build}/preverified/classes" />
+		<exec executable="${midp}/bin/preverify">
+			<arg line="-classpath '${midp/lib}'" />
+			<arg line="-d '${build}/preverified/classes'" />
+			<arg line="'${build}/obfuscate/classes'" />
+		</exec>
+	</target>	
 
 
 	<!--  Internal target: preprocess-manifest   -->
@@ -350,8 +380,8 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<taskdef name="jarsize" classname="JarSizeTask" classpath="${util/jarsizetask/lib}" />
 	</target>
 	
-	<!--  Target: dist  -->
-	<target name="dist" depends="preverify,preprocess-manifest,preprocess-resources,jarsizetask" description="Generate the distribution">
+	<!--  Target: dist_basic  -->
+	<target name="dist_basic" depends="preverify,preverify_bb,preprocess-manifest,preprocess-resources,jarsizetask" description="Generate the distribution">
 		<mkdir dir="${dist}/bin" />
 		<jar destfile="${dist}/bin/Jimm.jar" manifest="${build}/MANIFEST.MF">
 			<fileset dir="${build}/preverified/classes" />
@@ -363,6 +393,16 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</unjar>
 		<move file="${dist}/bin/META-INF/MANIFEST.MF" tofile="${dist}/bin/Jimm.jad" />
 		<delete dir="${dist}/bin/META-INF" />
+	</target>
+	
+	<!-- Target: dist -->
+	<target name="dist" depends="dist_basic,dist_bb"/>
+	
+	<!-- Target: bb -->
+	<target name="dist_bb" if="is_bb_build">
+		<mkdir dir="${dist}/bin/cod"/>
+		<taskdef name="wtkrapc" classname="de.pleumann.antenna.WtkRapc" classpath="${antenna/lib}"/> 
+	    <wtkrapc jadfile="${dist}/bin/Jimm.jad" source="${dist}/bin/Jimm.jar" codename="Jimm" import="${RIM/midp/lib}" destdir="${dist}/bin/cod" quiet="false" midlet="true"/>
 	</target>
 	
 	<!--  Internal target: del_build  -->
