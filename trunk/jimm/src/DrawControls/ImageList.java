@@ -29,7 +29,7 @@ import java.lang.Integer;
 import java.io.IOException;
 
 import javax.microedition.lcdui.*;
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
 import javax.microedition.lcdui.game.Sprite;
 //#sijapp cond.end#
 
@@ -101,13 +101,12 @@ public class ImageList
 			for (int x = 0; x < imgWidth; x += width)
 			{
 				Image newImage;
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
 				newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
-				//#sijapp cond.else#
-				//#				newImage = Image.createImage(width, height);
-				//#				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP
-				//#						| Graphics.LEFT);
-				//#sijapp cond.end#
+//#sijapp cond.else#
+				newImage = Image.createImage(width, height);
+				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP| Graphics.LEFT);
+//#sijapp cond.end#
 				Image imImage = Image.createImage(newImage);
 				images.addElement(imImage);
 			}

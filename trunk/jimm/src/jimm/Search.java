@@ -242,7 +242,9 @@ public class Search
 			/* Result Screen */
 			screen = new TextList(null);
 			screen.setVLCommands(this);
+//#sijapp cond.if target!="RIM"#
 			screen.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+//#sijapp cond.end#
 			screen.addCommandEx(this.previousCommand, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.nextCommand, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.addCommand, VirtualList.MENU_TYPE_RIGHT);

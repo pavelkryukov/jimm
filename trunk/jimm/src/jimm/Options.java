@@ -281,15 +281,8 @@ public class Options
 	{
 		setString(Options.OPTION_UIN1, emptyString);
 		setString(Options.OPTION_PASSWORD1, emptyString);
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"# ===>
-		setString(Options.OPTION_SRV_HOST, "login.icq.com");
-		//#sijapp cond.else# ===
-		//#sijapp cond.if modules_PROXY is "true" #
-		//#		setString (Options.OPTION_SRV_HOST,           "64.12.161.185"); //Cannot resolve host IP on MIDP1 devices
-		//#sijapp cond.else#
-		//#		setString (Options.OPTION_SRV_HOST,           "login.icq.com");
-		//#sijapp cond.end#
-		//#sijapp cond.end# <===
+		setString (Options.OPTION_SRV_HOST, "login.icq.com");
+		
 		setString(Options.OPTION_SRV_PORT, "5190");
 		setBoolean(Options.OPTION_KEEP_CONN_ALIVE, true);
 		setBoolean(Options.OPTION_RECONNECT, true);
@@ -308,7 +301,7 @@ public class Options
 		setBoolean(Options.OPTION_DISPLAY_DATE, false);
 		setInt(Options.OPTION_CL_SORT_BY, 0);
 		setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
-		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2"#
+		//#sijapp cond.if target="MIDP2" | target="SIEMENS2" | target="RIM"#
 		setInt(Options.OPTION_MESS_NOTIF_MODE, 0);
 		setString(Options.OPTION_MESS_NOTIF_FILE, "message.wav");
 		setInt(Options.OPTION_MESS_NOTIF_VOL, 50);
@@ -317,7 +310,6 @@ public class Options
 		setInt(Options.OPTION_ONLINE_NOTIF_VOL, 50);
 		setInt(Options.OPTION_TYPING_VOL, 50);
 		setString(Options.OPTION_TYPING_FILE, "typing.wav");
-		setInt(Options.OPTION_TYPING_MODE, 0);
 		//#sijapp cond.elseif target is "MOTOROLA"#
 		setInt    (Options.OPTION_MESS_NOTIF_MODE,    0);
 		setString (Options.OPTION_MESS_NOTIF_FILE,    "message.mp3");
@@ -327,9 +319,12 @@ public class Options
 		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
 		setInt	  (Options.OPTION_TYPING_VOL,	 	  50);
 		setString (Options.OPTION_TYPING_FILE,		  "typing.mp3");
-		setInt	  (Options.OPTION_TYPING_MODE,		  0);
 		setBoolean(Options.OPTION_LIGHT_MANUAL,       true);
 		//#sijapp cond.end#
+		
+//#sijapp cond.if target!="DEFAULT"#
+		setInt(Options.OPTION_TYPING_MODE, 0);
+//#sijapp cond.end#		
 
 		//#sijapp cond.if target="MIDP2"#
 		setBoolean(Options.OPTION_LIGHT_MANUAL,       false);
@@ -368,15 +363,15 @@ public class Options
 		setInt(Options.OPTION_VISIBILITY_ID, 0);
 		setInt(Options.OPTION_EXT_CLKEY0, 0);
 
-		//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
+//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 		setInt(Options.OPTION_EXT_CLKEYSTAR, HOTKEY_FULLSCR);
-		//#sijapp cond.else#
-		//#		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);
-		//#sijapp cond.end #
+//#sijapp cond.else#
+		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);
+//#sijapp cond.end #
 
-		//#sijapp cond.if target isnot "DEFAULT" #
+//#sijapp cond.if target isnot "DEFAULT" #
 		setBoolean(Options.OPTION_SILENT_MODE, false);
-		//#sijapp cond.end #
+//#sijapp cond.end #
 
 		setInt(Options.OPTION_EXT_CLKEY4, 0);
 		setInt(Options.OPTION_EXT_CLKEY6, 0);
@@ -425,11 +420,9 @@ public class Options
 		setInt(OPTION_CAMERA_ENCODING, 0);
 		//#sijapp cond.end#
 
-		//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
 		selectSoundType("online.", OPTION_ONLINE_NOTIF_FILE);
 		selectSoundType("message.", OPTION_MESS_NOTIF_FILE);
 		selectSoundType("typing.", OPTION_TYPING_FILE);
-		//#sijapp cond.end#
 		
 		setInt(OPTION_FT_MODE, FS_MODE_WEB);
 		
@@ -700,7 +693,7 @@ public class Options
 		optionsForm.addAccount(uin, password);
 	}
 
-	//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
+	//#sijapp cond.if target isnot "DEFAULT"#
 	private static void selectSoundType(String name, int option)
 	{
 		boolean ok;
@@ -820,14 +813,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private ChoiceGroup messageNotificationModeChoiceGroup;
 	private ChoiceGroup onlineNotificationModeChoiceGroup;
 	private ChoiceGroup typingNotificationModeChoiceGroup;
-//#sijapp cond.if target isnot "RIM"#
 	private TextField messageNotificationSoundfileTextField;
 	private Gauge messageNotificationSoundVolume;
 	private TextField onlineNotificationSoundfileTextField;
 	private TextField typingNotificationSoundfileTextField;
 	private Gauge onlineNotificationSoundVolume;
 	private Gauge typingNotificationSoundVolume;
-//#sijapp cond.end#
 //#sijapp cond.end#
 
 //#sijapp cond.if modules_TRAFFIC is "true" #
@@ -1095,7 +1086,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 		keysMenu.selectTextByIndex(lastItemIndex);
 
+//#sijapp cond.if target!="RIM"#
 		keysMenu.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+//#sijapp cond.end#
+
 		keysMenu.addCommandEx(JimmUI.cmdSave, VirtualList.MENU_TYPE_RIGHT);
 		keysMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT);
 		
@@ -1219,11 +1213,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (choiceCurAccount == null)
 				choiceCurAccount = new ChoiceGroup(ResourceBundle
 						.getString("options_account"), Choice.EXCLUSIVE);
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
 			choiceCurAccount.deleteAll();
-			//#sijapp cond.else#
-			//#			while (choiceCurAccount.size() > 0) { choiceCurAccount.delete(0); }
-			//#sijapp cond.end#
+//#sijapp cond.else#
+			while (choiceCurAccount.size() > 0) { choiceCurAccount.delete(0); }
+//#sijapp cond.end#
 
 			for (int i = 0; i < size; i++)
 				choiceCurAccount.append(checkUin((String) uins.elementAt(i)),
@@ -1651,26 +1645,19 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			//#sijapp cond.if target isnot "DEFAULT"#
 			onlineNotificationModeChoiceGroup = createSelector(
-					"onl_notification", "no" + "|" + "beep"
-					//#sijapp cond.if target isnot "RIM"#
-							+ "|" + "sound"
-					//#sijapp cond.end#
+					"onl_notification", "no" + "|" + "beep" + "|" + "sound"
 					, Options.OPTION_ONLINE_NOTIF_MODE);
 
-			//#sijapp cond.if target isnot "RIM"#                 
 			onlineNotificationSoundfileTextField = new TextField(
 					ResourceBundle.getString("onl_sound_file_name"),
 					Options.getString(Options.OPTION_ONLINE_NOTIF_FILE),
 					32, TextField.ANY);
-			//#sijapp cond.end#                 
+
 			messageNotificationModeChoiceGroup = createSelector(
-					"message_notification", "no" + "|" + "beep"
-					//#sijapp cond.if target isnot "RIM"#
-							+ "|" + "sound"
-					//#sijapp cond.end#
+					"message_notification", "no" + "|" + "beep" + "|" + "sound"
 					, Options.OPTION_MESS_NOTIF_MODE);
 
-			//#sijapp cond.if target isnot "RIM"#                  
+              
 			messageNotificationSoundfileTextField = new TextField(
 					ResourceBundle.getString("msg_sound_file_name"),
 					Options.getString(Options.OPTION_MESS_NOTIF_FILE), 32,
@@ -1692,7 +1679,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 					"typing_notify", "no" + "|" + "typing_display_only"
 							+ "|" + "beep" + "|" + "sound",
 					Options.OPTION_TYPING_MODE);
-			//#sijapp cond.end#
 
 			vibratorChoiceGroup = createSelector("vibration", "no" + "|"
 					+ "yes" + "|" + "when_locked", Options.OPTION_VIBRATOR);
@@ -1705,24 +1691,17 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			//#sijapp cond.if target isnot "DEFAULT"#     
 			optionsForm.append(messageNotificationModeChoiceGroup);
-
-			//#sijapp cond.if target isnot "RIM"#                        
 			optionsForm.append(messageNotificationSoundVolume);
 			optionsForm.append(messageNotificationSoundfileTextField);
-			//#sijapp cond.end#
-
 			optionsForm.append(vibratorChoiceGroup);
 			optionsForm.append(onlineNotificationModeChoiceGroup);
-
-			//#sijapp cond.if target isnot "RIM"#                          
 			optionsForm.append(onlineNotificationSoundVolume);
 			optionsForm.append(onlineNotificationSoundfileTextField);
 			optionsForm.append(typingNotificationModeChoiceGroup);
 			optionsForm.append(typingNotificationSoundVolume);
 			optionsForm.append(typingNotificationSoundfileTextField);
 			//#sijapp cond.end#
-
-			//#sijapp cond.end#
+			
 			optionsForm.append(chrgPopupWin);
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -2058,8 +2037,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 					onlineNotificationModeChoiceGroup.getSelectedIndex());
 			Options.setInt(Options.OPTION_TYPING_MODE,
 					typingNotificationModeChoiceGroup.getSelectedIndex());
-
-			//#sijapp cond.if target isnot "RIM"#       
+    
 			Options.setString(Options.OPTION_MESS_NOTIF_FILE,
 					messageNotificationSoundfileTextField.getString());
 			Options.setInt(Options.OPTION_MESS_NOTIF_VOL,
@@ -2072,7 +2050,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 					typingNotificationSoundfileTextField.getString());
 			Options.setInt(Options.OPTION_TYPING_VOL,
 					typingNotificationSoundVolume.getValue() * 10);
-			//#sijapp cond.end#
 			//#sijapp cond.end# <===
 			Options.setInt(Options.OPTION_POPUP_WIN2, chrgPopupWin
 					.getSelectedIndex());

@@ -49,7 +49,7 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+//#sijapp cond.if target!="DEFAULT"#
 import javax.microedition.media.PlayerListener;
 import javax.microedition.media.Manager;
 import javax.microedition.media.Player;
@@ -69,7 +69,7 @@ import jimm.Options;
 //////////////////////////////////////////////////////////////////////////////////
 public class ContactList implements CommandListener, VirtualTreeCommands,
 		VirtualListCommands
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+//#sijapp cond.if target!="DEFAULT"#
 		, PlayerListener
 //#sijapp cond.end#
 {
@@ -1312,7 +1312,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 	}
 
-	//#sijapp cond.if target isnot "DEFAULT" & target isnot "RIM"#
+	//#sijapp cond.if target!="DEFAULT"#
 
 	public static boolean testSoundFile(String source)
 	{
@@ -1327,7 +1327,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	//#sijapp cond.end#    
 
-	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#       
+	//#sijapp cond.if target!="DEFAULT"#
 	// Reaction to player events. (Thanks to Alexander Barannik for idea!)
 	public void playerUpdate(final Player player, final String event,
 			Object eventData)
@@ -1545,28 +1545,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 			}
 
-			//#sijapp cond.end#
-
-			//#sijapp cond.if target is "RIM"#
-			//#	        if (Options.getBoolean(Options.OPTION_VIBRATOR))
-			//#    	    {
-			//#				// had to use full path since import already contains another Alert object
-			//#        		net.rim.device.api.system.Alert.startVibrate(500);
-			//#        	}
-			//#        	int mode_rim;
-			//#        	if (notType == SOUND_TYPE_MESSAGE)
-			//#            	mode_rim = Options.getInt(Options.OPTION_MESS_NOTIF_MODE);
-			//#        	else
-			//#            	mode_rim = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
-			//#	        switch (mode_rim)
-			//#        	{
-			//#        	case 1:
-			//#	            // array is note in Hz, duration in ms.
-			//#				final short[] tune = new short[] { 349, 250, 0, 10, 523, 250 };
-			//#            	net.rim.device.api.system.Alert.startAudio(tune, 50);
-			//#            	net.rim.device.api.system.Alert.startBuzzer(tune, 50);
-			//#            	break;
-			//#			}
 			//#sijapp cond.end#
 		}
 

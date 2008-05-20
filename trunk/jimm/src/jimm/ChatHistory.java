@@ -158,7 +158,9 @@ class ChatTextList implements VirtualListCommands, CommandListener
 	{
 		textList.removeAllCommands();
 		
+//#sijapp cond.if target!="RIM"#
 		textList.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+//#sijapp cond.end#
 		
 		textList.addCommandEx(cmdMsgReply, VirtualList.MENU_TYPE_RIGHT);
 		textList.addCommandEx(cmdDelChat, VirtualList.MENU_TYPE_RIGHT);

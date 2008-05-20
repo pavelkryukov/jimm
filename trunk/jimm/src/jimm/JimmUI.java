@@ -1092,7 +1092,9 @@ public class JimmUI implements CommandListener
 		JimmUI.fillUserInfo(data, infoTextList);
 		infoTextList.removeCommandEx(cmdCancel);
 		infoTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+//#sijapp cond.if target!="RIM"#		
 		infoTextList.addCommandEx(cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+//#sijapp cond.end#		
 		infoTextList.addCommandEx(cmdCopyText, VirtualList.MENU_TYPE_RIGHT);
 		infoTextList.addCommandEx(cmdCopyAll, VirtualList.MENU_TYPE_RIGHT);
 	}
@@ -1115,7 +1117,9 @@ public class JimmUI implements CommandListener
 		if (addCommands)
 		{
 			infoTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+//#sijapp cond.if target!="RIM"#
 			infoTextList.addCommandEx(cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+//#sijapp cond.end#			
 			infoTextList.addCommandEx(cmdCopyText, VirtualList.MENU_TYPE_RIGHT);
 			infoTextList.addCommandEx(cmdCopyAll, VirtualList.MENU_TYPE_RIGHT);
 			infoTextList.setCommandListener(_this);
