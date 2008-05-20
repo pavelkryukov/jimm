@@ -420,9 +420,11 @@ public class Options
 		setInt(OPTION_CAMERA_ENCODING, 0);
 		//#sijapp cond.end#
 
+//#sijapp cond.if target isnot "DEFAULT"#
 		selectSoundType("online.", OPTION_ONLINE_NOTIF_FILE);
 		selectSoundType("message.", OPTION_MESS_NOTIF_FILE);
 		selectSoundType("typing.", OPTION_TYPING_FILE);
+//#sijapp cond.end#		
 		
 		setInt(OPTION_FT_MODE, FS_MODE_WEB);
 		
