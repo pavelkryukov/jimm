@@ -792,7 +792,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		try {
 			uinInt = Integer.parseInt(uin);
 		} catch (NumberFormatException ne){
-			System.out.println ("NFE: getItemByUin("+uin+")");
 			return null;
 		}
 		for (int i = cItems.size() - 1; i >= 0; i--)
@@ -1561,7 +1560,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		Alert alert = new Alert(null, ResourceBundle
 				.getString(newValue ? "#sound_is_off" : "#sound_is_on"), null,
 				null);
-		alert.setTimeout(1500);
+		alert.setTimeout(1000);
 		
 		if (activate) tree.activate(Jimm.display, alert);
 		else 

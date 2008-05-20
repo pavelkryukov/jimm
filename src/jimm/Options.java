@@ -751,7 +751,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private static final int TYPE_TOP_OPTIONS = 10000;
 	private static final int TYPE_MCL_OPTIONS = 10001;
 
-
 	// Constants for menu actios
 	private static final int OPTIONS_ACCOUNT     = 0;
 	private static final int OPTIONS_NETWORK     = 1;
@@ -990,6 +989,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			break;
 		}
 
+		optionsMenu.selectTextByIndex(currOptMode);
 		optionsMenu.activate(Jimm.display);
 	}
 
@@ -1362,8 +1362,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	
 	private void dataToForm(int mode)
 	{
-		currOptMode = mode;
-		
 		optionsForm.removeCommand(JimmUI.cmdSave);
 		optionsForm.removeCommand(JimmUI.cmdBack);
 		optionsForm.removeCommand(JimmUI.cmdOk);
