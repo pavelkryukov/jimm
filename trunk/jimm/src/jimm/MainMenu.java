@@ -366,6 +366,7 @@ public class MainMenu implements CommandListener
 			//#sijapp cond.if target isnot "DEFAULT" #
 			case MENU_SOUND:
 				ContactList.changeSoundMode(Icq.isConnected());
+				build();
 				break;
 			//#sijapp cond.end#				
 
