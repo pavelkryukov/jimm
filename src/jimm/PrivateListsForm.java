@@ -27,7 +27,9 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		super(ResourceBundle.getString("priv_lists"));
 		
 		addCommandEx(JimmUI.cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
+//#sijapp cond.if target!="RIM"#
 		addCommandEx(JimmUI.cmdMenu,   VirtualList.MENU_TYPE_RIGHT_BAR);
+//#sijapp cond.end#
 		addCommandEx(JimmUI.cmdSave,   VirtualList.MENU_TYPE_RIGHT);
 		addCommandEx(cmdChange,        VirtualList.MENU_TYPE_RIGHT);
 		

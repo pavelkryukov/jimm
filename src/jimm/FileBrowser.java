@@ -223,7 +223,9 @@ class FileSystem2 implements CommandListener, Runnable
 		
 		if (onlyDirs)
 		{
+//#sijapp cond.if target!="RIM"#
 			list.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+//#sijapp cond.end#
 			list.addCommandEx(JimmUI.cmdSelect2, VirtualList.MENU_TYPE_RIGHT);
 			list.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT);
 		}

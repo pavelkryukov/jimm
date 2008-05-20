@@ -54,8 +54,10 @@ class VirtualCanvas extends Canvas implements Runnable
 	
 	public VirtualCanvas()
 	{
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
 		setFullScreenMode(true);
+		//#sijapp cond.elseif target="RIM"#
+		setFullScreenMode(false);
 		//#sijapp cond.end#
 	}
 	
@@ -67,8 +69,10 @@ class VirtualCanvas extends Canvas implements Runnable
 	protected void showNotify()
 	{
 		cancelKeyRepeatTask();
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
 		setFullScreenMode(true);
+		//#sijapp cond.elseif target="RIM"#
+		setFullScreenMode(false);
 		//#sijapp cond.end#
 		if (currentControl != null) currentControl.showNotify();
 	}
@@ -458,31 +462,51 @@ public abstract class VirtualList
 		return (virtualCanvas.currentControl == this) && virtualCanvas.isShown();
 	}
 	
-	public void activate(Display display)
+	private void doActivate()
 	{
-		if (isActive()) return;
-		
 		if (virtualCanvas.currentControl != null)
+		{
+//#sijapp cond.if target="RIM"#
+			for (int i = virtualCanvas.currentControl.commands.size()-1; i >= 0; i--)
+				virtualCanvas.removeCommand((Command)virtualCanvas.currentControl.commands.elementAt(i));
+//#sijapp cond.end#
 			virtualCanvas.currentControl.onHide();
+		}
+		
+//#sijapp cond.if target="RIM"#
+		for (int i = commands.size()-1; i >= 0; i--)
+			virtualCanvas.addCommand((Command)commands.elementAt(i));
+//#sijapp cond.end#
 		
 		resetUiState();
 		virtualCanvas.currentControl = this;
 		virtualCanvas.cancelKeyRepeatTask();
+		
+		virtualCanvas.setCommandListener(commandListener);
+	}
+	
+	public void activate(Display display)
+	{
+		if (isActive()) return;
+		doActivate();
 		display.setCurrent(virtualCanvas);
 		repaint();
 		onShow();
-		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
 		setBackLightOn();
-		//#sijapp cond.end#
+//#sijapp cond.end#
 	}
 	
 	public void activate(Display display, Alert alert)
 	{
 		if (isActive()) return;
-		virtualCanvas.currentControl = this;
-		virtualCanvas.cancelKeyRepeatTask();
+		doActivate();
 		display.setCurrent(alert, virtualCanvas);
 		repaint();
+		onShow();
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		setBackLightOn();
+//#sijapp cond.end#
 	}
 
 	protected void showNotify()
@@ -879,16 +903,20 @@ public abstract class VirtualList
 			strCode = virtualCanvas.getKeyName(keyCode).toLowerCase();
 		}
 		catch (IllegalArgumentException e) {}
-
+		
 		if (strCode != null)
 		{
 			if ("soft1".equals(strCode) || "soft 1".equals(strCode) || "soft_1".equals(strCode) || "softkey 1".equals(strCode) || "sk2(left)".equals(strCode)
-					|| strCode.startsWith("left soft")) { return KEY_CODE_LEFT_MENU; }
+					|| strCode.startsWith("left soft")) return KEY_CODE_LEFT_MENU;
 
 			if ("soft2".equals(strCode) || "soft 2".equals(strCode) || "soft_2".equals(strCode) || "softkey 4".equals(strCode) || "sk1(right)".equals(strCode)
-					|| strCode.startsWith("right soft")) { return KEY_CODE_RIGHT_MENU; }
+					|| strCode.startsWith("right soft")) return KEY_CODE_RIGHT_MENU;
 
-			if ("on/off".equals(strCode) || "back".equals(strCode)) { return KEY_CODE_BACK_BUTTON; }
+			if ("on/off".equals(strCode) || "back".equals(strCode)) return KEY_CODE_BACK_BUTTON;
+			
+//#sijapp cond.if target="RIM"#			
+			if ("trackball".equals(strCode) || "enter".equals(strCode)) return Canvas.FIRE;
+//#sijapp cond.end#			
 		}
 
 		switch (keyCode)
@@ -1044,13 +1072,11 @@ public abstract class VirtualList
 	{
 		if ((caption != null) && (caption.equals(capt))) return;
 		caption = capt;
-
-		//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2"#
+//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
 		if (fullScreen || exMenuExists()) invalidate(0, 0, getWidth(), getCapHeight());
-		else if (isActive()) virtualCanvas.setTitle(capt);
-		//#sijapp cond.else#
+//#sijapp cond.else#
 		invalidate(0, 0, getWidth(), getCapHeight());
-		//#sijapp cond.end#
+//#sijapp cond.end#
 	}
 
 	public String getCaption()
@@ -1084,7 +1110,7 @@ public abstract class VirtualList
 	// Return height of caption in pixels
 	protected final int getCapHeight()
 	{
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target="RIM"#
 		if (fullScreen) return 0;
 		//#sijapp cond.end#
 		int capHeight = 0;
@@ -1587,6 +1613,8 @@ public abstract class VirtualList
     //                           //
 	///////////////////////////////
 	
+	private Vector commands = new Vector(); 
+	
 	public static final int MENU_TYPE_LEFT_BAR = 1;
 	public static final int MENU_TYPE_RIGHT_BAR = 2;
 	public static final int MENU_TYPE_LEFT = 3;
@@ -1597,7 +1625,7 @@ public abstract class VirtualList
 	private static final int UI_STATE_RIGHT_MENU_VISIBLE = 2;
 	
 	private int uiState;
-	
+
 	// Font for painting menu bar
 	private static Font menuBarFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
 	private static Font menuItemsFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
@@ -1713,6 +1741,13 @@ public abstract class VirtualList
 	
 	protected Command findMenuByType(int type)
 	{
+//#sijapp cond.if target="RIM"#		
+		for (int i = commands.size()-1; i >= 0; i--)
+		{
+			Command cmd = (Command)commands.elementAt(i); 
+			if (cmd.getCommandType() == type) return cmd;
+		}
+//#sijapp cond.else#
 		if ((leftMenu != null) && (leftMenu.getCommandType() == type)) return leftMenu;
 		
 		if ((rightMenu != null) && (rightMenu.getCommandType() == type)) return rightMenu;
@@ -1728,8 +1763,9 @@ public abstract class VirtualList
 			Command cmd = (Command)rightMenuItems.elementAt(i); 
 			if (cmd.getCommandType() == type) return cmd; 
 		}
+//#sijapp cond.end#		
 		
-		return null; 
+		return null;
 	}
 	
 	private boolean exMenuExists()
@@ -1745,6 +1781,10 @@ public abstract class VirtualList
 	
 	public void addCommandEx(Command cmd, int type)
 	{
+//#sijapp cond.if target="RIM"#
+		commands.addElement(cmd);
+		if (virtualCanvas.currentControl == this) virtualCanvas.addCommand(cmd);
+//#sijapp cond.else#		
 		if (mirrorMenu)
 		{
 			switch (type)
@@ -1784,10 +1824,16 @@ public abstract class VirtualList
 			}
 			break;
 		}
+		
+//#sijapp cond.end#		
 	}
 	
 	public void removeCommandEx(Command cmd)
 	{
+//#sijapp cond.if target="RIM"#		
+		commands.removeElement(cmd);
+		if (virtualCanvas.currentControl == this) virtualCanvas.removeCommand(cmd);
+//#sijapp cond.else#		
 		if (cmd == leftMenu)
 		{
 			leftMenu = null;
@@ -1805,14 +1851,22 @@ public abstract class VirtualList
 		
 		leftMenuItems.removeElement(cmd);
 		rightMenuItems.removeElement(cmd);
+//#sijapp cond.end#		
 	}
 	
 	public void removeAllCommands()
 	{
+//#sijapp cond.if target="RIM"#
+		if (virtualCanvas.currentControl == this)
+			for (int i = commands.size()-1; i >= 0; i--) 
+				virtualCanvas.removeCommand((Command)commands.elementAt(i));
+		commands.removeAllElements();
+//#sijapp cond.else#		
 		leftMenu = null;
 		rightMenu = null;
 		leftMenuItems.removeAllElements();
 		rightMenuItems.removeAllElements();
+//#sijapp cond.end#
 	}
 	
 	private boolean drawMenuItems(Graphics g, int menuBarHeight, int style, int curX, int curY)
@@ -2003,7 +2057,7 @@ public abstract class VirtualList
 		while (swaped);
 	}
 	
-	//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
 	private static boolean manualBackLight = false;
 	private static int backLightTimeOut = 5;
 	private static boolean backLightIsOn = false;
@@ -2021,5 +2075,5 @@ public abstract class VirtualList
 		//System.out.println("VirtualList.setBackLightOn()");
 	}
 	
-	//#sijapp cond.end #
+//#sijapp cond.end #
 }
