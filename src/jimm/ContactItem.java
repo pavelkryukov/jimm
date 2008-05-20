@@ -112,10 +112,7 @@ public class ContactItem implements ContactListItem
 			try
 			{
 				uinLong = Integer.parseInt(value);
-			} catch (NumberFormatException e)
-			{
-				System.out.println ("NFE: setStringValue(UIN,"+value+")");
-			}
+			} catch (NumberFormatException e) {}
 			return;
 		case CONTACTITEM_NAME:
 			name = value;
