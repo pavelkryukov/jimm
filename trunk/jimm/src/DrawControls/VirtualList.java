@@ -462,8 +462,10 @@ public abstract class VirtualList
 		return (virtualCanvas.currentControl == this) && virtualCanvas.isShown();
 	}
 	
-	private void doActivate()
+	private void doActivate(Display display, Alert alert)
 	{
+		if (isActive()) return;
+		
 		if (virtualCanvas.currentControl != null)
 		{
 //#sijapp cond.if target="RIM"#
@@ -483,30 +485,25 @@ public abstract class VirtualList
 		virtualCanvas.cancelKeyRepeatTask();
 		
 		virtualCanvas.setCommandListener(commandListener);
+		
+		if (alert != null) display.setCurrent(alert, virtualCanvas);
+		else display.setCurrent(virtualCanvas);
+
+		repaint();
+		onShow();
+//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
+		setBackLightOn();
+//#sijapp cond.end#
 	}
 	
 	public void activate(Display display)
 	{
-		if (isActive()) return;
-		doActivate();
-		display.setCurrent(virtualCanvas);
-		repaint();
-		onShow();
-//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		setBackLightOn();
-//#sijapp cond.end#
+		doActivate(display, null);
 	}
 	
 	public void activate(Display display, Alert alert)
 	{
-		if (isActive()) return;
-		doActivate();
-		display.setCurrent(alert, virtualCanvas);
-		repaint();
-		onShow();
-//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		setBackLightOn();
-//#sijapp cond.end#
+		doActivate(display, alert);
 	}
 
 	protected void showNotify()
