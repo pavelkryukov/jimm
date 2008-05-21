@@ -80,7 +80,9 @@ class VirtualCanvas extends Canvas implements Runnable
 	protected void hideNotify()
 	{
 		cancelKeyRepeatTask();
+//#sijapp cond.if target!="RIM"#
 		currentControl.resetUiState();
+//#sijapp cond.end#		
 		currentControl.onHide();
 	}
 	
@@ -332,7 +334,14 @@ public abstract class VirtualList
 	// returns height of draw area in pixels  
 	protected int getDrawHeight()
 	{
-		return getHeightInternal() - getCapHeight() - getMenuBarHeight();
+		int menuBartHeight;
+//#sijapp cond.if target!="RIM"#		
+		menuBartHeight = getMenuBarHeight();
+//#sijapp cond.else#
+		menuBartHeight = 0;
+//#sijapp cond.end#
+		
+		return getHeightInternal() - getCapHeight() - menuBartHeight;
 	}
 
 	//! Sets new font size and invalidates items
@@ -340,7 +349,9 @@ public abstract class VirtualList
 	{
 		if (fontSize == value) return;
 		fontSize = value;
+//#sijapp cond.if target!="RIM"#		
 		menuItemsFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, fontSize);
+//#sijapp cond.end#		
 		createSetOfFonts(fontSize);
 		checkTopItem();
 		invalidate();
@@ -478,9 +489,10 @@ public abstract class VirtualList
 //#sijapp cond.if target="RIM"#
 		for (int i = commands.size()-1; i >= 0; i--)
 			virtualCanvas.addCommand((Command)commands.elementAt(i));
+//#sijapp cond.else#
+		resetUiState();
 //#sijapp cond.end#
 		
-		resetUiState();
 		virtualCanvas.currentControl = this;
 		virtualCanvas.cancelKeyRepeatTask();
 		
@@ -510,7 +522,9 @@ public abstract class VirtualList
 	{
 		virtualCanvas.setCommandListener(commandListener);
 		forcedHeight = forcedWidth = -1;
+//#sijapp cond.if target!="RIM"#		
 		uiState = UI_STATE_NORMAL;
+//#sijapp cond.end#		
 		onShow();
 	}
 
@@ -523,7 +537,6 @@ public abstract class VirtualList
 	public int getItemHeight(int itemIndex)
 	{
 		int imgHeight = 0, fontHeight = getFontHeight();
-		//ListItem item = 
 		paintedItem.clear();
 		get(itemIndex, paintedItem);
 		if (paintedItem.leftImage != null) 
@@ -622,109 +635,11 @@ public abstract class VirtualList
 		return executeCommand(findMenuByType(Command.OK));
 	}
 	
-	static private int visibleItemsMenuCount;
-	static private int topMenuItem;
-	
-	private Vector leftMenuPressed()
-	{
-		Vector items = null;
-		if (leftMenu != null)
-		{
-			if (leftMenuItems.size() == 0)
-			{
-				if ( executeCommand(leftMenu) ) return null;
-			}
-			else 
-			{
-				if (uiState == UI_STATE_LEFT_MENU_VISIBLE) uiState = UI_STATE_NORMAL;
-				else
-				{
-					if (!leftMenuItemsSorted)
-					{
-						sortMenuItems(leftMenuItems);
-						leftMenuItemsSorted = true;
-					}
-					uiState = UI_STATE_LEFT_MENU_VISIBLE;
-					items = leftMenuItems;
-				}
-			}
-		}
-		
-		return items;
-	}
-	
-	private Vector rightMenuPressed()
-	{
-		// System.out.println("rightMenuPressed");
-		Vector items = null;
-		if (rightMenu != null)
-		{
-			if (rightMenuItems.size() == 0)
-			{
-				if (executeCommand(rightMenu)) return null;
-			}
-			else
-			{
-				if (uiState == UI_STATE_RIGHT_MENU_VISIBLE) uiState = UI_STATE_NORMAL;
-				else
-				{
-					if (!rightMenuItemsSorted)
-					{
-						sortMenuItems(rightMenuItems);
-						rightMenuItemsSorted = true;
-					}
-					uiState = UI_STATE_RIGHT_MENU_VISIBLE;
-					items = rightMenuItems;
-				}
-			}
-		}
-		return items;
-	}
-	
-	private void initPopupMenuItems(Vector items)
-	{
-		if (items == null) return;
-		curMenuItemIndex = items.size()-1;
-		int menuItemsCount = items.size();
-		int menuHeight = getMenuHeight(menuItemsCount);
-		int drawHeight = getDrawHeight();
-		if (menuHeight > drawHeight)
-		{
-			visibleItemsMenuCount = drawHeight/menuItemsFont.getHeight();
-			topMenuItem = menuItemsCount-visibleItemsMenuCount;
-		}
-		else
-		{
-			visibleItemsMenuCount = menuItemsCount;
-			topMenuItem = 0;
-		}
-	}
-	
-	private static void moveSelectedMenuItem(int offset, int size, boolean moveOnlyView)
-	{
-		if (!moveOnlyView)
-		{
-			curMenuItemIndex += offset;
-			if (curMenuItemIndex >= size) curMenuItemIndex = 0;
-			if (curMenuItemIndex < 0) curMenuItemIndex = size-1;
-			if (curMenuItemIndex >= topMenuItem+visibleItemsMenuCount) 
-				topMenuItem = curMenuItemIndex-visibleItemsMenuCount+1;
-			if (curMenuItemIndex < topMenuItem) 
-				topMenuItem = curMenuItemIndex;
-		}
-		else
-		{
-			topMenuItem += offset; 
-			if (topMenuItem < 0) topMenuItem = 0;
-			if (topMenuItem >= size-visibleItemsMenuCount) topMenuItem = size-visibleItemsMenuCount;
-		}
-	}
-	
 	// private keyReaction(int keyCode)
 	private void keyReaction(int keyCode, int type)
 	{
+//#sijapp cond.if target!="RIM"#
 		boolean menuItemsVisible = false;
-		
 		int lastMenuIndex = curMenuItemIndex;
 		Vector menuItemsData = null, clickedMenuItems = null;
 		switch (uiState)
@@ -741,9 +656,11 @@ public abstract class VirtualList
 		}
 				
 		int lastUIState = uiState;
+//#sijapp cond.end#		
 		
 		switch (getExtendedGameAction(keyCode))
 		{
+//#sijapp cond.if target!="RIM"#		
 		case KEY_CODE_LEFT_MENU:
 			if (type == KEY_PRESSED) clickedMenuItems = leftMenuPressed();
 			break;
@@ -751,42 +668,53 @@ public abstract class VirtualList
 		case KEY_CODE_RIGHT_MENU:
 			if (type == KEY_PRESSED) clickedMenuItems = rightMenuPressed();
 			break;
+//#sijapp cond.end#			
 			
 		case KEY_CODE_BACK_BUTTON:
 			if (type == KEY_PRESSED)
 			{
+//#sijapp cond.if target!="RIM"#				
 				switch (uiState)
 				{
+
 				case UI_STATE_RIGHT_MENU_VISIBLE:
 				case UI_STATE_LEFT_MENU_VISIBLE:
 					uiState = UI_STATE_NORMAL;
 					invalidate();
 					break;
-
 				default:
 					Command backMenu = findMenuByType(Command.BACK);
-					if (backMenu != null)
-					{
-						if (executeCommand(backMenu)) return;
-					}
+					if (backMenu != null && executeCommand(backMenu)) return;
 					break;
 				}
+//#sijapp cond.end#				
+				Command backMenu = findMenuByType(Command.BACK);
+				if (backMenu != null && executeCommand(backMenu)) return;
 			}
 			break;
 
 		case Canvas.DOWN:
+//#sijapp cond.if target!="RIM"#			
 			if (menuItemsVisible) moveSelectedMenuItem(1, menuItemsData.size(), false);
 			else moveCursor(1, false);
+//#sijapp cond.else#
+			moveCursor(1, false);
+//#sijapp cond.end#			
 			break;
 			
 		case Canvas.UP:
+//#sijapp cond.if target!="RIM"#			
 			if (menuItemsVisible) moveSelectedMenuItem(-1, menuItemsData.size(), false);
 			else moveCursor(-1, false);
+//#sijapp cond.else#
+			moveCursor(-1, false);
+//#sijapp cond.end#			
 			break;
 			
 		case Canvas.FIRE:
 			if (type == KEY_PRESSED)
 			{
+//#sijapp cond.if target!="RIM"#				
 				if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return;
 				if (menuItemsVisible)
 				{
@@ -799,10 +727,15 @@ public abstract class VirtualList
 					boolean executed = itemSelected();
 					if (!executed && (vlCommands != null)) vlCommands.vlItemClicked(this);
 				}
+//#sijapp cond.else#
+				boolean executed = itemSelected();
+				if (!executed && (vlCommands != null)) vlCommands.vlItemClicked(this);
+//#sijapp cond.end#				
 			}
 			break;
 		}
 		
+//#sijapp cond.if target!="RIM"#		
 		initPopupMenuItems(clickedMenuItems);
 		
 		if ((menuItemsVisible && (lastMenuIndex != curMenuItemIndex)) || (lastUIState != uiState))
@@ -810,6 +743,7 @@ public abstract class VirtualList
 			invalidate();
 			return;
 		}
+//#sijapp cond.end#
 		
 		if (type == KEY_PRESSED)
 		{
@@ -1070,7 +1004,7 @@ public abstract class VirtualList
 		if ((caption != null) && (caption.equals(capt))) return;
 		caption = capt;
 //#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
-		if (fullScreen || exMenuExists()) invalidate(0, 0, getWidth(), getCapHeight());
+		if (!fullScreen) invalidate(0, 0, getWidth(), getCapHeight());
 //#sijapp cond.else#
 		invalidate(0, 0, getWidth(), getCapHeight());
 //#sijapp cond.end#
@@ -1428,8 +1362,14 @@ public abstract class VirtualList
 		int height = getHeightInternal();
 		int capHeight = getCapHeight();
 		int visCount = getVisCount();
-		int menuBarHeight = getMenuBarHeight();
+		int menuBarHeight;
 		boolean clicked;
+
+//#sijapp cond.if target!="RIM"#
+		menuBarHeight = getMenuBarHeight();
+//#sijapp cond.else#		
+		menuBarHeight = 0;
+//#sijapp cond.end#
 		
 		switch (mode)
 		{
@@ -1439,6 +1379,7 @@ public abstract class VirtualList
 			y = (clipY1 <= capHeight) ? drawCaption(graphics, mode, mouseX, mouseY) : capHeight;
 			drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, mouseX, mouseY, clipY1, clipY2);
 			drawScroller(graphics, y, visCount, menuBarHeight);
+//#sijapp cond.if target!="RIM"#			
 			if (menuBarHeight != 0)
 			{
 				int barY = height-menuBarHeight;
@@ -1446,6 +1387,7 @@ public abstract class VirtualList
 					drawMenuBar(graphics, menuBarHeight, mode, mouseX, mouseY);
 			}
 			drawMenuItems(graphics, menuBarHeight, mode, mouseX, mouseY);
+//#sijapp cond.end#			
 			break;
 			
 //#sijapp cond.if target is "MIDP2"#
@@ -1610,12 +1552,138 @@ public abstract class VirtualList
     //                           //
 	///////////////////////////////
 	
-	private Vector commands = new Vector(); 
-	
 	public static final int MENU_TYPE_LEFT_BAR = 1;
 	public static final int MENU_TYPE_RIGHT_BAR = 2;
 	public static final int MENU_TYPE_LEFT = 3;
 	public static final int MENU_TYPE_RIGHT = 4;
+	
+	protected static final int DMS_DRAW = 1;
+	protected static final int DMS_CLICK = 2;
+	protected static final int DMS_DBLCLICK = 3;
+	protected static final int DMS_CUSTOM = 4;
+	
+	protected Command findMenuByType(int type)
+	{
+//#sijapp cond.if target="RIM"#		
+		for (int i = commands.size()-1; i >= 0; i--)
+		{
+			Command cmd = (Command)commands.elementAt(i); 
+			if (cmd.getCommandType() == type) return cmd;
+		}
+//#sijapp cond.else#
+		if ((leftMenu != null) && (leftMenu.getCommandType() == type)) return leftMenu;
+		
+		if ((rightMenu != null) && (rightMenu.getCommandType() == type)) return rightMenu;
+		
+		for (int i = leftMenuItems.size()-1; i >= 0; i--)
+		{
+			Command cmd = (Command)leftMenuItems.elementAt(i); 
+			if (cmd.getCommandType() == type) return cmd; 
+		}
+		
+		for (int i = rightMenuItems.size()-1; i >= 0; i--)
+		{
+			Command cmd = (Command)rightMenuItems.elementAt(i); 
+			if (cmd.getCommandType() == type) return cmd; 
+		}
+//#sijapp cond.end#		
+		
+		return null;
+	}
+	
+	public void addCommandEx(Command cmd, int type)
+	{
+//#sijapp cond.if target="RIM"#
+		commands.addElement(cmd);
+		if (virtualCanvas.currentControl == this) virtualCanvas.addCommand(cmd);
+//#sijapp cond.else#		
+		if (mirrorMenu)
+		{
+			switch (type)
+			{
+			case MENU_TYPE_LEFT_BAR:  type = MENU_TYPE_RIGHT_BAR; break;
+			case MENU_TYPE_RIGHT_BAR: type = MENU_TYPE_LEFT_BAR;  break;
+			case MENU_TYPE_LEFT:      type = MENU_TYPE_RIGHT;     break;
+			case MENU_TYPE_RIGHT:     type = MENU_TYPE_LEFT;      break;
+			}
+		}
+		
+		switch (type)
+		{
+		case MENU_TYPE_LEFT_BAR:
+			leftMenu = cmd;
+			invalidate();
+			break;
+			
+		case MENU_TYPE_RIGHT_BAR:
+			rightMenu = cmd;
+			invalidate();
+			break;
+			
+		case MENU_TYPE_LEFT:
+			if (leftMenuItems.indexOf(cmd) == -1)
+			{
+				leftMenuItems.addElement(cmd);
+				leftMenuItemsSorted = false;
+			}
+			break;
+			
+		case MENU_TYPE_RIGHT:
+			if (rightMenuItems.indexOf(cmd) == -1)
+			{
+				rightMenuItems.addElement(cmd);
+				rightMenuItemsSorted = false;
+			}
+			break;
+		}
+		
+//#sijapp cond.end#		
+	}
+	
+	public void removeCommandEx(Command cmd)
+	{
+//#sijapp cond.if target="RIM"#		
+		commands.removeElement(cmd);
+		if (virtualCanvas.currentControl == this) virtualCanvas.removeCommand(cmd);
+//#sijapp cond.else#		
+		if (cmd == leftMenu)
+		{
+			leftMenu = null;
+			leftMenuItems.removeAllElements();
+			invalidate();
+			return;
+		} 
+		else if (cmd == rightMenu)
+		{
+			rightMenu = null;
+			rightMenuItems.removeAllElements();
+			invalidate();
+			return;
+		}
+		
+		leftMenuItems.removeElement(cmd);
+		rightMenuItems.removeElement(cmd);
+//#sijapp cond.end#		
+	}
+	
+	public void removeAllCommands()
+	{
+//#sijapp cond.if target="RIM"#
+		if (virtualCanvas.currentControl == this)
+			for (int i = commands.size()-1; i >= 0; i--) 
+				virtualCanvas.removeCommand((Command)commands.elementAt(i));
+		commands.removeAllElements();
+//#sijapp cond.else#		
+		leftMenu = null;
+		rightMenu = null;
+		leftMenuItems.removeAllElements();
+		rightMenuItems.removeAllElements();
+//#sijapp cond.end#
+	}
+
+//#sijapp cond.if target="RIM"#
+	private Vector commands = new Vector();
+//#sijapp cond.else#
 	
 	private static final int UI_STATE_NORMAL = 0;
 	private static final int UI_STATE_LEFT_MENU_VISIBLE = 1;
@@ -1637,6 +1705,103 @@ public abstract class VirtualList
 	void resetUiState()
 	{
 		uiState = UI_STATE_NORMAL; 
+	}
+	
+	static private int visibleItemsMenuCount;
+	static private int topMenuItem;
+	
+	private Vector leftMenuPressed()
+	{
+		Vector items = null;
+		if (leftMenu != null)
+		{
+			if (leftMenuItems.size() == 0)
+			{
+				if ( executeCommand(leftMenu) ) return null;
+			}
+			else 
+			{
+				if (uiState == UI_STATE_LEFT_MENU_VISIBLE) uiState = UI_STATE_NORMAL;
+				else
+				{
+					if (!leftMenuItemsSorted)
+					{
+						sortMenuItems(leftMenuItems);
+						leftMenuItemsSorted = true;
+					}
+					uiState = UI_STATE_LEFT_MENU_VISIBLE;
+					items = leftMenuItems;
+				}
+			}
+		}
+		
+		return items;
+	}
+	
+	private Vector rightMenuPressed()
+	{
+		Vector items = null;
+		if (rightMenu != null)
+		{
+			if (rightMenuItems.size() == 0)
+			{
+				if (executeCommand(rightMenu)) return null;
+			}
+			else
+			{
+				if (uiState == UI_STATE_RIGHT_MENU_VISIBLE) uiState = UI_STATE_NORMAL;
+				else
+				{
+					if (!rightMenuItemsSorted)
+					{
+						sortMenuItems(rightMenuItems);
+						rightMenuItemsSorted = true;
+					}
+					uiState = UI_STATE_RIGHT_MENU_VISIBLE;
+					items = rightMenuItems;
+				}
+			}
+		}
+		return items;
+	}
+	
+	private void initPopupMenuItems(Vector items)
+	{
+		if (items == null) return;
+		curMenuItemIndex = items.size()-1;
+		int menuItemsCount = items.size();
+		int menuHeight = getMenuHeight(menuItemsCount);
+		int drawHeight = getDrawHeight();
+		if (menuHeight > drawHeight)
+		{
+			visibleItemsMenuCount = drawHeight/menuItemsFont.getHeight();
+			topMenuItem = menuItemsCount-visibleItemsMenuCount;
+		}
+		else
+		{
+			visibleItemsMenuCount = menuItemsCount;
+			topMenuItem = 0;
+		}
+	}
+	
+	private static void moveSelectedMenuItem(int offset, int size, boolean moveOnlyView)
+	{
+		if (!moveOnlyView)
+		{
+			curMenuItemIndex += offset;
+			if (curMenuItemIndex >= size) curMenuItemIndex = 0;
+			if (curMenuItemIndex < 0) curMenuItemIndex = size-1;
+			if (curMenuItemIndex >= topMenuItem+visibleItemsMenuCount) 
+				topMenuItem = curMenuItemIndex-visibleItemsMenuCount+1;
+			if (curMenuItemIndex < topMenuItem) 
+				topMenuItem = curMenuItemIndex;
+		}
+		else
+		{
+			topMenuItem += offset; 
+			if (topMenuItem < 0) topMenuItem = 0;
+			if (topMenuItem >= size-visibleItemsMenuCount) topMenuItem = size-visibleItemsMenuCount;
+		}
 	}
 	
 	public static void drawFramedString (Graphics g, String text, int left, int top, int style, int textColor, int frameColor){
@@ -1736,35 +1901,6 @@ public abstract class VirtualList
 		return false; 
 	}
 	
-	protected Command findMenuByType(int type)
-	{
-//#sijapp cond.if target="RIM"#		
-		for (int i = commands.size()-1; i >= 0; i--)
-		{
-			Command cmd = (Command)commands.elementAt(i); 
-			if (cmd.getCommandType() == type) return cmd;
-		}
-//#sijapp cond.else#
-		if ((leftMenu != null) && (leftMenu.getCommandType() == type)) return leftMenu;
-		
-		if ((rightMenu != null) && (rightMenu.getCommandType() == type)) return rightMenu;
-		
-		for (int i = leftMenuItems.size()-1; i >= 0; i--)
-		{
-			Command cmd = (Command)leftMenuItems.elementAt(i); 
-			if (cmd.getCommandType() == type) return cmd; 
-		}
-		
-		for (int i = rightMenuItems.size()-1; i >= 0; i--)
-		{
-			Command cmd = (Command)rightMenuItems.elementAt(i); 
-			if (cmd.getCommandType() == type) return cmd; 
-		}
-//#sijapp cond.end#		
-		
-		return null;
-	}
-	
 	private boolean exMenuExists()
 	{
 		return (leftMenu != null) || (rightMenu != null);
@@ -1775,97 +1911,7 @@ public abstract class VirtualList
 		if (fullScreen) return 0;
 		return exMenuExists() ? menuBarFont.getHeight()+3 : 0;
 	}
-	
-	public void addCommandEx(Command cmd, int type)
-	{
-//#sijapp cond.if target="RIM"#
-		commands.addElement(cmd);
-		if (virtualCanvas.currentControl == this) virtualCanvas.addCommand(cmd);
-//#sijapp cond.else#		
-		if (mirrorMenu)
-		{
-			switch (type)
-			{
-			case MENU_TYPE_LEFT_BAR:  type = MENU_TYPE_RIGHT_BAR; break;
-			case MENU_TYPE_RIGHT_BAR: type = MENU_TYPE_LEFT_BAR;  break;
-			case MENU_TYPE_LEFT:      type = MENU_TYPE_RIGHT;     break;
-			case MENU_TYPE_RIGHT:     type = MENU_TYPE_LEFT;      break;
-			}
-		}
-		
-		switch (type)
-		{
-		case MENU_TYPE_LEFT_BAR:
-			leftMenu = cmd;
-			invalidate();
-			break;
-			
-		case MENU_TYPE_RIGHT_BAR:
-			rightMenu = cmd;
-			invalidate();
-			break;
-			
-		case MENU_TYPE_LEFT:
-			if (leftMenuItems.indexOf(cmd) == -1)
-			{
-				leftMenuItems.addElement(cmd);
-				leftMenuItemsSorted = false;
-			}
-			break;
-			
-		case MENU_TYPE_RIGHT:
-			if (rightMenuItems.indexOf(cmd) == -1)
-			{
-				rightMenuItems.addElement(cmd);
-				rightMenuItemsSorted = false;
-			}
-			break;
-		}
-		
-//#sijapp cond.end#		
-	}
-	
-	public void removeCommandEx(Command cmd)
-	{
-//#sijapp cond.if target="RIM"#		
-		commands.removeElement(cmd);
-		if (virtualCanvas.currentControl == this) virtualCanvas.removeCommand(cmd);
-//#sijapp cond.else#		
-		if (cmd == leftMenu)
-		{
-			leftMenu = null;
-			leftMenuItems.removeAllElements();
-			invalidate();
-			return;
-		} 
-		else if (cmd == rightMenu)
-		{
-			rightMenu = null;
-			rightMenuItems.removeAllElements();
-			invalidate();
-			return;
-		}
-		
-		leftMenuItems.removeElement(cmd);
-		rightMenuItems.removeElement(cmd);
-//#sijapp cond.end#		
-	}
-	
-	public void removeAllCommands()
-	{
-//#sijapp cond.if target="RIM"#
-		if (virtualCanvas.currentControl == this)
-			for (int i = commands.size()-1; i >= 0; i--) 
-				virtualCanvas.removeCommand((Command)commands.elementAt(i));
-		commands.removeAllElements();
-//#sijapp cond.else#		
-		leftMenu = null;
-		rightMenu = null;
-		leftMenuItems.removeAllElements();
-		rightMenuItems.removeAllElements();
-//#sijapp cond.end#
-	}
-	
+
 	private boolean drawMenuItems(Graphics g, int menuBarHeight, int style, int curX, int curY)
 	{
 		switch (uiState)
@@ -1889,11 +1935,6 @@ public abstract class VirtualList
 	{
 		return (x1 <= ptX) && (ptX < x2) && (y1 <= ptY) && (ptY < y2); 
 	}
-	
-	protected static final int DMS_DRAW = 1;
-	protected static final int DMS_CLICK = 2;
-	protected static final int DMS_DBLCLICK = 3;
-	protected static final int DMS_CUSTOM = 4;
 	
 	private boolean paint3points(Graphics g, int x1, int y1, int x2, int y2, int mode, int curX, int curY, int moveOffset, int menuItemsCount)
 	{
@@ -2053,6 +2094,8 @@ public abstract class VirtualList
 		}
 		while (swaped);
 	}
+	
+//#sijapp cond.end#	
 	
 //#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
 	private static boolean manualBackLight = false;
