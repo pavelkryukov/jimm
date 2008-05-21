@@ -198,6 +198,7 @@
 "reset_rms_yes"             "* Да"
 "reset_rms_no"              "* Нет"
 "full_screen"				"Полный экран"
+"full_textbox"				"Поле ввода текста без заголовка"
 "gender"					"Пол"
 "goto_url"					"Открыть ссылку"
 "grant"						"Авторизировать"

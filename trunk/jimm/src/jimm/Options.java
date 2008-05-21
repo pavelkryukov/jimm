@@ -167,6 +167,7 @@ public class Options
 	public static final int OPTION_SHOW_DELETED_CONT = 164;
 	public static final int OPTION_SMALL_FONT        = 165;
 	public static final int OPTION_ANTI_SPAM         = 166;
+	public static final int OPTION_FULL_TEXTBOX      = 167;
 	
 	/* long */
 	public static final int OPTION_ONLINE_STATUS = 192; 
@@ -443,6 +444,7 @@ public class Options
 		setString(OPTION_ANTI_SPAM_QUESTION, "12-11");
 		setString(OPTION_ANTI_SPAM_ANS, "1");
 //#sijapp cond.end#		
+		setBoolean(OPTION_FULL_TEXTBOX, false);
 	}
 
 	static public void resetLangDependedOpts()
@@ -1381,7 +1383,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			// Initialize elements (network section)
 			srvHostTextField = new TextField(ResourceBundle
 					.getString("server_host"), Options
-					.getString(Options.OPTION_SRV_HOST), 32, TextField.ANY);
+					.getString(Options.OPTION_SRV_HOST), 32, TextField.URL);
 			srvPortTextField = new TextField(ResourceBundle
 					.getString("server_port"), Options
 					.getString(Options.OPTION_SRV_PORT), 5,
@@ -1473,7 +1475,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			srvProxyHostTextField = new TextField(ResourceBundle
 					.getString("proxy_server_host"), Options
-					.getString(Options.OPTION_PRX_SERV), 32, TextField.ANY);
+					.getString(Options.OPTION_PRX_SERV), 32, TextField.URL);
 			srvProxyPortTextField = new TextField(ResourceBundle
 					.getString("proxy_server_port"), Options
 					.getString(Options.OPTION_PRX_PORT), 5,
@@ -1566,6 +1568,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(chrgMessFormat, "use_smiles", Options.OPTION_USE_SMILES);
 			//#sijapp cond.end#
 			setChecked(chrgMessFormat, "mess_colored_text", Options.OPTION_MESS_COLORED_TEXT);
+			setChecked(chrgMessFormat, "full_textbox", Options.OPTION_FULL_TEXTBOX);
 
 			if (uiLanguageChoiceGroup != null)
 				optionsForm.append(uiLanguageChoiceGroup);
@@ -1986,6 +1989,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setBoolean(Options.OPTION_USE_SMILES, chrgMessFormat.isSelected(idx++));
 //#sijapp cond.end#
 			Options.setBoolean(Options.OPTION_MESS_COLORED_TEXT, chrgMessFormat.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_FULL_TEXTBOX, chrgMessFormat.isSelected(idx++));
 
 			Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
 
