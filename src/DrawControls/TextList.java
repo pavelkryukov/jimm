@@ -732,7 +732,14 @@ public class TextList extends VirtualList implements Runnable
 	
 	public void run()
 	{
-		drawItems(null, getCapHeight(), getFontHeight(), getMenuBarHeight(), DMS_CUSTOM, -1, -1, -1, -1);
+		int menuBarHeight;
+//#sijapp cond.if target!="RIM"#
+		menuBarHeight = getMenuBarHeight();
+//#sijapp cond.else#		
+		menuBarHeight = 0;
+//#sijapp cond.end#
+		
+		drawItems(null, getCapHeight(), getFontHeight(), menuBarHeight, DMS_CUSTOM, -1, -1, -1, -1);
 	}
 	
 	protected void onHide() 
