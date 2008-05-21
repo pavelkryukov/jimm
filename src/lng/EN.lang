@@ -121,6 +121,7 @@
   "reset_rms_yes"               "* Yes"
   "reset_rms_no"                "* No"
   "full_screen"                 "Full screen"
+  "full_textbox"				"Input textbox w/out caption"
   "gender"                      "Gender"
   "goto_url"                    "Open URL"
   "grant"                       "Grant Auth"

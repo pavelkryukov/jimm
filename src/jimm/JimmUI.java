@@ -1419,7 +1419,8 @@ public class JimmUI implements CommandListener
 	/* Write message */
 	public static void writeMessage(ContactItem receiver, String initText)
 	{
-		String formCap = receiver.getStringValue(ContactItem.CONTACTITEM_NAME)+" - "+ResourceBundle.getString("message");
+		String formCap = Options.getBoolean(Options.OPTION_FULL_TEXTBOX) ? null
+				 : receiver.getStringValue(ContactItem.CONTACTITEM_NAME)+" - "+ResourceBundle.getString("message");
 		
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (messageTextbox == null)
