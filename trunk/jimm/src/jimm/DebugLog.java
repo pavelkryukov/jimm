@@ -66,7 +66,7 @@ public class DebugLog
 
 	public void commandAction(Command c, Displayable d)
 	{
-		ContactList.activate();
+		ContactList.activateList();
 	}
 
 	//#sijapp cond.end#

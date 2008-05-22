@@ -232,14 +232,12 @@ public class FileTransfer implements CommandListener, Runnable
 				alert = new Alert(ResourceBundle.getString("ft_error"), exceptionText, null, AlertType.ERROR);
 				alert.setCommandListener(this);
 				alert.setTimeout(Alert.FOREVER);
-				System.out.println(exceptionText);
 				Jimm.display.setCurrent(alert);
 				Jimm.setBkltOn(false);
-				System.out.println("END");
 			}
 			else 
 			{
-				cItem.activate();
+				JimmUI.backToLastScreen();
 				JimmUI.setLastFileTransferLink(lastWebLink);
 			}
 			break;
@@ -444,8 +442,7 @@ public class FileTransfer implements CommandListener, Runnable
 		}
 		else if ((alert != null) && (d == alert))
 		{
-			System.out.println("cItem.activate();");
-			cItem.activate();
+			JimmUI.backToLastScreen();
 		}
 		else if ((fileSystem != null) && fileSystem.isActive())
 		{
@@ -458,7 +455,7 @@ public class FileTransfer implements CommandListener, Runnable
 			else
 			{
 				free();
-				this.getCItem().activate();
+				JimmUI.backToLastScreen();
 			}
 		}
 		else
@@ -489,14 +486,11 @@ public class FileTransfer implements CommandListener, Runnable
 						break;
 					}
 				}
-			} else if (c == this.backCommand)
+			} 
+			else if (c == this.backCommand || c == SplashCanvas.cancelCommnad)
 			{
 				free();
-				this.getCItem().activate();
-			} else if (c == SplashCanvas.cancelCommnad)
-			{
-				free();
-				ContactList.activate();
+				JimmUI.backToLastScreen();
 			}
 		}
 	}
@@ -816,7 +810,7 @@ public class FileTransfer implements CommandListener, Runnable
 				{
 					this.stop();
 					this.reset();
-					ContactList.activate();
+					JimmUI.backToLastScreen();
 					FileTransfer.this.vf = null;
 				}
 			}

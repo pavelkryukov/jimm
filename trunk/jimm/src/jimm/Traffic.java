@@ -418,13 +418,7 @@ public class Traffic
 			}
 			if (c == JimmUI.cmdBack)
 			{
-				if (Icq.isConnected())
-				{
-					ContactList.activate();
-				} else
-				{
-					MainMenu.activate();
-				}
+				JimmUI.backToLastScreen();
 			}
 		}
 	}

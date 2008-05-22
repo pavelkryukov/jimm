@@ -60,14 +60,11 @@ public class EditInfo extends Form implements CommandListener
 	private Command _CmdSave = new Command(ResourceBundle.getString("save"),
 			Command.OK, 1);
 
-	private Displayable _PreviousForm;
-
 	private static String[] userInfo;
 
-	public EditInfo(Displayable currentForm)
+	public EditInfo()
 	{
 		super(ResourceBundle.getString("editform"));
-		_PreviousForm = currentForm;
 		_SexItem.append(ResourceBundle.getString("female"), null);
 		_SexItem.append(ResourceBundle.getString("male"), null);
 		append(_NickNameItem);
@@ -82,10 +79,10 @@ public class EditInfo extends Form implements CommandListener
 		setCommandListener(this);
 	}
 
-	public static void showEditForm(String[] userInfo, Displayable previousForm)
+	public static void showEditForm(String[] userInfo)
 	{
 		EditInfo.userInfo = userInfo;
-		EditInfo editInfoForm = new EditInfo(previousForm);
+		EditInfo editInfoForm = new EditInfo();
 		editInfoForm._SexItem.setSelectedIndex(Util
 				.stringToGender(userInfo[JimmUI.UI_GENDER]) - 1, true);
 		editInfoForm._NickNameItem.setString(userInfo[JimmUI.UI_NICK]);
@@ -103,7 +100,7 @@ public class EditInfo extends Form implements CommandListener
 	{
 		if (c == _CmdCancel)
 		{
-			Jimm.display.setCurrent(_PreviousForm);
+			JimmUI.backToLastScreen();
 			Jimm.setBkltOn(true);
 		}
 

@@ -473,7 +473,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		{
 			HistoryStorage.clearCache();
 			messText = null;
-			ContactList.activate();
+			JimmUI.backToLastScreen();
 		}
 
 		// select message

@@ -35,6 +35,7 @@ import jimm.ContactItem;
 import jimm.Jimm;
 import jimm.FileTransfer;
 import jimm.JimmException;
+import jimm.JimmUI;
 import jimm.Options;
 import jimm.util.ResourceBundle;
 
@@ -389,7 +390,7 @@ public class DirectConnectionAction extends Action
 		{
 		case ON_CANCEL:
 			cancel = true;
-			ContactList.activate();
+			JimmUI.backToLastScreen();
 			break;
 
 		case ON_ERROR:
@@ -400,7 +401,7 @@ public class DirectConnectionAction extends Action
 							+ ResourceBundle.getString("successful") + "!",
 					null, AlertType.WARNING);
 			
-			ContactList.getVisibleContactListRef().activate(Jimm.display);
+			JimmUI.backToLastScreen();
 			break;
 
 		case ON_COMPLETE:

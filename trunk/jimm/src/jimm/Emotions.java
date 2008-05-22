@@ -369,7 +369,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 	private static String emotionText;
 	private static Selector selector;
 	private static int caretPos;
-	private static Object lastScreen;
 	private static TextBox textBox;
 	private static TimerTask aniTask;
 	
@@ -380,9 +379,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 		Selector._this.repaint();
 	}
 
-	static public void selectEmotion(TextBox textBox, Object screen)
+	static public void selectEmotion(TextBox textBox)
 	{
-		lastScreen = screen;
 		Emotions.caretPos = textBox.getCaretPosition();
 		Emotions.textBox = textBox;
 
@@ -407,7 +405,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		if (c == cmdOk) select();
 		else if (c == cmdCancel)
 		{
-			JimmUI.selectScreen(lastScreen);
+			Jimm.display.setCurrent(textBox);
 			Jimm.setBkltOn(true);
 		}
 		if (aniTask != null)
@@ -434,9 +432,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 	static private void select()
 	{
 		textBox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
-		JimmUI.selectScreen(lastScreen);
+		Jimm.display.setCurrent(textBox);
 		Jimm.setBkltOn(true);
-		
 	}
 
 	static public String getSelectedEmotion()

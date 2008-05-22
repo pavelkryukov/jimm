@@ -35,7 +35,7 @@ import jimm.SplashCanvas;
 
 
 /* TODO: remove UI code to ChatHistory */
-public class ContactItem implements ContactListItem
+public class ContactItem implements ContactListItem, JimmScreen
 {
 	/* Variable keys */
 	public static final int CONTACTITEM_UIN           = 0; /* String */
@@ -783,7 +783,7 @@ public class ContactItem implements ContactListItem
 		{
 			ChatTextList chat = ChatHistory.getChatHistoryAt(currentUin);
 			chat.buildMenu();
-			chat.activate(true, false);
+			chat.activate();
 		} 
 		else
 		/* Display menu */
@@ -792,6 +792,11 @@ public class ContactItem implements ContactListItem
 		}
 
 		setStatusImage();
+	}
+	
+	public boolean isScreenActive()
+	{
+		return JimmUI.isContactMenuActive(this);
 	}
 	
 

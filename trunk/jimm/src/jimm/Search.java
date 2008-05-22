@@ -24,19 +24,7 @@
 package jimm;
 
 import java.util.Vector;
-
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Choice;
-import javax.microedition.lcdui.ChoiceGroup;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Font;
-import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.List;
-import javax.microedition.lcdui.TextField;
+import javax.microedition.lcdui.*;
 
 import jimm.comm.SearchAction;
 import jimm.comm.Icq;
@@ -381,7 +369,7 @@ public class Search
 				} else
 				{
 					searchForm = null;
-					Options.editOptions();
+					JimmUI.backToLastScreen();
 				}
 			} else if (c == this.searchCommand)
 			{

@@ -31,7 +31,7 @@ import jimm.util.ResourceBundle;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 
-public class MainMenu implements CommandListener
+public class MainMenu implements CommandListener, JimmScreen
 {
 	private static final int TAG_EXIT = 1;
 	
@@ -152,12 +152,22 @@ public class MainMenu implements CommandListener
 	}
 
 	/* Activates the main menu */
-	static public void activate()
+	static public void activateMenu()
 	{
 		Jimm.aaUserActivity();
 		MainMenu.build();
 		MainMenu.list.activate(Jimm.display);
-		JimmUI.setLastScreen(MainMenu.list);
+		JimmUI.setLastScreen(_this, true);
+	}
+	
+	public void activate()
+	{
+		MainMenu.activateMenu();
+	}
+	
+	public boolean isScreenActive()
+	{
+		return JimmUI.isControlActive(list);
 	}
 	
 	public static TextList getUIConrol()
@@ -262,14 +272,14 @@ public class MainMenu implements CommandListener
 		// Return to works screen after canceling 
 		if ((c == JimmUI.cmdBack) && (JimmUI.isControlActive(statusList) || JimmUI.isControlActive(list)))
 		{
-			Jimm.showWorkScreen();
+			JimmUI.backToLastScreen();
 			statusList = null;
 		}
 		
 		// Activate contact list after pressing "List" menu
 		else if (c == JimmUI.cmdList)
 		{
-			ContactList.activate();
+			ContactList.activateList();
 		}
 
 		/* User select OK in exit questiom message box */
@@ -281,7 +291,7 @@ public class MainMenu implements CommandListener
 		/* User select CANCEL in exit questiom message box */
 		else if (JimmUI.getCommandType(c, TAG_EXIT) == JimmUI.CMD_NO)
 		{
-			ContactList.activate();
+			JimmUI.backToLastScreen();
 		}
 
 		/* Menu item has been selected */
@@ -304,12 +314,12 @@ public class MainMenu implements CommandListener
 				Icq.disconnect();
 				Thread.yield();
 				/* Show the main menu */
-				MainMenu.activate();
+				MainMenu.activateMenu();
 				break;
 
 			case MENU_LIST:
 				/* ContactList */
-				ContactList.activate();
+				ContactList.activateList();
 				break;
 
 			case MENU_KEYLOCK:
@@ -386,14 +396,7 @@ public class MainMenu implements CommandListener
 		{
 			Options.setString(Options.OPTION_STATUS_MESSAGE, statusMessage.getString());
 			Options.safe_save();
-			/* Active MM/CL */
-			if (Icq.isConnected())
-			{
-				ContactList.activate();
-			} else
-			{
-				MainMenu.activate();
-			}
+			JimmUI.backToLastScreen();
 		}
 	}
 	
@@ -467,10 +470,6 @@ public class MainMenu implements CommandListener
 		Options.safe_save();
 		statusList = null;
 		
-		if (activateMenu) /* Active MM/CL */
-		{
-			if (Icq.isConnected()) ContactList.activate();
-			else MainMenu.activate();
-		}
+		JimmUI.backToLastScreen();
 	}
 }

@@ -224,7 +224,7 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		
 		if (!wasChanges)
 		{
-			Options.editOptions();
+			JimmUI.backToLastScreen();
 			return;
 		}
 		
@@ -260,11 +260,11 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 			Icq.sendCLI_ADDEND();
 			
 			ContactList.safeSave();
-			Jimm.showWorkScreen();
+			
 		}
 		catch (Exception e) { }
 		
-		Options.editOptions();
+		JimmUI.backToLastScreen();
 	}
 }
 

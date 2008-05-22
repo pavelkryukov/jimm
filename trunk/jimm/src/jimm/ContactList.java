@@ -68,7 +68,7 @@ import jimm.Options;
 
 //////////////////////////////////////////////////////////////////////////////////
 public class ContactList implements CommandListener, VirtualTreeCommands,
-		VirtualListCommands
+		VirtualListCommands, JimmScreen
 //#sijapp cond.if target!="DEFAULT"#
 		, PlayerListener
 //#sijapp cond.end#
@@ -341,9 +341,19 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			JimmUI.getStatusImageIndex(status == -1 ? Icq.getCurrentStatus() : status)
 		));
 	}
+	
+	public void activate()
+	{
+		ContactList.activateList();
+	}
+	
+	public boolean isScreenActive()
+	{
+		return tree.isActive();
+	}
 
 	// Request display of the main menu
-	static public void activate()
+	static public void activateList()
 	{
 		Jimm.aaUserActivity();
 		showStatusInCaption(-1);
@@ -369,7 +379,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		//#sijapp cond.end#
 		
 		ContactList.tree.activate(Jimm.display);
-		JimmUI.setLastScreen(ContactList.tree);
+		JimmUI.setLastScreen(_this, true);
 
 		//#sijapp cond.if target isnot "DEFAULT" #
 		// play sound notifications after connecting 
@@ -1673,7 +1683,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		// Activate main menu
 		if (c == JimmUI.cmdMenu)
 		{
-			MainMenu.activate();
+			MainMenu.activateMenu();
 		}
 
 		// Contact item has been selected

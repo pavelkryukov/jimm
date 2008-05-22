@@ -49,36 +49,39 @@ import DrawControls.VirtualList;
 
 public class JimmUI implements CommandListener
 {
-	// Last screen constants
-	static private Object lastScreen;
-	
+	static private Vector lastScreens = new Vector();
 	static private TextList msgBoxList;
 	
-	public static void setLastScreen(Object screen)
+	public static void setLastScreen(JimmScreen screen, boolean isRoot)
 	{
-		lastScreen = screen;
+		if (isRoot) lastScreens.removeAllElements();
+		else lastScreens.removeElement(screen);
+		lastScreens.addElement(screen);
+	}
+	
+	public static void removeScreen(JimmScreen screen)
+	{
+		lastScreens.removeElement(screen);
 	}
 	
 	public static void backToLastScreen()
 	{
-		selectScreen(lastScreen);
-	}
-	
-	public static void selectScreen(Object screen)
-	{
-		if (screen instanceof VirtualList)
-		{
-			VirtualList vl = (VirtualList)screen;
-			vl.activate(Jimm.display);
-		}
-		else if (screen instanceof Displayable)
-		{
-			Jimm.display.setCurrent((Displayable)screen);
-			Jimm.setBkltOn(false);
-		}
+		System.out.println("backToLastScreen");
+		if (lastScreens.size() == 0) MainMenu.activateMenu();
 		else
 		{
-			MainMenu.activate();
+			for (;;)
+			{
+				JimmScreen screen = (JimmScreen)lastScreens.lastElement();
+				lastScreens.removeElement(screen);
+				
+				if (lastScreens.size() == 0 || !screen.isScreenActive()) 
+				{
+					System.out.println("backToLastScreen, lastScreens.size()="+lastScreens.size()+", screen.isScreenActive()="+screen.isScreenActive()); 
+					screen.activate();
+					break;
+				}
+			} 
 		}
 	}
 	
@@ -164,7 +167,7 @@ public class JimmUI implements CommandListener
 		
 		if (isControlActive(loadErrorTextList))
 		{
-			MainMenu.activate();
+			MainMenu.activateMenu();
 		}
 		
 		else if (isControlActive(removeContactMessageBox))
@@ -256,7 +259,8 @@ public class JimmUI implements CommandListener
 			}
 
 			boolean activated = ChatHistory.activateIfExists(authContactItem);
-			if (!activated) ContactList.activate();
+			if (activated) JimmUI.removeScreen(authContactItem); 
+			else ContactList.activateList();
 
 			authTextbox = null;
 			authContactItem = null;
@@ -274,9 +278,9 @@ public class JimmUI implements CommandListener
 					Jimm.jimm.platformRequest(URLList.getCurrText(0, false));
 				} catch (Exception e) {}
 			}
-			selectScreen(lastScreenBeforeUrlSelect);
 			URLList = null;
-			lastScreenBeforeUrlSelect = null;
+			
+			backToLastScreen();
 			return;
 		}
 		//#sijapp cond.end#
@@ -300,7 +304,8 @@ public class JimmUI implements CommandListener
 						sendMessage(messText, textMessReceiver);
 						messageTextbox = null;
 						boolean activated = ChatHistory.activateIfExists(textMessReceiver);
-						if (!activated) backToLastScreen();
+						if (activated) removeScreen(textMessReceiver); 
+						else backToLastScreen();
 					}
 					break;
 				}
@@ -309,13 +314,13 @@ public class JimmUI implements CommandListener
 			//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 			else if (c == cmdInsertEmo)
 			{
-				Emotions.selectEmotion(messageTextbox, messageTextbox);
+				Emotions.selectEmotion(messageTextbox);
 			}
 			//#sijapp cond.end#
 			
 			else if (c == cmdInsTemplate)
 			{
-				Templates.selectTemplate(messageTextbox, messageTextbox);
+				Templates.selectTemplate(messageTextbox);
 			}
 			
 			else if (c == cmdClearText)
@@ -329,7 +334,7 @@ public class JimmUI implements CommandListener
 		{
 			synchronized (_this)
 			{
-				MainMenu.activate();
+				MainMenu.activateMenu();
 				aboutTextList = null;
 			}
 		}
@@ -345,7 +350,7 @@ public class JimmUI implements CommandListener
 
 			if (c == cmdEdit)
 			{
-				EditInfo.showEditForm(last_user_info, Jimm.display.getCurrent());
+				EditInfo.showEditForm(last_user_info);
 			}
 
 			// "User info" -> "Copy text, Copy all"
@@ -816,7 +821,7 @@ public class JimmUI implements CommandListener
 				Options.setBoolean(Options.OPTION_USER_GROUPS, !Options.getBoolean(Options.OPTION_USER_GROUPS));
 				Options.safe_save();
 				ContactList.optionsChanged(true, false);
-				ContactList.activate();
+				ContactList.activateList();
 				break;
 
 			case Options.HOTKEY_ONOFF:
@@ -826,7 +831,7 @@ public class JimmUI implements CommandListener
 					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, true);
 				Options.safe_save();
 				ContactList.optionsChanged(true, false);
-				ContactList.activate();
+				ContactList.activateList();
 				break;
 
 			case Options.HOTKEY_OPTIONS:
@@ -834,7 +839,7 @@ public class JimmUI implements CommandListener
 				break;
 
 			case Options.HOTKEY_MENU:
-				MainMenu.activate();
+				MainMenu.activateMenu();
 				break;
 
 			//#sijapp cond.if target is "MIDP2"#
@@ -1512,11 +1517,9 @@ public class JimmUI implements CommandListener
 
 	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 	private static TextList URLList;
-	private static Object lastScreenBeforeUrlSelect;
 	
-	public static void gotoURL(String msg, Object lastScreen)
+	public static void gotoURL(String msg)
 	{
-		lastScreenBeforeUrlSelect = lastScreen;
 		Vector v = Util.parseMessageForURL(msg);
 		if (v.size() == 1)
 		{
@@ -1596,6 +1599,11 @@ public class JimmUI implements CommandListener
 	private static TextList removeContactMessageBox;
 	private static TextList removeMeMessageBox;
 	private static TextBox renameTextbox;
+	
+	public static boolean isContactMenuActive(ContactItem contact)
+	{
+		return (clciContactMenu == contact && isControlActive(tlContactMenu));
+	}
 	
 	public static void showContactMenu(ContactItem contact)
 	{
@@ -1683,6 +1691,8 @@ public class JimmUI implements CommandListener
 		}
 		
 		tlContactMenu.selectFirstTextIndex();
+		
+		JimmUI.setLastScreen(contact, false);
 	}
 	
 	private static int[] groupList;
@@ -1910,7 +1920,7 @@ public class JimmUI implements CommandListener
 			clciContactMenu.setIntValue(ContactItem.CONTACTITEM_INV_ID, invisNew);
 			
 			ContactList.safeSave();
-			ContactList.activate();
+			JimmUI.backToLastScreen();
 		}
 		catch (JimmException e)
 		{
@@ -2011,7 +2021,7 @@ public class JimmUI implements CommandListener
 			JimmException.handleException(e);
 			if (e.isCritical()) return;
 		}
-		ContactList.activate();
+		JimmUI.backToLastScreen();
 	}
 	
 	private static void menuRenameSelected()
