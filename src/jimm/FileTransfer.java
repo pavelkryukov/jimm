@@ -81,10 +81,6 @@ public class FileTransfer implements CommandListener, Runnable
 	// File data
 	private InputStream fis;
 
-	private int fsize;
-	
-	private String exceptionText;
-	
 	TextList tlWebAsk;
 
 	// File path and description TextField
@@ -99,10 +95,14 @@ public class FileTransfer implements CommandListener, Runnable
 
 	private ContactItem cItem;
 	
-	private String fileName, shortFileName;
-	private FileSystem2 fileSystem;
-	
+	private int fsize;
+	private String fileName;
+	private String shortFileName;
+	private String exceptionText;
 	private String lastWebLink;
+	private String description;
+	
+	private FileSystem2 fileSystem;
 
 	// Commands
 	private Command backCommand = new Command(ResourceBundle.getString("back"),
@@ -332,9 +332,11 @@ public class FileTransfer implements CommandListener, Runnable
 		
 			// Send info about file
 			StringBuffer messText = new StringBuffer();
-			messText.append("Filename: ").append(shortFileName).append("\n");
-			messText.append("Filesize: ").append(fsize/1024).append("KB\n");
-			messText.append("Link: ").append(respString);
+			messText.append(ResourceBundle.getString("filename")).append(": ").append(shortFileName).append("\n");
+			messText.append(ResourceBundle.getString("size")).append(": ").append(fsize/1024).append("KB\n");
+			if (description != null && description.length() != 0)
+				messText.append(ResourceBundle.getString("description")).append(": ").append(description).append("\n");
+			messText.append(respString);
 		
 			lastWebLink = messText.toString();
 			PlainMessage plainMsg = new PlainMessage(Options.getString(Options.OPTION_UIN), cItem, Message.MESSAGE_TYPE_NORM, Util.createCurrentDate(false), lastWebLink);
@@ -479,6 +481,7 @@ public class FileTransfer implements CommandListener, Runnable
 						SplashCanvas.show();
 						
 						fileName = this.fileNameField.getString();
+						description = this.descriptionField.getString();
 						String[] fnItems = Util.explode(fileName, '/');
 						shortFileName = (fnItems.length == 0) ? fileName : fnItems[fnItems.length-1];  
 						curMode = MODE_SEND_THROUGH_WEB;
