@@ -235,6 +235,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 					<contains string="${target}" substring="MIDP2"/>
 					<contains string="${target}" substring="SIEMENS2"/>
 					<contains string="${target}" substring="MOTOROLA"/>
+					<contains string="${target}" substring="RIM"/>
 				</OR>
 			</and>
 		</condition>

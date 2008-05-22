@@ -1642,7 +1642,7 @@ public class JimmUI implements CommandListener
 					&& (status != ContactList.STATUS_INVISIBLE))
 				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true, -1, Font.STYLE_PLAIN);		
 			
-//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2"|target="RIM")&modules_FILES="true"#
 			addTextListItem(tlContactMenu, "ft_caption", null, -1, true, groupsColor, Font.STYLE_BOLD);
 			if (((status != ContactList.STATUS_OFFLINE) 
 					&& contact.getIntValue(ContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
@@ -1752,9 +1752,8 @@ public class JimmUI implements CommandListener
 			break;
 			
 
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			//#sijapp cond.if modules_FILES is "true"#     
-			
+			//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
+			//#sijapp cond.if modules_FILES is "true"#
 			case USER_MENU_FILE_TRANS:
 				/* Send a filetransfer with a file given by path */
 				{
