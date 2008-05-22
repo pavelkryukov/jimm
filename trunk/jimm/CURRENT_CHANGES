@@ -29,6 +29,7 @@ Implemented:
   * Another optimization for lower memory usage in chat
   * More options added to customize chat
   * Build for Siemens 55-60 series will not released
+  * Blackberry version builds with MIDP2 profile now 
   * RIM builds are .cod files now and work on BlackBerry 88XX and 81XX series
 
 Planned:

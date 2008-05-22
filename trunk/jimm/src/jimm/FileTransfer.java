@@ -21,7 +21,7 @@
  Author(s): Andreas Rossbacher, Dmitry Tunin, Denis Artyomov
  *******************************************************************************/
 
-//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2"|target="RIM")&modules_FILES="true"#
 package jimm;
 
 import java.io.ByteArrayInputStream;

@@ -21,10 +21,10 @@
  Author(s): Andreas Rossbacher, Andrey Kazakov, Artyomov Denis, 
  *******************************************************************************/
 
-//#sijapp cond.if (target="MOTOROLA"|target="MIDP2"|target="SIEMENS2")&(modules_FILES="true"|modules_HISTORY="true")#
+//#sijapp cond.if (target="MOTOROLA"|target="MIDP2"|target="SIEMENS2"|target="RIM")&(modules_FILES="true"|modules_HISTORY="true")#
 package jimm;
 
-//#sijapp cond.if target="MIDP2"|target="MOTOROLA"#
+//#sijapp cond.if target="MIDP2"|target="MOTOROLA"|target="RIM"#
 import javax.microedition.io.file.*;
 import javax.microedition.io.*;
 //#sijapp cond.elseif target="SIEMENS2"#
