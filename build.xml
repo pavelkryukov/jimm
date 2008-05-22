@@ -60,7 +60,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  *******************************************************************   -->
 	<!--  This property must point at the Antenna JAR file, normally found      -->
 	<!--  directly in the directory where you installed Antenna.                -->
-	<!--  Please change if you are using a different version than 1.1.0         -->
+	<!--  Please change if you are using a different version than 1.0.0         -->
 	<property name="antenna/lib"       value="${antenna}/antenna-bin-1.0.0.jar"  />
 	<!--  *******************************************************************   -->
 	<!--  This property is used for building binaries for RIM Blackberry.       -->
@@ -158,7 +158,10 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		</condition>
 		<condition property="is_bb_build" value="true">
 			<equals arg1="${target}" arg2="RIM" />
-		</condition>		
+		</condition>
+		<condition property="skip-obfuscate" value="true">
+			<equals arg1="${target}" arg2="RIM" />
+		</condition>	
 		<condition property="midp" value="${MOTOROLA/midp}">
 			<equals arg1="${target}" arg2="MOTOROLA" />
 		</condition>
