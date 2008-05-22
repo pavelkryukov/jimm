@@ -270,7 +270,8 @@ public class Icq implements Runnable
 			ContactItem cItem)
 	{
 		// Check whether contact item is temporary
-		if (cItem.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP))
+		if (cItem.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP) && 
+				!cItem.getBooleanValue(ContactItem.CONTACTITEM_IS_PHANTOM))
 		{
 			// Remove this temporary contact item
 			removeLocalContact(cItem
