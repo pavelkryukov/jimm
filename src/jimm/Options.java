@@ -728,7 +728,7 @@ public class Options
 
 /* Form for editing option values */
 
-class OptionsForm implements CommandListener, ItemStateListener, VirtualListCommands
+class OptionsForm implements CommandListener, ItemStateListener, VirtualListCommands, JimmScreen
 {
 	private boolean lastGroupsUsed, lastHideOffline, lastSmallFont;
 
@@ -1323,7 +1323,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	///////////////////////////////////////////////////////////////////////////
 
 	/* Activate options menu */
-	protected void activate()
+	public void activate()
 	{
 		// Store some last values
 		lastUILang      = Options.getString (Options.OPTION_UI_LANGUAGE);
@@ -1333,6 +1333,13 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		lastSmallFont   = Options.getBoolean(Options.OPTION_SMALL_FONT);
 
 		initOptionsList(TYPE_TOP_OPTIONS);
+		
+		JimmUI.setLastScreen(this, false);
+	}
+	
+	public boolean isScreenActive()
+	{
+		return JimmUI.isControlActive(optionsMenu) || optionsForm.isShown();
 	}
 
 	final private static int TAG_DELETE_ACCOUNT = 1;
@@ -2307,7 +2314,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			{
 				if (registration_connected) Icq.disconnect();
 				Options.optionsForm = null;
-				Jimm.showWorkScreen(); /* Active MM/CL */
+				JimmUI.backToLastScreen();
 				return;
 			}
 		}
@@ -2325,7 +2332,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				if (Icq.isConnected())
 				{
 					Options.optionsForm = null;
-					ContactList.activate();
+					JimmUI.backToLastScreen();
 				}
 				else activate();
 			}

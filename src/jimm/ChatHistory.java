@@ -87,7 +87,7 @@ class MessData
 	//#sijapp cond.end#
 }
 
-class ChatTextList implements VirtualListCommands, CommandListener
+class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 {
 	// UI modes
 	final public static int UI_MODE_NONE = 0;
@@ -194,11 +194,6 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		return false;
 	}
 	
-	private Object getVisibleObject()
-	{
-		return textList;
-	}
-	
 	public void commandAction(Command c, Displayable d)
 	{
 		Jimm.aaUserActivity();
@@ -223,10 +218,10 @@ class ChatTextList implements VirtualListCommands, CommandListener
 				}
 
 				ChatHistory.chatHistoryDelete(contact.getStringValue(ContactItem.CONTACTITEM_UIN), delType);
-				ContactList.activate();
+				ContactList.activateList();
 				return;
 			}
-			else activate(false, false);
+			else activate();
 		}
 		
 		/* Write new message */
@@ -239,7 +234,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		else if (c == cmdCloseChat)
 		{
 			contact.resetUnreadMessages();
-			ContactList.activate();
+			JimmUI.backToLastScreen();
 		}
 		
 		/* Delete current chat */
@@ -265,7 +260,7 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		else if (c == JimmUI.cmdGotoURL)
 		{
-			JimmUI.gotoURL(textList.getCurrText(0, false), getVisibleObject());
+			JimmUI.gotoURL(textList.getCurrText(0, false));
 		}
 		//#sijapp cond.end#
 		
@@ -517,12 +512,18 @@ class ChatTextList implements VirtualListCommands, CommandListener
 		textList.unlock();
 	}
 
-	public void activate(boolean initChat, boolean resetText)
+	public void activate()
 	{
 		textList.activate(Jimm.display);
-		JimmUI.setLastScreen(textList);
 		ChatHistory.currentChat = this;
 		contact.resetUnreadMessages();
+		JimmUI.setLastScreen(this, false);
+	}
+	
+	public boolean isScreenActive()
+	{
+		System.out.println(textList.isActive());
+		return textList.isActive();
 	}
 	
 	public void messageIsDelivered(int messId)
@@ -895,7 +896,7 @@ public class ChatHistory
 		if (chat != null)
 		{
 			chat.buildMenu();
-			chat.activate(false, false);
+			chat.activate();
 		}
 		
 		return (chat != null);

@@ -67,7 +67,6 @@ public class Templates implements VirtualListCommands, CommandListener
 
 	private static final int TMPL_CLALL = 2;
 	
-	private static Object lastScreen;
 	private static TextBox textBox;
 	private static int caretPos;
 
@@ -76,9 +75,8 @@ public class Templates implements VirtualListCommands, CommandListener
 		_this = this;
 	}
 
-	public static void selectTemplate(TextBox textBox, Object lastScreen)
+	public static void selectTemplate(TextBox textBox)
 	{
-		Templates.lastScreen = lastScreen;
 		Templates.textBox = textBox;
 		caretPos = textBox.getCaretPosition();
 		
@@ -125,7 +123,7 @@ public class Templates implements VirtualListCommands, CommandListener
 		
 		if (c == backCommand)
 		{
-			JimmUI.selectScreen(lastScreen);
+			Jimm.display.setCurrent(textBox);
 			templateList = null;
 		}
 
@@ -177,7 +175,7 @@ public class Templates implements VirtualListCommands, CommandListener
 			} catch (Exception e)
 			{
 			}
-			JimmUI.selectScreen(lastScreen);
+			Jimm.display.setCurrent(textBox);
 			templateList = null;
 		}
 
@@ -192,7 +190,7 @@ public class Templates implements VirtualListCommands, CommandListener
 		String selectedTemplate = null;
 		if (templateList.getSize() != 0) selectedTemplate = getRecord(templateList.getCurrTextIndex());
 		templateList = null;
-		JimmUI.selectScreen(lastScreen);
+		Jimm.display.setCurrent(textBox);
 		if (selectedTemplate != null) textBox.insert(selectedTemplate, caretPos);
 	}
 

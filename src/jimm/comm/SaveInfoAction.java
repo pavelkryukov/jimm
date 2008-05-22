@@ -201,7 +201,7 @@ public class SaveInfoAction extends Action
 		switch (eventTuype)
 		{
 		case ON_COMPLETE:
-			ContactList.activate();
+			JimmUI.backToLastScreen();
 			break;
 		}
 	}

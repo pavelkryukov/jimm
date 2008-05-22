@@ -279,7 +279,7 @@ public class Icq implements Runnable
 			ContactList.removeContactItem(cItem);
 
 			// Activate contact list
-			ContactList.activate();
+			JimmUI.backToLastScreen();
 
 		} else
 		{

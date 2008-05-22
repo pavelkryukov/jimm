@@ -30,6 +30,7 @@ import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
+import jimm.JimmUI;
 import jimm.MainMenu;
 import jimm.JimmException;
 import jimm.Options;
@@ -1037,13 +1038,13 @@ public class ConnectAction extends Action
     	switch (eventType)
     	{
     	case ON_COMPLETE:
-    		ContactList.activate();
+    		ContactList.activateList();
     		break;
     		
     	case ON_CANCEL:
-		Icq.connecting = false;
+    		Icq.connecting = false;
     		Icq.disconnect();
-    		MainMenu.activate();
+    		JimmUI.backToLastScreen();
     		break;
     	}
     }

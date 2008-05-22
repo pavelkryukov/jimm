@@ -284,8 +284,7 @@ public class SplashCanvas extends Canvas
 		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE) && (t2 != null))
 			t2.cancel();
 
-		if (_this.isShown())
-			ContactList.activate();
+		if (_this.isShown()) JimmUI.backToLastScreen();
 	}
 
 	// Is the screen locked?

@@ -256,7 +256,7 @@ public class Jimm extends MIDlet
 			else
 			{
 				// Activate main menu
-				MainMenu.activate();
+				MainMenu.activateMenu();
 			}
 		}
 		else
@@ -381,9 +381,9 @@ public class Jimm extends MIDlet
 		if (SplashCanvas.locked())
 			SplashCanvas.show();
 		else if (Icq.isConnected())
-			ContactList.activate();
+			ContactList.activateList();
 		else
-			MainMenu.activate();
+			MainMenu.activateMenu();
 	}
 
 	//#sijapp cond.if target is "MIDP2" #
