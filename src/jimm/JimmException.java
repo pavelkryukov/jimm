@@ -29,9 +29,6 @@ import jimm.comm.Icq;
 import javax.microedition.lcdui.*;
 
 public class JimmException extends Exception
-//#sijapp cond.if target="MOTOROLA"#
-//#			implements CommandListener
-//#sijapp cond.end#
 {
 
 	// Returns the error description for the given error code
@@ -168,9 +165,6 @@ public class JimmException extends Exception
 			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e
 					.getMessage(), null, AlertType.ERROR);
 			errorMsg.setTimeout(Alert.FOREVER);
-			//#sijapp cond.if target="MOTOROLA"#
-			//#			errorMsg.setCommandListener(e);
-			//#sijapp cond.end#
 			MainMenu.activate(errorMsg);
 			return (errorMsg);
 
@@ -198,12 +192,4 @@ public class JimmException extends Exception
 		}
 
 	}
-
-	//#sijapp cond.if target="MOTOROLA"#
-	//#	public void commandAction(Command c, Displayable d)
-	//#	{
-	//#		MainMenu.activate();
-	//#	}
-	//#sijapp cond.end#
-
 }
