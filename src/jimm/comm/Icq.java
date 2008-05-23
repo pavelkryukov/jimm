@@ -279,9 +279,9 @@ public class Icq implements Runnable
 			ContactList.removeContactItem(cItem);
 
 			// Activate contact list
-			JimmUI.backToLastScreen();
-
-		} else
+			ContactList.activateList();
+		} 
+		else
 		{
 			// Request contact item removal
 			UpdateContactListAction act2 = new UpdateContactListAction(cItem,

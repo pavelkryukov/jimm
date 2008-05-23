@@ -54,34 +54,41 @@ public class JimmUI implements CommandListener
 	
 	public static void setLastScreen(JimmScreen screen, boolean isRoot)
 	{
-		if (isRoot) lastScreens.removeAllElements();
-		else lastScreens.removeElement(screen);
-		lastScreens.addElement(screen);
+		synchronized (lastScreens)
+		{
+			if (isRoot) lastScreens.removeAllElements();
+			else lastScreens.removeElement(screen);
+			lastScreens.addElement(screen);
+		}
 	}
 	
 	public static void removeScreen(JimmScreen screen)
 	{
-		lastScreens.removeElement(screen);
+		synchronized (lastScreens)
+		{
+			lastScreens.removeElement(screen);
+		}
 	}
 	
 	public static void backToLastScreen()
 	{
-		System.out.println("backToLastScreen");
-		if (lastScreens.size() == 0) MainMenu.activateMenu();
-		else
+		synchronized (lastScreens)
 		{
-			for (;;)
+			if (lastScreens.size() == 0) MainMenu.activateMenu();
+			else
 			{
-				JimmScreen screen = (JimmScreen)lastScreens.lastElement();
-				lastScreens.removeElement(screen);
-				
-				if (lastScreens.size() == 0 || !screen.isScreenActive()) 
+				for (;;)
 				{
-					System.out.println("backToLastScreen, lastScreens.size()="+lastScreens.size()+", screen.isScreenActive()="+screen.isScreenActive()); 
-					screen.activate();
-					break;
-				}
-			} 
+					JimmScreen screen = (JimmScreen)lastScreens.lastElement();
+					lastScreens.removeElement(screen);
+					
+					if (lastScreens.size() == 0 || !screen.isScreenActive()) 
+					{
+						screen.activate();
+						break;
+					}
+				} 
+			}
 		}
 	}
 	
