@@ -221,12 +221,8 @@ public abstract class VirtualList
 
 	static
 	{
-		//#sijapp cond.if target="MIDP2"#
 		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
-		//#sijapp cond.else#
-		//# 		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_SMALL);
-		//#sijapp cond.end#
-		int width = capFont.getHeight() / 4;
+		int width = capFont.getHeight() / 3;
 		scrollerWidth = width > 4 ? width : 4;
 		paintedItem = new ListItem();
 	}
@@ -1070,7 +1066,7 @@ public abstract class VirtualList
 		int width = getWidthInternal();
 		g.setFont(capFont);
 		int height = getCapHeight();
-		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -48), 0, 0, width, height);
+		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -64), 0, 0, width, height);
 
 		g.setColor(transformColorLight(capBkCOlor, -128));
 		g.drawLine(0, height - 1, width, height - 1);
@@ -1107,7 +1103,7 @@ public abstract class VirtualList
 		int height = getHeightInternal()-menuBarHeight;
 		int itemCount = getSize();
 		boolean haveToShowScroller = ((itemCount > visCount) && (itemCount > 0));
-		int color = transformColorLight(transformColorLight(bkgrndColor, 32), -32);
+		int color = transformColorLight(bkgrndColor, -16);
 		if (color == 0) color = 0x808080;
 		g.setStrokeStyle(Graphics.SOLID);
 		g.setColor(color);
@@ -1120,13 +1116,14 @@ public abstract class VirtualList
 			if (sliderSize < 7) sliderSize = 7;
 			srcollerY1 = topItem * (height - sliderSize - topY) / (itemCount - visCount) + topY;
 			srcollerY2 = srcollerY1 + sliderSize;
+			color = capBkCOlor;
 			g.setColor(color);
-			g.fillRect(width + 2, srcollerY1 + 2, scrollerWidth - 3, srcollerY2 - srcollerY1 - 3);
-			g.setColor(transformColorLight(color, -192));
+			g.fillRect(width+1, srcollerY1+1, scrollerWidth-2, srcollerY2-srcollerY1-2);
+			g.setColor(mergeColors(color, 0, 70));
 			g.drawRect(width, srcollerY1, scrollerWidth - 1, srcollerY2 - srcollerY1 - 1);
 			g.setColor(transformColorLight(color, 96));
-			g.drawLine(width + 1, srcollerY1 + 1, width + 1, srcollerY2 - 2);
-			g.drawLine(width + 1, srcollerY1 + 1, width + scrollerWidth - 2, srcollerY1 + 1);
+			g.drawLine(width+1, srcollerY1+1, width+1, srcollerY2-3);
+			g.drawLine(width+1, srcollerY1+1, width+scrollerWidth-2, srcollerY1+1);
 		}
 	}
 
@@ -1340,6 +1337,12 @@ public abstract class VirtualList
 		int r = value*(r2-r1)/100+r1;
 		int g = value*(g2-g1)/100+g1;
 		int b = value*(b2-b1)/100+b1;
+		if (r < 0) r = 0;
+		if (r > 255) r = 255;
+		if (g < 0) g = 0;
+		if (g > 255) g = 255;
+		if (b < 0) b = 0;
+		if (b > 255) b = 255;
 		return (r) | (g << 8) | (b << 16);
 	}
 	
@@ -1824,7 +1827,7 @@ public abstract class VirtualList
 		if ((style == DMS_DBLCLICK) || fullScreen) return false;
 		
 		if (style == DMS_DRAW)
-			drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -48), 0, y1, width, y2);
+			drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -80), 0, y1, width, y2);
 		
 		g.setFont(menuBarFont);
 		
@@ -2001,7 +2004,7 @@ public abstract class VirtualList
 		// Draw background
 		if (mode == DMS_DRAW)
 		{
-			drawRect(g, transformColorLight(capBkCOlor, 0), transformColorLight(capBkCOlor, -48), x, y, x+width, y+height);
+			drawRect(g, transformColorLight(bkgrndColor, 24), transformColorLight(bkgrndColor, -24), x, y, x+width, y+height);
 		}
 		
 		// Draw up button
@@ -2028,7 +2031,7 @@ public abstract class VirtualList
 			{
 				if (mode == DMS_DRAW)
 				{
-					g.setColor(capTxtColor);
+					g.setColor(getInverseColor(bkgrndColor));
 					g.fillRect(x, itemY-1, width+1, fontHeight+2);
 				}
 			}
@@ -2043,7 +2046,7 @@ public abstract class VirtualList
 			switch (mode)
 			{
 			case DMS_DRAW:
-				g.setColor((i == curMenuItemIndex) ? getInverseColor(capTxtColor) : capTxtColor);
+				g.setColor((i == curMenuItemIndex) ? bkgrndColor : textColor);
 				g.drawString(cmd.getLabel(), x+layer, itemY, Graphics.LEFT|Graphics.TOP);
 				break;
 				
