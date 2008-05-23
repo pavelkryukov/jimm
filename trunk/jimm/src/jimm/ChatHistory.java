@@ -518,6 +518,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 		ChatHistory.currentChat = this;
 		contact.resetUnreadMessages();
 		JimmUI.setLastScreen(this, false);
+		JimmUI.removeScreen(contact); 
 	}
 	
 	public boolean isScreenActive()

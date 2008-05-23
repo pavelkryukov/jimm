@@ -259,8 +259,7 @@ public class JimmUI implements CommandListener
 			}
 
 			boolean activated = ChatHistory.activateIfExists(authContactItem);
-			if (activated) JimmUI.removeScreen(authContactItem); 
-			else ContactList.activateList();
+			if (!activated) JimmUI.backToLastScreen(); 
 
 			authTextbox = null;
 			authContactItem = null;
@@ -304,8 +303,7 @@ public class JimmUI implements CommandListener
 						sendMessage(messText, textMessReceiver);
 						messageTextbox = null;
 						boolean activated = ChatHistory.activateIfExists(textMessReceiver);
-						if (activated) removeScreen(textMessReceiver); 
-						else backToLastScreen();
+						if (!activated) JimmUI.backToLastScreen();
 					}
 					break;
 				}
