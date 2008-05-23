@@ -113,26 +113,21 @@ public class Search
 	/** ************************************************************************* */
 
 	/* Class for the search forms */
-	public class SearchForm implements CommandListener, VirtualListCommands
+	public class SearchForm implements CommandListener, VirtualListCommands, JimmScreen
 	{
+		int lastType;
+		
 		/* Commands */
 		private Command backCommand;
-
 		private Command searchCommand;
-
 		private Command addCommand;
-
 		private Command previousCommand;
-
 		private Command nextCommand;
-
 		private Command cmdSendMessage;
-
 		private Command cmdShowInfo;
 
 		/* Forms for results and query */
 		private Form searchForm;
-
 		private TextList screen;
 
 		/* List for group selection */
@@ -140,24 +135,17 @@ public class Search
 
 		/* Textboxes for search */
 		private TextField uinSearchTextBox;
-
 		private TextField nickSearchTextBox;
-
 		private TextField firstnameSearchTextBox;
-
 		private TextField lastnameSearchTextBox;
-
 		private TextField emailSearchTextBox;
-
 		private TextField citySearchTextBox;
-
 		private TextField keywordSearchTextBox;
 
 		private ChoiceGroup chgrAge;
 
 		/* Choice boxes for gender and online choice */
 		private ChoiceGroup gender;
-
 		private ChoiceGroup onlyOnline;
 
 		/* Selectet index in result screen */
@@ -247,10 +235,24 @@ public class Search
 		static final public int ACTIV_JUST_SHOW = 2;
 
 		static final public int ACTIV_SHOW_NORESULTS = 3;
+		
+		public void activate()
+		{
+			activate(lastType);
+		}
+		
+		public boolean isScreenActive()
+		{
+			if (searchForm != null && searchForm.isShown()) return true;
+			if (screen != null && screen.isActive()) return true;
+			if (groupList != null && groupList.isActive()) return true; 
+			return false;
+		}
 
 		/* Activate search form */
 		public void activate(int type)
 		{
+			lastType = type;
 			switch (type)
 			{
 			case ACTIV_SHOW_RESULTS:
@@ -275,6 +277,7 @@ public class Search
 				Jimm.setBkltOn(false);
 				break;
 			}
+			JimmUI.setLastScreen(this, false);
 		}
 
 		public void drawResultScreen(int n)
@@ -363,15 +366,9 @@ public class Search
 		{
 			if (c == this.backCommand || c == JimmUI.cmdCancel)
 			{
-				if (JimmUI.isControlActive(screen) && !liteVersion)
-				{
-					activate(Search.SearchForm.ACTIV_JUST_SHOW);
-				} else
-				{
-					searchForm = null;
-					JimmUI.backToLastScreen();
-				}
-			} else if (c == this.searchCommand)
+				JimmUI.backToLastScreen();
+			} 
+			else if (c == this.searchCommand)
 			{
 				selectedIndex = 0;
 
