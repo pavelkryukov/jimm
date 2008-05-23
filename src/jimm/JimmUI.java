@@ -84,6 +84,7 @@ public class JimmUI implements CommandListener
 					
 					if (lastScreens.size() == 0 || !screen.isScreenActive()) 
 					{
+						//System.out.println("lastScreens.size()="+lastScreens.size()+", screen.isScreenActive()="+screen.isScreenActive()+", screen="+screen.getClass().getName());
 						screen.activate();
 						break;
 					}
