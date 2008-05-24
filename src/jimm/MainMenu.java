@@ -363,7 +363,7 @@ public class MainMenu implements CommandListener, JimmScreen
 
 			case MENU_ABOUT:
 				// Display an info
-				JimmUI.about(null);
+				JimmUI.about();
 				break;
 
 			//#sijapp cond.if target is "MIDP2"#
