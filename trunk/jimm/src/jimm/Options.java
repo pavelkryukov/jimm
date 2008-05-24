@@ -87,7 +87,7 @@ public class Options
 	public static final int OPTION_TYPING_FILE        = 16;
 	public static final int OPTION_HTTP_USER_AGENT    = 17;
 	public static final int OPTION_HTTP_WAP_PROFILE   = 18;
-	public static final int OPTION_ANTI_SPAM_QUESTION      = 19;
+	public static final int OPTION_ANTI_SPAM_QUESTION = 19;
 	public static final int OPTION_ANTI_SPAM_ANS      = 20;
 	
 	/* Passwords */

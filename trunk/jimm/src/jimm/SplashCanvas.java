@@ -265,6 +265,11 @@ public class SplashCanvas extends Canvas
 			(t2 = new Timer()).schedule(new TimerTasks(
 					TimerTasks.SC_AUTO_REPAINT), 20000, 20000);
 		}
+		
+//#sijapp cond.if target="MOTOROLA"#
+		Jimm.display.flashBacklight(1000*Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
+//#sijapp cond.end #		
+		
 	}
 
 	// Disable keylock
@@ -315,6 +320,9 @@ public class SplashCanvas extends Canvas
 	// Called when a key is pressed
 	protected void keyPressed(int keyCode)
 	{
+//#sijapp cond.if target="MOTOROLA"#
+		Jimm.display.flashBacklight(1000*Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
+//#sijapp cond.end #		
 		if (isLocked)
 		{
 			if (keyCode == Canvas.KEY_POUND)

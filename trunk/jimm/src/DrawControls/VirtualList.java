@@ -1209,15 +1209,16 @@ public abstract class VirtualList
 				int itemHeight = getItemHeight(i);
 				if (isItemSelected(i))
 				{
-					if (grCursorY1 == -1) grCursorY1 = y-1;
+					if (grCursorY1 == -1) grCursorY1 = y;
 					grCursorY2 = y + itemHeight;
 				}
 				y += itemHeight;
 				if (y >= bottomY) break;
 			}
 
-			if ((grCursorY1 != -1) && crdIntersect(grCursorY1-2, grCursorY2+2, clipY1, clipY2))
+			if ((grCursorY1 != -1) && crdIntersect(grCursorY1-3, grCursorY2+2, clipY1, clipY2))
 			{
+				grCursorY1--;
 				g.setColor(cursorColor);
 				g.fillRect(curX1, grCursorY1, curX2-curX1, grCursorY2-grCursorY1);
 				g.setColor(cursorFrameColor);
