@@ -536,7 +536,7 @@ public class JimmUI implements CommandListener
 	// String for recent version
 	static private String version;
 
-	static public void about(Displayable lastDisplayable_)
+	static public void about()
 	{
 		System.gc();
 		long freeMem = Runtime.getRuntime().freeMemory() / 1024;
@@ -548,14 +548,7 @@ public class JimmUI implements CommandListener
 		aboutTextList.clear();
 		aboutTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		setColorScheme(aboutTextList, false, -1, true);
-		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1,
-				0xffffff, 0);
-
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-		//		aboutTextList.setFontSize(Font.SIZE_MEDIUM);
-		//#sijapp cond.else#
-		//#		aboutTextList.setFontSize(Font.SIZE_SMALL);
-		//#sijapp cond.end#
+		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1, 0xffffff, 0);
 
 		aboutTextList.setCaption(ResourceBundle.getString("about"));
 
@@ -604,9 +597,41 @@ public class JimmUI implements CommandListener
 		}
 
 		aboutTextList.unlock();
-
-		if (version == null)
-			Jimm.getTimerRef().schedule(new GetVersionInfoTimerTask(), 2000);
+		
+		// request last jimm version
+		if (version == null) RunnableImpl.requestLastJimmVers();
+	}
+	
+	static public void internalReqLastVersThread()
+	{
+		HttpConnection httemp;
+		InputStream istemp = null;
+		
+		try
+		{
+			httemp = (HttpConnection) Connector
+					.open("http://www.jimm.org/en/current_ver");
+			if (httemp.getResponseCode() != HttpConnection.HTTP_OK)
+				throw new IOException();
+			istemp = httemp.openInputStream();
+			byte[] version_ = new byte[(int) httemp.getLength()];
+			istemp.read(version_, 0, version_.length);
+			version = new String(version_);
+		} 
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			version = "Error: " + e.getMessage();
+		}
+		
+		if (istemp != null) try {istemp.close();} catch (Exception e) {}
+		RunnableImpl.showLastJimmVers();
+	}
+	
+	static public void internalShowLastVersThread()
+	{
+		if (aboutTextList != null)
+			aboutTextList.addBigText(version, aboutTextList.getTextColor(), Font.STYLE_PLAIN, -1);
 	}
 
 	//////////////////////
@@ -700,47 +725,6 @@ public class JimmUI implements CommandListener
 		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), true, -1, true);
 	}
 
-	/*****************************************************************************/
-	/*****************************************************************************/
-	/*****************************************************************************/
-
-	// Waits until contact listupdate is completed
-	public static class GetVersionInfoTimerTask extends TimerTask
-	{
-		// Try to get current Jimm version from Jimm server
-		HttpConnection httemp;
-
-		InputStream istemp;
-
-		// Timer routine
-		public void run()
-		{
-			try
-			{
-				httemp = (HttpConnection) Connector
-						.open("http://www.jimm.org/en/current_ver");
-				if (httemp.getResponseCode() != HttpConnection.HTTP_OK)
-					throw new IOException();
-				istemp = httemp.openInputStream();
-				byte[] version_ = new byte[(int) httemp.getLength()];
-				istemp.read(version_, 0, version_.length);
-				version = new String(version_);
-			} catch (Exception e)
-			{
-				e.printStackTrace();
-				version = "Error: " + e.getMessage();
-			}
-
-			synchronized (_this)
-			{
-				if ((aboutTextList != null) && aboutTextList.isActive())
-				{
-					aboutTextList.addBigText(version, aboutTextList.getTextColor(), Font.STYLE_PLAIN, -1);
-				}
-			}
-		}
-
-	}
 
 	/************************************************************************/
 	/************************************************************************/

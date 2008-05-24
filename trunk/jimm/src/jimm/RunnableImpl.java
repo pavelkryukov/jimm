@@ -23,6 +23,8 @@
 
 package jimm;
 
+import java.util.TimerTask;
+
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.*;
 
@@ -52,6 +54,8 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_ADD_CONTACT         = 12;
 	final static public int TYPE_MINUTE_TASK         = 14;
 	final static public int TYPE_MESS_DELIVERED      = 15;
+	final static public int TYPE_REQ_LAST_VESR       = 16;
+	final static public int TYPE_SHOW_LAST_VESR      = 17;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -129,6 +133,14 @@ public class RunnableImpl implements Runnable
 		case TYPE_MESS_DELIVERED:
 			ChatHistory.messageIsDelivered((String)data[0], getInt(data, 1));
 			break;
+			
+		case TYPE_REQ_LAST_VESR:
+			JimmUI.internalReqLastVersThread();
+			break;
+			
+		case TYPE_SHOW_LAST_VESR:
+			JimmUI.internalShowLastVersThread();
+			break;
 		}
 	}
 
@@ -144,8 +156,7 @@ public class RunnableImpl implements Runnable
 
 	static public void callSerially(int type, Object obj1)
 	{
-		callSerially(type, new Object[]
-		{ obj1 });
+		callSerially(type, new Object[] { obj1 });
 	}
 
 	static public void callSerially(int type)
@@ -155,8 +166,7 @@ public class RunnableImpl implements Runnable
 
 	static public void callSerially(int type, Object obj1, Object obj2)
 	{
-		callSerially(type, new Object[]
-		{ obj1, obj2 });
+		callSerially(type, new Object[] { obj1, obj2 });
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -233,6 +243,16 @@ public class RunnableImpl implements Runnable
 	static public void messageIsDelevered(String uin, int messId)
 	{
 		callSerially(TYPE_MESS_DELIVERED, uin, new Integer(messId));
+	}
+	
+	static public void requestLastJimmVers()
+	{
+		new Thread(new RunnableImpl(TYPE_REQ_LAST_VESR, null)).start();
+	}
+	
+	static public void showLastJimmVers()
+	{
+		callSerially(TYPE_SHOW_LAST_VESR);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
