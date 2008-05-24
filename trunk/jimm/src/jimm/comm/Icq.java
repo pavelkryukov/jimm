@@ -2936,6 +2936,7 @@ public class Icq implements Runnable
 	private static final byte[] CAP_AVATAR         = Util.explodeToBytes("09,46,13,4C,4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
 	private static final byte[] CAP_TYPING         = Util.explodeToBytes("56,3f,c8,09,0b,6f,41,bd,9f,79,42,26,09,df,a2,f3", ',', 16);
 	private static final byte[] CAP_MCHAT          = Util.explodeToBytes("*mChat icq", ',', 16);
+	private static final byte[] CAP_IMPLUS         = Util.explodeToBytes("8e,cd,90,e7,4f,18,28,f8,02,ec,d6,18,a4,e9,de,68", ',', 16);
 	
 	// Arrays for new capability blowup
 	private static final byte[] CAP_OLD_HEAD = { (byte) 0x09, (byte) 0x46 };
@@ -3071,6 +3072,7 @@ public class Icq implements Runnable
 	public static final int CAPF_IsICQLITE		= 0x00000080;
 	public static final int CAPF_QIPPDASYM		= 0x00000100;
 	public static final int CAPF_QIPPDAWIN		= 0x00000200;
+	public static final int CAPF_IMPLUS		= 0x00000400;
 
 	// Client IDs
 	public static final byte CLI_NONE = 0;
@@ -3117,6 +3119,7 @@ public class Icq implements Runnable
 	public static final byte CLI_ICQ6 = 41;
 	public static final byte CLI_QIPPDASYM = 42;
 	public static final byte CLI_QIPPDAWIN = 43;
+	public static final byte CLI_IMPLUS = 44;
 	
 	private static int[] clientIndexes;
 	private static int[] clientImageIndexes;
@@ -3172,6 +3175,7 @@ public class Icq implements Runnable
 		initClientIndDataItem("ICQ 6",                  CLI_ICQ6,          16, vInd, vImg, vNames);
 		initClientIndDataItem("QIP Mobile (Symbian)",   CLI_QIPPDASYM,     13, vInd, vImg, vNames);
 		initClientIndDataItem("QIP PDA (Windows)",      CLI_QIPPDAWIN,     14, vInd, vImg, vNames);
+		initClientIndDataItem("IM+",                    CLI_IMPLUS,        30, vInd, vImg, vNames);
 		
 		clientNames = new String[vNames.size()];
 		vNames.copyInto(clientNames);
@@ -3401,6 +3405,10 @@ public class Icq implements Runnable
 				{
 					caps2 |= CAPF_IsICQLITE;
 				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_IMPLUS, 0, 16))
+				{
+					caps2 |= CAPF_IMPLUS;
+				}
 			}
 		}
 
@@ -3411,6 +3419,21 @@ public class Icq implements Runnable
 			switch (1)
 			{
 			default:
+				if ((caps2 & CAPF_IMPLUS) != 0)
+				{
+					client = CLI_IMPLUS;
+  					if ((dwFP1 & 0xFFFFFFF0) == 0x494D2B00) {
+						switch (dwFP1 & 0xFF) {
+							case 0x03:		//SmartPhone, Pocket PC
+								szVersion += "(SmartPhone, Pocket PC)";
+								break;
+							case 0x05:		//Win32
+								szVersion += "(Win32)";
+								break;
+						}
+					}
+					break;
+				}
 				if ((caps2 & CAPF_QIPINFIUM) != 0)
 				{
 					client = CLI_QIPINFIUM;
