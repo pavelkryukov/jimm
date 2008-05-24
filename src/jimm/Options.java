@@ -2329,15 +2329,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			/* Save options */
 			Options.safe_save();
 
-			if (!skipNextScreen)
-			{
-				if (Icq.isConnected())
-				{
-					Options.optionsForm = null;
-					JimmUI.backToLastScreen();
-				}
-				else activate();
-			}
+			if (!skipNextScreen) activate();
 		}
 
 		/* Accounts */

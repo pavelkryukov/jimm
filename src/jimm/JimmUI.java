@@ -604,13 +604,12 @@ public class JimmUI implements CommandListener
 	
 	static public void internalReqLastVersThread()
 	{
-		HttpConnection httemp;
+		HttpConnection httemp = null;
 		InputStream istemp = null;
 		
 		try
 		{
-			httemp = (HttpConnection) Connector
-					.open("http://www.jimm.org/en/current_ver");
+			httemp = (HttpConnection) Connector.open("http://www.jimm.org/en/current_ver");
 			if (httemp.getResponseCode() != HttpConnection.HTTP_OK)
 				throw new IOException();
 			istemp = httemp.openInputStream();
@@ -623,8 +622,12 @@ public class JimmUI implements CommandListener
 			e.printStackTrace();
 			version = "Error: " + e.getMessage();
 		}
+		finally
+		{
+			if (istemp != null) try {istemp.close();} catch (Exception e) {}
+			if (httemp != null) try {httemp.close();} catch (Exception e) {}
+		}
 		
-		if (istemp != null) try {istemp.close();} catch (Exception e) {}
 		RunnableImpl.showLastJimmVers();
 	}
 	
