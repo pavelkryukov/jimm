@@ -1938,7 +1938,7 @@ public class JimmUI implements CommandListener
 		
 		clInfoData[JimmUI.UI_ONLINE_STATUS] = JimmUI.getStatusString(cItem.getIntValue(ContactItem.CONTACTITEM_STATUS));
 		int xStatus = cItem.getIntValue(ContactItem.CONTACTITEM_XSTATUS);
-		clInfoData[JimmUI.UI_XSTATUS] = (xStatus <= 0) ? null : ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]); 
+		clInfoData[JimmUI.UI_XSTATUS] = (xStatus < 0) ? null : ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]); 
 
 		/* sign on time */
 		long signonTime = cItem.getIntValue(ContactItem.CONTACTITEM_SIGNON);
