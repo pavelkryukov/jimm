@@ -396,8 +396,12 @@ public class Jimm extends MIDlet
 		} else
 		{
 			Displayable disp = Jimm.display.getCurrent();
-			if ((disp == null) || !disp.isShown())
+			if (!disp.isShown()) {
+				if (disp != null)
+					Jimm.display.setCurrent(null);
 				showWorkScreen();
+			}
+
 		}
 	}
 
