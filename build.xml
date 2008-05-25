@@ -373,7 +373,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false" failonerror="false">
 			<fileset dir="${files_dir}" />
 		</copy>
-		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false" failonerror="false">
+		<copy todir="${build}/res" flatten="false" includeEmptyDirs="false" failonerror="false">
 			<fileset dir="${smiles_dir}" />
 		</copy>
 	</target>

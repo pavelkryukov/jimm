@@ -49,6 +49,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 	private static String[] selEmotionsSmileNames;
 	private static String[] textCorrWords;
 	private static boolean[] emoFinded;
+	private static String setName;
 
 	public Emotions()
 	{
@@ -68,33 +69,31 @@ public class Emotions implements VirtualListCommands, CommandListener
 		Vector timeingsValues = new Vector();
 		InputStream stream;
 		DataInputStream dos;
-		boolean eof = false;
 		
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 		System.gc();
 		long mem = Runtime.getRuntime().freeMemory();
 		//#sijapp cond.end#
 		
-		StringBuffer strBuffer = new StringBuffer();
+		String fileLine = null;
 		
 		try
 		{
-			stream = _this.getClass().getResourceAsStream("/animate.txt");
+			stream = _this.getClass().getResourceAsStream("/ani_emotions/animate.txt");
 			if (stream != null)
 			{
 				dos = new DataInputStream(stream);
-				eof = false;
 				for (;;)
 				{
 					try
 					{
-						readLineFromStream(strBuffer, dos);
+						fileLine = readLineFromStream(dos);
 					} catch (EOFException eofExcept)
 					{
-						eof = true;
+						break;
 					}
 					
-					String[] lineItems = Util.explode(strBuffer.toString(), ' ');
+					String[] lineItems = Util.explode(fileLine, ' ');
 					
 					if (lineItems.length >= 3)
 					{
@@ -105,7 +104,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 						
 						int index = Integer.parseInt(nameAndExt[0]);
 						
-						imageList.load("/"+fileName, imgWidth, -1, -1);
+						imageList.load("/ani_emotions/"+fileName, imgWidth, -1, -1);
 						imagesData.setSize(index+1);
 						imagesData.setElementAt(imageList.getImages(), index);
 						
@@ -126,8 +125,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 							timeData.setElementAt(timeDataArray, index);
 						}
 					}
-					
-					if (eof) break;
 				}
 				
 				animated = true;
@@ -135,46 +132,65 @@ public class Emotions implements VirtualListCommands, CommandListener
 			else animated = false;
 			
 			// Load file "smiles.txt"
-			stream = _this.getClass().getResourceAsStream("/smiles.txt");
+			stream = _this.getClass().getResourceAsStream(animated ? "/ani_emotions/smiles.txt" : "/smiles.txt");
 			if (stream == null) return;
 
 			dos = new DataInputStream(stream);
 			
+			fileLine = readLineFromStream(dos);
+			
 			// Read icon size
 			if (!animated)
 			{
-				readLineFromStream(strBuffer, dos);
-				iconsSize = Integer.parseInt(strBuffer.toString());
+				iconsSize = Integer.parseInt(fileLine);
+				setName = null;
+			}
+			
+			// Read emotions set name
+			else
+			{
+				String[] emoData = Util.explode(fileLine, '|');
+				if (emoData.length >= 1)
+				{
+					setName = emoData[0];
+					for (int i = 1; i < emoData.length; i++)
+					{
+						String[] langAndName = Util.explode(emoData[i], ',');
+						if (langAndName.length == 2 && Options.getString(Options.OPTION_UI_LANGUAGE).equals(langAndName[0]))
+						{
+							setName = langAndName[1];
+							break;
+						}
+					}
+				}
 			}
 
-			eof = false;
 			for (;;)
 			{
 				try
 				{
-					readLineFromStream(strBuffer, dos);
+					fileLine = readLineFromStream(dos);
 				} catch (EOFException eofExcept)
 				{
-					eof = true;
+					break;
 				}
 				
-				String[] lineItems = Util.explode(strBuffer.toString(), ' ');
+				String[] lineItems = Util.explode(fileLine, ' ');
 				
 				if (lineItems.length >= 3)
 				{
+					if (lineItems[0].charAt(0) == '#') continue;
 					Integer currIndex = Integer.valueOf(lineItems[0]);
-					String smileName = Util.replaceStr(lineItems[1], "_", " ");
+					String smileName = lineItems[1].replace('_', ' ');
 
 					for (int i = 2; i < lineItems.length; i++)
 					{
-						String word = Util.replaceStr(lineItems[i], "_", " ");
+						String word = lineItems[i].replace('_', ' ');
 						if (word.length() == 0) continue;
 						insertTextCorr(textCorr, word, currIndex);
 						if (i == 2) selEmotions.addElement(new Object[] { currIndex, word, smileName });
 					}
 				}
-
-				if (eof) break;
 			}
 
 			stream.close();
@@ -215,7 +231,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 		}
 		catch (Exception e)
 		{
-			Jimm.setLoadError("Error while loading emotions: "+e.getMessage());
+			e.printStackTrace();
+			Jimm.setLoadError("Error while loading emotions: "+e.toString());
 			return;
 		}
 		
@@ -277,17 +294,16 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 	// Reads simple word from stream. Used in Emotions(). 
 	// Returns "true" if break was found after word
-	static void readLineFromStream(StringBuffer buffer,
-			DataInputStream stream) throws IOException, EOFException
+	static String readLineFromStream(DataInputStream stream) throws IOException, EOFException
 	{
-		byte chr;
-		buffer.setLength(0);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream(); 
 		for (;;)
 		{
-			chr = stream.readByte();
-			if (chr == '\n') break;
-			if (chr >= ' ') buffer.append((char) chr);
+			int chr = stream.readByte();
+			if (chr == '\n' || chr == -1) break;
+			if (chr != '\r') bytes.write(chr);
 		}
+		return Util.byteArrayToString(bytes.toByteArray(), true);
 	}
 
 	static private void findEmotionInText(String text, String emotion,
@@ -487,7 +503,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 			rows = (selEmotionsIndexes.length + cols - 1) / cols;
 			curCol = 0;
 
-			showCurrSmileName();
+			if (setName != null) _this.setCaption("["+setName+"]");
+			else showCurrSmileName();
 		}
 		
 		protected void getCurXVals(int[] values)
@@ -554,10 +571,10 @@ public class Emotions implements VirtualListCommands, CommandListener
 		static private void showCurrSmileName()
 		{
 			int selIdx = _this.getCurrIndex() * cols + curCol;
-			if (selIdx >= selEmotionsSmileNames.length)
-				return;
+			if (selIdx >= selEmotionsSmileNames.length) return;
 			emotionText = selEmotionsWord[selIdx];
-			_this.setCaption(selEmotionsSmileNames[selIdx]);
+			String emoName = selEmotionsSmileNames[selIdx];
+			_this.setCaption(setName != null ? emoName+" ["+setName+"]" : emoName);
 		}
 
 		public int getItemHeight(int itemIndex)
