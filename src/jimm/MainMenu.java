@@ -446,7 +446,7 @@ public class MainMenu implements CommandListener, JimmScreen
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 				    statusMessage = new TextBox(ResourceBundle.getString("status_message"), statusText, 255, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
 //#sijapp cond.else#
-				    statusMessage = new TextBox(ResourceBundle.getString("status_message"), Options.getString(Options.OPTION_STATUS_MESSAGE), 255, TextField.ANY);
+				    statusMessage = new TextBox(ResourceBundle.getString("status_message"), statusText, 255, TextField.ANY);
 //#sijapp cond.end#
 
 			    statusMessage.addCommand(JimmUI.cmdCancel);
