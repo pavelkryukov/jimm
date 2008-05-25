@@ -171,7 +171,7 @@ public abstract class VirtualList
 	protected final static int scrollerWidth;
 
 	// Font for drawing caption
-	private static Font capFont;
+	private static Font capAndMenuFont;
 	
 	// Commands to react to VL events
 	private VirtualListCommands vlCommands;
@@ -221,8 +221,8 @@ public abstract class VirtualList
 
 	static
 	{
-		capFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
-		int width = capFont.getHeight() / 3;
+		capAndMenuFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
+		int width = capAndMenuFont.getHeight() / 3;
 		scrollerWidth = width > 4 ? width : 4;
 		paintedItem = new ListItem();
 	}
@@ -345,9 +345,6 @@ public abstract class VirtualList
 	{
 		if (fontSize == value) return;
 		fontSize = value;
-//#sijapp cond.if target!="RIM"#		
-		menuItemsFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, fontSize);
-//#sijapp cond.end#		
 		createSetOfFonts(fontSize);
 		checkTopItem();
 		invalidate();
@@ -1041,7 +1038,7 @@ public abstract class VirtualList
 		if (fullScreen) return 0;
 		//#sijapp cond.end#
 		int capHeight = 0;
-		if (caption != null) capHeight = capFont.getHeight() + 2;
+		if (caption != null) capHeight = capAndMenuFont.getHeight() + 2;
 		if (capImage != null)
 		{
 			int imgHeight = capImage.getHeight() + 2;
@@ -1064,7 +1061,7 @@ public abstract class VirtualList
 		if (mode != DMS_DRAW) return getCapHeight();
 
 		int width = getWidthInternal();
-		g.setFont(capFont);
+		g.setFont(capAndMenuFont);
 		int height = getCapHeight();
 		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -64), 0, 0, width, height);
 
@@ -1080,7 +1077,7 @@ public abstract class VirtualList
 		}
 
 		g.setColor(capTxtColor);
-		g.drawString(caption, x, (height - capFont.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
+		g.drawString(caption, x, (height - capAndMenuFont.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
 		
 		afterDrawCaption(g, height);
 		
@@ -1694,10 +1691,6 @@ public abstract class VirtualList
 	private static final int UI_STATE_RIGHT_MENU_VISIBLE = 2;
 	
 	private int uiState;
-
-	// Font for painting menu bar
-	private static Font menuBarFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
-	private static Font menuItemsFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
 	
 	private Command leftMenu;
 	private Command rightMenu;
@@ -1778,7 +1771,7 @@ public abstract class VirtualList
 		int drawHeight = getDrawHeight();
 		if (menuHeight > drawHeight)
 		{
-			visibleItemsMenuCount = drawHeight/menuItemsFont.getHeight();
+			visibleItemsMenuCount = drawHeight/capAndMenuFont.getHeight();
 			topMenuItem = menuItemsCount-visibleItemsMenuCount;
 		}
 		else
@@ -1830,9 +1823,9 @@ public abstract class VirtualList
 		if (style == DMS_DRAW)
 			drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -80), 0, y1, width, y2);
 		
-		g.setFont(menuBarFont);
+		g.setFont(capAndMenuFont);
 		
-		int textY = (y1+y2-menuBarFont.getHeight())/2+2;
+		int textY = (y1+y2-capAndMenuFont.getHeight())/2+2;
 		
 		boolean menuItemsVisible = false;
 		if (leftMenu != null)
@@ -1880,7 +1873,7 @@ public abstract class VirtualList
 			g.drawString
 			(
 				text, 
-				width-layer-menuBarFont.stringWidth(text), 
+				width-layer-capAndMenuFont.stringWidth(text), 
 				textY, 
 				Graphics.TOP|Graphics.LEFT
 			);
@@ -1892,7 +1885,7 @@ public abstract class VirtualList
 			drawFramedString
 			(
 			 	g, bottomText,
-				(width-menuBarFont.stringWidth(bottomText))/2, 
+				(width-capAndMenuFont.stringWidth(bottomText))/2, 
 				textY, 
 				Graphics.TOP|Graphics.LEFT,
 				capTxtColor, getInverseColor(capTxtColor)
@@ -1913,7 +1906,7 @@ public abstract class VirtualList
 	protected final int getMenuBarHeight()
 	{
 		if (fullScreen) return 0;
-		return exMenuExists() ? menuBarFont.getHeight()+3 : 0;
+		return exMenuExists() ? capAndMenuFont.getHeight()+3 : 0;
 	}
 
 	private boolean drawMenuItems(Graphics g, int menuBarHeight, int style, int curX, int curY)
@@ -1931,7 +1924,7 @@ public abstract class VirtualList
 	
 	private static int getMenuHeight(int count)
 	{
-		int fontHeight = menuItemsFont.getHeight();
+		int fontHeight = capAndMenuFont.getHeight();
 		return fontHeight+fontHeight*count;
 	}
 	
@@ -1972,7 +1965,7 @@ public abstract class VirtualList
 	
 	private boolean drawMenuItems(Graphics g, Vector items, int bottom, int horizAlign, int mode, int curX, int curY)
 	{
-		int fontHeight = menuItemsFont.getHeight(); 
+		int fontHeight = capAndMenuFont.getHeight(); 
 		int layer = fontHeight/3;
 		int vert_layer = fontHeight/2;
 		
@@ -1984,7 +1977,7 @@ public abstract class VirtualList
 		for (int i = 0; i < itemsCount; i++)
 		{
 			Command cmd = (Command)items.elementAt(i);
-			int txtWidth = menuItemsFont.stringWidth(cmd.getLabel());
+			int txtWidth = capAndMenuFont.stringWidth(cmd.getLabel());
 			if (txtWidth > width) width = txtWidth;
 		}
 		width += layer*2;
@@ -2022,7 +2015,7 @@ public abstract class VirtualList
 		}
 		
 		// Draw items
-		g.setFont(menuItemsFont);
+		g.setFont(capAndMenuFont);
 		
 		int itemY = y+vert_layer;
 		
