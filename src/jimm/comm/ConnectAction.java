@@ -91,27 +91,6 @@ public class ConnectAction extends Action
     	0x000b, 0x0001,
     };
     
-//    {(byte) 0x00, (byte) 0x01, (byte) 0x00, (byte) 0x03,
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04,	(byte) 0x7B,
-//	 (byte) 0x00, (byte) 0x13, (byte) 0x00, (byte) 0x02,
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
-//     (byte) 0x00, (byte) 0x02, (byte) 0x00, (byte) 0x01, 
-//	 (byte) 0x01, (byte) 0x01, (byte) 0x04, (byte) 0x7B,
-//     (byte) 0x00, (byte) 0x03, (byte) 0x00, (byte) 0x01, 
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
-//     (byte) 0x00, (byte) 0x15, (byte) 0x00, (byte) 0x01,
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
-//     (byte) 0x00, (byte) 0x04, (byte) 0x00, (byte) 0x01, 
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
-//     (byte) 0x00, (byte) 0x06, (byte) 0x00, (byte) 0x01, 
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
-//     (byte) 0x00, (byte) 0x09, (byte) 0x00, (byte) 0x01, 
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
-//     (byte) 0x00, (byte) 0x0A, (byte) 0x00, (byte) 0x01, 
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B,
-//     (byte) 0x00, (byte) 0x0B, (byte) 0x00, (byte) 0x01, 
-//	 (byte) 0x01, (byte) 0x10, (byte) 0x04, (byte) 0x7B};
-
     // Timeout
     // #sijapp cond.if modules_PROXY is "true" #
     public static final int TIME_OUT = 20 * 1000;
@@ -512,7 +491,7 @@ public class ConnectAction extends Action
 					(
 						SnacPacket.CLI_FAMILIES_FAMILY, 
 						SnacPacket.CLI_FAMILIES_COMMAND, 
-						0x00000000, 
+						SnacPacket.CLI_FAMILIES_COMMAND, 
 						new byte[0], 
 						stream.toByteArray()
 					)
@@ -535,25 +514,8 @@ public class ConnectAction extends Action
 				reqp = new SnacPacket(SnacPacket.CLI_REQLISTS_FAMILY, SnacPacket.CLI_REQLISTS_COMMAND,
 							SnacPacket.CLI_REQLISTS_COMMAND, new byte[0], rdata);
 				Icq.c.sendPacket(reqp);
+				reqp = null;
 
-				reqp = new SnacPacket(SnacPacket.CLI_REQLOCATION_FAMILY, SnacPacket.CLI_REQLOCATION_COMMAND,
-							SnacPacket.CLI_REQLOCATION_COMMAND, new byte[0], new byte[0]);
-				Icq.c.sendPacket(reqp);
-
-				rdata = new byte[6];
-				Util.putDWord(rdata, 0, 0x00050002);
-				Util.putWord(rdata, 4, 0x0003);
-				reqp = new SnacPacket(SnacPacket.CLI_REQBUDDY_FAMILY, SnacPacket.CLI_REQBUDDY_COMMAND,
-							SnacPacket.CLI_REQBUDDY_COMMAND, new byte[0], rdata);
-				Icq.c.sendPacket(reqp);
-
-				reqp = new SnacPacket(SnacPacket.CLI_REQICBM_FAMILY, SnacPacket.CLI_REQICBM_COMMAND,
-							SnacPacket.CLI_REQICBM_COMMAND, new byte[0], new byte[0]);
-				Icq.c.sendPacket(reqp);
-
-				reqp = new SnacPacket(SnacPacket.CLI_REQBOS_FAMILY, SnacPacket.CLI_REQBOS_COMMAND,
-							SnacPacket.CLI_REQBOS_COMMAND, new byte[0], new byte[0]);
-				Icq.c.sendPacket(reqp);
 
 				// Send a CLI_REQROSTER or
 				// CLI_CHECKROSTER packet
@@ -561,17 +523,41 @@ public class ConnectAction extends Action
 				int versionId2 = ContactList.getSsiNumberOfItems();
 				if (((versionId1 == -1) && (versionId2 == -1)) || (ContactList.getSize() == 0))
 				{
-					SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND, 0x00000000, new byte[0], new byte[0]);
-					Icq.c.sendPacket(reply2);
+					reqp = new SnacPacket(SnacPacket.CLI_REQROSTER_FAMILY, SnacPacket.CLI_REQROSTER_COMMAND, SnacPacket.CLI_REQROSTER_COMMAND, new byte[0], new byte[0]);
+					Icq.c.sendPacket(reqp);
 				}
 				else
 				{
 					byte[] data = new byte[6];
 					Util.putDWord(data, 0, versionId1);
 					Util.putWord(data, 4, versionId2);
-					SnacPacket reply2 = new SnacPacket(SnacPacket.CLI_CHECKROSTER_FAMILY, SnacPacket.CLI_CHECKROSTER_COMMAND, 0x00000000, new byte[0], data);
-					Icq.c.sendPacket(reply2);
+					reqp = new SnacPacket(SnacPacket.CLI_CHECKROSTER_FAMILY, SnacPacket.CLI_CHECKROSTER_COMMAND, SnacPacket.CLI_CHECKROSTER_COMMAND, new byte[0], data);
+					Icq.c.sendPacket(reqp);
 				}
+				reqp = null;
+
+				reqp = new SnacPacket(SnacPacket.CLI_REQLOCATION_FAMILY, SnacPacket.CLI_REQLOCATION_COMMAND,
+							SnacPacket.CLI_REQLOCATION_COMMAND, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reqp);
+				reqp = null;
+
+				rdata = new byte[6];
+				Util.putDWord(rdata, 0, 0x00050002);
+				Util.putWord(rdata, 4, 0x0003);
+				reqp = new SnacPacket(SnacPacket.CLI_REQBUDDY_FAMILY, SnacPacket.CLI_REQBUDDY_COMMAND,
+							SnacPacket.CLI_REQBUDDY_COMMAND, new byte[0], rdata);
+				Icq.c.sendPacket(reqp);
+				reqp = null;
+
+				reqp = new SnacPacket(SnacPacket.CLI_REQICBM_FAMILY, SnacPacket.CLI_REQICBM_COMMAND,
+							SnacPacket.CLI_REQICBM_COMMAND, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reqp);
+				reqp = null;
+
+				reqp = new SnacPacket(SnacPacket.CLI_REQBOS_FAMILY, SnacPacket.CLI_REQBOS_COMMAND,
+							SnacPacket.CLI_REQBOS_COMMAND, new byte[0], new byte[0]);
+				Icq.c.sendPacket(reqp);
+				reqp = null;
 
 				// Move to next state
 				this.state = ConnectAction.STATE_CLI_CHECKROSTER_SENT;
