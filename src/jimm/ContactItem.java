@@ -789,8 +789,6 @@ public class ContactItem implements ContactListItem, JimmScreen
 		{
 			JimmUI.showContactMenu(this);
 		}
-
-		setStatusImage();
 	}
 	
 	public boolean isScreenActive()
@@ -801,18 +799,17 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 	/****************************************************************************/
 	/****************************************************************************/
-	/****************************************************************************/
+	/***/
 
 	public void setStatusImage()
 	{
 		int imgIndex;
 
-		//#sijapp cond.if target isnot "DEFAULT"#		
-		imgIndex = typing ? 13 : JimmUI
-				.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
-		//#sijapp cond.else#
-		//#		imgIndex = JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
-		//#sijapp cond.end#
+//#sijapp cond.if target isnot "DEFAULT"#		
+		imgIndex = typing ? 13 : JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
+//#sijapp cond.else#
+		imgIndex = JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
+//#sijapp cond.end#
 
 		if (SplashCanvas.locked())
 		{

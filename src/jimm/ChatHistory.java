@@ -515,6 +515,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 		ChatHistory.currentChat = this;
 		ChatHistory.updateCaption_Internal(this);
 		contact.resetUnreadMessages();
+		contact.setStatusImage();
 		JimmUI.setLastScreen(this, false);
 		JimmUI.removeScreen(contact); 
 	}
@@ -544,6 +545,7 @@ public class ChatHistory
 {
 	static private ChatHistory _this;
 	static private Hashtable historyTable;
+	static private Vector historyUins = new Vector();
 
 	public ChatHistory()
 	{
@@ -725,12 +727,10 @@ public class ChatHistory
 	{
 		ContactItem cItem = ContactList.getItembyUIN(uin);
 		historyTable.remove(uin);
+		historyUins.removeElement(uin);
 
-		cItem.setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT,
-				false);
-		cItem.setIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
-		cItem.setIntValue(ContactItem.CONTACTITEM_URLMESSAGES, 0);
-		cItem.setIntValue(ContactItem.CONTACTITEM_SYSNOTICES, 0);
+		cItem.setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT, false);
+		cItem.resetUnreadMessages();
 	}
 
 	// Delete the chat history for uin
@@ -785,6 +785,8 @@ public class ChatHistory
 			ChatTextList chat = (ChatTextList)chats.nextElement();
 			if (chatForm != chat) updateCaption_Internal(chat);
 		}
+		
+		historyUins.addElement(uin);
 		
 		ContactList.getItembyUIN(uin).setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT, true);
 //#sijapp cond.if modules_HISTORY is "true" #
@@ -854,8 +856,15 @@ public class ChatHistory
 	{
 		String uin = current.contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		ChatTextList temp = (ChatTextList) historyTable.get(uin);
-		String Title = temp.ChatName + " / " + historyTable.size();
-		temp.textList.setCaption(Title);
+		int size = historyTable.size();
+		String title = null;
+		if (size != 1)
+		{
+			int index = historyUins.indexOf(uin)+1;
+			title = temp.ChatName + " (" + index + "/" + size + ")";
+		}
+		else title = temp.ChatName;
+		temp.textList.setCaption(title);
 	}		
 
 	static public void setColorScheme()
