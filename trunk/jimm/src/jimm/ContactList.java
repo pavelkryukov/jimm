@@ -1618,36 +1618,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		if (type == VirtualList.KEY_PRESSED) Jimm.aaUserActivity();
 	}
 
-	// shows next or previos chat 
-	static synchronized protected String showNextPrevChat(boolean next)
-	{
-		int index = cItems.indexOf(lastChatItem);
-		if (index == -1)
-			return null;
-		int di = next ? 1 : -1;
-		int maxSize = cItems.size();
-
-		for (int i = index + di;; i += di)
-		{
-			if (i < 0)
-				i = maxSize - 1;
-			if (i >= maxSize)
-				i = 0;
-			if (i == index)
-				break;
-
-			ContactItem cItem = getCItem(i);
-			if (cItem
-					.getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT))
-			{
-				lastChatItem = cItem;
-				cItem.activate();
-				return cItem.getStringValue(ContactItem.CONTACTITEM_UIN);
-			}
-		}
-		return null;
-	}
-
 	// Returns number of unread messages 
 	static protected int getUnreadMessCount()
 	{
