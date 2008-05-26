@@ -2802,7 +2802,7 @@ public class Icq implements Runnable
 
 			String message = icqXStatus != -1 ? ("icqmood"+icqXStatus) : "";
 
-			Util.writeWord(statBuffer, 0x0000, true);   // TLV Length
+			Util.writeWord(statBuffer, 12+szMoodId.length+message.length(), true);   // TLV Length
 			Util.writeWord(statBuffer, 0x0002, true);   // Text Status
 			Util.writeByte(statBuffer, 0x04);
 			Util.writeByte(statBuffer, szMoodId.length + 0x04);
