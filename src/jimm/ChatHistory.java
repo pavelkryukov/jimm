@@ -394,33 +394,29 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 
 	public void vlKeyPress(VirtualList sender, int keyCode, int type)
 	{
+		boolean keyWasProcessed = false;
+		
 		Jimm.aaUserActivity();
 		
-		try
-		// getGameAction can raise exception
+		try // getGameAction can raise exception
 		{
 			if (type == VirtualList.KEY_PRESSED)
 			{
-				String currUin;
 				switch (sender.getGameAction(keyCode))
 				{
 				case Canvas.LEFT:
-					currUin = ContactList.showNextPrevChat(false);
-					ChatHistory.calcCounter(currUin);
+					keyWasProcessed = ChatHistory.selectNextChat_Internal(this, false);
 					return;
 
 				case Canvas.RIGHT:
-					currUin = ContactList.showNextPrevChat(true);
-					ChatHistory.calcCounter(currUin);
+					keyWasProcessed = ChatHistory.selectNextChat_Internal(this, true);
 					return;
 				}
 			}
 
-			JimmUI.execHotKey(contact, keyCode, type);
-		} catch (Exception e)
-		{
-			// do nothing
-		}
+			if (!keyWasProcessed) JimmUI.execHotKey(contact, keyCode, type);
+		} 
+		catch (Exception e) { /* do nothing */ }
 	}
 
 	//#sijapp cond.if target isnot "DEFAULT"#
@@ -514,8 +510,10 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 
 	public void activate()
 	{
+		buildMenu();
 		textList.activate(Jimm.display);
 		ChatHistory.currentChat = this;
+		ChatHistory.updateCaption_Internal(this);
 		contact.resetUnreadMessages();
 		JimmUI.setLastScreen(this, false);
 		JimmUI.removeScreen(contact); 
@@ -547,8 +545,6 @@ public class ChatHistory
 	static private ChatHistory _this;
 	static private Hashtable historyTable;
 
-	static private int counter;
-
 	public ChatHistory()
 	{
 		_this = this;
@@ -557,7 +553,6 @@ public class ChatHistory
 	static
 	{
 		historyTable = new Hashtable();
-		counter = 1;
 	}
 
 	/* Adds a message to the message display */
@@ -784,12 +779,17 @@ public class ChatHistory
 		ChatTextList chatForm = new ChatTextList(name, contact);
 		String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		historyTable.put(uin, chatForm);
-		UpdateCaption(uin);
-		ContactList.getItembyUIN(uin).setBooleanValue(
-				ContactItem.CONTACTITEM_HAS_CHAT, true); ///
-		//#sijapp cond.if modules_HISTORY is "true" #
+		Enumeration chats = historyTable.elements();
+		while (chats.hasMoreElements())
+		{
+			ChatTextList chat = (ChatTextList)chats.nextElement();
+			if (chatForm != chat) updateCaption_Internal(chat);
+		}
+		
+		ContactList.getItembyUIN(uin).setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT, true);
+//#sijapp cond.if modules_HISTORY is "true" #
 		fillFormHistory(contact);
-		//#sijapp cond.end#
+//#sijapp cond.end#
 	}
 	
 	static public void updateChatIfExists(ContactItem contact)
@@ -845,42 +845,42 @@ public class ChatHistory
 	static public void contactRenamed(String uin, String newName)
 	{
 		ChatTextList temp = (ChatTextList) historyTable.get(uin);
-		if (temp == null)
-			return;
+		if (temp == null) return;
 		temp.ChatName = newName;
-		UpdateCaption(uin);
+		updateCaption_Internal(temp);
 	}
 
-	static public void UpdateCaption(String uin)
+	static protected void updateCaption_Internal(ChatTextList current)
 	{
-		calcCounter(uin);
+		String uin = current.contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		ChatTextList temp = (ChatTextList) historyTable.get(uin);
-		// Calculate the title for the chatdisplay.
-		String Title = temp.ChatName + " (" + counter + "/"
-				+ historyTable.size() + ")";
+		String Title = temp.ChatName + " / " + historyTable.size();
 		temp.textList.setCaption(Title);
-	}
+	}		
 
 	static public void setColorScheme()
 	{
 		Enumeration AllChats = historyTable.elements();
 		while (AllChats.hasMoreElements())
-			JimmUI
-					.setColorScheme(((ChatTextList) AllChats.nextElement()).textList, false, -1, true);
+			JimmUI.setColorScheme(((ChatTextList) AllChats.nextElement()).textList, false, -1, true);
 	}
-
-	// Sets the counter for the ChatHistory
-	static public void calcCounter(String curUin)
+	
+	static protected boolean selectNextChat_Internal(ChatTextList current, boolean next)
 	{
-		if (curUin == null) return;
-		Enumeration AllChats = historyTable.elements();
-		Object chat = historyTable.get(curUin);
-		counter = 1;
-		while (AllChats.hasMoreElements())
-		{
-			if (AllChats.nextElement() == chat) break;
-			counter++;
-		}
+		if (historyTable.size() <= 1) return false;
+		String curUin = current.contact.getStringValue(ContactItem.CONTACTITEM_UIN);
+		Enumeration keys = historyTable.keys();
+		Vector uins = new Vector(); 
+		while (keys.hasMoreElements()) uins.addElement(keys.nextElement());
+		int curIndex = uins.indexOf(curUin);
+		if (next) curIndex++;
+		else curIndex--;
+		if (curIndex < 0) curIndex = uins.size()-1;
+		if (curIndex >= uins.size()) curIndex = 0;
+		JimmUI.removeScreen(current);
+		ChatTextList newChat = (ChatTextList)historyTable.get(uins.elementAt(curIndex));
+		newChat.activate();
+		return true;
 	}
 	
 	public static void rebuildMenu(ContactItem item)
@@ -892,14 +892,8 @@ public class ChatHistory
 	public static boolean activateIfExists(ContactItem item)
 	{
 		if (item == null) return false;
-		
 		ChatTextList chat = getChatHistoryAt(item.getStringValue(ContactItem.CONTACTITEM_UIN));
-		if (chat != null)
-		{
-			chat.buildMenu();
-			chat.activate();
-		}
-		
+		if (chat != null) chat.activate();
 		return (chat != null);
 	}
 	

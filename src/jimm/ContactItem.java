@@ -782,7 +782,6 @@ public class ContactItem implements ContactListItem, JimmScreen
 		if (getBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT))
 		{
 			ChatTextList chat = ChatHistory.getChatHistoryAt(currentUin);
-			chat.buildMenu();
 			chat.activate();
 		} 
 		else
