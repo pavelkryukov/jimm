@@ -1542,7 +1542,7 @@ public class Icq implements Runnable
 			byte[] flapHeader = new byte[6];
 			byte[] flapData;
 			byte[] rcvdPacket;
-			int bRead, bReadSum;
+			int bRead = 0, bReadSum;
 
 			// Reset packet buffer
 			synchronized (this)
@@ -1665,6 +1665,14 @@ public class Icq implements Runnable
 						JimmException.handleException(f);
 				}
 				// Reset input close flag
+			}
+			
+			// Sometimes Nokia emulator stops working and bRead returns -1 
+			if (bRead == -1 && !inputCloseFlag)
+			{
+				JimmException f = new JimmException(120, 4);
+				if (!Icq.reconnect(f))
+					JimmException.handleException(f);
 			}
 		}
 
