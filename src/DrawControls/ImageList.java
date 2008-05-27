@@ -42,6 +42,7 @@ public class ImageList
 	//! Return image by index
 	public Image elementAt(int index)
 	{
+		if (items == null) return null;
 		return (index < 0 || index >= items.length) ? null : items[index];
 	}
 
@@ -53,7 +54,7 @@ public class ImageList
 	//! Return number of stored images
 	public int size()
 	{
-		return items.length;
+		return (items == null) ? 0 : items.length;
 	}
 
 	//! Return width of each image
@@ -117,6 +118,7 @@ public class ImageList
 
 	public void load(String firstLine, String extention, int from, int to) throws IOException
 	{
+		items = null;
 		Image image = null;
 		Vector images = new Vector();
 
