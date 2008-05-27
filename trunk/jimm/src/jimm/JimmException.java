@@ -50,7 +50,7 @@ public class JimmException extends Exception
 	// True, if an error message should be presented to the user
 	protected boolean displayMsg;
 
-	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 	// True, if this is an exceptuion for an peer connection
 	protected boolean peer;
 
@@ -70,7 +70,7 @@ public class JimmException extends Exception
 		this._ErrCode = errCode;
 		this.critical = true;
 		this.displayMsg = true;
-		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 		//  #sijapp cond.if modules_FILES is "true"#
 		this.peer = false;
 		//  #sijapp cond.end#
@@ -84,14 +84,14 @@ public class JimmException extends Exception
 		this._ErrCode = errCode;
 		this.critical = false;
 		this.displayMsg = displayMsg;
-		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 		//  #sijapp cond.if modules_FILES is "true"#
 		this.peer = false;
 		//  #sijapp cond.end#
 		//  #sijapp cond.end#
 	}
 
-	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 	//  #sijapp cond.if modules_FILES is "true"#
 	// Constructs a non-critical JimmException with peer info
 	public JimmException(int errCode, int extErrCode, boolean displayMsg,
@@ -119,7 +119,7 @@ public class JimmException extends Exception
 		return (this.critical);
 	}
 
-	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 	//  #sijapp cond.if modules_FILES is "true"#
 	// Returns true if this is a peer exception
 	public boolean isPeer()
@@ -139,7 +139,7 @@ public class JimmException extends Exception
 		{
 
 			// Reset comm. subsystem
-			//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 			//  #sijapp cond.if modules_FILES is "true"#
 			if (e.isPeer())
 				Icq.resetPeerCon();
