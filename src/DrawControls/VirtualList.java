@@ -1035,7 +1035,7 @@ public abstract class VirtualList
 	protected final int getCapHeight()
 	{
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target="RIM"#
-		if (fullScreen) return 0;
+		if (fullScreen) return curFrameWidth;
 		//#sijapp cond.end#
 		int capHeight = 0;
 		if (caption != null) capHeight = capAndMenuFont.getHeight() + 2;
@@ -1054,13 +1054,24 @@ public abstract class VirtualList
 	protected int drawCaption(Graphics g, int mode, int curX, int curY)
 	{
 		if (caption == null) return 0;
+		
+		int width = getWidthInternal();
+		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (fullScreen) return 0;
+		if (fullScreen)
+		{
+			if (mode == DMS_DRAW)
+			{
+				g.setColor(bkgrndColor);
+				g.fillRect(0, 0, width, curFrameWidth);
+			}
+			return curFrameWidth;
+		}
 		//#sijapp cond.end#
 		
 		if (mode != DMS_DRAW) return getCapHeight();
 
-		int width = getWidthInternal();
+		
 		g.setFont(capAndMenuFont);
 		int height = getCapHeight();
 		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -64), 0, 0, width, height);
@@ -1818,10 +1829,18 @@ public abstract class VirtualList
 		int width = getWidthInternal();
 		int layer = height/4;
 		
-		if ((style == DMS_DBLCLICK) || fullScreen) return false;
+		if (style == DMS_DBLCLICK) return false;
 		
 		if (style == DMS_DRAW)
-			drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -80), 0, y1, width, y2);
+		{
+			if (fullScreen)
+			{
+				g.setColor(bkgrndColor);
+				g.fillRect(0, y1, width, y2-y1);
+				return false;
+			}
+			else drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -80), 0, y1, width, y2);
+		}
 		
 		g.setFont(capAndMenuFont);
 		
@@ -1905,8 +1924,8 @@ public abstract class VirtualList
 	
 	protected final int getMenuBarHeight()
 	{
-		if (fullScreen) return 0;
-		return exMenuExists() ? capAndMenuFont.getHeight()+3 : 0;
+		if (fullScreen) return curFrameWidth;
+		return exMenuExists() ? capAndMenuFont.getHeight()+3 : curFrameWidth;
 	}
 
 	private boolean drawMenuItems(Graphics g, int menuBarHeight, int style, int curX, int curY)
