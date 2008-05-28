@@ -44,21 +44,18 @@ import DrawControls.TreeNode;
 public class VirtualTree extends VirtualList
 {
 	final protected TreeNode root = new TreeNode(null);
-
 	private Vector drawItems;
-
 	private boolean isChanged = false;
-
 	private int stepSize = 6;
-
-	private boolean showButtons = true, autoExpand = true;
-	
+	private boolean showButtons = true;
+	private boolean autoExpand = true;
 	private int currFontHeight;
 	
 	private VirtualTreeCommands commands;
 
 	{
 		root.expanded = true;
+		currFontHeight = getFontHeight();
 	}
 
 	//! Constructor
@@ -303,18 +300,17 @@ public class VirtualTree extends VirtualList
 
 	//! For internal use only
 	/*! Draw a tree node. Called by base class DrawControls#VirtualDrawList */
-	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight, int paintMode)
+	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int paintMode)
 	{
-		currFontHeight = fontHeight;
 		checkToRebuildTree();
 		
-		super.drawItemData(g, index, x1, y1, x2, y2, fontHeight, paintMode);
+		super.drawItemData(g, index, x1, y1, x2, y2, paintMode);
 		
 		if (showButtons)
 		{
 			TreeNode treeItem = getDrawItem(index);
 			int x = x1 + treeItem.level * stepSize;
-			drawNodeRect(g, treeItem, x, y1, y2, fontHeight);
+			drawNodeRect(g, treeItem, x, y1, y2, y2-y1);
 		}
 	}
 

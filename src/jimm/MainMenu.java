@@ -127,7 +127,8 @@ public class MainMenu implements CommandListener, JimmScreen
 			
 		JimmUI.addTextListItem(list, "about", null, MENU_ABOUT, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.if target is "MIDP2" #
-		if (Jimm.is_phone_SE()) JimmUI.addTextListItem(list, "minimize", null, MENU_MINIMIZE, true, -1, Font.STYLE_PLAIN);
+		if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON) 
+			JimmUI.addTextListItem(list, "minimize", null, MENU_MINIMIZE, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
 		JimmUI.addTextListItem(list, "exit", null, MENU_EXIT, true, -1, Font.STYLE_PLAIN);
 

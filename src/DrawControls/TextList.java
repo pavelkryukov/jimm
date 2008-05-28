@@ -343,11 +343,11 @@ public class TextList extends VirtualList implements Runnable
 	}
 
 	// Overrides VirtualList.drawItemData
-	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight, int paintMode)
+	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int paintMode)
 	{
 		if (getCursorMode() != CURSOR_MODE_DISABLED)
 		{
-			super.drawItemData(g, index, x1, y1, x2, y2, fontHeight, paintMode);
+			super.drawItemData(g, index, x1, y1, x2, y2, paintMode);
 			return;
 		}
 

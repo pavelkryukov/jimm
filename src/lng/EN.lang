@@ -40,6 +40,7 @@
   "black_on_white"              "Black on white"
   "bring_up"                    "Bring up on incoming message"
   "byte"                        "Byte"
+  "caption_offset"              "Caption offset (%)"
   "cancel"                      "Cancel"  
   "cell_phone"                  "Cell Tel." // ???
   "change"                      "Change"

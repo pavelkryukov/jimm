@@ -163,31 +163,12 @@ public abstract class VirtualList
 	public final static int KEY_REPEATED = 2;
 
 	public final static int KEY_RELEASED = 3;
-
-	// Set of fonts for quick selecting
-	private Font normalFont, boldFont, italicFont;
-
-	// Width of scroller line
-	protected final static int scrollerWidth;
-
-	// Font for drawing caption
-	private static Font capAndMenuFont;
 	
 	// Commands to react to VL events
 	private VirtualListCommands vlCommands;
 
-	// Caption of VL
-	private String caption;
-	
-	static private String bottomText;
-
 	// Used by "Invalidate" method to prevent invalidate when locked 
 	private boolean dontRepaint = false;
-
-	// Index for current item of VL
-	protected int currItem = 0;
-	
-	protected boolean cyclingCursor = false;
 
 	// Used for passing params of items when painting 
 	final static protected ListItem paintedItem;
@@ -195,29 +176,38 @@ public abstract class VirtualList
 	// Used to catch changes to repaint data
 	private int lastCurrItem = 0, lastTopItem = 0;
 
-	private boolean fullScreen = false;
-
-	private Image capImage;
+	private static int curMenuItemIndex;
 	
 	private static final int KEY_CODE_LEFT_MENU = 1000001;
 	private static final int KEY_CODE_RIGHT_MENU = 1000002;
 	private static final int KEY_CODE_BACK_BUTTON = 1000003;
 	private static final int KEY_CODE_UNKNOWN = 1000004;
+
+	// Individual UI stuff
+	protected int     currItem         = 0;
+	private   Image   capImage;
+	protected boolean cyclingCursor    = false;
+	private   boolean fullScreen       = false;
+	protected int     borderWidth      = 0;
+	protected int     curFrameWidth    = 1;
+	private   int     topItem          = 0; // Index of top visilbe item 
+	private   int     fontSize         = MEDIUM_FONT; // Current font size of VL
+	private   int     bkgrndColor      = 0xFFFFFF; // bk color of VL
+	private   int     cursorColor      = 0x808080; // Used when drawing focus rect.
+	private   int     cursorFrameColor = 0xFF; // Used when drawing focus rect.
+	private   int     textColor        = 0x000000; // Default text color.
+	private   int     capBkCOlor       = 0xC0C0C0;
+	private   int     capTxtColor      = 0x00; // Color of caprion text
+	private   int     cursorMode       = CURSOR_MODE_ENABLED; // Cursor mode
+	private   String  caption;
 	
-	private static int curMenuItemIndex; 
-	
+	// Common UI stuff
+	private static Font    capAndMenuFont;
 	private static boolean mirrorMenu = false;
-	protected int borderWidth = 0;
-	protected int curFrameWidth = 1;
-	private int topItem = 0; // Index of top visilbe item 
-	private int fontSize = MEDIUM_FONT; // Current font size of VL
-	private int bkgrndColor = 0xFFFFFF; // bk color of VL
-	private int cursorColor = 0x808080; // Used when drawing focus rect.
-	private int cursorFrameColor = 0xFF; // Used when drawing focus rect.
-	private int textColor = 0x000000; // Default text color.
-	private int capBkCOlor = 0xC0C0C0;
-	private int capTxtColor = 0x00; // Color of caprion text
-	private int cursorMode = CURSOR_MODE_ENABLED; // Cursor mode
+	private static int     capOffset  = 0;
+	private static String  bottomText = null;
+	
+	protected static final int scrollerWidth;
 
 	static
 	{
@@ -234,6 +224,11 @@ public abstract class VirtualList
 	public static void setMirrorMenu(boolean value)
 	{
 		mirrorMenu = value;
+	}
+	
+	public static void setCapOffset(int value)
+	{
+		capOffset = value;
 	}
 	
 	/**
@@ -294,8 +289,7 @@ public abstract class VirtualList
 	
 	private void initVirtualList()
 	{
-		createSetOfFonts(this.fontSize);
-		int fontHeight = normalFont.getHeight();
+		int fontHeight = getQuickFont(Font.STYLE_PLAIN).getHeight();
 		curFrameWidth = (fontHeight > 16) ? 2 : 1;
 		borderWidth = fontHeight/6+1;
 	}
@@ -318,12 +312,15 @@ public abstract class VirtualList
 		switch (style)
 		{
 		case Font.STYLE_BOLD:
-			return boldFont;
+			return Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, fontSize);
+			
 		case Font.STYLE_PLAIN:
-			return normalFont;
+			return Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, fontSize);
+			
 		case Font.STYLE_ITALIC:
-			return italicFont;
+			return Font.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, fontSize);
 		}
+		
 		return Font.getFont(Font.FACE_SYSTEM, style, fontSize);
 	}
 
@@ -345,7 +342,6 @@ public abstract class VirtualList
 	{
 		if (fontSize == value) return;
 		fontSize = value;
-		createSetOfFonts(fontSize);
 		checkTopItem();
 		invalidate();
 	}
@@ -391,13 +387,6 @@ public abstract class VirtualList
 		textColor = text;
 		cursorFrameColor = crsFrame;
 		if (isActive()) virtualCanvas.repaint();
-	}
-
-	private void createSetOfFonts(int size)
-	{
-		normalFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, fontSize);
-		boldFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, fontSize);
-		italicFont = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, fontSize);
 	}
 
 	public int getFontSize()
@@ -943,11 +932,6 @@ public abstract class VirtualList
 		return false;
 	}
 
-	static int abs(int value)
-	{
-		return (value < 0) ? -value : value;
-	}
-
 	protected void pointerPressed(int x, int y)
 	{
 		// is pointing on scroller
@@ -966,8 +950,8 @@ public abstract class VirtualList
 		long time = System.currentTimeMillis();
 		
 		if (((time - lastPointerTime) < 500) && 
-				(abs(x - lastPointerXCrd) < 10) && 
-				(abs(y - lastPointerYCrd) < 10)) mode = DMS_DBLCLICK;
+				(Math.abs(x - lastPointerXCrd) < 10) && 
+				(Math.abs(y - lastPointerYCrd) < 10)) mode = DMS_DBLCLICK;
 		
 		if (bDIimage == null) bDIimage = Image.createImage(getWidthInternal(), getHeightInternal());
 		paintAllOnGraphics(bDIimage.getGraphics(), mode, x, y);
@@ -1055,6 +1039,8 @@ public abstract class VirtualList
 	{
 		if (caption == null) return 0;
 		
+		if (mode != DMS_DRAW) return getCapHeight();
+		
 		int width = getWidthInternal();
 		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
@@ -1069,9 +1055,6 @@ public abstract class VirtualList
 		}
 		//#sijapp cond.end#
 		
-		if (mode != DMS_DRAW) return getCapHeight();
-
-		
 		g.setFont(capAndMenuFont);
 		int height = getCapHeight();
 		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -64), 0, 0, width, height);
@@ -1079,7 +1062,7 @@ public abstract class VirtualList
 		g.setColor(transformColorLight(capBkCOlor, -128));
 		g.drawLine(0, height - 1, width, height - 1);
 
-		int x = 2;
+		int x = 2+(capOffset*width-2)/100;
 
 		if (capImage != null)
 		{
@@ -1268,7 +1251,7 @@ public abstract class VirtualList
 			if ((mode == DMS_DRAW || mode == DMS_CUSTOM)/* && */)
 			{
 				if (crdIntersect(y1, y2, clipY1, clipY2))
-					drawItemData(g, i, x1, y1, x2, y2, fontHeight, mode);
+					drawItemData(g, i, x1, y1, x2, y2, mode);
 			}
 			
 			//#sijapp cond.if target is "MIDP2"#
@@ -1450,7 +1433,7 @@ public abstract class VirtualList
 	}
 
 	// protected void drawItemData
-	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight, int paintMode)
+	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int paintMode)
 	{
 		paintedItem.clear();
 		get(index, paintedItem);
@@ -1486,9 +1469,10 @@ public abstract class VirtualList
 		// Draw text of item
 		if (paintedItem.text != null)
 		{
-			g.setFont(getQuickFont(paintedItem.fontStyle));
+			Font font = getQuickFont(paintedItem.fontStyle);
+			g.setFont(font);
 			g.setColor(paintedItem.color);
-			g.drawString(paintedItem.text, x+1, (y1 + y2 - fontHeight) / 2, Graphics.TOP | Graphics.LEFT);
+			g.drawString(paintedItem.text, x+1, (y1 + y2 - font.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
 		}
 		
 		// Draw right image

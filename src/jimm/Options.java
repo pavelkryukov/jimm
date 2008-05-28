@@ -132,6 +132,7 @@ public class Options
 	public static final int OPTION_AUTOAWAY_TIME2     = 97;
 	public static final int OPTION_CAMERA_ENCODING    = 98;
 	public static final int OPTION_CAMERA_RES         = 99;
+	public static final int OPTION_CAPTION_OFFSET     = 100;
 	
 	/* boolean */
 	public static final int OPTION_KEEP_CONN_ALIVE   = 128; 
@@ -446,6 +447,8 @@ public class Options
 		setString(OPTION_ANTI_SPAM_ANS, "1");
 //#sijapp cond.end#		
 		setBoolean(OPTION_FULL_TEXTBOX, false);
+		
+		setInt(OPTION_CAPTION_OFFSET, (Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA) ? 10 : 0);
 	}
 
 	static public void resetLangDependedOpts()
@@ -837,6 +840,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private TextField lightTimeout;
 	private ChoiceGroup lightManual;
 //#sijapp cond.end#
+	private TextField txtCapOffset;
 	
 //#sijapp cond.if modules_PROXY is "true"#
 	private ChoiceGroup srvProxyType;
@@ -1592,6 +1596,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			optionsForm.append(lightTimeout);
 			optionsForm.append(lightManual);
 			//#sijapp cond.end #
+			
+			txtCapOffset = new TextField(ResourceBundle.getString("caption_offset"), String.valueOf(Options.getInt(Options.OPTION_CAPTION_OFFSET)), 2, TextField.NUMERIC); 
+			optionsForm.append(txtCapOffset);
 
 			break;
 
@@ -1720,7 +1727,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			chsBringUp = new ChoiceGroup(ResourceBundle.getString("misc"),
 					Choice.MULTIPLE);
 			//#sijapp cond.if target is "MIDP2"#
-			if (Jimm.is_phone_SE())
+			if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON)
 				setChecked(chsBringUp, "bring_up", Options.OPTION_BRING_UP);
 			//#sijapp cond.end#
 			
@@ -2020,9 +2027,15 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 			//#sijapp cond.end#
 			
+			int capOffset = Integer.parseInt(txtCapOffset.getString());
+			if (capOffset < 0) capOffset = 0;
+			if (capOffset > 50) capOffset = 50;
+			Options.setInt(Options.OPTION_CAPTION_OFFSET, capOffset);
+			
 			if (lastSmallFont != newSmallFont) JimmUI.setColorScheme();
 			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 			VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
+			VirtualList.setCapOffset(capOffset);
 
 			if (!lastUILang.equals(Options.getString(Options.OPTION_UI_LANGUAGE)))
 				Options.setBoolean(Options.OPTION_LANG_CHANGED, true);
@@ -2070,7 +2083,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			idx = 0;
 			//#sijapp cond.if target is "MIDP2"#
-			if (Jimm.is_phone_SE()) Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp.isSelected(idx++));
+			if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON) 
+				Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp.isSelected(idx++));
 			//#sijapp cond.end#
 			Options.setBoolean(Options.OPTION_CREEPING_LINE, chsBringUp.isSelected(idx++));
 			//#sijapp cond.end#
