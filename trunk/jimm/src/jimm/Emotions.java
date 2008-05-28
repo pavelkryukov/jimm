@@ -533,7 +533,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 		//#sijapp cond.end#
 
-		protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int fontHeight, int paintMode)
+		protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int paintMode)
 		{
 			int xa, xb;
 			int startIdx = cols * index;

@@ -62,6 +62,15 @@ public class Jimm extends MIDlet
 	{
 		loadError.append(value).append("\n\n");
 	}
+	
+	static public final int PHONE_SONYERICSSON = 1000;
+	static public final int PHONE_NOKIA        = 1001;
+	static private int phoneType;
+	
+	static public int getPhoneVendor()
+	{
+		return phoneType;
+	}
 
 	// ICQ object
 	private Icq icq;
@@ -78,10 +87,6 @@ public class Jimm extends MIDlet
 	// Chat history object
 	private ChatHistory ch;
 
-	//#sijapp cond.if target is "MIDP2" #
-	static private boolean is_phone_SE;
-
-	//#sijapp cond.end #
 	//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
 	//#	static public final boolean supports_JSR75;
 	//#sijapp cond.end#
@@ -106,20 +111,22 @@ public class Jimm extends MIDlet
 
 	private JimmUI ui;
 
-	public static final String microeditionPlatform = System
-			.getProperty("microedition.platform");
+	public static final String microeditionPlatform = System.getProperty("microedition.platform");
 
-	public static final String microeditionProfiles = System
-			.getProperty("microedition.profiles");
+	public static final String microeditionProfiles = System.getProperty("microedition.profiles");
 
 	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"#
 	static
 	{
-		//#sijapp cond.if target is "MIDP2" #
 		if (microeditionPlatform != null)
-			is_phone_SE = (microeditionPlatform.toLowerCase().indexOf(
-					"ericsson") != -1);
-		//#sijapp cond.end#
+		{
+			String melc = microeditionPlatform.toLowerCase();
+			if (melc.indexOf("ericsson") != -1)
+				phoneType = PHONE_SONYERICSSON;
+			else if (melc.indexOf("nokia") != -1)
+				phoneType = PHONE_NOKIA;
+		}
+
 		//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
 		//#		boolean jsr75 = false;
 		//#		try
@@ -243,6 +250,7 @@ public class Jimm extends MIDlet
 		
 		DrawControls.VirtualList.setDisplay(Jimm.display);
 		VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
+		VirtualList.setCapOffset(Options.getInt(Options.OPTION_CAPTION_OFFSET));
 
 		if (loadError.length() == 0)
 		{
@@ -403,11 +411,6 @@ public class Jimm extends MIDlet
 			}
 
 		}
-	}
-
-	static public boolean is_phone_SE()
-	{
-		return is_phone_SE;
 	}
 
 	//#sijapp cond.end #
