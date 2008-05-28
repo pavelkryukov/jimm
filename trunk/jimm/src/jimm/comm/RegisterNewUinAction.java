@@ -279,12 +279,12 @@ public class RegisterNewUinAction extends Action
 						int marker = 0;
 						if (Util.getWord(buf, marker) != 0x0001) {
 							this.state = RegisterNewUinAction.STATE_ERROR;
-							throw (new JimmException(232, 0, true));
+							throw (new JimmException(232, 0));
 						}
 						marker += 10;
 						if (Util.getWord(buf, marker) != 0x2d00) {
 							this.state = RegisterNewUinAction.STATE_ERROR;
-							throw (new JimmException(232, 1, true));
+							throw (new JimmException(232, 1));
 						}
 						marker += 36;
                         
@@ -319,7 +319,7 @@ public class RegisterNewUinAction extends Action
 						    this.state = RegisterNewUinAction.STATE_WELL_DONE;
 						} else {
 						    this.state = RegisterNewUinAction.STATE_ERROR;
-						    throw (new JimmException(230, 0, true));
+						    throw (new JimmException(230, 0));
 						}
 					}
 				}
