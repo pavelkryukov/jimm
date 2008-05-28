@@ -36,37 +36,33 @@ class TextItem
 {
 	byte[] imgNumsAndTimes;
 	Image[] image;
-	byte aniStep, timeCounter;
-	
 	String text;
-	private int fontAndColor = 0;
-	private int itemHeigthAndWidth = 0;
+	int fontAndColor = 0;
+	short aniStepOrWidth;
+	short timeCounterOrHeight;
 	
 	int getHeight(int fontSize)
 	{
 		if (image != null) return image[0].getHeight();
 		if (text == null) return 0;
-		if ((itemHeigthAndWidth&0xFFFF) == 0)
+		if (timeCounterOrHeight == 0)
 		{
 			Font font = Font.getFont(Font.FACE_SYSTEM, (fontAndColor >> 24)&0xFF, fontSize);
-			itemHeigthAndWidth = (itemHeigthAndWidth&0xFFFF0000)|font.getHeight();
+			timeCounterOrHeight = (short)font.getHeight();
 		}
-		return itemHeigthAndWidth&0xFFFF;
+		return timeCounterOrHeight;
 	}
 	
 	int getWidth(int fontSize)
 	{
-		if (image != null)
-		{
-			return image[0].getWidth();
-		}
+		if (image != null) return image[0].getWidth();
 		if (text == null) return 0;
-		if ((itemHeigthAndWidth&0xFFFF0000) == 0)
+		if (aniStepOrWidth == 0)
 		{
 			Font font = Font.getFont(Font.FACE_SYSTEM, (fontAndColor >> 24)&0xFF, fontSize);
-			itemHeigthAndWidth = (itemHeigthAndWidth&0x0000FFFF)|(font.stringWidth(text) << 16);
+			aniStepOrWidth = (short)font.stringWidth(text);
 		}
-		return (itemHeigthAndWidth&0xFFFF0000) >> 16;
+		return aniStepOrWidth;
 	}
 	
 	int getColor()
@@ -163,18 +159,18 @@ class TextLine
 			int drawYPos = ypos + (itemHeight - item.getHeight(fontSize))/2;
 			if (item.image != null)
 			{
-				int imgIndex = (item.imgNumsAndTimes == null) ? 0 : item.imgNumsAndTimes[2*item.aniStep];
+				int imgIndex = (item.imgNumsAndTimes == null) ? 0 : item.imgNumsAndTimes[2*item.aniStepOrWidth];
 				Image img = item.image[imgIndex];
 				if (g != null) g.drawImage(img, xpos, drawYPos, Graphics.TOP | Graphics.LEFT);
 				
 				if (nextAniStep && item.image.length > 1)
 				{
-					item.timeCounter++;
-					if (item.timeCounter > item.imgNumsAndTimes[2*item.aniStep+1])
+					item.timeCounterOrHeight++;
+					if (item.timeCounterOrHeight > item.imgNumsAndTimes[2*item.aniStepOrWidth+1])
 					{
-						item.timeCounter = 0;
-						item.aniStep++;
-						if (item.aniStep >= item.imgNumsAndTimes.length/2) item.aniStep = 0;
+						item.timeCounterOrHeight = 0;
+						item.aniStepOrWidth++;
+						if (item.aniStepOrWidth >= item.imgNumsAndTimes.length/2) item.aniStepOrWidth = 0;
 						vl.getCanvas().repaint(xpos, drawYPos, img.getWidth(), img.getHeight());
 					}
 				}
