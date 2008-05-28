@@ -66,6 +66,7 @@ public class DebugLog
 
 	public void commandAction(Command c, Displayable d)
 	{
+		Jimm.aaUserActivity();
 		ContactList.activateList();
 	}
 

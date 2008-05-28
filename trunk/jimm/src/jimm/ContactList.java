@@ -355,7 +355,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Request display of the main menu
 	static public void activateList()
 	{
-		Jimm.aaUserActivity();
 		showStatusInCaption(-1);
 		
 		//#sijapp cond.if modules_TRAFFIC is "true" #
