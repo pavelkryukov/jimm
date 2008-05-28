@@ -465,7 +465,7 @@ public abstract class VirtualList
 			for (int i = virtualCanvas.currentControl.commands.size()-1; i >= 0; i--)
 				virtualCanvas.removeCommand((Command)virtualCanvas.currentControl.commands.elementAt(i));
 //#sijapp cond.end#
-			virtualCanvas.currentControl.onHide();
+			if (virtualCanvas.isShown()) virtualCanvas.currentControl.onHide();
 		}
 		
 //#sijapp cond.if target="RIM"#

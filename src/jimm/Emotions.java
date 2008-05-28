@@ -424,12 +424,6 @@ public class Emotions implements VirtualListCommands, CommandListener
 			Jimm.display.setCurrent(textBox);
 			Jimm.setBkltOn(true);
 		}
-		if (aniTask != null)
-		{
-			aniTask.cancel();
-			aniTask = null;
-		}
-		selector = null;
 	}
 
 	public void vlKeyPress(VirtualList sender, int keyCode, int type)
@@ -566,6 +560,17 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 				xa = xb;
 			}
+		}
+		
+		protected void onHide() 
+		{
+			System.out.println("Emotions.onHide()");
+			if (aniTask != null)
+			{
+				aniTask.cancel();
+				aniTask = null;
+			}
+			selector = null;
 		}
 
 		static private void showCurrSmileName()
