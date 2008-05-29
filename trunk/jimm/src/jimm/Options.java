@@ -516,13 +516,6 @@ public class Options
 
 		/* Close record store */
 		account.closeRecordStore();
-
-		/* Hide offline? */
-		if (getBoolean(Options.OPTION_CL_HIDE_OFFLINE))
-		{
-			setInt(Options.OPTION_CL_SORT_BY, 0);
-		}
-
 	}
 
 	/* Save option values to record store */
