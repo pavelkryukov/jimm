@@ -448,7 +448,7 @@ public class Options
 //#sijapp cond.end#		
 		setBoolean(OPTION_FULL_TEXTBOX, false);
 		
-		setInt(OPTION_CAPTION_OFFSET, (Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA) ? 10 : 0);
+		setInt(OPTION_CAPTION_OFFSET, (Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA) ? 8 : 0);
 	}
 
 	static public void resetLangDependedOpts()

@@ -178,7 +178,7 @@ public class MainMenu implements CommandListener, JimmScreen
 
 	private void doExit(boolean anyway)
 	{
-		if (!anyway && ContactList.getUnreadMessCount() > 0)
+		if (!anyway && ContactList.getUnreadMessCount())
 		{
 			JimmUI.messageBox(ResourceBundle.getString("attention"),
 					ResourceBundle.getString("have_unread_mess"),

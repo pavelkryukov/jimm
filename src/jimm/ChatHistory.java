@@ -315,7 +315,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 			{
 				Icq.requestAction(sysNotAct);
 			
-				contact.setIntValue(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
+				contact.setBooleanValue(ContactItem.CONTACTITEM_B_AUTREQUESTS, false);
 				buildMenu();
 			} catch (JimmException e)
 			{
@@ -376,7 +376,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 	
 	void checkForAuthReply()
 	{
-		if (contact.isMessageAvailable(ContactItem.MESSAGE_AUTH_REQUEST))
+		if (contact.getBooleanValue(ContactItem.CONTACTITEM_B_AUTREQUESTS))
 		{
 			textList.addCommandEx(cmdGrantAuth, VirtualList.MENU_TYPE_RIGHT);
 			textList.addCommandEx(cmdDenyAuth, VirtualList.MENU_TYPE_RIGHT);
@@ -578,7 +578,7 @@ public class ChatHistory
 			{
 				PlainMessage plainMsg = (PlainMessage) message;
 
-				if (!visible) contact.increaseMessageCount(ContactItem.MESSAGE_PLAIN);
+				if (!visible) contact.setBooleanValue(ContactItem.CONTACTITEM_B_PLMESSAGES, true);
 
 				addTextToForm(uin, contact
 						.getStringValue(ContactItem.CONTACTITEM_NAME),
@@ -606,17 +606,19 @@ public class ChatHistory
 			else if (message instanceof UrlMessage)
 			{
 				UrlMessage urlMsg = (UrlMessage) message;
-				if (!chat.isVisible()) contact .increaseMessageCount(ContactItem.MESSAGE_URL);
+				if (!chat.isVisible()) 
+					contact.setBooleanValue(ContactItem.CONTACTITEM_B_URLMESSAGES, true);
+				
 				addTextToForm(uin, contact
 						.getStringValue(ContactItem.CONTACTITEM_NAME),
 						urlMsg.getText(), urlMsg.getUrl(), urlMsg.getNewDate(),
 						false, offline, -1);
-			} else if (message instanceof SystemNotice)
+			} 
+			else if (message instanceof SystemNotice)
 			{
 				SystemNotice notice = (SystemNotice) message;
 				if (!visible)
-					contact
-							.increaseMessageCount(ContactItem.MESSAGE_SYS_NOTICE);
+					contact.setBooleanValue(ContactItem.CONTACTITEM_B_SYSNOTICES, true);
 
 				if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_YOUWEREADDED)
 				{
@@ -624,16 +626,18 @@ public class ChatHistory
 							ResourceBundle.getString("youwereadded")
 									+ notice.getSndrUin(), "", notice.getNewDate(),
 							false, offline, -1);
-				} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
+				} 
+				else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREQ)
 				{
-					contact
-							.increaseMessageCount(ContactItem.MESSAGE_AUTH_REQUEST);
+					contact.setBooleanValue(ContactItem.CONTACTITEM_B_AUTREQUESTS, true);
+					
 					addTextToForm(uin, ResourceBundle.getString("sysnotice"),
 							notice.getSndrUin()
 									+ ResourceBundle.getString("wantsyourauth")
 									+ notice.getText(), "", notice.getNewDate(),
 							false, offline, -1);
-				} else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
+				} 
+				else if (notice.getSysnotetype() == SystemNotice.SYS_NOTICE_AUTHREPLY)
 				{
 					if (notice.isAUTH_granted())
 					{

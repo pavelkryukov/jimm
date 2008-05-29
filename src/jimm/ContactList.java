@@ -1618,13 +1618,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	}
 
 	// Returns number of unread messages 
-	static protected int getUnreadMessCount()
+	static protected boolean getUnreadMessCount()
 	{
 		int count = cItems.size();
-		int result = 0;
 		for (int i = 0; i < count; i++)
-			result += getCItem(i).getUnreadMessCount();
-		return result;
+			if (getCItem(i).isContainingUnreadMessages()) return true;
+		return false;
 	}
 
 	static public ContactItem[] getItems(ContactListGroupItem group)
@@ -1681,7 +1680,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					ContactListGroupItem gItem = (ContactListGroupItem)item;
 					ContactItem[] cItems = getItems(gItem);
 					int unreadCounter = 0;
-					for (int i = 0; i < cItems.length; i++) unreadCounter += cItems[i].getUnreadMessCount();
+					for (int i = 0; i < cItems.length; i++) 
+						unreadCounter += (cItems[i].isContainingUnreadMessages() ? 1 : 0);
 					gItem.setMessCount(unreadCounter);
 				}
 				tree.setExpandFlag(node, newExpanded);
