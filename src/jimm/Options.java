@@ -1842,7 +1842,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			return;
 			
 		case OPTIONS_PRIVATE_LISTS:
-			new PrivateListsForm().execute();
+			new PrivateListsForm().activate();
 			return;
 			
 		case OPTIONS_DELETE_GROUP:
