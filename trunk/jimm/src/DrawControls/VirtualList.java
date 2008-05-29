@@ -177,6 +177,7 @@ public abstract class VirtualList
 	private int lastCurrItem = 0, lastTopItem = 0;
 
 	private static int curMenuItemIndex;
+	private static int[] curXVals = new int[2];
 	
 	private static final int KEY_CODE_LEFT_MENU = 1000001;
 	private static final int KEY_CODE_RIGHT_MENU = 1000002;
@@ -200,13 +201,13 @@ public abstract class VirtualList
 	private   int     capTxtColor      = 0x00; // Color of caprion text
 	private   int     cursorMode       = CURSOR_MODE_ENABLED; // Cursor mode
 	private   String  caption;
+	private   int     fontHeight;
 	
 	// Common UI stuff
-	private static Font    capAndMenuFont;
-	private static boolean mirrorMenu = false;
-	private static int     capOffset  = 0;
-	private static String  bottomText = null;
-	
+	private   static Font    capAndMenuFont;
+	private   static boolean mirrorMenu = false;
+	private   static int     capOffset  = 0;
+	private   static String  bottomText = null;
 	protected static final int scrollerWidth;
 
 	static
@@ -289,7 +290,7 @@ public abstract class VirtualList
 	
 	private void initVirtualList()
 	{
-		int fontHeight = getQuickFont(Font.STYLE_PLAIN).getHeight();
+		fontHeight = getQuickFont(Font.STYLE_PLAIN).getHeight();
 		curFrameWidth = (fontHeight > 16) ? 2 : 1;
 		borderWidth = fontHeight/6+1;
 	}
@@ -342,6 +343,7 @@ public abstract class VirtualList
 	{
 		if (fontSize == value) return;
 		fontSize = value;
+		fontHeight = getQuickFont(Font.STYLE_PLAIN).getHeight();
 		checkTopItem();
 		invalidate();
 	}
@@ -510,23 +512,17 @@ public abstract class VirtualList
 		onShow();
 	}
 
-	private static int maxInt(int value1, int value2)
-	{
-		return (value1 > value2) ? value1 : value2;
-	}
-
 	//! Returns height of each item in list
 	public int getItemHeight(int itemIndex)
 	{
-		int imgHeight = 0, fontHeight = getFontHeight();
-		paintedItem.clear();
+		int imgHeight = 0;
 		get(itemIndex, paintedItem);
 		if (paintedItem.leftImage != null) 
-			imgHeight = maxInt(imgHeight, paintedItem.leftImage.getHeight());
+			imgHeight = Math.max(imgHeight, paintedItem.leftImage.getHeight());
 		else if (paintedItem.secondLeftImage != null) 
-			imgHeight = maxInt(imgHeight, paintedItem.secondLeftImage.getHeight());
+			imgHeight = Math.max(imgHeight, paintedItem.secondLeftImage.getHeight());
 		else if (paintedItem.rightImage != null) 
-			imgHeight = maxInt(imgHeight, paintedItem.secondLeftImage.getHeight());
+			imgHeight = Math.max(imgHeight, paintedItem.secondLeftImage.getHeight());
 		else 
 			imgHeight = 0;
 		return (fontHeight > imgHeight) ? fontHeight : imgHeight;
@@ -1143,14 +1139,15 @@ public abstract class VirtualList
 			g.fillRect(x1, crd1, x2-x1, crd2-crd1);
 		}
 	}
-
-	//! returns font height
+	
+	/**
+	 * @return Returns height of normal font (in pixels)
+	 */
 	public int getFontHeight()
 	{
-		return getQuickFont(Font.STYLE_PLAIN).getHeight();
+		return fontHeight;
 	}
 	
-	static private int[] curXVals = new int[2];  
 	protected void getCurXVals(int[] values)
 	{
 		values[0] = curFrameWidth+1;
@@ -1161,7 +1158,6 @@ public abstract class VirtualList
 	(
 		Graphics g, 
 		int topY, 
-		int fontHeight, 
 		int menuBarHeight, 
 		int mode, 
 		int mouseX, 
@@ -1372,7 +1368,7 @@ public abstract class VirtualList
 			int clipY1 = graphics.getClipY();
 			int clipY2 = clipY1+graphics.getClipHeight();
 			y = (clipY1 <= capHeight) ? drawCaption(graphics, mode, mouseX, mouseY) : capHeight;
-			drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, mouseX, mouseY, clipY1, clipY2);
+			drawItems(graphics, y, menuBarHeight, mode, mouseX, mouseY, clipY1, clipY2);
 			drawScroller(graphics, y, visCount, menuBarHeight);
 //#sijapp cond.if target!="RIM"#			
 			if (menuBarHeight != 0)
@@ -1398,7 +1394,7 @@ public abstract class VirtualList
 			
 			clicked = drawMenuItems(graphics, menuBarHeight, mode, mouseX, mouseY);
 			if (clicked) return;
-			clicked = drawItems(graphics, y, getFontHeight(), menuBarHeight, mode, mouseX, mouseY, -1, -1);
+			clicked = drawItems(graphics, y, menuBarHeight, mode, mouseX, mouseY, -1, -1);
 			if (clicked) return;
 			break;
 //#sijapp cond.end#
