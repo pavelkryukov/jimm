@@ -615,19 +615,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	// Updates the client-side contact list (called when a new roster has been
 	// received)
-	static public void update(int flags, int versionId1_, int versionId2_, ContactListItem[] items, Vector privData)
+	static public void update(int versionId1_, int versionId2_, ContactListItem[] items, Vector privData)
 	{
 		synchronized (_this)
 		{
-			//#sijapp cond.if modules_DEBUGLOG is "true"#
-			System.out.println("New roster. versionId1_=" + ssiListLastChangeTime
-					+ ", versionId2=" + versionId2_ + ", flags=" + flags);
-			System.out.println("Old versionId1=" + ssiListLastChangeTime
-					+ ", versionId2=" + ssiNumberOfItems + ", updated="
-					+ haveToBeCleared);
-			System.out.println();
-			//#sijapp cond.end #
-
 			// Remove all Elemente form the old ContactList
 			if (haveToBeCleared)
 			{
@@ -687,6 +678,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 						ContactItem.CONTACTITEM_HAS_CHAT,
 						ChatHistory.chatHistoryExists(cItem.getStringValue(ContactItem.CONTACTITEM_UIN))
 					);
+					ChatHistory.updateChatIfExists(cItem);
 				}
 			}
 		}

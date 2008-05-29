@@ -587,11 +587,6 @@ public class ConnectAction extends Action
 					else if ((snacPacket.getFamily() == SnacPacket.SRV_REPLYROSTER_FAMILY) && (snacPacket.getCommand() == SnacPacket.SRV_REPLYROSTER_COMMAND))
 					{
 						Vector privacyLists = new Vector(); 
-						
-						if (snacPacket.getFlags() != 1) this.srvReplyRosterRcvd = true;
-
-						// System.out.println("Flag:
-						// "+snacPacket.getFlags());
 
 						// Initialize vector for
 						// items
@@ -780,7 +775,9 @@ public class ConnectAction extends Action
 						items.copyInto(itemsAsArray);
 						
 						// Save values into contact list
-						ContactList.update(snacPacket.getFlags(), timestamp, count, itemsAsArray, privacyLists);
+						ContactList.update(timestamp, count, itemsAsArray, privacyLists);
+						
+						if (timestamp != 0) this.srvReplyRosterRcvd = true;
 
 						// Packet has been consumed
 						consumed = true;
