@@ -117,6 +117,7 @@ public class JimmUI implements CommandListener
 	public final static Command cmdSelect2 = new Command(ResourceBundle.getString("select"), Command.ITEM, 2);
 	public final static Command cmdSend = new Command(ResourceBundle.getString("send"), Command.OK, 1);
 	public final static Command cmdList = new Command(ResourceBundle.getString("contact_list"), Command.ITEM, 1);
+	public final static Command cmdInfo = new Command(ResourceBundle.getString("info"), Command.ITEM, 10);
 	
 	//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 	public final static Command cmdInsertEmo = new Command(ResourceBundle.getString("insert_emotion"), Command.ITEM, 3);

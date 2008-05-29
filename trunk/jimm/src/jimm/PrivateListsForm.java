@@ -6,7 +6,7 @@ import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 import DrawControls.*;
 
-public class PrivateListsForm extends VirtualList implements VirtualListCommands, CommandListener
+public class PrivateListsForm extends VirtualList implements VirtualListCommands, CommandListener, JimmScreen
 {
 	private short[] values;
 	private ContactItem[] items;
@@ -32,6 +32,7 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 //#sijapp cond.end#
 		addCommandEx(JimmUI.cmdSave,   VirtualList.MENU_TYPE_RIGHT);
 		addCommandEx(cmdChange,        VirtualList.MENU_TYPE_RIGHT);
+		addCommandEx(JimmUI.cmdInfo,   VirtualList.MENU_TYPE_RIGHT);
 		
 		setCommandListener(this);
 		
@@ -74,9 +75,16 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		rectColor = mergeColors(backColor, textColor, 20);
 	}
 	
-	public void execute()
+	
+	public void activate()
 	{
 		activate(Jimm.display);
+		JimmUI.setLastScreen(this, false);
+	}
+	
+	public boolean isScreenActive()
+	{
+		return isActive();
 	}
 	
 	protected void getCurXVals(int[] values)
@@ -203,7 +211,19 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		
 		else if (c == JimmUI.cmdCancel)
 		{
-			Options.editOptions();
+			JimmUI.backToLastScreen();
+		}
+		
+		else if (c == JimmUI.cmdInfo)
+		{
+			int index = getCurrIndex();
+			if ((index >= getSize()) || (index < 0)) return;
+			JimmUI.requiestUserInfo
+			(
+				items[index].getStringValue(ContactItem.CONTACTITEM_UIN),
+				items[index].getStringValue(ContactItem.CONTACTITEM_NAME),
+				false
+			);
 		}
 	}
 	
@@ -265,7 +285,7 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		catch (Exception e) { }
 		
 		JimmUI.backToLastScreen();
-	}
+	}	
 }
 
 
