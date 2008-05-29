@@ -108,10 +108,6 @@ public class RunnableImpl implements Runnable
 
 			break;
 
-		case TYPE_ADDCONTACT:
-			ContactList.addContactItem((ContactItem) data[0]);
-			break;
-
 		case TYPE_RESET_CONTACTS:
 			ContactList.setStatusesOffline();
 			break;
