@@ -212,9 +212,12 @@ class TextLine
  You may use it to show text with colorised lines :) */
 public class TextList extends VirtualList implements Runnable
 {
+	private boolean alwaysShowCursor;
 	private boolean animated;
 	private static TimerTask aniTimerTask;
 	private static Timer aniTimer = new Timer();
+	private Vector lines = new Vector(); // Vector of lines. Each line contains cols. Col can be text or image
+	
 	
 	//! Construct new text list 
 	public TextList
@@ -237,15 +240,17 @@ public class TextList extends VirtualList implements Runnable
 		super(capt);
 	}
 	
-	// Vector of lines. Each line contains cols. Col can be text or image
-	private Vector lines = new Vector();
-
 	// protected int getSize()
 	public int getSize()
 	{
 		if (lines.isEmpty()) return 0;
 		int size = lines.size();
 		return (((TextLine) lines.lastElement()).size() == 0) ? size - 1 : size;
+	}
+	
+	public void setAlwaysShowCursor(boolean value)
+	{
+		alwaysShowCursor = value;
 	}
 
 	private TextLine getLine(int index)
@@ -358,13 +363,14 @@ public class TextList extends VirtualList implements Runnable
 	// Overrides VirtualList.moveCursor
 	protected void moveCursor(int step, boolean moveTop)
 	{
-		int size, currTextIndex;
+		int size, currTextIndex, lastCurItem;
 		int halfSize = (getDrawHeight()/getFontHeight())/2;
 
 		switch (step)
 		{
 		case -1:
 		case 1:
+			lastCurItem = currItem;
 			currTextIndex = getCurrTextIndex();
 			size = getSize();
 			
@@ -406,6 +412,10 @@ public class TextList extends VirtualList implements Runnable
 			checkCurrItem();
 			checkTopItem();
 			checkTopItem();
+			
+			if (alwaysShowCursor && getLine(currItem).bigTextIndex == -1) 
+				currItem = lastCurItem;
+			
 			repaintIfLastIndexesChanged();
 			break;
 

@@ -1611,6 +1611,7 @@ public class JimmUI implements CommandListener
 		tlContactMenu.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 		tlContactMenu.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 		tlContactMenu.setCommandListener(_this);
+		tlContactMenu.setAlwaysShowCursor(true);
 		
 		long status = contact.getIntValue(ContactItem.CONTACTITEM_STATUS);
 		int groupsColor = Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
