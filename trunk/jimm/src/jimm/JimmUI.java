@@ -258,7 +258,7 @@ public class JimmUI implements CommandListener
 					if (authRequested) 
 						authContactItem.setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, false);
 					
-					authContactItem.setIntValue(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
+					authContactItem.setBooleanValue(ContactItem.CONTACTITEM_B_AUTREQUESTS, false);
 				} 
 				catch (JimmException e)
 				{

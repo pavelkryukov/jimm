@@ -37,64 +37,72 @@ import jimm.SplashCanvas;
 /* TODO: remove UI code to ChatHistory */
 public class ContactItem implements ContactListItem, JimmScreen
 {
-	/* Variable keys */
-	public static final int CONTACTITEM_UIN           = 0; /* String */
-	public static final int CONTACTITEM_NAME          = 1; /* String */
-	public static final int CONTACTITEM_CLIVERSION    = 2; /* String */	
+	/* String */
+	public static final int CONTACTITEM_UIN           = 0; 
+	public static final int CONTACTITEM_NAME          = 1;
+	public static final int CONTACTITEM_CLIVERSION    = 2;	
 	
-	public static final int CONTACTITEM_ID            = 64; /* Integer */
-	public static final int CONTACTITEM_GROUP         = 65; /* Integer */
-	public static final int CONTACTITEM_PLAINMESSAGES = 67; /* Integer */
-	public static final int CONTACTITEM_URLMESSAGES   = 68; /* Integer */
-	public static final int CONTACTITEM_SYSNOTICES    = 69; /* Integer */
-	public static final int CONTACTITEM_AUTREQUESTS   = 70; /* Integer */
-	public static final int CONTACTITEM_IDLE          = 71; /* Integer */
-	public static final int CONTACTITEM_DC_TYPE       = 72; /* Integer */
-	public static final int CONTACTITEM_ICQ_PROT      = 73; /* Integer */
-	public static final int CONTACTITEM_DC_PORT       = 74; /* Integer */
-	public static final int CONTACTITEM_CAPABILITIES  = 75; /* Integer */
-	public static final int CONTACTITEM_CLIENT        = 76; /* Integer */
-	public static final int CONTACTITEM_XSTATUS       = 78; /* Integer */
-	public static final int CONTACTITEM_STATUS        = 79; /* Integer */
-	public static final int CONTACTITEM_AUTH_COOKIE   = 80; /* Integer */
-	public static final int CONTACTITEM_SIGNON        = 81; /* Integer */
-	public static final int CONTACTITEM_ONLINE        = 82; /* Integer */
-	public static final int CONTACTITEM_INV_ID        = 83; /* Integer */
-	public static final int CONTACTITEM_VIS_ID        = 84; /* Integer */
-	public static final int CONTACTITEM_IGN_ID        = 85; /* Integer */
+	/* Integer */
+	public static final int CONTACTITEM_ID            = 64; 
+	public static final int CONTACTITEM_GROUP         = 65;
+	public static final int CONTACTITEM_IDLE          = 71;
+	public static final int CONTACTITEM_DC_TYPE       = 72;
+	public static final int CONTACTITEM_ICQ_PROT      = 73;
+	public static final int CONTACTITEM_DC_PORT       = 74;
+	public static final int CONTACTITEM_CAPABILITIES  = 75;
+	public static final int CONTACTITEM_CLIENT        = 76;
+	public static final int CONTACTITEM_XSTATUS       = 78;
+	public static final int CONTACTITEM_STATUS        = 79;
+	public static final int CONTACTITEM_AUTH_COOKIE   = 80;
+	public static final int CONTACTITEM_SIGNON        = 81;
+	public static final int CONTACTITEM_ONLINE        = 82;
+	public static final int CONTACTITEM_INV_ID        = 83;
+	public static final int CONTACTITEM_VIS_ID        = 84;
+	public static final int CONTACTITEM_IGN_ID        = 85;
 
-	public static final int CONTACTITEM_ADDED         = 1 << 0; /* Boolean */
-	public static final int CONTACTITEM_NO_AUTH       = 1 << 1; /* Boolean */
-	public static final int CONTACTITEM_CHAT_SHOWN    = 1 << 2; /* Boolean */
-	public static final int CONTACTITEM_IS_TEMP       = 1 << 3; /* Boolean */
-	public static final int CONTACTITEM_HAS_CHAT      = 1 << 4; /* Boolean */
-	public static final int CONTACTITEM_IS_PHANTOM    = 1 << 5; /* Boolean */
+	/* Boolean */
+	public static final int CONTACTITEM_ADDED         = 1 << 0; 
+	public static final int CONTACTITEM_NO_AUTH       = 1 << 1;
+	public static final int CONTACTITEM_CHAT_SHOWN    = 1 << 2;
+	public static final int CONTACTITEM_IS_TEMP       = 1 << 3;
+	public static final int CONTACTITEM_HAS_CHAT      = 1 << 4;
+	public static final int CONTACTITEM_IS_PHANTOM    = 1 << 5;
+	public static final int CONTACTITEM_B_PLMESSAGES  = 1 << 6;
+	public static final int CONTACTITEM_B_URLMESSAGES = 1 << 7;
+	public static final int CONTACTITEM_B_SYSNOTICES  = 1 << 8;
+	public static final int CONTACTITEM_B_AUTREQUESTS = 1 << 9;
 	
-	public static final int CONTACTITEM_SS_DATA       = 227; /* bytes[] */
-	public static final int CONTACTITEM_INTERNAL_IP   = 225; /* bytes[] */
-	public static final int CONTACTITEM_EXTERNAL_IP   = 226; /* bytes[] */
-	
+	/* bytes[] */
+	public static final int CONTACTITEM_SS_DATA       = 227; 
+	public static final int CONTACTITEM_INTERNAL_IP   = 225;
+	public static final int CONTACTITEM_EXTERNAL_IP   = 226;
 	
 	/* No capability */
 	public static final int CAP_NO_INTERNAL = 0x00000000;
 
-	/* Message types */
-	public static final int MESSAGE_PLAIN = 1;
-	public static final int MESSAGE_URL = 2;
-	public static final int MESSAGE_SYS_NOTICE = 3;
-	public static final int MESSAGE_AUTH_REQUEST = 4;
-
-	private int idAndGropup, caps, idle, booleanValues, messCounters;
+	private int idAndGropup;
+	private int caps;
+	private int idle;
+	private int booleanValues;
 
 	//#sijapp cond.if modules_FILES is "true"#
-	private int typeAndClientId, portAndProt, intIP, extIP, authCookie;
+	private int typeAndClientId;
+	private int portAndProt;
+	private int intIP;
+	private int extIP;
+	private int authCookie;
 	//#sijapp cond.end #
 
 	private long privacyData;
-	private int uinLong, online, signOn, status;
+	private int uinLong;
+	private int online;
+	private int signOn;
+	private int status;
 	private byte xStatusId;
 
-	private String name, clientVersion, lowerText;
+	private String name;
+	private String clientVersion;
+	private String lowerText;
 	private byte[] ssData; // server-size raw data
 
 	///////////////////////////////////////////////////////////////////////////
@@ -187,22 +195,6 @@ public class ContactItem implements ContactListItem, JimmScreen
 			idAndGropup = (idAndGropup & 0xFFFF0000) | value;
 			return;
 
-		case CONTACTITEM_PLAINMESSAGES:
-			messCounters = (messCounters & 0x00FFFFFF) | (value << 24);
-			return;
-
-		case CONTACTITEM_URLMESSAGES:
-			messCounters = (messCounters & 0xFF00FFFF) | (value << 16);
-			return;
-
-		case CONTACTITEM_SYSNOTICES:
-			messCounters = (messCounters & 0xFFFF00FF) | (value << 8);
-			return;
-
-		case CONTACTITEM_AUTREQUESTS:
-			messCounters = (messCounters & 0xFFFFFF00) | value;
-			return;
-
 		case CONTACTITEM_IDLE:
 			idle = value;
 			return;
@@ -279,14 +271,6 @@ public class ContactItem implements ContactListItem, JimmScreen
 			int value = (idAndGropup & 0x0000FFFF);
 			if (value == 0 && !getBooleanValue_(CONTACTITEM_IS_PHANTOM)) value = -1; // Group is -1 for temporary contacts
 			return value; 
-		case CONTACTITEM_PLAINMESSAGES:
-			return ((messCounters & 0xFF000000) >> 24) & 0xFF;
-		case CONTACTITEM_URLMESSAGES:
-			return ((messCounters & 0x00FF0000) >> 16) & 0xFF;
-		case CONTACTITEM_SYSNOTICES:
-			return ((messCounters & 0x0000FF00) >> 8) & 0xFF;
-		case CONTACTITEM_AUTREQUESTS:
-			return (messCounters & 0x000000FF);
 		case CONTACTITEM_IDLE:
 			return idle;
 		case CONTACTITEM_CAPABILITIES:
@@ -462,10 +446,6 @@ public class ContactItem implements ContactListItem, JimmScreen
 					ContactList.STATUS_OFFLINE);
 			setIntValue_(ContactItem.CONTACTITEM_CAPABILITIES,
 					Icq.CAPF_NO_INTERNAL);
-			setIntValue_(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
-			setIntValue_(ContactItem.CONTACTITEM_URLMESSAGES, 0);
-			setIntValue_(ContactItem.CONTACTITEM_SYSNOTICES, 0);
-			setIntValue_(ContactItem.CONTACTITEM_AUTREQUESTS, 0);
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			//#sijapp cond.if modules_FILES is "true"#
 			setBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
@@ -554,17 +534,11 @@ public class ContactItem implements ContactListItem, JimmScreen
 		if (typing)
 			return 17;
 		//#sijapp cond.end#			
-		if (isMessageAvailable(MESSAGE_PLAIN))
-			tempIndex = 13;
-		else if (isMessageAvailable(MESSAGE_URL))
-			tempIndex = 14;
-		else if (isMessageAvailable(MESSAGE_AUTH_REQUEST))
-			tempIndex = 15;
-		else if (isMessageAvailable(MESSAGE_SYS_NOTICE))
-			tempIndex = 16;
-		else
-			tempIndex = JimmUI
-					.getStatusImageIndex(getIntValue(ContactItem.CONTACTITEM_STATUS));
+		if (getBooleanValue(CONTACTITEM_B_PLMESSAGES)) tempIndex = 13;
+		else if (getBooleanValue(CONTACTITEM_B_URLMESSAGES)) tempIndex = 14;
+		else if (getBooleanValue(CONTACTITEM_B_AUTREQUESTS)) tempIndex = 15;
+		else if (getBooleanValue(CONTACTITEM_B_SYSNOTICES)) tempIndex = 16;
+		else tempIndex = JimmUI.getStatusImageIndex(getIntValue(ContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
 	
@@ -631,79 +605,25 @@ public class ContactItem implements ContactListItem, JimmScreen
 	}
 
 	/* Returns total count of all unread messages (messages, sys notices, urls, auths) */
-	protected int getUnreadMessCount()
+	synchronized protected boolean isContainingUnreadMessages()
 	{
-		synchronized (this)
-		{
-			return getIntValue_(ContactItem.CONTACTITEM_PLAINMESSAGES)
-				+ getIntValue_(ContactItem.CONTACTITEM_URLMESSAGES)
-				+ getIntValue_(ContactItem.CONTACTITEM_SYSNOTICES)
-				+ getIntValue_(ContactItem.CONTACTITEM_AUTREQUESTS);
-		}
-	}
-
-	/* Returns true if the next available message is a message of given type
-	 Returns false if no message at all is available, or if the next available
-	 message is of another type */
-	public boolean isMessageAvailable(int type)
-	{
-		switch (type)
-		{
-		case MESSAGE_PLAIN:
-			return (getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
-		case MESSAGE_URL:
-			return (getIntValue(ContactItem.CONTACTITEM_URLMESSAGES) > 0);
-		case MESSAGE_SYS_NOTICE:
-			return (getIntValue(ContactItem.CONTACTITEM_SYSNOTICES) > 0);
-		case MESSAGE_AUTH_REQUEST:
-			return (getIntValue(ContactItem.CONTACTITEM_AUTREQUESTS) > 0);
-		}
-		return (getIntValue(ContactItem.CONTACTITEM_PLAINMESSAGES) > 0);
-	}
-
-	/* Increases the message count */
-	protected synchronized void increaseMessageCount(int type)
-	{
-		switch (type)
-		{
-		case MESSAGE_PLAIN:
-			setIntValue_(
-				ContactItem.CONTACTITEM_PLAINMESSAGES,
-				getIntValue_(ContactItem.CONTACTITEM_PLAINMESSAGES) + 1
-			);
-			break;
-			
-		case MESSAGE_URL:
-			setIntValue_(
-				ContactItem.CONTACTITEM_URLMESSAGES,
-				getIntValue_(ContactItem.CONTACTITEM_URLMESSAGES) + 1
-			);
-			break;
-			
-		case MESSAGE_SYS_NOTICE:
-			setIntValue_(
-				ContactItem.CONTACTITEM_SYSNOTICES,
-				getIntValue_(ContactItem.CONTACTITEM_SYSNOTICES) + 1
-			);
-			break;
-			
-		case MESSAGE_AUTH_REQUEST:
-			setIntValue_(
-				ContactItem.CONTACTITEM_AUTREQUESTS,
-				getIntValue_(ContactItem.CONTACTITEM_AUTREQUESTS) + 1
-			);
-			break;
-		}
+		return getBooleanValue(
+			CONTACTITEM_B_PLMESSAGES|
+			CONTACTITEM_B_URLMESSAGES|
+			CONTACTITEM_B_SYSNOTICES|
+			CONTACTITEM_B_AUTREQUESTS
+		);
 	}
 
 	public synchronized void resetUnreadMessages()
 	{
-		synchronized (this)
-		{
-			setIntValue_(ContactItem.CONTACTITEM_PLAINMESSAGES, 0);
-			setIntValue_(ContactItem.CONTACTITEM_URLMESSAGES, 0);
-			setIntValue_(ContactItem.CONTACTITEM_SYSNOTICES, 0);
-		}
+		setBooleanValue(
+				CONTACTITEM_B_PLMESSAGES|
+				CONTACTITEM_B_URLMESSAGES|
+				CONTACTITEM_B_SYSNOTICES|
+				CONTACTITEM_B_AUTREQUESTS,
+				false
+			);		
 	}
 
 	//#sijapp cond.if modules_HISTORY is "true" #
