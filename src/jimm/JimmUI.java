@@ -1148,6 +1148,7 @@ public class JimmUI implements CommandListener
 		curScreenTag = tag;
 		lstSelector = new TextList (ResourceBundle.getString(caption));
 		JimmUI.setColorScheme(lstSelector, false, -1, true);
+		lstSelector.setCyclingCursor(true);
 		lstSelector.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		lstSelector.setFontSize(Font.SIZE_LARGE);
 		for (int i = 0; i < elements.length; i++) JimmUI.addTextListItem(lstSelector, elements[i], null, i, translateWords, -1, Font.STYLE_PLAIN);
