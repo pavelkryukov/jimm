@@ -74,13 +74,18 @@ public class RunnableImpl implements Runnable
 	{
 		switch (type)
 		{
-		//#sijapp cond.if target isnot "DEFAULT"#
+//#sijapp cond.if target isnot "DEFAULT"#
 		case TYPE_USER_IS_TYPING:
 			ContactList.BeginTyping((String) data[0], getBoolean(data, 1));
 			break;
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		case TYPE_ADD_MSG:
+//#sijapp cond.if target isnot "DEFAULT"#			
+			int vibraKind = Options.getInt(Options.OPTION_VIBRATOR);
+			if (vibraKind == 2) vibraKind = SplashCanvas.locked() ? 1 : 0;
+			if (vibraKind > 0) Jimm.display.vibrate(500);
+//#sijapp cond.end#			
 			ContactList.addMessage((Message) data[0]);
 			break;
 
