@@ -778,6 +778,8 @@ public class Icq implements Runnable
 			ContactList.beforeConnect();
 			connect();
 			return true;
+//		} else {
+//			connecting = false;
 		}
 
 		return false;
@@ -3275,6 +3277,14 @@ public class Icq implements Runnable
 					caps |= CAPF_ANDRQ;
 					szVersion = detectClientVersion(capabilities, CLI_ANDRQ, j);
 				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDASYM, 0, 16))
+				{
+					caps |= CAPF_QIPPDASYM;
+				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDAWIN, 0, 16))
+				{
+					caps |= CAPF_QIPPDAWIN;
+				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIP, 0, 11))
 				{
 					caps |= CAPF_QIP;
@@ -3358,14 +3368,6 @@ public class Icq implements Runnable
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPINFIUM, 0, 16))
 				{
 					caps |= CAPF_QIPINFIUM;
-				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDASYM, 0, 16))
-				{
-					caps |= CAPF_QIPPDASYM;
-				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDAWIN, 0, 16))
-				{
-					caps |= CAPF_QIPPDAWIN;
 				}
 //				else if (Util.byteArrayEquals(capabilities, j16, CAP_AUDIO, 0, 16))
 //				{
