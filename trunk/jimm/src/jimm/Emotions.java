@@ -185,7 +185,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 					for (int i = 2; i < lineItems.length; i++)
 					{
-						String word = lineItems[i].replace('_', ' ');
+						String word = lineItems[i];
 						if (word.length() == 0) continue;
 						insertTextCorr(textCorr, word, currIndex);
 						if (i == 2) selEmotions.addElement(new Object[] { currIndex, word, smileName });
