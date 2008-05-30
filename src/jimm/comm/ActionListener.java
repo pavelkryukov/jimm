@@ -305,10 +305,8 @@ public class ActionListener
 						textLen = Util.getWord(buf, skip + uinLen, false);
 						lenSkip = 2;
 					}
-
-					Alert status_message = new Alert(ResourceBundle.getString("status_message"),Util.byteArrayToString(buf, skip + lenSkip + uinLen, (int)textLen,false), null, AlertType.INFO);
-					status_message.setTimeout(15000);
-					ContactList.activate(status_message);
+					
+					RunnableImpl.showStatusString(Util.byteArrayToString(buf, skip + lenSkip + uinLen, (int)textLen,false), uin);
 				}
 			}
 		

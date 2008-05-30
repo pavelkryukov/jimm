@@ -174,7 +174,14 @@ public class JimmUI implements CommandListener
 	{
 		Jimm.aaUserActivity();
 		
-		if (isControlActive(loadErrorTextList))
+		if (isControlActive(tlStatusMessage))
+		{
+			tlStatusMessage = null;
+			statusMessCI = null;
+			backToLastScreen();
+		}
+		
+		else if (isControlActive(loadErrorTextList))
 		{
 			MainMenu.activateMenu();
 		}
@@ -869,6 +876,10 @@ public class JimmUI implements CommandListener
 				MainMenu.build();
 				break;
 			//#sijapp cond.end#
+				
+			case Options.HOTKEY_REQ_SM:
+				requestContactStatusMess(item);
+				break;
 			}
 		}
 
@@ -1380,8 +1391,10 @@ public class JimmUI implements CommandListener
 	public static void addTextListItem(TextList list, String text, Image image, int value, boolean translate, int textColor, int fontStyle)
 	{
 		if (image != null) list.addImage(image, null, value);
-		String textToAdd = translate ? ResourceBundle.getString(text) : text; 
-		list.addBigText((image != null) ? (" "+textToAdd) : textToAdd, textColor != -1 ? textColor : list.getTextColor(), fontStyle, value);
+		String textToAdd = translate ? ResourceBundle.getString(text) : text;
+		if (textColor == -1) textColor = list.getTextColor();
+		else if (textColor == -2) textColor = Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
+		list.addBigText((image != null) ? (" "+textToAdd) : textToAdd, textColor, fontStyle, value);
 		list.doCRLF(value);
 	}
 	
@@ -1616,9 +1629,8 @@ public class JimmUI implements CommandListener
 		tlContactMenu.setAlwaysShowCursor(true);
 		
 		long status = contact.getIntValue(ContactItem.CONTACTITEM_STATUS);
-		int groupsColor = Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
 		
-		addTextListItem(tlContactMenu, "group_message", null, -1, true, groupsColor, Font.STYLE_BOLD);
+		addTextListItem(tlContactMenu, "group_message", null, -1, true, -2, Font.STYLE_BOLD);
 		
 		if (Icq.isConnected())
 		{
@@ -1635,7 +1647,7 @@ public class JimmUI implements CommandListener
 		addTextListItem(tlContactMenu, "history", null, USER_MENU_HISTORY, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
 		
-		addTextListItem(tlContactMenu, "group_info", null, -1, true, groupsColor, Font.STYLE_BOLD);
+		addTextListItem(tlContactMenu, "group_info", null, -1, true, -2, Font.STYLE_BOLD);
 		
 		addTextListItem(tlContactMenu, "info", null, USER_MENU_USER_INFO, true, -1, Font.STYLE_PLAIN);
 		if (status != ContactList.STATUS_OFFLINE)
@@ -1649,7 +1661,7 @@ public class JimmUI implements CommandListener
 				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true, -1, Font.STYLE_PLAIN);		
 			
 //#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2"|target="RIM")&modules_FILES="true"#
-			addTextListItem(tlContactMenu, "ft_caption", null, -1, true, groupsColor, Font.STYLE_BOLD);
+			addTextListItem(tlContactMenu, "ft_caption", null, -1, true, -2, Font.STYLE_BOLD);
 			if (((status != ContactList.STATUS_OFFLINE) 
 					&& contact.getIntValue(ContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
 					(Options.getInt(Options.OPTION_FT_MODE) == Options.FS_MODE_WEB))
@@ -1665,7 +1677,7 @@ public class JimmUI implements CommandListener
 			}
 //#sijapp cond.end#
 			
-			addTextListItem(tlContactMenu, "group_lists", null, -1, true, groupsColor, Font.STYLE_BOLD);
+			addTextListItem(tlContactMenu, "group_lists", null, -1, true, -2, Font.STYLE_BOLD);
 			addTextListItem(tlContactMenu, "remove", null, USER_MENU_USER_REMOVE, true, -1, Font.STYLE_PLAIN);
 			addTextListItem(tlContactMenu, "remove_me", null, USER_MENU_REMOVE_ME, true, -1, Font.STYLE_PLAIN);
 			if (contact.getIntValue(ContactItem.CONTACTITEM_GROUP) != 0x0000) {
@@ -1712,53 +1724,8 @@ public class JimmUI implements CommandListener
 			break;
 			
 		case USER_MENU_STATUS_MESSAGE:
-			long status = clciContactMenu.getIntValue(ContactItem.CONTACTITEM_STATUS);
-			if (!((status == ContactList.STATUS_ONLINE)
-					|| (status == ContactList.STATUS_OFFLINE) || (status == ContactList.STATUS_INVISIBLE)))
-			{
-				int msgType;
-				/* Send a status message request message */
-				if (status == ContactList.STATUS_AWAY)
-					msgType = Message.MESSAGE_TYPE_AWAY;
-				else if (status == ContactList.STATUS_OCCUPIED)
-					msgType = Message.MESSAGE_TYPE_OCC;
-				else if (status == ContactList.STATUS_DND)
-					msgType = Message.MESSAGE_TYPE_DND;
-				else if (status == ContactList.STATUS_CHAT)
-					msgType = Message.MESSAGE_TYPE_FFC;
-				else if (status == ContactList.STATUS_NA)
-					msgType = Message.MESSAGE_TYPE_NA;
-				else if (status == ContactList.STATUS_EVIL)
-                                        msgType = Message.MESSAGE_TYPE_EVIL;
-				else if (status == ContactList.STATUS_DEPRESSION)
-                                        msgType = Message.MESSAGE_TYPE_DEPRESSION;
-				else if (status == ContactList.STATUS_HOME)
-                                        msgType = Message.MESSAGE_TYPE_HOME;
-				else if (status == ContactList.STATUS_WORK)
-                                        msgType = Message.MESSAGE_TYPE_WORK;
-				else if (status == ContactList.STATUS_LUNCH)
-                                        msgType = Message.MESSAGE_TYPE_LUNCH;
-				else
-					msgType = Message.MESSAGE_TYPE_AWAY;
-
-				PlainMessage awayReq = new PlainMessage(Options.getString(Options.OPTION_UIN),
-						clciContactMenu, msgType, Util
-								.createCurrentDate(false), "");
-
-				SendMessageAction act = new SendMessageAction(awayReq);
-				try
-				{
-					Icq.requestAction(act);
-
-				} catch (JimmException e)
-				{
-					JimmException.handleException(e);
-					if (e.isCritical())
-						return;
-				}
-			}
+			requestContactStatusMess(clciContactMenu);
 			break;
-			
 
 			//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
 			//#sijapp cond.if modules_FILES is "true"#
@@ -2118,15 +2085,88 @@ public class JimmUI implements CommandListener
 	///////////////////////////////////////////////////////////////////////////
 	
 	public static TextList loadErrorTextList;
-	public static void addLoadError(String text)
+	public static void showLoadError(String text)
 	{
 		loadErrorTextList = new TextList("Load error");
 		loadErrorTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		setColorScheme(loadErrorTextList, false, -1, true);
-		loadErrorTextList.addBigText(text, loadErrorTextList.getTextColor(), Font.STYLE_PLAIN, -1);
+		loadErrorTextList.addBigText(text, 0xFF0000, Font.STYLE_PLAIN, -1);
 		loadErrorTextList.addCommandEx(cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
 		loadErrorTextList.setCommandListener(_this);
 		loadErrorTextList.activate(Jimm.display);
+	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	
+	////////////////////////////////
+	//                            //
+	//    Status message stuff    //
+	//                            //
+	////////////////////////////////
+	
+	private static TextList tlStatusMessage;
+	private static ContactItem statusMessCI;
+	
+	/* Send a status message request message */
+	public static void requestContactStatusMess(ContactItem ci)
+	{
+		int status = ci.getIntValue(ContactItem.CONTACTITEM_STATUS);
+		if (status == ContactList.STATUS_ONLINE
+				|| status == ContactList.STATUS_OFFLINE 
+				|| status == ContactList.STATUS_INVISIBLE) return;		
+		
+		statusMessCI = ci;
+		tlStatusMessage = new TextList(ResourceBundle.getString("status_message"));
+		setColorScheme(tlStatusMessage, false, -1, true);
+		addTextListItem(tlStatusMessage, "wait", null, -1, true, 0x808080, Font.STYLE_PLAIN);
+		tlStatusMessage.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+		tlStatusMessage.setCommandListener(_this);
+		tlStatusMessage.activate(Jimm.display);
+		
+		int msgType = Message.MESSAGE_TYPE_AWAY;
+		
+		switch (status)
+		{
+		case ContactList.STATUS_AWAY:       msgType = Message.MESSAGE_TYPE_AWAY; break;
+		case ContactList.STATUS_OCCUPIED:   msgType = Message.MESSAGE_TYPE_OCC; break;
+		case ContactList.STATUS_DND:        msgType = Message.MESSAGE_TYPE_DND; break;
+		case ContactList.STATUS_CHAT:       msgType = Message.MESSAGE_TYPE_FFC; break;
+		case ContactList.STATUS_NA:         msgType = Message.MESSAGE_TYPE_NA; break;
+		case ContactList.STATUS_EVIL:       msgType = Message.MESSAGE_TYPE_EVIL; break;
+		case ContactList.STATUS_DEPRESSION: msgType = Message.MESSAGE_TYPE_DEPRESSION; break;
+		case ContactList.STATUS_HOME:       msgType = Message.MESSAGE_TYPE_HOME; break;
+		case ContactList.STATUS_WORK:       msgType = Message.MESSAGE_TYPE_WORK; break;
+		case ContactList.STATUS_LUNCH:      msgType = Message.MESSAGE_TYPE_LUNCH; break;
+		}
+
+		PlainMessage awayReq = new PlainMessage(
+				Options.getString(Options.OPTION_UIN), statusMessCI, msgType, Util.createCurrentDate(false), "");
+
+		SendMessageAction act = new SendMessageAction(awayReq);
+		try
+		{
+			Icq.requestAction(act);
+
+		} catch (JimmException e)
+		{
+			JimmException.handleException(e);
+			if (e.isCritical())
+				return;
+		}
+	}
+	
+	static public void showStatusMessage(String message, String uin)
+	{
+		if (tlStatusMessage == null || statusMessCI == null) return;
+		if ( !statusMessCI.getStringValue(ContactItem.CONTACTITEM_UIN).equals(uin) ) return;
+		
+		tlStatusMessage.lock();
+		tlStatusMessage.clear();
+		
+		addTextListItem(tlStatusMessage, statusMessCI.getStringValue(ContactItem.CONTACTITEM_NAME), null, -1, false, -1, Font.STYLE_BOLD);
+		addTextListItem(tlStatusMessage, getStatusString(statusMessCI.getIntValue(ContactItem.CONTACTITEM_STATUS)), null, -1, false, -1, Font.STYLE_PLAIN);
+		addTextListItem(tlStatusMessage, message, null, -1, false, -2, Font.STYLE_PLAIN);
+		tlStatusMessage.unlock();
 	}
 	
 }

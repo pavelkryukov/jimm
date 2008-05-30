@@ -55,6 +55,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_MESS_DELIVERED      = 15;
 	final static public int TYPE_REQ_LAST_VESR       = 16;
 	final static public int TYPE_SHOW_LAST_VESR      = 17;
+	final static public int TYPE_SHOW_STATUS_STR     = 18;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -135,6 +136,10 @@ public class RunnableImpl implements Runnable
 			
 		case TYPE_SHOW_LAST_VESR:
 			JimmUI.internalShowLastVersThread();
+			break;
+			
+		case TYPE_SHOW_STATUS_STR:
+			JimmUI.showStatusMessage((String)data[0], (String)data[1]);
 			break;
 		}
 	}
@@ -248,6 +253,11 @@ public class RunnableImpl implements Runnable
 	static public void showLastJimmVers()
 	{
 		callSerially(TYPE_SHOW_LAST_VESR);
+	}
+	
+	static public void showStatusString(String text, String uin)
+	{
+		callSerially(TYPE_SHOW_STATUS_STR, text, uin);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

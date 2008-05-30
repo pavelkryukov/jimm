@@ -269,7 +269,7 @@ public class Jimm extends MIDlet
 		}
 		else
 		{
-			JimmUI.addLoadError(loadError.toString());
+			JimmUI.showLoadError(loadError.toString());
 		}
 		loadError = null;
 		
