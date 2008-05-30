@@ -178,19 +178,20 @@ public class Options
 	public static final int FS_MODE_NET = 1;
 	
 	/* Hotkey Actions */
-	public static final int HOTKEY_NONE     = 0;
-	public static final int HOTKEY_INFO     = 2;
-	public static final int HOTKEY_NEWMSG   = 3;
-	public static final int HOTKEY_ONOFF    = 4;
-	public static final int HOTKEY_OPTIONS  = 5;
-	public static final int HOTKEY_MENU     = 6;
-	public static final int HOTKEY_LOCK     = 7;
-	public static final int HOTKEY_HISTORY  = 8;
-	public static final int HOTKEY_MINIMIZE = 9;
-	public static final int HOTKEY_CLI_INFO = 10;
-	public static final int HOTKEY_FULLSCR  = 11;
-	public static final int HOTKEY_SOUNDOFF	= 12;
+	public static final int HOTKEY_NONE        = 0;
+	public static final int HOTKEY_INFO        = 2;
+	public static final int HOTKEY_NEWMSG      = 3;
+	public static final int HOTKEY_ONOFF       = 4;
+	public static final int HOTKEY_OPTIONS     = 5;
+	public static final int HOTKEY_MENU        = 6;
+	public static final int HOTKEY_LOCK        = 7;
+	public static final int HOTKEY_HISTORY     = 8;
+	public static final int HOTKEY_MINIMIZE    = 9;
+	public static final int HOTKEY_CLI_INFO    = 10;
+	public static final int HOTKEY_FULLSCR     = 11;
+	public static final int HOTKEY_SOUNDOFF	   = 12;
 	public static final int HOTKEY_USER_GROUPS = 13;
+	public static final int HOTKEY_REQ_SM      = 14;
 	
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
@@ -860,7 +861,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private TextList groupSelector;
 
 	final private String[] hotkeyActionNames = Util.explode(
-			"ext_hotkey_action_none" + "|" + "info" + "|" + "send_message"
+			"ext_hotkey_action_none" + "|" + "info" + "|" + "send_message" + "|" + "status_message"
 					//#sijapp cond.if modules_HISTORY is "true"#
 					+ "|" + "history"
 					//#sijapp cond.end#
@@ -882,7 +883,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			, '|');
 
 	final private int[] hotkeyActions =
-	{ Options.HOTKEY_NONE, Options.HOTKEY_INFO, Options.HOTKEY_NEWMSG,
+	{ Options.HOTKEY_NONE, Options.HOTKEY_INFO, Options.HOTKEY_NEWMSG, Options.HOTKEY_REQ_SM,
 			//#sijapp cond.if modules_HISTORY is "true"#
 			Options.HOTKEY_HISTORY,
 			//#sijapp cond.end#
