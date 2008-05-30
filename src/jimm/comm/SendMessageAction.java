@@ -476,7 +476,7 @@ public class SendMessageAction extends Action
 				// Put foreground, background color and guidlength
 				Util.putDWord(buf, marker, 0x00000000);
 				marker += 4;
-				Util.putDWord(buf, marker, 0x00FFFFFF);
+				Util.putDWord(buf, marker, 0xFFFFFF00);
 				marker += 4;
 				Util.putDWord(buf, marker, 0x26000000);
 				marker += 4;
