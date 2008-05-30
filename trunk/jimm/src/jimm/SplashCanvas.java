@@ -122,6 +122,9 @@ public class SplashCanvas extends Canvas
 	// Message to display beneath the splash image
 	static private String message;
 
+	// Last error code message
+	static private String lastErrCode;
+
 	// Progress in percent
 	static private int progress; // = 0
 
@@ -162,6 +165,15 @@ public class SplashCanvas extends Canvas
 	static public synchronized String getMessage()
 	{
 		return (message);
+	}
+
+	// Sets the informational message
+	static public synchronized void setLastErrCode(String errcode)
+	{
+		if (errcode != null)
+			SplashCanvas.lastErrCode = new String(errcode);
+		else
+			SplashCanvas.lastErrCode = null;
 	}
 
 	// Sets the informational message
@@ -415,6 +427,13 @@ public class SplashCanvas extends Canvas
 								| Graphics.TOP);
 			}
 
+			if (lastErrCode != null) {
+			    g.setColor(255, 255, 255);
+			    g.setFont(SplashCanvas.font);
+			    g.drawString(lastErrCode, 4, this.getHeight() - (2 * SplashCanvas.height) - 5, Graphics.LEFT
+								    | Graphics.TOP);
+			}
+			
 			//#sijapp cond.if target is "SIEMENS2"#
 			//#			String accuLevel = System.getProperty("MPJC_CAP");
 			//#			if( accuLevel != null && isLocked )
