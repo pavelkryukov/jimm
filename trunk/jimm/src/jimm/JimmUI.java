@@ -1620,13 +1620,13 @@ public class JimmUI implements CommandListener
 		
 		if (Icq.isConnected())
 		{
-			if (contact.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH))
-				addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH, true, -1, Font.STYLE_PLAIN);
-			
 			addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE, true, -1, Font.STYLE_PLAIN);
 			
 			if (JimmUI.getClipBoardText() != null)
 				addTextListItem(tlContactMenu, "quote", null, USER_MENU_QUOTA, true, -1, Font.STYLE_PLAIN);
+			
+			if (contact.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH))
+				addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH, true, -1, Font.STYLE_PLAIN);
 		}
 		
 		//#sijapp cond.if modules_HISTORY is "true" #

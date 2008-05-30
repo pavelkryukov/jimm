@@ -47,7 +47,6 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_UPDATE_CONTACT_LIST = 5;
 	final static public int TYPE_SHOW_USER_INFO      = 6;
 	final static public int TYPE_UPDATE_CL_CAPTION   = 7;
-	final static public int TYPE_ADDCONTACT          = 8;
 	final static public int TYPE_USER_IS_TYPING      = 9;
 	final static public int TYPE_RESET_CONTACTS      = 10;
 	final static public int TYPE_SHOW_TIME           = 11;
