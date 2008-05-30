@@ -48,6 +48,7 @@
   "small_font"                  "Small font"
   "city"                        "City"
   "clear"                       "Clear"
+  "cli_caps"                    "Client capabilites"
   "cli_none"                    "Not detected"
   "close"                       "Close"  
   "color_scheme"                "Color scheme"
