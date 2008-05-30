@@ -119,7 +119,7 @@ public class SendMessageAction extends Action
 		//#sijapp cond.if modules_FILES is "true"#
 		if ((this.fileTrans != null)
 				&& (rcvr.getIntValue(ContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
-				&& rcvr.hasCapability(Icq.CAPF_AIM_SERVERRELAY_INTERNAL))
+				&& rcvr.hasCapability(Icq.CAPF_AIM_SERVERRELAY))
 		{
 			type = 2;
 		}
@@ -134,7 +134,7 @@ public class SendMessageAction extends Action
 		}
 		
 		if (Options.getBoolean(Options.OPTION_DELIV_MES_INFO)
-			&& rcvr.hasCapability(Icq.CAPF_AIM_SERVERRELAY_INTERNAL)
+			&& rcvr.hasCapability(Icq.CAPF_AIM_SERVERRELAY)
 			&& (rcvr.getIntValue(ContactItem.CONTACTITEM_CLIENT) != Icq.CLI_STICQ)
 			&& (rcvr.getIntValue(ContactItem.CONTACTITEM_CLIENT) != Icq.CLI_TRILLIAN)
 			&& (rcvr.getIntValue(ContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE))

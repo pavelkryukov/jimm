@@ -932,9 +932,10 @@ public class JimmUI implements CommandListener
 	final public static int UI_LAST_NAME = 37;
 	final public static int UI_ONLINE_STATUS = 38;
 	final public static int UI_XSTATUS = 39;
+	final public static int UI_CAPS = 40;
 
 	//////
-	final public static int UI_LAST_ID = 40;
+	final public static int UI_LAST_ID = 41;
 
 	static private int uiBigTextIndex;
 
@@ -1023,15 +1024,16 @@ public class JimmUI implements CommandListener
 		addToTextList(UI_W_PHONE, data, "phone", list);
 		addToTextList(UI_W_FAX, data, "fax", list);
 
+		uiSectName = "icq_client";
+		addToTextList(UI_ICQ_CLIENT, data, "icq_client", list);
+		addToTextList(UI_CAPS, data, "cli_caps", list);
+		
 		uiSectName = "dc_info";
 		addToTextList(UI_ONLINE_STATUS, data, "status", list);
 		addToTextList(UI_XSTATUS, data, "xstatus", list);
-		addToTextList(UI_ICQ_CLIENT, data, "icq_client", list);
 		addToTextList(UI_SIGNON, data, "li_signon_time", list);
 		addToTextList(UI_ONLINETIME, data, "li_online_time", list);
 		addToTextList(UI_IDLE_TIME, data, "li_idle_time", list);
-
-		uiSectName = "DC";
 		addToTextList(UI_ICQ_VERS, data, "ICQ version", list);
 		addToTextList(UI_INT_IP, data, "Int IP", list);
 		addToTextList(UI_EXT_IP, data, "Ext IP", list);
@@ -1984,6 +1986,25 @@ public class JimmUI implements CommandListener
 		int port = cItem.getIntValue(ContactItem.CONTACTITEM_DC_PORT);
 		if (port != 0)
 			clInfoData[JimmUI.UI_PORT] = Integer.toString(port);
+		
+		StringBuffer capsStr = new StringBuffer("\n");
+		int caps = cItem.getIntValue(ContactItem.CONTACTITEM_CAPABILITIES);
+		if ((caps & Icq.CAPF_AIM_SERVERRELAY) != 0) capsStr.append("Type-2 messages\n");
+		if ((caps & Icq.CAPF_UTF8_INTERNAL)   != 0) capsStr.append("Utf-8 messages\n");
+		if ((caps & Icq.CAPF_RICHTEXT)        != 0) capsStr.append("Rich text messages\n");
+		if ((caps & Icq.CAPF_HTMLMESSAGES)    != 0) capsStr.append("Html messages\n");
+		if ((caps & Icq.CAPF_AIMICON)         != 0) capsStr.append("AIM Icon\n");
+		if ((caps & Icq.CAPF_AIMCHAT)         != 0) capsStr.append("AIM Chat\n");
+		if ((caps & Icq.CAPF_XTRAZ)           != 0) capsStr.append("X-traz\n");
+		if ((caps & Icq.CAPF_AIMFILE)         != 0) capsStr.append("AIM File\n");
+		if ((caps & Icq.CAPF_AIMIMIMAGE)      != 0) capsStr.append("AIM Image\n");
+		if ((caps & Icq.CAPF_AVATAR)          != 0) capsStr.append("Avatars\n");
+		if ((caps & Icq.CAPF_DIRECT)          != 0) capsStr.append("Direct connect\n");
+		if ((caps & Icq.CAPF_TYPING)          != 0) capsStr.append("Typeing notify\n");
+		if ((caps & Icq.CAPF_AUDIO)           != 0) capsStr.append("Audio\n");
+		if ((caps & Icq.CAPF_VIDEO)           != 0) capsStr.append("Video\n");
+		clInfoData[UI_CAPS] = capsStr.toString(); 
+		
 		//#sijapp cond.end#
 
 		JimmUI.fillUserInfo(clInfoData, tlist);

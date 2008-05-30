@@ -3000,89 +3000,56 @@ public class Icq implements Runnable
 		return (index < 0) ? true : (XSTATUS_CONSTS[index*18+1] != -1);
 	}
 
-	// No capability
-	public static final int CAPF_NO_INTERNAL = 0x00000000;
-
-	// Client unterstands type-2 messages
-	public static final int CAPF_AIM_SERVERRELAY_INTERNAL = 0x00000001;
-
-	// Client unterstands UTF-8 messages
-	public static final int CAPF_UTF8_INTERNAL = 0x00000002;
+	/* Capabilities */
+	public static final int CAPF_NO_INTERNAL     = 0;      // No capability
+	public static final int CAPF_AIM_SERVERRELAY = 1 << 0; // Client unterstands type-2 messages
+	public static final int CAPF_UTF8_INTERNAL   = 1 << 1; // Client unterstands UTF-8 messages
+	public static final int CAPF_RICHTEXT        = 1 << 2;
+	public static final int CAPF_AIMICON         = 1 << 3;
+	public static final int CAPF_AIMCHAT         = 1 << 4;
+	public static final int CAPF_XTRAZ           = 1 << 5;
+	public static final int CAPF_AIMFILE         = 1 << 6;
+	public static final int CAPF_AIMIMIMAGE      = 1 << 7;
+	public static final int CAPF_AVATAR          = 1 << 8;	
+	public static final int CAPF_DIRECT          = 1 << 9;
+	public static final int CAPF_TYPING          = 1 << 10;
+	public static final int CAPF_HTMLMESSAGES    = 1 << 11;
+	public static final int CAPF_AUDIO           = 1 << 12;
+	public static final int CAPF_VIDEO           = 1 << 14;
 
 	// Client capabilities for detection
-	public static final int CAPF_MIRANDAIM = 0x00000004;
+	private static final long CAPF_MIRANDAIM     = 1l << 32;
+	private static final long CAPF_TRILLIAN      = 1l << 33;
+	private static final long CAPF_TRILCRYPT     = 1l << 34;
+	private static final long CAPF_SIM           = 1l << 35;
+	private static final long CAPF_SIMOLD        = 1l << 36;
+	private static final long CAPF_LICQ          = 1l << 37;
+	private static final long CAPF_KOPETE        = 1l << 38;
+	private static final long CAPF_MICQ          = 1l << 39;
+	private static final long CAPF_ANDRQ         = 1l << 40;
+	private static final long CAPF_QIP           = 1l << 41;
+	private static final long CAPF_IM2           = 1l << 42;
+	private static final long CAPF_MACICQ        = 1l << 43;
+	private static final long CAPF_IS2001        = 1l << 44;
+	private static final long CAPF_IS2002        = 1l << 45;
+	private static final long CAPF_STR20012      = 1l << 46;
+	private static final long CAPF_UIM           = 1l << 47;
+	private static final long CAPF_RAMBLER       = 1l << 48;
+	private static final long CAPF_ABV           = 1l << 49;
+	private static final long CAPF_NETVIGATOR    = 1l << 50;
+	private static final long CAPF_JIMM          = 1l << 51;
+	private static final long CAPF_MCHAT         = 1l << 52;
+	private static final long CAPF_QIPINFIUM     = 1l << 53;
+	private static final long CAPF_IsICQLITE     = 1l << 54;
+	private static final long CAPF_QIPPDASYM     = 1l << 55;
+	private static final long CAPF_QIPPDAWIN     = 1l << 56;
+	private static final long CAPF_IMPLUS        = 1l << 57;
+	private static final long CAPF_JIMM_SMAPER   = 1l << 58;
 
-	public static final int CAPF_TRILLIAN = 0x00000008;
-
-	public static final int CAPF_TRILCRYPT = 0x00000010;
-
-	public static final int CAPF_SIM = 0x00000020;
-
-	public static final int CAPF_SIMOLD = 0x00000040;
-
-	public static final int CAPF_LICQ = 0x00000080;
-
-	public static final int CAPF_KOPETE = 0x00000100;
-
-	public static final int CAPF_MICQ = 0x00000200;
-
-	public static final int CAPF_ANDRQ = 0x00000400;
-
-	public static final int CAPF_QIP = 0x000000800;
-
-	public static final int CAPF_IM2 = 0x00001000;
-
-	public static final int CAPF_MACICQ = 0x00002000;
-
-	public static final int CAPF_RICHTEXT = 0x00004000;
-
-	public static final int CAPF_IS2001 = 0x00008000;
-
-	public static final int CAPF_IS2002 = 0x00010000;
-
-	public static final int CAPF_STR20012 = 0x00020000;
-
-	public static final int CAPF_AIMICON = 0x00040000;
-
-	public static final int CAPF_AIMCHAT = 0x00080000;
-
-	public static final int CAPF_UIM = 0x00100000;
-
-	public static final int CAPF_RAMBLER = 0x00200000;
-
-	public static final int CAPF_ABV = 0x00400000;
-
-	public static final int CAPF_NETVIGATOR = 0x00800000;
-
-	public static final int CAPF_XTRAZ = 0x01000000;
-
-	public static final int CAPF_AIMFILE = 0x02000000;
-
-	public static final int CAPF_JIMM = 0x04000000;
-
-	public static final int CAPF_AIMIMIMAGE = 0x08000000;
-
-	public static final int CAPF_AVATAR = 0x10000000;
-
-	public static final int CAPF_DIRECT = 0x20000000;
-
-	public static final int CAPF_TYPING = 0x40000000;
-
-	public static final int CAPF_MCHAT = 0x80000000;
-
-	// additional caps (caps2)
-	public static final int CAPF_QIPINFIUM		= 0x00000001;
-//	public static final int CAPF_QIPPLUGINS		= 0x00000002;
-//	public static final int CAPF_AUDIO		= 0x00000004;
-//	public static final int CAPF_VIDEO		= 0x00000008;
-	public static final int CAPF_HTMLMESSAGES	= 0x00000010;
-//	public static final int CAPF_XMultiUserChat	= 0x00000020;
-//	public static final int CAPF_XtZers		= 0x00000040;
-	public static final int CAPF_IsICQLITE		= 0x00000080;
-	public static final int CAPF_QIPPDASYM		= 0x00000100;
-	public static final int CAPF_QIPPDAWIN		= 0x00000200;
-	public static final int CAPF_IMPLUS         = 0x00000400;
-	public static final int CAPF_JIMM_SMAPER    = 0x00000800;
+	
+//	public static final int CAPF_QIPPLUGINS      = 1l << 59;
+//	public static final int CAPF_XMultiUserChat  = 1l << 60;
+//	public static final int CAPF_XtZers          = 1l << 61;
 
 	// Client IDs
 	public static final byte CLI_NONE = 0;
@@ -3249,8 +3216,7 @@ public class Icq implements Runnable
 	{
 		int client = CLI_NONE;
 		String szVersion = "";
-		int caps = CAPF_NO_INTERNAL;
-		int caps2 = CAPF_NO_INTERNAL;
+		long caps = CAPF_NO_INTERNAL;
 
 		if (capabilities != null)
 		{
@@ -3260,7 +3226,7 @@ public class Icq implements Runnable
 				int j16 = j * 16;
 				if (Util.byteArrayEquals(capabilities, j16, CAP_AIM_SERVERRELAY, 0, 16))
 				{
-					caps |= CAPF_AIM_SERVERRELAY_INTERNAL;
+					caps |= CAPF_AIM_SERVERRELAY;
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_UTF8, 0, 16))
 				{
@@ -3269,7 +3235,7 @@ public class Icq implements Runnable
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_MIRANDAIM, 0, 8))
 				{
 					caps |= CAPF_MIRANDAIM;
-					szVersion = detectClientVersion(capabilities, CAPF_MIRANDAIM, j);
+					szVersion = detectClientVersion(capabilities, CLI_MIRANDA, j);
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_TRILLIAN, 0, 16))
 				{
@@ -3290,12 +3256,12 @@ public class Icq implements Runnable
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_LICQ, 0, 0xC))
 				{
 					caps |= CAPF_LICQ;
-					szVersion = detectClientVersion(capabilities, CAPF_LICQ, j);
+					szVersion = detectClientVersion(capabilities, CLI_LICQ, j);
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_KOPETE, 0, 0xC))
 				{
 					caps |= CAPF_KOPETE;
-					szVersion = detectClientVersion(capabilities, CAPF_KOPETE, j);
+					szVersion = detectClientVersion(capabilities, CLI_KOPETE, j);
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_MICQ, 0, 16))
 				{
@@ -3304,12 +3270,12 @@ public class Icq implements Runnable
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_ANDRQ, 0, 9))
 				{
 					caps |= CAPF_ANDRQ;
-					szVersion = detectClientVersion(capabilities, CAPF_ANDRQ, j);
+					szVersion = detectClientVersion(capabilities, CLI_ANDRQ, j);
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIP, 0, 11))
 				{
 					caps |= CAPF_QIP;
-					szVersion = detectClientVersion(capabilities, CAPF_QIP, j);
+					szVersion = detectClientVersion(capabilities, CLI_QIP, j);
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_IM2, 0, 16))
 				{
@@ -3370,11 +3336,11 @@ public class Icq implements Runnable
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_JIMM, 0, 5))
 				{
 					caps |= CAPF_JIMM;
-					szVersion = detectClientVersion(capabilities, CAPF_JIMM, j);
+					szVersion = detectClientVersion(capabilities, CLI_JIMM, j);
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_JIMM_SMAPER, 0, CAP_JIMM_SMAPER.length))
 				{
-					caps2 |= CAPF_JIMM_SMAPER;
+					caps |= CAPF_JIMM_SMAPER;
 					szVersion = detectClientVersion(capabilities, CLI_JIMM_SMAPER, j);
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMIMIMAGE, 0, 16)) caps |= CAPF_AIMIMIMAGE;
@@ -3384,47 +3350,47 @@ public class Icq implements Runnable
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_MCHAT, 0, 9))
 				{
 					caps |= CAPF_MCHAT;
-					szVersion = detectClientVersion(capabilities, CAPF_MCHAT, j);
+					szVersion = detectClientVersion(capabilities, CLI_MCHAT, j);
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPINFIUM, 0, 16))
 				{
-					caps2 |= CAPF_QIPINFIUM;
+					caps |= CAPF_QIPINFIUM;
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDASYM, 0, 16))
 				{
-					caps2 |= CAPF_QIPPDASYM;
+					caps |= CAPF_QIPPDASYM;
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDAWIN, 0, 16))
 				{
-					caps2 |= CAPF_QIPPDAWIN;
+					caps |= CAPF_QIPPDAWIN;
 				}
 //				else if (Util.byteArrayEquals(capabilities, j16, CAP_AUDIO, 0, 16))
 //				{
-//					caps2 |= CAPF_AUDIO;
+//					caps |= CAPF_AUDIO;
 //				}
 //				else if (Util.byteArrayEquals(capabilities, j16, CAP_VIDEO, 0, 16))
 //				{
-//					caps2 |= CAPF_VIDEO;
+//					caps |= CAPF_VIDEO;
 //				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_HTMLMESSAGES, 0, 16))
 				{
-					caps2 |= CAPF_HTMLMESSAGES;
+					caps |= CAPF_HTMLMESSAGES;
 				}
 //				else if (Util.byteArrayEquals(capabilities, j16, CAP_XMultiUserChat, 0, 16))
 //				{
-//					caps2 |= CAPF_XMultiUserChat;
+//					caps |= CAPF_XMultiUserChat;
 //				}
 //				else if (Util.byteArrayEquals(capabilities, j16, CAP_XtZers, 0, 16))
 //				{
-//					caps2 |= CAPF_XtZers;
+//					caps |= CAPF_XtZers;
 //				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_IsICQLITE, 0, 16))
 				{
-					caps2 |= CAPF_IsICQLITE;
+					caps |= CAPF_IsICQLITE;
 				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_IMPLUS, 0, 16))
 				{
-					caps2 |= CAPF_IMPLUS;
+					caps |= CAPF_IMPLUS;
 				}
 			}
 		}
@@ -3436,7 +3402,7 @@ public class Icq implements Runnable
 			switch (1)
 			{
 			default:
-				if ((caps2 & CAPF_IMPLUS) != 0)
+				if ((caps & CAPF_IMPLUS) != 0)
 				{
 					client = CLI_IMPLUS;
   					if ((dwFP1 & 0xFFFFFFF0) == 0x494D2B00) {
@@ -3451,22 +3417,22 @@ public class Icq implements Runnable
 					}
 					break;
 				}
-				if ((caps2 & CAPF_JIMM_SMAPER) != 0)
+				if ((caps & CAPF_JIMM_SMAPER) != 0)
 				{
 					client = CLI_JIMM_SMAPER;
 				}
-				if ((caps2 & CAPF_QIPINFIUM) != 0)
+				if ((caps & CAPF_QIPINFIUM) != 0)
 				{
 					client = CLI_QIPINFIUM;
 					szVersion += "(" + dwFP1 + ")" + ((dwFP2 == 0xB) ? " Beta" : "");
 					break;
 				}
-				if ((caps2 & CAPF_QIPPDASYM) != 0)
+				if ((caps & CAPF_QIPPDASYM) != 0)
 				{
 					client = CLI_QIPPDASYM;
 					break;
 				}
-				if ((caps2 & CAPF_QIPPDAWIN) != 0)
+				if ((caps & CAPF_QIPPDAWIN) != 0)
 				{
 					client = CLI_QIPPDAWIN;
 					break;
@@ -3535,7 +3501,7 @@ public class Icq implements Runnable
 							client = CLI_ICQ2003B;
 						}
 					case 7:
-						if (((caps & CAPF_AIM_SERVERRELAY_INTERNAL) == 0) && ((caps & CAPF_DIRECT) == 0) && (dwFP1 == 0) && (dwFP2 == 0) && (dwFP3 == 0))
+						if (((caps & CAPF_AIM_SERVERRELAY) == 0) && ((caps & CAPF_DIRECT) == 0) && (dwFP1 == 0) && (dwFP2 == 0) && (dwFP3 == 0))
 						{
 							client = CLI_ICQ2GO;
 						}
@@ -3553,7 +3519,7 @@ public class Icq implements Runnable
 									else client = CLI_ICQLITE4;
 								}
 							}
-							else if (((caps2 & CAPF_IsICQLITE) != 0) && ((caps2 & CAPF_HTMLMESSAGES) != 0))
+							else if (((caps & CAPF_IsICQLITE) != 0) && ((caps & CAPF_HTMLMESSAGES) != 0))
 								{
 									client = CLI_ICQ6;
 								}
@@ -3570,7 +3536,7 @@ public class Icq implements Runnable
 					break;
 				}
 
-				if (((caps & CAPF_AIMCHAT) != 0) && ((caps2 & CAPF_IsICQLITE) == 0))
+				if (((caps & CAPF_AIMCHAT) != 0) && ((caps & CAPF_IsICQLITE) == 0))
 				{
 					client = CLI_AIM;
 					break;
@@ -3653,7 +3619,7 @@ public class Icq implements Runnable
 					{
 						if (wVersion == 7)
 						{
-							if (((caps & CAPF_AIM_SERVERRELAY_INTERNAL) != 0) && ((caps & CAPF_DIRECT) != 0))
+							if (((caps & CAPF_AIM_SERVERRELAY) != 0) && ((caps & CAPF_DIRECT) != 0))
 							{
 								if ((caps & CAPF_RICHTEXT) != 0)
 								{
@@ -3690,14 +3656,14 @@ public class Icq implements Runnable
 					client = CLI_VICQ;
 					break;
 				}
-				if (((caps & CAPF_AIM_SERVERRELAY_INTERNAL) != 0) && ((caps & CAPF_DIRECT) != 0) && ((caps & CAPF_UTF8_INTERNAL) != 0)
+				if (((caps & CAPF_AIM_SERVERRELAY) != 0) && ((caps & CAPF_DIRECT) != 0) && ((caps & CAPF_UTF8_INTERNAL) != 0)
 						&& ((caps & CAPF_RICHTEXT) != 0))
 				{
 
 					if ((dwFP1 != 0) && (dwFP2 != 0) && (dwFP3 != 0)) client = CLI_ICQ2002A2003A;
 					break;
 				}
-				if (((caps & (CAPF_STR20012 + CAPF_AIM_SERVERRELAY_INTERNAL)) != 0) && ((caps & CAPF_IS2001) != 0))
+				if (((caps & (CAPF_STR20012 + CAPF_AIM_SERVERRELAY)) != 0) && ((caps & CAPF_IS2001) != 0))
 				{
 					if ((dwFP1 == 0) && (dwFP2 == 0) && (dwFP3 == 0) && (wVersion == 0)) client = CLI_ICQPPC;
 					else client = CLI_ICQ2001B; //FP1: 1068985885; FP2:0; FP3:1068986138
@@ -3705,7 +3671,7 @@ public class Icq implements Runnable
 				}
 				if (wVersion == 7)
 				{
-					if (((caps & CAPF_AIM_SERVERRELAY_INTERNAL) != 0) && ((caps & CAPF_DIRECT) != 0))
+					if (((caps & CAPF_AIM_SERVERRELAY) != 0) && ((caps & CAPF_DIRECT) != 0))
 					{
 						if ((dwFP1 == 0) && (dwFP2 == 0) && (dwFP3 == 0)) client = CLI_ANDRQ;
 						else client = CLI_ICQ2000;
@@ -3747,7 +3713,7 @@ public class Icq implements Runnable
 			}
 		}
 
-		item.setIntValue(ContactItem.CONTACTITEM_CAPABILITIES, caps);
+		item.setIntValue(ContactItem.CONTACTITEM_CAPABILITIES, (int)(caps&0xFFFFFFFF));
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 		System.out.println("uin - " + item.getStringValue(ContactItem.CONTACTITEM_UIN) + " found capabilities count:" + capabilities.length/16);
 		System.out.println("dwFP1 = " + "0x"+Integer.toHexString(dwFP1) + ", " + "dwFP2 = " + "0x"+Integer.toHexString(dwFP2) + ", " + "dwFP3 = " + "0x"+Integer.toHexString(dwFP3));
@@ -3780,7 +3746,7 @@ public class Icq implements Runnable
 		
 		switch (cli)
 		{
-		case CAPF_MIRANDAIM:
+		case CLI_MIRANDA:
 			if ((buf[0xC] == 0) && (buf[0xD] == 0) && (buf[0xE] == 0)
 					&& (buf[0xF] == 1))
 			{
@@ -3796,27 +3762,27 @@ public class Icq implements Runnable
 			}
 			break;
 			
-		case CAPF_LICQ:
+		case CLI_LICQ:
 			ver = buf[0xC] + "." + (buf[0xD] % 100) + "." + buf[0xE];
 			break;
 			
-		case CAPF_KOPETE:
+		case CLI_KOPETE:
 			ver = buf[0xC] + "." + buf[0xD] + "." + buf[0xE] + "." + buf[0xF];
 			break;
 			
-		case CAPF_ANDRQ:
+		case CLI_ANDRQ:
 			ver = (char) buf[0xC] + "." + (char) buf[0xB];// + "." +buf[0xA] + "." +buf[9];
 			break;
 			
-		case CAPF_JIMM:
+		case CLI_JIMM:
 			ver = Util.byteArrayToString(buf, 5, 11);
 			break;
 			
-		case CAPF_QIP:
+		case CLI_QIP:
 			ver = Util.byteArrayToString(buf, 11, 5);
 			break;
 			
-		case CAPF_MCHAT:
+		case CLI_MCHAT:
 			ver = Util.byteArrayToString(buf, 0, 16);
 			break;
 			
