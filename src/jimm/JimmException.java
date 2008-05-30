@@ -57,10 +57,15 @@ public class JimmException extends Exception
 	//  #sijapp cond.end#
 
 	private int _ErrCode;
+	private int _ExtErrCode;
 
 	public int getErrCode()
 	{
 		return _ErrCode;
+	}
+	public String getFullErrCode()
+	{
+		return "#" + _ErrCode + "." + _ExtErrCode;
 	}
 
 	// Constructs a critical JimmException
@@ -68,6 +73,7 @@ public class JimmException extends Exception
 	{
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this._ErrCode = errCode;
+		this._ExtErrCode = extErrCode;
 		this.critical = true;
 		this.displayMsg = true;
 		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
@@ -82,6 +88,7 @@ public class JimmException extends Exception
 	{
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this._ErrCode = errCode;
+		this._ExtErrCode = extErrCode;
 		this.critical = false;
 		this.displayMsg = displayMsg;
 		//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
@@ -99,6 +106,7 @@ public class JimmException extends Exception
 	{
 		super(JimmException.getErrDesc(errCode, extErrCode));
 		this._ErrCode = errCode;
+		this._ExtErrCode = extErrCode;
 		this.critical = false;
 		this.displayMsg = displayMsg;
 		this.peer = _peer;

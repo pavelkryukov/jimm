@@ -358,6 +358,7 @@ public class Icq implements Runnable
 	// Puts the comm. subsystem into STATE_CONNECTED
 	static protected synchronized void setConnected()
 	{
+		SplashCanvas.setLastErrCode(null);
 		Icq.reconnect_attempts = Options
 				.getInt(Options.OPTION_RECONNECT_NUMBER);
 		connected = true;
@@ -477,6 +478,7 @@ public class Icq implements Runnable
 				.getString(Options.OPTION_CONN_ALIVE_INVTERV)) * 1000;
 		Jimm.getTimerRef().schedule(keepAliveTimerTask, keepAliveInterv,
 				keepAliveInterv);
+		SplashCanvas.setLastErrCode(null);
 
 		// Catch JimmExceptions
 		try
@@ -771,6 +773,7 @@ public class Icq implements Runnable
 				&& e.isCritical() && connecting
 				&& (errCode < 110 || errCode > 117) && errCode != 127)
 		{
+			SplashCanvas.setLastErrCode(e.getFullErrCode());
 			disconnect();
 			ContactList.beforeConnect();
 			connect();
