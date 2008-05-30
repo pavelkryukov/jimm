@@ -50,11 +50,8 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
 //#sijapp cond.if target!="DEFAULT"#
-import javax.microedition.media.PlayerListener;
-import javax.microedition.media.Manager;
-import javax.microedition.media.Player;
-import javax.microedition.media.control.ToneControl;
-import javax.microedition.media.control.VolumeControl;
+import javax.microedition.media.*;
+import javax.microedition.media.control.*;
 import java.io.InputStream;
 //#sijapp cond.end#
 
@@ -1312,38 +1309,78 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 	}
 
-	//#sijapp cond.if target!="DEFAULT"#
+//#sijapp cond.if target!="DEFAULT"#
 
+	////////////////////////////////////
+	//                                //
+	//    Sound Notification stuff    //
+	//                                //
+	////////////////////////////////////
+	
+	private static Vector soundQueue = new Vector();
+	
+	private static void playSound_Internal(String fileName, int volume)
+	{
+		try
+		{
+			//Siemens 65-75 bugfix
+//#sijapp cond.if target is "SIEMENS2"#
+			Player p1 = createPlayer("silence.wav");
+			setVolume(p1,100);
+			p1.start();
+			p1.close();
+//#sijapp cond.end#
+			Player p = createPlayer(fileName);
+			if (p == null) return;
+			setVolume(p, volume);
+			p.start();
+		}
+		catch (Exception e) {} 
+	}
+	
+	private static void playSound(String fileName, int volume)
+	{
+		if (playerFree) playSound_Internal(fileName, volume);
+		else 
+		{
+			soundQueue.addElement(fileName);
+			soundQueue.addElement(new Integer(volume));
+		}
+	}
+	
 	public static boolean testSoundFile(String source)
 	{
 		playerFree = true;
 		Player player = createPlayer(source);
 		boolean ok = (player != null);
-		if (player != null)
-			player.close();
+		if (player != null) player.close();
 		playerFree = true;
 		return ok;
 	}
 
-	//#sijapp cond.end#    
-
-	//#sijapp cond.if target!="DEFAULT"#
 	// Reaction to player events. (Thanks to Alexander Barannik for idea!)
-	public void playerUpdate(final Player player, final String event,
-			Object eventData)
+	public void playerUpdate(final Player player, final String event, Object eventData)
 	{
 		if (event.equals(PlayerListener.END_OF_MEDIA))
 		{
 			player.close();
 			playerFree = true;
+			
+			if (soundQueue.size() != 0)
+			{
+				String name = (String)soundQueue.elementAt(0);
+				Integer volume = (Integer)soundQueue.elementAt(1);
+				playSound(name, volume.intValue());
+				soundQueue.removeElementAt(0);
+				soundQueue.removeElementAt(0);
+			}
 		}
 	}
 
 	/* Creates player for file 'source' */
 	static private Player createPlayer(String source)
 	{
-		if (!playerFree)
-			return null;
+		if (!playerFree) return null;
 
 		String url, mediaType;
 		Player p;
@@ -1379,29 +1416,19 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 		return p;
 	}
-	//#sijapp cond.end#
-
-	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+	
 	// sets volume for player
-	static private void setVolume(Player p, int value)
+	static private void setVolume(Player p, int value) throws MediaException
 	{
-		try
+		p.realize();
+		VolumeControl c = (VolumeControl) p.getControl("VolumeControl");
+		if (c != null)
 		{
-			p.realize();
-			VolumeControl c = (VolumeControl) p.getControl("VolumeControl");
-			if (c != null)
-			{
-				c.setLevel(value);
-				p.prefetch();
-			}
-		} catch (Exception e)
-		{
+			c.setLevel(value);
+			p.prefetch();
 		}
 	}
 
-	//#sijapp cond.end#
-
-	//#sijapp cond.if target isnot "DEFAULT"#
 	synchronized static public void BeginTyping(String uin, boolean type)
 	{
 		ContactItem item = getItembyUIN(uin);
@@ -1416,29 +1443,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		if (ChatHistory.chatHistoryShown(uin)) ChatHistory.getChatHistoryAt(uin).BeginTyping(type);
 		else tree.repaint();
 	}
-	//#sijapp cond.end#
-
-	//#sijapp cond.if target isnot  "DEFAULT"#		
+	
 	// Play a sound notification
 	static public void playSoundNotification(int notType)
 	{
 		synchronized (_this)
 		{
-			if (!treeBuilt)
-				return;
-
-			int vibraKind = Options.getInt(Options.OPTION_VIBRATOR);
-			if (vibraKind == 2)
-				vibraKind = SplashCanvas.locked() ? 1 : 0;
-			if ((vibraKind > 0) && (notType == SOUND_TYPE_MESSAGE))
-			{
-				Jimm.display.vibrate(500);
-			}
-
-			if (Options.getBoolean(Options.OPTION_SILENT_MODE) == true)
-				return;
-
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+			if (Options.getBoolean(Options.OPTION_SILENT_MODE) == true || !treeBuilt) return;
 
 			int not_mode = 0;
 
@@ -1465,14 +1476,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					switch (notType)
 					{
 					case SOUND_TYPE_MESSAGE:
-						Manager.playTone(ToneControl.C4, 500, Options
-								.getInt(Options.OPTION_MESS_NOTIF_VOL));
+						Manager.playTone(ToneControl.C4, 500, Options.getInt(Options.OPTION_MESS_NOTIF_VOL));
 						break;
 					case SOUND_TYPE_ONLINE:
-
 					case SOUND_TYPE_TYPING:
-						Manager.playTone(ToneControl.C4 + 7, 500, Options
-								.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
+						Manager.playTone(ToneControl.C4 + 7, 500, Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
 					}
 
 				} catch (Exception e)
@@ -1482,77 +1490,36 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				break;
 
 			case 2:
-				try
+				if (notType == SOUND_TYPE_MESSAGE)
 				{
-					Player p;
-
-					if (notType == SOUND_TYPE_MESSAGE)
-					{
-						//Siemens 65-75 bugfix
-						//#sijapp cond.if target is "SIEMENS2"#
-						//#	        			Player p1 = createPlayer("silence.wav");
-						//#        				setVolume(p1,100);
-						//#        				p1.start();
-						//#        				p1.close();
-						//#        				playerFree = true;
-						//#sijapp cond.end#
-						p = createPlayer(Options
-								.getString(Options.OPTION_MESS_NOTIF_FILE));
-						if (p == null)
-							return;
-						setVolume(p, Options
-								.getInt(Options.OPTION_MESS_NOTIF_VOL));
-					} else if (notType == SOUND_TYPE_ONLINE)
-					{
-						// Siemens 65-75 bugfix
-						//#sijapp cond.if target is "SIEMENS2"#
-						//#        				Player p1 = createPlayer("silence.wav");
-						//#        				setVolume(p1,100);
-						//#        				p1.start();
-						//#	        			p1.close();
-						//#    	    			playerFree = true;
-						//#sijapp cond.end#
-						p = createPlayer(Options
-								.getString(Options.OPTION_ONLINE_NOTIF_FILE));
-						if (p == null)
-							return;
-						setVolume(p, Options
-								.getInt(Options.OPTION_ONLINE_NOTIF_VOL));
-					} else
-					{
-						// Siemens 65-75 bugfix
-						//#sijapp cond.if target is "SIEMENS2"#
-						//#        				Player p1 = createPlayer("silence.wav");
-						//#        				setVolume(p1,100);
-						//#        				p1.start();
-						//#        				p1.close();
-						//#        				playerFree = true;
-						//#sijapp cond.end#
-						p = createPlayer(Options
-								.getString(Options.OPTION_TYPING_FILE));
-						if (p == null)
-							return;
-						setVolume(p, Options.getInt(Options.OPTION_TYPING_VOL));
-					}
-
-					p.start();
-				} catch (Exception me)
+					playSound
+					(
+						Options.getString(Options.OPTION_MESS_NOTIF_FILE),
+						Options.getInt(Options.OPTION_MESS_NOTIF_VOL)
+					);
+				} 
+				else if (notType == SOUND_TYPE_ONLINE)
 				{
-					// Do nothing
+					playSound
+					(
+						Options.getString(Options.OPTION_ONLINE_NOTIF_FILE), 
+						Options.getInt(Options.OPTION_ONLINE_NOTIF_VOL)
+					);
+				}
+				else
+				{
+					playSound
+					(
+						Options.getString(Options.OPTION_TYPING_FILE),
+						Options.getInt(Options.OPTION_TYPING_VOL)
+					);
 				}
 
 				break;
-
 			}
-
-			//#sijapp cond.end#
 		}
-
 	}
 
-	//#sijapp cond.end#
-
-	//#sijapp cond.if target isnot "DEFAULT"#    
 	static public boolean changeSoundMode(boolean activate)
 	{
 		boolean newValue = !Options.getBoolean(Options.OPTION_SILENT_MODE);
@@ -1572,7 +1539,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		return newValue;
 	}
 
-	//#sijapp cond.end#
+//#sijapp cond.end#
 
 	static ContactItem lastChatItem = null;
 
