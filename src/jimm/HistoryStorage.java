@@ -31,7 +31,12 @@ import javax.microedition.rms.RecordStore;
 import jimm.util.ResourceBundle;
 import java.io.*;
 import javax.microedition.lcdui.*;
-import javax.microedition.midlet.MIDlet;
+//#sijapp cond.if target="RIM" | target="MOTOROLA" | target="MIDP2"#
+import javax.microedition.io.Connector;
+//#sijapp cond.elseif target="SIEMENS2"#
+//# import javax.microedition.io.Connector;
+//# import com.siemens.mp.io.file.*;
+//#sijapp cond.end#
 
 import DrawControls.ListItem;
 import DrawControls.VirtualList;
@@ -39,18 +44,8 @@ import DrawControls.TextList;
 import DrawControls.VirtualListCommands;
 
 import jimm.comm.Util;
-//#sijapp cond.if target="SIEMENS2" | target="MOTOROLA" | target="MIDP2"#
-import javax.microedition.io.Connector;
-//#sijapp cond.if target is "SIEMENS2"#
-//# import com.siemens.mp.io.file.FileConnection;
-//# import com.siemens.mp.io.file.FileSystemRegistry;
-//#sijapp cond.else#
-import javax.microedition.io.file.FileConnection;
-import javax.microedition.io.file.FileSystemRegistry;
-//#sijapp cond.end#
 import jimm.ContactItem;
 
-//#sijapp cond.end#
 // Class to cache one line in messages list
 // All fields are public to easy and fast access
 class CachedRecord
@@ -59,15 +54,15 @@ class CachedRecord
 
 	byte type; // 0 - incoming message, 1 - outgoing message
 
-	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
+//#sijapp cond.if target != "DEFAULT"#
 	boolean contains_url;
-	//#sijapp cond.end#
+//#sijapp cond.end#
 }
 
 // Visual messages history list
 class HistoryStorageList extends VirtualList implements CommandListener,
 		VirtualListCommands
-		//#sijapp cond.if target="SIEMENS2" | target="MOTOROLA" | target="MIDP2"#
+//#sijapp cond.if target != "DEFAULT"#
 		, Runnable
 //#sijapp cond.end#
 {
@@ -109,11 +104,10 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 	private static Command cmdExportAll = new Command(ResourceBundle
 			.getString("exportall"), Command.ITEM, 8);
 
-	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
-	private static Command cmdGotoURL = new Command(ResourceBundle
-			.getString("goto_url"), Command.ITEM, 9);
-
-	//#sijapp cond.end#
+//#sijapp cond.if target != "DEFAULT"#
+	private static Command cmdGotoURL = new Command(ResourceBundle.getString("goto_url"), Command.ITEM, 9);
+//#sijapp cond.end#
+	
 	//commands for url list
 	private static Command cmdurlSelect = new Command(ResourceBundle
 			.getString("select"), Command.OK, 1);
@@ -173,11 +167,11 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 
 			if (record == null)
 				return;
-			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
+//#sijapp cond.if target != "DEFAULT"#
 			removeCommandEx(cmdGotoURL);
 			if (record.contains_url)
 				addCommandEx(cmdGotoURL, VirtualList.MENU_TYPE_RIGHT);
-			//#sijapp cond.end#
+//#sijapp cond.end#
 			setCaption(record.from + " " + record.date);
 		}
 	}
@@ -215,7 +209,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		}
 	}
 
-	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"|target="SIEMENS2"#
+//#sijapp cond.if target != "DEFAULT"#
 	private Object fileSystem; 
 	private boolean cp1251;
 	private String exportUin;
@@ -372,9 +366,6 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		Jimm.display.callSerially(this);
 	}
 
-	//#sijapp cond.end#
-
-	//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
 	private static TextList URLList;
 
 	private void gotoURL()
@@ -407,14 +398,13 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		}
 	}
 
-	//#sijapp cond.end#
+//#sijapp cond.end#
 
 	public void commandAction(Command c, Displayable d)
 	{
 		Jimm.aaUserActivity();
 		
-		//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
-		
+//#sijapp cond.if target != "DEFAULT"#		
 		if (JimmUI.isControlActive(messTextList))
 		{
 			messTextList = null;
@@ -458,15 +448,13 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 
 		else if (c == cmdGotoURL)
 			gotoURL();
-		//#sijapp cond.end#
-
-		//#sijapp cond.if target="SIEMENS2"|target="MOTOROLA"|target="MIDP2"#
+		
 		// Export history to txt file
 		if (c == cmdExport)
 			export(currUin);
 		if (c == cmdExportAll)
 			export(null);
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		// back to contact list
 		if (c == cmdBack)
@@ -646,18 +634,17 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 				Font.STYLE_BOLD, -1);
 		messText.doCRLF(-1);
 
-		//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
-		Emotions.addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN,
-				messText.getTextColor(), -1);
-		//#sijapp cond.else#
-		//#		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
-		//#sijapp cond.end#
+//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
+		Emotions.addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN, messText.getTextColor(), -1);
+//#sijapp cond.else#
+		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
+//#sijapp cond.end#
 
-		//#sijapp cond.if target is "SIEMENS2" | target is "MOTOROLA" | target is "MIDP2"#
+//#sijapp cond.if target != "DEFAULT"#
 		messText.removeCommandEx(cmdGotoURL);
 		if (record.contains_url)
 			messText.addCommandEx(cmdGotoURL, VirtualList.MENU_TYPE_RIGHT);
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		messText.doCRLF(-1);
 		messText.setCaption(record.from);
@@ -869,18 +856,19 @@ public class HistoryStorage
 			result.from = dis.readUTF();
 			result.text = dis.readUTF();
 			result.date = dis.readUTF();
-			//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
+//#sijapp cond.if target != "DEFAULT"#
 			if (Util.parseMessageForURL(result.text) != null)
 				result.contains_url = true;
 			else
 				result.contains_url = false;
-			//#sijapp cond.end#
-		} catch (Exception e)
+//#sijapp cond.end#
+		} 
+		catch (Exception e)
 		{
 			result.text = result.date = result.from = "error";
-			//#sijapp cond.if target is "SIEMENS2" | target is "MIDP2"#
+//#sijapp cond.if target != "DEFAULT"#			
 			result.contains_url = false;
-			//#sijapp cond.end#
+//#sijapp cond.end#
 			return null;
 		}
 
