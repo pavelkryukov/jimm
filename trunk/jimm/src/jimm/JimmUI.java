@@ -726,16 +726,6 @@ public class JimmUI implements CommandListener
 			vl.setFontSize(Options.getBoolean(Options.OPTION_SMALL_FONT) ? Font.SIZE_SMALL : Font.SIZE_MEDIUM);
 	}
 
-	static public void setColorScheme()
-	{
-		//#sijapp cond.if modules_HISTORY is "true" #
-		HistoryStorage.setColorScheme();
-		//#sijapp cond.end#
-
-		ChatHistory.setColorScheme();
-		setColorScheme((VirtualList)ContactList.getVisibleContactListRef(), true, -1, true);
-	}
-
 
 	/************************************************************************/
 	/************************************************************************/
@@ -1967,7 +1957,7 @@ public class JimmUI implements CommandListener
 		if ((caps & Icq.CAPF_AIMIMIMAGE)      != 0) capsStr.append("AIM Image\n");
 		if ((caps & Icq.CAPF_AVATAR)          != 0) capsStr.append("Avatars\n");
 		if ((caps & Icq.CAPF_DIRECT)          != 0) capsStr.append("Direct connect\n");
-		if ((caps & Icq.CAPF_TYPING)          != 0) capsStr.append("Typeing notify\n");
+		if ((caps & Icq.CAPF_TYPING)          != 0) capsStr.append("Typing notify\n");
 		if ((caps & Icq.CAPF_AUDIO)           != 0) capsStr.append("Audio\n");
 		if ((caps & Icq.CAPF_VIDEO)           != 0) capsStr.append("Video\n");
 		clInfoData[UI_CAPS] = capsStr.toString(); 
