@@ -139,7 +139,6 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 
 		this.contact = contact;
 		ChatName = name;
-		JimmUI.setColorScheme(textList, true, -1, false);
 
 		textList.setVLCommands(this);
 	}
@@ -511,6 +510,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 	public void activate()
 	{
 		buildMenu();
+		JimmUI.setColorScheme(textList, true, -1, false);
 		textList.activate(Jimm.display);
 		ChatHistory.currentChat = this;
 		ChatHistory.updateCaption_Internal(this);
@@ -870,13 +870,6 @@ public class ChatHistory
 		else title = temp.ChatName;
 		temp.textList.setCaption(title);
 	}		
-
-	static public void setColorScheme()
-	{
-		Enumeration AllChats = historyTable.elements();
-		while (AllChats.hasMoreElements())
-			JimmUI.setColorScheme(((ChatTextList) AllChats.nextElement()).textList, false, -1, true);
-	}
 	
 	static protected boolean selectNextChat_Internal(ChatTextList current, boolean next)
 	{

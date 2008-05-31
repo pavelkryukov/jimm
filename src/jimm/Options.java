@@ -728,7 +728,7 @@ public class Options
 
 class OptionsForm implements CommandListener, ItemStateListener, VirtualListCommands, JimmScreen
 {
-	private boolean lastGroupsUsed, lastHideOffline, lastSmallFont;
+	private boolean lastGroupsUsed, lastHideOffline;
 
 	private int lastSortMethod, lastColorScheme;
 
@@ -1330,7 +1330,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 		lastGroupsUsed  = Options.getBoolean(Options.OPTION_USER_GROUPS);
 		lastSortMethod  = Options.getInt    (Options.OPTION_CL_SORT_BY);
-		lastSmallFont   = Options.getBoolean(Options.OPTION_SMALL_FONT);
 
 		initOptionsList(TYPE_TOP_OPTIONS);
 		
@@ -2026,7 +2025,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (capOffset > 50) capOffset = 50;
 			Options.setInt(Options.OPTION_CAPTION_OFFSET, capOffset);
 			
-			if (lastSmallFont != newSmallFont) JimmUI.setColorScheme();
 			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 			VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
 			VirtualList.setCapOffset(capOffset);
@@ -2212,7 +2210,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				if (theme == -1) return;
 				Options.setInt(Options.OPTION_COLOR_SCHEME, theme);
 				Options.safe_save();
-				if (theme != lastColorScheme) JimmUI.setColorScheme();
 			}
 			activate();
 			return;

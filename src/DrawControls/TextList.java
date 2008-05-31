@@ -494,9 +494,12 @@ public class TextList extends VirtualList implements Runnable
 
 	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text, int crsFrame)
 	{
-		Enumeration allLines = lines.elements();
-		while (allLines.hasMoreElements())
-			((TextLine) allLines.nextElement()).setItemColor(text);
+		if (getTextColor() != text)
+		{
+			Enumeration allLines = lines.elements();
+			while (allLines.hasMoreElements())
+				((TextLine) allLines.nextElement()).setItemColor(text);
+		}
 		super.setColors(capTxt, capbk, bkgrnd, cursor, text, crsFrame);
 	}
 

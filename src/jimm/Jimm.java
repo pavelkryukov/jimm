@@ -236,9 +236,6 @@ public class Jimm extends MIDlet
 		new Templates();
 
 		ui = new JimmUI();
-
-		// set color scheme for all forms
-		JimmUI.setColorScheme();
 		
 		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
 		DrawControls.VirtualList.setBackLightData

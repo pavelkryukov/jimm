@@ -366,6 +366,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		sortAll();
 		tree.unlock();
 		
+		JimmUI.setColorScheme(tree, true, -1, true);
 		tree.removeAllCommands();
 		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_LEFT_BAR);
 		tree.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);

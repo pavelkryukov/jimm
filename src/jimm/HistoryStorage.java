@@ -964,17 +964,6 @@ public class HistoryStorage
 		currCacheUin = new String();
 	}
 
-	// Sets color scheme for history UI controls
-	static public void setColorScheme()
-	{
-		if (list != null)
-		{
-			JimmUI.setColorScheme(list, false, -1, true);
-			if (HistoryStorageList.messText != null)
-				JimmUI.setColorScheme(HistoryStorageList.messText, false, -1, true);
-		}
-	}
-
 	static synchronized private boolean find_intern(String uin, String text,
 			boolean case_sens, boolean back)
 	{
