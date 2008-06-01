@@ -497,8 +497,10 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 			cols = drawWidth / itemWidth;
 			rows = (selEmotionsIndexes.length + cols - 1) / cols;
-			curCol = 0;
+			curCol = 0; curRow = 0;
 
+//			if (setName != null) _this.setCaption("["+setName+"]");
+//			else showCurrSmileName();
 			if (setName != null) _this.setCaption("["+setName+"]");
 			else showCurrSmileName();
 		}
