@@ -318,9 +318,9 @@ public class JimmUI implements CommandListener
 					{
 						sendMessage(messText, textMessReceiver);
 						messageTextbox = null;
-						boolean activated = ChatHistory.activateIfExists(textMessReceiver);
-						if (!activated) JimmUI.backToLastScreen();
 					}
+					boolean activated = ChatHistory.activateIfExists(textMessReceiver);
+					if (!activated) JimmUI.backToLastScreen();
 					break;
 				}
 			}
