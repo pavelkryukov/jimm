@@ -478,7 +478,6 @@ public class Icq implements Runnable
 				.getString(Options.OPTION_CONN_ALIVE_INVTERV)) * 1000;
 		Jimm.getTimerRef().schedule(keepAliveTimerTask, keepAliveInterv,
 				keepAliveInterv);
-		SplashCanvas.setLastErrCode(null);
 
 		// Catch JimmExceptions
 		try

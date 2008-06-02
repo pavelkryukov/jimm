@@ -312,6 +312,7 @@ public class MainMenu implements CommandListener, JimmScreen
 				Icq.reconnect_attempts = Options
 						.getInt(Options.OPTION_RECONNECT_NUMBER);
 				ContactList.beforeConnect();
+				SplashCanvas.setLastErrCode(null);
 				Icq.connect();
 				break;
 
