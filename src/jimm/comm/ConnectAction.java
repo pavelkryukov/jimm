@@ -30,6 +30,7 @@ import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
+import jimm.DebugLog;
 import jimm.JimmUI;
 import jimm.MainMenu;
 import jimm.JimmException;
@@ -378,6 +379,8 @@ public class ConnectAction extends Action
 				}
 
 				if (errcode != -1) {
+					DebugLog.addText("Connection error: " + errcode);
+
 					int toThrow = 100;
 					switch (errcode) {
 						// Multiple logins

@@ -170,10 +170,7 @@ public class SplashCanvas extends Canvas
 	// Sets the informational message
 	static public synchronized void setLastErrCode(String errcode)
 	{
-		if (errcode != null)
-			SplashCanvas.lastErrCode = new String(errcode);
-		else
-			SplashCanvas.lastErrCode = null;
+		SplashCanvas.lastErrCode = (errcode != null) ? new String(errcode) : null;
 	}
 
 	// Sets the informational message
