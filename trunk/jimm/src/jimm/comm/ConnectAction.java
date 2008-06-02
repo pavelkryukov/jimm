@@ -231,6 +231,26 @@ public class ConnectAction extends Action
 
     }
 
+    private int getConnectionErrorCode (int errCode) {
+	switch (errCode) {
+		// Multiple logins
+		case 0x0001:
+			return 110;
+		// Bad password
+		case 0x0004: case 0x0005:
+			return 111;
+		// Non-existant UIN
+		case 0x0007: case 0x0008:
+			return 112;
+		// Too many clients from same IP
+		case 0x0015: case 0x0016:
+			return 113;
+		// Rate exceeded
+		case 0x0018: case 0x001d:
+			return 114;
+	}
+	return 100;
+    }
     // Forwards received packet, returns true if packet has been consumed
     protected boolean forward(Packet packet) throws JimmException
     {
@@ -291,46 +311,66 @@ public class ConnectAction extends Action
                 }
 
             }
-			else if (state == STATE_AUTHKEY_REQUESTED) {
-				if (packet instanceof SnacPacket) {
-					SnacPacket snacPacket = (SnacPacket)packet;
-					if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0007)) {
-						byte[] rbuf = snacPacket.getData();
-						int len = Util.getWord(rbuf, 0);
-						byte[] authkey = new byte[len];
-						System.arraycopy(rbuf, 2, authkey, 0, len);
-						rbuf = null;
-						byte[] buf = new byte[2 + 2 + this.uin.length() + 2 + 2 + 16];
-						int marker = 0;
-						Util.putWord(buf, marker, 0x0001);
-						marker += 2;
-						Util.putWord(buf, marker, this.uin.length());
-						marker += 2;
-						byte[] uinRaw = Util.stringToByteArray(this.uin);
-						System.arraycopy(uinRaw, 0, buf, marker, uinRaw.length);
-						marker += uinRaw.length;
-						Util.putWord(buf, marker, 0x0025);
-						marker += 2;
-						Util.putWord(buf, marker, 0x0010);
-						marker += 2;
-						byte[] md5buf = new byte[authkey.length + this.password.length() + Util.AIM_MD5_STRING.length];
-						int md5marker = 0;
-						System.arraycopy(authkey, 0, md5buf, md5marker, authkey.length);
-						md5marker += authkey.length;
-						byte[] passwordRaw = Util.stringToByteArray(this.password);
-						System.arraycopy(passwordRaw, 0, md5buf, md5marker, passwordRaw.length);
-						md5marker += passwordRaw.length;
-						System.arraycopy(Util.AIM_MD5_STRING, 0, md5buf, md5marker, Util.AIM_MD5_STRING.length);
-						byte[] hash = Util.calculateMD5(md5buf);
-						System.arraycopy(hash, 0, buf, marker, 16);
-						Icq.c.sendPacket(new SnacPacket(0x0017, 0x0002, 0, new byte[0], buf));
-						state = STATE_CLI_IDENT_SENT;
-					} else {
-						throw new JimmException(100,0);
-					}
-				}
-				consumed = true;
-			}
+	    else if (state == STATE_AUTHKEY_REQUESTED) {
+		    if (packet instanceof SnacPacket) {
+			    SnacPacket snacPacket = (SnacPacket)packet;
+			    if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0007)) {
+				    byte[] rbuf = snacPacket.getData();
+				    int len = Util.getWord(rbuf, 0);
+				    byte[] authkey = new byte[len];
+				    System.arraycopy(rbuf, 2, authkey, 0, len);
+				    rbuf = null;
+				    byte[] buf = new byte[2 + 2 + this.uin.length() + 2 + 2 + 16];
+				    int marker = 0;
+				    Util.putWord(buf, marker, 0x0001);
+				    marker += 2;
+				    Util.putWord(buf, marker, this.uin.length());
+				    marker += 2;
+				    byte[] uinRaw = Util.stringToByteArray(this.uin);
+				    System.arraycopy(uinRaw, 0, buf, marker, uinRaw.length);
+				    marker += uinRaw.length;
+				    Util.putWord(buf, marker, 0x0025);
+				    marker += 2;
+				    Util.putWord(buf, marker, 0x0010);
+				    marker += 2;
+				    byte[] md5buf = new byte[authkey.length + this.password.length() + Util.AIM_MD5_STRING.length];
+				    int md5marker = 0;
+				    System.arraycopy(authkey, 0, md5buf, md5marker, authkey.length);
+				    md5marker += authkey.length;
+				    byte[] passwordRaw = Util.stringToByteArray(this.password);
+				    System.arraycopy(passwordRaw, 0, md5buf, md5marker, passwordRaw.length);
+				    md5marker += passwordRaw.length;
+				    System.arraycopy(Util.AIM_MD5_STRING, 0, md5buf, md5marker, Util.AIM_MD5_STRING.length);
+				    byte[] hash = Util.calculateMD5(md5buf);
+				    System.arraycopy(hash, 0, buf, marker, 16);
+				    Icq.c.sendPacket(new SnacPacket(0x0017, 0x0002, 0, new byte[0], buf));
+				    state = STATE_CLI_IDENT_SENT;
+			    } else {
+				    int errcode = -1;
+				    if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0003)) {
+					    byte[] buf = snacPacket.getData();
+					    int marker = 0;
+					    while (marker < buf.length) {
+						    byte[] tlvData = Util.getTlv(buf, marker);
+						    int tlvType = Util.getWord(buf, marker);
+						    marker += 4 + tlvData.length;
+						    if (tlvType == 0x0008) {
+							    errcode = Util.getWord(tlvData, 0);
+						    }
+					    }
+				    }
+
+				    if (errcode != -1) {
+					    consumed = true;
+					    DebugLog.addText("Connection error: " + errcode);
+					    int toThrow = getConnectionErrorCode (errcode);
+					    throw new JimmException(toThrow, errcode);
+				    }
+
+			    }
+		    }
+		    consumed = true;
+	    }
             // Watch out for STATE_CLI_IDENT_SENT
             else if (this.state == ConnectAction.STATE_CLI_IDENT_SENT)
 			{
@@ -379,32 +419,10 @@ public class ConnectAction extends Action
 				}
 
 				if (errcode != -1) {
-					DebugLog.addText("Connection error: " + errcode);
-
-					int toThrow = 100;
-					switch (errcode) {
-						// Multiple logins
-						case 0x0001:
-							toThrow = 110;
-							break;
-						// Bad password
-						case 0x0004: case 0x0005:
-							toThrow = 111;
-							break;
-						// Non-existant UIN
-						case 0x0007: case 0x0008:
-							toThrow = 112;
-							break;
-						// Too many clients from same IP
-						case 0x0015: case 0x0016:
-							toThrow = 113;
-							break;
-						// Rate exceeded
-						case 0x0018: case 0x001d:
-							toThrow = 114;
-							break;
-					}
-					throw new JimmException(toThrow, errcode);
+				    DebugLog.addText("Connection error: " + errcode);
+				    consumed = true;
+				    int toThrow = getConnectionErrorCode (errcode);
+				    throw new JimmException(toThrow, errcode);
 				}
 
 				if (consumed & (this.server != null) & (this.cookie != null)) {
