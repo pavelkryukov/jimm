@@ -679,7 +679,7 @@ public class Options
 	{
 		// Construct option form
 		optionsForm = new OptionsForm();
-		optionsForm.activate();
+		optionsForm.activateForm();
 	}
 
 	static public void setCaptchaImage(Image img)
@@ -938,6 +938,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	// Initialize the kist for the Options menu
 	private void initOptionsList(int type)
 	{
+		if (type != currOptType) currOptMode = 0;
 		currOptType = type;
 		
 		boolean connected = Icq.isConnected();
@@ -1321,18 +1322,23 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-
-	/* Activate options menu */
-	public void activate()
+	
+	public void activateForm()
 	{
 		// Store some last values
 		lastUILang      = Options.getString (Options.OPTION_UI_LANGUAGE);
 		lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 		lastGroupsUsed  = Options.getBoolean(Options.OPTION_USER_GROUPS);
 		lastSortMethod  = Options.getInt    (Options.OPTION_CL_SORT_BY);
-
-		initOptionsList(TYPE_TOP_OPTIONS);
 		
+		initOptionsList(TYPE_TOP_OPTIONS);
+		JimmUI.setLastScreen(this, false);
+	}
+
+	/* Activate options menu */
+	public void activate()
+	{
+		initOptionsList(currOptType);
 		JimmUI.setLastScreen(this, false);
 	}
 	
@@ -2304,18 +2310,26 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		}
 
 		// Look for select command
-		else if ((c == JimmUI.cmdSelect) && JimmUI.isControlActive(optionsMenu))
+		else if (JimmUI.isControlActive(optionsMenu))
 		{
-			currOptMode = optionsMenu.getCurrTextIndex();
-			dataToForm(currOptMode);
+			if (c == JimmUI.cmdSelect)
+			{
+				currOptMode = optionsMenu.getCurrTextIndex();
+				dataToForm(currOptMode);
+			}
+			else if (c == JimmUI.cmdBack)
+			{
+				if (currOptType == TYPE_TOP_OPTIONS) JimmUI.backToLastScreen();
+				else initOptionsList(TYPE_TOP_OPTIONS);
+			}
 		}
 
 		/* Look for back command */
 		else if ((c == JimmUI.cmdBack) || (c == JimmUI.cmdCancel))
 		{
-			if (d == optionsForm || keysMenu.isActive() || currOptType == TYPE_MCL_OPTIONS)
+			if (d == optionsForm || keysMenu.isActive())
 			{
-				initOptionsList(TYPE_TOP_OPTIONS);
+				initOptionsList(currOptType);
 			} 
 			else
 			{
