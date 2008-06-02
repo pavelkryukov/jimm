@@ -129,7 +129,7 @@ KNOWN BUGS
    run stable with less than 40 contacts.
 
  * On Nokia 6230 with FW > 3.15 or other devices which stop connecting at about
-   20% of the connection you have to set "Shadow connction" in the "Network" 
+   20% of the connection you have to set "Shadow connection" in the "Network" 
    section of the "Options section" to true.
    
  * On later Benq-Siemens devices you have to set the keepalive packet interval
