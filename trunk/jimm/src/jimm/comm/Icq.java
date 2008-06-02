@@ -764,17 +764,33 @@ public class Icq implements Runnable
 
 	public static volatile boolean connecting = false;
 
+	private static boolean isNotCriticalConnectionError (int errcode) {
+		switch (errcode) {
+		    case 111:	// Bad password
+		    case 112:	// Non-existant UIN
+		    case 117:	// Empty UIN and/or password
+		    case 122:	// Specified server host and/or port is invalid
+		    case 127:	// peer connection: specified server host and/or port is invalid
+			return false;
+		}
+		return true;
+	}
+
 	public synchronized static boolean reconnect(JimmException e)
 	{
 		int errCode = e.getErrCode();
 		if (reconnect_attempts-- != 0
 				&& Options.getBoolean(Options.OPTION_RECONNECT)
 				&& e.isCritical() && connecting
-				&& (errCode < 110 || errCode > 117) && errCode != 127)
+				&& isNotCriticalConnectionError (errCode))
 		{
 			SplashCanvas.setLastErrCode(e.getFullErrCode());
 			disconnect();
 			ContactList.beforeConnect();
+                        try // Wait the given time
+                        {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException ie) {}
 			connect();
 			return true;
 		} else {

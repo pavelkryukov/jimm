@@ -32,7 +32,6 @@ import jimm.ContactListItem;
 import jimm.ContactList;
 import jimm.DebugLog;
 import jimm.JimmUI;
-import jimm.MainMenu;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.RunnableImpl;
@@ -361,8 +360,10 @@ public class ConnectAction extends Action
 				    }
 
 				    if (errcode != -1) {
-					    consumed = true;
 					    DebugLog.addText("Connection error: " + errcode);
+					    consumed = true;
+					    Icq.c.close();
+					    this.state = ConnectAction.STATE_ERROR;
 					    int toThrow = getConnectionErrorCode (errcode);
 					    throw new JimmException(toThrow, errcode);
 				    }
@@ -421,6 +422,8 @@ public class ConnectAction extends Action
 				if (errcode != -1) {
 				    DebugLog.addText("Connection error: " + errcode);
 				    consumed = true;
+				    Icq.c.close();
+				    this.state = ConnectAction.STATE_ERROR;
 				    int toThrow = getConnectionErrorCode (errcode);
 				    throw new JimmException(toThrow, errcode);
 				}
@@ -1045,6 +1048,7 @@ public class ConnectAction extends Action
     		ContactList.activateList();
     		break;
     		
+    	case ON_ERROR:
     	case ON_CANCEL:
     		Icq.connecting = false;
     		Icq.disconnect();
