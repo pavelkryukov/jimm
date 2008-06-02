@@ -777,8 +777,8 @@ public class Icq implements Runnable
 			ContactList.beforeConnect();
 			connect();
 			return true;
-//		} else {
-//			connecting = false;
+		} else {
+			connecting = false;
 		}
 
 		return false;
