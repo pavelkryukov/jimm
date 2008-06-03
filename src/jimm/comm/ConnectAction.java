@@ -1045,14 +1045,14 @@ public class ConnectAction extends Action
     	switch (eventType)
     	{
     	case ON_COMPLETE:
-    		ContactList.activateList();
+    		RunnableImpl.activateListMT();
     		break;
     		
     	case ON_ERROR:
     	case ON_CANCEL:
     		Icq.connecting = false;
     		Icq.disconnect();
-    		JimmUI.backToLastScreen();
+    		RunnableImpl.backToLastScreenMT();
     		break;
     	}
     }

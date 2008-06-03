@@ -56,6 +56,8 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_REQ_LAST_VESR       = 16;
 	final static public int TYPE_SHOW_LAST_VESR      = 17;
 	final static public int TYPE_SHOW_STATUS_STR     = 18;
+	final static public int TYPE_BACK_TO_LAST_SCR    = 19;
+	final static public int TYPE_ACTIVATE_CL         = 20;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -145,6 +147,14 @@ public class RunnableImpl implements Runnable
 			
 		case TYPE_SHOW_STATUS_STR:
 			JimmUI.showStatusMessage((String)data[0], (String)data[1]);
+			break;
+			
+		case TYPE_BACK_TO_LAST_SCR:
+			JimmUI.backToLastScreen();
+			break;
+			
+		case TYPE_ACTIVATE_CL:
+			ContactList.activateList();
 			break;
 		}
 	}
@@ -263,6 +273,16 @@ public class RunnableImpl implements Runnable
 	static public void showStatusString(String text, String uin)
 	{
 		callSerially(TYPE_SHOW_STATUS_STR, text, uin);
+	}
+	
+	static public void backToLastScreenMT()
+	{
+		callSerially(TYPE_BACK_TO_LAST_SCR);
+	}
+	
+	static public void activateListMT()
+	{
+		callSerially(TYPE_ACTIVATE_CL);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
