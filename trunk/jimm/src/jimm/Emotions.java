@@ -187,9 +187,9 @@ public class Emotions implements VirtualListCommands, CommandListener
 					{
 						String word = lineItems[i];
 						if (word.length() == 0) continue;
-						insertTextCorr(textCorr, word, currIndex);
+						insertTextCorr(textCorr, word.toLowerCase(), currIndex);
 						if (word.indexOf('_') != -1 && word.length() > 3) 
-							insertTextCorr(textCorr, word.replace('_', ' '), currIndex);
+							insertTextCorr(textCorr, word.replace('_', ' ').toLowerCase(), currIndex);
 						if (i == 2) selEmotions.addElement(new Object[] { currIndex, word, smileName });
 					}
 				}
@@ -330,6 +330,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 			textList.addBigText(text, textColor, fontStyle, bigTextIndex);
 			return;
 		}
+		
+		String loweredText = text.toLowerCase();
 
 		for (int i = emoFinded.length - 1; i >= 0; i--)
 			emoFinded[i] = true;
@@ -341,7 +343,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 			int size = textCorrWords.length;
 			for (int i = 0; i < size; i++)
-				findEmotionInText(text, textCorrWords[i], textCorrIndexes[i], startIndex, i);
+				findEmotionInText(loweredText, textCorrWords[i], textCorrIndexes[i], startIndex, i);
 			
 			if (findedEmotions.isEmpty()) break;
 			

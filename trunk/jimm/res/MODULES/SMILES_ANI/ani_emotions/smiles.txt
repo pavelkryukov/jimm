@@ -1,46 +1,46 @@
 Kolobok|EN,Kolobok|RU,Колобки
-1 Aggressive >:o >:O >+O >:o >+o :-@ :angry:
-2 Angel O:-) O:) O+) O=) 0:-) 0:) 0+) 0=) (A) (a)
+1 Aggressive >:o >+O :-@ :angry:
+2 Angel O:-) O:) O+) O=) 0:-) 0:) 0+) 0=) (A)
 3 Beee :-\ :-/ :\", ":-\
 4 Biggrin :-D :D +D =D :biggrin:
-5 Blum :-P :P :-p :p +P =P +p =p :-b :b +b =b :tongue:
+5 Blum :-P :P +P =P :-b :b +b =b :tongue:
 6 Blush :-[ :[ ;'> ;-. :blush:
 7 Bomb @=
 8 Bad :-! :! :-~ ;-~ :(~ +(~ =(~ :bad:
-9 Shok =-O =O =-o =0 O_O O_o o_O O_0 o_0 0_O 0_o
-10 Clapping *BRAVO* :BRAVO: :bravo: :clapping:
+9 Shok =-O =O =0 O_O O_0 0_O
+10 Clapping *BRAVO* :BRAVO: :clapping:
 11 Cry :'( :'-(
 12 Crazy *CRAZY* :crazy:
 13 Dance *DANCE* :dance:
 14 Diablo ]:-> }:-> ]:> }:> >:-] >:] (6) :diablo: *DIABLO*
-15 Cool 8-) 8) B) :COOL: :cool: COOL cool COOL! COOL!! COOL!!!
+15 Cool 8-) 8) B) :COOL: COOL! COOL!! COOL!!!
 16 Drinks *DRINK* DRINK :drink:
 17 Fool :-| :| =|
-18 Good *THUMBS_UP* :GOOD: :good: GOOD! *GOOD*
-19 Happy *HAPPY* :happy: :HAPPY: :Happy: ^^
+18 Good *THUMBS_UP* :GOOD: GOOD! *GOOD*
+19 Happy *HAPPY* :HAPPY: ^^
 20 Heart *GIVE_HEART*
 21 Kiss :-* :* :-{} :{} +{} ={} ^.^ :kiss: *KISS* *KISSING* *KISSED*
-22 Laugh
-23 LOL *LOL* :-)) :)) =)) +)) :-))) :))) LOL lol LOL! lol! :lol:
-24 Mad 
+#22 Laugh
+23 LOL *LOL* :-)) :)) =)) +)) :-))) :))) LOL LOL! :lol:
+#24 Mad 
 25 Mamba *WASSUP* *SUP* *MAMBA* :MAMBA:
 26 Man_in_love *IN_LOVE* LOVE
-27 Jokingly *JOKINGLY* 8P 8p
+27 Jokingly *JOKINGLY* 8P
 28 Music [:-} [:}
 29 No *NO*
-30 Pardon *PARDON* =] :PARDON: :pardon: PARDON pardon
-31 Rolf *ROFL* :ROFL: :rofl: ROFL ROFL! rofl :-)))) :-))))) :-)))))) :)))) :))))) :)))))) =)))) =))))) =))))))
-32 Rose @}->-- @}-:-- @>}--,-`--- (F) (f)
+30 Pardon *PARDON* =] :PARDON:
+31 Rolf *ROFL* :ROFL: ROFL! :-)))) :-))))) :-)))))) :)))) :))))) :)))))) =)))) =))))) =))))))
+32 Rose @}->-- @}-:-- @>}--,-`--- (F)
 33 Sad :-( :( +( =( :-(( :(( +(( =(( :sad:
-34 Secret :-X :-x X: x: :-# :# :secret:
+34 Secret :-X X: :-# :# :secret:
 35 Shout *SHOUT*
 36 Smile :-) :) +) =) :smile:
-37 Sorry *SORRY* :sorry:
-38 Don't_know *DONT_KNOW* *UNKNOWN* :HZ: :hz:
+37 Sorry *SORRY*
+38 Don't_know *DONT_KNOW* *UNKNOWN* :HZ:
 39 Black_eye *VAVA*
-40 Wacko %) %-) :-$ :$ :wacko: :WACKO:
+40 Wacko %) %-) :-$ :$ :WACKO:
 41 Wink ;-) ;) ^_~ :wink:
-42 Yahoo *YAHOO* *YAHOO!* :YAHOO: :yahoo: YAHOO! Yahoo! YAHOO!! Yahoo!! YAHOO!!! Yahoo!!!
+42 Yahoo *YAHOO* *YAHOO!* :YAHOO: YAHOO! YAHOO!! YAHOO!!!
 #-1 boredom *TIRED* |-0 :boredom:
-#-1 stop *STOP* STOP STOP! STOP!! STOP!!! :stop:
+#-1 stop *STOP* STOP! STOP!! STOP!!! :STOP:
 #-1 pleasantry *db* :db:
