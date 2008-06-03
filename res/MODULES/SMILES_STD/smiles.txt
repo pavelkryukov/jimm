@@ -2,7 +2,7 @@
 0 Smile :-) :) :-)) :))
 1 Sad :-( :( :(( :-(( =( =((
 2 Ironic ;-) ;)
-3 Amused :-P :P :-p
+3 Amused :-P :P 
 4 Jokingly *JOKINGLY* :-] lol
 5 Crying :'( :"( :'-( ='( ;-( ;( :~( :cry:
 6 Kissed *KISSED*
