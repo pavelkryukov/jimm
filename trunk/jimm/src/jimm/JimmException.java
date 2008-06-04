@@ -173,9 +173,8 @@ public class JimmException extends Exception
 			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e
 					.getMessage(), null, AlertType.ERROR);
 			errorMsg.setTimeout(Alert.FOREVER);
-			MainMenu.activate(errorMsg);
+			RunnableImpl.activateMainMenu(errorMsg);
 			return (errorMsg);
-
 		}
 		// Non-critical exception
 		else
@@ -193,7 +192,7 @@ public class JimmException extends Exception
 				if (Icq.isConnected())
 					ContactList.activate(errorMsg);
 				else
-					MainMenu.activate(errorMsg);
+					RunnableImpl.activateMainMenu(errorMsg);
 				return (errorMsg);
 			}
 			return (null);

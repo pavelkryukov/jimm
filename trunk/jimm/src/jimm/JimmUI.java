@@ -346,11 +346,8 @@ public class JimmUI implements CommandListener
 		// "About" -> "Back"
 		else if (JimmUI.isControlActive(aboutTextList) && (c == cmdBack))
 		{
-			synchronized (_this)
-			{
-				MainMenu.activateMenu();
-				aboutTextList = null;
-			}
+			MainMenu.activateMenu();
+			aboutTextList = null;
 		}
 
 		// "User info"
@@ -588,23 +585,21 @@ public class JimmUI implements CommandListener
 		else
 			str.append(" ...");
 
+		Image image = null;
 		try
 		{
-			Image image = SplashCanvas.getSplashImage();
-			aboutTextList.addBigText("\n", 0xffffff, Font.STYLE_PLAIN, -1)
-					.addImage(image, null, -1).doCRLF(-1).addBigText(str.toString(), 0xffffff,
-							Font.STYLE_PLAIN, -1);
+			image = SplashCanvas.getSplashImage();
+		} catch (Exception e){}
+		
+		aboutTextList.addBigText("\n", 0xffffff, Font.STYLE_PLAIN, -1);
+		if (image != null) aboutTextList.addImage(image, null, -1).doCRLF(-1);
+		aboutTextList.addBigText(str.toString(), 0xffffff, Font.STYLE_PLAIN, -1);
 
-			aboutTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
-			aboutTextList.setCommandListener(_this);
-
-			// Set the color sceme (background would not fit otherwise)
-			aboutTextList.activate(Jimm.display);
-		} catch (Exception e)
-		{
-		}
-
+		aboutTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+		aboutTextList.setCommandListener(_this);
 		aboutTextList.unlock();
+		
+		aboutTextList.activate(Jimm.display);
 		
 		// request last jimm version
 		if (version == null) RunnableImpl.requestLastJimmVers();
@@ -639,7 +634,7 @@ public class JimmUI implements CommandListener
 		RunnableImpl.showLastJimmVers();
 	}
 	
-	static public void internalShowLastVersThread()
+	static public void internalShowLastVers()
 	{
 		if (aboutTextList != null)
 			aboutTextList.addBigText(version, aboutTextList.getTextColor(), Font.STYLE_PLAIN, -1);
@@ -863,7 +858,7 @@ public class JimmUI implements CommandListener
 			//#sijapp cond.if target isnot "DEFAULT" #
 			case Options.HOTKEY_SOUNDOFF:
 				ContactList.changeSoundMode(false);
-				RunnableImpl.buildMenuMT();
+				MainMenu.build();
 				break;
 			//#sijapp cond.end#
 				

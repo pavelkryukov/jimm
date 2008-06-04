@@ -37,6 +37,7 @@ import jimm.FileTransfer;
 import jimm.JimmException;
 import jimm.JimmUI;
 import jimm.Options;
+import jimm.RunnableImpl;
 import jimm.util.ResourceBundle;
 
 public class DirectConnectionAction extends Action
@@ -390,7 +391,7 @@ public class DirectConnectionAction extends Action
 		{
 		case ON_CANCEL:
 			cancel = true;
-			JimmUI.backToLastScreen();
+			RunnableImpl.backToLastScreenMT();
 			break;
 
 		case ON_ERROR:
@@ -401,7 +402,7 @@ public class DirectConnectionAction extends Action
 							+ ResourceBundle.getString("successful") + "!",
 					null, AlertType.WARNING);
 			
-			JimmUI.backToLastScreen();
+			RunnableImpl.backToLastScreenMT();
 			break;
 
 		case ON_COMPLETE:

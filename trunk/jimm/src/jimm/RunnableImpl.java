@@ -58,7 +58,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_SHOW_STATUS_STR     = 18;
 	final static public int TYPE_BACK_TO_LAST_SCR    = 19;
 	final static public int TYPE_ACTIVATE_CL         = 20;
-	final static public int TYPE_BUILD_MENU          = 21;
+	final static public int TYPE_ACTIVATE_MM         = 21;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -143,7 +143,7 @@ public class RunnableImpl implements Runnable
 			break;
 			
 		case TYPE_SHOW_LAST_VESR:
-			JimmUI.internalShowLastVersThread();
+			JimmUI.internalShowLastVers();
 			break;
 			
 		case TYPE_SHOW_STATUS_STR:
@@ -157,9 +157,9 @@ public class RunnableImpl implements Runnable
 		case TYPE_ACTIVATE_CL:
 			ContactList.activateList();
 			break;
-
-		case TYPE_BUILD_MENU:
-			MainMenu.build();
+			
+		case TYPE_ACTIVATE_MM:
+			MainMenu.activate((Alert)data[0]);
 			break;
 		}
 	}
@@ -267,7 +267,8 @@ public class RunnableImpl implements Runnable
 	
 	static public void requestLastJimmVers()
 	{
-		new Thread(new RunnableImpl(TYPE_REQ_LAST_VESR, null)).start();
+		RunnableImpl ri = new RunnableImpl(TYPE_REQ_LAST_VESR, null);
+		new Thread(ri).start();
 	}
 	
 	static public void showLastJimmVers()
@@ -289,11 +290,12 @@ public class RunnableImpl implements Runnable
 	{
 		callSerially(TYPE_ACTIVATE_CL);
 	}
-
-	static public void buildMenuMT()
+	
+	static public void activateMainMenu(Alert alert)
 	{
-		callSerially(TYPE_BUILD_MENU);
+		callSerially(TYPE_ACTIVATE_MM, alert);
 	}
+
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
