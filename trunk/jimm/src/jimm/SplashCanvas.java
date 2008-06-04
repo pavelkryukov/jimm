@@ -131,6 +131,9 @@ public class SplashCanvas extends Canvas
 	// True if keylock has been enabled
 	static private boolean isLocked;
 
+	// isError occured while connection
+	static private boolean errFlag;
+
 	// Number of available messages
 	static private int availableMessages;
 
@@ -171,6 +174,13 @@ public class SplashCanvas extends Canvas
 	static public synchronized void setLastErrCode(String errcode)
 	{
 		SplashCanvas.lastErrCode = (errcode != null) ? new String(errcode) : null;
+	}
+
+	// Sets the error flag
+	static public synchronized void setErrFlag(boolean errF)
+	{
+		SplashCanvas.errFlag = errF;
+		SplashCanvas._this.repaint();
 	}
 
 	// Sets the informational message
@@ -522,7 +532,11 @@ public class SplashCanvas extends Canvas
 
 		g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx,
 				SplashCanvas.height + 2);
-		g.setColor(255, 255, 255);
+		if (errFlag) {
+			g.setColor(255, 0, 0);
+		} else {
+			g.setColor(255, 255, 255);
+		}
 		g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx,
 				SplashCanvas.height + 2);
 

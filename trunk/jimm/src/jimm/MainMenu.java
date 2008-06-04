@@ -148,7 +148,7 @@ public class MainMenu implements CommandListener, JimmScreen
 	/* Displays the given alert and activates the main menu afterwards */
 	static public void activate(Alert alert)
 	{
-		MainMenu.build();
+		RunnableImpl.buildMenuMT();
 		MainMenu.list.activate(Jimm.display, alert);
 	}
 
@@ -156,7 +156,7 @@ public class MainMenu implements CommandListener, JimmScreen
 	static public void activateMenu()
 	{
 		Jimm.aaUserActivity();
-		MainMenu.build();
+		RunnableImpl.buildMenuMT();
 		MainMenu.list.activate(Jimm.display);
 		JimmUI.setLastScreen(_this, true);
 	}
