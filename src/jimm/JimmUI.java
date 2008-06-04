@@ -863,7 +863,7 @@ public class JimmUI implements CommandListener
 			//#sijapp cond.if target isnot "DEFAULT" #
 			case Options.HOTKEY_SOUNDOFF:
 				ContactList.changeSoundMode(false);
-				MainMenu.build();
+				RunnableImpl.buildMenuMT();
 				break;
 			//#sijapp cond.end#
 				

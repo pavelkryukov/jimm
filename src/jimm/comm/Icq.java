@@ -785,12 +785,14 @@ public class Icq implements Runnable
 				&& isNotCriticalConnectionError (errCode))
 		{
 			SplashCanvas.setLastErrCode(e.getFullErrCode());
+			SplashCanvas.setErrFlag(true);
 			disconnect();
 			ContactList.beforeConnect();
                         try // Wait the given time
                         {
                             Thread.sleep(5000);
                         } catch (InterruptedException ie) {}
+			SplashCanvas.setErrFlag(false);
 			connect();
 			return true;
 		} else {
