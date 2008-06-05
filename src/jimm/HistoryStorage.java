@@ -139,7 +139,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		super(null);
 		
 		addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
-//#sijapp cond.if target!="RIM"#		
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
 		addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
 //#sijapp cond.end#
 
@@ -615,7 +615,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			
 			messText.addCommandEx(cmdMsgBack, VirtualList.MENU_TYPE_LEFT_BAR);
 			
-//#sijapp cond.if target!="RIM"#
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
 			messText.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
 //#sijapp cond.end#
 			

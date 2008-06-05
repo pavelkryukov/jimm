@@ -80,7 +80,7 @@ class VirtualCanvas extends Canvas implements Runnable
 	protected void hideNotify()
 	{
 		cancelKeyRepeatTask();
-//#sijapp cond.if target!="RIM"#
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
 		currentControl.resetUiState();
 //#sijapp cond.end#		
 		currentControl.onHide();
@@ -329,10 +329,10 @@ public abstract class VirtualList
 	protected int getDrawHeight()
 	{
 		int menuBartHeight;
-//#sijapp cond.if target!="RIM"#		
-		menuBartHeight = getMenuBarHeight();
-//#sijapp cond.else#
+//#sijapp cond.if target="RIM" | target="DEFAULT"#		
 		menuBartHeight = 0;
+//#sijapp cond.else#
+		menuBartHeight = getMenuBarHeight();
 //#sijapp cond.end#
 		
 		return getHeightInternal() - getCapHeight() - menuBartHeight;
@@ -463,14 +463,14 @@ public abstract class VirtualList
 		
 		if (virtualCanvas.currentControl != null)
 		{
-//#sijapp cond.if target="RIM"#
+//#sijapp cond.if target="RIM" | target="DEFAULT"#
 			for (int i = virtualCanvas.currentControl.commands.size()-1; i >= 0; i--)
 				virtualCanvas.removeCommand((Command)virtualCanvas.currentControl.commands.elementAt(i));
 //#sijapp cond.end#
 			if (virtualCanvas.isShown()) virtualCanvas.currentControl.onHide();
 		}
 		
-//#sijapp cond.if target="RIM"#
+//#sijapp cond.if target="RIM" | target="DEFAULT"#
 		for (int i = commands.size()-1; i >= 0; i--)
 			virtualCanvas.addCommand((Command)commands.elementAt(i));
 //#sijapp cond.else#
@@ -506,7 +506,7 @@ public abstract class VirtualList
 	{
 		virtualCanvas.setCommandListener(commandListener);
 		forcedHeight = forcedWidth = -1;
-//#sijapp cond.if target!="RIM"#		
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#		
 		uiState = UI_STATE_NORMAL;
 //#sijapp cond.end#		
 		onShow();
@@ -616,7 +616,7 @@ public abstract class VirtualList
 	// private keyReaction(int keyCode)
 	private void keyReaction(int keyCode, int type)
 	{
-//#sijapp cond.if target!="RIM"#
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
 		boolean menuItemsVisible = false;
 		int lastMenuIndex = curMenuItemIndex;
 		Vector menuItemsData = null, clickedMenuItems = null;
@@ -638,7 +638,7 @@ public abstract class VirtualList
 		
 		switch (getExtendedGameAction(keyCode))
 		{
-//#sijapp cond.if target!="RIM"#		
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#		
 		case KEY_CODE_LEFT_MENU:
 			if (type == KEY_PRESSED) clickedMenuItems = leftMenuPressed();
 			break;
@@ -651,7 +651,7 @@ public abstract class VirtualList
 		case KEY_CODE_BACK_BUTTON:
 			if (type == KEY_PRESSED)
 			{
-//#sijapp cond.if target!="RIM"#				
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
 				switch (uiState)
 				{
 
@@ -672,7 +672,7 @@ public abstract class VirtualList
 			break;
 
 		case Canvas.DOWN:
-//#sijapp cond.if target!="RIM"#			
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#			
 			if (menuItemsVisible) moveSelectedMenuItem(1, menuItemsData.size(), false);
 			else moveCursor(1, false);
 //#sijapp cond.else#
@@ -681,7 +681,7 @@ public abstract class VirtualList
 			break;
 			
 		case Canvas.UP:
-//#sijapp cond.if target!="RIM"#			
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#			
 			if (menuItemsVisible) moveSelectedMenuItem(-1, menuItemsData.size(), false);
 			else moveCursor(-1, false);
 //#sijapp cond.else#
@@ -692,7 +692,7 @@ public abstract class VirtualList
 		case Canvas.FIRE:
 			if (type == KEY_PRESSED)
 			{
-//#sijapp cond.if target!="RIM"#				
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#				
 				if ((keyCode == KEY_CODE_LEFT_MENU) || (keyCode == KEY_CODE_RIGHT_MENU)) return;
 				if (menuItemsVisible)
 				{
@@ -713,7 +713,7 @@ public abstract class VirtualList
 			break;
 		}
 		
-//#sijapp cond.if target!="RIM"#		
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#		
 		initPopupMenuItems(clickedMenuItems);
 		
 		if ((menuItemsVisible && (lastMenuIndex != curMenuItemIndex)) || (lastUIState != uiState))
@@ -1356,10 +1356,10 @@ public abstract class VirtualList
 		int menuBarHeight;
 		boolean clicked;
 
-//#sijapp cond.if target!="RIM"#
-		menuBarHeight = getMenuBarHeight();
-//#sijapp cond.else#		
+//#sijapp cond.if target="RIM" | target="DEFAULT"#
 		menuBarHeight = 0;
+//#sijapp cond.else#
+		menuBarHeight = getMenuBarHeight();
 //#sijapp cond.end#
 		
 		switch (mode)
@@ -1370,7 +1370,7 @@ public abstract class VirtualList
 			y = (clipY1 <= capHeight) ? drawCaption(graphics, mode, mouseX, mouseY) : capHeight;
 			drawItems(graphics, y, menuBarHeight, mode, mouseX, mouseY, clipY1, clipY2);
 			drawScroller(graphics, y, visCount, menuBarHeight);
-//#sijapp cond.if target!="RIM"#			
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#			
 			if (menuBarHeight != 0)
 			{
 				int barY = height-menuBarHeight;
@@ -1556,7 +1556,7 @@ public abstract class VirtualList
 	
 	protected Command findMenuByType(int type)
 	{
-//#sijapp cond.if target="RIM"#		
+//#sijapp cond.if target="RIM" | target="DEFAULT"#		
 		for (int i = commands.size()-1; i >= 0; i--)
 		{
 			Command cmd = (Command)commands.elementAt(i); 
@@ -1585,7 +1585,7 @@ public abstract class VirtualList
 	
 	public void addCommandEx(Command cmd, int type)
 	{
-//#sijapp cond.if target="RIM"#
+//#sijapp cond.if target="RIM" | target="DEFAULT"#
 		commands.addElement(cmd);
 		if (virtualCanvas.currentControl == this) virtualCanvas.addCommand(cmd);
 //#sijapp cond.else#		
@@ -1634,7 +1634,7 @@ public abstract class VirtualList
 	
 	public void removeCommandEx(Command cmd)
 	{
-//#sijapp cond.if target="RIM"#		
+//#sijapp cond.if target="RIM" | target="DEFAULT"#		
 		commands.removeElement(cmd);
 		if (virtualCanvas.currentControl == this) virtualCanvas.removeCommand(cmd);
 //#sijapp cond.else#		
@@ -1660,7 +1660,7 @@ public abstract class VirtualList
 	
 	public void removeAllCommands()
 	{
-//#sijapp cond.if target="RIM"#
+//#sijapp cond.if target="RIM" | target="DEFAULT"#
 		if (virtualCanvas.currentControl == this)
 			for (int i = commands.size()-1; i >= 0; i--) 
 				virtualCanvas.removeCommand((Command)commands.elementAt(i));
@@ -1673,7 +1673,7 @@ public abstract class VirtualList
 //#sijapp cond.end#
 	}
 
-//#sijapp cond.if target="RIM"#
+//#sijapp cond.if target="RIM" | target="DEFAULT"#
 	private Vector commands = new Vector();
 //#sijapp cond.else#
 	
