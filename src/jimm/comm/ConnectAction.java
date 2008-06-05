@@ -1048,7 +1048,7 @@ public class ConnectAction extends Action
     	{
     	case ON_COMPLETE:
     		RunnableImpl.resetLoginTimer();
-    		RunnableImpl.activateListMT();
+    		RunnableImpl.activateContactListMT(null);
     		break;
     		
     	case ON_ERROR:

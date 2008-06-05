@@ -190,7 +190,7 @@ public class JimmException extends Exception
 				SplashCanvas.unlock(false);
 
 				if (Icq.isConnected())
-					ContactList.activate(errorMsg);
+					RunnableImpl.activateContactListMT(errorMsg);
 				else
 					RunnableImpl.activateMainMenu(errorMsg);
 				return (errorMsg);

@@ -331,11 +331,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 	}
 
-	// Request display of the given alert and the main menu afterwards
-	static public void activate(Alert alert)
-	{
-		ContactList.tree.activate(Jimm.display, alert);
-	}
 	
 	static public void showStatusInCaption(int status)
 	{
@@ -353,6 +348,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	public boolean isScreenActive()
 	{
 		return tree.isActive();
+	}
+	
+	// Request display of the given alert and the main menu afterwards
+	static public void activateList(Alert alert)
+	{
+		ContactList.tree.activate(Jimm.display, alert);
 	}
 
 	// Request display of the main menu

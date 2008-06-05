@@ -425,7 +425,9 @@ public class Search
 							.getString("warning"), JimmException.getErrDesc(
 							161, 0), null, AlertType.WARNING);
 					errorMsg.setTimeout(Alert.FOREVER);
-					ContactList.activate(errorMsg);
+					
+					// TODO: show normal error here
+					RunnableImpl.activateContactListMT(errorMsg);
 				} else
 				{
 					/* Show list of groups to select which group to add to */
