@@ -313,7 +313,7 @@ public class RegisterNewUinAction extends Action
 					DisconnectPacket disconnectPacket = (DisconnectPacket) packet;
 					// Watch out for CLI_GOODBYE packet
 					if (disconnectPacket.getType() == DisconnectPacket.TYPE_CLI_GOODBYE) {
-						Icq.c.close();
+						Icq.c.notifyToDisconnect();
 						consumed = true;
 						if (this.uin != null) {
 						    this.state = RegisterNewUinAction.STATE_WELL_DONE;
@@ -376,11 +376,11 @@ public class RegisterNewUinAction extends Action
 		System.out.println ("new uin: " + this.getUin());
 		System.out.println ("password: " + this.getPassword());
 		Options.submitNewUinPassword (this.getUin(), this.getPassword());
-    		Icq.disconnect();
+    		Icq.disconnect(false);
     		break;
     	case ON_CANCEL:
     	case ON_ERROR:
-    		Icq.disconnect();
+    		Icq.disconnect(false);
     		break;
 	}
     }
