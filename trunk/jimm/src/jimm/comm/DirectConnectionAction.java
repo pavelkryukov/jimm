@@ -402,6 +402,7 @@ public class DirectConnectionAction extends Action
 							+ ResourceBundle.getString("successful") + "!",
 					null, AlertType.WARNING);
 			
+			// TODO: show error here
 			RunnableImpl.backToLastScreenMT();
 			break;
 
@@ -416,7 +417,7 @@ public class DirectConnectionAction extends Action
 					AlertType.INFO);
 			ok.setTimeout(2000);
 			
-			ContactList.activate(ok);
+			RunnableImpl.activateContactListMT(ok);
 			break;
 		}
 	}

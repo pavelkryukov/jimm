@@ -156,7 +156,9 @@ public class RunnableImpl implements Runnable
 			break;
 			
 		case TYPE_ACTIVATE_CL:
-			ContactList.activateList();
+			Alert alert = (Alert)data[0];
+			if (alert == null) ContactList.activateList();
+			else ContactList.activateList(alert);
 			break;
 			
 		case TYPE_ACTIVATE_MM:
@@ -288,9 +290,9 @@ public class RunnableImpl implements Runnable
 		callSerially(TYPE_BACK_TO_LAST_SCR);
 	}
 	
-	static public void activateListMT()
+	static public void activateContactListMT(Alert alert)
 	{
-		callSerially(TYPE_ACTIVATE_CL);
+		callSerially(TYPE_ACTIVATE_CL, alert);
 	}
 	
 	static public void activateMainMenu(Alert alert)

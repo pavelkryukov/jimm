@@ -433,7 +433,7 @@ public class UpdateContactListAction extends Action
 				ContactList.optionsChanged(true, true);
 				break;
 			}
-			RunnableImpl.activateListMT();
+			RunnableImpl.activateContactListMT(null);
 			if ((action != ACTION_DEL) && (cItem != null))
 				ContactList.contactChanged(cItem, true, false);
 			break;
