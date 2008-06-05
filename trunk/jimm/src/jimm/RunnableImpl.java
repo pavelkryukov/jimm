@@ -59,6 +59,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_BACK_TO_LAST_SCR    = 19;
 	final static public int TYPE_ACTIVATE_CL         = 20;
 	final static public int TYPE_ACTIVATE_MM         = 21;
+	final static public int TYPE_RESET_LOGIN_TIMER   = 22;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -161,6 +162,10 @@ public class RunnableImpl implements Runnable
 		case TYPE_ACTIVATE_MM:
 			MainMenu.activate((Alert)data[0]);
 			break;
+			
+		case TYPE_RESET_LOGIN_TIMER:
+			ContactList.resetLoginTimer();
+			break;
 		}
 	}
 
@@ -224,9 +229,6 @@ public class RunnableImpl implements Runnable
 		setInt(arguments, 11, idle);
 
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
-		//#sijapp cond.if target isnot "DEFAULT" #		
-		ContactList.checkAndPlayOnlineSound(uin, status);
-		//#sijapp cond.end #		
 	}
 
 	//#sijapp cond.if target isnot "DEFAULT"#
@@ -294,6 +296,11 @@ public class RunnableImpl implements Runnable
 	static public void activateMainMenu(Alert alert)
 	{
 		callSerially(TYPE_ACTIVATE_MM, alert);
+	}
+	
+	static public void resetLoginTimer()
+	{
+		callSerially(TYPE_RESET_LOGIN_TIMER);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
