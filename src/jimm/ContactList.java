@@ -110,8 +110,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	public static Image eventSystemNoticeImg;
 	public static Image eventSysActionImg;
 	
+	private static long lastLoginTime;
 	public static boolean playerFree = true;
-	private static boolean needPlayOnlineNotif = false;
 	private static boolean needPlayMessNotif = false;
 
 	private static ContactList _this;
@@ -268,6 +268,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	/* *********************************************************** */
 	
+	static void resetLoginTimer()
+	{
+		lastLoginTime = System.currentTimeMillis();
+		System.out.println("resetLoginTimer");
+	}
+	
 	/* Returns reference to tree */
 	static public VirtualList getVisibleContactListRef()
 	{
@@ -379,13 +385,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		JimmUI.setLastScreen(_this, true);
 
 		//#sijapp cond.if target isnot "DEFAULT" #
-		// play sound notifications after connecting 
-		if (needPlayOnlineNotif)
-		{
-			needPlayOnlineNotif = false;
-			playSoundNotification(SOUND_TYPE_ONLINE);
-		}
-
 		if (needPlayMessNotif)
 		{
 			needPlayMessNotif = false;
@@ -1022,8 +1021,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		cItem.setIntValue(ContactItem.CONTACTITEM_IDLE, idle);
 
 		// Play sound notice if selected
-		if ((trueStatus == STATUS_ONLINE) && statusChanged && !treeBuilt)
-			needPlayOnlineNotif |= true;
+//#sijapp cond.if target isnot "DEFAULT"#		
+		if (trueStatus == STATUS_ONLINE && statusChanged)
+			playSoundNotification(SOUND_TYPE_ONLINE);
+//#sijapp cond.end#		
 
 		// Update visual list
 		if (statusChanged)
@@ -1039,21 +1040,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			if (text != null) JimmUI.showCapText(curScr, cItem.getStringValue(ContactItem.CONTACTITEM_NAME)+": "+text, TimerTasks.TYPE_FLASH);
 		}
 	}
-
-	//#sijapp cond.if target isnot "DEFAULT" #
-	static public void checkAndPlayOnlineSound(String uin, int newStatus)
-	{
-		ContactItem cItem = getItembyUIN(uin);
-		if (cItem == null)
-			return;
-		int trueStatus = Util.translateStatusReceived(newStatus);
-		if ((trueStatus == STATUS_ONLINE)
-				&& (cItem
-						.getIntValue(ContactItem.CONTACTITEM_STATUS) != STATUS_ONLINE))
-			playSoundNotification(SOUND_TYPE_ONLINE);
-	}
-
-	//#sijapp cond.end#    
 
 	// Updates the client-side contact list (called when a contact changes status)
 	static public synchronized void update(String uin, int status)
@@ -1450,7 +1436,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		synchronized (_this)
 		{
-			if (Options.getBoolean(Options.OPTION_SILENT_MODE) == true || !treeBuilt) return;
+			if (Options.getBoolean(Options.OPTION_SILENT_MODE)) return;
 
 			int not_mode = 0;
 
@@ -1461,6 +1447,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				break;
 
 			case SOUND_TYPE_ONLINE:
+				if ((System.currentTimeMillis()-lastLoginTime) < 3000)
+					return;
 				not_mode = Options.getInt(Options.OPTION_ONLINE_NOTIF_MODE);
 				break;
 

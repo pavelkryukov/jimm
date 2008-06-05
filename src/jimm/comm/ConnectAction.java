@@ -843,6 +843,8 @@ public class ConnectAction extends Action
 
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_STATUS_INFO_SENT;
+						
+						RunnableImpl.resetLoginTimer();
 					}
 				}
 			}
@@ -1045,6 +1047,7 @@ public class ConnectAction extends Action
     	switch (eventType)
     	{
     	case ON_COMPLETE:
+    		RunnableImpl.resetLoginTimer();
     		RunnableImpl.activateListMT();
     		break;
     		
