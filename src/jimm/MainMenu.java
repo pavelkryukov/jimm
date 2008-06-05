@@ -186,7 +186,7 @@ public class MainMenu implements CommandListener, JimmScreen
 		} else
 		{
 			Icq.connecting = false;
-			Icq.disconnect();
+			Icq.disconnect(false);
 			try
 			{
 				Thread.sleep(500);
@@ -319,7 +319,7 @@ public class MainMenu implements CommandListener, JimmScreen
 			case MENU_DISCONNECT:
 				/* Disconnect */
 				Icq.connecting = false;
-				Icq.disconnect();
+				Icq.disconnect(true);
 				Thread.yield();
 				/* Show the main menu */
 				MainMenu.activateMenu();

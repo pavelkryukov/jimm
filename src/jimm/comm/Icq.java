@@ -240,12 +240,20 @@ public class Icq implements Runnable
 	}
 
 	/* Disconnects from the ICQ network */
-	static public synchronized void disconnect()
+	static public synchronized void disconnect(boolean force)
 	{
-		/* Disconnect */
+		thread = null;
+		
 		if (c != null)
-			c.close();
-		resetServerCon();
+		{
+			if (force)
+			{
+				c.forceDisconnect();
+				setNotConnected();
+			}
+			else c.notifyToDisconnect();
+		}
+
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 		//#sijapp cond.if modules_FILES is "true"#
 		resetPeerCon();
@@ -374,9 +382,6 @@ public class Icq implements Runnable
 	// Resets the comm. subsystem
 	static public synchronized void resetServerCon()
 	{
-		// Stop thread
-		thread = null;
-
 		// Wake up thread in order to complete
 		synchronized (Icq.wait)
 		{
@@ -752,7 +757,7 @@ public class Icq implements Runnable
 		if (!Options.getBoolean(Options.OPTION_RECONNECT))
 		{
 			// Close connection
-			c.close();
+			c.notifyToDisconnect();
 
 			resetServerCon();
 
@@ -786,7 +791,7 @@ public class Icq implements Runnable
 		{
 			SplashCanvas.setLastErrCode(e.getFullErrCode());
 			SplashCanvas.setErrFlag(true);
-			disconnect();
+			disconnect(false);
 			ContactList.beforeConnect();
                         try // Wait the given time
                         {
@@ -808,8 +813,10 @@ public class Icq implements Runnable
 
 	public abstract class Connection implements Runnable
 	{
+		private Object inputCloseFlagSynch = new Object();
+		
 		// Disconnect flags
-		protected volatile boolean inputCloseFlag;
+		private volatile boolean inputCloseFlag;
 
 		// Receiver thread
 		protected volatile Thread rcvThread;
@@ -824,11 +831,24 @@ public class Icq implements Runnable
 		{
 
 		}
+		
+		void setInputCloseFlag(boolean value)
+		{
+			synchronized (inputCloseFlagSynch) { inputCloseFlag = value; }
+		}
+		
+		boolean getInputCloseFlag()
+		{
+			synchronized (inputCloseFlagSynch) { return inputCloseFlag; }
+		}
 
 		// Sets the reconnect flag and closes the connection
-		public synchronized void close()
+		final public void notifyToDisconnect()
 		{
+			setInputCloseFlag(true);
 		}
+		
+		public abstract void forceDisconnect();
 
 		// Returns the number of packets available
 		public synchronized int available()
@@ -944,7 +964,7 @@ public class Icq implements Runnable
 				// If this is the first connection initialize the connection with the proxy
 				if (connSeq == 1)
 				{
-					this.inputCloseFlag = false;
+					this.setInputCloseFlag(false);
 					this.rcvThread = new Thread(this);
 					this.rcvThread.start();
 					// Wait the the finished init will notify us
@@ -982,46 +1002,6 @@ public class Icq implements Runnable
 			{
 				// Do nothing
 			}
-		}
-
-		// Sets the reconnect flag and closes the connection
-		public synchronized void close()
-		{
-			this.inputCloseFlag = true;
-
-			try
-			{
-				this.ism.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				this.ism = null;
-			}
-
-			try
-			{
-				this.osd.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				this.osd = null;
-			}
-
-			try
-			{
-				this.hcm.close();
-				this.hcd.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				this.hcm = null;
-				this.hcd = null;
-			}
-
-			Thread.yield();
 		}
 
 		/***************************************************************************** 
@@ -1068,7 +1048,7 @@ public class Icq implements Runnable
 				this.osd = this.hcd.openOutputStream();
 			} catch (IOException e)
 			{
-				this.close();
+				this.notifyToDisconnect();
 			}
 
 			// Throw exception if output stream is not ready
@@ -1107,7 +1087,7 @@ public class Icq implements Runnable
 
 					// Send the data
 					if (hcd.getResponseCode() != HttpConnection.HTTP_OK)
-						this.close();
+						this.notifyToDisconnect();
 					else
 						seq++;
 
@@ -1139,7 +1119,7 @@ public class Icq implements Runnable
 					// System.out.println(" ");
 				} catch (IOException e)
 				{
-					this.close();
+					this.notifyToDisconnect();
 				}
 
 			}
@@ -1175,7 +1155,7 @@ public class Icq implements Runnable
 			try
 			{
 				// Check abort condition
-				while (!this.inputCloseFlag)
+				while (!this.getInputCloseFlag())
 				{
 					// Set connection parameters
 					this.hcm = (HttpConnection) Connector.open(monitorURL,
@@ -1348,7 +1328,7 @@ public class Icq implements Runnable
 			// Catch communication exception
 			catch (NullPointerException e)
 			{
-				if (!this.inputCloseFlag)
+				if (!this.getInputCloseFlag())
 				{
 					// Construct and handle exception
 					JimmException f = new JimmException(125, 3);
@@ -1368,7 +1348,7 @@ public class Icq implements Runnable
 			// Catch IO exception
 			catch (IOException e)
 			{
-				if (!this.inputCloseFlag)
+				if (!this.getInputCloseFlag())
 				{
 					// Construct and handle exception
 					JimmException f = new JimmException(125, 1);
@@ -1377,7 +1357,30 @@ public class Icq implements Runnable
 				{ /* Do nothing */
 				}
 			}
+			
+			closeStreams();
+			setNotConnected();
+		}
+		
+		private void closeStreams()
+		{
+			try { this.ism.close(); } catch (Exception e) {}
+			this.ism = null;
 
+			try { this.osd.close(); } catch (Exception e) {}
+			this.osd = null;
+
+			try { this.hcm.close(); } catch (Exception e) {}
+			this.hcm = null;
+			
+			try { this.hcd.close(); } catch (Exception e) {}
+			this.hcd = null;
+		}
+		
+		public void forceDisconnect()
+		{
+			setInputCloseFlag(true);
+			closeStreams();
 		}
 
 	}
@@ -1422,7 +1425,7 @@ public class Icq implements Runnable
 				is = sc.openInputStream();
 				os = sc.openOutputStream();
 
-				inputCloseFlag = false;
+				setInputCloseFlag(false);
 				rcvThread = new Thread(this);
 				rcvThread.start();
 				nextSequence = (new Random()).nextInt() % 0x0FFF;
@@ -1430,7 +1433,7 @@ public class Icq implements Runnable
 
 			} catch (ConnectionNotFoundException e)
 			{
-				throw (new JimmException(121, 0));
+				if (!getInputCloseFlag()) throw (new JimmException(121, 0));
 			} catch (IllegalArgumentException e)
 			{
 				throw (new JimmException(122, 0));
@@ -1438,43 +1441,6 @@ public class Icq implements Runnable
 			{
 				throw (new JimmException(120, 0));
 			}
-		}
-
-		// Sets the reconnect flag and closes the connection
-		public synchronized void close()
-		{
-			inputCloseFlag = true;
-			try
-			{
-				is.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				is = null;
-			}
-
-			try
-			{
-				os.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				os = null;
-			}
-
-			try
-			{
-				sc.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				sc = null;
-			}
-
-			Thread.yield();
 		}
 
 		// Sends the specified packet
@@ -1516,7 +1482,7 @@ public class Icq implements Runnable
 					//#sijapp cond.end#
 				} catch (IOException e)
 				{
-					close();
+					notifyToDisconnect();
 					JimmException ex = new JimmException(120, 3);
 					if (!Icq.reconnect(ex))
 						throw ex;
@@ -1577,7 +1543,7 @@ public class Icq implements Runnable
 			{
 
 				// Check abort condition
-				while (!inputCloseFlag)
+				while (!getInputCloseFlag())
 				{
 					// Read flap header
 					bReadSum = 0;
@@ -1656,14 +1622,14 @@ public class Icq implements Runnable
 			{
 
 				// Construct and handle exception (only if input close flag has not been set)
-				if (!inputCloseFlag)
+				if (!getInputCloseFlag())
 				{
 					JimmException f = new JimmException(120, 3);
 					JimmException.handleException(f);
 				}
 
 				// Reset input close flag
-				inputCloseFlag = false;
+				setInputCloseFlag(false);
 
 			}
 			// Catch InterruptedException
@@ -1680,7 +1646,7 @@ public class Icq implements Runnable
 			catch (IOException e)
 			{
 				// Construct and handle exception (only if input close flag has not been set)
-				if (!inputCloseFlag)
+				if (!getInputCloseFlag())
 				{
 					JimmException f = new JimmException(120, 1);
 					if (!Icq.reconnect(f))
@@ -1690,12 +1656,34 @@ public class Icq implements Runnable
 			}
 			
 			// Sometimes Nokia emulator stops working and bRead returns -1 
-			if (bRead == -1 && !inputCloseFlag)
+			if (bRead == -1 && !getInputCloseFlag())
 			{
 				JimmException f = new JimmException(120, 4);
 				if (!Icq.reconnect(f))
 					JimmException.handleException(f);
 			}
+			
+			closeStreams();
+			setNotConnected();
+		}
+		
+		private void closeStreams()
+		{
+			try { is.close(); } catch (Exception e) {} 
+			is = null;
+
+			try { os.close(); } catch (Exception e) {}
+			os = null;
+
+			try { sc.close(); } catch (Exception e) {}
+			sc = null;
+			
+		}
+		
+		public void forceDisconnect()
+		{
+			setInputCloseFlag(true);
+			closeStreams();
 		}
 
 	}
@@ -1872,7 +1860,7 @@ public class Icq implements Runnable
 					// If not succeeded, then try socks4
 					if (!is_connected)
 					{
-						stream_close();
+						closeStreams();
 						try
 						{
 							// Wait the given time
@@ -1886,7 +1874,7 @@ public class Icq implements Runnable
 					break;
 				}
 
-				inputCloseFlag = false;
+				setInputCloseFlag(false);
 				rcvThread = new Thread(this);
 				rcvThread.start();
 				nextSequence = (new Random()).nextInt() % 0x0FFF;
@@ -1970,7 +1958,7 @@ public class Icq implements Runnable
 				}
 			} catch (ConnectionNotFoundException e)
 			{
-				throw (new JimmException(121, 0));
+				if (!getInputCloseFlag()) throw (new JimmException(121, 0));
 			} catch (IllegalArgumentException e)
 			{
 				throw (new JimmException(122, 0));
@@ -2092,7 +2080,7 @@ public class Icq implements Runnable
 				}
 			} catch (ConnectionNotFoundException e)
 			{
-				throw (new JimmException(121, 0));
+				if (!getInputCloseFlag()) throw (new JimmException(121, 0));
 			} catch (IllegalArgumentException e)
 			{
 				throw (new JimmException(122, 0));
@@ -2102,48 +2090,23 @@ public class Icq implements Runnable
 			}
 		}
 
-		// Sets the reconnect flag and closes the connection
-		public synchronized void close()
+		public void forceDisconnect()
 		{
-			inputCloseFlag = true;
-
-			stream_close();
-
-			Thread.yield();
+			setInputCloseFlag(true);
+			closeStreams();
 		}
 
 		// Close input and output streams
-		private synchronized void stream_close()
+		private synchronized void closeStreams()
 		{
-			try
-			{
-				is.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				is = null;
-			}
+			try { is.close(); } catch (Exception e) {}
+			is = null;
 
-			try
-			{
-				os.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				os = null;
-			}
+			try { os.close(); } catch (Exception e) {}
+			os = null;
 
-			try
-			{
-				sc.close();
-			} catch (Exception e)
-			{ /* Do nothing */
-			} finally
-			{
-				sc = null;
-			}
+			try { sc.close(); } catch (Exception e) {}
+			sc = null;
 		}
 
 		// Sends the specified packet
@@ -2184,7 +2147,7 @@ public class Icq implements Runnable
 					//#sijapp cond.end#
 				} catch (IOException e)
 				{
-					close();
+					notifyToDisconnect();
 				}
 
 			}
@@ -2242,7 +2205,7 @@ public class Icq implements Runnable
 			{
 
 				// Check abort condition
-				while (!inputCloseFlag)
+				while (!getInputCloseFlag())
 				{
 
 					// Read flap header
@@ -2387,14 +2350,14 @@ public class Icq implements Runnable
 			{
 
 				// Construct and handle exception (only if input close flag has not been set)
-				if (!inputCloseFlag)
+				if (!getInputCloseFlag())
 				{
 					JimmException f = new JimmException(120, 3);
 					JimmException.handleException(f);
 				}
 
 				// Reset input close flag
-				inputCloseFlag = false;
+				setInputCloseFlag(false);
 
 			}
 			// Catch InterruptedException
@@ -2413,17 +2376,22 @@ public class Icq implements Runnable
 			catch (IOException e)
 			{
 				// Construct and handle exception (only if input close flag has not been set)
-				if (!inputCloseFlag)
+				if (!getInputCloseFlag())
 				{
 					JimmException f = new JimmException(120, 1);
 					JimmException.handleException(f);
 				}
 
 				// Reset input close flag
-				inputCloseFlag = false;
+				setInputCloseFlag(false);
 
 			}
+			
+			closeStreams();
+			setNotConnected();
 		}
+		
+		
 
 	}
 

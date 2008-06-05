@@ -288,7 +288,7 @@ public class Jimm extends MIDlet
 	{
 		// Disconnect
 		Icq.connecting = false;
-		Icq.disconnect();
+		Icq.disconnect(false);
 
 		// Save traffic
 		//#sijapp cond.if modules_TRAFFIC is "true" #

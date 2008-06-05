@@ -208,7 +208,7 @@ public class ConnectAction extends Action
                 else
                     if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
                     {
-                    	Icq.c.close();
+                    	Icq.c.notifyToDisconnect();
                         try
                         {
                             // Wait the given time
@@ -362,7 +362,7 @@ public class ConnectAction extends Action
 				    if (errcode != -1) {
 					    DebugLog.addText("Connection error: " + errcode);
 					    consumed = true;
-					    Icq.c.close();
+					    Icq.c.notifyToDisconnect();
 					    this.state = ConnectAction.STATE_ERROR;
 					    int toThrow = getConnectionErrorCode (errcode);
 					    throw new JimmException(toThrow, errcode);
@@ -422,7 +422,7 @@ public class ConnectAction extends Action
 				if (errcode != -1) {
 				    DebugLog.addText("Connection error: " + errcode);
 				    consumed = true;
-				    Icq.c.close();
+				    Icq.c.notifyToDisconnect();
 				    this.state = ConnectAction.STATE_ERROR;
 				    int toThrow = getConnectionErrorCode (errcode);
 				    throw new JimmException(toThrow, errcode);
@@ -431,7 +431,7 @@ public class ConnectAction extends Action
 				if (consumed & (this.server != null) & (this.cookie != null)) {
 					// Close connection (only if not HTTP Connection)
 					if (!(Icq.c instanceof HTTPConnection))
-						Icq.c.close();
+						Icq.c.notifyToDisconnect();
 					// #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
 					if (Options.getBoolean(Options.OPTION_SHADOW_CON)) try
 					{
@@ -461,7 +461,7 @@ public class ConnectAction extends Action
 							}
 							else if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
 							{
-								Icq.c.close();
+								Icq.c.notifyToDisconnect();
 								try
 								{
 									// Wait the given time
@@ -1054,7 +1054,7 @@ public class ConnectAction extends Action
     	case ON_ERROR:
     	case ON_CANCEL:
     		Icq.connecting = false;
-    		Icq.disconnect();
+    		Icq.disconnect(false);
     		RunnableImpl.backToLastScreenMT();
     		break;
     	}

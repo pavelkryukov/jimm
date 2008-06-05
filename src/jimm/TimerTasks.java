@@ -189,7 +189,12 @@ public class TimerTasks extends TimerTask implements
 	{
 		if (c == SplashCanvas.cancelCommnad)
 		{
-			action.onEvent(Action.ON_CANCEL);
+			if (Icq.isConnected()) action.onEvent(Action.ON_CANCEL);
+			else 
+			{
+				Icq.disconnect(false);
+				JimmUI.backToLastScreen();
+			}
 			cancel();
 		}
 	}

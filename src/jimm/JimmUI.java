@@ -610,6 +610,9 @@ public class JimmUI implements CommandListener
 		HttpConnection httemp = null;
 		InputStream istemp = null;
 		
+		Thread.yield();
+		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+		
 		try
 		{
 			httemp = (HttpConnection) Connector.open("http://www.jimm.org/en/current_ver");
