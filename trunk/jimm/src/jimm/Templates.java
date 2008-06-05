@@ -84,7 +84,7 @@ public class Templates implements VirtualListCommands, CommandListener
 		JimmUI.setColorScheme(templateList, false, -1, true);
 		templateList.setCaption(ResourceBundle.getString("templates"));
 		
-//#sijapp cond.if target!="RIM"#
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
 		templateList.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
 //#sijapp cond.end#
 
