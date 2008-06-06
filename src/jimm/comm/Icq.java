@@ -42,11 +42,9 @@ import javax.microedition.io.SocketConnection;
 //#sijapp cond.end#
 
 import jimm.ContactItem;
-import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.JimmUI;
 import jimm.JimmException;
-import jimm.MainMenu;
 import jimm.Options;
 import jimm.SplashCanvas;
 import jimm.util.ResourceBundle;
@@ -132,43 +130,6 @@ public class Icq implements Runnable
 
 	}
 
-	public static void removeLocalContact(String uin)
-	{
-		byte[] buf = new byte[1 + uin.length()];
-		Util.putByte(buf, 0, uin.length());
-		System.arraycopy(uin.getBytes(), 0, buf, 1, uin.length());
-		try
-		{
-			c.sendPacket(new SnacPacket(0x0003, 0x0005, 0, new byte[0], buf));
-		} catch (JimmException e)
-		{
-			JimmException.handleException(e);
-		}
-	}
-
-	// Adds a ContactItem to the server saved contact list
-	static public synchronized void addToContactList(
-			ContactItem cItem)
-	{
-		// Request contact item adding
-		UpdateContactListAction act = new UpdateContactListAction(cItem,
-				UpdateContactListAction.ACTION_ADD);
-
-		try
-		{
-			requestAction(act);
-		} catch (JimmException e)
-		{
-			JimmException.handleException(e);
-			if (e.isCritical())
-				return;
-		}
-
-		// Start timer
-		SplashCanvas.addTimerTask("wait", act, false);
-		// System.out.println("start addContact");
-	}
-
 	// Connects to the ICQ network
 	static public synchronized void connect()
 	{
@@ -179,13 +140,12 @@ public class Icq implements Runnable
 			// Make the shadow connection for Nokia 6230 of other devices if
 			// needed
 			ContentConnection ctemp = null;
-			DataInputStream istemp = null;
 			try
 			{
 				String url = "http://shadow.jimm.org/";
 				ctemp = (ContentConnection) Connector.open(url);
 
-				istemp = ctemp.openDataInputStream();
+				ctemp.openDataInputStream();
 			} catch (Exception e)
 			{
 				// Do nothing
@@ -242,17 +202,12 @@ public class Icq implements Runnable
 	/* Disconnects from the ICQ network */
 	static public synchronized void disconnect(boolean force)
 	{
+		if (c == null) return;
+		
 		thread = null;
 		
-		if (c != null)
-		{
-			if (force)
-			{
-				c.forceDisconnect();
-				setNotConnected();
-			}
-			else c.notifyToDisconnect();
-		}
+		if (force) c.forceDisconnect();
+		else c.notifyToDisconnect();
 
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 		//#sijapp cond.if modules_FILES is "true"#
@@ -271,69 +226,10 @@ public class Icq implements Runnable
 
 		/* Reset all contacts offine */
 		RunnableImpl.resetContactsOffline();
+		
+		setNotConnected();
+		c = null;
 	}
-
-	// Dels a ContactItem to the server saved contact list
-	static public synchronized boolean delFromContactList(
-			ContactItem cItem)
-	{
-		// Check whether contact item is temporary
-		if (cItem.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP) && 
-				!cItem.getBooleanValue(ContactItem.CONTACTITEM_IS_PHANTOM))
-		{
-			// Remove this temporary contact item
-			removeLocalContact(cItem
-					.getStringValue(ContactItem.CONTACTITEM_UIN));
-			ContactList.removeContactItem(cItem);
-
-			// Activate contact list
-			ContactList.activateList();
-		} 
-		else
-		{
-			// Request contact item removal
-			UpdateContactListAction act2 = new UpdateContactListAction(cItem,
-					UpdateContactListAction.ACTION_DEL);
-			try
-			{
-				Icq.requestAction(act2);
-			} catch (JimmException e)
-			{
-				JimmException.handleException(e);
-				if (e.isCritical())
-					return false;
-			}
-
-			// Start timer
-			SplashCanvas.addTimerTask("wait", act2, false);
-		}
-		return true;
-	}
-
-	//#sijapp cond.if target isnot "DEFAULT"#
-	public synchronized static void beginTyping(String uin, boolean isTyping)
-			throws JimmException
-	{
-		byte[] uinRaw = Util.stringToByteArray(uin);
-		int tempBuffLen = Icq.MTN_PACKET_BEGIN.length + 1 + uinRaw.length + 2;
-		int marker = 0;
-		byte[] tempBuff = new byte[tempBuffLen];
-		System.arraycopy(Icq.MTN_PACKET_BEGIN, 0, tempBuff, marker,
-				Icq.MTN_PACKET_BEGIN.length);
-		marker += Icq.MTN_PACKET_BEGIN.length;
-		Util.putByte(tempBuff, marker, uinRaw.length);
-		marker += 1;
-		System.arraycopy(uinRaw, 0, tempBuff, marker, uinRaw.length);
-		marker += uinRaw.length;
-		Util.putWord(tempBuff, marker, ((isTyping) ? (0x0002) : (0x0000)));
-		marker += 2;
-		// Send packet
-		SnacPacket snacPkt = new SnacPacket(0x0004, 0x0014, 0x00000000,
-				new byte[0], tempBuff);
-		c.sendPacket(snacPkt);
-	}
-
-	//#sijapp cond.end#
 
 	static public void setVisibility(int value)
 	{
@@ -747,14 +643,11 @@ public class Icq implements Runnable
 
 			}
 		}
-		// Critical JimmException
-		catch (JimmException e)
+		catch (Exception e)
 		{
-			// Do nothing, already handled
-
 		}
 
-		if (!Options.getBoolean(Options.OPTION_RECONNECT))
+		if (!Options.getBoolean(Options.OPTION_RECONNECT) && c != null)
 		{
 			// Close connection
 			c.notifyToDisconnect();
@@ -783,6 +676,7 @@ public class Icq implements Runnable
 
 	public synchronized static boolean reconnect(JimmException e)
 	{
+		System.out.println("reconnect");
 		int errCode = e.getErrCode();
 		if (reconnect_attempts-- != 0
 				&& Options.getBoolean(Options.OPTION_RECONNECT)
@@ -834,6 +728,7 @@ public class Icq implements Runnable
 		
 		void setInputCloseFlag(boolean value)
 		{
+			System.out.println("setInputCloseFlag, value="+value);
 			synchronized (inputCloseFlagSynch) { inputCloseFlag = value; }
 		}
 		
@@ -1483,9 +1378,11 @@ public class Icq implements Runnable
 				} catch (IOException e)
 				{
 					notifyToDisconnect();
-					JimmException ex = new JimmException(120, 3);
-					if (!Icq.reconnect(ex))
-						throw ex;
+					if (!getInputCloseFlag())
+					{
+						JimmException ex = new JimmException(120, 3);
+						if (!Icq.reconnect(ex)) throw ex;
+					}
 				}
 
 			}
@@ -1648,6 +1545,7 @@ public class Icq implements Runnable
 				// Construct and handle exception (only if input close flag has not been set)
 				if (!getInputCloseFlag())
 				{
+					System.out.println("getInputCloseFlag()="+getInputCloseFlag());
 					JimmException f = new JimmException(120, 1);
 					if (!Icq.reconnect(f))
 						JimmException.handleException(f);
@@ -3908,5 +3806,105 @@ public class Icq implements Runnable
 		
 		return true;
 	}
+	
+	public static void removeLocalContact(String uin)
+	{
+		byte[] buf = new byte[1 + uin.length()];
+		Util.putByte(buf, 0, uin.length());
+		System.arraycopy(uin.getBytes(), 0, buf, 1, uin.length());
+		try
+		{
+			c.sendPacket(new SnacPacket(0x0003, 0x0005, 0, new byte[0], buf));
+		} catch (JimmException e)
+		{
+			JimmException.handleException(e);
+		}
+	}
+
+	// Adds a ContactItem to the server saved contact list
+	static public synchronized void addToContactList(
+			ContactItem cItem)
+	{
+		// Request contact item adding
+		UpdateContactListAction act = new UpdateContactListAction(cItem,
+				UpdateContactListAction.ACTION_ADD);
+
+		try
+		{
+			requestAction(act);
+		} catch (JimmException e)
+		{
+			JimmException.handleException(e);
+			if (e.isCritical())
+				return;
+		}
+
+		// Start timer
+		SplashCanvas.addTimerTask("wait", act, false);
+		// System.out.println("start addContact");
+	}
+
+	// Dels a ContactItem to the server saved contact list
+	static public synchronized boolean delFromContactList(
+			ContactItem cItem)
+	{
+		// Check whether contact item is temporary
+		if (cItem.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP) && 
+				!cItem.getBooleanValue(ContactItem.CONTACTITEM_IS_PHANTOM))
+		{
+			// Remove this temporary contact item
+			removeLocalContact(cItem
+					.getStringValue(ContactItem.CONTACTITEM_UIN));
+			ContactList.removeContactItem(cItem);
+
+			// Activate contact list
+			ContactList.activateList();
+		} 
+		else
+		{
+			// Request contact item removal
+			UpdateContactListAction act2 = new UpdateContactListAction(cItem,
+					UpdateContactListAction.ACTION_DEL);
+			try
+			{
+				Icq.requestAction(act2);
+			} catch (JimmException e)
+			{
+				JimmException.handleException(e);
+				if (e.isCritical())
+					return false;
+			}
+
+			// Start timer
+			SplashCanvas.addTimerTask("wait", act2, false);
+		}
+		return true;
+	}
+
+	//#sijapp cond.if target isnot "DEFAULT"#
+	public synchronized static void beginTyping(String uin, boolean isTyping)
+			throws JimmException
+	{
+		byte[] uinRaw = Util.stringToByteArray(uin);
+		int tempBuffLen = Icq.MTN_PACKET_BEGIN.length + 1 + uinRaw.length + 2;
+		int marker = 0;
+		byte[] tempBuff = new byte[tempBuffLen];
+		System.arraycopy(Icq.MTN_PACKET_BEGIN, 0, tempBuff, marker,
+				Icq.MTN_PACKET_BEGIN.length);
+		marker += Icq.MTN_PACKET_BEGIN.length;
+		Util.putByte(tempBuff, marker, uinRaw.length);
+		marker += 1;
+		System.arraycopy(uinRaw, 0, tempBuff, marker, uinRaw.length);
+		marker += uinRaw.length;
+		Util.putWord(tempBuff, marker, ((isTyping) ? (0x0002) : (0x0000)));
+		marker += 2;
+		// Send packet
+		SnacPacket snacPkt = new SnacPacket(0x0004, 0x0014, 0x00000000,
+				new byte[0], tempBuff);
+		c.sendPacket(snacPkt);
+	}
+
+	//#sijapp cond.end#
+	
 	
 }
