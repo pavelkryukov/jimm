@@ -431,7 +431,7 @@ public class ConnectAction extends Action
 				if (consumed & (this.server != null) & (this.cookie != null)) {
 					// Close connection (only if not HTTP Connection)
 					if (!(Icq.c instanceof HTTPConnection))
-						Icq.c.notifyToDisconnect();
+						Icq.c.forceDisconnect();
 					// #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
 					if (Options.getBoolean(Options.OPTION_SHADOW_CON)) try
 					{
