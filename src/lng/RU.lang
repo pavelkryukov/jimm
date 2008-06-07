@@ -114,7 +114,7 @@
 "auto_away_time1"           "Время до статуса Отсутствую (минут)"
 "auto_away_time2"           "Время до статуса Недоступен (минут)"
 "auto_connect"				"Подключаться автоматически"
-//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+//#sijapp cond.if target!="DEFAULT"#
 "select_background"			"Выбрать фон"
 "background_mode"			"Фоновое изображение"
 "background_none"			"Нет"
