@@ -51,7 +51,7 @@ import jimm.comm.Icq;
 import jimm.comm.RegisterNewUinAction;
 import jimm.util.ResourceBundle;
 
-//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 import javax.microedition.io.file.*;
 import javax.microedition.io.*;
 //#sijapp cond.end#
@@ -462,7 +462,7 @@ public class Options
 		
 		setInt(OPTION_CAPTION_OFFSET, (Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA) ? 8 : 0);
 
-		//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+		//#sijapp cond.if target!="DEFAULT"#
 		setString (Options.OPTION_BG_IMAGE_URL, new String());
 		setInt (Options.OPTION_BG_IMAGE_MODE, 0);
 		//#sijapp cond.end#
@@ -736,7 +736,7 @@ public class Options
 		}
 	}
 	//#sijapp cond.end#	
-//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+//#sijapp cond.if target!="DEFAULT"#
 	public static void setBackgroundImage(int mode, String value)
 	{
 		switch (mode) {
@@ -878,8 +878,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private ChoiceGroup camEnc;
 //#sijapp cond.end#
 
-	private ChoiceGroup backImgGroup;
-
 //#sijapp cond.if target isnot "DEFAULT"#
 	private ChoiceGroup messageNotificationModeChoiceGroup;
 	private ChoiceGroup onlineNotificationModeChoiceGroup;
@@ -890,6 +888,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private TextField typingNotificationSoundfileTextField;
 	private Gauge onlineNotificationSoundVolume;
 	private Gauge typingNotificationSoundVolume;
+	private ChoiceGroup backImgGroup;
 //#sijapp cond.end#
 
 //#sijapp cond.if modules_TRAFFIC is "true" #
@@ -930,7 +929,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private TextList tlRmsAsk;
 	private TextList groupSelector;
 
-	//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+	//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 	// For background selection
 	private FileSystem2 fileSystem;
 	//#sijapp cond.end#
@@ -1205,7 +1204,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private Command cmdRequestRegistration = new Command(ResourceBundle.getString(
 			"register_request_send", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
 
-	//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+	//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 	private Command cmdSelectBackImg = new Command(ResourceBundle.getString(
 			"select_background", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
 	//#sijapp cond.end#
@@ -1663,7 +1662,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(chrgMessFormat, "full_textbox", Options.OPTION_FULL_TEXTBOX);
 
 			// OPTION_BG_IMAGE_MODE
-			//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+			//#sijapp cond.if target!="DEFAULT"#
 			backImgGroup = createSelector("background_mode", "background_none"
 					+ "|" + "background_int"
 			//#sijapp cond.if modules_FILES="true"#
@@ -1690,7 +1689,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			txtCapOffset = new TextField(ResourceBundle.getString("caption_offset"), String.valueOf(Options.getInt(Options.OPTION_CAPTION_OFFSET)), 2, TextField.NUMERIC); 
 			optionsForm.append(txtCapOffset);
 
-			//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+			//#sijapp cond.if target!="DEFAULT"#
 			optionsForm.append(backImgGroup);
 			//#sijapp cond.if modules_FILES="true"#
 			optionsForm.addCommand(cmdSelectBackImg);
@@ -2128,7 +2127,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (capOffset > 50) capOffset = 50;
 			Options.setInt(Options.OPTION_CAPTION_OFFSET, capOffset);
 			
-			//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+			//#sijapp cond.if target!="DEFAULT"#
 			Options.setInt(Options.OPTION_BG_IMAGE_MODE, backImgGroup.getSelectedIndex());
 			Options.setBackgroundImage (backImgGroup.getSelectedIndex(), Options.getString(Options.OPTION_BG_IMAGE_URL));
 			//#sijapp cond.end#
@@ -2494,7 +2493,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			}
 			return;
 		} 
-		//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 		else if ((fileSystem != null) && fileSystem.isActive())
 		{
 			if (c == JimmUI.cmdOk)
@@ -2544,7 +2543,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		optionsForm.removeCommand(cmdRequestCaptchaImage);
 		optionsForm.removeCommand(cmdRequestRegistration);
 		optionsForm.removeCommand(cmdDeleteAccount);
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
+		//#sijapp cond.if target!="DEFAULT"#
 		//#sijapp cond.if modules_FILES="true"#
 		optionsForm.removeCommand(cmdSelectBackImg);
 		//#sijapp cond.end#
