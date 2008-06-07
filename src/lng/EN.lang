@@ -35,6 +35,15 @@
   "auto_away_time2"             "Time before NA status (minutes)"
   "auto_connect"                "Auto connect on startup"
   "back"                        "Back"  
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+  "select_background"			"Sel. background"
+  "background_mode"				"Background image"
+  "background_none"				"None"
+  "background_int"				"Default"
+//#sijapp cond.if modules_FILES="true"#
+  "background_ext"				"External"
+//#sijapp cond.end #
+//#sijapp cond.end #
   "beep"                        "Beep"
   "birth_day"                   "Birthday"
   "black_on_white"              "Black on white"
