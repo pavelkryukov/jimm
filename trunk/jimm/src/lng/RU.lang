@@ -114,6 +114,15 @@
 "auto_away_time1"           "Время до статуса Отсутствую (минут)"
 "auto_away_time2"           "Время до статуса Недоступен (минут)"
 "auto_connect"				"Подключаться автоматически"
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+"select_background"			"Выбрать фон"
+"background_mode"			"Фоновое изображение"
+"background_none"			"Нет"
+"background_int"			"По умолчанию"
+//#sijapp cond.if modules_FILES="true"#
+"background_ext"			"Из файла"
+//#sijapp cond.end #
+//#sijapp cond.end #
 "beep"						"Гудок"
 "birth_day"					"День рождения"
 "black_on_white"			"Чёрная на белом"

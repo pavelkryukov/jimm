@@ -248,6 +248,10 @@ public class Jimm extends MIDlet
 		DrawControls.VirtualList.setDisplay(Jimm.display);
 		VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
 		VirtualList.setCapOffset(Options.getInt(Options.OPTION_CAPTION_OFFSET));
+		//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+		Options.setBackgroundImage( Options.getInt(Options.OPTION_BG_IMAGE_MODE),
+						Options.getString(Options.OPTION_BG_IMAGE_URL));
+		//#sijapp cond.end#
 
 		if (loadError.length() == 0)
 		{

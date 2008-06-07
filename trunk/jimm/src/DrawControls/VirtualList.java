@@ -187,6 +187,11 @@ public abstract class VirtualList
 	// Individual UI stuff
 	protected int     currItem         = 0;
 	private   Image   capImage;
+
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+	private   static  Image backImage;
+//#sijapp cond.end#		
+
 	protected boolean cyclingCursor    = false;
 	private   boolean fullScreen       = false;
 	protected int     borderWidth      = 0;
@@ -369,6 +374,14 @@ public abstract class VirtualList
 		capImage = image;
 		invalidate(0, 0, getWidth(), getCapHeight());
 	}
+
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+	public static void setBackImage(Image image)
+	{
+		if (backImage == image) return;
+		backImage = image;
+	}
+//#sijapp cond.end#		
 
 	public void setVLCommands(VirtualListCommands vlCommands)
 	{
@@ -1184,10 +1197,16 @@ public abstract class VirtualList
 			int curX2 = curXVals[1];
 			
 			// Fill background
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+			if (backImage == null) {
+//#sijapp cond.end#		
 			g.setColor(bkgrndColor);
 			int realY1 = Math.max(topY, clipY1);
 			int realY2 = Math.min(bottomY, clipY2); 
 			g.fillRect(0, realY1, itemWidth, realY2-realY1);
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+			}
+//#sijapp cond.end#		
 
 			// Draw cursor
 			y = topY;
@@ -1356,6 +1375,19 @@ public abstract class VirtualList
 		int menuBarHeight;
 		boolean clicked;
 
+//#sijapp cond.if target!="RIM" & target!="DEFAULT"#
+		if (backImage != null)
+		{
+			int scrWidth = getWidth();
+			int scrHeight = getHeight();
+			int imgWidth = backImage.getWidth();
+			int imgHeight = backImage.getHeight();
+			for (int xx = 0; xx < scrWidth; xx += imgWidth)
+				for (int yy = 0; yy < scrHeight; yy += imgHeight)
+					graphics.drawImage(backImage, xx, yy, Graphics.LEFT|Graphics.TOP);
+		}
+//#sijapp cond.end#
+		
 //#sijapp cond.if target="RIM" | target="DEFAULT"#
 		menuBarHeight = 0;
 //#sijapp cond.else#
