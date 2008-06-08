@@ -8,6 +8,7 @@ Implemented:
   * NEW FEATURE: Manage saved backup list of deleted contacts
   * NEW FEATURE: Animated emotions
   * NEW FEATURE: Antispam filter
+  * NEW FEATURE: Background image from jar or from file
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * BUGFIX: Reconnect to server feature, cancel of connecting
   * BUGFIX: Channel-2 text messages contain wrong background color 
