@@ -796,6 +796,32 @@ public class Options
 
 class OptionsForm implements CommandListener, ItemStateListener, VirtualListCommands, JimmScreen
 {
+
+	//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+	private class OptionsItems implements ItemCommandListener
+	{
+		public OptionsItems()
+		{
+		}
+
+		public void commandAction(Command command, Item item)
+		{
+			if(command == cmdSelectBackImg)
+			{
+				try
+				{
+					fileSystem = new FileSystem2();
+					fileSystem.browse(null, _this, false);
+				} catch (Exception e)
+				{
+					System.out.println (e.getMessage());
+				}
+			} 
+		}
+	}
+	//#sijapp cond.end#
+
+
 	private boolean lastGroupsUsed, lastHideOffline;
 
 	private int lastSortMethod, lastColorScheme;
@@ -889,6 +915,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private Gauge onlineNotificationSoundVolume;
 	private Gauge typingNotificationSoundVolume;
 	private ChoiceGroup backImgGroup;
+	//#sijapp cond.if modules_FILES="true"#
+	private StringItem backImgFilename;
+	private int backImgFilenameIndex = 0;
+	//#sijapp cond.end#
 //#sijapp cond.end#
 
 //#sijapp cond.if modules_TRAFFIC is "true" #
@@ -933,6 +963,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	// For background selection
 	private FileSystem2 fileSystem;
 	//#sijapp cond.end#
+
+	private static OptionsForm _this;
 
 	final private String[] hotkeyActionNames = Util.explode(
 			"ext_hotkey_action_none" + "|" + "info" + "|" + "send_message" + "|" + "status_message"
@@ -980,6 +1012,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	// Constructor
 	public OptionsForm() throws NullPointerException
 	{
+		_this = this;
+
 		// Initialize hotkeys
 		keysMenu = new TextList(ResourceBundle.getString("ext_listhotkeys"));
 		keysMenu.setCyclingCursor(true);
@@ -1398,6 +1432,21 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				}
 			}
 		}
+		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+		else if (backImgGroup != null)
+		{
+			int selItem = backImgGroup.getSelectedIndex();
+			
+			if (selItem == Options.BG_IMAGE_EXT)
+			{
+				if (backImgFilenameIndex == 0)
+					backImgFilenameIndex = optionsForm.append(backImgFilename);
+			} else if (backImgFilenameIndex != 0) {
+				optionsForm.delete(backImgFilenameIndex);
+				backImgFilenameIndex = 0;
+			}
+		}
+		//#sijapp cond.end#
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -1692,7 +1741,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.if target!="DEFAULT"#
 			optionsForm.append(backImgGroup);
 			//#sijapp cond.if modules_FILES="true"#
-			optionsForm.addCommand(cmdSelectBackImg);
+			backImgFilename = new StringItem(null, Options.getString(Options.OPTION_BG_IMAGE_URL), Item.HYPERLINK);
+			backImgFilename.setDefaultCommand(cmdSelectBackImg);
+			backImgFilename.setItemCommandListener(new OptionsItems());
+			if (Options.getInt (Options.OPTION_BG_IMAGE_MODE) == Options.BG_IMAGE_EXT)
+				backImgFilenameIndex = optionsForm.append (backImgFilename);
 			//#sijapp cond.end #
 			//#sijapp cond.end #
 			break;
@@ -2129,7 +2182,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			
 			//#sijapp cond.if target!="DEFAULT"#
 			Options.setInt(Options.OPTION_BG_IMAGE_MODE, backImgGroup.getSelectedIndex());
-			Options.setBackgroundImage (backImgGroup.getSelectedIndex(), Options.getString(Options.OPTION_BG_IMAGE_URL));
+			Options.setString (Options.OPTION_BG_IMAGE_URL, backImgFilename.getText());
+			Options.setBackgroundImage (backImgGroup.getSelectedIndex(), backImgFilename.getText());
 			//#sijapp cond.end#
 			
 			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
@@ -2499,13 +2553,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (c == JimmUI.cmdOk)
 			{
 				String fileName = fileSystem.getValue();
-				Options.setInt (Options.OPTION_BG_IMAGE_MODE, Options.BG_IMAGE_EXT);
-				Options.setString (Options.OPTION_BG_IMAGE_URL, fileName);
-				Options.safe_save();
-				Options.setBackgroundImage(Options.BG_IMAGE_EXT, fileName);
+				backImgFilename.setText (fileName);
 			}
 			fileSystem = null;
-			JimmUI.backToLastScreen();
+			Jimm.display.setCurrent(optionsForm);
+			Jimm.setBkltOn(true);
 		}
 		else if (c == cmdSelectBackImg)
 		{
@@ -2544,9 +2596,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		optionsForm.removeCommand(cmdRequestRegistration);
 		optionsForm.removeCommand(cmdDeleteAccount);
 		//#sijapp cond.if target!="DEFAULT"#
-		//#sijapp cond.if modules_FILES="true"#
-		optionsForm.removeCommand(cmdSelectBackImg);
-		//#sijapp cond.end#
 		optionsForm.deleteAll();
 		//#sijapp cond.else#
 		while (optionsForm.size() > 0) { optionsForm.delete(0); }
