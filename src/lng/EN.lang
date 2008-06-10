@@ -38,7 +38,6 @@
 //#sijapp cond.if target!="DEFAULT"#
   "select_background"			"Sel. background"
   "background_mode"				"Background image"
-  "background_none"				"None"
   "background_int"				"Default"
 //#sijapp cond.if modules_FILES="true"#
   "background_ext"				"External"
@@ -108,6 +107,7 @@
   "ext_hotkey_action_onoff"     "Show/hide offline"
   "ext_hotkey_action_groups"	"Show/hide groups"
   "fax"                         "Fax"
+  "none"			"None"
   "female"                      "F"
   "female_male"                 "F/M"
   "filename"                    "File Name"

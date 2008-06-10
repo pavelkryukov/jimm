@@ -1043,8 +1043,9 @@ public class Util
 	{
 		if (gender == ResourceBundle.getString("female"))
 			return 1;
-		else
+		else if (gender == ResourceBundle.getString("male"))
 			return 2;
+		return 0;
 	}
 
 	// Converts an Unicode string into CP1251 byte array

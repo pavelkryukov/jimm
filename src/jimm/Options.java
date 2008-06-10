@@ -463,7 +463,7 @@ public class Options
 		setInt(OPTION_CAPTION_OFFSET, (Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA) ? 8 : 0);
 
 		//#sijapp cond.if target!="DEFAULT"#
-		setString (Options.OPTION_BG_IMAGE_URL, new String());
+		setString (Options.OPTION_BG_IMAGE_URL, emptyString);
 		setInt (Options.OPTION_BG_IMAGE_MODE, 0);
 		//#sijapp cond.end#
 
@@ -1712,7 +1712,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			// OPTION_BG_IMAGE_MODE
 			//#sijapp cond.if target!="DEFAULT"#
-			backImgGroup = createSelector("background_mode", "background_none"
+			backImgGroup = createSelector("background_mode", "none"
 					+ "|" + "background_int"
 			//#sijapp cond.if modules_FILES="true"#
 					+ "|" + "background_ext"
