@@ -664,6 +664,7 @@ public class Icq implements Runnable
 
 	private static boolean isNotCriticalConnectionError (int errcode) {
 		switch (errcode) {
+		    case 110:	// Login from another device
 		    case 111:	// Bad password
 		    case 112:	// Non-existant UIN
 		    case 117:	// Empty UIN and/or password

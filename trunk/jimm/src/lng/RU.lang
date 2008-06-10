@@ -117,7 +117,6 @@
 //#sijapp cond.if target!="DEFAULT"#
 "select_background"			"Выбрать фон"
 "background_mode"			"Фоновое изображение"
-"background_none"			"Нет"
 "background_int"			"По умолчанию"
 //#sijapp cond.if modules_FILES="true"#
 "background_ext"			"Из файла"
@@ -185,6 +184,7 @@
 "ext_hotkey_action_onoff"	"Показ./скр. отключенных"
 "ext_hotkey_action_groups"	"Показ./скр. группы"
 "fax"						"Факс"
+"none"					"Нет"
 "female"					"Ж"
 "female_male"				"Любой"
 "filename"					"Имя файла"

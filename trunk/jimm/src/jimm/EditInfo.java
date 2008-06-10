@@ -34,13 +34,13 @@ import jimm.util.ResourceBundle;
 public class EditInfo extends Form implements CommandListener
 {
 	private TextField _NickNameItem = new TextField(ResourceBundle
-			.getString("nick"), null, 15, TextField.ANY);
+			.getString("nick"), null, 20, TextField.ANY);
 
 	private TextField _FirstNameItem = new TextField(ResourceBundle
-			.getString("firstname"), null, 15, TextField.ANY);
+			.getString("firstname"), null, 20, TextField.ANY);
 
 	private TextField _LastNameItem = new TextField(ResourceBundle
-			.getString("lastname"), null, 15, TextField.ANY);
+			.getString("lastname"), null, 20, TextField.ANY);
 
 	private TextField _EmailItem = new TextField(ResourceBundle
 			.getString("email"), null, 50, TextField.EMAILADDR);
@@ -49,7 +49,7 @@ public class EditInfo extends Form implements CommandListener
 			.getString("birth_day"), null, 15, TextField.ANY);
 
 	private TextField _CityItem = new TextField(ResourceBundle
-			.getString("city"), null, 15, TextField.ANY);
+			.getString("city"), null, 50, TextField.ANY);
 
 	private ChoiceGroup _SexItem = new ChoiceGroup(ResourceBundle
 			.getString("gender"), Choice.EXCLUSIVE);
@@ -65,6 +65,7 @@ public class EditInfo extends Form implements CommandListener
 	public EditInfo()
 	{
 		super(ResourceBundle.getString("editform"));
+		_SexItem.append(ResourceBundle.getString("none"), null);
 		_SexItem.append(ResourceBundle.getString("female"), null);
 		_SexItem.append(ResourceBundle.getString("male"), null);
 		append(_NickNameItem);
@@ -84,7 +85,7 @@ public class EditInfo extends Form implements CommandListener
 		EditInfo.userInfo = userInfo;
 		EditInfo editInfoForm = new EditInfo();
 		editInfoForm._SexItem.setSelectedIndex(Util
-				.stringToGender(userInfo[JimmUI.UI_GENDER]) - 1, true);
+				.stringToGender(userInfo[JimmUI.UI_GENDER]), true);
 		editInfoForm._NickNameItem.setString(userInfo[JimmUI.UI_NICK]);
 		editInfoForm._EmailItem.setString(userInfo[JimmUI.UI_EMAIL]);
 		editInfoForm._BdayItem.setString(userInfo[JimmUI.UI_BDAY]);
@@ -113,7 +114,7 @@ public class EditInfo extends Form implements CommandListener
 			userInfo[JimmUI.UI_LAST_NAME] = _LastNameItem.getString();
 			userInfo[JimmUI.UI_CITY] = _CityItem.getString();
 			userInfo[JimmUI.UI_GENDER] = Util.genderToString(_SexItem
-					.getSelectedIndex() + 1);
+					.getSelectedIndex());
 
 			//
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();

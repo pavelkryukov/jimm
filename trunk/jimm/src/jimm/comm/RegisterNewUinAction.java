@@ -18,8 +18,9 @@
  ********************************************************************************
  File: src/jimm/comm/RegisterNewUinAction.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Ivan Mikitevich
- *******************************************************************************/
+ 2004, Author(s): Andreas Rossbacher
+ 2008, Author(s): Ivan Mikitevich
+*******************************************************************************/
 
 package jimm.comm;
 
