@@ -41,6 +41,7 @@
   "background_int"				"Default"
 //#sijapp cond.if modules_FILES="true"#
   "background_ext"				"External"
+  "background_empty"			">>not specified<<"
 //#sijapp cond.end #
 //#sijapp cond.end #
   "beep"                        "Beep"
@@ -242,6 +243,12 @@
   "captcha"			"Enter code:"
   "phone"                       "Tel."
   "pink_scheme"                 "Pink"
+  "green_scheme"                "Green"
+  "sand_scheme"                 "Sand"
+  "hacker_scheme"               "Hacker :)"
+  "aqua_scheme"                 "Aqua"
+  "green_night_scheme"          "Green Night"
+  "opera_mini_scheme"           "Pink"
   "plength"                     "Length of charge packet in kB"
   "plsauthme"                   "Hi! Please authorise my request to add you to my contact list."
   "popup_win"                   "Popup window"
