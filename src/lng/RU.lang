@@ -120,6 +120,7 @@
 "background_int"			"По умолчанию"
 //#sijapp cond.if modules_FILES="true"#
 "background_ext"			"Из файла"
+"background_empty"			">>не выбран<<"
 //#sijapp cond.end #
 //#sijapp cond.end #
 "beep"						"Гудок"
@@ -315,6 +316,12 @@
 "password"					"Пароль"
 "phone"						"Телефон"
 "pink_scheme"				"Розовая"
+"green_scheme"              "Зеленая"
+"sand_scheme"               "Песочная"
+"hacker_scheme"             "Хакер :)"
+"aqua_scheme"               "Аква"
+"green_night_scheme"        "Зеленая ночь"
+"opera_mini_scheme"         "Опера Мини"
 "plength"					"Длина оплачиваемого пакета в КБ"
 "plsauthme"					"Привет! Пожалуйста, авторизируй меня и разреши добавить тебя в контакт-лист"
 "popup_win"					"Всплывающие окна"

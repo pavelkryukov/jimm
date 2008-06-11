@@ -63,7 +63,7 @@ public class ImageList
 		return width;
 	}
 
-	//! Return hright of each image
+	//! Return height of each image
 	public int getHeight()
 	{
 		return height;

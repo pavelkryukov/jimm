@@ -222,11 +222,11 @@ public class Options
 	/* Color schemes values */
 	final static private int[] colors =
 	{//	back      text      out text  cursor    caption   in text   cap text  curs.brd.
-		0xFFFFFF, 0x000000, 0x0000FF, 0xE8E8FF, 0xF0F0F0, 0xFF0000, 0x000000, 0x6060A0,
-		0x000000, 0xFFFFFF, 0x00FFFF, 0x0000C0, 0x505050, 0xFF0000, 0xFFFFFF, 0x0000FF,
-		0x000080, 0xFFFFFF, 0x00FFFF, 0x0000D0, 0x0000B0, 0xFF0000, 0xFFFFFF, 0x0000FF,
-		0xFFA0C0, 0x000000, 0x4000C0, 0xFFE0D0, 0xFFE0D0, 0xC00040, 0x000000, 0xA02020,
-		0xE0FFE0, 0x000000, 0x008000, 0xC0FFC0, 0xC0FFC0, 0xFF0000, 0x000000, 0x00A000,
+		0xFFFFFF, 0x000000, 0x0000FF, 0xE8E8FF, 0xF0F0F0, 0xFF0000, 0x000000, 0x6060A0, // Black on White
+		0x000000, 0xFFFFFF, 0x00FFFF, 0x0000C0, 0x505050, 0xFF0000, 0xFFFFFF, 0x0000FF, // White on Black
+		0x000080, 0xFFFFFF, 0x00FFFF, 0x0000D0, 0x0000B0, 0xFF0000, 0xFFFFFF, 0x0000FF, // White on Blue
+		0xFFA0C0, 0x000000, 0x4000C0, 0xFFE0D0, 0xFFE0D0, 0xC00040, 0x000000, 0xA02020, // Pink
+		0xE0FFE0, 0x000000, 0x008000, 0xC0FFC0, 0xC0FFC0, 0xFF0000, 0x000000, 0x00A000, // Green
 		0xF9F3EF, 0xD60000, 0x3A6793, 0xE3BFA1, 0xC37D3F, 0xDB8941, 0xFFFFF0, 0xD26464, // Sand
 		0x000000, 0x00D000, 0xD0D0D0, 0x005000, 0x007000, 0x00FF00, 0x80FF80, 0x008000, // Hacker
 		0xD5FDFD, 0x000000, 0x009090, 0xB0FFFF, 0xA0FFFF, 0x0000FF, 0x000000, 0x00A0A0, // Aqua
@@ -1157,12 +1157,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		JimmUI.addTextListItem(tlColorScheme, "white_on_black",  null, 1, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(tlColorScheme, "white_on_blue",   null, 2, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(tlColorScheme, "pink_scheme",     null, 3, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "Green",           null, 4, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "Sand",            null, 5, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "Hacker :)",       null, 6, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "Aqua",            null, 7, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "Green Night",     null, 8, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "A'la opera mini", null, 9, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "green_scheme",    null, 4, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "sand_scheme",     null, 5, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "hacker_scheme",   null, 6, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "aqua_scheme",     null, 7, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "green_night_scheme",null, 8, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(tlColorScheme, "opera_mini_scheme", null, 9, true, -1, Font.STYLE_PLAIN);
 		
 		tlColorScheme.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
 		tlColorScheme.addCommandEx(JimmUI.cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
@@ -1741,7 +1741,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.if target!="DEFAULT"#
 			optionsForm.append(backImgGroup);
 			//#sijapp cond.if modules_FILES="true"#
-			backImgFilename = new StringItem(null, Options.getString(Options.OPTION_BG_IMAGE_URL), Item.HYPERLINK);
+			String fname = Options.getString(Options.OPTION_BG_IMAGE_URL);
+			fname = (fname.length() == 0) ? ResourceBundle.getString("background_select") : fname;
+			backImgFilename = new StringItem(null, fname, Item.HYPERLINK);
 			backImgFilename.setDefaultCommand(cmdSelectBackImg);
 			backImgFilename.setItemCommandListener(new OptionsItems());
 			if (Options.getInt (Options.OPTION_BG_IMAGE_MODE) == Options.BG_IMAGE_EXT)
