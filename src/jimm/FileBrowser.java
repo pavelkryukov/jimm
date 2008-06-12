@@ -128,7 +128,7 @@ class StdFileSystemHelper implements MotoFileSystem
 	public void enumFiles(Vector result, String fileName) throws IOException
 	{
 		FileConnection fileconn = (FileConnection) Connector.open("file://" + fileName, Connector.READ);
-		Enumeration list = fileconn.list();
+		Enumeration list = fileconn.list("*", true);
 		fileconn.close();
 		
 		result.addElement(FileSystem2.PARENT_DIRECTORY);
@@ -276,7 +276,7 @@ class FileSystem2 implements CommandListener, Runnable
 		fileconn = (FileConnection) Connector.open("file://localhost"+fileName, Connector.READ);
 		//#sijapp cond.end#
 
-		Enumeration list = fileconn.list();
+		Enumeration list = fileconn.list("*.*", true);
 		fileconn.close();
 		
 		result.addElement(PARENT_DIRECTORY);
