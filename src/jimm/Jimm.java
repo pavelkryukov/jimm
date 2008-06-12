@@ -172,6 +172,7 @@ public class Jimm extends MIDlet
 		this.sc = new SplashCanvas(ResourceBundle.getString("loading"));
 
 		// Check available heap memory, display warning if less then 250 KB
+		System.gc();
 		if (Runtime.getRuntime().totalMemory() < 256000)
 		{
 			Alert errorMsg = new Alert(ResourceBundle.getString("warning"),
