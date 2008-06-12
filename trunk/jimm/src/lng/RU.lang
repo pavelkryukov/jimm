@@ -66,6 +66,8 @@
 "error_195"                 "Невозможно обработать ответ файлового сервера (#195.EXT)"
 "error_196"                 "Ошибка ввода/вывода при передаче файла (#196.EXT)"
 
+"background_ext"			"Из файла"
+"background_empty"			"не выбран"
 //#sijapp cond.end#
 
 // General strings
@@ -118,10 +120,6 @@
 "select_background"			"Выбрать фон"
 "background_mode"			"Фоновое изображение"
 "background_int"			"По умолчанию"
-//#sijapp cond.if modules_FILES="true"#
-"background_ext"			"Из файла"
-"background_empty"			">>не выбран<<"
-//#sijapp cond.end #
 //#sijapp cond.end #
 "beep"						"Гудок"
 "birth_day"					"День рождения"
