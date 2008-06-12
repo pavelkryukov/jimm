@@ -1742,7 +1742,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			optionsForm.append(backImgGroup);
 			//#sijapp cond.if modules_FILES="true"#
 			String fname = Options.getString(Options.OPTION_BG_IMAGE_URL);
-			fname = (fname.length() == 0) ? ResourceBundle.getString("background_select") : fname;
+			fname = (fname.length() == 0) ? ResourceBundle.getString("background_empty") : fname;
 			backImgFilename = new StringItem(null, fname, Item.HYPERLINK);
 			backImgFilename.setDefaultCommand(cmdSelectBackImg);
 			backImgFilename.setItemCommandListener(new OptionsItems());
