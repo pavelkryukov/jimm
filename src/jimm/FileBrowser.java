@@ -203,7 +203,7 @@ class FileSystem2 implements CommandListener, Runnable
 		imageList = new ImageList();
 		try
 		{
-			imageList.load("/fs.png", -1, -1, -1);
+			imageList.load("/fs.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (java.io.IOException e) {}		
 		
 		items = new Vector();
