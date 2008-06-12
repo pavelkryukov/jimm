@@ -39,10 +39,6 @@
   "select_background"			"Sel. background"
   "background_mode"				"Background image"
   "background_int"				"Default"
-//#sijapp cond.if modules_FILES="true"#
-  "background_ext"				"External"
-  "background_empty"			">>not specified<<"
-//#sijapp cond.end #
 //#sijapp cond.end #
   "beep"                        "Beep"
   "birth_day"                   "Birthday"
@@ -541,6 +537,9 @@
   "error_194"                   "Wrong answer from filetransfer server (#194.EXT)"
   "error_195"                   "Impossible to parse filetransfer server data (#195.EXT)"
   "error_196"                   "I/O error during filetransfer (#196.EXT)"
+
+  "background_ext"		"External"
+  "background_empty"		"not specified"
   //#sijapp cond.end#
   
   // HTTP Connection errors
