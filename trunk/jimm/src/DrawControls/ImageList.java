@@ -91,7 +91,11 @@ public class ImageList
 		
 		int transpColor = -1;
 		for (int x = 0; x < width; x++) 
-			if ((argbData[x]&0xFF000000) == 0x00000000) transpColor = argbData[x]&0x00FFFFFF;
+			if ((argbData[x]&0xFF000000) == 0x00000000)
+			{
+				transpColor = argbData[x]&0x00FFFFFF;
+				break;
+			}
 		if (transpColor == -1 || transpColor == 0) return image;
 		
 		for (int i = 0; i < len; i++) 
