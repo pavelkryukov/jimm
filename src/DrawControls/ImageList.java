@@ -96,7 +96,7 @@ public class ImageList
 				transpColor = argbData[x]&0x00FFFFFF;
 				break;
 			}
-		if (transpColor == -1 || transpColor == 0) return image;
+		if (transpColor == -1 || transpColor == 0 || transpColor == 0x00FFFFFF) return image;
 		
 		for (int i = 0; i < len; i++) 
 			if ((argbData[i]&0x00FFFFFF) == transpColor) argbData[i] = transpColor;
