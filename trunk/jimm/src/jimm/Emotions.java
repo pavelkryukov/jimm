@@ -104,7 +104,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 						
 						int index = Integer.parseInt(nameAndExt[0]);
 						
-						imageList.load("/ani_emotions/"+fileName, imgWidth, -1, -1);
+						imageList.load("/ani_emotions/"+fileName, imgWidth, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 						imagesData.setSize(index+1);
 						imagesData.setElementAt(imageList.getImages(), index);
 						
@@ -200,7 +200,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 			// Read images
 			if (!animated)
 			{
-				imageList.load("/smiles.png", iconsSize, iconsSize, -1);
+				imageList.load("/smiles.png", iconsSize, iconsSize, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 				for (int i = 0; i < imageList.size(); i++)
 					imagesData.addElement(new Image[] { imageList.elementAt(i) });
 				timeData.setSize(imagesData.size());

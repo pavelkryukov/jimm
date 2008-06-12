@@ -167,7 +167,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		try
 		{
 			/* reads and divides image "icons.png" to several icons */
-			imageList.load("/icons.png", -1, -1, -1);
+			imageList.load("/icons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 			ContactList.statusEvilImg = imageList.elementAt(8);
 			ContactList.statusDepressionImg = imageList.elementAt(9);
 			ContactList.statusHomeImg = imageList.elementAt(10);
@@ -185,17 +185,17 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			ContactList.eventUrlMessageImg = imageList.elementAt(14);
 			ContactList.eventSystemNoticeImg = imageList.elementAt(15);
 			ContactList.eventSysActionImg = imageList.elementAt(16);
-			smallIcons.load("/sicons.png", -1, -1, -1);
+			smallIcons.load("/sicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (Exception e) {}
 		
 		try
 		{
-			cliImages.load("/clicons.png", -1, -1, -1);
+			cliImages.load("/clicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (Exception e) {}
 		
 		try
 		{
-			xStatusImages.load("/xstatus.png", -1, -1, -1);
+			xStatusImages.load("/xstatus.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (Exception e) {}
 	}
 

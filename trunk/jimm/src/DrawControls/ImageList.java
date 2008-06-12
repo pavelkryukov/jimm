@@ -79,12 +79,37 @@ public class ImageList
 	{
 		items = null;
 	}
+	
+//#sijapp cond.if target="MIDP2"#
+	private static Image fixAlphaChannel(Image image)
+	{
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int len = height*width;
+		int[] argbData = new int[len];  
+		image.getRGB(argbData, 0, width, 0, 0, width, height);
+		
+		int transpColor = -1;
+		for (int x = 0; x < width; x++) 
+			if ((argbData[x]&0xFF000000) == 0x00000000) transpColor = argbData[x]&0x00FFFFFF;
+		if (transpColor == -1 || transpColor == 0) return image;
+		
+		for (int i = 0; i < len; i++) 
+			if ((argbData[i]&0x00FFFFFF) == transpColor) argbData[i] = transpColor;
+		
+		return Image.createRGBImage(argbData, width, height, true);
+	}
+//#sijapp cond.end#
 
 	//! Load and divide big image to several small and store it in object
-	public void load(String resName, //!< Name of image in resouce
+	public void load
+	(
+		String resName, //!< Name of image in resouce
 		int width, //!< Width of result images
 		int height, //!< Height of result images
-		int count) throws IOException
+		int count,
+		boolean fixAlphaCh
+	) throws IOException
 	{
 		Image resImage = Image.createImage(resName);
 		int imgHeight = resImage.getHeight();
@@ -102,11 +127,15 @@ public class ImageList
 			for (int x = 0; x < imgWidth; x += width)
 			{
 				Image newImage;
-//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
+//#sijapp cond.if target!="DEFAULT"#
 				newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
 //#sijapp cond.else#
 				newImage = Image.createImage(width, height);
 				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP| Graphics.LEFT);
+//#sijapp cond.end#
+				
+//#sijapp cond.if target="MIDP2"#
+				if (fixAlphaCh) newImage = fixAlphaChannel(newImage);
 //#sijapp cond.end#
 				Image imImage = Image.createImage(newImage);
 				images.addElement(imImage);
