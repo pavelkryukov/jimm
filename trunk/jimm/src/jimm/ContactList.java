@@ -111,9 +111,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	public static Image eventSysActionImg;
 	
 	private static long lastLoginTime;
+	private static boolean needPlayMessNotif = false;
+	
+//#sijapp cond.if target!="DEFAULT"#
 	public static boolean playerFree = true;
 	private static long stopTime = StopTimeControl.RESET;
-	private static boolean needPlayMessNotif = false;
+//#sijapp cond.end#	
 
 	private static ContactList _this;
 

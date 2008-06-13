@@ -235,7 +235,8 @@ public class Icq implements Runnable
 		RunnableImpl.resetContactsOffline();
 		
 		setNotConnected();
-		if ( !(c instanceof SOCKSConnection) ) c = null;
+		
+		if (c.haveToSetNullAfterDisconnect()) c = null;
 	}
 
 	static public void setVisibility(int value)
@@ -822,6 +823,11 @@ public class Icq implements Runnable
 		public void run()
 		{
 
+		}
+		
+		public boolean haveToSetNullAfterDisconnect()
+		{
+			return true;
 		}
 
 	}
@@ -1644,6 +1650,12 @@ public class Icq implements Runnable
 
 		// ICQ sequence number counter
 		private int nextIcqSequence;
+		
+		public boolean haveToSetNullAfterDisconnect()
+		{
+			return false;
+		}
+		
 
 		// Tries to resolve given host IP
 		private synchronized String ResolveIP(String host, String port)

@@ -51,9 +51,13 @@ import jimm.comm.Icq;
 import jimm.comm.RegisterNewUinAction;
 import jimm.util.ResourceBundle;
 
-//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if target="MIDP2"|target="MOTOROLA"|target="RIM"#
 import javax.microedition.io.file.*;
 import javax.microedition.io.*;
+//#sijapp cond.elseif target="SIEMENS2"#
+//#import com.siemens.mp.io.file.FileConnection;
+//#import com.siemens.mp.io.file.FileSystemRegistry;
+//#import javax.microedition.io.Connector;
 //#sijapp cond.end#
 
 import java.io.*;
@@ -2182,7 +2186,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (capOffset > 50) capOffset = 50;
 			Options.setInt(Options.OPTION_CAPTION_OFFSET, capOffset);
 			
-			//#sijapp cond.if target!="DEFAULT"#
+			//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 			Options.setInt(Options.OPTION_BG_IMAGE_MODE, backImgGroup.getSelectedIndex());
 			Options.setString (Options.OPTION_BG_IMAGE_URL, backImgFilename.getText());
 			Options.setBackgroundImage (backImgGroup.getSelectedIndex(), backImgFilename.getText());
