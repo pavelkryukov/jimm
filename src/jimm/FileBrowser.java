@@ -276,7 +276,7 @@ class FileSystem2 implements CommandListener, Runnable
 		fileconn = (FileConnection) Connector.open("file://localhost"+fileName, Connector.READ);
 		//#sijapp cond.end#
 
-		Enumeration list = fileconn.list("*.*", true);
+		Enumeration list = fileconn.list("*", true);
 		fileconn.close();
 		
 		result.addElement(PARENT_DIRECTORY);
