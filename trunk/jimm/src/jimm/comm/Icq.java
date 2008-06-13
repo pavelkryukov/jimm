@@ -180,7 +180,7 @@ public class Icq implements Runnable
 
 
 	// Connects to the ICQ network for register new uin
-	static public synchronized void connect(String newPassword)
+	static public synchronized void connectForNewUIN(String newPassword)
 	{
 		// Connect
 		RegisterNewUinAction act = new RegisterNewUinAction(newPassword, Options
@@ -228,7 +228,7 @@ public class Icq implements Runnable
 		RunnableImpl.resetContactsOffline();
 		
 		setNotConnected();
-		c = null;
+		if ( !(c instanceof SOCKSConnection) ) c = null;
 	}
 
 	static public void setVisibility(int value)
@@ -322,15 +322,12 @@ public class Icq implements Runnable
 	static private Object wait = new Object();
 
 	// Connection to the ICQ server
-	public static Connection c;
+	static Connection c;
 
-	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-	//#sijapp cond.if modules_FILES is "true"#
 	// Connection to peer
+//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 	static PeerConnection peerC;
-
-	//#sijapp cond.end#
-	//#sijapp cond.end#
+//#sijapp cond.end#
 
 	// All currently active actions
 	static private Vector actAction;
@@ -342,6 +339,18 @@ public class Icq implements Runnable
 	static private TimerTasks keepAliveTimerTask;
 
 	public static int reconnect_attempts;
+	
+	public static void sendPacket(Packet packet) throws JimmException
+	{
+		if (c == null) return; // TODO: may be better to thow exception?
+		c.sendPacket(packet);
+	}
+	
+	public static void connect(String data) throws JimmException
+	{
+		if (c == null) return; // TODO: may be better to thow exception?
+		c.connect(data);
+	}
 
 	// Main loop
 	public void run()
@@ -2006,6 +2015,16 @@ public class Icq implements Runnable
 
 			try { sc.close(); } catch (Exception e) {}
 			sc = null;
+			
+			try
+			{
+				throw new Exception();
+			}
+			catch (Exception e)
+			{
+				System.out.println("closeStreams:");
+				e.printStackTrace();
+			}
 		}
 
 		// Sends the specified packet
@@ -2286,8 +2305,8 @@ public class Icq implements Runnable
 
 			}
 			
-			closeStreams();
-			setNotConnected();
+			//closeStreams();
+			//setNotConnected();
 		}
 		
 		
@@ -2623,7 +2642,7 @@ public class Icq implements Runnable
 		byte[] buf = new byte[4];
 		
 		Util.putDWord(buf, 0, inactiveTime);
-		c.sendPacket(new SnacPacket(0x0001, 0x0011, 0x0011, new byte[0], buf));
+		sendPacket(new SnacPacket(0x0001, 0x0011, 0x0011, new byte[0], buf));
 	}
 
 	static public void setOnlineStatus(int status, int xStatus) throws JimmException
@@ -2663,7 +2682,7 @@ public class Icq implements Runnable
 							SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 							SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 							SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], visBuffer.toByteArray());
-					c.sendPacket(reply2pre);
+					sendPacket(reply2pre);
 				}
 			}
 		
@@ -2717,7 +2736,7 @@ public class Icq implements Runnable
 			SnacPacket packet = new SnacPacket(SnacPacket.CLI_SETSTATUS_FAMILY,
 					SnacPacket.CLI_SETSTATUS_COMMAND, SnacPacket.CLI_SETSTATUS_COMMAND, new byte[0],
 					statBuffer.toByteArray());
-			c.sendPacket(packet);
+			sendPacket(packet);
 		}
 		
 		// Change privacy setting according to new status
@@ -2728,7 +2747,7 @@ public class Icq implements Runnable
 					SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 					SnacPacket.CLI_ROSTERUPDATE_COMMAND,
 					SnacPacket.CLI_ROSTERUPDATE_COMMAND, new byte[0], visBuffer.toByteArray());
-			c.sendPacket(reply2post);
+			sendPacket(reply2post);
 		}
 
 		lastStatusChangeTime = Util.getDateString(true);
@@ -2774,11 +2793,11 @@ public class Icq implements Runnable
 		}
 		catch (Exception e) {}
 		
-		c.sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 4, new byte[0], packet));
+		sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 4, new byte[0], packet));
 
 		byte[] buf = new byte[4];
 		Util.putDWord(buf, 0, 0x00040000);
-		c.sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 4, new byte[0], buf));
+		sendPacket(new SnacPacket(SnacPacket.CLI_SETUSERINFO_FAMILY, SnacPacket.CLI_SETUSERINFO_COMMAND, 4, new byte[0], buf));
 	}
 	
 	////////////////
@@ -3737,14 +3756,14 @@ public class Icq implements Runnable
 	
 	static public void sendCLI_ADDSTART() throws JimmException
 	{
-		c.sendPacket(new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY,
+		sendPacket(new SnacPacket(SnacPacket.CLI_ADDSTART_FAMILY,
 				SnacPacket.CLI_ADDSTART_COMMAND, SnacPacket.CLI_ADDSTART_COMMAND,
 				new byte[0], new byte[0]));
 	}
 
 	static public void sendCLI_ADDEND() throws JimmException
 	{
-		c.sendPacket(new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
+		sendPacket(new SnacPacket(SnacPacket.CLI_ADDEND_FAMILY,
 				SnacPacket.CLI_ADDEND_COMMAND, SnacPacket.CLI_ADDEND_COMMAND, new byte[0],
 				new byte[0]));
 	}
@@ -3789,7 +3808,7 @@ public class Icq implements Runnable
 		
 		SnacPacket packet = new SnacPacket(0x0013, command, Util.getCounter(), new byte[0], buffer.toByteArray());
 		
-		c.sendPacket(packet);
+		sendPacket(packet);
 	}
 
 	public static boolean runActionAndProcessError(Action act) 
@@ -3815,7 +3834,7 @@ public class Icq implements Runnable
 		System.arraycopy(uin.getBytes(), 0, buf, 1, uin.length());
 		try
 		{
-			c.sendPacket(new SnacPacket(0x0003, 0x0005, 0, new byte[0], buf));
+			sendPacket(new SnacPacket(0x0003, 0x0005, 0, new byte[0], buf));
 		} catch (JimmException e)
 		{
 			JimmException.handleException(e);
@@ -3902,7 +3921,7 @@ public class Icq implements Runnable
 		// Send packet
 		SnacPacket snacPkt = new SnacPacket(0x0004, 0x0014, 0x00000000,
 				new byte[0], tempBuff);
-		c.sendPacket(snacPkt);
+		sendPacket(snacPkt);
 	}
 
 	//#sijapp cond.end#

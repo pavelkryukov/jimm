@@ -91,7 +91,7 @@ public class SysNoticeAction extends Action
 			SnacPacket packet = new SnacPacket(SnacPacket.CLI_AUTHORIZE_FAMILY,
 					SnacPacket.CLI_AUTHORIZE_COMMAND, 0x0000001A, new byte[0],
 					buf);
-			Icq.c.sendPacket(packet);
+			Icq.sendPacket(packet);
 		}
 		//	If system notice is a SYS_NOTICE_REQUAUTH
 		else if (this.notice.getSysnotetype() == SystemNotice.SYS_NOTICE_REQUAUTH)
@@ -115,7 +115,7 @@ public class SysNoticeAction extends Action
 			SnacPacket packet = new SnacPacket(SnacPacket.CLI_REQAUTH_FAMILY,
 					SnacPacket.CLI_REQAUTH_COMMAND, 0x00000018, new byte[0],
 					buf);
-			Icq.c.sendPacket(packet);
+			Icq.sendPacket(packet);
 		}
 
 	}

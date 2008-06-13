@@ -101,7 +101,7 @@ public class TimerTasks extends TimerTask implements
 					// Instantiate and send an alive packet
 					try
 					{
-						Icq.c.sendPacket(new jimm.comm.Packet(5, new byte[0]));
+						Icq.sendPacket(new jimm.comm.Packet(5, new byte[0]));
 					} catch (JimmException e)
 					{
 						JimmException.handleException(e);

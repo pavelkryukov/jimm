@@ -681,7 +681,7 @@ public class ActionListener
 								SnacPacket.CLI_ACKMSG_FAMILY,
 								SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0],
 								ackBuf);
-						Icq.c.sendPacket(ackPacket);
+						Icq.sendPacket(ackPacket);
 
 					}
 					// Extended message
@@ -885,7 +885,7 @@ public class ActionListener
 									SnacPacket.CLI_ACKMSG_FAMILY,
 									SnacPacket.CLI_ACKMSG_COMMAND, 0,
 									new byte[0], ackBuf);
-							Icq.c.sendPacket(ackPacket);
+							Icq.sendPacket(ackPacket);
 
 						}
 						// Other messages
@@ -948,7 +948,7 @@ public class ActionListener
 								SnacPacket.CLI_ACKMSG_COMMAND, 0, new byte[0],
 								ackBuf);
 
-						Icq.c.sendPacket(ackPacket);
+						Icq.sendPacket(ackPacket);
 					}
 
 				}

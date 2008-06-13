@@ -2536,7 +2536,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		else if (c == cmdRequestCaptchaImage)
 		{
 			optionsForm.append(ResourceBundle.getString("wait"));
-			Icq.connect(newPassword.getString());
+			Icq.connectForNewUIN(newPassword.getString());
 			return;
 		} 
 		else if (c == cmdRequestRegistration)
