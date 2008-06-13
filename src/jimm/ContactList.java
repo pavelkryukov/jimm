@@ -112,6 +112,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	
 	private static long lastLoginTime;
 	public static boolean playerFree = true;
+	private static long stopTime = StopTimeControl.RESET;
 	private static boolean needPlayMessNotif = false;
 
 	private static ContactList _this;
@@ -1307,8 +1308,51 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	
 	private static Vector soundQueue = new Vector();
 	
+	private static void startPlayer(Player player)
+	{
+		try
+		{
+			if (player != null)
+			{
+				if (player.getState() == Player.UNREALIZED)
+				{
+					player.prefetch();
+					player.realize();
+				}
+
+				if (player.getState() != Player.CLOSED)
+				{
+					Thread.sleep(0);
+					player.start();
+				}
+			} else {
+				playerFree = true;
+			}
+			Thread.sleep(0);
+		}
+		catch (MediaException e)
+		{
+			discardPlayer(player);
+		}
+		catch (Exception e)
+		{
+			discardPlayer(player);
+		}
+	}
+
+	private static void discardPlayer(Player player)
+	{
+		if (player != null)
+		{
+			player.close();
+		}
+		playerFree = true;
+	}
+
+
 	private static void playSound_Internal(String fileName, int volume)
 	{
+
 		try
 		{
 			//Siemens 65-75 bugfix
@@ -1321,7 +1365,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			Player p = createPlayer(fileName);
 			if (p == null) return;
 			setVolume(p, volume);
-			p.start();
+			startPlayer (p);
 		}
 		catch (Exception e) {} 
 	}
@@ -1351,7 +1395,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		if (event.equals(PlayerListener.END_OF_MEDIA))
 		{
-			player.close();
+			if (player!=null) {
+				player.removePlayerListener(_this);
+				player.close();
+			}
 			playerFree = true;
 			
 			if (soundQueue.size() != 0)
@@ -1362,6 +1409,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				soundQueue.removeElementAt(0);
 				soundQueue.removeElementAt(0);
 			}
+		} else if (event.equals(PlayerListener.CLOSED))
+		{
+			playerFree = true;
 		}
 	}
 
@@ -1396,9 +1446,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			if (is == null)
 				return null;
 			p = Manager.createPlayer(is, mediaType);
-			playerFree = false;
+			p.realize();
+			p.prefetch();
+			updateStopTime(p);
 			p.addPlayerListener(_this);
-		} catch (Exception e)
+			playerFree = false;
+		} catch (MediaException e)
+		{
+			return null;
+		} catch (IOException e)
 		{
 			return null;
 		}
@@ -1408,13 +1464,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// sets volume for player
 	static private void setVolume(Player p, int value) throws MediaException
 	{
-		p.realize();
 		VolumeControl c = (VolumeControl) p.getControl("VolumeControl");
-		if (c != null)
-		{
-			c.setLevel(value);
-			p.prefetch();
+		if (c != null) c.setLevel(value);
 		}
+
+	static private void updateStopTime(Player p)
+	{
+		StopTimeControl c = (StopTimeControl) p.getControl("StopTimeControl");
+		if (c != null) c.setStopTime(stopTime);
 	}
 
 	synchronized static public void BeginTyping(String uin, boolean type)
