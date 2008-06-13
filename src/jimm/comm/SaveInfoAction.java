@@ -128,7 +128,7 @@ public class SaveInfoAction extends Action
 		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options
 				.getString(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD,
 				new byte[0], stream.toByteArray());
-		Icq.c.sendPacket(packet);
+		Icq.sendPacket(packet);
 
 		/* Save date */
 		this.init = new Date();

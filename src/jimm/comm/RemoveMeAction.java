@@ -58,7 +58,7 @@ public class RemoveMeAction extends Action
 		// Send a CLI_AUTHORIZE packet
 		SnacPacket packet = new SnacPacket(SnacPacket.CLI_REMOVEME_FAMILY,
 				SnacPacket.CLI_REMOVEME_COMMAND, 0x00000003, new byte[0], buf);
-		Icq.c.sendPacket(packet);
+		Icq.sendPacket(packet);
 	}
 
 	// Forwards received packet, returns true if packet was consumed

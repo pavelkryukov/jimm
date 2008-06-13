@@ -190,7 +190,7 @@ public class ConnectAction extends Action
 
             try
             {
-            	Icq.c.connect(this.srvHost + ":" + this.srvPort);
+            	Icq.connect(this.srvHost + ":" + this.srvPort);
                 // #sijapp cond.if modules_PROXY is "true" #
                 break;
                 // #sijapp cond.end #

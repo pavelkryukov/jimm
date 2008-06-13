@@ -204,7 +204,7 @@ public class SendMessageAction extends Action
 			// ----------- Send packet --------------
 			SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY,
 					SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buffer.toByteArray());
-			Icq.c.sendPacket(snacPkt);
+			Icq.sendPacket(snacPkt);
 		}
 
 		//////////////////////
@@ -334,8 +334,7 @@ public class SendMessageAction extends Action
 			Util.putDWord(buf, marker, 0x000f0000);
 			marker += 4;
 
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 			if (this.fileTrans != null)
 			{
 				// Set TLV 0x03 (IP)
@@ -348,12 +347,10 @@ public class SendMessageAction extends Action
 				// Set TLV 0x05 (port)
 				Util.putWord(buf, marker, 0x0005);
 				Util.putWord(buf, marker + 2, 0x0002);
-				Util.putWord(buf, marker + 4, Icq.c
-						.getLocalPort());
+				Util.putWord(buf, marker + 4, Icq.c.getLocalPort());
 				marker += 6;
 			}
-			//#sijapp cond.end#
-			//#sijapp cond.end#
+//#sijapp cond.end#
 			// Set TLV 0x2711
 			Util.putWord(buf, marker, 0x2711);
 			marker += 2;
@@ -611,7 +608,7 @@ public class SendMessageAction extends Action
 			// Send packet
 			SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY,
 					SnacPacket.CLI_SENDMSG_COMMAND, 0, new byte[0], buf);
-			Icq.c.sendPacket(snacPkt);
+			Icq.sendPacket(snacPkt);
 			// System.out.println("SendMessageAction: Sent the packet");
 		}
 

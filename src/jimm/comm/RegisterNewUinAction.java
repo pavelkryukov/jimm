@@ -167,7 +167,7 @@ public class RegisterNewUinAction extends Action
 	marker += 4;
 	System.arraycopy(codeRaw, 0, rbuf, marker, codeRaw.length);
 	try {
-		Icq.c.sendPacket(new SnacPacket(0x0017, 0x0004, 0x0004, new byte[0], rbuf));
+		Icq.sendPacket(new SnacPacket(0x0017, 0x0004, 0x0004, new byte[0], rbuf));
 	} catch (Exception e) {
 		throw (new JimmException(231, 0));
 	}
@@ -175,33 +175,32 @@ public class RegisterNewUinAction extends Action
 
 
     // Init action
-    protected void init() throws JimmException
-    {
- 
-        // Check parameters
-        if (this.password.length() == 0)
-        {
-            this.state = RegisterNewUinAction.STATE_ERROR;
-            return;
-        }
+	protected void init() throws JimmException
+	{
 
-        // Open connection
-	try
-            {
-            	Icq.c.connect(this.srvHost + ":" + this.srvPort);
-            } catch (JimmException e)
-            {
-		this.state = RegisterNewUinAction.STATE_ERROR;
-		throw (e);
-            }
+		// Check parameters
+		if (this.password.length() == 0)
+		{
+			this.state = RegisterNewUinAction.STATE_ERROR;
+			return;
+		}
 
-        // Set STATE_INIT
-        this.state = RegisterNewUinAction.STATE_INIT_DONE;
+		// Open connection
+		try
+		{
+			Icq.connect(this.srvHost + ":" + this.srvPort);
+		} catch (JimmException e)
+		{
+			this.state = RegisterNewUinAction.STATE_ERROR;
+			throw (e);
+		}
 
-        // Update activity timestamp
-        this.lastActivity = new Date();
+		// Set STATE_INIT
+		this.state = RegisterNewUinAction.STATE_INIT_DONE;
 
-    }
+		// Update activity timestamp
+		this.lastActivity = new Date();
+	}
 
     // Forwards received packet, returns true if packet has been consumed
     protected boolean forward(Packet packet) throws JimmException
@@ -224,13 +223,13 @@ public class RegisterNewUinAction extends Action
 		                    if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
 		                    {
 					// Send CLI_HELLO packet
-					Icq.c.sendPacket(new ConnectPacket());
+					Icq.sendPacket(new ConnectPacket());
 
 					// Request CAPTCHA image
 					byte[] buf = new byte[8];
 					Util.putDWord(buf, 0, 0x00010000);
 					Util.putDWord(buf, 4, 0x00000000);
-					Icq.c.sendPacket(new SnacPacket(0x0017, 0x000C, 0x000C, new byte[0], buf));
+					Icq.sendPacket(new SnacPacket(0x0017, 0x000C, 0x000C, new byte[0], buf));
 
 		                        // Move to next state
 		                        this.state = RegisterNewUinAction.STATE_CAPTCHA_REQUESTED;

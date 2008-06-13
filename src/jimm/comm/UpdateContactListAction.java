@@ -143,7 +143,7 @@ public class UpdateContactListAction extends Action
 			packet = new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 					SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(),
 					new byte[0], buf);
-			Icq.c.sendPacket(packet);
+			Icq.sendPacket(packet);
 			this.state = UpdateContactListAction.STATE_CLI_ROSTERMODIFY_SENT;
 			break;
 
@@ -174,7 +174,7 @@ public class UpdateContactListAction extends Action
 			packet = new SnacPacket(SnacPacket.CLI_ROSTERADD_FAMILY,
 					SnacPacket.CLI_ROSTERADD_COMMAND, Util.getCounter(),
 					new byte[0], buf);
-			Icq.c.sendPacket(packet);
+			Icq.sendPacket(packet);
 			break;
 
 		/* Send a CLI_ROSTERDELETE packet */
@@ -196,11 +196,11 @@ public class UpdateContactListAction extends Action
 			packet = new SnacPacket(SnacPacket.CLI_ROSTERDELETE_FAMILY,
 					SnacPacket.CLI_ROSTERDELETE_COMMAND, Util.getCounter(),
 					new byte[0], buf);
-			Icq.c.sendPacket(packet);
+			Icq.sendPacket(packet);
 			break;
 
         case ACTION_MOVE:
-            Icq.c.sendPacket
+            Icq.sendPacket
             (
                  new SnacPacket
                  (
@@ -215,7 +215,7 @@ public class UpdateContactListAction extends Action
             cItem.setIntValue(ContactItem.CONTACTITEM_GROUP, newGItem.getId());
             cItem.setIntValue(ContactItem.CONTACTITEM_ID, ContactList.generateNewIdForBuddy());
 
-            Icq.c.sendPacket
+            Icq.sendPacket
             (
                  new SnacPacket
                  (
@@ -383,7 +383,7 @@ public class UpdateContactListAction extends Action
 
 	private void sendGroupsList() throws JimmException
 	{
-		Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+		Icq.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 				SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(),
 				new byte[0], packGroups()));
 	}
@@ -391,7 +391,7 @@ public class UpdateContactListAction extends Action
 	static private void sendGroup(ContactListGroupItem group)
 			throws JimmException
 	{
-		Icq.c.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
+		Icq.sendPacket(new SnacPacket(SnacPacket.CLI_ROSTERUPDATE_FAMILY,
 				SnacPacket.CLI_ROSTERUPDATE_COMMAND, Util.getCounter(),
 				new byte[0], packRosterItem(group)));
 	}

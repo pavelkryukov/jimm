@@ -184,7 +184,7 @@ public class SearchAction extends Action
 				SnacPacket.CLI_TOICQSRV_COMMAND, 0x0002, Options
 						.getString(Options.OPTION_UIN), 0x07D0, new byte[0],
 				buffer.toByteArray());
-		Icq.c.sendPacket(packet);
+		Icq.sendPacket(packet);
 
 		this.state = STATE_UIN_SEARCH_SENT;
 	}
