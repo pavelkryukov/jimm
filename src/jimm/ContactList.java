@@ -272,7 +272,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	static void resetLoginTimer()
 	{
 		lastLoginTime = System.currentTimeMillis();
-		System.out.println("resetLoginTimer");
 	}
 	
 	/* Returns reference to tree */

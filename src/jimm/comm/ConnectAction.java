@@ -117,6 +117,7 @@ public class ConnectAction extends Action
     // Last activity
     private Date lastActivity = new Date();
     private boolean active;
+    private boolean canceled;
 
     // Temporary variables
 	private String server;
@@ -983,8 +984,6 @@ public class ConnectAction extends Action
 
 							// Packet has been consumed
 							consumed = true;
-							
-							System.out.println("CLI_ACKOFFLINEMSGS_SUBCMD");
 						}
 					}
 				}
@@ -1028,9 +1027,12 @@ public class ConnectAction extends Action
     {
     	if ((this.state != ConnectAction.STATE_ERROR) && !this.active && (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
         {
-    		JimmException e = new JimmException(118, 0);
-    		if( !Icq.reconnect(e) )
-    			JimmException.handleException(e);
+    		if (!canceled)
+    		{
+    			JimmException e = new JimmException(118, 0);
+    			if( !Icq.reconnect(e) ) JimmException.handleException(e);
+    		}
+    		
             this.state = ConnectAction.STATE_ERROR;
         }
         return (this.state == ConnectAction.STATE_ERROR);
@@ -1055,6 +1057,11 @@ public class ConnectAction extends Action
     	case ON_CANCEL:
     		Icq.connecting = false;
     		Icq.disconnect(false);
+    		if (eventType == ON_CANCEL)
+    		{
+    			canceled = true;
+    			Icq.reconnect_attempts = 0;
+    		}
     		RunnableImpl.backToLastScreenMT();
     		break;
     	}
