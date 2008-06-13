@@ -47,7 +47,7 @@ import java.util.Timer;
 //# import net.rim.device.api.system.LED;
 //#sijapp cond.end#
 
-public class SplashCanvas extends Canvas
+public class SplashCanvas extends Canvas implements CommandListener
 {
 	static private SplashCanvas _this;
 
@@ -568,6 +568,19 @@ public class SplashCanvas extends Canvas
 					TimerTasks.SC_RESET_TEXT_AND_IMG), 3000);
 		}
 	}
+	
+	private static TimerTasks lastTimerTask;
+	private static Action lastAction;
+	
+	public static void resetLastTask()
+	{
+		if (lastTimerTask != null)
+		{
+			try { lastTimerTask.cancel(); } catch (Exception e) {}
+			lastTimerTask = null;
+			lastAction = null;
+		}
+	}
 
 	public static void addTimerTask(String captionLngStr, Action action,
 			boolean canCancel)
@@ -577,6 +590,8 @@ public class SplashCanvas extends Canvas
 			t2.cancel();
 			t2 = null;
 		}
+		
+		resetLastTask();
 
 		isLocked = false;
 
@@ -586,7 +601,7 @@ public class SplashCanvas extends Canvas
 		if (canCancel)
 		{
 			SplashCanvas._this.addCommand(SplashCanvas.cancelCommnad);
-			SplashCanvas._this.setCommandListener(timerTask);
+			SplashCanvas._this.setCommandListener(_this);
 		}
 
 		//  #sijapp cond.if target="MIDP2" | target="MOTOROLA"#
@@ -598,5 +613,28 @@ public class SplashCanvas extends Canvas
 		Jimm.display.setCurrent(SplashCanvas._this);
 
 		Jimm.getTimerRef().schedule(timerTask, 1000, 1000);
+		
+		lastTimerTask = timerTask;
+		lastAction = action;
 	}
+	
+	public void commandAction(Command c, Displayable d)
+	{
+		if (c == SplashCanvas.cancelCommnad)
+		{
+			if (lastAction != null)
+			{
+				lastAction.onEvent(Action.ON_CANCEL);
+				lastAction = null;
+			}
+			if (!Icq.isConnected()) 
+			{
+				if (lastAction != null)
+				Icq.reconnect_attempts = 0;
+				Icq.disconnect(false);
+				Icq.removeAllActions();
+				JimmUI.backToLastScreen();
+			}
+		}
+	}	
 }

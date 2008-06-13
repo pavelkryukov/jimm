@@ -10,8 +10,7 @@ import DrawControls.VirtualList;
 import jimm.comm.Action;
 import jimm.comm.Icq;
 
-public class TimerTasks extends TimerTask implements
-		javax.microedition.lcdui.CommandListener
+public class TimerTasks extends TimerTask
 {
 	public static final int SC_AUTO_REPAINT = 1;
 	public static final int SC_HIDE_KEYLOCK = 2;
@@ -182,20 +181,5 @@ public class TimerTasks extends TimerTask implements
 	public void flashRestoreOldCaption()
 	{
 		JimmUI.setCaption(flashDispl, flashOldText);
-	}
-
-	public void commandAction(javax.microedition.lcdui.Command c,
-			javax.microedition.lcdui.Displayable d)
-	{
-		if (c == SplashCanvas.cancelCommnad)
-		{
-			if (Icq.isConnected()) action.onEvent(Action.ON_CANCEL);
-			else 
-			{
-				Icq.disconnect(false);
-				JimmUI.backToLastScreen();
-			}
-			cancel();
-		}
 	}
 }

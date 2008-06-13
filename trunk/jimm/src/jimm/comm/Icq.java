@@ -198,6 +198,12 @@ public class Icq implements Runnable
 		RegisterNewUinAction.addTimerTask (act);
 		lastStatusChangeTime = Util.getDateString(true);
 	}
+	
+	static public synchronized void removeAllActions()
+	{
+		if (reqAction != null)
+			reqAction.removeAllElements();
+	}
 
 	/* Disconnects from the ICQ network */
 	static public synchronized void disconnect(boolean force)
@@ -205,6 +211,7 @@ public class Icq implements Runnable
 		if (c == null) return;
 		
 		thread = null;
+		synchronized (wait) { wait.notifyAll(); }		
 		
 		if (force) c.forceDisconnect();
 		else c.notifyToDisconnect();
@@ -686,16 +693,17 @@ public class Icq implements Runnable
 
 	public synchronized static boolean reconnect(JimmException e)
 	{
-		System.out.println("reconnect");
 		int errCode = e.getErrCode();
-		if (reconnect_attempts-- != 0
+		if (reconnect_attempts-- > 0
 				&& Options.getBoolean(Options.OPTION_RECONNECT)
 				&& e.isCritical() && connecting
 				&& isNotCriticalConnectionError (errCode))
 		{
 			SplashCanvas.setLastErrCode(e.getFullErrCode());
 			SplashCanvas.setErrFlag(true);
-			disconnect(false);
+			disconnect(true);
+			removeAllActions();
+			Thread.yield();
 			ContactList.beforeConnect();
                         try // Wait the given time
                         {
@@ -738,7 +746,6 @@ public class Icq implements Runnable
 		
 		void setInputCloseFlag(boolean value)
 		{
-			System.out.println("setInputCloseFlag, value="+value);
 			synchronized (inputCloseFlagSynch) { inputCloseFlag = value; }
 		}
 		
@@ -1448,7 +1455,6 @@ public class Icq implements Runnable
 			// Try
 			try
 			{
-
 				// Check abort condition
 				while (!getInputCloseFlag())
 				{
@@ -2015,16 +2021,6 @@ public class Icq implements Runnable
 
 			try { sc.close(); } catch (Exception e) {}
 			sc = null;
-			
-			try
-			{
-				throw new Exception();
-			}
-			catch (Exception e)
-			{
-				System.out.println("closeStreams:");
-				e.printStackTrace();
-			}
 		}
 
 		// Sends the specified packet
