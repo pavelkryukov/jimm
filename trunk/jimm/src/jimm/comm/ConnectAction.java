@@ -432,7 +432,11 @@ public class ConnectAction extends Action
 				if (consumed & (this.server != null) & (this.cookie != null)) {
 					// Close connection (only if not HTTP Connection)
 					if (!(Icq.c instanceof HTTPConnection))
+					{
 						Icq.c.forceDisconnect();
+						Thread.yield();
+						try { Thread.sleep(1000); } catch (Exception e ) {}
+					}
 					// #sijapp cond.if target is "DEFAULT" | target is "MIDP2"#
 					if (Options.getBoolean(Options.OPTION_SHADOW_CON)) try
 					{
