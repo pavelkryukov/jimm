@@ -23,7 +23,6 @@
 
 package jimm.comm;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -1364,7 +1363,6 @@ public class Icq implements Runnable
 		// Sends the specified packet
 		public void sendPacket(Packet packet) throws JimmException
 		{
-
 			// Throw exception if output stream is not ready
 			if (os == null)
 			{
@@ -1445,7 +1443,6 @@ public class Icq implements Runnable
 		// Main loop
 		public void run()
 		{
-
 			// Required variables
 			byte[] flapHeader = new byte[6];
 			byte[] flapData;
@@ -1527,7 +1524,7 @@ public class Icq implements Runnable
 					{
 						rcvdPackets.addElement(rcvdPacket);
 					}
-
+					
 					// Notify main loop
 					synchronized (Icq.wait)
 					{
@@ -1537,24 +1534,11 @@ public class Icq implements Runnable
 
 			}
 			// Catch communication exception
-			catch (NullPointerException e)
-			{
-
-				// Construct and handle exception (only if input close flag has not been set)
-				if (!getInputCloseFlag())
-				{
-					JimmException f = new JimmException(120, 3);
-					JimmException.handleException(f);
-				}
-
-				// Reset input close flag
-				setInputCloseFlag(false);
-
-			}
+			catch (NullPointerException e) { } /* Do nothing */
+			
 			// Catch InterruptedException
-			catch (InterruptedException e)
-			{ /* Do nothing */
-			}
+			catch (InterruptedException e) { } /* Do nothing */
+			
 			// Catch JimmException
 			catch (JimmException e)
 			{
