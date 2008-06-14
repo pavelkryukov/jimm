@@ -2392,8 +2392,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			    case RMS_ASK_RESULT_NO:
 				    break;
 			    case RMS_ASK_RESULT_YES:
-				Icq.connecting = false;
-				Icq.disconnect(false);
+				Icq.disconnect(true);
 				try
 				{
 					Options.reset_rms();
@@ -2494,7 +2493,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			} 
 			else
 			{
-				if (registration_connected) Icq.disconnect(false);
+				if (registration_connected) Icq.disconnect(true);
 				Options.optionsForm = null;
 				JimmUI.backToLastScreen();
 				return;

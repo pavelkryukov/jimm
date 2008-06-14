@@ -148,7 +148,8 @@ public class TimerTasks extends TimerTask
 		{
 			cancel();
 			action.onEvent(Action.ON_COMPLETE);
-		} else if (action.isError())
+		} 
+		else if (action.isError() && !canceled)
 		{
 			wasError = true;
 			cancel();

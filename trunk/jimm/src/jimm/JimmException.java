@@ -145,7 +145,6 @@ public class JimmException extends Exception
 		// Critical exception
 		if (e.isCritical())
 		{
-
 			// Reset comm. subsystem
 			//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 			//  #sijapp cond.if modules_FILES is "true"#
@@ -165,15 +164,30 @@ public class JimmException extends Exception
 			SplashCanvas.setStatusToDraw(JimmUI
 					.getStatusImageIndex(ContactList.STATUS_OFFLINE));
 
-			// Unlock splash (if locked)
-			if (SplashCanvas.locked())
-				SplashCanvas.unlock(true);
+			Alert errorMsg = null;
+			
+			if (Icq.isNotCriticalConnectionError(e.getErrCode()) && 
+					!Icq.isDisconnected() && 
+					Options.getBoolean(Options.OPTION_RECONNECT) &&
+					Icq.reconnect_attempts > 0)
+			{
+				int reconTotal = Options.getInt(Options.OPTION_RECONNECT_NUMBER);
+				SplashCanvas.setLastErrCode(e.getFullErrCode()+" "+(reconTotal-Icq.reconnect_attempts+1)+"/"+reconTotal);
+				Icq.reconnect_attempts--;
+				
+				RunnableImpl.reconnect();
+			}
+			else
+			{
+				// Unlock splash (if locked)
+				if (SplashCanvas.locked())
+					SplashCanvas.unlock(true);
 
-			// Display error message
-			Alert errorMsg = new Alert(ResourceBundle.getString("error"), e
-					.getMessage(), null, AlertType.ERROR);
-			errorMsg.setTimeout(Alert.FOREVER);
-			RunnableImpl.activateMainMenu(errorMsg);
+				// Display error message
+				errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
+				errorMsg.setTimeout(Alert.FOREVER);
+				RunnableImpl.activateMainMenu(errorMsg);
+			}
 			return (errorMsg);
 		}
 		// Non-critical exception

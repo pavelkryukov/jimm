@@ -292,7 +292,6 @@ public class Jimm extends MIDlet
 			throws MIDletStateChangeException
 	{
 		// Disconnect
-		Icq.connecting = false;
 		Icq.disconnect(false);
 
 		// Save traffic

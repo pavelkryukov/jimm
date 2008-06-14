@@ -115,7 +115,7 @@ public class ConnectAction extends Action
     private int state;
 
     // Last activity
-    private Date lastActivity = new Date();
+    private long lastActivity;
     private boolean active;
     private boolean canceled;
 
@@ -128,6 +128,7 @@ public class ConnectAction extends Action
     public ConnectAction(String uin, String password, String srvHost, String srvPort)
     {
     	super(true, false);
+    	lastActivity = System.currentTimeMillis();
         this.uin = uin;
         this.password = password;
         this.srvHost = srvHost;
@@ -198,7 +199,7 @@ public class ConnectAction extends Action
             } catch (JimmException e)
             {
                 // #sijapp cond.if modules_PROXY is "true" #
-                if (i >= (retry - 1) || ((this.lastActivity.getTime() + this.TIMEOUT) < System.currentTimeMillis()))
+                if (i >= (retry - 1) || ((this.lastActivity + this.TIMEOUT) < System.currentTimeMillis()))
                 {
                     // #sijapp cond.end #
 
@@ -207,7 +208,7 @@ public class ConnectAction extends Action
                 }
                 // #sijapp cond.if modules_PROXY is "true" #
                 else
-                    if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
+                    if ((this.lastActivity + this.TIMEOUT) > System.currentTimeMillis())
                     {
                     	Icq.c.notifyToDisconnect();
                         try
@@ -227,7 +228,7 @@ public class ConnectAction extends Action
         this.state = ConnectAction.STATE_INIT_DONE;
 
         // Update activity timestamp
-        this.lastActivity = new Date();
+        this.lastActivity = System.currentTimeMillis();
 
     }
 
@@ -314,40 +315,39 @@ public class ConnectAction extends Action
 	    else if (state == STATE_AUTHKEY_REQUESTED) {
 		    if (packet instanceof SnacPacket) {
 			    SnacPacket snacPacket = (SnacPacket)packet;
-//			    if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0007)) {
-//				    byte[] rbuf = snacPacket.getData();
-//				    int len = Util.getWord(rbuf, 0);
-//				    byte[] authkey = new byte[len];
-//				    System.arraycopy(rbuf, 2, authkey, 0, len);
-//				    rbuf = null;
-//				    byte[] buf = new byte[2 + 2 + this.uin.length() + 2 + 2 + 16];
-//				    int marker = 0;
-//				    Util.putWord(buf, marker, 0x0001);
-//				    marker += 2;
-//				    Util.putWord(buf, marker, this.uin.length());
-//				    marker += 2;
-//				    byte[] uinRaw = Util.stringToByteArray(this.uin);
-//				    System.arraycopy(uinRaw, 0, buf, marker, uinRaw.length);
-//				    marker += uinRaw.length;
-//				    Util.putWord(buf, marker, 0x0025);
-//				    marker += 2;
-//				    Util.putWord(buf, marker, 0x0010);
-//				    marker += 2;
-//				    byte[] md5buf = new byte[authkey.length + this.password.length() + Util.AIM_MD5_STRING.length];
-//				    int md5marker = 0;
-//				    System.arraycopy(authkey, 0, md5buf, md5marker, authkey.length);
-//				    md5marker += authkey.length;
-//				    byte[] passwordRaw = Util.stringToByteArray(this.password);
-//				    System.arraycopy(passwordRaw, 0, md5buf, md5marker, passwordRaw.length);
-//				    md5marker += passwordRaw.length;
-//				    System.arraycopy(Util.AIM_MD5_STRING, 0, md5buf, md5marker, Util.AIM_MD5_STRING.length);
-//				    byte[] hash = Util.calculateMD5(md5buf);
-//				    System.arraycopy(hash, 0, buf, marker, 16);
-//				    Icq.c.sendPacket(new SnacPacket(0x0017, 0x0002, 0, new byte[0], buf));
-//				    state = STATE_CLI_IDENT_SENT;
-//			    } else {
-//				    int errcode = -1;
-				    int errcode = 29;
+			    if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0007)) {
+				    byte[] rbuf = snacPacket.getData();
+				    int len = Util.getWord(rbuf, 0);
+				    byte[] authkey = new byte[len];
+				    System.arraycopy(rbuf, 2, authkey, 0, len);
+				    rbuf = null;
+				    byte[] buf = new byte[2 + 2 + this.uin.length() + 2 + 2 + 16];
+				    int marker = 0;
+				    Util.putWord(buf, marker, 0x0001);
+				    marker += 2;
+				    Util.putWord(buf, marker, this.uin.length());
+				    marker += 2;
+				    byte[] uinRaw = Util.stringToByteArray(this.uin);
+				    System.arraycopy(uinRaw, 0, buf, marker, uinRaw.length);
+				    marker += uinRaw.length;
+				    Util.putWord(buf, marker, 0x0025);
+				    marker += 2;
+				    Util.putWord(buf, marker, 0x0010);
+				    marker += 2;
+				    byte[] md5buf = new byte[authkey.length + this.password.length() + Util.AIM_MD5_STRING.length];
+				    int md5marker = 0;
+				    System.arraycopy(authkey, 0, md5buf, md5marker, authkey.length);
+				    md5marker += authkey.length;
+				    byte[] passwordRaw = Util.stringToByteArray(this.password);
+				    System.arraycopy(passwordRaw, 0, md5buf, md5marker, passwordRaw.length);
+				    md5marker += passwordRaw.length;
+				    System.arraycopy(Util.AIM_MD5_STRING, 0, md5buf, md5marker, Util.AIM_MD5_STRING.length);
+				    byte[] hash = Util.calculateMD5(md5buf);
+				    System.arraycopy(hash, 0, buf, marker, 16);
+				    Icq.c.sendPacket(new SnacPacket(0x0017, 0x0002, 0, new byte[0], buf));
+				    state = STATE_CLI_IDENT_SENT;
+			    } else {
+				    int errcode = -1;
 				    if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0003)) {
 					    byte[] buf = snacPacket.getData();
 					    int marker = 0;
@@ -370,7 +370,7 @@ public class ConnectAction extends Action
 					    throw new JimmException(toThrow, errcode);
 				    }
 
-//			    }
+			    }
 		    }
 		    consumed = true;
 	    }
@@ -459,13 +459,13 @@ public class ConnectAction extends Action
 
 						} catch (JimmException e)
 						{
-							if (i >= (retry - 1) || ((this.lastActivity.getTime() + this.TIMEOUT) < System.currentTimeMillis()))
+							if (i >= (retry - 1) || ((this.lastActivity + this.TIMEOUT) < System.currentTimeMillis()))
 							{
 								this.active = false;
 								this.state = ConnectAction.STATE_ERROR;
 								throw (e);
 							}
-							else if ((this.lastActivity.getTime() + this.TIMEOUT) > System.currentTimeMillis())
+							else if ((this.lastActivity + this.TIMEOUT) > System.currentTimeMillis())
 							{
 								Icq.c.notifyToDisconnect();
 								try
@@ -996,7 +996,7 @@ public class ConnectAction extends Action
 			}
 
             // Update activity timestamp and reset activity flag
-            this.lastActivity = new Date();
+            this.lastActivity = System.currentTimeMillis();
             this.active = false;
 
             // Return consumption flag
@@ -1008,7 +1008,7 @@ public class ConnectAction extends Action
         {
 
             // Update activity timestamp and reset activity flag
-            this.lastActivity = new Date();
+            this.lastActivity = System.currentTimeMillis();
             this.active = false;
 
             // Set error state if exception is critical
@@ -1030,16 +1030,11 @@ public class ConnectAction extends Action
     // Returns true if an error has occured
     public boolean isError()
     {
-    	if ((this.state != ConnectAction.STATE_ERROR) && !this.active && (this.lastActivity.getTime() + this.TIMEOUT < System.currentTimeMillis()))
-        {
-    		if (!canceled)
-    		{
-    			JimmException e = new JimmException(118, 0);
-    			if( !Icq.reconnect(e) ) JimmException.handleException(e);
-    		}
-    		
-            this.state = ConnectAction.STATE_ERROR;
-        }
+    	if (
+    		(this.state != ConnectAction.STATE_ERROR) && 
+    		!this.active && 
+    		(this.lastActivity + this.TIMEOUT < System.currentTimeMillis())
+    	) this.state = ConnectAction.STATE_ERROR;
         return (this.state == ConnectAction.STATE_ERROR);
     }
 
@@ -1050,27 +1045,34 @@ public class ConnectAction extends Action
     }
     
     public void onEvent(int eventType)
-    {
-    	switch (eventType)
-    	{
-    	case ON_COMPLETE:
-    		RunnableImpl.resetLoginTimer();
-    		RunnableImpl.activateContactListMT(null);
-    		break;
-    		
-    	case ON_ERROR:
-    	case ON_CANCEL:
-    		Icq.connecting = false;
-    		Icq.disconnect(false);
-    		if (eventType == ON_CANCEL)
+	{
+		switch (eventType)
+		{
+		case ON_COMPLETE:
+			RunnableImpl.resetLoginTimer();
+			RunnableImpl.activateContactListMT(null);
+			break;
+		
+		case ON_CANCEL:
+			Icq.disconnect(false);
+			Icq.removeAllActions();
+			canceled = true;
+			Icq.reconnect_attempts = 0;
+			RunnableImpl.backToLastScreenMT();
+			break;
+			
+		case ON_ERROR:
+			Icq.disconnect(true);
+			Icq.removeAllActions();
+    		if (!canceled)
     		{
-    			canceled = true;
-    			Icq.reconnect_attempts = 0;
+    			System.out.println("case ON_ERROR, this="+this);
+    			Util.showStackTrace();
+    			JimmException e = new JimmException(118, 0);
+    			JimmException.handleException(e);
     		}
-		if (Icq.reconnect_attempts <= 0)
-    		RunnableImpl.backToLastScreenMT();
-    		break;
-    	}
-    }
+			break;
+		}
+	}
 
 }
