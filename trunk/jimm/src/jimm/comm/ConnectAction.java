@@ -314,39 +314,40 @@ public class ConnectAction extends Action
 	    else if (state == STATE_AUTHKEY_REQUESTED) {
 		    if (packet instanceof SnacPacket) {
 			    SnacPacket snacPacket = (SnacPacket)packet;
-			    if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0007)) {
-				    byte[] rbuf = snacPacket.getData();
-				    int len = Util.getWord(rbuf, 0);
-				    byte[] authkey = new byte[len];
-				    System.arraycopy(rbuf, 2, authkey, 0, len);
-				    rbuf = null;
-				    byte[] buf = new byte[2 + 2 + this.uin.length() + 2 + 2 + 16];
-				    int marker = 0;
-				    Util.putWord(buf, marker, 0x0001);
-				    marker += 2;
-				    Util.putWord(buf, marker, this.uin.length());
-				    marker += 2;
-				    byte[] uinRaw = Util.stringToByteArray(this.uin);
-				    System.arraycopy(uinRaw, 0, buf, marker, uinRaw.length);
-				    marker += uinRaw.length;
-				    Util.putWord(buf, marker, 0x0025);
-				    marker += 2;
-				    Util.putWord(buf, marker, 0x0010);
-				    marker += 2;
-				    byte[] md5buf = new byte[authkey.length + this.password.length() + Util.AIM_MD5_STRING.length];
-				    int md5marker = 0;
-				    System.arraycopy(authkey, 0, md5buf, md5marker, authkey.length);
-				    md5marker += authkey.length;
-				    byte[] passwordRaw = Util.stringToByteArray(this.password);
-				    System.arraycopy(passwordRaw, 0, md5buf, md5marker, passwordRaw.length);
-				    md5marker += passwordRaw.length;
-				    System.arraycopy(Util.AIM_MD5_STRING, 0, md5buf, md5marker, Util.AIM_MD5_STRING.length);
-				    byte[] hash = Util.calculateMD5(md5buf);
-				    System.arraycopy(hash, 0, buf, marker, 16);
-				    Icq.c.sendPacket(new SnacPacket(0x0017, 0x0002, 0, new byte[0], buf));
-				    state = STATE_CLI_IDENT_SENT;
-			    } else {
-				    int errcode = -1;
+//			    if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0007)) {
+//				    byte[] rbuf = snacPacket.getData();
+//				    int len = Util.getWord(rbuf, 0);
+//				    byte[] authkey = new byte[len];
+//				    System.arraycopy(rbuf, 2, authkey, 0, len);
+//				    rbuf = null;
+//				    byte[] buf = new byte[2 + 2 + this.uin.length() + 2 + 2 + 16];
+//				    int marker = 0;
+//				    Util.putWord(buf, marker, 0x0001);
+//				    marker += 2;
+//				    Util.putWord(buf, marker, this.uin.length());
+//				    marker += 2;
+//				    byte[] uinRaw = Util.stringToByteArray(this.uin);
+//				    System.arraycopy(uinRaw, 0, buf, marker, uinRaw.length);
+//				    marker += uinRaw.length;
+//				    Util.putWord(buf, marker, 0x0025);
+//				    marker += 2;
+//				    Util.putWord(buf, marker, 0x0010);
+//				    marker += 2;
+//				    byte[] md5buf = new byte[authkey.length + this.password.length() + Util.AIM_MD5_STRING.length];
+//				    int md5marker = 0;
+//				    System.arraycopy(authkey, 0, md5buf, md5marker, authkey.length);
+//				    md5marker += authkey.length;
+//				    byte[] passwordRaw = Util.stringToByteArray(this.password);
+//				    System.arraycopy(passwordRaw, 0, md5buf, md5marker, passwordRaw.length);
+//				    md5marker += passwordRaw.length;
+//				    System.arraycopy(Util.AIM_MD5_STRING, 0, md5buf, md5marker, Util.AIM_MD5_STRING.length);
+//				    byte[] hash = Util.calculateMD5(md5buf);
+//				    System.arraycopy(hash, 0, buf, marker, 16);
+//				    Icq.c.sendPacket(new SnacPacket(0x0017, 0x0002, 0, new byte[0], buf));
+//				    state = STATE_CLI_IDENT_SENT;
+//			    } else {
+//				    int errcode = -1;
+				    int errcode = 29;
 				    if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0003)) {
 					    byte[] buf = snacPacket.getData();
 					    int marker = 0;
@@ -369,7 +370,7 @@ public class ConnectAction extends Action
 					    throw new JimmException(toThrow, errcode);
 				    }
 
-			    }
+//			    }
 		    }
 		    consumed = true;
 	    }
@@ -1066,6 +1067,7 @@ public class ConnectAction extends Action
     			canceled = true;
     			Icq.reconnect_attempts = 0;
     		}
+		if (Icq.reconnect_attempts <= 0)
     		RunnableImpl.backToLastScreenMT();
     		break;
     	}
