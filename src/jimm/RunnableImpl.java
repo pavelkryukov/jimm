@@ -29,6 +29,7 @@ import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.*;
 
 import DrawControls.VirtualList;
+import jimm.comm.Icq;
 import jimm.comm.Message;
 import jimm.comm.Util;
 import jimm.ContactItem;
@@ -60,6 +61,7 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_ACTIVATE_CL         = 20;
 	final static public int TYPE_ACTIVATE_MM         = 21;
 	final static public int TYPE_RESET_LOGIN_TIMER   = 22;
+	final static public int TYPE_RECONNECT           = 23;
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -167,6 +169,11 @@ public class RunnableImpl implements Runnable
 			
 		case TYPE_RESET_LOGIN_TIMER:
 			ContactList.resetLoginTimer();
+			break;
+			
+		case TYPE_RECONNECT:
+			try {Thread.sleep(5000);} catch (Exception e) {}
+			if (!Icq.isDisconnected()) Icq.connect();
 			break;
 		}
 	}
@@ -303,6 +310,12 @@ public class RunnableImpl implements Runnable
 	static public void resetLoginTimer()
 	{
 		callSerially(TYPE_RESET_LOGIN_TIMER);
+	}
+	
+	static public void reconnect()
+	{
+		RunnableImpl ri = new RunnableImpl(TYPE_RECONNECT, null);
+		new Thread(ri).start();
 	}
 
 	///////////////////////////////////////////////////////////////////////////

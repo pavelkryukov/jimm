@@ -185,7 +185,6 @@ public class MainMenu implements CommandListener, JimmScreen
 					JimmUI.MESBOX_YESNO, _this, TAG_EXIT);
 		} else
 		{
-			Icq.connecting = false;
 			Icq.disconnect(false);
 			try
 			{
@@ -318,7 +317,6 @@ public class MainMenu implements CommandListener, JimmScreen
 
 			case MENU_DISCONNECT:
 				/* Disconnect */
-				Icq.connecting = false;
 				Icq.disconnect(true);
 				Thread.yield();
 				/* Show the main menu */

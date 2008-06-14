@@ -174,6 +174,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	static public synchronized void setLastErrCode(String errcode)
 	{
 		SplashCanvas.lastErrCode = (errcode != null) ? new String(errcode) : null;
+		_this.repaint();
 	}
 
 	// Sets the error flag
@@ -579,6 +580,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 			try { lastTimerTask.cancel(); } catch (Exception e) {}
 			lastTimerTask = null;
 			lastAction = null;
+			System.out.println("resetLastTask");
 		}
 	}
 
@@ -626,14 +628,6 @@ public class SplashCanvas extends Canvas implements CommandListener
 			{
 				lastAction.onEvent(Action.ON_CANCEL);
 				lastAction = null;
-			}
-			if (!Icq.isConnected()) 
-			{
-				if (lastAction != null)
-				Icq.reconnect_attempts = 0;
-				Icq.disconnect(false);
-				Icq.removeAllActions();
-				JimmUI.backToLastScreen();
 			}
 		}
 	}	

@@ -1769,18 +1769,32 @@ public class Util
 		return result;
 	}
 
-	static public int strCountOccur(String source, String sub){
-        
-        	int index = 0;
-        	int index2 = 0;
-		int res = 0;        
-	        if((source != null) && (sub != null)){
-			while((index = source.indexOf(sub, index2)) != -1){
-	        	        index2 = index + sub.length();
+	static public int strCountOccur(String source, String sub)
+	{
+
+		int index = 0;
+		int index2 = 0;
+		int res = 0;
+		if ((source != null) && (sub != null))
+		{
+			while ((index = source.indexOf(sub, index2)) != -1)
+			{
+				index2 = index + sub.length();
 				res++;
 			}
 		}
 		return res;
-        }
+	}
+
+	static public void showStackTrace()
+	{
+		try
+		{
+			throw new Exception();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 }

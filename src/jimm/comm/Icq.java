@@ -66,6 +66,8 @@ public class Icq implements Runnable
 	
 	// Current state
 	static private boolean connected = false;
+	
+	static private boolean disconnected = false;
 
 	// Requested actions
 	static private Vector reqAction = new Vector();
@@ -92,6 +94,23 @@ public class Icq implements Runnable
 	static
 	{
 		initClientIndData();
+	}
+	
+	// Flag for indicate that connection was reset _by_user_
+	public static boolean isDisconnected()
+	{
+		synchronized (_this)
+		{
+			return disconnected;
+		}
+	}
+	
+	private static void setDisconnected(boolean value)
+	{
+		synchronized (_this)
+		{
+			disconnected = value;
+		}
 	}
 
 	// Request an action
@@ -132,7 +151,7 @@ public class Icq implements Runnable
 	// Connects to the ICQ network
 	static public synchronized void connect()
 	{
-		Icq.connecting = true;
+		setDisconnected(false);
 		//#sijapp cond.if target isnot "MOTOROLA"#
 		if (Options.getBoolean(Options.OPTION_SHADOW_CON))
 		{
@@ -163,10 +182,7 @@ public class Icq implements Runnable
 
 		} catch (JimmException e)
 		{
-			if (!reconnect(e))
-			{
-				JimmException.handleException(e);
-			}
+			JimmException.handleException(e);
 		}
 
 		SplashCanvas.setStatusToDraw(jimm.JimmUI.getStatusImageIndex(Options
@@ -209,17 +225,17 @@ public class Icq implements Runnable
 	{
 		if (c == null) return;
 		
+		setDisconnected(true);
+		
 		thread = null;
 		synchronized (wait) { wait.notifyAll(); }		
 		
 		if (force) c.forceDisconnect();
 		else c.notifyToDisconnect();
 
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-		//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 		resetPeerCon();
-		//#sijapp cond.end#
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		try
@@ -457,8 +473,7 @@ public class Icq implements Runnable
 						actAction.addElement(newAction);
 					} catch (JimmException e)
 					{
-						if (!reconnect(e))
-							JimmException.handleException(e);
+						JimmException.handleException(e);
 						if (e.isCritical())
 							throw (e);
 					}
@@ -494,8 +509,7 @@ public class Icq implements Runnable
 							packet = peerC.getPacket();
 					} catch (JimmException e)
 					{
-						if (!reconnect(e))
-							JimmException.handleException(e);
+						JimmException.handleException(e);
 						if (e.isCritical())
 							throw (e);
 					}
@@ -515,10 +529,8 @@ public class Icq implements Runnable
 							}
 						} catch (JimmException e)
 						{
-							if (!reconnect(e))
-								JimmException.handleException(e);
-							if (e.isCritical())
-								throw (e);
+							JimmException.handleException(e);
+							if (e.isCritical()) throw (e);
 						}
 					}
 					if (!consumed)
@@ -528,10 +540,8 @@ public class Icq implements Runnable
 							actListener.forward(packet);
 						} catch (JimmException e)
 						{
-							if (!reconnect(e))
-								JimmException.handleException(e);
-							if (e.isCritical())
-								throw (e);
+							JimmException.handleException(e);
+							if (e.isCritical()) throw (e);
 						}
 					}
 
@@ -676,9 +686,7 @@ public class Icq implements Runnable
 
 	}
 
-	public static volatile boolean connecting = false;
-
-	private static boolean isNotCriticalConnectionError (int errcode) {
+	public static boolean isNotCriticalConnectionError (int errcode) {
 		switch (errcode) {
 		    case 110:	// Login from another device
 		    case 111:	// Bad password
@@ -691,6 +699,7 @@ public class Icq implements Runnable
 		return true;
 	}
 
+	/*
 	public synchronized static boolean reconnect(JimmException e)
 	{
 		int errCode = e.getErrCode();
@@ -718,6 +727,7 @@ public class Icq implements Runnable
 
 		return false;
 	}
+	*/
 
 	/**************************************************************************/
 	/**************************************************************************/
@@ -1364,12 +1374,7 @@ public class Icq implements Runnable
 		public void sendPacket(Packet packet) throws JimmException
 		{
 			// Throw exception if output stream is not ready
-			if (os == null)
-			{
-				JimmException e = new JimmException(123, 0);
-				if (!Icq.reconnect(e))
-					throw e;
-			}
+			if (os == null) throw new JimmException(123, 0);
 
 			// Request lock on output stream
 			synchronized (os)
@@ -1399,11 +1404,7 @@ public class Icq implements Runnable
 				} catch (IOException e)
 				{
 					notifyToDisconnect();
-					if (!getInputCloseFlag())
-					{
-						JimmException ex = new JimmException(120, 3);
-						if (!Icq.reconnect(ex)) throw ex;
-					}
+					if (!getInputCloseFlag()) throw new JimmException(120, 3);
 				}
 
 			}
@@ -1542,8 +1543,7 @@ public class Icq implements Runnable
 			// Catch JimmException
 			catch (JimmException e)
 			{
-				if (!Icq.reconnect(e))
-					JimmException.handleException(e);
+				JimmException.handleException(e);
 			}
 			// Catch IO exception
 			catch (IOException e)
@@ -1551,10 +1551,8 @@ public class Icq implements Runnable
 				// Construct and handle exception (only if input close flag has not been set)
 				if (!getInputCloseFlag())
 				{
-					System.out.println("getInputCloseFlag()="+getInputCloseFlag());
 					JimmException f = new JimmException(120, 1);
-					if (!Icq.reconnect(f))
-						JimmException.handleException(f);
+					JimmException.handleException(f);
 				}
 				// Reset input close flag
 			}
@@ -1563,8 +1561,7 @@ public class Icq implements Runnable
 			if (bRead == -1 && !getInputCloseFlag())
 			{
 				JimmException f = new JimmException(120, 4);
-				if (!Icq.reconnect(f))
-					JimmException.handleException(f);
+				JimmException.handleException(f);
 			}
 			
 			closeStreams();
