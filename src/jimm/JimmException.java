@@ -158,6 +158,10 @@ public class JimmException extends Exception
 			//  #sijapp cond.else#
 			//#			Icq.resetServerCon();
 			//  #sijapp cond.end#
+			
+			boolean diconnFlag = Icq.isDisconnected(); 
+			Icq.disconnect(true);
+			Icq.setDisconnected(diconnFlag);
 
 			// Set offline status for all contacts and reset online counters 
 			ContactList.setStatusesOffline();
@@ -175,6 +179,7 @@ public class JimmException extends Exception
 				SplashCanvas.setLastErrCode(e.getFullErrCode()+" "+(reconTotal-Icq.reconnect_attempts+1)+"/"+reconTotal);
 				Icq.reconnect_attempts--;
 				
+				System.out.println("err_code="+e.getFullErrCode());
 				RunnableImpl.reconnect();
 			}
 			else
