@@ -570,9 +570,8 @@ public class Icq implements Runnable
 				//#                        if (c.available() > 0) packet = c.getPacket();
 				//#                    } catch (JimmException e)
 				//#                    {
-				//#                    	if(!reconnect(e))
-				//#                            JimmException.handleException(e);
-				//#                        if (e.isCritical()) throw (e);
+				//#      					JimmException.handleException(e);
+				//#                         if (e.isCritical()) throw (e);
 				//#                    }
 				//#
 				//#                    // Forward received packet to all active actions and to the
@@ -589,8 +588,7 @@ public class Icq implements Runnable
 				//#                            }
 				//#                        } catch (JimmException e)
 				//#                       {
-				//#                        	if(!reconnect(e))
-				//#                                JimmException.handleException(e);
+				//#                            JimmException.handleException(e);
 				//#                            if (e.isCritical()) throw (e);
 				//#                        }
 				//#                    }
@@ -601,8 +599,7 @@ public class Icq implements Runnable
 				//#                            actListener.forward(packet);
 				//#                       } catch (JimmException e)
 				//#                        {
-				//#                        	if(!reconnect(e))
-				//#                                JimmException.handleException(e);
+				//#                            JimmException.handleException(e);
 				//#                            if (e.isCritical()) throw (e);
 				//#                        }
 				//#                    }
@@ -619,8 +616,7 @@ public class Icq implements Runnable
 				//#                        if (c.available() > 0) packet = c.getPacket();
 				//#                    } catch (JimmException e)
 				//#                    {
-				//#                    	if(!reconnect(e))
-				//#                            JimmException.handleException(e);
+				//#                        JimmException.handleException(e);
 				//#                        if (e.isCritical()) throw (e);
 				//#                    }
 				//#
@@ -638,8 +634,7 @@ public class Icq implements Runnable
 				//#                            }
 				//#                        } catch (JimmException e)
 				//#                        {
-				//#                        	if(!reconnect(e))
-				//#                                JimmException.handleException(e);
+				//#                            JimmException.handleException(e);
 				//#                            if (e.isCritical()) throw (e);
 				//#                        }
 				//#                    }
@@ -651,8 +646,7 @@ public class Icq implements Runnable
 				//#                            actListener.forward(packet);
 				//#                        } catch (JimmException e)
 				//#                        {
-				//#                        	if(!reconnect(e))
-				//#                                JimmException.handleException(e);
+				//#                            JimmException.handleException(e);
 				//#                            if (e.isCritical()) throw (e);
 				//#                        }
 				//#                    }
