@@ -197,6 +197,8 @@ public class Icq implements Runnable
 	// Connects to the ICQ network for register new uin
 	static public synchronized void connectForNewUIN(String newPassword)
 	{
+		setDisconnected(true); // to prevent reconnect on error
+		
 		// Connect
 		RegisterNewUinAction act = new RegisterNewUinAction(newPassword, Options
 					.getString(Options.OPTION_SRV_HOST), Options
