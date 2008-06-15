@@ -2186,7 +2186,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (capOffset > 50) capOffset = 50;
 			Options.setInt(Options.OPTION_CAPTION_OFFSET, capOffset);
 			
-			//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+			//#sijapp cond.if target!="DEFAULT"#
 			Options.setInt(Options.OPTION_BG_IMAGE_MODE, backImgGroup.getSelectedIndex());
 			Options.setString (Options.OPTION_BG_IMAGE_URL, backImgFilename.getText());
 			Options.setBackgroundImage (backImgGroup.getSelectedIndex(), backImgFilename.getText());
