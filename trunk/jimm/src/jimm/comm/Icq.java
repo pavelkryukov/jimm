@@ -105,7 +105,7 @@ public class Icq implements Runnable
 		}
 	}
 	
-	private static void setDisconnected(boolean value)
+	public static void setDisconnected(boolean value)
 	{
 		synchronized (_this)
 		{
