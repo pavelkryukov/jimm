@@ -173,7 +173,11 @@ public class RunnableImpl implements Runnable
 			
 		case TYPE_RECONNECT:
 			try {Thread.sleep(5000);} catch (Exception e) {}
-			if (!Icq.isDisconnected()) Icq.connect();
+			if (!Icq.isDisconnected())
+			{
+				ContactList.beforeConnect();
+				Icq.connect();
+			}
 			break;
 		}
 	}
