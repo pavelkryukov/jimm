@@ -2188,9 +2188,15 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			
 			//#sijapp cond.if target!="DEFAULT"#
 			Options.setInt(Options.OPTION_BG_IMAGE_MODE, backImgGroup.getSelectedIndex());
+			//#sijapp cond.if modules_FILES="true"#
 			Options.setString (Options.OPTION_BG_IMAGE_URL, backImgFilename.getText());
 			Options.setBackgroundImage (backImgGroup.getSelectedIndex(), backImgFilename.getText());
+			//#sijapp cond.else#
+			Options.setString (Options.OPTION_BG_IMAGE_URL, Options.emptyString);
+			Options.setBackgroundImage (backImgGroup.getSelectedIndex(), null);
 			//#sijapp cond.end#
+			//#sijapp cond.end#
+			
 			
 			VirtualList.setFullScreenForCurrent(Options.getBoolean(Options.OPTION_FULL_SCREEN));
 			VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
