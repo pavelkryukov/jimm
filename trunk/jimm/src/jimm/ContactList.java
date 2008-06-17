@@ -1767,11 +1767,15 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			}
 			return false;
 		}
-		else
+		else 
 		{
-			String messText = ResourceBundle.getString("antispam_mess")+Options.getString(Options.OPTION_ANTI_SPAM_QUESTION);
-			boolean ok = antiSpamSendMess(uin, messText);
-			if (ok) antiSpamList.put(uin, antiSpamAnsSent);
+			long status = Options.getLong(Options.OPTION_ONLINE_STATUS);
+			if (status != ContactList.STATUS_INVIS_ALL && status != ContactList.STATUS_INVISIBLE)
+			{
+				String messText = ResourceBundle.getString("antispam_mess")+Options.getString(Options.OPTION_ANTI_SPAM_QUESTION);
+				boolean ok = antiSpamSendMess(uin, messText);
+				if (ok) antiSpamList.put(uin, antiSpamAnsSent);
+			}
 		}
 		
 		return false;
