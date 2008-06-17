@@ -25,6 +25,7 @@ package jimm;
 
 //#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 
+import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -62,13 +63,15 @@ public class Emotions implements VirtualListCommands, CommandListener
 	{
 		int iconsSize = -1;
 		animated = false;
-		
+		String lang = Options.getString(Options.OPTION_UI_LANGUAGE).toLowerCase();
+		if (lang == null || lang.length() == 0) lang = "en";
 		ImageList imageList = new ImageList(); 
 		Vector textCorr = new Vector();
 		Vector selEmotions = new Vector();
 		Vector timeingsValues = new Vector();
 		InputStream stream;
 		DataInputStream dos;
+		Hashtable transl = new Hashtable();
 		
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 		System.gc();
@@ -131,6 +134,9 @@ public class Emotions implements VirtualListCommands, CommandListener
 			}
 			else animated = false;
 			
+			String translFile = "/smiles."+lang+".txt";
+			loadTranslation(animated ? "/ani_emotions"+translFile : translFile, transl);
+			
 			// Load file "smiles.txt"
 			stream = _this.getClass().getResourceAsStream(animated ? "/ani_emotions/smiles.txt" : "/smiles.txt");
 			if (stream == null) return;
@@ -156,7 +162,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 					for (int i = 1; i < emoData.length; i++)
 					{
 						String[] langAndName = Util.explode(emoData[i], ',');
-						if (langAndName.length == 2 && Options.getString(Options.OPTION_UI_LANGUAGE).equals(langAndName[0]))
+						if (langAndName.length == 2 && lang.equals(langAndName[0].toLowerCase()))
 						{
 							setName = langAndName[1];
 							break;
@@ -181,8 +187,9 @@ public class Emotions implements VirtualListCommands, CommandListener
 				{
 					if (lineItems[0].charAt(0) == '#') continue;
 					Integer currIndex = Integer.valueOf(lineItems[0]);
-					String smileName = lineItems[1].replace('_', ' ');
-
+					String smileName = lineItems[1];
+					String translation = (String)transl.get(smileName.toLowerCase()); 
+					smileName = (translation != null) ? translation : lineItems[1].replace('_', ' ');
 					for (int i = 2; i < lineItems.length; i++)
 					{
 						String word = lineItems[i];
@@ -272,6 +279,34 @@ public class Emotions implements VirtualListCommands, CommandListener
 		System.gc();
 		System.out.println("Emotions used: "+(mem - Runtime.getRuntime().freeMemory()));
 		//#sijapp cond.end#
+	}
+	
+	static private void loadTranslation(String file, Hashtable transl) throws IOException
+	{
+		InputStream stream = _this.getClass().getResourceAsStream(file);
+		if (stream == null) return;
+
+		DataInputStream dos = new DataInputStream(stream);
+		
+		for (;;)
+		{
+			String line = null;
+			try
+			{
+				line = readLineFromStream(dos);
+			}
+			catch (EOFException eofExcept)
+			{
+				break;
+			}
+			
+			String[] pair = Util.explode(line, '=');
+			if (pair.length < 2) continue;
+			if (pair[1].length() == 0) continue;
+			transl.put(pair[0].toLowerCase(), pair[1]);
+		}
+
+		stream.close();
 	}
 
 	// Add smile text and index to textCorr in decreasing order of text length 
