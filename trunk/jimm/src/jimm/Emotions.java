@@ -503,10 +503,16 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 	static class Selector extends VirtualList implements VirtualListCommands
 	{
-		static private int cols, rows, itemHeight, itemWidth, curCol;
+		static private int cols, rows, itemHeight, itemWidth, curCol, lastRow;
 		static int counter;
 
 		static Selector _this;
+		
+		static
+		{
+			curCol = 0;
+			lastRow = 0;
+		}
 
 		Selector()
 		{
@@ -534,7 +540,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 			cols = drawWidth / itemWidth;
 			rows = (selEmotionsIndexes.length + cols - 1) / cols;
-			curCol = 0;
+
+			setCurrentItem(lastRow);
 
 			showCurrSmileName();
 		}
@@ -613,7 +620,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 		static private void showCurrSmileName()
 		{
-			int selIdx = _this.getCurrIndex() * cols + curCol;
+			lastRow = _this.getCurrIndex();
+			int selIdx = lastRow * cols + curCol;
 			if (selIdx >= selEmotionsSmileNames.length) return;
 			emotionText = selEmotionsWord[selIdx];
 			String emoName = selEmotionsSmileNames[selIdx];
