@@ -2839,6 +2839,7 @@ public class Icq implements Runnable
 	private static final byte[] CAP_MCHAT          = Util.explodeToBytes("*mChat icq", ',', 16);
 	private static final byte[] CAP_IMPLUS         = Util.explodeToBytes("8e,cd,90,e7,4f,18,28,f8,02,ec,d6,18,a4,e9,de,68", ',', 16);
 	private static final byte[] CAP_JIMM_SMAPER    = Util.explodeToBytes("*Smaper ", ',', 16);
+	private static final byte[] CAP_JIMM_DICHAT    = Util.explodeToBytes("44,5B,69,5D,43,68,61,74,20", ',', 16);
 	
 	// Arrays for new capability blowup
 	private static final byte[] CAP_OLD_HEAD = { (byte) 0x09, (byte) 0x46 };
@@ -2938,11 +2939,12 @@ public class Icq implements Runnable
 	private static final long CAPF_QIPPDAWIN     = 1l << 56;
 	private static final long CAPF_IMPLUS        = 1l << 57;
 	private static final long CAPF_JIMM_SMAPER   = 1l << 58;
-
+	private static final long CAPF_JIMM_DICHAT   = 1l << 59;
 	
-//	public static final int CAPF_QIPPLUGINS      = 1l << 59;
-//	public static final int CAPF_XMultiUserChat  = 1l << 60;
-//	public static final int CAPF_XtZers          = 1l << 61;
+//	public static final int CAPF_QIPPLUGINS      = 1l << 60;
+//	public static final int CAPF_XMultiUserChat  = 1l << 61;
+//	public static final int CAPF_XtZers          = 1l << 62;
+
 
 	// Client IDs
 	public static final byte CLI_NONE = 0;
@@ -2991,6 +2993,7 @@ public class Icq implements Runnable
 	public static final byte CLI_QIPPDAWIN = 43;
 	public static final byte CLI_IMPLUS = 44;
 	public static final byte CLI_JIMM_SMAPER = 45;
+	public static final byte CLI_JIMM_DICHAT = 46;
 	
 	private static int[] clientIndexes;
 	private static int[] clientImageIndexes;
@@ -3048,6 +3051,7 @@ public class Icq implements Runnable
 		initClientIndDataItem("QIP PDA (Windows)",      CLI_QIPPDAWIN,     14, vInd, vImg, vNames);
 		initClientIndDataItem("IM+",                    CLI_IMPLUS,        30, vInd, vImg, vNames);
 		initClientIndDataItem("Smaper",                 CLI_JIMM_SMAPER,   31, vInd, vImg, vNames);
+		initClientIndDataItem("D[i]Chat",               CLI_JIMM_DICHAT,   32, vInd, vImg, vNames);
 		
 		clientNames = new String[vNames.size()];
 		vNames.copyInto(clientNames);
@@ -3244,6 +3248,11 @@ public class Icq implements Runnable
 					caps |= CAPF_JIMM_SMAPER;
 					szVersion = detectClientVersion(capabilities, CLI_JIMM_SMAPER, j);
 				}
+				else if (Util.byteArrayEquals(capabilities, j16, CAP_JIMM_DICHAT, 0, CAP_JIMM_DICHAT.length))
+				{
+					caps |= CAPF_JIMM_DICHAT;
+					szVersion = detectClientVersion(capabilities, CLI_JIMM_DICHAT, j);
+				}
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMIMIMAGE, 0, 16)) caps |= CAPF_AIMIMIMAGE;
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_AVATAR, 0, 16)) caps |= CAPF_AVATAR;
 				else if (Util.byteArrayEquals(capabilities, j16, CAP_DIRECT, 0, 16)) caps |= CAPF_DIRECT;
@@ -3313,6 +3322,10 @@ public class Icq implements Runnable
 				if ((caps & CAPF_JIMM_SMAPER) != 0)
 				{
 					client = CLI_JIMM_SMAPER;
+				}
+				if ((caps & CAPF_JIMM_DICHAT) != 0)
+				{
+					client = CLI_JIMM_DICHAT;
 				}
 				if ((caps & CAPF_QIPINFIUM) != 0)
 				{
@@ -3681,6 +3694,10 @@ public class Icq implements Runnable
 			
 		case CLI_JIMM_SMAPER:
 			ver = Util.byteArrayToString(buf, CAP_JIMM_SMAPER.length, 16-CAP_JIMM_SMAPER.length);
+			break;
+
+		case CLI_JIMM_DICHAT:
+			ver = Util.byteArrayToString(buf, CAP_JIMM_DICHAT.length, 16-CAP_JIMM_DICHAT.length);
 			break;
 		}
 

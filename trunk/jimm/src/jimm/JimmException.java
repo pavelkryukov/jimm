@@ -167,6 +167,7 @@ public class JimmException extends Exception
 			ContactList.setStatusesOffline();
 			SplashCanvas.setStatusToDraw(JimmUI
 					.getStatusImageIndex(ContactList.STATUS_OFFLINE));
+			SplashCanvas.setErrFlag(true);
 
 			Alert errorMsg = null;
 			
