@@ -594,8 +594,8 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 								": ").append(rs.getSizeAvailable() / 1024)
 						.append("\n").toString(), null, AlertType.INFO);
 				alert.setTimeout(Alert.FOREVER);
+				Jimm.setBkltOn(true);
 				Jimm.display.setCurrent(alert);
-				Jimm.setBkltOn(false);
 			} catch (Exception e)
 			{
 			}
