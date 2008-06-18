@@ -465,4 +465,18 @@ public class VirtualTree extends VirtualList
 		setCurrentItem(lastNode);
 		lastNode = null;
 	}
+	
+	public TreeNode findNodeByData(TreeNode root, Object data)
+	{
+		if (root == null) root = this.root;
+		if (root.getData() == data) return root;
+		int size = root.size();
+		for (int i = 0; i < size; i++)
+		{
+			TreeNode node = root.elementAt(i);
+			TreeNode finded = findNodeByData(node, data);
+			if (finded != null) return finded;
+		}
+		return null;
+	}
 }

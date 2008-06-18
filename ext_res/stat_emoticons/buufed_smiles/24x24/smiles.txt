@@ -14,7 +14,7 @@
 10 Nothing_to_say :-$ :|
 12 Drinking *DRINK* (beer)
 13 In_love *IN_LOVE* (inlove) (h)
-14 Scream  :-@ :@ @: @-:
+14 Scream :-@ :@ @: @-:
 15 Thank_you @}->--
 16 Crying :'-( ;( :'(
 17 Rolling_On_Floor_Laughing (rofl) *ROFL* ROFL

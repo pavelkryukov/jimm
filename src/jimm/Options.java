@@ -144,6 +144,9 @@ public class Options
 	public static final int OPTION_CAMERA_RES         = 99;
 	public static final int OPTION_CAPTION_OFFSET     = 100;
 	public static final int OPTION_BG_IMAGE_MODE      = 101;
+	public static final int OPTION_CURSOR_ALPHA       = 102;
+	public static final int OPTION_MENU_ALPHA         = 103;
+	
 	
 	/* boolean */
 	public static final int OPTION_KEEP_CONN_ALIVE   = 128; 
@@ -469,6 +472,8 @@ public class Options
 		//#sijapp cond.if target!="DEFAULT"#
 		setString (Options.OPTION_BG_IMAGE_URL, emptyString);
 		setInt (Options.OPTION_BG_IMAGE_MODE, 0);
+		setInt (Options.OPTION_CURSOR_ALPHA, 128);
+		setInt (Options.OPTION_MENU_ALPHA, 64);
 		//#sijapp cond.end#
 
 	}
@@ -865,6 +870,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private static final int OPTIONS_MANAGE_CL   = 12;
 	private static final int OPTIONS_RESET_RMS   = 14;
 	private static final int OPTIONS_ANTISPAM    = 15;
+	private static final int OPTIONS_TRANSP      = 16;
 
 	// Constants for contact list menu
 	private static final int OPTIONS_ADD_USER      = 100;
@@ -909,6 +915,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 //#sijapp cond.end#
 
 //#sijapp cond.if target isnot "DEFAULT"#
+	private ChoiceGroup cursorAlpha;
+	private ChoiceGroup menuAlpha;
 	private ChoiceGroup messageNotificationModeChoiceGroup;
 	private ChoiceGroup onlineNotificationModeChoiceGroup;
 	private ChoiceGroup typingNotificationModeChoiceGroup;
@@ -1072,7 +1080,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (System.getProperty("video.snapshot.encodings") != null)
 			JimmUI.addTextListItem(optionsMenu, "options_camera", null, OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#
-			JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN); 
+			JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN);
+			
+//#sijapp cond.if target!="DEFAULT"#
+			if (Jimm.display.numAlphaLevels() > 2)
+				JimmUI.addTextListItem(optionsMenu, "transparency", null, OPTIONS_TRANSP, true, -1, Font.STYLE_PLAIN);
+//#sijapp cond.end#			
 			JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true, -1, Font.STYLE_PLAIN);
 			JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true, -1, Font.STYLE_PLAIN);
 			JimmUI.addTextListItem(optionsMenu, "auto_away", null, OPTIONS_AUTOAWAY, true, -1, Font.STYLE_PLAIN);
@@ -1812,6 +1825,19 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		case OPTIONS_COLOR_THEME:
 			InitColorThemeUI();
 			return;
+			
+//#sijapp cond.if target!="DEFAULT"#			
+		case OPTIONS_TRANSP:
+			String[] transpText = Util.explode(ResourceBundle.getString("no") + "|25%|50%|75%" , '|');
+			cursorAlpha = new ChoiceGroup(ResourceBundle.getString("cursor"), ChoiceGroup.POPUP, transpText, null);
+			cursorAlpha.setSelectedIndex(Options.getInt(Options.OPTION_CURSOR_ALPHA)/64, true);
+			menuAlpha = new ChoiceGroup(ResourceBundle.getString("menu"), ChoiceGroup.POPUP, transpText, null);
+			menuAlpha.setSelectedIndex(Options.getInt(Options.OPTION_MENU_ALPHA)/64, true);
+			
+			optionsForm.append(cursorAlpha);
+			optionsForm.append(menuAlpha);
+			break;
+//#sijapp cond.end #			
 
 		case OPTIONS_SIGNALING:
 			/* Initialize elements (Signaling section) */
@@ -2206,6 +2232,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				Options.setBoolean(Options.OPTION_LANG_CHANGED, true);
 
 			break;
+
+//#sijapp cond.if target!="DEFAULT"#			
+		case OPTIONS_TRANSP:
+			Options.setInt(Options.OPTION_CURSOR_ALPHA, cursorAlpha.getSelectedIndex()*64);
+			Options.setInt(Options.OPTION_MENU_ALPHA, menuAlpha.getSelectedIndex()*64);
+			break;
+//#sijapp cond.end#			
+			
 
 		//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
 		case OPTIONS_CAMERA:

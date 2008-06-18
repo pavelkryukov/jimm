@@ -133,6 +133,8 @@ public class ConnectAction extends Action
         this.password = password;
         this.srvHost = srvHost;
         this.srvPort = srvPort;
+        
+        System.out.println("ConnectAction, this="+this);
     }
 
     // Returns the UID

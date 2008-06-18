@@ -492,7 +492,7 @@ public class TextList extends VirtualList implements Runnable
 		return getLine(currItemIndex).bigTextIndex;
 	}
 
-	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text, int crsFrame)
+	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text, int crsFrame, int cursorAlpha, int menuAlpha)
 	{
 		if (getTextColor() != text)
 		{
@@ -500,7 +500,7 @@ public class TextList extends VirtualList implements Runnable
 			while (allLines.hasMoreElements())
 				((TextLine) allLines.nextElement()).setItemColor(text);
 		}
-		super.setColors(capTxt, capbk, bkgrnd, cursor, text, crsFrame);
+		super.setColors(capTxt, capbk, bkgrnd, cursor, text, crsFrame, cursorAlpha, menuAlpha);
 	}
 
 	public TextList doCRLF(int blockTextIndex)
@@ -782,4 +782,24 @@ public class TextList extends VirtualList implements Runnable
 			//System.out.println("resetAnimationTask");
 		}
 	}
+	
+	public void addTextItem(String string, Image image, int index, int fontStyle)
+	{
+		if (fontStyle == -1) fontStyle = Font.STYLE_PLAIN;
+		if (image != null)
+		{
+			addImage(image, null, index);
+			addBigText(" ", getTextColor(), fontStyle, index);
+		}
+		addBigText(string, getTextColor(), fontStyle, index);
+		doCRLF(index);
+	}
+	
+	public int getLastTextIndex()
+	{
+		int size = getSize();
+		if (size == 0) return -1;
+		return getLine(size-1).bigTextIndex; 
+	}
+	
 }

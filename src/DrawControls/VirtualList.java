@@ -207,6 +207,8 @@ public abstract class VirtualList
 	private   int     cursorMode       = CURSOR_MODE_ENABLED; // Cursor mode
 	private   String  caption;
 	private   int     fontHeight;
+	private   int     cursorAlpha      = 255;
+	private   int     menuAlpha        = 255;
 	
 	// Common UI stuff
 	private   static Font    capAndMenuFont;
@@ -393,14 +395,16 @@ public abstract class VirtualList
 		return virtualCanvas.isShown() ? virtualCanvas.currentControl : null; 
 	}
 
-	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text, int crsFrame)
+	public void setColors(int capTxt, int capbk, int bkgrnd, int cursor, int text, int crsFrame, int cursorAlpha, int menuAlpha)
 	{
-		capBkCOlor = capbk;
-		capTxtColor = capTxt;
-		bkgrndColor = bkgrnd;
-		cursorColor = cursor;
-		textColor = text;
-		cursorFrameColor = crsFrame;
+		this.capBkCOlor = capbk;
+		this.capTxtColor = capTxt;
+		this.bkgrndColor = bkgrnd;
+		this.cursorColor = cursor;
+		this.textColor = text;
+		this.cursorFrameColor = crsFrame;
+		this.cursorAlpha = cursorAlpha;
+		this.menuAlpha = menuAlpha;
 		if (isActive()) virtualCanvas.repaint();
 	}
 
@@ -1066,7 +1070,7 @@ public abstract class VirtualList
 		
 		g.setFont(capAndMenuFont);
 		int height = getCapHeight();
-		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -64), 0, 0, width, height);
+		drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -64), 0, 0, width, height, 255);
 
 		g.setColor(transformColorLight(capBkCOlor, -128));
 		g.drawLine(0, height - 1, width, height - 1);
@@ -1127,7 +1131,8 @@ public abstract class VirtualList
 		}
 	}
 
-	static protected void drawRect(Graphics g, int color1, int color2, int x1, int y1, int x2, int y2)
+	private static int[] alphaBuffer = null;
+	static protected void drawRect(Graphics gr, int color1, int color2, int x1, int y1, int x2, int y2, int alpha)
 	{
 		int r1 = ((color1 & 0xFF0000) >> 16);
 		int g1 = ((color1 & 0x00FF00) >> 8);
@@ -1136,21 +1141,65 @@ public abstract class VirtualList
 		int g2 = ((color2 & 0x00FF00) >> 8);
 		int b2 = (color2 & 0x0000FF);
 		
-		int count = (y2-y1)/3;
-		if (count < 0) count = -count;
-		if (count < 8) count = 8;
 		
-		y2++;
-		x2++;
-
-		for (int i = 0; i < count; i++)
+		if (alpha == 255)
 		{
-			int crd1 = i * (y2 - y1) / count + y1;
-			int crd2 = (i + 1) * (y2 - y1) / count + y1;
-			if (crd1 == crd2) continue;
-			g.setColor(i * (r2 - r1) / (count-1) + r1, i * (g2 - g1) / (count-1) + g1, i * (b2 - b1) / (count-1) + b1);
-			g.fillRect(x1, crd1, x2-x1, crd2-crd1);
+			int count = (y2-y1)/3;
+			if (count < 0) count = -count;
+			if (count < 8) count = 8;
+			
+			y2++;
+			x2++;
+			for (int i = 0; i < count; i++)
+			{
+				int crd1 = i * (y2 - y1) / count + y1;
+				int crd2 = (i + 1) * (y2 - y1) / count + y1;
+				if (crd1 == crd2) continue;
+				gr.setColor(i * (r2 - r1) / (count-1) + r1, i * (g2 - g1) / (count-1) + g1, i * (b2 - b1) / (count-1) + b1);
+				gr.fillRect(x1, crd1, x2-x1, crd2-crd1);
+			}
 		}
+//#sijapp cond.if target!="DEFAULT"#		
+		else
+		{
+			int alphaValue = alpha << 24;
+			int width = x2-x1;
+			int height = y2-y1;
+			if (width > gr.getClipWidth()) width = gr.getClipWidth();
+			if (height > virtualCanvas.getHeight()) height = virtualCanvas.getHeight();
+			int spaceRequired = 32*height;
+			if (alphaBuffer == null || alphaBuffer.length < spaceRequired)
+			{
+				alphaBuffer = null;
+				alphaBuffer = new int[spaceRequired];
+			}
+				
+			int idx = 0;
+			for (int y = 0; y < height; y++)
+			{
+				int crd1 = y * (y2 - y1) / height;
+				int crd2 = (y + 1) * (y2 - y1) / height;
+				if (crd1 == crd2) continue;
+				
+				int r = y * (r2 - r1) / (height-1) + r1;
+				int g = y * (g2 - g1) / (height-1) + g1;
+				int b = y * (b2 - b1) / (height-1) + b1;
+				
+				int color = (r << 16) | (g << 8) | (b) | (alphaValue);
+				
+				for (int x = 0; x < 32; x++) alphaBuffer[idx++] = color;
+			}
+			
+			int totalWidth = width;
+			for (int x = x1; x < x2; x += 32)
+			{
+				gr.drawRGB(alphaBuffer, 0, 32, x, y1, (totalWidth > 32) ? 32 : totalWidth, height, true);
+				totalWidth -= 32;
+			}
+			
+			
+		}
+//#sijapp cond.end#		
 	}
 	
 	/**
@@ -1225,8 +1274,9 @@ public abstract class VirtualList
 			if ((grCursorY1 != -1) && crdIntersect(grCursorY1-3, grCursorY2+2, clipY1, clipY2))
 			{
 				grCursorY1--;
-				g.setColor(cursorColor);
-				g.fillRect(curX1, grCursorY1, curX2-curX1, grCursorY2-grCursorY1);
+				
+				drawRect(g, cursorColor, cursorColor, curX1, grCursorY1, curX2, grCursorY2, cursorAlpha);
+
 				g.setColor(cursorFrameColor);
 				boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1) : false;
 				
@@ -1851,7 +1901,7 @@ public abstract class VirtualList
 				g.fillRect(0, y1, width, y2-y1);
 				return false;
 			}
-			else drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -80), 0, y1, width, y2);
+			else drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -80), 0, y1, width, y2, 255);
 		}
 		
 		g.setFont(capAndMenuFont);
@@ -1874,7 +1924,7 @@ public abstract class VirtualList
 			if (uiState == UI_STATE_LEFT_MENU_VISIBLE)
 			{
 				menuItemsVisible = true;
-				drawRect(g, transformColorLight(capBkCOlor, -64), transformColorLight(capBkCOlor, -32), 0, y1, width/2, y2);
+				drawRect(g, transformColorLight(capBkCOlor, -64), transformColorLight(capBkCOlor, -32), 0, y1, width/2, y2, 255);
 			}
 			String text = leftMenu.getLabel();
 			g.setColor(capTxtColor);
@@ -1897,7 +1947,7 @@ public abstract class VirtualList
 			if (uiState == UI_STATE_RIGHT_MENU_VISIBLE)
 			{
 				menuItemsVisible = true;
-				drawRect(g, transformColorLight(capBkCOlor, -64), transformColorLight(capBkCOlor, -32), width/2, y1, width, y2);
+				drawRect(g, transformColorLight(capBkCOlor, -64), transformColorLight(capBkCOlor, -32), width/2, y1, width, y2, 255);
 			}
 			
 			g.setColor(capTxtColor);
@@ -2029,7 +2079,7 @@ public abstract class VirtualList
 		// Draw background
 		if (mode == DMS_DRAW)
 		{
-			drawRect(g, transformColorLight(bkgrndColor, 24), transformColorLight(bkgrndColor, -24), x, y, x+width, y+height);
+			drawRect(g, transformColorLight(bkgrndColor, 24), transformColorLight(bkgrndColor, -24), x, y, x+width, y+height, menuAlpha);
 		}
 		
 		// Draw up button
