@@ -611,6 +611,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 		//#sijapp cond.end#
 
 		SplashCanvas.setMessage(ResourceBundle.getString(captionLngStr));
+		SplashCanvas.setErrFlag(false);
 		SplashCanvas.setProgress(0);
 		Jimm.display.setCurrent(SplashCanvas._this);
 
