@@ -1141,7 +1141,6 @@ public abstract class VirtualList
 		int g2 = ((color2 & 0x00FF00) >> 8);
 		int b2 = (color2 & 0x0000FF);
 		
-		
 		if (alpha == 255)
 		{
 			int count = (y2-y1)/3;
@@ -1165,8 +1164,8 @@ public abstract class VirtualList
 			int alphaValue = alpha << 24;
 			int width = x2-x1;
 			int height = y2-y1;
-			if (width > gr.getClipWidth()) width = gr.getClipWidth();
-			if (height > virtualCanvas.getHeight()) height = virtualCanvas.getHeight();
+			if (width <= 0 || height <= 0) return; 
+			
 			int spaceRequired = 32*height;
 			if (alphaBuffer == null || alphaBuffer.length < spaceRequired)
 			{
@@ -1196,8 +1195,6 @@ public abstract class VirtualList
 				gr.drawRGB(alphaBuffer, 0, 32, x, y1, (totalWidth > 32) ? 32 : totalWidth, height, true);
 				totalWidth -= 32;
 			}
-			
-			
 		}
 //#sijapp cond.end#		
 	}
