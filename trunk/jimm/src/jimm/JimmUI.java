@@ -553,7 +553,7 @@ public class JimmUI implements CommandListener
 		aboutTextList.clear();
 		aboutTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		setColorScheme(aboutTextList, false, -1, true);
-		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1, 0xffffff, 0);
+		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1, 0xffffff, 0, 0, 0);
 
 		aboutTextList.setCaption(ResourceBundle.getString("about"));
 
@@ -704,6 +704,16 @@ public class JimmUI implements CommandListener
 	static public void setColorScheme(VirtualList vl, boolean setFullScreen, int theme, boolean changeFont)
 	{
 		if (vl == null) return;
+		
+		int cursorAlpha, menuAlpha;
+		
+//#sijapp cond.if target="DEFAULT"#
+		cursorAlpha = 255;
+		menuAlpha = 255;
+//#sijapp cond.else#
+		cursorAlpha = 255-Options.getInt(Options.OPTION_CURSOR_ALPHA);
+		menuAlpha = 255-Options.getInt(Options.OPTION_MENU_ALPHA);
+//#sijapp cond.end#		
 
 		vl.setColors
 		(
@@ -712,7 +722,9 @@ public class JimmUI implements CommandListener
 			Options.getSchemeColor(Options.CLRSCHHEME_BACK, theme), 
 			Options.getSchemeColor(Options.CLRSCHHEME_CURS, theme), 
 			Options.getSchemeColor(Options.CLRSCHHEME_TEXT, theme),
-			Options.getSchemeColor(Options.CLRSCHHEME_CURS_FRAME, theme)
+			Options.getSchemeColor(Options.CLRSCHHEME_CURS_FRAME, theme), 
+			cursorAlpha,
+			menuAlpha
 		);
 		
 		if (setFullScreen) 
