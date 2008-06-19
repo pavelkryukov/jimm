@@ -1132,6 +1132,11 @@ public abstract class VirtualList
 	}
 
 	private static int[] alphaBuffer = null;
+	private static int lastRectHeight;
+	private static int lastRectColor1;
+	private static int lastRectColor2;
+	
+	
 	static protected void drawRect(Graphics gr, int color1, int color2, int x1, int y1, int x2, int y2, int alpha)
 	{
 		int r1 = ((color1 & 0xFF0000) >> 16);
@@ -1172,21 +1177,27 @@ public abstract class VirtualList
 				alphaBuffer = null;
 				alphaBuffer = new int[spaceRequired];
 			}
-				
-			int idx = 0;
-			for (int y = 0; y < height; y++)
+			
+			if (lastRectHeight != height || lastRectColor1 != color1 || lastRectColor2 != color2)
 			{
-				int crd1 = y * (y2 - y1) / height;
-				int crd2 = (y + 1) * (y2 - y1) / height;
-				if (crd1 == crd2) continue;
-				
-				int r = y * (r2 - r1) / (height-1) + r1;
-				int g = y * (g2 - g1) / (height-1) + g1;
-				int b = y * (b2 - b1) / (height-1) + b1;
-				
-				int color = (r << 16) | (g << 8) | (b) | (alphaValue);
-				
-				for (int x = 0; x < 32; x++) alphaBuffer[idx++] = color;
+				int idx = 0;
+				for (int y = 0; y < height; y++)
+				{
+					int crd1 = y * (y2 - y1) / height;
+					int crd2 = (y + 1) * (y2 - y1) / height;
+					if (crd1 == crd2) continue;
+					
+					int r = y * (r2 - r1) / (height-1) + r1;
+					int g = y * (g2 - g1) / (height-1) + g1;
+					int b = y * (b2 - b1) / (height-1) + b1;
+					
+					int color = (r << 16) | (g << 8) | (b) | (alphaValue);
+					
+					for (int x = 0; x < 32; x++) alphaBuffer[idx++] = color;
+				}
+				lastRectHeight = height;
+				lastRectColor1 = color1;
+				lastRectColor2 = color2;
 			}
 			
 			int totalWidth = width;
