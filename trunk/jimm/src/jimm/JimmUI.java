@@ -711,8 +711,12 @@ public class JimmUI implements CommandListener
 		cursorAlpha = 255;
 		menuAlpha = 255;
 //#sijapp cond.else#
-		cursorAlpha = 255-Options.getInt(Options.OPTION_CURSOR_ALPHA);
-		menuAlpha = 255-Options.getInt(Options.OPTION_MENU_ALPHA);
+		if (Jimm.display.numAlphaLevels() > 2)
+		{
+			cursorAlpha = 255-Options.getInt(Options.OPTION_CURSOR_ALPHA);
+			menuAlpha = 255-Options.getInt(Options.OPTION_MENU_ALPHA);
+		}
+		else cursorAlpha = menuAlpha = 255; 
 //#sijapp cond.end#		
 
 		vl.setColors
