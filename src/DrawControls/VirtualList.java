@@ -1130,6 +1130,63 @@ public abstract class VirtualList
 			g.drawLine(width+1, srcollerY1+1, width+scrollerWidth-2, srcollerY1+1);
 		}
 	}
+	
+//#sijapp cond.if target!="DEFAULT"#	
+	private static int[] menuBarBackground;
+	private static int menuBarBackgroundColor1 = -1;
+	private static int menuBarBackgroundColor2 = -1;
+	private static int[] getMenuBarBackground(int width, int height, int color1, int color2)
+	{
+		if (color1 == menuBarBackgroundColor1 && color2 == menuBarBackgroundColor2 && menuBarBackground != null)
+			return menuBarBackground;
+		menuBarBackground = new int[height*width];
+		
+		int r1 = ((color1 & 0xFF0000) >> 16);
+		int g1 = ((color1 & 0x00FF00) >> 8);
+		int b1 = (color1 & 0x0000FF);
+		int r2 = ((color2 & 0xFF0000) >> 16);
+		int g2 = ((color2 & 0x00FF00) >> 8);
+		int b2 = (color2 & 0x0000FF);
+		
+		int width2 = width/2;
+		int width3 = width/3;
+		int idx = 0;
+		for (int y = 0; y < height; y++)
+		{
+			int r = y * (r2 - r1) / (height-1) + r1;
+			int g = y * (g2 - g1) / (height-1) + g1;
+			int b = y * (b2 - b1) / (height-1) + b1;
+			
+			for (int x = 0; x < width; x++)
+			{
+				int dist = x-width2;
+				
+				if (dist < 0) dist = -dist;
+				dist = width3-dist;
+				if (dist < 0) dist = 0;
+				int diff = 96*dist/width3;
+				
+				int new_r = r+diff;
+				int new_g = g+diff;
+				int new_b = b+diff;
+				
+				if (new_r < 0) new_r = 0;
+				if (new_r > 255) new_r = 255;
+				if (new_g < 0) new_g = 0;
+				if (new_g > 255) new_g = 255;
+				if (new_b < 0) new_b = 0;
+				if (new_b > 255) new_b = 255;
+				
+				int color = (new_r << 16) | (new_g << 8) | (new_b);
+				menuBarBackground[idx++] = color;
+			}
+		}
+		
+		menuBarBackgroundColor1 = color1;
+		menuBarBackgroundColor2 = color2;
+		return menuBarBackground;
+	}
+//#sijapp cond.end#	
 
 	private static int[] alphaBuffer = null;
 	private static int lastRectHeight;
@@ -1909,7 +1966,12 @@ public abstract class VirtualList
 				g.fillRect(0, y1, width, y2-y1);
 				return false;
 			}
-			else drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -80), 0, y1, width, y2, 255);
+			else 
+			{
+				//drawRect(g, capBkCOlor, transformColorLight(capBkCOlor, -80), 0, y1, width, y2, 255);
+				int[] backPic = getMenuBarBackground(width, height, transformColorLight(capBkCOlor, -32), transformColorLight(capBkCOlor, -102));
+				g.drawRGB(backPic, 0, width, 0, y1, width, height, false);
+			}
 		}
 		
 		g.setFont(capAndMenuFont);
