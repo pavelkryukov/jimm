@@ -1363,6 +1363,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			setVolume(p1,100);
 			p1.start();
 			p1.close();
+			playerFree = true;
 //#sijapp cond.end#
 			Player p = createPlayer(fileName);
 			if (p == null) return;
