@@ -29,7 +29,7 @@ Kolobok|EN,Kolobok|RU,Колобки
 25 Mamba *WASSUP* *SUP* *MAMBA* :MAMBA:
 37 Sorry *SORRY*
 10 Clapping *BRAVO* :BRAVO: :clapping:
-31 Rolf *ROFL* :ROFL: ROFL! :-)))) :-))))) :-)))))) :)))) :))))) :)))))) =)))) =))))) =))))))
+31 Rofl *ROFL* :ROFL: ROFL! :-)))) :-))))) :-)))))) :)))) :))))) :)))))) =)))) =))))) =))))))
 30 Pardon *PARDON* =] :PARDON:
 29 No *NO*
 12 Crazy *CRAZY* :crazy:
