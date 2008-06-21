@@ -162,6 +162,8 @@ public class JimmException extends Exception
 			boolean diconnFlag = Icq.isDisconnected(); 
 			Icq.disconnect(true);
 			Icq.setDisconnected(diconnFlag);
+			
+			Icq.resetServerCon();
 
 			// Set offline status for all contacts and reset online counters 
 			ContactList.setStatusesOffline();

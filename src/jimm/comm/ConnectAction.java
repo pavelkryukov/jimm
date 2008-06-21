@@ -1057,7 +1057,6 @@ public class ConnectAction extends Action
 		
 		case ON_CANCEL:
 			Icq.disconnect(false);
-			Icq.removeAllActions();
 			canceled = true;
 			Icq.reconnect_attempts = 0;
 			RunnableImpl.backToLastScreenMT();
@@ -1065,7 +1064,6 @@ public class ConnectAction extends Action
 			
 		case ON_ERROR:
 			Icq.disconnect(true);
-			Icq.removeAllActions();
     		if (!canceled)
     		{
     			System.out.println("case ON_ERROR, this="+this);
