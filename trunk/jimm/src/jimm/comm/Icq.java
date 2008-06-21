@@ -215,12 +215,6 @@ public class Icq implements Runnable
 		RegisterNewUinAction.addTimerTask (act);
 		lastStatusChangeTime = Util.getDateString(true);
 	}
-	
-	static public synchronized void removeAllActions()
-	{
-		if (reqAction != null)
-			reqAction.removeAllElements();
-	}
 
 	/* Disconnects from the ICQ network */
 	static public synchronized void disconnect(boolean force)
