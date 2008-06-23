@@ -368,7 +368,7 @@ public class FileTransfer implements CommandListener, Runnable
         // Set the splash screen
         SplashCanvas.setProgress(0);
         SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
-        SplashCanvas.addCmd(SplashCanvas.cancelCommnad);
+        SplashCanvas.addCmd(SplashCanvas.cancelCommand);
         SplashCanvas.setCmdListener(this);
         SplashCanvas.show();
 
@@ -473,7 +473,7 @@ public class FileTransfer implements CommandListener, Runnable
 					case Options.FS_MODE_WEB:
 				        SplashCanvas.setProgress(0);
 				        SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
-				        SplashCanvas.removeCmd(SplashCanvas.cancelCommnad);
+				        SplashCanvas.removeCmd(SplashCanvas.cancelCommand);
 				        SplashCanvas.setCmdListener(this);
 						SplashCanvas.show();
 						
@@ -487,7 +487,7 @@ public class FileTransfer implements CommandListener, Runnable
 					}
 				}
 			} 
-			else if (c == this.backCommand || c == SplashCanvas.cancelCommnad)
+			else if (c == this.backCommand || c == SplashCanvas.cancelCommand)
 			{
 				free();
 				JimmUI.backToLastScreen();
