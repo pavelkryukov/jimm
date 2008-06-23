@@ -51,7 +51,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 {
 	static private SplashCanvas _this;
 
-	public final static Command cancelCommnad = new Command(ResourceBundle
+	public final static Command cancelCommand = new Command(ResourceBundle
 			.getString("cancel"), Command.BACK, 1);
 
 	//Timer for repaint
@@ -267,7 +267,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	// Enable keylock
 	static public synchronized void lock()
 	{
-		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommnad);
+		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommand);
 		if (isLocked)
 			return;
 
@@ -599,10 +599,10 @@ public class SplashCanvas extends Canvas implements CommandListener
 
 		TimerTasks timerTask = new TimerTasks(action);
 
-		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommnad);
+		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommand);
 		if (canCancel)
 		{
-			SplashCanvas._this.addCommand(SplashCanvas.cancelCommnad);
+			SplashCanvas._this.addCommand(SplashCanvas.cancelCommand);
 			SplashCanvas._this.setCommandListener(_this);
 		}
 
@@ -623,7 +623,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	
 	public void commandAction(Command c, Displayable d)
 	{
-		if (c == SplashCanvas.cancelCommnad)
+		if (c == SplashCanvas.cancelCommand)
 		{
 			if (lastAction != null)
 			{

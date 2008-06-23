@@ -361,13 +361,13 @@ public class Icq implements Runnable
 	
 	public static void sendPacket(Packet packet) throws JimmException
 	{
-		if (c == null) return; // TODO: may be better to thow exception?
+		if (c == null) return; // TODO: may be better to throw exception?
 		c.sendPacket(packet);
 	}
 	
 	public static void connect(String data) throws JimmException
 	{
-		if (c == null) return; // TODO: may be better to thow exception?
+		if (c == null) return; // TODO: may be better to throw exception?
 		c.connect(data);
 	}
 
