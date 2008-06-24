@@ -1319,7 +1319,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		optionsForm.append(captchaCode);
 		optionsForm.append(ResourceBundle.getString("register_notice"));
 		optionsForm.addCommand(cmdRequestRegistration);
-		registration_connected = true;
 	}
 
 	public void addAccount (String uin, String password)
@@ -2519,23 +2518,53 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			}
 			else if (c == JimmUI.cmdBack)
 			{
-				if (currOptType == TYPE_TOP_OPTIONS) JimmUI.backToLastScreen();
+				if (currOptType == TYPE_TOP_OPTIONS) RunnableImpl.backToLastScreenMT();
 				else initOptionsList(TYPE_TOP_OPTIONS);
 			}
 		}
 
+		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+		else if ((fileSystem != null) && fileSystem.isActive())
+		{
+			if (c == JimmUI.cmdOk)
+			{
+				String fileName = fileSystem.getValue();
+				backImgFilename.setText (fileName);
+			}
+			fileSystem = null;
+			Jimm.display.setCurrent(optionsForm);
+			Jimm.setBkltOn(true);
+		}
+		else if (c == cmdSelectBackImg)
+		{
+			try
+			{
+				fileSystem = new FileSystem2();
+				fileSystem.browse(null, this, false);
+			} catch (Exception e)
+			{
+				System.out.println (e.getMessage());
+			}
+			return;
+		} 
+
+		//#sijapp cond.end#
 		/* Look for back command */
 		else if ((c == JimmUI.cmdBack) || (c == JimmUI.cmdCancel))
 		{
 			if (d == optionsForm || keysMenu.isActive())
 			{
+				if (registration_connected)
+				{
+					RegisterNewUinAction.stopTimerTask();
+					registration_connected = false;
+				}
 				initOptionsList(currOptType);
 			} 
 			else
 			{
-				if (registration_connected) Icq.disconnect(true);
 				Options.optionsForm = null;
-				JimmUI.backToLastScreen();
+				RunnableImpl.backToLastScreenMT();
 				return;
 			}
 		}
@@ -2578,45 +2607,32 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		} 
 		else if (c == cmdRequestCaptchaImage)
 		{
+			if (newPassword.getString().length() == 0) return;
+			optionsForm.removeCommand(cmdRequestCaptchaImage);
+			//#sijapp cond.if target!="DEFAULT"#
+			optionsForm.append(new Gauge(null, false, Gauge.INDEFINITE, Gauge.CONTINUOUS_RUNNING));
+			//#sijapp cond.else#
 			optionsForm.append(ResourceBundle.getString("wait"));
+			//#sijapp cond.end#
+			registration_connected = true;
 			Icq.connectForNewUIN(newPassword.getString());
 			return;
 		} 
 		else if (c == cmdRequestRegistration)
 		{
 			try {
+				//#sijapp cond.if target!="DEFAULT"#
+				optionsForm.append(new Gauge(null, false, Gauge.INDEFINITE, Gauge.CONTINUOUS_RUNNING));
+				//#sijapp cond.else#
 				optionsForm.append(ResourceBundle.getString("wait"));
+				//#sijapp cond.end#
+
 				RegisterNewUinAction.requestRegistration (newPassword.getString(), captchaCode.getString());
 			} catch (Exception e) {
 				System.out.println (e.getMessage());
 			}
 			return;
 		} 
-		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
-		else if ((fileSystem != null) && fileSystem.isActive())
-		{
-			if (c == JimmUI.cmdOk)
-			{
-				String fileName = fileSystem.getValue();
-				backImgFilename.setText (fileName);
-			}
-			fileSystem = null;
-			Jimm.display.setCurrent(optionsForm);
-			Jimm.setBkltOn(true);
-		}
-		else if (c == cmdSelectBackImg)
-		{
-			try
-			{
-				fileSystem = new FileSystem2();
-				fileSystem.browse(null, this, false);
-			} catch (Exception e)
-			{
-				System.out.println (e.getMessage());
-			}
-			return;
-		} 
-		//#sijapp cond.end#
 		else if (JimmUI.getCurScreenTag() == TAG_DELETE_ACCOUNT)
 		{
 			if (c == JimmUI.cmdOk)
