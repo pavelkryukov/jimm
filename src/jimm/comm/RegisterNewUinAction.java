@@ -66,6 +66,38 @@ public class RegisterNewUinAction extends Action
     private Date lastActivity = new Date();
     private boolean active;
 
+	private static TimerTasks lastTimerTask;
+	private static Action lastAction;
+	
+	public static void resetLastTask()
+	{
+		if (lastTimerTask != null)
+		{
+			try { lastTimerTask.cancel(); } catch (Exception e) {}
+			lastTimerTask = null;
+			lastAction = null;
+		}
+	}
+
+	public static void addTimerTask(Action action)
+	{
+		resetLastTask();
+		TimerTasks timerTask = new TimerTasks(action);
+		Jimm.getTimerRef().schedule(timerTask, 1000, 1000);
+
+		lastTimerTask = timerTask;
+		lastAction = action;
+	}
+
+	public static void stopTimerTask()
+	{
+		if (lastAction != null)
+		{
+			lastAction.onEvent(Action.ON_CANCEL);
+			lastAction = null;
+		}
+	}
+
     // Constructor
     public RegisterNewUinAction(String password, String srvHost, String srvPort)
     {
@@ -98,12 +130,6 @@ public class RegisterNewUinAction extends Action
     public String getSrvPort()
     {
         return this.srvPort;
-    }
-
-    public static void addTimerTask(Action action)
-    {
-	TimerTasks timerTask = new TimerTasks(action);
-	Jimm.getTimerRef().schedule(timerTask, 1000, 1000);
     }
 
     // Send new uin registration request
@@ -182,13 +208,13 @@ public class RegisterNewUinAction extends Action
 		if (this.password.length() == 0)
 		{
 			this.state = RegisterNewUinAction.STATE_ERROR;
-			return;
+	    throw (new JimmException(233, 0));
 		}
 
 		// Open connection
 		try
 		{
-			Icq.connect(this.srvHost + ":" + this.srvPort);
+			Icq.c.connect(this.srvHost + ":" + this.srvPort);
 		} catch (JimmException e)
 		{
 			this.state = RegisterNewUinAction.STATE_ERROR;
@@ -260,7 +286,6 @@ public class RegisterNewUinAction extends Action
 							}
 						}
 
-						Icq.setConnected();
 			                        // Move to next state
 			                        this.state = RegisterNewUinAction.STATE_WAITING_FOR_CONFIRM;
 			                        // Packet has been consumed
@@ -380,7 +405,7 @@ public class RegisterNewUinAction extends Action
     		break;
     	case ON_CANCEL:
     	case ON_ERROR:
-    		Icq.disconnect(false);
+    		Icq.disconnect(true);
     		break;
 	}
     }
