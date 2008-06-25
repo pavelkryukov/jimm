@@ -498,7 +498,7 @@ public class Options
 	static public void load() throws IOException, RecordStoreException
 	{
 		/* Open record store */
-		RecordStore account = RecordStore.openRecordStore("options", false);
+		RecordStore account = RecordStore.openRecordStore("opt"+"ions"/*to avoid lang. preprocessor*/, false);
 
 		/* Temporary variables */
 		byte[] buf;
@@ -549,7 +549,7 @@ public class Options
 	static public void save() throws IOException, RecordStoreException
 	{
 		/* Open record store */
-		RecordStore account = RecordStore.openRecordStore("options", true);
+		RecordStore account = RecordStore.openRecordStore("opt"+"ions"/*to avoid lang. preprocessor*/, true);
 
 		/* Add empty records if necessary */
 		while (account.getNumRecords() < 3)
