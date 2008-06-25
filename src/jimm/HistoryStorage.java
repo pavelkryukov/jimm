@@ -51,6 +51,7 @@ import jimm.ContactItem;
 class CachedRecord
 {
 	String shortText, text, date, from;
+	Integer index;
 
 	byte type; // 0 - incoming message, 1 - outgoing message
 
@@ -710,6 +711,8 @@ public class HistoryStorage
 	private static String currCacheUin = new String();
 
 	private static Hashtable cachedRecords;
+	
+	private static Vector cachedRecordsOrder;
 
 	final static private int TEXT_START_INDEX = 1;
 
@@ -819,8 +822,8 @@ public class HistoryStorage
 		}
 		currCacheUin = uin;
 
-		if (cachedRecords == null)
-			cachedRecords = new Hashtable();
+		if (cachedRecords == null) cachedRecords = new Hashtable();
+		if (cachedRecordsOrder == null) cachedRecordsOrder = new Vector();
 	}
 
 	// Returns record count for UIN
@@ -879,24 +882,35 @@ public class HistoryStorage
 	static public CachedRecord getCachedRecord(String uin, int recNo)
 	{
 		int maxLen = 20;
-		CachedRecord cachedRec = (CachedRecord) cachedRecords.get(new Integer(
-				recNo));
-		if (cachedRec != null)
-			return cachedRec;
-
-		cachedRec = getRecord(uin, recNo);
+		CachedRecord cachedRec = (CachedRecord) cachedRecords.get(new Integer(recNo));
 		if (cachedRec == null)
-			return null;
-		if (cachedRec.text.length() > maxLen)
-			cachedRec.shortText = cachedRec.text.substring(0, maxLen) + "...";
-		else
-			cachedRec.shortText = cachedRec.text;
+		{
+			cachedRec = getRecord(uin, recNo);
+			if (cachedRec == null) return null;
+			if (cachedRec.text.length() > maxLen)
+				cachedRec.shortText = cachedRec.text.substring(0, maxLen) + "...";
+			else
+				cachedRec.shortText = cachedRec.text;
 
-		cachedRec.shortText = cachedRec.shortText.replace('\n', ' ');
-		cachedRec.shortText = cachedRec.shortText.replace('\r', ' ');
+			cachedRec.shortText = cachedRec.shortText.replace('\n', ' ');
+			cachedRec.shortText = cachedRec.shortText.replace('\r', ' ');
+			cachedRec.index = new Integer(recNo);
 
-		cachedRecords.put(new Integer(recNo), cachedRec);
+			cachedRecords.put(cachedRec.index, cachedRec);
+		}
+		
+		// Place record at top of cache
+		cachedRecordsOrder.removeElement(cachedRec);
+		cachedRecordsOrder.addElement(cachedRec);
 
+		// Maximum 50 records in cache
+		while (cachedRecordsOrder.size() > 50) 
+		{
+			CachedRecord record = (CachedRecord)cachedRecordsOrder.firstElement();
+			cachedRecordsOrder.removeElementAt(0);
+			cachedRecords.remove(record.index);
+		}
+		
 		return cachedRec;
 	}
 
@@ -930,8 +944,8 @@ public class HistoryStorage
 			recordStore = null;
 			System.gc();
 			RecordStore.deleteRecordStore(getRSName(uin));
-			if (cachedRecords != null)
-				cachedRecords.clear();
+			if (cachedRecords != null) cachedRecords.clear();
+			if (cachedRecordsOrder != null) cachedRecordsOrder.removeAllElements(); 
 			currCacheUin = new String();
 		} catch (Exception e)
 		{
@@ -941,11 +955,8 @@ public class HistoryStorage
 	// Clears cache before hiding history list
 	static public void clearCache()
 	{
-		if (cachedRecords != null)
-		{
-			cachedRecords.clear();
-			cachedRecords = null;
-		}
+		cachedRecordsOrder = null;
+		cachedRecords = null;
 
 		list = null;
 
