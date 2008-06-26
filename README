@@ -112,7 +112,7 @@ your WAP device and select the desired version:
 <http://www.jimm.org/download/>
 
 ________________________________________________________________________________
-KNOWN BUGS
+KNOWN ISSUES
 
  * On Nokia 6230 with FW > 3.15 or other devices which stop connecting at about
    20% of the connection you have to set "Shadow connection" in the "Network" 
@@ -121,6 +121,8 @@ KNOWN BUGS
  * On later Benq-Siemens devices you have to set the keepalive packet interval
    to some value bellow 30 seconds. (29 seconds is suggested)
 
+ * On Nokia S60-series devices no sound or vibration, if options "Warning tones" or
+   "Vibration on" disabled in "Settings/<Profile name>/Personalisation/Tones/"
 ________________________________________________________________________________
 HOW TO BUILD
 
