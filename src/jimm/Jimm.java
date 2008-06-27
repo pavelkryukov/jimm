@@ -63,8 +63,8 @@ public class Jimm extends MIDlet
 		loadError.append(value).append("\n\n");
 	}
 	
-	static public final int PHONE_SONYERICSSON = 1000;
-	static public final int PHONE_NOKIA        = 1001;
+	static public final int PHONE_SONYERICSSON 	= 1000;
+	static public final int PHONE_NOKIA		= 1001;
 	static private int phoneType;
 	
 	static public int getPhoneVendor()
@@ -115,14 +115,22 @@ public class Jimm extends MIDlet
 
 	public static final String microeditionProfiles = System.getProperty("microedition.profiles");
 
+	public static final int cmdBack;
+
 	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"#
 	static
 	{
 		if (microeditionPlatform != null)
 		{
 			String melc = microeditionPlatform.toLowerCase();
-			if (melc.indexOf("ericsson") != -1)
+			if (melc.indexOf("ericsson") != -1) {
 				phoneType = PHONE_SONYERICSSON;
+				String jp = System.getProperty("com.sonyericsson.java.platform").toLowerCase();
+				if (jp.indexOf("sjp") != -1)
+					cmdBack = Command.CANCEL;
+				else
+					cmdBack = Command.BACK;
+			}
 			else if (melc.indexOf("nokia") != -1)
 				phoneType = PHONE_NOKIA;
 		}

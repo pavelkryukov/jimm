@@ -52,7 +52,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	static private SplashCanvas _this;
 
 	public final static Command cancelCommand = new Command(ResourceBundle
-			.getString("cancel"), Command.BACK, 1);
+			.getString("cancel"), Jimm.cmdBack, 1);
 
 	//Timer for repaint
 	static private Timer t1, t2;

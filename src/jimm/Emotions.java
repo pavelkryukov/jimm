@@ -419,7 +419,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 	///////////////////////////////////
 
 	private static Command cmdOk = new Command(ResourceBundle.getString("select"), Command.OK, 1);
-	private static Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Command.BACK, 2);
+	private static Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Jimm.cmdBack, 2);
 
 	private static String emotionText;
 	private static Selector selector;

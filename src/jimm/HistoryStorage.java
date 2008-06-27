@@ -69,7 +69,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 {
 	// commands for message text
 	private static Command cmdMsgBack = new Command(ResourceBundle
-			.getString("back"), Command.BACK, 1);
+			.getString("back"), Jimm.cmdBack, 1);
 
 	private static Command cmdMsgNext = new Command(ResourceBundle
 			.getString("next"), Command.ITEM, 2);
@@ -85,7 +85,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			.getString("select"), Command.OK, 1);
 
 	private static Command cmdBack = new Command(ResourceBundle
-			.getString("back"), Command.BACK, 2);
+			.getString("back"), Jimm.cmdBack, 2);
 
 	private static Command cmdClear = new Command(ResourceBundle.getString(
 			"clear", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 4);
@@ -114,7 +114,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 			.getString("select"), Command.OK, 1);
 
 	private static Command cmdurlBack = new Command(ResourceBundle
-			.getString("back"), Command.BACK, 2);
+			.getString("back"), Jimm.cmdBack, 2);
 
 	static TextList messText;
 
@@ -543,7 +543,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 				cmdFindOk = new Command(ResourceBundle.getString("find"),
 						Command.ITEM, 1);
 				cmdFindCancel = new Command(ResourceBundle.getString("back"),
-						Command.BACK, 2);
+						Jimm.cmdBack, 2);
 				tfldFind = new TextField(ResourceBundle
 						.getString("text_to_find"), "", 64, TextField.ANY);
 

@@ -106,7 +106,7 @@ public class FileTransfer implements CommandListener, Runnable
 
 	// Commands
 	private Command backCommand = new Command(ResourceBundle.getString("back"),
-			Command.BACK, 2);
+			Jimm.cmdBack, 2);
 
 	private Command okCommand = new Command(ResourceBundle.getString("ok"),
 			Command.OK, 1);
@@ -556,7 +556,7 @@ public class FileTransfer implements CommandListener, Runnable
 		{
 
 			backCommand = new Command(ResourceBundle.getString("back"),
-					Command.BACK, 2);
+					Jimm.cmdBack, 2);
 			okCommand = new Command(ResourceBundle.getString("ok"),
 					Command.SCREEN, 1);
 
