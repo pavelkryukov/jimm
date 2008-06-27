@@ -38,7 +38,7 @@ public class Templates implements VirtualListCommands, CommandListener
 			.getString("select"), Command.OK, 1);
 
 	private static Command backCommand = new Command(ResourceBundle
-			.getString("back"), Command.BACK, 2);
+			.getString("back"), Jimm.cmdBack, 2);
 
 	private static Command newTemplateCommand = new Command(ResourceBundle
 			.getString("add_new"), Command.ITEM, 3);
@@ -53,7 +53,7 @@ public class Templates implements VirtualListCommands, CommandListener
 			.getString("add_new"), Command.OK, 1);
 
 	private static Command cancelCommand = new Command(ResourceBundle
-			.getString("back"), Command.BACK, 2);
+			.getString("back"), Jimm.cmdBack, 2);
 
 	private static TextList templateList;
 

@@ -97,7 +97,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 	TextList textList;
 
 	private static final Command cmdMsgReply = new Command(ResourceBundle.getString("reply", ResourceBundle.FLAG_ELLIPSIS), Command.OK, 1);
-	private static final Command cmdCloseChat = new Command(ResourceBundle.getString("close"), Command.BACK, 2);
+	private static final Command cmdCloseChat = new Command(ResourceBundle.getString("close"), Jimm.cmdBack, 2);
 	private static final Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"), Command.ITEM, 4);
 	private static final Command cmdReplWithQuota = new Command(ResourceBundle.getString("quote", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
 	private static final Command cmdAddUrs = new Command(ResourceBundle.getString("add_user", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 5);

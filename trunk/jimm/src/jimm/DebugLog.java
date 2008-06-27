@@ -37,7 +37,7 @@ public class DebugLog
 	//#sijapp cond.if modules_DEBUGLOG is "true" #
 	private static TextList list;
 
-	private static Command backCommand = new Command("Back", Command.BACK, 1);
+	private static Command backCommand = new Command("Back", Jimm.cmdBack, 1);
 
 	static
 	{

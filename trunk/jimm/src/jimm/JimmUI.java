@@ -104,11 +104,11 @@ public class JimmUI implements CommandListener
 	// Commands
 	public final static Command cmdSave = new Command(ResourceBundle.getString("save"), Command.ITEM, 1);
 	public final static Command cmdOk = new Command(ResourceBundle.getString("ok"), Command.OK, 1);
-	public final static Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Command.BACK, 5);
+	public final static Command cmdCancel = new Command(ResourceBundle.getString("cancel"), Jimm.cmdBack, 5);
 	public final static Command cmdYes = new Command(ResourceBundle.getString("yes"), Command.OK, 1);
 	public final static Command cmdNo = new Command(ResourceBundle.getString("no"), Command.CANCEL, 2);
 	public final static Command cmdFind = new Command(ResourceBundle.getString("find"), Command.OK, 1);
-	public final static Command cmdBack = new Command(ResourceBundle.getString("back"), Command.BACK, 1);
+	public final static Command cmdBack = new Command(ResourceBundle.getString("back"), Jimm.cmdBack, 1);
 	public final static Command cmdCopyText = new Command(ResourceBundle.getString("copy_text"), Command.ITEM, 3);
 	public final static Command cmdCopyAll = new Command(ResourceBundle.getString("copy_all_text"), Command.ITEM, 4);
 	public final static Command cmdEdit = new Command(ResourceBundle.getString("edit"), Command.ITEM, 1);

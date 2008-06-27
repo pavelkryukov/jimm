@@ -158,7 +158,7 @@ public class Search
 			this.searchCommand = new Command(ResourceBundle
 					.getString("search_user"), Command.OK, 1);
 			this.backCommand = new Command(ResourceBundle.getString("back"),
-					Command.BACK, 2);
+					Jimm.cmdBack, 2);
 			this.addCommand = new Command(ResourceBundle
 					.getString("add_to_list"), Command.OK, 1);
 			this.previousCommand = new Command(
