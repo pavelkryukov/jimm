@@ -320,6 +320,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	protected void hideNotify()
 	{
 		SplashCanvas.splash = null;
+		resetLastTask();
 	}
 
 	// Called when message has been received
@@ -580,7 +581,6 @@ public class SplashCanvas extends Canvas implements CommandListener
 			try { lastTimerTask.cancel(); } catch (Exception e) {}
 			lastTimerTask = null;
 			lastAction = null;
-			System.out.println("resetLastTask");
 		}
 	}
 
