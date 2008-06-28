@@ -25,7 +25,6 @@ package jimm;
 
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
-import jimm.JimmUI;
 
 import java.util.Timer;
 
@@ -115,7 +114,7 @@ public class Jimm extends MIDlet
 
 	public static final String microeditionProfiles = System.getProperty("microedition.profiles");
 
-	public static final int cmdBack;
+	public static int cmdBack;
 
 	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"#
 	static
