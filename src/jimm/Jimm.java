@@ -114,7 +114,7 @@ public class Jimm extends MIDlet
 
 	public static final String microeditionProfiles = System.getProperty("microedition.profiles");
 
-	public static int cmdBack;
+	public static int cmdBack = Command.BACK;
 
 	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"#
 	static
@@ -127,8 +127,6 @@ public class Jimm extends MIDlet
 				String jp = System.getProperty("com.sonyericsson.java.platform").toLowerCase();
 				if (jp.indexOf("sjp") != -1)
 					cmdBack = Command.CANCEL;
-				else
-					cmdBack = Command.BACK;
 			}
 			else if (melc.indexOf("nokia") != -1)
 				phoneType = PHONE_NOKIA;
