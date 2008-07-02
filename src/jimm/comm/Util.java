@@ -56,11 +56,13 @@ public class Util
 		Image thumb = Image.createImage(width, height);
 		Graphics g = thumb.getGraphics();
 
+		int dx;
+		int dy;
 		for (int y = 0; y < height; y++) {
+		  dy = y * sourceHeight / height;
 		  for (int x = 0; x < width; x++) {
 		    g.setClip(x, y, 1, 1);
-		    int dx = x * sourceWidth / width;
-		    int dy = y * sourceHeight / height;
+		    dx = x * sourceWidth / width;
 		    g.drawImage(image, x - dx, y - dy, Graphics.LEFT | Graphics.TOP);
 		  }
 		}
