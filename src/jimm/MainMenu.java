@@ -242,12 +242,14 @@ public class MainMenu implements CommandListener, JimmScreen
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.setColorScheme(statusList, false, -1, true);
+		int xstatus;
+		boolean std;
 		for (int s = 0; s < 2; s++)
 		{
 			for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
 			{
-				int xstatus = i-1;
-				boolean std = Icq.isXStatusStd(xstatus);
+				xstatus = i-1;
+				std = Icq.isXStatusStd(xstatus);
 				if ((std ? 0 : 1) == s)
 					JimmUI.addTextListItem
 					(

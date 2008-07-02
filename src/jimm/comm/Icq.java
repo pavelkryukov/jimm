@@ -493,10 +493,12 @@ public class Icq implements Runnable
 				// Read next packet, if available
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
 				//#sijapp cond.if modules_FILES is "true"#
+				Packet packet;
+				boolean consumed;
 				while ((c.available() > 0) || dcPacketAvailable)
 				{
 					// Try to get packet
-					Packet packet = null;
+					packet = null;
 					try
 					{
 						if (c.available() > 0)
@@ -512,7 +514,7 @@ public class Icq implements Runnable
 
 					// Forward received packet to all active actions and to the
 					// action listener
-					boolean consumed = false;
+					consumed = false;
 					for (int i = 0; i < actAction.size(); i++)
 					{
 						try
@@ -3090,11 +3092,12 @@ public class Icq implements Runnable
 	
 	public static int detectXStatus(byte[] capabilities)
 	{
+		int counter;
 		for (int i = 0; i < capabilities.length; i += 16)
 		{
 			for (int j = 0; j < XSTATUS_CONSTS.length; j += 18)
 			{
-				int counter = 0;
+				counter = 0;
 				for (int k = 0; k < 16; k++, counter++) 
 					if (capabilities[i+k] != XSTATUS_CONSTS[j+k+2]) break;
 				if (counter == 16) return XSTATUS_CONSTS[j];
@@ -3111,10 +3114,11 @@ public class Icq implements Runnable
 
 		if (capabilities != null)
 		{
+			int j16;
 			//Caps parsing
 			for (int j = 0; j < capabilities.length / 16; j++)
 			{
-				int j16 = j * 16;
+				j16 = j * 16;
 				if (Util.byteArrayEquals(capabilities, j16, CAP_AIM_SERVERRELAY, 0, 16))
 				{
 					caps |= CAPF_AIM_SERVERRELAY;
@@ -3720,14 +3724,17 @@ public class Icq implements Runnable
 		}
 		// Check for coexisting capabilities and merge
 		boolean found = false;
+		byte[] tmp_old;
+		byte[] tmp_new;
+		byte[] merged;
 		for (int i = 0; i < capabilities_old.length; i += 16)
 		{
-			byte[] tmp_old = new byte[16];
+			tmp_old = new byte[16];
 			System.arraycopy(capabilities_old, i, tmp_old, 0, 16);
 			for (int j = 0; j < extended_new.length; j += 16)
 			{
 				//System.out.println(j + " " + i + " " + extended_new.length);
-				byte[] tmp_new = new byte[16];
+				tmp_new = new byte[16];
 				System.arraycopy(extended_new, j, tmp_new, 0, 16);
 				if (tmp_old == tmp_new)
 				{
@@ -3738,7 +3745,7 @@ public class Icq implements Runnable
 			if (!found)
 			{
 				//System.out.println("Merge capability");
-				byte[] merged = new byte[extended_new.length + 16];
+				merged = new byte[extended_new.length + 16];
 				System.arraycopy(extended_new, 0, merged, 0,
 						extended_new.length);
 				System.arraycopy(tmp_old, 0, merged, extended_new.length,

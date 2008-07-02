@@ -458,6 +458,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			long mem = Runtime.getRuntime().freeMemory();
 			//#sijapp cond.end#
 
+			byte type;
 			while (marker <= cl.getNumRecords())
 			{
 
@@ -471,7 +472,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				while (dis.available() > 0)
 				{
 					// Get item type
-					byte type = dis.readByte();
+					type = dis.readByte();
 
 					// Normal contact
 					if (type == 0)
@@ -547,13 +548,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		// Iterate through all contact items
 		int cItemsCount = cItems.size();
 		int totalCount = cItemsCount + gItems.size();
+		ContactListGroupItem gItem;
 		for (int i = 0; i < totalCount; i++)
 		{
 			if (i < cItemsCount)
 				getCItem(i).saveToStream(dos);
 			else
 			{
-				ContactListGroupItem gItem = (ContactListGroupItem) gItems
+				gItem = (ContactListGroupItem) gItems
 						.elementAt(i - cItemsCount);
 				gItem.saveToStream(dos);
 			}
@@ -569,6 +571,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				baos.reset();
 			}
 		}
+		gItem = null;
 
 		// Close record store
 		cl.closeRecordStore();
@@ -586,12 +589,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	static public void setStatusesOffline()
 	{
 		onlineCounter = 0;
+		ContactItem item;
 		for (int i = cItems.size() - 1; i >= 0; i--)
 		{
-			ContactItem item = getCItem(i);
+			item = getCItem(i);
 			item.setOfflineStatus();
 		}
-
+		item = null;
 		for (int i = gItems.size() - 1; i >= 0; i--)
 			((ContactListGroupItem) gItems.elementAt(i)).setCounters(0, 0);
 	}
@@ -651,16 +655,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					list.put(((ContactItem)cItems.elementAt(i)).getStringValue(ContactItem.CONTACTITEM_UIN), cItems.elementAt(i));
 				
 				int size = privData.size();
+				String uin;
+				int[] data;
+				ContactItem ci;
 				for (int i = 0; i < size; i += 2)
 				{
-					String uin = (String)privData.elementAt(i);
-					int[] data = (int[]) privData.elementAt(i+1);
+					uin = (String)privData.elementAt(i);
+					data = (int[]) privData.elementAt(i+1);
 					
-					ContactItem ci = (ContactItem)list.get(uin);
+					ci = (ContactItem)list.get(uin);
 					if (ci == null) continue;
 
 					ci.setIntValue(data[0], data[1]);
 				}
+				ci = null;
 			}
 
 			// Save new contact list
@@ -670,10 +678,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				safeSave();
 				treeBuilt = false;
 
+				ContactItem cItem;
 				// Which contacts already have chats?
 				for (int i = getSize() - 1; i >= 0; i--)
 				{
-					ContactItem cItem = getCItem(i);
+					cItem = getCItem(i);
 					cItem.setBooleanValue
 					(
 						ContactItem.CONTACTITEM_HAS_CHAT,
@@ -681,6 +690,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					);
 					ChatHistory.updateChatIfExists(cItem);
 				}
+				cItem = null;
 			}
 		}
 	}
@@ -712,13 +722,17 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			tree.sortNode(null);
 			
 			// Sort contacts
+			ContactListGroupItem gItem;
+			TreeNode groupNode;
 			for (int i = 0; i < gItems.size(); i++)
 			{
-				ContactListGroupItem gItem = (ContactListGroupItem) gItems.elementAt(i);
-				TreeNode groupNode = (TreeNode) gNodes.get(new Integer(gItem.getId()));
+				gItem = (ContactListGroupItem) gItems.elementAt(i);
+				groupNode = (TreeNode) gNodes.get(new Integer(gItem.getId()));
 				tree.sortNode(groupNode);
 				calcGroupData(groupNode, gItem);
 			}
+			gItem = null;
+			groupNode = null;
 		} else
 			tree.sortNode(null);
 		treeSorted = true;
@@ -743,18 +757,23 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 		if (use_groups)
 		{
+			ContactListGroupItem item;
+			TreeNode groupNode;
 			for (i = 0; i < gCount; i++)
 			{
-				ContactListGroupItem item = (ContactListGroupItem) gItems.elementAt(i);
-				TreeNode groupNode = tree.addNode(null, item);
+				item = (ContactListGroupItem) gItems.elementAt(i);
+				groupNode = tree.addNode(null, item);
 				gNodes.put(new Integer(item.getId()), groupNode);
 			}
+			item = null;
+			groupNode = null;
 		}
 
 		// add contacts
+		ContactItem cItem;
 		for (i = 0; i < cCount; i++)
 		{
-			ContactItem cItem = getCItem(i);
+			cItem = getCItem(i);
 
 			if (only_online
 					&& (cItem.getIntValue(ContactItem.CONTACTITEM_STATUS) == STATUS_OFFLINE)
@@ -771,6 +790,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				tree.addNode(null, cItem);
 			}
 		}
+		cItem = null;
 
 		treeSorted = false;
 		treeBuilt = true;
@@ -779,11 +799,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Returns reference to group with id or null if group not found
 	public static ContactListGroupItem getGroupById(int id)
 	{
+		ContactListGroupItem group;
 		for (int i = gItems.size() - 1; i >= 0; i--)
 		{
-			ContactListGroupItem group = (ContactListGroupItem) gItems.elementAt(i);
+			group = (ContactListGroupItem) gItems.elementAt(i);
 			if (group.getId() == id) return group;
 		}
+		group = null;
 		return null;
 	}
 
@@ -796,9 +818,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		} catch (NumberFormatException ne){
 			return null;
 		}
+		ContactItem citem;
 		for (int i = cItems.size() - 1; i >= 0; i--)
 		{
-			ContactItem citem = getCItem(i);
+			citem = getCItem(i);
 			if (citem.getUIN() == uinInt)
 				return citem;
 		}
@@ -808,12 +831,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	static public ContactItem[] getGroupItems(int groupId)
 	{
 		Vector vect = new Vector();
+		ContactItem cItem;
 		for (int i = 0; i < cItems.size(); i++)
 		{
-			ContactItem cItem = getCItem(i);
+			cItem = getCItem(i);
 			if (cItem.getIntValue(ContactItem.CONTACTITEM_GROUP) == groupId)
 				vect.addElement(cItem);
 		}
+		cItem = null;
 
 		ContactItem[] result = new ContactItem[vect
 				.size()];
@@ -841,6 +866,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			if (cItem.getIntValue(ContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
 				onlineCount++;
 		}
+		cItem = null;
 		group.setCounters(onlineCount, count);
 	}
 
@@ -874,10 +900,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 		// Does contact exists in tree?
 		count = groupNode.size();
+		Object data;
 		for (i = 0; i < count; i++)
 		{
 			cItemNode = groupNode.elementAt(i);
-			Object data = cItemNode.getData();
+			data = cItemNode.getData();
 			if (!(data instanceof ContactItem))
 				continue;
 			if (!((ContactItem) data).getStringValue(
@@ -886,6 +913,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			contactExistInTree = true;
 			break;
 		}
+		data = null;
 
 		// Does contact exists in internal list?
 		contactExistsInList = (cItems.indexOf(item) != -1);
@@ -927,9 +955,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			sortType = Options.getInt(Options.OPTION_CL_SORT_BY);
 
 			// TODO: Make binary search instead of linear before child insertion!!!
+			TreeNode testNode;
 			for (int j = 0; j < contCount; j++)
 			{
-				TreeNode testNode = groupNode.elementAt(j);
+				testNode = groupNode.elementAt(j);
 				if (!(testNode.getData() instanceof ContactItem))
 					continue;
 				if (_this.vtCompareNodes(cItemNode, testNode) < 0)
@@ -939,6 +968,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					break;
 				}
 			}
+			testNode = null;
 			if (!inserted)
 				tree.insertChild(groupNode, cItemNode, contCount);
 			if (isCurrent)
@@ -1202,9 +1232,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		synchronized (_this)
 		{
+			ContactItem cItem;
 			for (int i = cItems.size()-1; i >= 0; i--)
 			{
-				ContactItem cItem = getCItem(i);
+				cItem = getCItem(i);
 				if (cItem.getIntValue(ContactItem.CONTACTITEM_GROUP) == gItem.getId())
 				{
 					if (cItem.getIntValue(ContactItem.CONTACTITEM_STATUS) != STATUS_OFFLINE)
@@ -1212,6 +1243,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					cItems.removeElementAt(i);
 				}
 			}
+			cItem = null;
 			Integer groupId = new Integer(gItem.getId());
 			if (Options.getBoolean(Options.OPTION_USER_GROUPS))
 			{
@@ -1640,12 +1672,14 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		Vector data = new Vector();
 		int gid = group.getId();
 		int size = getSize();
+		ContactItem item;
 		for (int i = 0; i < size; i++)
 		{
-			ContactItem item = getCItem(i);
+			item = getCItem(i);
 			if (item.getIntValue(ContactItem.CONTACTITEM_GROUP) == gid)
 				data.addElement(item);
 		}
+		item = null;
 		ContactItem[] result = new ContactItem[data
 				.size()];
 		data.copyInto(result);
@@ -1707,20 +1741,24 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	
 	static private boolean checkIfIdExists(int id)
 	{
+		ContactItem ci;
 		for (int i = cItems.size()-1; i >= 0; i--)
 		{
-			ContactItem ci = getCItem(i);
+			ci = getCItem(i);
 			if (ci.getIntValue(ContactItem.CONTACTITEM_ID) == id) return true;
 			if (ci.getIntValue(ContactItem.CONTACTITEM_INV_ID) == id) return true;
 			if (ci.getIntValue(ContactItem.CONTACTITEM_VIS_ID) == id) return true;
 			if (ci.getIntValue(ContactItem.CONTACTITEM_IGN_ID) == id) return true;
 		}
+		ci = null;
 		
+		ContactListGroupItem gi;
 		for (int i = gItems.size()-1; i >= 0; i--)
 		{
-			ContactListGroupItem gi = (ContactListGroupItem)gItems.elementAt(i);
+			gi = (ContactListGroupItem)gItems.elementAt(i);
 			if (gi.getId() == id) return true;
 		}
+		gi = null;
 	
 		return false;
 	}
@@ -1815,9 +1853,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			dos.writeInt(size);
 			
 			e = antiSpamList.keys();
+			String uin;
 			while (e.hasMoreElements())
 			{
-				String uin = (String)e.nextElement();
+				uin = (String)e.nextElement();
 				if (antiSpamList.get(uin) == antiSpamTrue) dos.writeUTF(uin);
 			}
 			
@@ -1856,9 +1895,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			if (vers != ANTISPAM_RMS_VERS) return;
 			
 			int count = dis.readInt();
+			String uin;
 			for (int i = 0; i < count; i++)
 			{
-				String uin = dis.readUTF();
+				uin = dis.readUTF();
 				antiSpamList.put(uin, antiSpamTrue);
 			}
 		}

@@ -86,6 +86,13 @@ public class Emotions implements VirtualListCommands, CommandListener
 			if (stream != null)
 			{
 				dos = new DataInputStream(stream);
+				String[] lineItems;
+				String[] nameAndExt;
+				String[] imgAndTime;
+				String fileName;
+				int imgWidth;
+				int index;
+				byte[] timeDataArray;
 				for (;;)
 				{
 					try
@@ -96,16 +103,16 @@ public class Emotions implements VirtualListCommands, CommandListener
 						break;
 					}
 					
-					String[] lineItems = Util.explode(fileLine, ' ');
+					lineItems = Util.explode(fileLine, ' ');
 					
 					if (lineItems.length >= 3)
 					{
-						String fileName = lineItems[0];
-						int imgWidth = Integer.parseInt(lineItems[1]);
+						fileName = lineItems[0];
+						imgWidth = Integer.parseInt(lineItems[1]);
 						
-						String[] nameAndExt = Util.explode(fileName, '.');
+						nameAndExt = Util.explode(fileName, '.');
 						
-						int index = Integer.parseInt(nameAndExt[0]);
+						index = Integer.parseInt(nameAndExt[0]);
 						
 						imageList.load("/ani_emotions/"+fileName, imgWidth, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 						imagesData.setSize(index+1);
@@ -114,7 +121,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 						timeingsValues.removeAllElements();
 						for (int i = 2; i < lineItems.length; i++)
 						{
-							String[] imgAndTime = Util.explode(lineItems[i], ',');
+							imgAndTime = Util.explode(lineItems[i], ',');
 							timeingsValues.addElement(new Byte((byte)(0xFF&Integer.parseInt(imgAndTime[0]))));
 							timeingsValues.addElement(new Byte((byte)(0xFF&Integer.parseInt(imgAndTime[1]))));
 						}
@@ -122,10 +129,11 @@ public class Emotions implements VirtualListCommands, CommandListener
 						timeData.setSize(index+1);
 						if (timeingsValues.size() > 2)
 						{
-							byte[] timeDataArray = new byte[timeingsValues.size()];
+							timeDataArray = new byte[timeingsValues.size()];
 							for (int i = 0; i < timeDataArray.length; i++)
 								timeDataArray[i] = ((Byte)timeingsValues.elementAt(i)).byteValue();
 							timeData.setElementAt(timeDataArray, index);
+							timeDataArray = null;
 						}
 					}
 				}
@@ -156,12 +164,13 @@ public class Emotions implements VirtualListCommands, CommandListener
 			else
 			{
 				String[] emoData = Util.explode(fileLine, '|');
+				String[] langAndName;
 				if (emoData.length >= 1)
 				{
 					setName = emoData[0];
 					for (int i = 1; i < emoData.length; i++)
 					{
-						String[] langAndName = Util.explode(emoData[i], ',');
+						langAndName = Util.explode(emoData[i], ',');
 						if (langAndName.length == 2 && lang.equals(langAndName[0].toLowerCase()))
 						{
 							setName = langAndName[1];
@@ -171,6 +180,11 @@ public class Emotions implements VirtualListCommands, CommandListener
 				}
 			}
 
+			String[] lineItems;
+			Integer currIndex;
+			String smileName;
+			String translation; 
+			String word;
 			for (;;)
 			{
 				try
@@ -181,18 +195,18 @@ public class Emotions implements VirtualListCommands, CommandListener
 					break;
 				}
 				
-				String[] lineItems = Util.explode(fileLine, ' ');
+				lineItems = Util.explode(fileLine, ' ');
 				
 				if (lineItems.length >= 3)
 				{
 					if (lineItems[0].charAt(0) == '#') continue;
-					Integer currIndex = Integer.valueOf(lineItems[0]);
-					String smileName = lineItems[1];
-					String translation = (String)transl.get(smileName.toLowerCase()); 
+					currIndex = Integer.valueOf(lineItems[0]);
+					smileName = lineItems[1];
+					translation = (String)transl.get(smileName.toLowerCase()); 
 					smileName = (translation != null) ? translation : lineItems[1].replace('_', ' ');
 					for (int i = 2; i < lineItems.length; i++)
 					{
-						String word = lineItems[i];
+						word = lineItems[i];
 						if (word.length() == 0) continue;
 						insertTextCorr(textCorr, word.toLowerCase(), currIndex);
 						if (word.indexOf('_') != -1 && word.length() > 3) 
@@ -250,9 +264,10 @@ public class Emotions implements VirtualListCommands, CommandListener
 		selEmotionsIndexes = new int[size];
 		selEmotionsWord = new String[size];
 		selEmotionsSmileNames = new String[size];
+		Object[] data;
 		for (int i = 0; i < size; i++)
 		{
-			Object[] data = (Object[]) selEmotions.elementAt(i);
+			data = (Object[]) selEmotions.elementAt(i);
 			selEmotionsIndexes[i] = ((Integer) data[0]).intValue();
 			selEmotionsWord[i] = (String) data[1];
 			selEmotionsSmileNames[i] = (String) data[2];
@@ -264,10 +279,11 @@ public class Emotions implements VirtualListCommands, CommandListener
 		emoFinded = new boolean[size];
 		for (int i = 0; i < size; i++)
 		{
-			Object[] data = (Object[]) textCorr.elementAt(i);
+			data = (Object[]) textCorr.elementAt(i);
 			textCorrWords[i] = (String) data[0];
 			textCorrIndexes[i] = ((Integer) data[1]).intValue();
 		}
+		data = null;
 
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 		selEmotions.removeAllElements();
@@ -288,9 +304,11 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 		DataInputStream dos = new DataInputStream(stream);
 		
+		String line;
+		String[] pair;
 		for (;;)
 		{
-			String line = null;
+			line = null;
 			try
 			{
 				line = readLineFromStream(dos);
@@ -300,7 +318,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 				break;
 			}
 			
-			String[] pair = Util.explode(line, '=');
+			pair = Util.explode(line, '=');
 			if (pair.length < 2) continue;
 			if (pair[1].length() == 0) continue;
 			transl.put(pair[0].toLowerCase(), pair[1]);
@@ -316,16 +334,19 @@ public class Emotions implements VirtualListCommands, CommandListener
 		int wordLen = word.length();
 		int size = textCorr.size();
 		int insIndex = 0;
+		Object[] cvtData;
+		int cvlDataWordLen;
 		for (; insIndex < size; insIndex++)
 		{
-			Object[] cvtData = (Object[]) textCorr.elementAt(insIndex);
-			int cvlDataWordLen = ((String) cvtData[0]).length();
+			cvtData = (Object[]) textCorr.elementAt(insIndex);
+			cvlDataWordLen = ((String) cvtData[0]).length();
 			if (cvlDataWordLen <= wordLen)
 			{
 				textCorr.insertElementAt(data, insIndex);
 				return;
 			}
 		}
+		cvtData = null;
 		textCorr.addElement(data);
 	}
 
@@ -372,17 +393,22 @@ public class Emotions implements VirtualListCommands, CommandListener
 			emoFinded[i] = true;
 
 		int startIndex = 0;
+		int size;
+		int count;
+		int imgIndex;
+		Image[] imgSeq;
+		byte[] timeSeq;
 		for (;;)
 		{
 			findedEmotions.removeAllElements();
 
-			int size = textCorrWords.length;
+			size = textCorrWords.length;
 			for (int i = 0; i < size; i++)
 				findEmotionInText(loweredText, textCorrWords[i], textCorrIndexes[i], startIndex, i);
 			
 			if (findedEmotions.isEmpty()) break;
 			
-			int count = findedEmotions.size();
+			count = findedEmotions.size();
 			int minIndex = 100000, data[] = null, minArray[] = null;
 			for (int i = 0; i < count; i++)
 			{
@@ -397,14 +423,16 @@ public class Emotions implements VirtualListCommands, CommandListener
 			if (startIndex != minIndex)
 				textList.addBigText(text.substring(startIndex, minIndex), textColor, fontStyle, bigTextIndex);
 
-			int imgIndex = minArray[2];
-			Image[] imgSeq = (Image[])imagesData.elementAt(imgIndex);
-			byte[] timeSeq = (byte[])timeData.elementAt(imgIndex);
+			imgIndex = minArray[2];
+			imgSeq = (Image[])imagesData.elementAt(imgIndex);
+			timeSeq = (byte[])timeData.elementAt(imgIndex);
 			
 			textList.addAniImage(imgSeq, timeSeq, text.substring(minIndex, minIndex + minArray[1]), bigTextIndex);
 
 			startIndex = minIndex + minArray[1];
 		}
+		imgSeq = null;
+		timeSeq = null;
 
 		int lastIndex = text.length();
 
@@ -525,15 +553,19 @@ public class Emotions implements VirtualListCommands, CommandListener
 			setMode(CURSOR_MODE_ENABLED);
 			
 			itemWidth = itemHeight = 0;
+			Image[] images;
+			int w;
+			int h;
 			for (int i = 0; i < imagesData.size(); i++)
 			{
-				Image[] images = (Image[])imagesData.elementAt(i);
+				images = (Image[])imagesData.elementAt(i);
 				if (images == null) continue;
-				int w = images[0].getWidth();
-				int h = images[0].getHeight();
+				w = images[0].getWidth();
+				h = images[0].getHeight();
 				if (w > itemWidth) itemWidth = w;
 				if (h > itemHeight) itemHeight = h;
 			}
+			images = null;
 
 			itemWidth += 5;
 			itemHeight += 5;
@@ -577,34 +609,38 @@ public class Emotions implements VirtualListCommands, CommandListener
 			int xa, xb;
 			int startIdx = cols * index;
 			int imagesCount = imagesData.size();
+			int smileIdx;
+			int imgIndex;
+			byte[] timeSeq;
+			Image img;
 
 			xa = x1;
 			for (int i = 0; i < cols; i++, startIdx++)
 			{
 				if (startIdx >= selEmotionsIndexes.length)
 					break;
-				int smileIdx = selEmotionsIndexes[startIdx];
+				smileIdx = selEmotionsIndexes[startIdx];
 
 				xb = xa + itemWidth;
 
 				if (smileIdx < imagesCount)
 				{
-					int imgIndex;
 					if (animated)
 					{
-						byte[] timeSeq = (byte[])timeData.elementAt(smileIdx);
+						timeSeq = (byte[])timeData.elementAt(smileIdx);
 						imgIndex = (timeSeq == null) ? 0 : 0xFF&(int)timeSeq[counter%timeSeq.length];
 						
 					}
 					else imgIndex = 0;
 					
-					Image img = ((Image[])imagesData.elementAt(smileIdx))[imgIndex];
+					img = ((Image[])imagesData.elementAt(smileIdx))[imgIndex];
 					g.drawImage(img, (xa+xb-img.getWidth()+1)/2, (y1+y2-img.getHeight()+1)/2,
 							Graphics.TOP | Graphics.LEFT);
 				}
 
 				xa = xb;
 			}
+			img = null;
 		}
 		
 		protected void onHide() 

@@ -122,9 +122,10 @@ class TextLine
 		if (height == -1)
 		{
 			height = fontSize;
+			int currHeight;
 			for (int i = items.size() - 1; i >= 0; i--)
 			{
-				int currHeight = elementAt(i).getHeight(fontSize);
+				currHeight = elementAt(i).getHeight(fontSize);
 				if (currHeight > height) height = currHeight;
 			}
 		}
@@ -141,11 +142,13 @@ class TextLine
 
 	void setItemColor(int value)
 	{
+		TextItem listItem;
 		for (int i = items.size() - 1; i >= 0; i--)
 		{
-			TextItem listItem = elementAt(i);
+			listItem = elementAt(i);
 			listItem.setColor(value);
 		}
+		listItem = null;
 	}
 
 	void paint(int xpos, int ypos, Graphics g, int fontSize, VirtualList vl, boolean nextAniStep)
@@ -153,14 +156,18 @@ class TextLine
 		int count = items.size();
 		int itemHeight = getHeight(fontSize);
 
+		TextItem item;
+		int drawYPos;
+		int imgIndex;
+		Image img;
 		for (int i = 0; i < count; i++)
 		{
-			TextItem item = elementAt(i);
-			int drawYPos = ypos + (itemHeight - item.getHeight(fontSize))/2;
+			item = elementAt(i);
+			drawYPos = ypos + (itemHeight - item.getHeight(fontSize))/2;
 			if (item.image != null)
 			{
-				int imgIndex = (item.imgNumsAndTimes == null) ? 0 : item.imgNumsAndTimes[2*item.aniStepOrWidth];
-				Image img = item.image[imgIndex];
+				imgIndex = (item.imgNumsAndTimes == null) ? 0 : item.imgNumsAndTimes[2*item.aniStepOrWidth];
+				img = item.image[imgIndex];
 				if (g != null) g.drawImage(img, xpos, drawYPos, Graphics.TOP | Graphics.LEFT);
 				
 				if (nextAniStep && item.image.length > 1)
@@ -377,11 +384,12 @@ public class TextList extends VirtualList implements Runnable
 			storelastItemIndexes();
 			
 			// Find next item
+			TextLine item;
 			for (; halfSize > 0; halfSize--)
 			{
 				currItem += step;
 				if ((currItem < 0) || (currItem >= size)) break;
-				TextLine item = getLine(currItem);
+				item = getLine(currItem);
 				if ((currTextIndex != item.bigTextIndex) && (item.bigTextIndex != -1))
 				{
 					currTextIndex = item.bigTextIndex;
@@ -400,7 +408,7 @@ public class TextList extends VirtualList implements Runnable
 						currItem -= step;
 						break;
 					}
-					TextLine item = getLine(currItem);
+					item = getLine(currItem);
 					if (currTextIndex != item.bigTextIndex)
 					{
 						currItem -= step;
@@ -408,6 +416,7 @@ public class TextList extends VirtualList implements Runnable
 					}
 				}
 			}
+			item = null;
 
 			checkCurrItem();
 			checkTopItem();
@@ -428,13 +437,15 @@ public class TextList extends VirtualList implements Runnable
 	public void selectFirstTextIndex()
 	{
 		int size = lines.size();
+		TextLine line;
 		for (int i = 0; i < size; i++)
 		{
-			TextLine line = getLine(i);
+			line = getLine(i);
 			if (line.bigTextIndex == -1) continue;
 			setCurrentItem(i);
 			break;
 		}
+		line = null;
 	}
 	
 	public String getTextByIndex(int offset, boolean wholeText, int textIndex)
@@ -443,9 +454,10 @@ public class TextList extends VirtualList implements Runnable
 		
 		// Fills the lines
 		int size = lines.size();
+		TextLine line;
 		for (int i = 0; i < size; i++)
 		{
-			TextLine line = getLine(i);
+			line = getLine(i);
 			if (wholeText || (textIndex == -1) || (line.bigTextIndex == textIndex))
 			{
 				line.readText(result);
@@ -456,6 +468,7 @@ public class TextList extends VirtualList implements Runnable
 				}
 			}
 		}
+		line = null;
 		
 		if (result.length() == 0) return null;
 		String resultText = result.toString();
@@ -550,9 +563,10 @@ public class TextList extends VirtualList implements Runnable
 	private static String replace(String text, String from, String to)
 	{
 		int fromSize = from.length();
+		int pos;
 		for (;;)
 		{
-			int pos = text.indexOf(from);
+			pos = text.indexOf(from);
 			if (pos == -1) break;
 			text = text.substring(0, pos) + to + text.substring(pos + fromSize, text.length());
 		}
@@ -587,6 +601,7 @@ public class TextList extends VirtualList implements Runnable
 		lastWordEnd = -1;
 
 		textLen = text.length();
+		String insString;
 		for (curPos = 0; curPos < textLen;)
 		{
 			curChar = text.charAt(curPos);
@@ -657,7 +672,7 @@ public class TextList extends VirtualList implements Runnable
 
 			if (divideLineToWords)
 			{
-				String insString = text.substring(startPos, lastWordEnd);
+				insString = text.substring(startPos, lastWordEnd);
 				internAdd(insString, color, -1, fontStyle, textIndex, true, ' ');
 				curPos = lastWordEnd + 1;
 				startPos = curPos;
@@ -689,12 +704,14 @@ public class TextList extends VirtualList implements Runnable
 	public boolean replaceImages(int textIndex, Image from, Image to)
 	{
 		boolean replaced = false;
+		TextLine textLine;
 		for (int i = getSize()-1; i >= 0; i--)
 		{
-			TextLine textLine = (TextLine) lines.elementAt(i);
+			textLine = (TextLine) lines.elementAt(i);
 			if (textLine.bigTextIndex != textIndex) continue;
 			replaced |= textLine.replaceImages(from, to);
 		}
+		textLine = null;
 		return replaced;
 	}
 

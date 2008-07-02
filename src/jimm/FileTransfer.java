@@ -277,14 +277,16 @@ public class FileTransfer implements CommandListener, Runnable
 			// Send file data and show progress
 			byte[] buffer = new byte[1024];
 			int counter = fsize;
+			int read;
+			int percent;
 			do 
 			{
-				int read = fis.read(buffer);
+				read = fis.read(buffer);
 				os.write(buffer, 0, read);
 				counter -= read;
 				if (fsize != 0)
 				{
-					int percent = 100*(fsize-counter)/fsize;
+					percent = 100*(fsize-counter)/fsize;
 					SplashCanvas.setProgress(percent);
 					SplashCanvas.setMessage(ResourceBundle.getString("ft_transfer")+" "+percent+"% / "+fsize/1024+"KB");
 				}
@@ -305,7 +307,7 @@ public class FileTransfer implements CommandListener, Runnable
 			StringBuffer response = new StringBuffer();
 			for (;;)
 			{
-				int read = is.read();
+				read = is.read();
 				if (read == -1) break; 
 				response.append((char)(read & 0xFF));
 			}
@@ -648,12 +650,16 @@ public class FileTransfer implements CommandListener, Runnable
 					int key2 = 0;
 					String[] imageTypes = Util.explode(System.getProperty("video.snapshot.encodings"), ' ');
 					String tmp = "";
+					String[] params;
+					String[] values;
+					String width;
+					String height;
 					for (int i = 0; i < imageTypes.length; i++) {
-						String[] params = Util.explode(imageTypes[i], '&');
-						String width = null;
-						String height = null;
+						params = Util.explode(imageTypes[i], '&');
+						width = null;
+						height = null;
 						for (int j = 0; j < params.length; j++) {
-							String[] values = Util.explode(params[j], '=');
+							values = Util.explode(params[j], '=');
 							if (values[0].equals("encoding")) {
 								if (Util.strCountOccur(tmp, values[1]) == 0){
 									if (key1 == curEnc) {

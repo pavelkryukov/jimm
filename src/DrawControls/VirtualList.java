@@ -1151,24 +1151,38 @@ public abstract class VirtualList
 		int width2 = width/2;
 		int width3 = width/3;
 		int idx = 0;
+
+		int r = 0;
+		int g = 0;
+		int b = 0;
+
+		int dist = 0;
+		int diff = 0;
+
+		int new_r = 0;
+		int new_g = 0;
+		int new_b = 0;
+
+		int color = 0;
+
 		for (int y = 0; y < height; y++)
 		{
-			int r = y * (r2 - r1) / (height-1) + r1;
-			int g = y * (g2 - g1) / (height-1) + g1;
-			int b = y * (b2 - b1) / (height-1) + b1;
+			r = y * (r2 - r1) / (height-1) + r1;
+			g = y * (g2 - g1) / (height-1) + g1;
+			b = y * (b2 - b1) / (height-1) + b1;
 			
 			for (int x = 0; x < width; x++)
 			{
-				int dist = x-width2;
+				dist = x-width2;
 				
 				if (dist < 0) dist = -dist;
 				dist = width3-dist;
 				if (dist < 0) dist = 0;
-				int diff = 96*dist/width3;
+				diff = 96*dist/width3;
 				
-				int new_r = r+diff;
-				int new_g = g+diff;
-				int new_b = b+diff;
+				new_r = r+diff;
+				new_g = g+diff;
+				new_b = b+diff;
 				
 				if (new_r < 0) new_r = 0;
 				if (new_r > 255) new_r = 255;
@@ -1177,7 +1191,7 @@ public abstract class VirtualList
 				if (new_b < 0) new_b = 0;
 				if (new_b > 255) new_b = 255;
 				
-				int color = (new_r << 16) | (new_g << 8) | (new_b);
+				color = (new_r << 16) | (new_g << 8) | (new_b);
 				menuBarBackground[idx++] = color;
 			}
 		}
@@ -1211,10 +1225,12 @@ public abstract class VirtualList
 			
 			y2++;
 			x2++;
+		int crd1 = 0;
+		int crd2 = 0;
 			for (int i = 0; i < count; i++)
 			{
-				int crd1 = i * (y2 - y1) / count + y1;
-				int crd2 = (i + 1) * (y2 - y1) / count + y1;
+			crd1 = i * (y2 - y1) / count + y1;
+			crd2 = (i + 1) * (y2 - y1) / count + y1;
 				if (crd1 == crd2) continue;
 				gr.setColor(i * (r2 - r1) / (count-1) + r1, i * (g2 - g1) / (count-1) + g1, i * (b2 - b1) / (count-1) + b1);
 				gr.fillRect(x1, crd1, x2-x1, crd2-crd1);
@@ -1238,17 +1254,24 @@ public abstract class VirtualList
 			if (lastRectHeight != height || lastRectColor1 != color1 || lastRectColor2 != color2)
 			{
 				int idx = 0;
+			int crd1 = 0;
+			int crd2 = 0;
+			int r = 0;
+			int g = 0;
+			int b = 0;
+				
+			int color = 0;
 				for (int y = 0; y < height; y++)
 				{
-					int crd1 = y * (y2 - y1) / height;
-					int crd2 = (y + 1) * (y2 - y1) / height;
+				crd1 = y * (y2 - y1) / height;
+				crd2 = (y + 1) * (y2 - y1) / height;
 					if (crd1 == crd2) continue;
 					
-					int r = y * (r2 - r1) / (height-1) + r1;
-					int g = y * (g2 - g1) / (height-1) + g1;
-					int b = y * (b2 - b1) / (height-1) + b1;
+				r = y * (r2 - r1) / (height-1) + r1;
+				g = y * (g2 - g1) / (height-1) + g1;
+				b = y * (b2 - b1) / (height-1) + b1;
 					
-					int color = (r << 16) | (g << 8) | (b) | (alphaValue);
+				color = (r << 16) | (g << 8) | (b) | (alphaValue);
 					
 					for (int x = 0; x < 32; x++) alphaBuffer[idx++] = color;
 				}
@@ -1324,9 +1347,10 @@ public abstract class VirtualList
 
 			// Draw cursor
 			y = topY;
+			int itemHeight = 0;
 			for (i = topItem; i < size; i++)
 			{
-				int itemHeight = getItemHeight(i);
+				itemHeight = getItemHeight(i);
 				if (isItemSelected(i))
 				{
 					if (grCursorY1 == -1) grCursorY1 = y;
@@ -1369,15 +1393,20 @@ public abstract class VirtualList
 		// Draw items
 		paintedItem.clear();
 		y = topY;
+		int itemHeight = 0;
+		int x1 = 0;
+		int x2 = 0;
+		int y1 = 0;
+		int y2 = 0;
 		for (i = topItem; i < size; i++)
 		{
-			int itemHeight = getItemHeight(i);
+			itemHeight = getItemHeight(i);
 			if (g != null) g.setStrokeStyle(Graphics.SOLID);
 			
-			int x1 = borderWidth;
-			int x2 = itemWidth-2;
-			int y1 = y;
-			int y2 = y + itemHeight;
+			x1 = borderWidth;
+			x2 = itemWidth-2;
+			y1 = y;
+			y2 = y + itemHeight;
 			if ((mode == DMS_DRAW || mode == DMS_CUSTOM)/* && */)
 			{
 				if (crdIntersect(y1, y2, clipY1, clipY2))
@@ -2092,9 +2121,10 @@ public abstract class VirtualList
 			g.setColor(textColor);
 			int size = 2;
 			int y = (y1+y2-size)/2;
+			int x = 0;
 			for (int i = -1; i <= 1; i++)
 			{
-				int x = (x1+x2)/2-i*(2*size+1);
+				x = (x1+x2)/2-i*(2*size+1);
 				g.fillRect(x, y, size, size);
 			}
 			break;

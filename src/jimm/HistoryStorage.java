@@ -281,6 +281,9 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 					.append(ResourceBundle.getString("export_date")).append(
 							Util.getDateString(false)).append(endl).append(endl);
 			os.write(Util.stringToByteArray(str_buf.toString(), !cp1251));
+			char cc;
+			String curr_msg_text;
+			StringBuffer msg_str_buf;
 			for (int i = 0; i < max; i++)
 			{
 				record = HistoryStorage.getRecord(uin, i);
@@ -288,11 +291,11 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 						+ ((record.type == 0) ? nick : ResourceBundle
 								.getString("me")) + " (" + record.date
 						+ "):\r\n", !cp1251));
-				String curr_msg_text = record.text.trim();
-				StringBuffer msg_str_buf = new StringBuffer(curr_msg_text.length());
+				curr_msg_text = record.text.trim();
+				msg_str_buf = new StringBuffer(curr_msg_text.length());
 				for (int k = 0; k < curr_msg_text.length(); k++)
 				{
-					char cc = curr_msg_text.charAt(k);
+					cc = curr_msg_text.charAt(k);
 					if (cc == '\r') continue;
 					else if (cc == '\n') msg_str_buf.append(endl);
 					else msg_str_buf.append(cc);
@@ -302,6 +305,8 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 				os.flush();
 				SplashCanvas.setProgress((100 * i) / max);
 			}
+			curr_msg_text = null;
+			msg_str_buf = null;
 		}
 	}
 
@@ -904,12 +909,14 @@ public class HistoryStorage
 		cachedRecordsOrder.addElement(cachedRec);
 
 		// Maximum 50 records in cache
+		CachedRecord record;
 		while (cachedRecordsOrder.size() > 50) 
 		{
-			CachedRecord record = (CachedRecord)cachedRecordsOrder.firstElement();
+			record = (CachedRecord)cachedRecordsOrder.firstElement();
 			cachedRecordsOrder.removeElementAt(0);
 			cachedRecords.remove(record.index);
 		}
+		record = null;
 		
 		return cachedRec;
 	}
@@ -973,18 +980,21 @@ public class HistoryStorage
 			text = text.toLowerCase();
 		int size = getRecordCount(uin);
 
+		String search_text;
+		CachedRecord record;
 		for (;;)
 		{
 			if ((index < 0) || (index >= size))
 				break;
-			CachedRecord record = getRecord(uin, index);
-			String search_text = case_sens ? record.text : record.text
+			record = getRecord(uin, index);
+			search_text = case_sens ? record.text : record.text
 					.toLowerCase();
 			if (search_text.indexOf(text) != -1)
 
 			{
 				list.setCurrentItem(index);
 				list.activate(Jimm.display);
+				record = null;
 				return true;
 			}
 
@@ -993,6 +1003,7 @@ public class HistoryStorage
 			else
 				index++;
 		}
+		record = null;
 		return false;
 	}
 
@@ -1031,9 +1042,10 @@ public class HistoryStorage
 
 			String[] stores = RecordStore.listRecordStores();
 
+			String store;
 			for (int i = 0; i < stores.length; i++)
 			{
-				String store = stores[i];
+				store = stores[i];
 				if (store.indexOf(prefix) == -1)
 					continue;
 				if (exceptRMS != null)

@@ -176,10 +176,11 @@ public class RequestInfoAction extends Action
 				{
 					StringBuffer sb = new StringBuffer();
 					int counter = stream.readByte();
+					String item;
 					for (int i = 0; i < counter; i++)
 					{
 						Util.getWord(stream, false);
-						String item = Util.readAsciiz(stream);
+						item = Util.readAsciiz(stream);
 						if (item.trim().length() == 0)
 							continue;
 						if (sb.length() != 0)

@@ -126,11 +126,12 @@ public class ImageList
 		this.width = width;
 		this.height = height;
 
+		Image newImage;
+		Image imImage;
 		for (int y = 0; y < imgHeight; y += height)
 		{
 			for (int x = 0; x < imgWidth; x += width)
 			{
-				Image newImage;
 //#sijapp cond.if target!="DEFAULT"#
 				newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
 //#sijapp cond.else#
@@ -141,12 +142,13 @@ public class ImageList
 //#sijapp cond.if target="MIDP2"#
 				if (fixAlphaCh) newImage = fixAlphaChannel(newImage);
 //#sijapp cond.end#
-				Image imImage = Image.createImage(newImage);
+				imImage = Image.createImage(newImage);
 				images.addElement(imImage);
 			}
 		}
 		items = new Image[images.size()];
 		images.copyInto(items);
+		images = null;
 	}
 
 	public void load(String firstLine, String extention, int from, int to) throws IOException
@@ -171,5 +173,6 @@ public class ImageList
 		}
 		items = new Image[images.size()];
 		images.copyInto(items);
+		images = null;
 	}
 }
