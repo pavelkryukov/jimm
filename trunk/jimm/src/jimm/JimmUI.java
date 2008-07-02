@@ -656,9 +656,10 @@ public class JimmUI implements CommandListener
 		StringBuffer result = new StringBuffer();
 		int size = text.length();
 		boolean wasNewLine = true;
+		char chr;
 		for (int i = 0; i < size; i++)
 		{
-			char chr = text.charAt(i);
+			chr = text.charAt(i);
 			if (wasNewLine)
 				result.append(qChars);
 			result.append(chr);
@@ -1315,9 +1316,10 @@ public class JimmUI implements CommandListener
 		ContactListGroupItem[] groups = ContactList.getGroupItems();
 		
 		boolean found = false;
+		int id;
 		for (int i = 0; i < groups.length; i++)
 		{
-			int id = groups[i].getId();
+			id = groups[i].getId();
 			if ((id == excludeGroupId) || (id == 0x0000)) continue;
 			
 			if (type == SHS_TYPE_EMPTY)
@@ -1349,16 +1351,17 @@ public class JimmUI implements CommandListener
 		int[] groupIdsTmp = new int[groups.length];
 
 		int index = 0;
+		int groupId;
+		ContactItem[] cItems;
 		for (int i = 0; i < groups.length; i++)
 		{
-			int groupId = groups[i].getId();
+			groupId = groups[i].getId();
 			if (groupId == excludeGroupId)
 				continue;
 			switch (type)
 			{
 			case SHS_TYPE_EMPTY:
-				ContactItem[] cItems = ContactList
-						.getGroupItems(groupId);
+				cItems = ContactList.getGroupItems(groupId);
 				if (cItems.length != 0)
 					continue;
 				break;
@@ -1368,6 +1371,7 @@ public class JimmUI implements CommandListener
 			groupNamesTmp[index] = groups[i].getName();
 			index++;
 		}
+		cItems = null;
 
 		if (index == 0)
 		{

@@ -178,9 +178,10 @@ public class VirtualTree extends VirtualList
 	private boolean buildNodePath(Vector path, TreeNode root, TreeNode node)
 	{
 		int count = root.size();
+		TreeNode childNode;
 		for (int i = 0; i < count; i++)
 		{
-			TreeNode childNode = root.elementAt(i);
+			childNode = root.elementAt(i);
 			if (childNode == node) return true;
 			if (buildNodePath(path, childNode, node))
 			{
@@ -334,9 +335,10 @@ public class VirtualTree extends VirtualList
 	{
 		if (root.findItem(node) != -1) return root;
 		int count = root.size();
+		TreeNode result;
 		for (int i = 0; i < count; i++)
 		{
-			TreeNode result = findParent(root.elementAt(i), node);
+			result = findParent(root.elementAt(i), node);
 			if (result != null) return result;
 		}
 		return null;
@@ -471,10 +473,12 @@ public class VirtualTree extends VirtualList
 		if (root == null) root = this.root;
 		if (root.getData() == data) return root;
 		int size = root.size();
+		TreeNode node;
+		TreeNode finded;
 		for (int i = 0; i < size; i++)
 		{
-			TreeNode node = root.elementAt(i);
-			TreeNode finded = findNodeByData(node, data);
+			node = root.elementAt(i);
+			finded = findNodeByData(node, data);
 			if (finded != null) return finded;
 		}
 		return null;

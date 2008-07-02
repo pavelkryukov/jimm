@@ -40,10 +40,12 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		
 		items = ContactList.getContactItems();
 		// Sort list
+		boolean sorted;
+		int len;
 		for (;;)
 		{
-			boolean sorted = true;
-			int len = items.length-1;
+			sorted = true;
+			len = items.length-1;
 			for (int i = 0; i < len; i++)
 			{
 				if (items[i].getSortText().compareTo(items[i+1].getSortText()) > 0)
@@ -58,9 +60,10 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 		}
 		
 		values = new short[items.length];
+		short value;
 		for (int i = items.length-1; i >= 0; i--)
 		{
-			short value = 0;
+			value = 0;
 			for (int j = props.length-1; j >= 0; j--) 
 				if (items[i].getIntValue(props[j]) != 0) value += (1 << j); 
 			values[i] = value; 
@@ -131,10 +134,12 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 	protected void afterDrawCaption(Graphics g, int height)
 	{
 		Font f = g.getFont();
+		int x;
+		String str;
 		for (int col = 0; col < COL_COUNT; col++)
 		{
-			int x = getGridX(col);
-			String str = names[col];
+			x = getGridX(col);
+			str = names[col];
 			g.drawString
 			(
 				str, 
@@ -148,20 +153,30 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 	protected void drawItemData(Graphics g, int index, int x1, int y1, int x2, int y2, int paintMode)
 	{
 		super.drawItemData(g, index, x1, y1, x2, y2, paintMode);
+		int x;
+		int rectX;
+		int rectY;
+		int rectW;
+		int rectH;
+		
+		int color;
+		int color1;
+		int color2;
+		boolean value;
 		for (int col = 0; col < COL_COUNT; col++)
 		{
-			int x = getGridX(col);
-			int rectX = x+2;
-			int rectY = y1+2;
-			int rectW = itemHeight-5;
-			int rectH = itemHeight-5;
+			x = getGridX(col);
+			rectX = x+2;
+			rectY = y1+2;
+			rectW = itemHeight-5;
+			rectH = itemHeight-5;
 			
-			int color = getBkgrndColor();
-			int color1 = transformColorLight(color, 20);
-			int color2 = transformColorLight(color, -20);
+			color = getBkgrndColor();
+			color1 = transformColorLight(color, 20);
+			color2 = transformColorLight(color, -20);
 			drawRect(g, color1, color2, rectX, rectY, rectX+rectW, rectY+rectH, 255);
 			
-			boolean value = ((values[index] & (1 << col)) != 0);
+			value = ((values[index] & (1 << col)) != 0);
 			if (value)
 			{
 				g.setColor(getTextColor());
@@ -230,17 +245,21 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 	private void processChanges()
 	{
 		boolean wasChanges = false;
+		ContactItem ci;
+		boolean newVal;
+		boolean oldVal;
 		for (int i = items.length-1; i >= 0; i--)
 		{
-			ContactItem ci = items[i];
+			ci = items[i];
 			for (int col = 0; col < COL_COUNT; col++)
 			{
-				boolean newVal = ((values[i] & (1 << col)) != 0);
-				boolean oldVal = ci.getIntValue(props[col]) != 0;
+				newVal = ((values[i] & (1 << col)) != 0);
+				oldVal = ci.getIntValue(props[col]) != 0;
 				if (newVal != oldVal) wasChanges = true;
 			}
 			if (wasChanges) break;
 		}
+		ci = null;
 		
 		if (!wasChanges)
 		{
@@ -254,14 +273,15 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 			
 			Icq.sendCLI_ADDSTART();
 			
+			String uin;
 			for (int i = items.length-1; i >= 0; i--)
 			{
-				ContactItem ci = items[i];
-				String uin = ci.getStringValue(ContactItem.CONTACTITEM_UIN);
+				ci = items[i];
+				uin = ci.getStringValue(ContactItem.CONTACTITEM_UIN);
 				for (int col = 0; col < COL_COUNT; col++)
 				{
-					boolean newVal = ((values[i] & (1 << col)) != 0);
-					boolean oldVal = ci.getIntValue(props[col]) != 0;
+					newVal = ((values[i] & (1 << col)) != 0);
+					oldVal = ci.getIntValue(props[col]) != 0;
 					if (newVal && !oldVal)
 					{
 						int newId = ContactList.generateNewIdForBuddy();

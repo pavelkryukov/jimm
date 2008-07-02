@@ -132,11 +132,13 @@ class StdFileSystemHelper implements MotoFileSystem
 		fileconn.close();
 		
 		result.addElement(FileSystem2.PARENT_DIRECTORY);
+		String filename;
 		while (list.hasMoreElements())
 		{
-			String filename = (String) list.nextElement();
+			filename = (String) list.nextElement();
 			result.addElement(filename);
 		}
+		filename = null;
 	}
 	
 	public void closeFileConn() throws IOException
@@ -280,11 +282,13 @@ class FileSystem2 implements CommandListener, Runnable
 		fileconn.close();
 		
 		result.addElement(PARENT_DIRECTORY);
+		String filename;
 		while (list.hasMoreElements())
 		{
-			String filename = (String) list.nextElement();
+			filename = (String) list.nextElement();
 			result.addElement(filename);
 		}
+		filename = null;
 	}
 	
 	//#sijapp cond.end#
@@ -327,9 +331,10 @@ class FileSystem2 implements CommandListener, Runnable
 			
 			// Show last path element at caption 
 			int index1 = -1, index2 = -1;
+			boolean isDelim = false;
 			for (int i = currentDir.length()-1; i >= 0; i--)
 			{
-				boolean isDelim = (currentDir.charAt(i) == '/');
+				isDelim = (currentDir.charAt(i) == '/');
 				if (isDelim)
 				{
 					if (index1 == -1) index1 = i;
@@ -349,9 +354,10 @@ class FileSystem2 implements CommandListener, Runnable
 			list.clear();
 			
 			// Show dirs
+			String itemText;
 			for (int i = 0; i < items.size(); i++)
 			{
-				String itemText = (String)items.elementAt(i);
+				itemText = (String)items.elementAt(i);
 				if (!itemText.endsWith("/")) continue;
 				JimmUI.addTextListItem(list, itemText, imageList.elementAt(0), i, true, -1, Font.STYLE_PLAIN);
 			}
@@ -359,7 +365,7 @@ class FileSystem2 implements CommandListener, Runnable
 			// Show files
 			if (!onlyDirs) for (int i = 0; i < items.size(); i++)
 			{
-				String itemText = (String)items.elementAt(i);
+				itemText = (String)items.elementAt(i);
 				if (itemText.endsWith("/")) continue;
 				JimmUI.addTextListItem(list, itemText, imageList.elementAt(1), i, true, -1, Font.STYLE_PLAIN);
 			}

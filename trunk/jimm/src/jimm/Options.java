@@ -515,9 +515,11 @@ public class Options
 		buf = account.getRecord(2);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
+		int optionKey;
+		byte[] optionValue;
 		while (dis.available() > 0)
 		{
-			int optionKey = dis.readUnsignedByte();
+			optionKey = dis.readUnsignedByte();
 			if (optionKey < 64) /* 0-63 = String */
 			{
 				setString(optionKey, dis.readUTF());
@@ -533,13 +535,14 @@ public class Options
 			} else
 			/* 226-255 = Scrambled String */
 			{
-				byte[] optionValue = new byte[dis.readUnsignedShort()];
+				optionValue = new byte[dis.readUnsignedShort()];
 				dis.readFully(optionValue);
 				optionValue = Util.decipherPassword(optionValue);
 				setString(optionKey, Util.byteArrayToString(optionValue, 0,
 						optionValue.length, true));
 			}
 		}
+		optionValue = null;
 
 		/* Close record store */
 		account.closeRecordStore();
@@ -573,9 +576,11 @@ public class Options
 		baos = new ByteArrayOutputStream();
 		dos = new DataOutputStream(baos);
 		Enumeration optionKeys = options.keys();
+		int optionKey;
+		byte[] optionValue;
 		while (optionKeys.hasMoreElements())
 		{
-			int optionKey = ((Integer) optionKeys.nextElement()).intValue();
+			optionKey = ((Integer) optionKeys.nextElement()).intValue();
 			dos.writeByte(optionKey);
 			if (optionKey < 64) /* 0-63 = String */
 			{
@@ -592,13 +597,14 @@ public class Options
 			} else
 			/* 226-255 = Scrambled String */
 			{
-				byte[] optionValue = Util.stringToByteArray(
+				optionValue = Util.stringToByteArray(
 						getString(optionKey), true);
 				optionValue = Util.decipherPassword(optionValue);
 				dos.writeShort(optionValue.length);
 				dos.write(optionValue);
 			}
 		}
+		optionValue = null;
 		buf = baos.toByteArray();
 		account.setRecord(2, buf, 0, buf.length);
 
@@ -733,9 +739,10 @@ public class Options
 
 		/* Test other extensions */
 		String[] exts = Util.explode("wav|mp3", '|');
+		String testFile;
 		for (int i = 0; i < exts.length; i++)
 		{
-			String testFile = name + exts[i];
+			testFile = name + exts[i];
 			ok = ContactList.testSoundFile(testFile);
 			if (ok)
 			{
@@ -1278,10 +1285,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	{
 		uins.removeAllElements();
 		passwords.removeAllElements();
+		int index;
+		String uin;
 		for (int i = 0; i < maxAccountsCount; i++)
 		{
-			int index = i * 2;
-			String uin = Options.getString(Options.accountKeys[index]);
+			index = i * 2;
+			uin = Options.getString(Options.accountKeys[index]);
 			if ((i != 0) && (uin.length() == 0))
 				continue;
 			uins.addElement(uin);
@@ -1364,6 +1373,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 		uinTextField = new TextField[size];
 		passwordTextField = new TextField[size];
+		TextField uinFld;
+		TextField passFld;
 		for (int i = 0; i < size; i++)
 		{
 			if (size > 1)
@@ -1371,9 +1382,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			String add = (size == 1) ? "" : "-" + (i + 1);
 
-			TextField uinFld = new TextField(ResourceBundle.getString("uin")
+			uinFld = new TextField(ResourceBundle.getString("uin")
 					+ add, (String) uins.elementAt(i), 12, TextField.NUMERIC);
-			TextField passFld = new TextField(ResourceBundle
+			passFld = new TextField(ResourceBundle
 					.getString("password")
 					+ add, (String) passwords.elementAt(i), 32,
 					TextField.PASSWORD);
@@ -1384,6 +1395,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			uinTextField[i] = uinFld;
 			passwordTextField[i] = passFld;
 		}
+		uinFld = null;
+		passFld = null;
 
 		if (size != maxAccountsCount) {
 			optionsForm.addCommand(cmdAddNewAccount);
@@ -1781,12 +1794,16 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 			System.out.println ("video.snapshot.encodings = " + System.getProperty("video.snapshot.encodings"));
 		//#sijapp cond.end #
+			String[] params;
+			String[] values;
+			String width;
+			String height;
 			for (int i = 0; i < imageTypes.length; i++) {
-				String[] params = Util.explode(imageTypes[i], '&');
-				String width = null;
-				String height = null;
+				params = Util.explode(imageTypes[i], '&');
+				width = null;
+				height = null;
 				for (int j = 0; j < params.length; j++) {
-					String[] values = Util.explode(params[j], '=');
+					values = Util.explode(params[j], '=');
 					if (values[0].equals("encoding")) {
 						boolean found = false;
 						for (int k = 0; k < camEnc.size(); k++) {

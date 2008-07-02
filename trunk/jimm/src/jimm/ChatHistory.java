@@ -528,12 +528,14 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 	
 	public void messageIsDelivered(int messId)
 	{
+		MessData data;
+		boolean ok;
 		for (int i = messData.size()-1; i >= 0; i--)
 		{
-			MessData data = (MessData)messData.elementAt(i);
+			data = (MessData)messData.elementAt(i);
 			if (data.getMessId() == messId)
 			{
-				boolean ok = textList.replaceImages(i, ContactList.imageList.elementAt(13), ContactList.imageList.elementAt(18));
+				ok = textList.replaceImages(i, ContactList.imageList.elementAt(13), ContactList.imageList.elementAt(18));
 				if (ok) textList.repaint();
 				break;
 			}
@@ -749,9 +751,10 @@ public class ChatHistory
 		case DEL_TYPE_ALL_EXCEPT_CUR:
 		case DEL_TYPE_ALL:
 			Enumeration AllChats = historyTable.keys();
+			String key;
 			while (AllChats.hasMoreElements())
 			{
-				String key = (String) AllChats.nextElement();
+				key = (String) AllChats.nextElement();
 				if ((delType == DEL_TYPE_ALL_EXCEPT_CUR) && (key.equals(uin)))
 					continue;
 				chatHistoryDelete(key);
@@ -784,12 +787,13 @@ public class ChatHistory
 		String uin = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		historyTable.put(uin, chatForm);
 		Enumeration chats = historyTable.elements();
+		ChatTextList chat;
 		while (chats.hasMoreElements())
 		{
-			ChatTextList chat = (ChatTextList)chats.nextElement();
+			chat = (ChatTextList)chats.nextElement();
 			if (chatForm != chat) updateCaption_Internal(chat);
 		}
-		
+		chat = null;		
 		historyUins.addElement(uin);
 		
 		ContactList.getItembyUIN(uin).setBooleanValue(ContactItem.CONTACTITEM_HAS_CHAT, true);
@@ -827,9 +831,10 @@ public class ChatHistory
 
 			int insSize = (recCount > MAX_HIST_LAST_MESS) ? MAX_HIST_LAST_MESS
 					: recCount;
+			CachedRecord rec;
 			for (int i = recCount - insSize; i < recCount; i++)
 			{
-				CachedRecord rec = HistoryStorage.getRecord(uin, i);
+				rec = HistoryStorage.getRecord(uin, i);
 				chatForm.textList.addBigText("[" + rec.from + " " + rec.date
 						+ "]", ChatTextList.getInOutColor(rec.type == 0),
 						Font.STYLE_PLAIN, -1);
@@ -843,6 +848,7 @@ public class ChatHistory
 				//#sijapp cond.end#
 				chatForm.textList.doCRLF(-1);
 			}
+			rec = null;
 		}
 	}
 

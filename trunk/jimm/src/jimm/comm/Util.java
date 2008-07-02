@@ -277,11 +277,12 @@ public class Util
 		try
 		{
 			long result = 0;
+			long value;
 			for (int i = 0; i < 8; i++)
 			{
 				if (bigEndian) result <<= 8;
 				else result >>= 8;
-				long value = stream.read()&0xFF;
+				value = stream.read()&0xFF;
 				if (bigEndian) result |= value;
 				else result |= (value << 56);
 			}
@@ -683,12 +684,14 @@ public class Util
 	{
 		StringBuffer buffer1 = new StringBuffer(), buffer2 = new StringBuffer();
 
+		int charaster;
+		String hex;
 		for (int i = 0; i < data.length; i++)
 		{
-			int charaster = ((int) data[i]) & 0xFF;
+			charaster = ((int) data[i]) & 0xFF;
 			buffer1.append(charaster < ' ' || charaster >= 128 ? '.'
 					: (char) charaster);
-			String hex = Integer.toHexString(((int) data[i]) & 0xFF);
+			hex = Integer.toHexString(((int) data[i]) & 0xFF);
 			buffer2.append(hex.length() == 1 ? "0" + hex : hex);
 			buffer2.append(" ");
 
@@ -725,9 +728,10 @@ public class Util
 	{
 		StringBuffer result = new StringBuffer();
 		int size = val.length();
+		char chr;
 		for (int i = 0; i < size; i++)
 		{
-			char chr = val.charAt(i);
+			chr = val.charAt(i);
 			if (chr == '\r')
 				continue;
 			if (chr == '\n')
@@ -742,9 +746,10 @@ public class Util
 	{
 		int len = val.length();
 		char[] dst = new char[len];
+		char chr;
 		for (int i = 0; i < len; i++)
 		{
-			char chr = val.charAt(i);
+			chr = val.charAt(i);
 			if ((chr == '\n') || (chr == '\r') || (chr == '\t'))
 				chr = ' ';
 			dst[i] = chr;
@@ -910,10 +915,12 @@ public class Util
 		if (array.length < (start + lenght))
 			return false;
 
+		int seqLen;
+		byte bt;
 		for (int i = start, len = lenght; len > 0;)
 		{
-			int seqLen = 0;
-			byte bt = array[i++];
+			seqLen = 0;
+			bt = array[i++];
 			len--;
 
 			if ((bt & 0xE0) == 0xC0)
@@ -1054,9 +1061,10 @@ public class Util
 	public static byte[] stringToByteArray1251(String s)
 	{
 		byte abyte0[] = s.getBytes();
+		char c;
 		for (int i = 0; i < s.length(); i++)
 		{
-			char c = s.charAt(i);
+			c = s.charAt(i);
 			switch (c)
 			{
 			case 1025:
@@ -1109,9 +1117,10 @@ public class Util
 	public static String byteArray1251ToString(byte abyte0[], int i, int j)
 	{
 		StringBuffer stringbuffer = new StringBuffer(j);
+		int l;
 		for (int k = 0; k < j; k++)
 		{
-			int l = abyte0[k + i] & 0xff;
+			l = abyte0[k + i] & 0xff;
 			try
 			{
 				switch (l)
@@ -1666,11 +1675,12 @@ public class Util
 		Vector result = new Vector();
 		int size = msg.length();
 		int findIndex = 0, beginIdx, endIdx;
+		int ptIndex;
 		for (;;)
 		{
 			if (findIndex >= size)
 				break;
-			int ptIndex = msg.indexOf('.', findIndex);
+			ptIndex = msg.indexOf('.', findIndex);
 			if (ptIndex == -1)
 				break;
 
@@ -1699,9 +1709,10 @@ public class Util
 		int elemLen = elem.length;
 		if (elemLen > arrayLen) return -1;
 		int searchLen = arrayLen-elemLen; 
+		int counter;
 		for (int i = 0; i < searchLen; i++)
 		{
-			int counter = 0;
+			counter = 0;
 			for (int j = 0; j < elemLen; j++, counter++) if (array[i+j] != elem[j]) break;
 			if (counter == elemLen) return i;
 		}
@@ -1735,10 +1746,10 @@ public class Util
 	{
 		String[] strings = explode(text, separator);
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-
+		String item;
 		for (int i = 0; i < strings.length; i++)
 		{
-			String item = strings[i];
+			item = strings[i];
 			if (item.charAt(0) == '*')
 				for (int j = 1; j < item.length(); j++)
 					bytes.write((byte) item.charAt(j));
@@ -1755,9 +1766,10 @@ public class Util
 		Vector tmp = new Vector();
 		StringBuffer strBuf = new StringBuffer();
 		int len = text.length();
+		char chr;
 		for (int i = 0; i < len; i++)
 		{
-			char chr = text.charAt(i);
+			chr = text.charAt(i);
 			if (chr == separator)
 			{
 				tmp.addElement(strBuf.toString());
