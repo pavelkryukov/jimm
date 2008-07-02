@@ -320,7 +320,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	protected void hideNotify()
 	{
 		SplashCanvas.splash = null;
-		resetLastTask();
+//		resetLastTask();
 	}
 
 	// Called when message has been received
