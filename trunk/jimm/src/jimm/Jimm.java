@@ -124,9 +124,12 @@ public class Jimm extends MIDlet
 			String melc = microeditionPlatform.toLowerCase();
 			if (melc.indexOf("ericsson") != -1) {
 				phoneType = PHONE_SONYERICSSON;
+				try
+				{
 				String jp = System.getProperty("com.sonyericsson.java.platform").toLowerCase();
 				if (jp.indexOf("sjp") != -1)
 					cmdBack = Command.CANCEL;
+				} catch (Exception e) {} //Do nothing
 			}
 			else if (melc.indexOf("nokia") != -1)
 				phoneType = PHONE_NOKIA;
