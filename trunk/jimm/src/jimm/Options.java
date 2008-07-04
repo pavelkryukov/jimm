@@ -357,7 +357,7 @@ public class Options
 		//#sijapp cond.end #
 
 		setBoolean(Options.OPTION_CP1251_HACK, ResourceBundle.langAvailable[0]
-				.equals("RU"));
+				.equals("RU") || ResourceBundle.langAvailable[0].equals("BE") );
 		//#sijapp cond.if target isnot "DEFAULT"#
 		setInt(Options.OPTION_VIBRATOR, 0);
 		//#sijapp cond.end#		
