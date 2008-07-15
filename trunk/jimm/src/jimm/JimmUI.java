@@ -622,7 +622,11 @@ public class JimmUI implements CommandListener
 			byte[] version_ = new byte[(int) httemp.getLength()];
 			istemp.read(version_, 0, version_.length);
 			version = new String(version_);
-		} 
+		} catch (SecurityException e)
+		{
+			JimmException f = new JimmException(119, 1, true);
+			JimmException.handleException(f);
+		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
@@ -705,7 +709,7 @@ public class JimmUI implements CommandListener
 	static public void setColorScheme(VirtualList vl, boolean setFullScreen, int theme, boolean changeFont)
 	{
 		if (vl == null) return;
-		
+
 		int cursorAlpha, menuAlpha;
 		
 //#sijapp cond.if target="DEFAULT"#

@@ -1088,7 +1088,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			JimmUI.addTextListItem(optionsMenu, "options_camera", null, OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#
 			JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN);
-			
+
 //#sijapp cond.if target!="DEFAULT"#
 			if (Jimm.display.numAlphaLevels() > 2)
 				JimmUI.addTextListItem(optionsMenu, "transparency", null, OPTIONS_TRANSP, true, -1, Font.STYLE_PLAIN);
@@ -1841,7 +1841,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		case OPTIONS_COLOR_THEME:
 			InitColorThemeUI();
 			return;
-			
+
 //#sijapp cond.if target!="DEFAULT"#			
 		case OPTIONS_TRANSP:
 			String[] transpText = Util.explode(ResourceBundle.getString("no") + "|25%|50%|75%" , '|');

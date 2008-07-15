@@ -35,9 +35,9 @@
   "auto_away_time2"             "Time before NA status (minutes)"
   "auto_connect"                "Auto connect on startup"
   "back"                        "Back"  
-  "select_background"		"Sel. background"
-  "background_mode"		"Background image"
-  "background_int"		"Default"
+  "select_background"			"Sel. background"
+  "background_mode"				"Background image"
+  "background_int"				"Default"
   "beep"                        "Beep"
   "birth_day"                   "Birthday"
   "black_on_white"              "Black on white"
@@ -473,10 +473,10 @@
   "error_116"                   "Offline message could not be parsed (#116.EXT)"
   "error_117"                   "Empty UIN and/or password (#117.EXT)"
   "error_118"                   "No response from server (#118.EXT)"
-  "error_119"                   "Connection timed out (#119.EXT)"
 
   // Network communication specific exceptions
   // Connection to server
+  "error_119"                   "You need to allow network connection (#119.EXT)"
   "error_120"                   "An I/O error occured (#120.EXT)"
   "error_121"                   "Requested TCP connection cannot be made (#121.EXT)"
   "error_122"                   "Specified server host and/or port is invalid (#122.EXT)"

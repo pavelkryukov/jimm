@@ -62,8 +62,8 @@ public class Jimm extends MIDlet
 		loadError.append(value).append("\n\n");
 	}
 	
-	static public final int PHONE_SONYERICSSON 	= 1000;
-	static public final int PHONE_NOKIA		= 1001;
+	static public final int PHONE_SONYERICSSON = 1000;
+	static public final int PHONE_NOKIA        = 1001;
 	static private int phoneType;
 	
 	static public int getPhoneVendor()
@@ -267,7 +267,8 @@ public class Jimm extends MIDlet
 			if (Options.getBoolean(Options.OPTION_AUTO_CONNECT))
 			{
 				// Connect
-				Icq.reconnect_attempts = Options.getInt(Options.OPTION_RECONNECT_NUMBER);
+				Icq.reconnect_attempts = (Options.getBoolean(Options.OPTION_RECONNECT)) ?
+							Options.getInt(Options.OPTION_RECONNECT_NUMBER) : 0;
 				ContactList.beforeConnect();
 				Icq.connect();
 			} 

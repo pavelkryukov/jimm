@@ -186,7 +186,7 @@ public class ConnectPacket extends Packet
 		// Assemble FLAP header
 		Util.putByte(buf, marker, 0x2A);   // FLAP.ID
 		Util.putByte(buf, marker + 1, 0x01);   // FLAP.CHANNEL
-		Util.putWord(buf, marker + 2, Icq.getFlapSequence());   // FLAP.SEQUENCE
+		Util.putWord(buf, marker + 2, this.sequence);   // FLAP.SEQUENCE
 		Util.putWord(buf, marker + 4, length - 6);   // FLAP.LENGTH
 		marker += 6;
 

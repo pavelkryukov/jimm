@@ -74,7 +74,7 @@ public class Packet
 		byte[] buf = new byte[6 + flapData.length];
 		Util.putByte(buf, 0, 0x2a);
 		Util.putByte(buf, 1, flapChannel);
-		Util.putWord(buf, 2, Icq.getFlapSequence());
+		Util.putWord(buf, 2, this.sequence);
 		Util.putWord(buf, 4, flapData.length);
 		System.arraycopy(flapData, 0, buf, 6, flapData.length);
 		return buf;

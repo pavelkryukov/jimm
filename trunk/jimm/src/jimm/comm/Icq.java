@@ -34,7 +34,7 @@ import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.ContentConnection;
 import javax.microedition.io.HttpConnection;
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
+//#sijapp cond.if target!="DEFAULT"#
 import javax.microedition.io.SocketConnection;
 //#sijapp cond.else#
 //# import javax.microedition.io.StreamConnection;
@@ -66,7 +66,7 @@ public class Icq implements Runnable
 	
 	// Current state
 	static private boolean connected = false;
-	
+
 	static private boolean disconnected = false;
 
 	// Requested actions
@@ -74,9 +74,6 @@ public class Icq implements Runnable
 
 	// Thread
 	static volatile Thread thread;
-
-	// FLAP sequence number
-	static int flapSEQ;
 
 	// Current visibility mode
 	static private int currentVisibility;
@@ -86,16 +83,13 @@ public class Icq implements Runnable
 	public Icq()
 	{
 		_this = this;
-		// Set starting point for seq numbers (not bigger then 0x8000)
-		Random rand = new Random(System.currentTimeMillis());
-		flapSEQ = rand.nextInt() % 0x8000;
 	}
 	
 	static
 	{
 		initClientIndData();
 	}
-	
+
 	// Flag for indicate that connection was reset _by_user_
 	public static boolean isDisconnected()
 	{
@@ -221,6 +215,8 @@ public class Icq implements Runnable
 	{
 		if (c == null) return;
 		
+		try { c.sendPacket (new DisconnectPacket()); } catch (Exception ignore) { /* Do nothing */ }
+
 		setDisconnected(true);
 		
 		thread = null;
@@ -229,9 +225,9 @@ public class Icq implements Runnable
 		if (force) c.forceDisconnect();
 		else c.notifyToDisconnect();
 
-//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 		resetPeerCon();
-//#sijapp cond.end#
+		//#sijapp cond.end#
 
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		try
@@ -246,7 +242,7 @@ public class Icq implements Runnable
 		RunnableImpl.resetContactsOffline();
 		
 		setNotConnected();
-		
+
 		if (c.haveToSetNullAfterDisconnect()) c = null;
 	}
 
@@ -282,16 +278,9 @@ public class Icq implements Runnable
 	static protected synchronized void setConnected()
 	{
 		SplashCanvas.setLastErrCode(null);
-		Icq.reconnect_attempts = Options
-				.getInt(Options.OPTION_RECONNECT_NUMBER);
+		Icq.reconnect_attempts = (Options.getBoolean(Options.OPTION_RECONNECT))	?
+						Options.getInt(Options.OPTION_RECONNECT_NUMBER) : 0;
 		connected = true;
-	}
-
-	// Returns and updates sequence nr
-	static public int getFlapSequence()
-	{
-		flapSEQ = ++flapSEQ % 0x8000;
-		return flapSEQ;
 	}
 
 	// Resets the comm. subsystem
@@ -321,17 +310,14 @@ public class Icq implements Runnable
 
 	}
 
-	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-	//#sijapp cond.if modules_FILES is "true"#
+	//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 	// Resets the comm. subsystem
 	static public synchronized void resetPeerCon()
 	{
 		// Close connection
 		peerC = null;
 	}
-
-	//#sijapp cond.end#
-	//#sijapp cond.end#
+	//  #sijapp cond.end#
 
 	/** *********************************************************************** */
 	/** *********************************************************************** */
@@ -344,9 +330,9 @@ public class Icq implements Runnable
 	static Connection c;
 
 	// Connection to peer
-//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+	//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 	static PeerConnection peerC;
-//#sijapp cond.end#
+	//  #sijapp cond.end#
 
 	// All currently active actions
 	static private Vector actAction;
@@ -358,7 +344,7 @@ public class Icq implements Runnable
 	static private TimerTasks keepAliveTimerTask;
 
 	public static int reconnect_attempts;
-	
+
 	public static void sendPacket(Packet packet) throws JimmException
 	{
 		if (c == null) return; // TODO: may be better to throw exception?
@@ -374,12 +360,11 @@ public class Icq implements Runnable
 	// Main loop
 	public void run()
 	{
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-		//#sijapp cond.if modules_FILES is "true"#
+		//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 		// Is a DC packet Available
 		boolean dcPacketAvailable;
-		//#sijapp cond.end#
-		//#sijapp cond.end#
+		//  #sijapp cond.end#
+
 
 		// Get thread object
 		Thread thread = Thread.currentThread();
@@ -387,14 +372,20 @@ public class Icq implements Runnable
 		Action newAction = null;
 
 		// Instantiate connections
-		if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_SOCKET)
-			c = new SOCKETConnection();
-		else if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_HTTP)
-			c = new HTTPConnection();
-		//#sijapp cond.if modules_PROXY is "true"#
-		else if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
-			c = new SOCKSConnection();
-		//#sijapp cond.end#
+		switch (Options.getInt(Options.OPTION_CONN_TYPE))
+		{
+			case Options.CONN_TYPE_SOCKET:
+				c = new SOCKETConnection();
+				break;
+			case Options.CONN_TYPE_HTTP:
+				c = new HTTPConnection();
+				break;
+			//#sijapp cond.if modules_PROXY is "true"#
+			case Options.CONN_TYPE_PROXY:
+				c = new SOCKSConnection();
+				break;
+			//#sijapp cond.end#
+		}
 
 		// Instantiate active actions vector
 		actAction = new Vector();
@@ -445,8 +436,18 @@ public class Icq implements Runnable
 					}
 				}
 
+				// Set dcPacketAvailable to true if the peerC is not null and
+				// there is an packet waiting
+				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+				dcPacketAvailable = (peerC != null) ? ((peerC.available() > 0) ? true : false ) : false;
+				//  #sijapp cond.end#
+
 				// Wait if a new action does not exist
-				if ((newAction == null) && (c.available() == 0))
+				if ((newAction == null) && (c.available() == 0)
+				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+					&& !dcPacketAvailable
+				//  #sijapp cond.end#
+				)
 				{
 					try
 					{
@@ -475,36 +476,28 @@ public class Icq implements Runnable
 					}
 				}
 
-				// Set dcPacketAvailable to true if the peerC is not null and
-				// there is an packet waiting
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-				//#sijapp cond.if modules_FILES is "true"#
-				if (peerC != null)
-				{
-					if (peerC.available() > 0)
-						dcPacketAvailable = true;
-					else
-						dcPacketAvailable = false;
-				} else
-					dcPacketAvailable = false;
-				//#sijapp cond.end#
-				//#sijapp cond.end#
+				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+				dcPacketAvailable = (peerC != null) ? ((peerC.available() > 0) ? true : false ) : false;
+				//  #sijapp cond.end#
 
 				// Read next packet, if available
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-				//#sijapp cond.if modules_FILES is "true"#
 				Packet packet;
 				boolean consumed;
-				while ((c.available() > 0) || dcPacketAvailable)
+				while (
+					(c.available() > 0)
+				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+					|| dcPacketAvailable
+				//  #sijapp cond.end#
+				)
 				{
 					// Try to get packet
 					packet = null;
 					try
 					{
-						if (c.available() > 0)
-							packet = c.getPacket();
-						else if (dcPacketAvailable)
-							packet = peerC.getPacket();
+						if (c.available() > 0) packet = c.getPacket();
+						//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+						else if (dcPacketAvailable) packet = peerC.getPacket();
+						//  #sijapp cond.end#
 					} catch (JimmException e)
 					{
 						JimmException.handleException(e);
@@ -543,111 +536,10 @@ public class Icq implements Runnable
 						}
 					}
 
-					// Set dcPacketAvailable to true if the peerC is not null
-					// and there is an packet waiting
-					if (peerC != null)
-					{
-						if (peerC.available() > 0)
-							dcPacketAvailable = true;
-						else
-							dcPacketAvailable = false;
-					} else
-						dcPacketAvailable = false;
+					//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+					dcPacketAvailable = (peerC != null) ? ((peerC.available() > 0) ? true : false ) : false;
+					//  #sijapp cond.end#
 				}
-
-				//#sijapp cond.else#
-				//#
-				//#                while ((c.available() > 0))
-				//#                {
-				//#                    // Try to get packet
-				//#                    Packet packet = null;
-				//#                    try
-				//#                    {
-				//#                        if (c.available() > 0) packet = c.getPacket();
-				//#                    } catch (JimmException e)
-				//#                    {
-				//#      					JimmException.handleException(e);
-				//#                         if (e.isCritical()) throw (e);
-				//#                    }
-				//#
-				//#                    // Forward received packet to all active actions and to the
-				//#                    // action listener
-				//#                    boolean consumed = false;
-				//#                    for (int i = 0; i < actAction.size(); i++)
-				//#                    {
-				//#                        try
-				//#                        {
-				//#                            if (((Action) actAction.elementAt(i)).forward(packet))
-				//#                            {
-				//#                                consumed = true;
-				//#                                break;
-				//#                            }
-				//#                        } catch (JimmException e)
-				//#                       {
-				//#                            JimmException.handleException(e);
-				//#                            if (e.isCritical()) throw (e);
-				//#                        }
-				//#                    }
-				//#                    if (!consumed)
-				//#                    {
-				//#                        try
-				//#                        {
-				//#                            actListener.forward(packet);
-				//#                       } catch (JimmException e)
-				//#                        {
-				//#                            JimmException.handleException(e);
-				//#                            if (e.isCritical()) throw (e);
-				//#                        }
-				//#                    }
-				//#                }
-				//#
-				//#sijapp cond.end#
-				//#sijapp cond.else#
-				//#                while ((c.available() > 0))
-				//#                {
-				//#                    // Try to get packet
-				//#                   Packet packet = null;
-				//#                    try
-				//#                    {
-				//#                        if (c.available() > 0) packet = c.getPacket();
-				//#                    } catch (JimmException e)
-				//#                    {
-				//#                        JimmException.handleException(e);
-				//#                        if (e.isCritical()) throw (e);
-				//#                    }
-				//#
-				//#                    // Forward received packet to all active actions and to the
-				//#                    // action listener
-				//#                    boolean consumed = false;
-				//#                    for (int i = 0; i < actAction.size(); i++)
-				//#                    {
-				//#                        try
-				//#                        {
-				//#                            if (((Action) actAction.elementAt(i)).forward(packet))
-				//#                            {
-				//#                                consumed = true;
-				//#                                break;
-				//#                            }
-				//#                        } catch (JimmException e)
-				//#                        {
-				//#                            JimmException.handleException(e);
-				//#                            if (e.isCritical()) throw (e);
-				//#                        }
-				//#                    }
-				//#
-				//#                    if (!consumed)
-				//#                    {
-				//#                        try
-				//#                        {
-				//#                            actListener.forward(packet);
-				//#                        } catch (JimmException e)
-				//#                        {
-				//#                            JimmException.handleException(e);
-				//#                            if (e.isCritical()) throw (e);
-				//#                        }
-				//#                    }
-				//#                }
-				//#sijapp cond.end#
 
 				// Remove completed actions
 				for (int i = 0; i < actAction.size(); i++)
@@ -684,42 +576,13 @@ public class Icq implements Runnable
 		    case 111:	// Bad password
 		    case 112:	// Non-existant UIN
 		    case 117:	// Empty UIN and/or password
+		    case 119:	// "You need to allow network connection"
 		    case 122:	// Specified server host and/or port is invalid
 		    case 127:	// peer connection: specified server host and/or port is invalid
 			return false;
 		}
 		return true;
 	}
-
-	/*
-	public synchronized static boolean reconnect(JimmException e)
-	{
-		int errCode = e.getErrCode();
-		if (reconnect_attempts-- > 0
-				&& Options.getBoolean(Options.OPTION_RECONNECT)
-				&& e.isCritical() && connecting
-				&& isNotCriticalConnectionError (errCode))
-		{
-			SplashCanvas.setLastErrCode(e.getFullErrCode());
-			SplashCanvas.setErrFlag(true);
-			disconnect(true);
-			removeAllActions();
-			Thread.yield();
-			ContactList.beforeConnect();
-                        try // Wait the given time
-                        {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException ie) {}
-			SplashCanvas.setErrFlag(false);
-			connect();
-			return true;
-		} else {
-			connecting = false;
-		}
-
-		return false;
-	}
-	*/
 
 	/**************************************************************************/
 	/**************************************************************************/
@@ -738,6 +601,9 @@ public class Icq implements Runnable
 		// Received packets
 		protected Vector rcvdPackets;
 
+		// FLAP sequence number
+		protected int flapSEQ;
+
 		// Opens a connection to the specified host and starts the receiver
 		// thread
 		public synchronized void connect(String hostAndPort)
@@ -746,6 +612,13 @@ public class Icq implements Runnable
 
 		}
 		
+		// Returns and updates sequence nr
+		public synchronized int getFlapSequence()
+		{
+			flapSEQ = ++flapSEQ % 0x8000;
+			return flapSEQ;
+		}
+
 		void setInputCloseFlag(boolean value)
 		{
 			synchronized (inputCloseFlagSynch) { inputCloseFlag = value; }
@@ -802,30 +675,28 @@ public class Icq implements Runnable
 		{
 		}
 
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-		//#sijapp cond.if modules_FILES is "true"#
+		//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 
-		// Retun the port this connection is running on
+		// Return the port this connection is running on
 		public int getLocalPort()
 		{
 			return (0);
 		}
 
-		// Retun the ip this connection is running on
+		// Return the ip this connection is running on
 		public byte[] getLocalIP()
 		{
 			return (new byte[4]);
 		}
 
-		//#sijapp cond.end#
-		//#sijapp cond.end#
+		//  #sijapp cond.end#
 
 		// Main loop
 		public void run()
 		{
 
 		}
-		
+
 		public boolean haveToSetNullAfterDisconnect()
 		{
 			return true;
@@ -871,6 +742,9 @@ public class Icq implements Runnable
 			seq = 0;
 			connSeq = 0;
 			monitorURL = "http://http.proxy.icq.com/hello";
+			// Set starting point for seq numbers (not bigger then 0x8000)
+			Random rand = new Random(System.currentTimeMillis());
+			flapSEQ = rand.nextInt() % 0x8000;
 		}
 
 		// Opens a connection to the specified host and starts the receiver thread
@@ -984,6 +858,9 @@ public class Icq implements Runnable
 				try
 				{
 					byte[] outpack;
+
+					// Set sequence numbers
+					packet.setSequence(getFlapSequence());
 
 					// Add http header (it has 14 bytes)
 					if (rawData == null)
@@ -1313,7 +1190,7 @@ public class Icq implements Runnable
 	{
 
 		// Connection variables
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
+		//  #sijapp cond.if target!="DEFAULT"#
 		private SocketConnection sc;
 
 		//#sijapp cond.else#
@@ -1322,9 +1199,6 @@ public class Icq implements Runnable
 		private InputStream is;
 
 		private OutputStream os;
-
-		// FLAP sequence number counter
-		private int nextSequence;
 
 		// ICQ sequence number counter
 		private int nextIcqSequence;
@@ -1335,7 +1209,7 @@ public class Icq implements Runnable
 		{
 			try
 			{
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
+				//#sijapp cond.if target!="DEFAULT"#
 				sc = (SocketConnection) Connector.open("socket://"
 						+ hostAndPort, Connector.READ_WRITE);
 				//#sijapp cond.else#
@@ -1347,9 +1221,10 @@ public class Icq implements Runnable
 				setInputCloseFlag(false);
 				rcvThread = new Thread(this);
 				rcvThread.start();
-				nextSequence = (new Random()).nextInt() % 0x0FFF;
+				// Set starting point for seq numbers (not bigger then 0x8000)
+				Random rand = new Random(System.currentTimeMillis());
+				flapSEQ = rand.nextInt() % 0x8000;
 				nextIcqSequence = 2;
-
 			} catch (ConnectionNotFoundException e)
 			{
 				if (!getInputCloseFlag()) throw (new JimmException(121, 0));
@@ -1359,6 +1234,9 @@ public class Icq implements Runnable
 			} catch (IOException e)
 			{
 				throw (new JimmException(120, 0));
+			} catch (SecurityException e)
+			{
+				throw (new JimmException(119, 0));
 			}
 		}
 
@@ -1373,7 +1251,7 @@ public class Icq implements Runnable
 			{
 
 				// Set sequence numbers
-				packet.setSequence(nextSequence++);
+				packet.setSequence(getFlapSequence());
 				if (packet instanceof ToIcqSrvPacket)
 				{
 					((ToIcqSrvPacket) packet).setIcqSequence(nextIcqSequence++);
@@ -1403,10 +1281,9 @@ public class Icq implements Runnable
 
 		}
 
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-		//#sijapp cond.if modules_FILES is "true"#
+		//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 
-		// Retun the port this connection is running on
+		// Return the port this connection is running on
 		public int getLocalPort()
 		{
 			try
@@ -1418,7 +1295,7 @@ public class Icq implements Runnable
 			}
 		}
 
-		// Retun the ip this connection is running on
+		// Return the ip this connection is running on
 		public byte[] getLocalIP()
 		{
 			try
@@ -1430,7 +1307,6 @@ public class Icq implements Runnable
 			}
 		}
 
-		//#sijapp cond.end#
 		//#sijapp cond.end#
 
 		// Main loop
@@ -1517,7 +1393,7 @@ public class Icq implements Runnable
 					{
 						rcvdPackets.addElement(rcvdPacket);
 					}
-					
+
 					// Notify main loop
 					synchronized (Icq.wait)
 					{
@@ -1528,10 +1404,10 @@ public class Icq implements Runnable
 			}
 			// Catch communication exception
 			catch (NullPointerException e) { } /* Do nothing */
-			
+
 			// Catch InterruptedException
 			catch (InterruptedException e) { } /* Do nothing */
-			
+
 			// Catch JimmException
 			catch (JimmException e)
 			{
@@ -1618,12 +1494,9 @@ public class Icq implements Runnable
 
 		private boolean is_connected = false;
 
-		// FLAP sequence number counter
-		private int nextSequence;
-
 		// ICQ sequence number counter
 		private int nextIcqSequence;
-		
+
 		public boolean haveToSetNullAfterDisconnect()
 		{
 			return false;
@@ -1633,7 +1506,7 @@ public class Icq implements Runnable
 		// Tries to resolve given host IP
 		private synchronized String ResolveIP(String host, String port)
 		{
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
+			//#sijapp cond.if target!="DEFAULT"#
 			if (Util.isIP(host))
 				return host;
 			SocketConnection c;
@@ -1776,7 +1649,9 @@ public class Icq implements Runnable
 				setInputCloseFlag(false);
 				rcvThread = new Thread(this);
 				rcvThread.start();
-				nextSequence = (new Random()).nextInt() % 0x0FFF;
+				// Set starting point for seq numbers (not bigger then 0x8000)
+				Random rand = new Random(System.currentTimeMillis());
+				flapSEQ = rand.nextInt() % 0x8000;
 				nextIcqSequence = 2;
 			} catch (JimmException e)
 			{
@@ -1796,7 +1671,7 @@ public class Icq implements Runnable
 
 			try
 			{
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
+				//#sijapp cond.if target!="DEFAULT"#
 				sc = (SocketConnection) Connector.open("socket://" + proxy_host
 						+ ":" + proxy_port, Connector.READ_WRITE);
 				//#sijapp cond.else#
@@ -1864,6 +1739,9 @@ public class Icq implements Runnable
 			} catch (IOException e)
 			{
 				throw (new JimmException(120, 0));
+			} catch (SecurityException e)
+			{
+				throw (new JimmException(119, 0));
 			}
 		}
 
@@ -1881,7 +1759,7 @@ public class Icq implements Runnable
 
 			try
 			{
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
+				//#sijapp cond.if target!="DEFAULT"#
 				sc = (SocketConnection) Connector.open("socket://" + proxy_host
 						+ ":" + proxy_port, Connector.READ_WRITE);
 				//#sijapp cond.else#
@@ -1986,6 +1864,9 @@ public class Icq implements Runnable
 			} catch (IOException e)
 			{
 				throw (new JimmException(120, 0));
+			} catch (SecurityException e)
+			{
+				throw (new JimmException(119, 0));
 			}
 		}
 
@@ -2023,7 +1904,7 @@ public class Icq implements Runnable
 			{
 
 				// Set sequence numbers
-				packet.setSequence(nextSequence++);
+				packet.setSequence(getFlapSequence());
 				if (packet instanceof ToIcqSrvPacket)
 				{
 					((ToIcqSrvPacket) packet).setIcqSequence(nextIcqSequence++);
@@ -2053,8 +1934,7 @@ public class Icq implements Runnable
 
 		}
 
-		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-		//#sijapp cond.if modules_FILES is "true"#
+		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 
 		// Retun the port this connection is running on
 		public int getLocalPort()
@@ -2080,7 +1960,6 @@ public class Icq implements Runnable
 			}
 		}
 
-		//#sijapp cond.end#
 		//#sijapp cond.end#
 
 		// Main loop
@@ -2300,8 +2179,7 @@ public class Icq implements Runnable
 	/**************************************************************************/
 	/**************************************************************************/
 
-	//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-	//#sijapp cond.if modules_FILES is "true"#
+	//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 	// PeerConnection
 	public class PeerConnection implements Runnable
 	{
@@ -2353,6 +2231,9 @@ public class Icq implements Runnable
 			} catch (IOException e)
 			{
 				throw (new JimmException(125, 0, true, true));
+			} catch (SecurityException e)
+			{
+				throw (new JimmException(119, 0));
 			}
 		}
 
@@ -2602,13 +2483,16 @@ public class Icq implements Runnable
 				} else
 				{ /* Do nothing */
 				}
+			} catch (SecurityException e)
+			{
+				// Construct and handle exception
+				JimmException f = new JimmException(119, 1, true, true);
+				JimmException.handleException(f);
 			}
-
 		}
 
 	}
 
-	//#sijapp cond.end#
 	//#sijapp cond.end#
 
 	public static int getCurrentStatus()
@@ -2757,8 +2641,8 @@ public class Icq implements Runnable
 			capsStream.write(CAP_ICHAT);
 			capsStream.write(CAP_UTF8);
 			capsStream.write(CAP_VERSION);
-			
-			//#sijapp cond.if target isnot  "DEFAULT"#
+
+			//#sijapp cond.if target!="DEFAULT"#
 			if (Options.getInt(Options.OPTION_TYPING_MODE) > 0) capsStream.write(CAP_MTN);
 			//#sijapp cond.end#
 			
@@ -2936,7 +2820,7 @@ public class Icq implements Runnable
 	private static final long CAPF_IMPLUS        = 1l << 57;
 	private static final long CAPF_JIMM_SMAPER   = 1l << 58;
 	private static final long CAPF_JIMM_DICHAT   = 1l << 59;
-	
+
 //	public static final int CAPF_QIPPLUGINS      = 1l << 60;
 //	public static final int CAPF_XMultiUserChat  = 1l << 61;
 //	public static final int CAPF_XtZers          = 1l << 62;
