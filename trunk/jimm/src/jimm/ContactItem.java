@@ -105,6 +105,11 @@ public class ContactItem implements ContactListItem, JimmScreen
 	private String lowerText;
 	private byte[] ssData; // server-size raw data
 
+	private int COLOR_NORMAL;
+	private int COLOR_HASCHAT;
+	private int COLOR_FANTOM;
+
+	private String formattedName;
 	///////////////////////////////////////////////////////////////////////////
 
 	synchronized public void setStringValue(int key, String value)
@@ -462,6 +467,11 @@ public class ContactItem implements ContactListItem, JimmScreen
 			setIntValue_(ContactItem.CONTACTITEM_CLIENT, Icq.CLI_NONE);
 			setStringValue_(ContactItem.CONTACTITEM_CLIVERSION, "");
 			xStatusId = -1;
+
+			COLOR_NORMAL = Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
+			COLOR_HASCHAT = Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
+			COLOR_FANTOM = 0x808080;
+
 		}
 	}
 
@@ -506,11 +516,8 @@ public class ContactItem implements ContactListItem, JimmScreen
 		synchronized (this)
 		{
 			if (getBooleanValue_(CONTACTITEM_IS_TEMP))
-				return 0x808080;
-			int color = getBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT) ? Options
-					.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1)
-					: Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
-			return color;
+				return COLOR_FANTOM;
+			return getBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT) ? COLOR_HASCHAT : COLOR_NORMAL;
 		}
 	}
 
@@ -555,7 +562,17 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 	static private StringBuffer tmpStringBuffer = new StringBuffer();	
 	
-	public String getText()
+	public void generateFormattedName ()
+	{
+		formattedName = getText(-1);
+	}
+
+	public synchronized String getText()
+	{
+		return formattedName;
+	}
+
+	private String getText(int type)
 	{
 		if (tmpStringBuffer.length() != 0)
 			tmpStringBuffer.delete(0, tmpStringBuffer.length());

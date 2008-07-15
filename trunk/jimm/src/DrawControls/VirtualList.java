@@ -209,7 +209,11 @@ public abstract class VirtualList
 	private   int     fontHeight;
 	private   int     cursorAlpha      = 255;
 	private   int     menuAlpha        = 255;
-	
+
+	protected static Font    FONT_STYLE_BOLD;
+	protected static Font    FONT_STYLE_PLAIN;
+	protected static Font    FONT_STYLE_ITALIC;
+
 	// Common UI stuff
 	private   static Font    capAndMenuFont;
 	private   static boolean mirrorMenu = false;
@@ -297,6 +301,7 @@ public abstract class VirtualList
 	
 	private void initVirtualList()
 	{
+		initFonts();
 		fontHeight = getQuickFont(Font.STYLE_PLAIN).getHeight();
 		curFrameWidth = (fontHeight > 16) ? 2 : 1;
 		borderWidth = fontHeight/6+1;
@@ -320,13 +325,13 @@ public abstract class VirtualList
 		switch (style)
 		{
 		case Font.STYLE_BOLD:
-			return Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, fontSize);
+			return FONT_STYLE_BOLD;
 			
 		case Font.STYLE_PLAIN:
-			return Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, fontSize);
+			return FONT_STYLE_PLAIN;
 			
 		case Font.STYLE_ITALIC:
-			return Font.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, fontSize);
+			return FONT_STYLE_ITALIC;
 		}
 		
 		return Font.getFont(Font.FACE_SYSTEM, style, fontSize);
@@ -345,12 +350,21 @@ public abstract class VirtualList
 		return getHeightInternal() - getCapHeight() - menuBartHeight;
 	}
 
+	//! Init static Fonts
+	private void initFonts()
+	{
+		FONT_STYLE_BOLD = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, fontSize);
+		FONT_STYLE_PLAIN = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, fontSize);
+		FONT_STYLE_ITALIC = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_ITALIC, fontSize);
+	}
+
 	//! Sets new font size and invalidates items
 	public void setFontSize(int value)
 	{
 		if (fontSize == value) return;
 		fontSize = value;
-		fontHeight = getQuickFont(Font.STYLE_PLAIN).getHeight();
+		initFonts();
+		fontHeight = FONT_STYLE_PLAIN.getHeight();
 		checkTopItem();
 		invalidate();
 	}
@@ -1130,7 +1144,7 @@ public abstract class VirtualList
 			g.drawLine(width+1, srcollerY1+1, width+scrollerWidth-2, srcollerY1+1);
 		}
 	}
-	
+
 //#sijapp cond.if target!="DEFAULT"#	
 	private static int[] menuBarBackground;
 	private static int menuBarBackgroundColor1 = -1;
@@ -1225,12 +1239,12 @@ public abstract class VirtualList
 			
 			y2++;
 			x2++;
-		int crd1 = 0;
-		int crd2 = 0;
+			int crd1 = 0;
+			int crd2 = 0;
 			for (int i = 0; i < count; i++)
 			{
-			crd1 = i * (y2 - y1) / count + y1;
-			crd2 = (i + 1) * (y2 - y1) / count + y1;
+				crd1 = i * (y2 - y1) / count + y1;
+				crd2 = (i + 1) * (y2 - y1) / count + y1;
 				if (crd1 == crd2) continue;
 				gr.setColor(i * (r2 - r1) / (count-1) + r1, i * (g2 - g1) / (count-1) + g1, i * (b2 - b1) / (count-1) + b1);
 				gr.fillRect(x1, crd1, x2-x1, crd2-crd1);
@@ -1254,24 +1268,24 @@ public abstract class VirtualList
 			if (lastRectHeight != height || lastRectColor1 != color1 || lastRectColor2 != color2)
 			{
 				int idx = 0;
-			int crd1 = 0;
-			int crd2 = 0;
-			int r = 0;
-			int g = 0;
-			int b = 0;
+				int crd1 = 0;
+				int crd2 = 0;
+				int r = 0;
+				int g = 0;
+				int b = 0;
 				
-			int color = 0;
+				int color = 0;
 				for (int y = 0; y < height; y++)
 				{
-				crd1 = y * (y2 - y1) / height;
-				crd2 = (y + 1) * (y2 - y1) / height;
+					crd1 = y * (y2 - y1) / height;
+					crd2 = (y + 1) * (y2 - y1) / height;
 					if (crd1 == crd2) continue;
 					
-				r = y * (r2 - r1) / (height-1) + r1;
-				g = y * (g2 - g1) / (height-1) + g1;
-				b = y * (b2 - b1) / (height-1) + b1;
+					r = y * (r2 - r1) / (height-1) + r1;
+					g = y * (g2 - g1) / (height-1) + g1;
+					b = y * (b2 - b1) / (height-1) + b1;
 					
-				color = (r << 16) | (g << 8) | (b) | (alphaValue);
+					color = (r << 16) | (g << 8) | (b) | (alphaValue);
 					
 					for (int x = 0; x < 32; x++) alphaBuffer[idx++] = color;
 				}

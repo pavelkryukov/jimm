@@ -159,6 +159,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	//
 	private static int onlineCounter;
 
+	private static boolean Params[] = new boolean[2];
+
 	/* Initializer */
 	static
 	{
@@ -362,6 +364,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Request display of the main menu
 	static public void activateList()
 	{
+		Params[0] = Options.getBoolean(Options.OPTION_CL_CLIENTS);
+		Params[1] = Options.getBoolean(Options.OPTION_XSTATUSES);
+
 		showStatusInCaption(-1);
 		
 		//#sijapp cond.if modules_TRAFFIC is "true" #
@@ -548,11 +553,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		// Iterate through all contact items
 		int cItemsCount = cItems.size();
 		int totalCount = cItemsCount + gItems.size();
+		ContactItem cItem;
 		ContactListGroupItem gItem;
 		for (int i = 0; i < totalCount; i++)
 		{
 			if (i < cItemsCount)
-				getCItem(i).saveToStream(dos);
+			{
+				cItem = getCItem(i);
+				cItem.generateFormattedName();
+				cItem.saveToStream(dos);
+			}
 			else
 			{
 				gItem = (ContactListGroupItem) gItems
@@ -571,6 +581,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				baos.reset();
 			}
 		}
+		cItem = null;
 		gItem = null;
 
 		// Close record store
@@ -1060,6 +1071,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			playSoundNotification(SOUND_TYPE_ONLINE);
 //#sijapp cond.end#		
 
+		cItem.generateFormattedName();
 		// Update visual list
 		if (statusChanged)
 			contactChanged(cItem, false, (wasOnline && !nowOnline)
@@ -1630,16 +1642,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		ContactListItem item = (ContactListItem) src.getData();
 		dst.text = item.getText();
 		dst.leftImage = imageList.elementAt(item.getLeftImageIndex(src.getExpanded()));
-		dst.rightImage = 
-			Options.getBoolean(Options.OPTION_CL_CLIENTS) ? 
-			cliImages.elementAt(item.getRightImageIndex()) : 
-			null;
-			
-		dst.secondLeftImage =
-			Options.getBoolean(Options.OPTION_XSTATUSES) ? 
-			xStatusImages.elementAt(item.getSecondLeftImageIndex()) :
-			null;
-		
+		dst.rightImage = Params[0] ? cliImages.elementAt(item.getRightImageIndex()) : null;
+		dst.secondLeftImage = Params[1] ? xStatusImages.elementAt(item.getSecondLeftImageIndex()) : null;
 		dst.color = item.getTextColor();
 		dst.fontStyle = item.getFontStyle();
 	}
@@ -1806,7 +1810,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			}
 			return false;
 		}
-		else 
+		else
 		{
 			long status = Options.getLong(Options.OPTION_ONLINE_STATUS);
 			if (status != ContactList.STATUS_INVIS_ALL && status != ContactList.STATUS_INVISIBLE)
