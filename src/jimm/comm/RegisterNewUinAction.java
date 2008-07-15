@@ -208,7 +208,7 @@ public class RegisterNewUinAction extends Action
 		if (this.password.length() == 0)
 		{
 			this.state = RegisterNewUinAction.STATE_ERROR;
-	    throw (new JimmException(233, 0));
+	    	throw (new JimmException(233, 0));
 		}
 
 		// Open connection

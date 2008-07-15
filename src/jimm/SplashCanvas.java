@@ -570,7 +570,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 					TimerTasks.SC_RESET_TEXT_AND_IMG), 3000);
 		}
 	}
-	
+
 	private static TimerTasks lastTimerTask;
 	private static Action lastAction;
 	
@@ -592,7 +592,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 			t2.cancel();
 			t2 = null;
 		}
-		
+
 		resetLastTask();
 
 		isLocked = false;
@@ -631,5 +631,5 @@ public class SplashCanvas extends Canvas implements CommandListener
 				lastAction = null;
 			}
 		}
-	}	
+	}
 }

@@ -30,7 +30,6 @@ import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
-import jimm.DebugLog;
 import jimm.JimmUI;
 import jimm.JimmException;
 import jimm.Options;
@@ -364,7 +363,6 @@ public class ConnectAction extends Action
 				    }
 
 				    if (errcode != -1) {
-					    DebugLog.addText("Connection error: " + errcode);
 					    consumed = true;
 					    Icq.c.notifyToDisconnect();
 					    this.state = ConnectAction.STATE_ERROR;
@@ -424,7 +422,6 @@ public class ConnectAction extends Action
 				}
 
 				if (errcode != -1) {
-				    DebugLog.addText("Connection error: " + errcode);
 				    consumed = true;
 				    Icq.c.notifyToDisconnect();
 				    this.state = ConnectAction.STATE_ERROR;

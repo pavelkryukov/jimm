@@ -40,7 +40,7 @@ public class SendMessageAction extends Action
 	// File transfer request message
 	private FileTransferMessage fileTrans;
 //#sijapp cond.end#
-	
+
 	private int SEQ1 = 0xffff;
 	
 	private int messId = -1;

@@ -284,6 +284,7 @@ public class TextList extends VirtualList implements Runnable
 		item.text = titem.text;
 		item.color = titem.getColor();
 		item.fontStyle = titem.getFontStyle();
+		titem = null;
 	}
 
 	//! Remove all lines form list

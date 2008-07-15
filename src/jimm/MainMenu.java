@@ -310,8 +310,8 @@ public class MainMenu implements CommandListener, JimmScreen
 			{
 			case MENU_CONNECT:
 				/* Connect */
-				Icq.reconnect_attempts = Options
-						.getInt(Options.OPTION_RECONNECT_NUMBER);
+				Icq.reconnect_attempts = (Options.getBoolean(Options.OPTION_RECONNECT)) ?
+							Options.getInt(Options.OPTION_RECONNECT_NUMBER) : 0;
 				ContactList.beforeConnect();
 				SplashCanvas.setLastErrCode(null);
 				Icq.connect();

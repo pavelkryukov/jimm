@@ -416,7 +416,6 @@
 "error_116"					"Offline-Nachricht konnte nicht gelesen werden (#116.EXT)"
 "error_117"					"UIN und/oder Passwort sind leer (#117.EXT)"
 "error_118"					"Keine Antwort vom Server (#118.EXT)"
-"error_119"					"Verbindungsfehler: Zeitüberschreigung (#119.EXT)"
 
  // Network communication specific exceptions (first half main connection second half peer)
 "error_120"					"Ein I/O-Fehler ist aufgetreten (#120.EXT)"

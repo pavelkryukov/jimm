@@ -473,7 +473,6 @@
 "error_116"					"Nepodařilo se stáhnout offline zprávu (#116.EXT)"
 "error_117"					"Prázdné UIN a/nebo heslo (#117.EXT)"
 "error_118"					"Server neodpověděl (#118.EXT)"
-"error_119"					"Vypršel časový limit spojení (#119.EXT)"
 
  // Network communication specific exceptions (first half main connection second half peer)
 "error_120"					"I/O chyba (#120.EXT)"

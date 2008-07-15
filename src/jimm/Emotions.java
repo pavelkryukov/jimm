@@ -296,7 +296,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		System.out.println("Emotions used: "+(mem - Runtime.getRuntime().freeMemory()));
 		//#sijapp cond.end#
 	}
-	
+
 	static private void loadTranslation(String file, Hashtable transl) throws IOException
 	{
 		InputStream stream = _this.getClass().getResourceAsStream(file);
@@ -535,7 +535,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		static int counter;
 
 		static Selector _this;
-		
+
 		static
 		{
 			curCol = 0;

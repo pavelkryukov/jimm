@@ -716,7 +716,7 @@ public class HistoryStorage
 	private static String currCacheUin = new String();
 
 	private static Hashtable cachedRecords;
-	
+
 	private static Vector cachedRecordsOrder;
 
 	final static private int TEXT_START_INDEX = 1;
@@ -917,7 +917,7 @@ public class HistoryStorage
 			cachedRecords.remove(record.index);
 		}
 		record = null;
-		
+
 		return cachedRec;
 	}
 
