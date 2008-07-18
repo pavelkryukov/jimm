@@ -1100,6 +1100,12 @@ public abstract class VirtualList
 		g.setColor(capTxtColor);
 		g.drawString(caption, x, (height - capAndMenuFont.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
 		
+		//#sijapp cond.if modules_DEBUGLOG is "true"#
+		int ram=(int)((Runtime.getRuntime().freeMemory()*32)/Runtime.getRuntime().totalMemory());
+		g.setColor(0xffffff);  g.fillRect(width-54, 0, 34, 3);
+		g.setColor(0x00ff00);  g.fillRect(width-53, 1, ram, 2);
+		//#sijapp cond.end #
+
 		afterDrawCaption(g, height);
 		
 		return height;

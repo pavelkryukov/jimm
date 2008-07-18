@@ -41,6 +41,7 @@ import javax.microedition.io.SocketConnection;
 //#sijapp cond.end#
 
 import jimm.ContactItem;
+import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.JimmUI;
 import jimm.JimmException;
@@ -215,7 +216,7 @@ public class Icq implements Runnable
 	{
 		if (c == null) return;
 		
-		try { c.sendPacket (new DisconnectPacket()); } catch (Exception ignore) { /* Do nothing */ }
+//		try { c.sendPacket (new DisconnectPacket()); } catch (Exception ignore) { /* Do nothing */ }
 
 		setDisconnected(true);
 		
@@ -555,6 +556,8 @@ public class Icq implements Runnable
 		}
 		catch (Exception e)
 		{
+			DebugLog.addText ("MainThread: Exception: " + e.toString());
+			e.printStackTrace();
 		}
 
 		if (!Options.getBoolean(Options.OPTION_RECONNECT) && c != null)
@@ -859,12 +862,12 @@ public class Icq implements Runnable
 				{
 					byte[] outpack;
 
-					// Set sequence numbers
-					packet.setSequence(getFlapSequence());
-
 					// Add http header (it has 14 bytes)
 					if (rawData == null)
 					{
+						// Set sequence numbers
+						packet.setSequence(getFlapSequence());
+
 						rawData = packet.toByteArray();
 						outpack = new byte[14 + rawData.length];
 					}
@@ -1936,7 +1939,7 @@ public class Icq implements Runnable
 
 		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 
-		// Retun the port this connection is running on
+		// Return the port this connection is running on
 		public int getLocalPort()
 		{
 			try
@@ -1948,7 +1951,7 @@ public class Icq implements Runnable
 			}
 		}
 
-		// Retun the ip this connection is running on
+		// Return the ip this connection is running on
 		public byte[] getLocalIP()
 		{
 			try
@@ -2958,17 +2961,11 @@ public class Icq implements Runnable
 		return -1;
 	}
 	
-	private static final byte[] xStWord = {'i', 'c', 'q', 'm', 'o', 'o', 'd' };
-	
-	/* TODO: find out format of 001D TLV and correct method! */
-	public static int detectStandartXStatus(byte[] data)
+	public static int detectStandartXStatus(String data)
 	{
-		int idx = Util.indexOf(data, xStWord);
+		int idx = data.indexOf("icqmood");
 		if (idx < 2) return -1;
-		int len = Util.getWord(data, idx-2);
-		String strData = Util.byteArrayToString(data, idx, len, false);
-		String text = strData.substring(7);
-		int stdStatusValue = Util.strToIntDef(text, -1);
+		int stdStatusValue = Util.strToIntDef(data.substring(7), -1);
 		for (int i = 0; i < XSTATUS_CONSTS.length; i += 18)
 			if (XSTATUS_CONSTS[i+1] == stdStatusValue) return XSTATUS_CONSTS[i]; 
 		return -1;

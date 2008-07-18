@@ -1479,7 +1479,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	}
 
 	///////////////////////////////////////////////////////////////////////////
-	
+
 	public void activateForm()
 	{
 		// Store some last values
@@ -1487,7 +1487,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 		lastGroupsUsed  = Options.getBoolean(Options.OPTION_USER_GROUPS);
 		lastSortMethod  = Options.getInt    (Options.OPTION_CL_SORT_BY);
-		
+
 		initOptionsList(TYPE_TOP_OPTIONS);
 		JimmUI.setLastScreen(this, false);
 	}
@@ -2227,7 +2227,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (capOffset < 0) capOffset = 0;
 			if (capOffset > 50) capOffset = 50;
 			Options.setInt(Options.OPTION_CAPTION_OFFSET, capOffset);
-			
+
 			//#sijapp cond.if target!="DEFAULT"#
 			Options.setInt(Options.OPTION_BG_IMAGE_MODE, backImgGroup.getSelectedIndex());
 			//#sijapp cond.if modules_FILES="true"#

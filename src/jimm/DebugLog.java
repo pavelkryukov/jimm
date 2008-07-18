@@ -28,6 +28,7 @@ import javax.microedition.lcdui.*;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 import jimm.Jimm;
+import jimm.comm.Util;
 
 public class DebugLog
 //#sijapp cond.if modules_DEBUGLOG is "true" #
@@ -37,12 +38,18 @@ public class DebugLog
 	//#sijapp cond.if modules_DEBUGLOG is "true" #
 	private static TextList list;
 
-	private static Command backCommand = new Command("Back", Jimm.cmdBack, 1);
+	private static final Command backCommand = new Command("Back", Jimm.cmdBack, 1);
+	private static final Command cmdCopyText = new Command("Copy text", Command.ITEM, 4);
+	private static final Command cmdClear = new Command("Clear", Command.ITEM, 8);
 
 	static
 	{
 		list = new TextList(null);
 		list.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT_BAR);
+
+		list.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_LEFT_BAR);
+		list.addCommandEx(cmdClear, VirtualList.MENU_TYPE_LEFT);
+		list.addCommandEx(cmdCopyText, VirtualList.MENU_TYPE_LEFT);
 		list.setCommandListener(new DebugLog());
 		list.setFontSize(VirtualList.SMALL_FONT);
 		list.setCaption("Debug log");
@@ -67,7 +74,18 @@ public class DebugLog
 	public void commandAction(Command c, Displayable d)
 	{
 		Jimm.aaUserActivity();
-		ContactList.activateList();
+		if (c == backCommand)
+		{
+			ContactList.activateList();
+		}
+		else if (c == cmdClear)
+		{
+			list.clear();
+		}
+		else if (c == cmdCopyText)
+		{
+			JimmUI.setClipBoardText("[DebugLog]\n" + list.getCurrText(0, false));
+		}
 	}
 
 	//#sijapp cond.end#
@@ -77,14 +95,14 @@ public class DebugLog
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
 		synchronized (list)
 		{
-			list.addBigText("[" + Integer.toString(counter + 1) + "]: ", 0xFF,
+			list.addBigText("(" + Util.getDateString(true) +"): ", 0xFF,
 					Font.STYLE_PLAIN, counter);
 			list.addBigText(text, 0, Font.STYLE_PLAIN, counter);
 			list.doCRLF(counter);
 			counter++;
 		}
 		//#sijapp cond.else#
-		//#		System.out.println(text);
+		//#		System.out.println("(" + Util.getDateString(true) + "): " + text);
 		//#sijapp cond.end#
 	}
 }

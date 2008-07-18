@@ -99,6 +99,7 @@ public class ActionListener
 					&& (snacPacket.getCommand() == SnacPacket.SRV_USERONLINE_COMMAND))
 			{
 				int xStatus = -1;
+				String xStatusMessage = new String("");
 
 				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 				//#sijapp cond.if modules_FILES is "true"#
@@ -153,15 +154,36 @@ public class ActionListener
 					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
 					//#sijapp cond.if modules_FILES is "true"#
 
-					/* Standart ICQ x-statuses */
 					else if (tlvType == 0x001D)
 					{
-						xStatus = Icq.detectStandartXStatus(tlvData);
+						int marker1d = 0;
+						while (tlvData.length > marker1d)
+						{
+							int bart_id = Util.getWord(tlvData, marker1d);
+							marker1d += 2;
+							int bart_flg = Util.getByte(tlvData, marker1d);
+							marker1d ++;
+							int bart_len = Util.getByte(tlvData, marker1d);
+							marker1d ++;
+
+							if ((bart_id == 0x0002) && (bart_flg == 0x0004))
+							{
+								int textLen = (int)Util.getWord(tlvData, marker1d);
+								xStatusMessage = Util.byteArrayToString(tlvData, marker1d+2, textLen, true);
+							}
+							else if ((bart_id == 0x000E) && (bart_flg == 0x0000))
+							{
+								String strData = Util.byteArrayToString(tlvData, marker1d, bart_len, false);
+								xStatus = Icq.detectStandartXStatus(strData);
+							}
+							marker1d += bart_len;
+						}
 					}
 					else if (tlvType == 0x000A) // External IP
 					{
 						System.arraycopy(tlvData, 0, externalIP, 0, 4);
-					} else if (tlvType == 0x000c) // DC Infos
+					}
+					else if (tlvType == 0x000c) // DC Infos
 					{
 						// dcMarker
 						int dcMarker = 0;
@@ -226,9 +248,9 @@ public class ActionListener
 					if (xStatus == -1)
 						xStatus = Icq.detectXStatus(capsArray);
 				}
-				RunnableImpl.updateContactList(uin, status, xStatus, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle);
+				RunnableImpl.updateContactList(uin, status, xStatus, xStatusMessage, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle);
 				//#sijapp cond.else#
-				RunnableImpl.updateContactList(uin, status, -1, null, null, 0, 0, 0, 0, signon, online,idle);
+				RunnableImpl.updateContactList(uin, status, -1, null, null, null, 0, 0, 0, 0, signon, online,idle);
 				//#sijapp cond.end#
 			}
 
