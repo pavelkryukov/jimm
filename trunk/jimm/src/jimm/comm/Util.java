@@ -30,6 +30,7 @@ import java.util.*;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
 
+import jimm.DebugLog;
 import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactList;
@@ -92,7 +93,7 @@ public class Util
 				bytes += bj;
 			}
 			bytes += "}";
-			System.out.println(caption + bytes);
+			DebugLog.addText(caption + bytes);
 		}
 	}
 

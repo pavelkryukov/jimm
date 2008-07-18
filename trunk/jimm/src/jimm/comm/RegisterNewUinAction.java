@@ -62,6 +62,9 @@ public class RegisterNewUinAction extends Action
     // Action state
     private int state;
 
+    // Error code
+    private int errCode;
+
     // Last activity
     private Date lastActivity = new Date();
     private boolean active;
@@ -105,7 +108,8 @@ public class RegisterNewUinAction extends Action
         this.password = password;
         this.srvHost = srvHost;
         this.srvPort = srvPort;
-	this.uin = null;
+		this.uin = null;
+		this.errCode = 0;
     }
 
     // Returns the UID
@@ -203,14 +207,6 @@ public class RegisterNewUinAction extends Action
     // Init action
 	protected void init() throws JimmException
 	{
-
-		// Check parameters
-		if (this.password.length() == 0)
-		{
-			this.state = RegisterNewUinAction.STATE_ERROR;
-	    	throw (new JimmException(233, 0));
-		}
-
 		// Open connection
 		try
 		{
@@ -240,30 +236,36 @@ public class RegisterNewUinAction extends Action
 		// Flag indicates whether packet has been consumed or not
 		boolean consumed = false;
 
+		// Update activity timestamp
+		this.lastActivity = new Date();
+
 		switch (this.state) {
+
 			case RegisterNewUinAction.STATE_INIT_DONE :
-        		        // Watch out for SRV_CLI_HELLO packet
-		                if (packet instanceof ConnectPacket)
-		                {
-		                    ConnectPacket connectPacket = (ConnectPacket) packet;
-		                    if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
-		                    {
-					// Send CLI_HELLO packet
-					Icq.sendPacket(new ConnectPacket());
+		        // Watch out for SRV_CLI_HELLO packet
+                if (packet instanceof ConnectPacket)
+                {
+                    ConnectPacket connectPacket = (ConnectPacket) packet;
+                    if (connectPacket.getType() == ConnectPacket.SRV_CLI_HELLO)
+					{
 
-					// Request CAPTCHA image
-					byte[] buf = new byte[8];
-					Util.putDWord(buf, 0, 0x00010000);
-					Util.putDWord(buf, 4, 0x00000000);
-					Icq.sendPacket(new SnacPacket(0x0017, 0x000C, 0x000C, new byte[0], buf));
+						// Send CLI_HELLO packet
+						Icq.sendPacket(new ConnectPacket());
 
-		                        // Move to next state
-		                        this.state = RegisterNewUinAction.STATE_CAPTCHA_REQUESTED;
-		                        // Packet has been consumed
-		                        consumed = true;
-		                    }
-		                }
+						// Request CAPTCHA image
+						byte[] buf = new byte[8];
+						Util.putDWord(buf, 0, 0x00010000);
+						Util.putDWord(buf, 4, 0x00000000);
+						Icq.sendPacket(new SnacPacket(0x0017, 0x000C, 0x000C, new byte[0], buf));
+
+						// Move to next state
+						this.state = RegisterNewUinAction.STATE_CAPTCHA_REQUESTED;
+						// Packet has been consumed
+						consumed = true;
+                    }
+                }
 				break;
+
 			case RegisterNewUinAction.STATE_CAPTCHA_REQUESTED :
 				if (packet instanceof SnacPacket) {
 					SnacPacket snacPacket = (SnacPacket)packet;
@@ -286,13 +288,27 @@ public class RegisterNewUinAction extends Action
 							}
 						}
 
-			                        // Move to next state
-			                        this.state = RegisterNewUinAction.STATE_WAITING_FOR_CONFIRM;
-			                        // Packet has been consumed
-		        	                consumed = true;
+                        // Move to next state
+                        this.state = RegisterNewUinAction.STATE_WAITING_FOR_CONFIRM;
+                        // Packet has been consumed
+    	                consumed = true;
+					} else
+					if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0001)) {
+                        
+						// Get data
+						byte[] buf = snacPacket.getData();
+
+						// Read the error code from the packet
+						this.errCode = Util.getWord(buf, 0);
+
+						// Move to next state
+                        this.state = RegisterNewUinAction.STATE_WAITING_GOODBYE;
+                        // Packet has been consumed
+    	                consumed = true;
 					}
 				}
 				break;
+
 			case RegisterNewUinAction.STATE_WAITING_FOR_CONFIRM :
 				if (packet instanceof SnacPacket) {
 					SnacPacket snacPacket = (SnacPacket)packet;
@@ -318,17 +334,23 @@ public class RegisterNewUinAction extends Action
 
 						this.uin = String.valueOf(uinL);
                         
-			                        // Move to next state
-			                        this.state = RegisterNewUinAction.STATE_WAITING_GOODBYE;
-			                        // Packet has been consumed
-		        	                consumed = true;
+                        // Move to next state
+                        this.state = RegisterNewUinAction.STATE_WAITING_GOODBYE;
+                        // Packet has been consumed
+    	                consumed = true;
 					} else
 					if ((snacPacket.getFamily() == 0x0017) && (snacPacket.getCommand() == 0x0001)) {
                         
+						// Get data
+						byte[] buf = snacPacket.getData();
+
+						// Read the error code from the packet
+						this.errCode = Util.getWord(buf, 0);
+
 						// Move to next state
-			                        this.state = RegisterNewUinAction.STATE_WAITING_GOODBYE;
-			                        // Packet has been consumed
-		        	                consumed = true;
+                        this.state = RegisterNewUinAction.STATE_WAITING_GOODBYE;
+                        // Packet has been consumed
+    	                consumed = true;
 					}
 				}
 				break;
@@ -344,19 +366,18 @@ public class RegisterNewUinAction extends Action
 						    this.state = RegisterNewUinAction.STATE_WELL_DONE;
 						} else {
 						    this.state = RegisterNewUinAction.STATE_ERROR;
-						    throw (new JimmException(230, 0));
+						    throw (new JimmException(230, this.errCode));
 						}
 					}
 				}
 		}
 
-		// Update activity timestamp and reset activity flag
-		this.lastActivity = new Date();
+		// Reset activity flag
 		this.active = false;
 
 		// Return consumption flag
 		return (consumed);
-        }
+	}
 
 	// Catch JimmExceptions
 	catch (JimmException e)
@@ -398,9 +419,7 @@ public class RegisterNewUinAction extends Action
     	switch (eventType)
     	{
     	case ON_COMPLETE:
-		System.out.println ("new uin: " + this.getUin());
-		System.out.println ("password: " + this.getPassword());
-		Options.submitNewUinPassword (this.getUin(), this.getPassword());
+			Options.submitNewUinPassword (this.getUin(), this.getPassword());
     		Icq.disconnect(false);
     		break;
     	case ON_CANCEL:

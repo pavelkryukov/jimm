@@ -41,6 +41,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 	public static final int CONTACTITEM_UIN           = 0; 
 	public static final int CONTACTITEM_NAME          = 1;
 	public static final int CONTACTITEM_CLIVERSION    = 2;	
+	public static final int CONTACTITEM_XSTATUSMSG    = 3;	
 	
 	/* Integer */
 	public static final int CONTACTITEM_ID            = 64; 
@@ -73,10 +74,10 @@ public class ContactItem implements ContactListItem, JimmScreen
 	public static final int CONTACTITEM_B_AUTREQUESTS = 1 << 9;
 	
 	/* bytes[] */
-	public static final int CONTACTITEM_SS_DATA       = 227; 
 	public static final int CONTACTITEM_INTERNAL_IP   = 225;
 	public static final int CONTACTITEM_EXTERNAL_IP   = 226;
-	
+	public static final int CONTACTITEM_SS_DATA       = 227; 
+
 	/* No capability */
 	public static final int CAP_NO_INTERNAL = 0x00000000;
 
@@ -103,6 +104,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 	private String name;
 	private String clientVersion;
 	private String lowerText;
+	private String xStatusMessage;
 	private byte[] ssData; // server-size raw data
 
 	private int COLOR_NORMAL;
@@ -134,6 +136,9 @@ public class ContactItem implements ContactListItem, JimmScreen
 		case CONTACTITEM_CLIVERSION:
 			clientVersion = value;
 			return;
+		case CONTACTITEM_XSTATUSMSG:
+			xStatusMessage = (value == null) ? xStatusMessage : value;
+			return;
 		}
 	}
 
@@ -147,6 +152,8 @@ public class ContactItem implements ContactListItem, JimmScreen
 			return name;
 		case CONTACTITEM_CLIVERSION:
 			return clientVersion;
+		case CONTACTITEM_XSTATUSMSG:
+			return xStatusMessage;
 		}
 		return null;
 	}
@@ -443,6 +450,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 			setIntValue_(ContactItem.CONTACTITEM_GROUP, group);
 			setStringValue_(ContactItem.CONTACTITEM_UIN, uin);
 			setStringValue_(ContactItem.CONTACTITEM_NAME, name);
+			setStringValue_(ContactItem.CONTACTITEM_XSTATUSMSG, new String(""));
 			setBooleanValue_(ContactItem.CONTACTITEM_NO_AUTH, noAuth);
 			setBooleanValue_(ContactItem.CONTACTITEM_IS_TEMP, false);
 			setBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT, false);

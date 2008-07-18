@@ -1004,7 +1004,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Updates the client-side contact list (called when a contact changes status)
 	// DO NOT CALL THIS DIRECTLY FROM OTHER THREAND THAN MAIN!
 	// USE RunnableImpl.updateContactList INSTEAD!
-	static public synchronized void update(String uin, int status, int xStatus,
+	static public synchronized void update(String uin, int status, int xStatus, String xStatusMessage,
 			byte[] internalIP, byte[] externalIP, int dcPort, int dcType,
 			int icqProt, int authCookie, int signon, int online, int idle)
 	{
@@ -1040,6 +1040,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		
 		// Set x-status
 		cItem.setIntValue(ContactItem.CONTACTITEM_XSTATUS, xStatus);
+
+		// Set x-status message
+		cItem.setStringValue (ContactItem.CONTACTITEM_XSTATUSMSG, xStatusMessage);
 
 		// Update DC values
 		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
@@ -1090,7 +1093,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Updates the client-side contact list (called when a contact changes status)
 	static public synchronized void update(String uin, int status)
 	{
-		update(uin, status, -1, null, null, 0, 0, -1, 0, -1, -1, -1);
+		update(uin, status, -1, null, null, null, 0, 0, -1, 0, -1, -1, -1);
 	}
 
 	static private void statusChanged(ContactItem cItem,
