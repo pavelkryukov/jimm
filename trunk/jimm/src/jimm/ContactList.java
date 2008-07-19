@@ -729,6 +729,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		sortType = Options.getInt(Options.OPTION_CL_SORT_BY);
 		if (Options.getBoolean(Options.OPTION_USER_GROUPS))
 		{
+			boolean only_online_and_not_empty = 
+				(Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE) &&
+				 Options.getBoolean(Options.OPTION_CL_HIDE_EMPTY));
 			// Sort groups
 			tree.sortNode(null);
 			
@@ -741,6 +744,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				groupNode = (TreeNode) gNodes.get(new Integer(gItem.getId()));
 				tree.sortNode(groupNode);
 				calcGroupData(groupNode, gItem);
+				if (gItem.getOnlineCount() == 0 && only_online_and_not_empty)
+					tree.removeNode(groupNode);
 			}
 			gItem = null;
 			groupNode = null;

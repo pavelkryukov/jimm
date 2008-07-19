@@ -139,6 +139,7 @@
   "group_info"                  "Information"
   "group_lists"                 "Server lists"
   "have_unread_mess"            "You have unread messages. Exit anyway?"
+  "hide_empty"                  "Hide empty groups"
   "hide_offline"                "Hide offline contacts"
   "home_page"                   "Home page"
   "home_info"                   "Home"
