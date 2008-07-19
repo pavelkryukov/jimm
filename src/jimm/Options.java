@@ -183,6 +183,7 @@ public class Options
 	public static final int OPTION_SMALL_FONT        = 165;
 	public static final int OPTION_ANTI_SPAM         = 166;
 	public static final int OPTION_FULL_TEXTBOX      = 167;
+	public static final int OPTION_CL_HIDE_EMPTY     = 168;
 	
 	/* long */
 	public static final int OPTION_ONLINE_STATUS = 192; 
@@ -323,6 +324,7 @@ public class Options
 		setBoolean(Options.OPTION_DISPLAY_DATE, false);
 		setInt(Options.OPTION_CL_SORT_BY, 0);
 		setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
+		setBoolean(Options.OPTION_CL_HIDE_EMPTY, false);
 		//#sijapp cond.if target="MIDP2" | target="SIEMENS2" | target="RIM"#
 		setInt(Options.OPTION_MESS_NOTIF_MODE, 0);
 		setString(Options.OPTION_MESS_NOTIF_FILE, "message.wav");
@@ -838,7 +840,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	//#sijapp cond.end#
 
 
-	private boolean lastGroupsUsed, lastHideOffline;
+	private boolean lastGroupsUsed, lastHideOffline, lastHideEmpty;
 
 	private int lastSortMethod, lastColorScheme;
 
@@ -1485,6 +1487,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		// Store some last values
 		lastUILang      = Options.getString (Options.OPTION_UI_LANGUAGE);
 		lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
+		lastHideEmpty   = Options.getBoolean(Options.OPTION_CL_HIDE_EMPTY);
 		lastGroupsUsed  = Options.getBoolean(Options.OPTION_USER_GROUPS);
 		lastSortMethod  = Options.getInt    (Options.OPTION_CL_SORT_BY);
 
@@ -1705,6 +1708,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
 			setChecked(choiceContactList, "show_user_groups", Options.OPTION_USER_GROUPS);
+			setChecked(choiceContactList, "hide_empty", Options.OPTION_CL_HIDE_EMPTY);
 			setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
 			setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
 			setChecked(choiceContactList, "show_clients", Options.OPTION_CL_CLIENTS);
@@ -2167,6 +2171,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			
 			idx = 0;
 			boolean newUseGroups = choiceContactList.isSelected(idx++);
+			boolean newHideEmpty = choiceContactList.isSelected(idx++);
 			boolean newHideOffline = choiceContactList.isSelected(idx++);
 			boolean newShowXStatuses = choiceContactList.isSelected(idx++);
 			boolean newShowClients = choiceContactList.isSelected(idx++);
@@ -2175,6 +2180,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			int newSortMethod = clSortByChoiceGroup.getSelectedIndex();
 			Options.setInt(Options.OPTION_CL_SORT_BY, newSortMethod);
 			Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, newHideOffline);
+			Options.setBoolean(Options.OPTION_CL_HIDE_EMPTY, newHideEmpty);
 			//setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
 			Options.setBoolean(Options.OPTION_XSTATUSES, newShowXStatuses);
 			Options.setBoolean(Options.OPTION_CL_CLIENTS, newShowClients); 
@@ -2208,7 +2214,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			// Set UI options for existing controls
 			ContactList.optionsChanged
 			(
-				(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline),
+				(newUseGroups != lastGroupsUsed) || (newHideOffline != lastHideOffline) || (newHideEmpty != lastHideEmpty),
 				(newSortMethod != lastSortMethod)
 			);
 

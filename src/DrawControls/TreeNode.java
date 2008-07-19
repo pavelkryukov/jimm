@@ -45,7 +45,7 @@ public class TreeNode
 		this.data = data;
 	}
 
-	//! Romove all elements from node
+	//! Remove all elements from node
 	protected void clear()
 	{
 		if (items != null)

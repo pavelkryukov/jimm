@@ -210,9 +210,9 @@ public abstract class VirtualList
 	private   int     cursorAlpha      = 255;
 	private   int     menuAlpha        = 255;
 
-	protected static Font    FONT_STYLE_BOLD;
-	protected static Font    FONT_STYLE_PLAIN;
-	protected static Font    FONT_STYLE_ITALIC;
+	protected Font    FONT_STYLE_BOLD;
+	protected Font    FONT_STYLE_PLAIN;
+	protected Font    FONT_STYLE_ITALIC;
 
 	// Common UI stuff
 	private   static Font    capAndMenuFont;
