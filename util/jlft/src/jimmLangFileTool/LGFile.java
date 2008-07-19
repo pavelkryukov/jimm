@@ -163,7 +163,8 @@ public class LGFile extends Vector
 					{
 						if (lgs.getKey().startsWith("error_"))
 						{
-							if (lgs.getKey().endsWith("0")) file.write("\n // " + error[Integer.parseInt(lgs.getKey().substring(6, 8)) - 10] + "\n");
+							if (lgs.getKey().endsWith("0") && (lgs.getKey().indexOf("_ext_") == -1)) file.write("\n // " + error[Integer.parseInt(lgs.getKey().substring(6, 8)) - 10] + "\n");
+							else if (lgs.getKey().endsWith("_ext_1")) file.write("\n // " + error[error.length-1] + "\n");
 						}
 						file.write("\"" + lgs.getKey() + "\"\t");
 						for (int k = lgs.getKey().length(); k < 22; k += 4)
