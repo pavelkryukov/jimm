@@ -214,6 +214,10 @@ public class Icq implements Runnable
 	/* Disconnects from the ICQ network */
 	static public synchronized void disconnect(boolean force)
 	{
+		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+		resetPeerCon();
+		//#sijapp cond.end#
+
 		if (c == null) return;
 		
 //		try { c.sendPacket (new DisconnectPacket()); } catch (Exception ignore) { /* Do nothing */ }
@@ -225,10 +229,6 @@ public class Icq implements Runnable
 		
 		if (force) c.forceDisconnect();
 		else c.notifyToDisconnect();
-
-		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
-		resetPeerCon();
-		//#sijapp cond.end#
 
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		try
@@ -400,7 +400,7 @@ public class Icq implements Runnable
 		Jimm.getTimerRef().schedule(keepAliveTimerTask, keepAliveInterv,
 				keepAliveInterv);
 
-		// Catch JimmExceptions
+		// Catch All Exceptions
 		try
 		{
 			// Abort only in error state
@@ -1420,12 +1420,18 @@ public class Icq implements Runnable
 			catch (IOException e)
 			{
 				// Construct and handle exception (only if input close flag has not been set)
-				if (!getInputCloseFlag())
+				if (!getInputCloseFlag() && (Icq.c == this))
 				{
 					JimmException f = new JimmException(120, 1);
 					JimmException.handleException(f);
 				}
 				// Reset input close flag
+			}
+			finally
+			{
+				closeStreams();
+				if (Icq.c == this)
+					setNotConnected();
 			}
 			
 			// Sometimes Nokia emulator stops working and bRead returns -1 
@@ -1435,8 +1441,6 @@ public class Icq implements Runnable
 				JimmException.handleException(f);
 			}
 			
-			closeStreams();
-			setNotConnected();
 		}
 		
 		private void closeStreams()

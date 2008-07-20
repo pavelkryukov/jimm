@@ -95,14 +95,14 @@ public class DebugLog
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
 		synchronized (list)
 		{
-			list.addBigText("(" + Util.getDateString(true) +"): ", 0xFF,
+			list.addBigText("(" + Util.getTimeString() +"): ", 0xFF,
 					Font.STYLE_PLAIN, counter);
 			list.addBigText(text, 0, Font.STYLE_PLAIN, counter);
 			list.doCRLF(counter);
 			counter++;
 		}
 		//#sijapp cond.else#
-		//#		System.out.println("(" + Util.getDateString(true) + "): " + text);
+		//#		System.out.println("(" + Util.getTimeString() + "): " + text);
 		//#sijapp cond.end#
 	}
 }

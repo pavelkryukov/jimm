@@ -949,6 +949,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		// if have to add new contact
 		if (haveToAdd && !contactExistInTree)
 		{
+			if (tree.findNodeByData(null, groupNode.getData()) == null)
+			{
+				tree.addNode(null, groupNode.getData());
+				needSorting = true;
+			}
 			cItemNode = tree.addNode(groupNode, item);
 		}
 
