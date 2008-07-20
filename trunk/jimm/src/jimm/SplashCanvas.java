@@ -628,7 +628,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 			if (lastAction != null)
 			{
 				lastAction.onEvent(Action.ON_CANCEL);
-				lastAction = null;
+				resetLastTask();
 			}
 		}
 	}

@@ -148,12 +148,7 @@ public class JimmException extends Exception
 		{
 			// Reset comm. subsystem
 			//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
-			if (e.isPeer())
-				Icq.resetPeerCon();
-			else
-				Icq.resetServerCon();
-			//  #sijapp cond.else#
-			//#			Icq.resetServerCon();
+			if (e.isPeer())	Icq.resetPeerCon();
 			//  #sijapp cond.end#
 
 			boolean diconnFlag = Icq.isDisconnected(); 
@@ -178,7 +173,7 @@ public class JimmException extends Exception
 				SplashCanvas.setLastErrCode(e.getFullErrCode()+" "+(reconTotal-Icq.reconnect_attempts+1)+"/"+reconTotal);
 				Icq.reconnect_attempts--;
 				
-				System.out.println("err_code="+e.getFullErrCode());
+				DebugLog.addText("err_code="+e.getFullErrCode());
 				RunnableImpl.reconnect();
 			}
 			else

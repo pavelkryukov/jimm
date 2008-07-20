@@ -117,6 +117,7 @@ public class ConnectAction extends Action
     private long lastActivity;
     private boolean active;
     private boolean canceled;
+    private boolean canceled_by_timeout;
 
     // Temporary variables
 	private String server;
@@ -1033,7 +1034,11 @@ public class ConnectAction extends Action
     		(this.state != ConnectAction.STATE_ERROR) && 
     		!this.active && 
     		(this.lastActivity + this.TIMEOUT < System.currentTimeMillis())
-    	) this.state = ConnectAction.STATE_ERROR;
+    	)
+	{
+		this.canceled_by_timeout = true;
+		this.state = ConnectAction.STATE_ERROR;
+	}
         return (this.state == ConnectAction.STATE_ERROR);
     }
 
@@ -1060,11 +1065,9 @@ public class ConnectAction extends Action
 			break;
 			
 		case ON_ERROR:
-			Icq.disconnect(true);
-    		if (!canceled)
+   			DebugLog.addText("case ON_ERROR, this="+this);
+    		if (canceled_by_timeout)
     		{
-    			System.out.println("case ON_ERROR, this="+this);
-    			Util.showStackTrace();
     			JimmException e = new JimmException(118, 0);
     			JimmException.handleException(e);
     		}

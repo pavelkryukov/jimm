@@ -1241,6 +1241,23 @@ public class Util
 		return sb.toString();
 	}
 
+	/* Show time string */
+	public static String getTimeString(long date)
+	{
+		if (date == 0)
+			return error_str;
+
+		int[] loclaDate = createDate(date);
+
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(Util.makeTwo(loclaDate[TIME_HOUR])).append(':').append(
+				Util.makeTwo(loclaDate[TIME_MINUTE])).append(':')
+			  .append(Util.makeTwo(loclaDate[TIME_SECOND]));
+
+		return sb.toString();
+	}
+
 	/* Generates seconds count from 1st Jan 1970 till mentioned date */
 	public static long createLongTime(int year, int mon, int day, int hour,
 			int min, int sec)
@@ -1313,6 +1330,11 @@ public class Util
 	public static String getDateString(boolean onlyTime)
 	{
 		return getDateString(onlyTime, createCurrentDate(false));
+	}
+
+	public static String getTimeString()
+	{
+		return getTimeString(createCurrentDate(false));
 	}
 
 	public static long gmtTimeToLocalTime(long gmtTime)
