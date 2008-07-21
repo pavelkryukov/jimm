@@ -1035,10 +1035,10 @@ public class ConnectAction extends Action
     		!this.active && 
     		(this.lastActivity + this.TIMEOUT < System.currentTimeMillis())
     	)
-	{
-		this.canceled_by_timeout = true;
-		this.state = ConnectAction.STATE_ERROR;
-	}
+		{
+			this.canceled_by_timeout = true;
+			this.state = ConnectAction.STATE_ERROR;
+		}
         return (this.state == ConnectAction.STATE_ERROR);
     }
 
@@ -1065,7 +1065,6 @@ public class ConnectAction extends Action
 			break;
 			
 		case ON_ERROR:
-   			DebugLog.addText("case ON_ERROR, this="+this);
     		if (canceled_by_timeout)
     		{
     			JimmException e = new JimmException(118, 0);
