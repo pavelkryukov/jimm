@@ -729,9 +729,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		sortType = Options.getInt(Options.OPTION_CL_SORT_BY);
 		if (Options.getBoolean(Options.OPTION_USER_GROUPS))
 		{
-			boolean only_online_and_not_empty = 
-				(Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE) &&
-				 Options.getBoolean(Options.OPTION_CL_HIDE_EMPTY));
+			boolean only_not_empty = Options.getBoolean(Options.OPTION_CL_HIDE_EMPTY);
 			// Sort groups
 			tree.sortNode(null);
 			
@@ -744,7 +742,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				groupNode = (TreeNode) gNodes.get(new Integer(gItem.getId()));
 				tree.sortNode(groupNode);
 				calcGroupData(groupNode, gItem);
-				if (gItem.getOnlineCount() == 0 && only_online_and_not_empty)
+				if (groupNode.size() == 0 && only_not_empty)
 					tree.removeNode(groupNode);
 			}
 			gItem = null;
@@ -909,6 +907,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		boolean only_online = Options
 				.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 
+		boolean only_not_empty = Options
+				.getBoolean(Options.OPTION_CL_HIDE_EMPTY);
+
 		// Whitch group node?
 		TreeNode groupNode = (TreeNode) gNodes.get(new Integer(groupId));
 		if (groupNode == null)
@@ -949,10 +950,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		// if have to add new contact
 		if (haveToAdd && !contactExistInTree)
 		{
-			if (tree.findNodeByData(null, groupNode.getData()) == null)
+			if (only_not_empty)
 			{
-				tree.addNode(null, groupNode.getData());
-				needSorting = true;
+				if (tree.findNodeByData(null, groupNode.getData()) == null)
+				{
+					groupNode = (TreeNode) tree.addNode(tree.getRoot(), groupNode.getData());
+				}
 			}
 			cItemNode = tree.addNode(groupNode, item);
 		}
@@ -961,6 +964,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		else if (haveToDelete)
 		{
 			tree.removeNode(cItemNode);
+			if (only_not_empty)
+			{
+				if (groupNode.size() == 0)
+				{
+					tree.removeNode(groupNode);
+				}
+			}
 			wasDeleted = true;
 		}
 
