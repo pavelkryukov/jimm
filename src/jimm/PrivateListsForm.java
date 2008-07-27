@@ -238,6 +238,9 @@ public class PrivateListsForm extends VirtualList implements VirtualListCommands
 				items[index].getStringValue(ContactItem.CONTACTITEM_UIN),
 				items[index].getStringValue(ContactItem.CONTACTITEM_NAME),
 				false
+				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+				,items[index].getBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH)
+				//  #sijapp cond.end#
 			);
 		}
 	}

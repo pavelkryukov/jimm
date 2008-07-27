@@ -815,12 +815,17 @@ public class JimmUI implements CommandListener
 
 			case Options.HOTKEY_INFO:
 				if (item != null)
+				{
 					requiestUserInfo
 					(
 						item.getStringValue(ContactItem.CONTACTITEM_UIN),
-						item.getStringValue(ContactItem.CONTACTITEM_NAME), 
+						item.getStringValue(ContactItem.CONTACTITEM_NAME),
 						false
+						//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+						,item.getBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH)
+						//  #sijapp cond.end#
 					);
+				}
 				break;
 
 			case Options.HOTKEY_NEWMSG:
@@ -1066,7 +1071,36 @@ public class JimmUI implements CommandListener
 
 	static private TextList infoTextList = null;
 
-	static public void requiestUserInfo(String uin, String name, boolean allowToEdit)
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	static public void updateActiveUserInfo(String uin)
+	{
+		if (infoTextList != null)
+		{
+			if (infoTextList.isActive())
+			{
+				try
+				{
+					ContactItem cItem = ContactList.getItembyUIN(uin);
+					byte[] imgtmp = cItem.getBytesArray(ContactItem.CONTACTITEM_BUDDYICON);
+					Image image = Image.createImage (imgtmp, 0, imgtmp.length);
+					imgtmp = null;
+					if (image != null)
+					{
+						infoTextList.insertImage(image, null, -1, 0).doCRLF(-1);
+						infoTextList.repaint();
+					}
+					image = null;
+				} catch (Exception ignore) {/*Do nothing*/}
+			}
+		}
+	}
+	//  #sijapp cond.end#
+
+	static public void requiestUserInfo(String uin, String name, boolean allowToEdit
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		, byte[] hash
+		//  #sijapp cond.end#
+		)
 	{
 		infoTextList = getInfoTextList(uin, false);
 		infoTextList.setCommandListener(_this);
@@ -1075,6 +1109,26 @@ public class JimmUI implements CommandListener
 		{
 			if (allowToEdit)
 				infoTextList.addCommandEx(cmdEdit, VirtualList.MENU_TYPE_RIGHT);
+
+			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+			ContactItem cItem = ContactList.getItembyUIN(uin);
+
+			if (cItem.iconReady())
+			{
+				RequestBuddyIconAction act = new RequestBuddyIconAction(uin,hash);
+				try
+				{
+					Icq.requestAction(act);
+				} catch (JimmException e)
+				{
+					System.out.println ("Exception!");
+						JimmException.handleException(e);
+					if (e.isCritical())
+						return;
+				}
+				SplashCanvas.addTimerTask(act);
+			}
+			//  #sijapp cond.end#
 
 			RequestInfoAction act = new RequestInfoAction(uin, name);
 
@@ -1097,6 +1151,7 @@ public class JimmUI implements CommandListener
 		{
 			String[] data = new String[JimmUI.UI_LAST_ID];
 			data[JimmUI.UI_NICK] = name;
+			data[JimmUI.UI_UIN] = uin;
 			data[JimmUI.UI_UIN_LIST] = uin;
 			showUserInfo(data);
 			showInfoTextList(infoTextList);
@@ -1110,6 +1165,18 @@ public class JimmUI implements CommandListener
 		last_user_info = data;
 		if (infoTextList == null) return;
 		infoTextList.clear();
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		try
+		{
+			ContactItem cItem = ContactList.getItembyUIN(data[JimmUI.UI_UIN]);
+			byte[] imgtmp = cItem.getBytesArray(ContactItem.CONTACTITEM_BUDDYICON);
+			Image image = Image.createImage (imgtmp, 0, imgtmp.length);
+			imgtmp = null;
+			if (image != null) infoTextList.insertImage(image, null, -1, 0).doCRLF(-1);
+			image = null;
+		} catch (Exception ignore) {/*Do nothing*/}
+		//  #sijapp cond.end#
+
 		JimmUI.fillUserInfo(data, infoTextList);
 		infoTextList.removeCommandEx(cmdCancel);
 		infoTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
@@ -1806,6 +1873,9 @@ public class JimmUI implements CommandListener
 					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_UIN), 
 					clciContactMenu.getStringValue(ContactItem.CONTACTITEM_NAME), 
 					false
+					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+					,clciContactMenu.getBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH)
+					//  #sijapp cond.end#
 				);
 				break;
 				

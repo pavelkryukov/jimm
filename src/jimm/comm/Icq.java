@@ -214,14 +214,16 @@ public class Icq implements Runnable
 	/* Disconnects from the ICQ network */
 	static public synchronized void disconnect(boolean force)
 	{
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		disconnectBart(force);
+		//#sijapp cond.end#
+
 		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 		resetPeerCon();
 		//#sijapp cond.end#
 
 		if (c == null) return;
 		
-//		try { c.sendPacket (new DisconnectPacket()); } catch (Exception ignore) { /* Do nothing */ }
-
 		setDisconnected(true);
 		
 		thread = null;
@@ -246,6 +248,19 @@ public class Icq implements Runnable
 
 		if (c.haveToSetNullAfterDisconnect()) c = null;
 	}
+
+	/* Disconnects from the ICQ network */
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	static public synchronized void disconnectBart(boolean force)
+	{
+		if (bartC == null) return;
+		
+		if (force) bartC.forceDisconnect();
+		else bartC.notifyToDisconnect();
+
+		if (bartC.haveToSetNullAfterDisconnect()) bartC = null;
+	}
+	//#sijapp cond.end#
 
 	static public void setVisibility(int value)
 	{
@@ -329,6 +344,9 @@ public class Icq implements Runnable
 
 	// Connection to the ICQ server
 	static Connection c;
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	static Connection bartC;
+	//  #sijapp cond.end#
 
 	// Connection to peer
 	//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
@@ -365,7 +383,9 @@ public class Icq implements Runnable
 		// Is a DC packet Available
 		boolean dcPacketAvailable;
 		//  #sijapp cond.end#
-
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		boolean biPacketAvailable;
+		//  #sijapp cond.end#
 
 		// Get thread object
 		Thread thread = Thread.currentThread();
@@ -443,10 +463,19 @@ public class Icq implements Runnable
 				dcPacketAvailable = (peerC != null) ? ((peerC.available() > 0) ? true : false ) : false;
 				//  #sijapp cond.end#
 
+				// Set biPacketAvailable to true if the bartC is not null and
+				// there is an packet waiting
+				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+				biPacketAvailable = (bartC != null) ? ((bartC.available() > 0) ? true : false ) : false;
+				//  #sijapp cond.end#
+
 				// Wait if a new action does not exist
 				if ((newAction == null) && (c.available() == 0)
 				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 					&& !dcPacketAvailable
+				//  #sijapp cond.end#
+				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+					&& !biPacketAvailable
 				//  #sijapp cond.end#
 				)
 				{
@@ -480,6 +509,9 @@ public class Icq implements Runnable
 				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 				dcPacketAvailable = (peerC != null) ? ((peerC.available() > 0) ? true : false ) : false;
 				//  #sijapp cond.end#
+				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+				biPacketAvailable = (bartC != null) ? ((bartC.available() > 0) ? true : false ) : false;
+				//  #sijapp cond.end#
 
 				// Read next packet, if available
 				Packet packet;
@@ -488,6 +520,9 @@ public class Icq implements Runnable
 					(c.available() > 0)
 				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 					|| dcPacketAvailable
+				//  #sijapp cond.end#
+				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+					|| biPacketAvailable
 				//  #sijapp cond.end#
 				)
 				{
@@ -498,6 +533,9 @@ public class Icq implements Runnable
 						if (c.available() > 0) packet = c.getPacket();
 						//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 						else if (dcPacketAvailable) packet = peerC.getPacket();
+						//  #sijapp cond.end#
+						//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+						else if (biPacketAvailable) packet = bartC.getPacket();
 						//  #sijapp cond.end#
 					} catch (JimmException e)
 					{
@@ -539,6 +577,9 @@ public class Icq implements Runnable
 
 					//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 					dcPacketAvailable = (peerC != null) ? ((peerC.available() > 0) ? true : false ) : false;
+					//  #sijapp cond.end#
+					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+					biPacketAvailable = (bartC != null) ? ((bartC.available() > 0) ? true : false ) : false;
 					//  #sijapp cond.end#
 				}
 
@@ -597,6 +638,9 @@ public class Icq implements Runnable
 		
 		// Disconnect flags
 		private volatile boolean inputCloseFlag;
+		
+		// Connection state
+		protected volatile boolean state = false;		// true - connected, false - disconnected
 
 		// Receiver thread
 		protected volatile Thread rcvThread;
@@ -606,6 +650,9 @@ public class Icq implements Runnable
 
 		// FLAP sequence number
 		protected int flapSEQ;
+
+		// Type of connection for exceptions handling
+		protected int typeNetwork;
 
 		// Opens a connection to the specified host and starts the receiver
 		// thread
@@ -639,6 +686,12 @@ public class Icq implements Runnable
 		}
 		
 		public abstract void forceDisconnect();
+
+		// Return the connection state
+		public synchronized boolean getState()
+		{
+			return (this.state);
+		}
 
 		// Returns the number of packets available
 		public synchronized int available()
@@ -1158,7 +1211,8 @@ public class Icq implements Runnable
 			}
 			
 			closeStreams();
-			setNotConnected();
+			if (typeNetwork == JimmException.ICQ_MAIN)
+				setNotConnected();
 		}
 		
 		private void closeStreams()
@@ -1206,12 +1260,23 @@ public class Icq implements Runnable
 		// ICQ sequence number counter
 		private int nextIcqSequence;
 
+		public SOCKETConnection ()
+		{
+			this.typeNetwork = JimmException.ICQ_MAIN;
+		}
+
+		public SOCKETConnection (int type)
+		{
+			this.typeNetwork = type;
+		}
+
 		// Opens a connection to the specified host and starts the receiver thread
 		public synchronized void connect(String hostAndPort)
 				throws JimmException
 		{
 			try
 			{
+				state = false;
 				//#sijapp cond.if target!="DEFAULT"#
 				sc = (SocketConnection) Connector.open("socket://"
 						+ hostAndPort, Connector.READ_WRITE);
@@ -1228,6 +1293,7 @@ public class Icq implements Runnable
 				Random rand = new Random(System.currentTimeMillis());
 				flapSEQ = rand.nextInt() % 0x8000;
 				nextIcqSequence = 2;
+				state = true;
 			} catch (ConnectionNotFoundException e)
 			{
 				if (!getInputCloseFlag()) throw (new JimmException(121, 0));
@@ -1241,13 +1307,17 @@ public class Icq implements Runnable
 			{
 				throw (new JimmException(119, 0));
 			}
+			finally
+			{
+				if (!state) closeStreams();
+			}
 		}
 
 		// Sends the specified packet
 		public void sendPacket(Packet packet) throws JimmException
 		{
 			// Throw exception if output stream is not ready
-			if (os == null) throw new JimmException(123, 0);
+			if (os == null) throw new JimmException(123, 0, this.typeNetwork);
 
 			// Request lock on output stream
 			synchronized (os)
@@ -1276,8 +1346,9 @@ public class Icq implements Runnable
 					//#sijapp cond.end#
 				} catch (IOException e)
 				{
+					state = false;
 					notifyToDisconnect();
-					if (!getInputCloseFlag()) throw new JimmException(120, 3);
+					if (!getInputCloseFlag()) throw new JimmException(120, 3, this.typeNetwork);
 				}
 
 			}
@@ -1420,27 +1491,27 @@ public class Icq implements Runnable
 			catch (IOException e)
 			{
 				// Construct and handle exception (only if input close flag has not been set)
-				if (!getInputCloseFlag() && (Icq.c == this))
+				if (!getInputCloseFlag() && ((Icq.c == this) && (this.typeNetwork == JimmException.ICQ_MAIN)))
 				{
-					JimmException f = new JimmException(120, 1);
+					JimmException f = new JimmException(120, 1, this.typeNetwork);
 					JimmException.handleException(f);
 				}
 				// Reset input close flag
 			}
 			finally
 			{
+				state = false;
 				closeStreams();
-				if (Icq.c == this)
+				if ((Icq.c == this) && (this.typeNetwork == JimmException.ICQ_MAIN))
 					setNotConnected();
 			}
 			
 			// Sometimes Nokia emulator stops working and bRead returns -1 
 			if (bRead == -1 && !getInputCloseFlag())
 			{
-				JimmException f = new JimmException(120, 4);
+				JimmException f = new JimmException(120, 4, this.typeNetwork);
 				JimmException.handleException(f);
 			}
-			
 		}
 		
 		private void closeStreams()
@@ -2207,6 +2278,14 @@ public class Icq implements Runnable
 		// Received packets
 		private Vector rcvdPackets;
 
+		// Type of connection for exceptions handling
+		protected int typeNetwork;
+
+		public PeerConnection ()
+		{
+			this.typeNetwork = JimmException.ICQ_PEER;
+		}
+
 		// Opens a connection to the specified host and starts the receiver
 		// thread
 		public synchronized void connect(String hostAndPort)
@@ -2496,6 +2575,11 @@ public class Icq implements Runnable
 				JimmException f = new JimmException(119, 1, true, true);
 				JimmException.handleException(f);
 			}
+			finally
+			{
+				this.close();
+			}
+			
 		}
 
 	}
@@ -2647,6 +2731,9 @@ public class Icq implements Runnable
 			capsStream.write(CAP_AIM_ISICQ);
 			capsStream.write(CAP_ICHAT);
 			capsStream.write(CAP_UTF8);
+			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+			capsStream.write(CAP_AVATAR);
+			//#sijapp cond.end#
 			capsStream.write(CAP_VERSION);
 
 			//#sijapp cond.if target!="DEFAULT"#
@@ -3504,11 +3591,11 @@ public class Icq implements Runnable
 
 		item.setIntValue(ContactItem.CONTACTITEM_CAPABILITIES, (int)(caps&0xFFFFFFFF));
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
-		System.out.println("uin - " + item.getStringValue(ContactItem.CONTACTITEM_UIN) + " found capabilities count:" + capabilities.length/16);
-		System.out.println("dwFP1 = " + "0x"+Integer.toHexString(dwFP1) + ", " + "dwFP2 = " + "0x"+Integer.toHexString(dwFP2) + ", " + "dwFP3 = " + "0x"+Integer.toHexString(dwFP3));
-		System.out.println("wVersion = " + Integer.toHexString(wVersion));
-		System.out.println("client = " + client + ", " + "szVersion = " + szVersion);
-		Util.PrintCapabilities("", capabilities);
+//		System.out.println("uin - " + item.getStringValue(ContactItem.CONTACTITEM_UIN) + " found capabilities count:" + capabilities.length/16);
+//		System.out.println("dwFP1 = " + "0x"+Integer.toHexString(dwFP1) + ", " + "dwFP2 = " + "0x"+Integer.toHexString(dwFP2) + ", " + "dwFP3 = " + "0x"+Integer.toHexString(dwFP3));
+//		System.out.println("wVersion = " + Integer.toHexString(wVersion));
+//		System.out.println("client = " + client + ", " + "szVersion = " + szVersion);
+//		Util.PrintCapabilities("", capabilities);
 		//#sijapp cond.end#
 	}
 

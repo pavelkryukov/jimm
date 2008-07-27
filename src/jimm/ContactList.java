@@ -1026,7 +1026,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// USE RunnableImpl.updateContactList INSTEAD!
 	static public synchronized void update(String uin, int status, int xStatus, String xStatusMessage,
 			byte[] internalIP, byte[] externalIP, int dcPort, int dcType,
-			int icqProt, int authCookie, int signon, int online, int idle)
+			int icqProt, int authCookie, int signon, int online, int idle
+			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+			, byte[] biHash
+			//#sijapp cond.end#
+	)
 	{
 		ContactItem cItem = getItembyUIN(uin);
 
@@ -1063,6 +1067,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 		// Set x-status message
 		cItem.setStringValue (ContactItem.CONTACTITEM_XSTATUSMSG, xStatusMessage);
+
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		cItem.setBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH, biHash);
+		//#sijapp cond.end#
 
 		// Update DC values
 		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
@@ -1113,8 +1121,28 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Updates the client-side contact list (called when a contact changes status)
 	static public synchronized void update(String uin, int status)
 	{
-		update(uin, status, -1, null, null, null, 0, 0, -1, 0, -1, -1, -1);
+		update(uin, status, -1, null, null, null, 0, 0, -1, 0, -1, -1, -1
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		, null
+		//#sijapp cond.end#
+			);
 	}
+
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	static public synchronized void update(String uin, byte[] iconRaw, byte[] biHashOfDone)
+	{
+		ContactItem cItem = getItembyUIN(uin);
+
+		if (cItem == null)
+		{
+			return;
+		}
+
+		cItem.setBytesArray(ContactItem.CONTACTITEM_BUDDYICON, iconRaw);
+		cItem.setBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH_READY, biHashOfDone);
+
+	}
+	//#sijapp cond.end#
 
 	static private void statusChanged(ContactItem cItem,
 			boolean wasOnline, boolean nowOnline, int tolalChanges)

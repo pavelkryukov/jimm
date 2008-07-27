@@ -621,6 +621,16 @@ public class SplashCanvas extends Canvas implements CommandListener
 		lastAction = action;
 	}
 	
+	public static void addTimerTask(Action action)
+	{
+		TimerTasks timerTask = new TimerTasks(action);
+
+		Jimm.getTimerRef().schedule(timerTask, 1000, 1000);
+		
+		lastTimerTask = timerTask;
+		lastAction = action;
+	}
+
 	public void commandAction(Command c, Displayable d)
 	{
 		if (c == SplashCanvas.cancelCommand)

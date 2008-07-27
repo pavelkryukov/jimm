@@ -556,6 +556,46 @@ public class TextList extends VirtualList implements Runnable
 		return addAniImage(new Image[] {image}, null, altarnateText, blockTextIndex);
 	}
 
+	public TextList insertAniImage(Image[] image, byte[] imgNumsAndTimes, String altarnateText, int blockTextIndex, int textLineIndex)
+	{
+		if (lines.isEmpty())
+		{
+			lines.addElement(new TextLine());
+			textLineIndex = 0;
+		}
+		else
+		{
+			lines.insertElementAt(new TextLine(), textLineIndex);
+		}
+
+		TextLine textLine = (TextLine) lines.elementAt(textLineIndex);
+
+		textLine.bigTextIndex = blockTextIndex;
+		
+		if ((textLine.getWidth(getFontSize()) + image[0].getWidth()) > getTextAreaWidth())
+		{
+			doCRLF(blockTextIndex);
+			textLine = (TextLine) lines.lastElement();
+		}
+
+		TextItem newItem = new TextItem();
+		newItem.image = image;
+		newItem.imgNumsAndTimes = imgNumsAndTimes;
+		newItem.text = altarnateText;
+		textLine.add(newItem);
+		
+		boolean lastAnimated = animated; 
+		animated |= (image.length > 1);
+		if (lastAnimated != animated) startAnimationTask();
+		
+		return this;
+	}
+
+	public TextList insertImage(Image image, String altarnateText, int blockTextIndex, int textLineIndex)
+	{
+		return insertAniImage(new Image[] {image}, null, altarnateText, blockTextIndex, textLineIndex);
+	}
+
 	private int getTextAreaWidth()
 	{
 		return getWidthInternal() - scrollerWidth - borderWidth*2;

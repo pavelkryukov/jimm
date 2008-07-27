@@ -62,6 +62,9 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_ACTIVATE_MM         = 21;
 	final static public int TYPE_RESET_LOGIN_TIMER   = 22;
 	final static public int TYPE_RECONNECT           = 23;
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	final static public int TYPE_UPDATE_BUDDYICON    = 24;
+	//  #sijapp cond.end#
 
 	RunnableImpl(int type, Object[] data)
 	{
@@ -115,9 +118,19 @@ public class RunnableImpl implements Runnable
 			ContactList.update((String) data[0], getInt(data, 1), getInt(data, 2), (String) data[3],
 					(byte[]) data[4], (byte[]) data[5], getInt(data, 6),
 					getInt(data, 7), getInt(data, 8), getInt(data, 9), getInt(
-							data, 10), getInt(data, 11), getInt(data, 12));
+							data, 10), getInt(data, 11), getInt(data, 12)
+							//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+							,(byte[]) data[13]
+							//  #sijapp cond.end#
+			);
 
 			break;
+
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		case TYPE_UPDATE_BUDDYICON:
+			ContactList.update((String) data[0], (byte[]) data[1], (byte[]) data[2]);
+			break;
+		//  #sijapp cond.end#
 
 		case TYPE_RESET_CONTACTS:
 			ContactList.setStatusesOffline();
@@ -172,9 +185,9 @@ public class RunnableImpl implements Runnable
 			break;
 			
 		case TYPE_RECONNECT:
-			try {Thread.sleep(5000);} catch (Exception e) {}
 			if (!Icq.isDisconnected())
 			{
+				try {Thread.sleep(5000);} catch (Exception e) {}
 				ContactList.beforeConnect();
 				Icq.connect();
 			}
@@ -224,9 +237,17 @@ public class RunnableImpl implements Runnable
 
 	static public void updateContactList(String uin, int status, int xStatus, String xStatusMessage,
 			byte[] internalIP, byte[] externalIP, int dcPort, int dcType,
-			int icqProt, int authCookie, int signon, int online, int idle)
+			int icqProt, int authCookie, int signon, int online, int idle
+			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+			, byte[] biHash
+			//#sijapp cond.end#
+	)
 	{
-		Object[] arguments = new Object[14];
+		//# sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		Object[] arguments = new Object[15];
+		//# sijapp cond.else#
+		//# Object[] arguments = new Object[14];
+		//# sijapp cond.end#
 
 		arguments[0] = uin;
 		setInt(arguments, 1, status);
@@ -241,9 +262,25 @@ public class RunnableImpl implements Runnable
 		setInt(arguments, 10, signon);
 		setInt(arguments, 11, online);
 		setInt(arguments, 12, idle);
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		arguments[13] = biHash;
+		//#sijapp cond.end#
 
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
 	}
+
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	static public void updateBuddyIcon(String uin, byte[] iconRaw, byte[] biHashOfDone)
+	{
+		Object[] arguments = new Object[3];
+
+		arguments[0] = uin;
+		arguments[1] = iconRaw;
+		arguments[2] = biHashOfDone;
+
+		callSerially(TYPE_UPDATE_BUDDYICON, arguments);
+	}
+	//#sijapp cond.end#
 
 	//#sijapp cond.if target isnot "DEFAULT"#
 	static public void BeginTyping(String uin, boolean type)

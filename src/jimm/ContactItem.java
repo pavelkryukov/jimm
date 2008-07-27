@@ -74,9 +74,15 @@ public class ContactItem implements ContactListItem, JimmScreen
 	public static final int CONTACTITEM_B_AUTREQUESTS = 1 << 9;
 	
 	/* bytes[] */
-	public static final int CONTACTITEM_INTERNAL_IP   = 225;
-	public static final int CONTACTITEM_EXTERNAL_IP   = 226;
-	public static final int CONTACTITEM_SS_DATA       = 227; 
+	public static final int CONTACTITEM_INTERNAL_IP			 = 225;
+	public static final int CONTACTITEM_EXTERNAL_IP     	 = 226;
+	public static final int CONTACTITEM_SS_DATA         	 = 227;
+
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	public static final int CONTACTITEM_BUDDYICON_HASH       = 228;
+	public static final int CONTACTITEM_BUDDYICON_HASH_READY = 229;
+	public static final int CONTACTITEM_BUDDYICON       	 = 230;
+	//#sijapp cond.end #
 
 	/* No capability */
 	public static final int CAP_NO_INTERNAL = 0x00000000;
@@ -106,6 +112,11 @@ public class ContactItem implements ContactListItem, JimmScreen
 	private String lowerText;
 	private String xStatusMessage;
 	private byte[] ssData; // server-size raw data
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	private byte[] biHash; // buddy-icon hash
+	private byte[] biHashDone; // buddy-icon hash of downloaded image
+	private byte[] buddyIcon; // buddy-icon raw data
+	//#sijapp cond.end #
 
 	private int COLOR_NORMAL;
 	private int COLOR_HASCHAT;
@@ -386,6 +397,17 @@ public class ContactItem implements ContactListItem, JimmScreen
 		case CONTACTITEM_SS_DATA:
 			ssData = value;
 			break;
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		case CONTACTITEM_BUDDYICON_HASH:
+			biHash = value;
+			break;
+		case CONTACTITEM_BUDDYICON_HASH_READY:
+			biHashDone = value;
+			break;
+		case CONTACTITEM_BUDDYICON:
+			buddyIcon = value;
+			break;
+		//#sijapp cond.end #
 		}
 	}
 
@@ -402,6 +424,14 @@ public class ContactItem implements ContactListItem, JimmScreen
 			
 		case CONTACTITEM_SS_DATA:
 			return ssData;
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		case CONTACTITEM_BUDDYICON_HASH:
+			return biHash;
+		case CONTACTITEM_BUDDYICON_HASH_READY:
+			return biHashDone;
+		case CONTACTITEM_BUDDYICON:
+			return buddyIcon;
+		//#sijapp cond.end #
 		}
 		return null;
 	}
@@ -459,6 +489,10 @@ public class ContactItem implements ContactListItem, JimmScreen
 					ContactList.STATUS_OFFLINE);
 			setIntValue_(ContactItem.CONTACTITEM_CAPABILITIES,
 					Icq.CAPF_NO_INTERNAL);
+			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+			setBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH, new byte[16]);
+			setBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH_READY, new byte[16]);
+			//#sijapp cond.end#
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			//#sijapp cond.if modules_FILES is "true"#
 			setBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
@@ -494,6 +528,23 @@ public class ContactItem implements ContactListItem, JimmScreen
 	{
 		xStatusId = -1;
 	}
+
+	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	/* Returns true if buddy icon can to be downloaded */
+	synchronized public boolean iconReady()
+	{
+		if (Util.byteArrayIsEmpty(biHash, biHash.length))
+			return false;
+		
+		if (Util.byteArrayEquals(biHash, 0, biHashDone, 0, biHash.length))
+			return false;
+
+		if ((buddyIcon != null) && (buddyIcon.length > 0))
+			return false;
+
+		return true;
+	}
+	//#sijapp cond.end#
 
 	/* Returns true if client supports given capability */
 	synchronized public boolean hasCapability(int capability)

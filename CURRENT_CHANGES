@@ -9,6 +9,7 @@ Implemented:
   * NEW FEATURE: Animated emotions
   * NEW FEATURE: Antispam filter
   * NEW FEATURE: Background image from jar or from file
+  * NEW FEATURE: Loading buddy icons
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * BUGFIX: Reconnect to server feature, cancel of connecting
   * BUGFIX: Channel-2 text messages contain wrong background color
@@ -39,4 +40,3 @@ Planned:
   * Changes graphics and sounds directly form Jimm
   * Full extended status support
   * Sending SMS and dialing 
-  * Buddy icons (Avatars)

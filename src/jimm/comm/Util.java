@@ -783,6 +783,29 @@ public class Util
 
 	}
 
+	public static boolean byteArrayIsEmpty(byte[] buf, int len)
+	{
+
+		// Length check
+		if (len > buf.length)
+		{
+			len = buf.length;
+		}
+
+		// Compare bytes, stop at first mismatch
+		for (int i = 0; i < len; i++)
+		{
+			if (buf[i] != 0)
+			{
+				return (false);
+			}
+		}
+
+		// Return true if this point is reached
+		return (true);
+
+	}
+
 	// DeScramble password
 	public static byte[] decipherPassword(byte[] buf)
 	{
@@ -909,16 +932,16 @@ public class Util
 	//#sijapp cond.end #
 
 	// Check is data array utf-8 string
-	public static boolean isDataUTF8(byte[] array, int start, int lenght)
+	public static boolean isDataUTF8(byte[] array, int start, int length)
 	{
-		if (lenght == 0)
+		if (length == 0)
 			return false;
-		if (array.length < (start + lenght))
+		if (array.length < (start + length))
 			return false;
 
 		int seqLen;
 		byte bt;
-		for (int i = start, len = lenght; len > 0;)
+		for (int i = start, len = length; len > 0;)
 		{
 			seqLen = 0;
 			bt = array[i++];

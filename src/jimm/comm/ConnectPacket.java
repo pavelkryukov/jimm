@@ -318,6 +318,10 @@ public class ConnectPacket extends Packet
 				case 0x000E:   // country
 					country = Util.byteArrayToString(tlvValue);
 					break;
+				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+				case 32769:   // bart server
+					break;
+				//#sijapp cond.end#
 				default:
 					throw (new JimmException(132, 2));
 			}
