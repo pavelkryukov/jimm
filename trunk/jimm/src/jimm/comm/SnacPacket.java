@@ -44,6 +44,14 @@ public class SnacPacket extends Packet
 	public static final int SRV_FAMILIES_FAMILY = 0x0001;
 	public static final int SRV_FAMILIES_COMMAND = 0x0003;
 
+	// CLI_SERVICEREQUEST packet family and command
+	public static final int CLI_SERVICEREQUEST_FAMILY = 0x0001;
+	public static final int CLI_SERVICEREQUEST_COMMAND = 0x0004;
+
+	// SRV_REDIRECTxSERVICE packet family and command
+	public static final int SRV_REDIRECT_FAMILY = 0x0001;
+	public static final int SRV_REDIRECT_COMMAND = 0x0005;
+
 	// CLI_RATESREQUEST packet family and command
 	public static final int CLI_RATESREQUEST_FAMILY = 0x0001;
 	public static final int CLI_RATESREQUEST_COMMAND = 0x0006;
@@ -178,6 +186,19 @@ public class SnacPacket extends Packet
 	/***************************/
 
 	// Nothing
+
+
+	/**************************/
+	/* Family 0x0010: AVATARS */
+	/**************************/
+
+	// CLI_REQAVATAR packet family and command
+	public static final int CLI_REQAVATAR_FAMILY = 0x0010;
+	public static final int CLI_REQAVATAR_COMMAND = 0x0006;
+
+	// SRV_REPLYLISTS packet family and command
+	public static final int SRV_REPLYAVATAR_FAMILY = 0x0010;
+	public static final int SRV_REPLYAVATAR_COMMAND = 0x0007;
 
 
 	/*************************/

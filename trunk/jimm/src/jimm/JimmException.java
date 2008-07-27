@@ -31,6 +31,10 @@ import javax.microedition.lcdui.*;
 public class JimmException extends Exception
 {
 
+	static public final int ICQ_MAIN = 2001;
+	static public final int ICQ_BART = 2002;
+	static public final int ICQ_PEER = 2003;
+
 	// Returns the error description for the given error code
 	public static String getErrDesc(int errCode, int extErrCode)
 	{
@@ -59,6 +63,7 @@ public class JimmException extends Exception
 
 	private int _ErrCode;
 	private int _ExtErrCode;
+	private int typeNetwork;
 
 	public int getErrCode()
 	{
@@ -89,7 +94,42 @@ public class JimmException extends Exception
 		//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 		this.peer = false;
 		//  #sijapp cond.end#
+	}
 
+	// Constructs a JimmException for network connections
+	public JimmException(int errCode, int extErrCode, int typeNetwork)
+	{
+		super(JimmException.getErrDesc(errCode, extErrCode));
+		this._ErrCode = errCode;
+		this._ExtErrCode = extErrCode;
+		this.typeNetwork = typeNetwork;
+
+		switch (this.typeNetwork)
+		{
+			case ICQ_MAIN:
+				this.critical = true;
+				this.displayMsg = true;
+				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+				this.peer = false;
+				//  #sijapp cond.end#
+				break;
+			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+			case ICQ_BART:
+				this.critical = false;
+				this.displayMsg = false;
+				//  #sijapp cond.if modules_FILES="true"#
+				this.peer = false;
+				//  #sijapp cond.end#
+				break;
+			//  #sijapp cond.end#
+			//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+			case ICQ_PEER:
+				this.critical = false;
+				this.displayMsg = true;
+				this.peer = true;
+				break;
+			//  #sijapp cond.end#
+		}
 	}
 
 	// Constructs a non-critical JimmException
@@ -138,6 +178,12 @@ public class JimmException extends Exception
 		return (this.peer);
 	}
 	//  #sijapp cond.end#
+
+	// Returns network type
+	public int getTypeNetwork()
+	{
+		return (this.typeNetwork);
+	}
 
 	// Exception handler
 	public synchronized static Alert handleException(JimmException e)
@@ -192,6 +238,12 @@ public class JimmException extends Exception
 		// Non-critical exception
 		else
 		{
+			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+			if (e.getTypeNetwork() == ICQ_BART)
+			{
+				Icq.disconnectBart(true);
+			}
+			//  #sijapp cond.end#
 
 			// Display error message, if required
 			if (e.isDisplayMsg())

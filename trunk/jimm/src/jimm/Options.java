@@ -1005,7 +1005,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 					//#sijapp cond.if target isnot "DEFAULT" #
 					+ "|" + "#sound_off"
-			//#sijapp cond.end#
+					//#sijapp cond.end#
 
 			, '|');
 
@@ -1027,7 +1027,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			//#sijapp cond.if target isnot "DEFAULT" #
 			Options.HOTKEY_SOUNDOFF,
-	//#sijapp cond.end#
+			//#sijapp cond.end#
 	};
 
 	// Constructor
@@ -2020,7 +2020,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			break;
 			
 		case OPTIONS_MY_INFO:
-			JimmUI.requiestUserInfo(Options.getString(Options.OPTION_UIN), "", true);
+			JimmUI.requiestUserInfo(Options.getString(Options.OPTION_UIN), "", true
+				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+				, null
+				//  #sijapp cond.end#
+				);
 			return;
 			
 		case OPTIONS_MANAGE_CL:

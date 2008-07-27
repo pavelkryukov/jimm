@@ -683,6 +683,9 @@ public class ConnectAction extends Action
 								
 								// Get nick
 								String nick = new String(name);
+								//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+								byte[] biHash = new byte[16];
+								//#sijapp cond.end#
 								
 								boolean noAuth = false;
 								while (len > 0)
@@ -719,6 +722,9 @@ public class ConnectAction extends Action
 									ContactItem item = new ContactItem(id, group, name, nick, noAuth, true);
 									if (group == 0) item.setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP|ContactItem.CONTACTITEM_IS_PHANTOM, true); 
 									item.setBytesArray(ContactItem.CONTACTITEM_SS_DATA, (serverData.size() != 0) ? serverData.toByteArray() : null);
+									//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+									item.setBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH, (biHash.length != 0) ? biHash : null);
+									//#sijapp cond.end#
 									items.addElement(item);
 								}
 								catch (NumberFormatException ne)

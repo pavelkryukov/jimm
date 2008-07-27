@@ -119,6 +119,11 @@ public class ActionListener
 				byte[] capabilities_old = null; // Buffer for old style capabilities (TLV 0x000D)
 				byte[] capabilities_new = null; // Buffer for new style capabilities (TLV 0x0019)
 
+				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+				// Buddy Icon
+				byte[] biHash = new byte[16];	// Buffer for buddy icon md5 hash
+				//#sijapp cond.end#
+
 				// Time variables
 				int idle = -1;
 				int online = -1;
@@ -166,7 +171,14 @@ public class ActionListener
 							int bart_len = Util.getByte(tlvData, marker1d);
 							marker1d ++;
 
-							if ((bart_id == 0x0002) && (bart_flg == 0x0004))
+							if ((bart_id == 0x0001) && (bart_flg == 0x0001))	// ICON HASH
+							{
+								//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+								System.arraycopy(tlvData, marker1d, biHash, 0, (bart_len < 17) ? bart_len : 0x0010);
+								// Util.PrintCapabilities(uin + "[ << ]",biHash);
+								//#sijapp cond.end#
+							}
+							else if ((bart_id == 0x0002) && (bart_flg == 0x0004))
 							{
 								int textLen = (int)Util.getWord(tlvData, marker1d);
 								xStatusMessage = Util.byteArrayToString(tlvData, marker1d+2, textLen, true);
@@ -248,9 +260,17 @@ public class ActionListener
 					if (xStatus == -1)
 						xStatus = Icq.detectXStatus(capsArray);
 				}
-				RunnableImpl.updateContactList(uin, status, xStatus, xStatusMessage, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle);
+				RunnableImpl.updateContactList(uin, status, xStatus, xStatusMessage, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle
+					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+					, biHash
+					//#sijapp cond.end#
+				);
 				//#sijapp cond.else#
-				RunnableImpl.updateContactList(uin, status, -1, null, null, null, 0, 0, 0, 0, signon, online,idle);
+				RunnableImpl.updateContactList(uin, status, -1, null, null, null, 0, 0, 0, 0, signon, online, idle
+					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+					, null
+					//#sijapp cond.end#
+				);
 				//#sijapp cond.end#
 			}
 
