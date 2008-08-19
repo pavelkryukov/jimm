@@ -24,6 +24,7 @@
 package jimm.comm;
 
 import java.util.*;
+import javax.microedition.lcdui.Image;
 
 import jimm.JimmException;
 import jimm.DebugLog;
@@ -281,7 +282,14 @@ public class RequestBuddyIconAction extends Action
 					    marker += 2;
 					    byte[] iconRaw = new byte[imgLength];
 					    System.arraycopy(buf, marker, iconRaw, 0, imgLength);
-					    RunnableImpl.updateBuddyIcon (uin, iconRaw, biHash);
+					    Image av = null;
+					    try {
+							av = Image.createImage (iconRaw, 0, iconRaw.length);
+					    } catch (Exception ignore) {/* Do nothing */}
+					    if (av != null) {
+							RunnableImpl.updateBuddyIcon (uin, av, biHash);
+							av = null;
+					    }
 					    iconRaw = null;
 					    buf = null;
 	

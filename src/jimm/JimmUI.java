@@ -1081,16 +1081,14 @@ public class JimmUI implements CommandListener
 				try
 				{
 					ContactItem cItem = ContactList.getItembyUIN(uin);
-					byte[] imgtmp = cItem.getBytesArray(ContactItem.CONTACTITEM_BUDDYICON);
-					Image image = Image.createImage (imgtmp, 0, imgtmp.length);
-					imgtmp = null;
+					Image image = cItem.getImage(ContactItem.CONTACTITEM_BUDDYICON);
 					if (image != null)
 					{
 						infoTextList.insertImage(image, null, -1, 0).doCRLF(-1);
 						infoTextList.repaint();
 					}
 					image = null;
-				} catch (Exception ignore) {/*Do nothing*/}
+				} catch (Exception ignore) {/* Do nothing */}
 			}
 		}
 	}
@@ -1111,22 +1109,23 @@ public class JimmUI implements CommandListener
 				infoTextList.addCommandEx(cmdEdit, VirtualList.MENU_TYPE_RIGHT);
 
 			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-			ContactItem cItem = ContactList.getItembyUIN(uin);
-
-			if (cItem.iconReady())
-			{
-				RequestBuddyIconAction act = new RequestBuddyIconAction(uin,hash);
-				try
+			if (hash != null) {
+				ContactItem cItem = ContactList.getItembyUIN(uin);
+				if (cItem.iconReady())
 				{
-					Icq.requestAction(act);
-				} catch (JimmException e)
-				{
-					System.out.println ("Exception!");
-						JimmException.handleException(e);
-					if (e.isCritical())
-						return;
+					RequestBuddyIconAction act = new RequestBuddyIconAction(uin,hash);
+					try
+					{
+						Icq.requestAction(act);
+					} catch (JimmException e)
+					{
+						System.out.println ("Exception!");
+							JimmException.handleException(e);
+						if (e.isCritical())
+							return;
+					}
+					SplashCanvas.addTimerTask(act);
 				}
-				SplashCanvas.addTimerTask(act);
 			}
 			//  #sijapp cond.end#
 
@@ -1169,9 +1168,7 @@ public class JimmUI implements CommandListener
 		try
 		{
 			ContactItem cItem = ContactList.getItembyUIN(data[JimmUI.UI_UIN]);
-			byte[] imgtmp = cItem.getBytesArray(ContactItem.CONTACTITEM_BUDDYICON);
-			Image image = Image.createImage (imgtmp, 0, imgtmp.length);
-			imgtmp = null;
+			Image image = cItem.getImage(ContactItem.CONTACTITEM_BUDDYICON);
 			if (image != null) infoTextList.insertImage(image, null, -1, 0).doCRLF(-1);
 			image = null;
 		} catch (Exception ignore) {/*Do nothing*/}
