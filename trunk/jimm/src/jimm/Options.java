@@ -1448,6 +1448,22 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 	public void itemStateChanged(Item item)
 	{
+		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+		if ((backImgGroup != null) && (backImgGroup == item))
+		{
+			int selItem = backImgGroup.getSelectedIndex();
+			
+			if (selItem == Options.BG_IMAGE_EXT)
+			{
+				if (backImgFilenameIndex == 0)
+					backImgFilenameIndex = optionsForm.append(backImgFilename);
+			} else if (backImgFilenameIndex != 0) {
+				optionsForm.delete(backImgFilenameIndex);
+				backImgFilenameIndex = 0;
+			}
+		}
+		//#sijapp cond.end#
+
 		if (uinTextField != null)
 		{
 			int accCount = uinTextField.length;
@@ -1463,21 +1479,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				}
 			}
 		}
-		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
-		else if (backImgGroup != null)
-		{
-			int selItem = backImgGroup.getSelectedIndex();
-			
-			if (selItem == Options.BG_IMAGE_EXT)
-			{
-				if (backImgFilenameIndex == 0)
-					backImgFilenameIndex = optionsForm.append(backImgFilename);
-			} else if (backImgFilenameIndex != 0) {
-				optionsForm.delete(backImgFilenameIndex);
-				backImgFilenameIndex = 0;
-			}
-		}
-		//#sijapp cond.end#
 	}
 
 	///////////////////////////////////////////////////////////////////////////
