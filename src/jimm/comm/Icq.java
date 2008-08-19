@@ -3065,6 +3065,9 @@ public class Icq implements Runnable
 	public static int detectXStatus(byte[] capabilities)
 	{
 		int counter;
+
+		if (capabilities == null)
+			return -1;
 		for (int i = 0; i < capabilities.length; i += 16)
 		{
 			for (int j = 0; j < XSTATUS_CONSTS.length; j += 18)
