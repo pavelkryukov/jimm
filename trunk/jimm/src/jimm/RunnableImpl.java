@@ -128,7 +128,7 @@ public class RunnableImpl implements Runnable
 
 		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 		case TYPE_UPDATE_BUDDYICON:
-			ContactList.update((String) data[0], (byte[]) data[1], (byte[]) data[2]);
+			ContactList.update((String) data[0], (Image) data[1], (byte[]) data[2]);
 			break;
 		//  #sijapp cond.end#
 
@@ -270,12 +270,12 @@ public class RunnableImpl implements Runnable
 	}
 
 	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-	static public void updateBuddyIcon(String uin, byte[] iconRaw, byte[] biHashOfDone)
+	static public void updateBuddyIcon(String uin, Image image, byte[] biHashOfDone)
 	{
 		Object[] arguments = new Object[3];
 
 		arguments[0] = uin;
-		arguments[1] = iconRaw;
+		arguments[1] = image;
 		arguments[2] = biHashOfDone;
 
 		callSerially(TYPE_UPDATE_BUDDYICON, arguments);

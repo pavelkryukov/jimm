@@ -115,7 +115,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 	private byte[] biHash; // buddy-icon hash
 	private byte[] biHashDone; // buddy-icon hash of downloaded image
-	private byte[] buddyIcon; // buddy-icon raw data
+	private Image buddyIcon; // buddy-icon raw data
 	//#sijapp cond.end #
 
 	private int COLOR_NORMAL;
@@ -381,6 +381,30 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 	//#sijapp cond.end #
 	
+	synchronized public void setImage(int key, Image value)
+	{
+		switch (key)
+		{
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		case CONTACTITEM_BUDDYICON:
+			buddyIcon = value;
+			break;
+		//#sijapp cond.end #
+		}
+	}
+
+	synchronized public Image getImage(int key)
+	{
+		switch (key)
+		{
+		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		case CONTACTITEM_BUDDYICON:
+			return buddyIcon;
+		//#sijapp cond.end #
+		}
+		return null;
+	}
+
 	synchronized public void setBytesArray(int key, byte[] value)
 	{
 		switch (key)
@@ -404,9 +428,6 @@ public class ContactItem implements ContactListItem, JimmScreen
 		case CONTACTITEM_BUDDYICON_HASH_READY:
 			biHashDone = value;
 			break;
-		case CONTACTITEM_BUDDYICON:
-			buddyIcon = value;
-			break;
 		//#sijapp cond.end #
 		}
 	}
@@ -429,8 +450,6 @@ public class ContactItem implements ContactListItem, JimmScreen
 			return biHash;
 		case CONTACTITEM_BUDDYICON_HASH_READY:
 			return biHashDone;
-		case CONTACTITEM_BUDDYICON:
-			return buddyIcon;
 		//#sijapp cond.end #
 		}
 		return null;
@@ -539,7 +558,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 		if (Util.byteArrayEquals(biHash, 0, biHashDone, 0, biHash.length))
 			return false;
 
-		if ((buddyIcon != null) && (buddyIcon.length > 0))
+		if (buddyIcon != null)
 			return false;
 
 		return true;
@@ -604,6 +623,8 @@ public class ContactItem implements ContactListItem, JimmScreen
 		else if (getBooleanValue(CONTACTITEM_B_URLMESSAGES)) tempIndex = 14;
 		else if (getBooleanValue(CONTACTITEM_B_AUTREQUESTS)) tempIndex = 15;
 		else if (getBooleanValue(CONTACTITEM_B_SYSNOTICES)) tempIndex = 16;
+		else if (getBooleanValue(CONTACTITEM_NO_AUTH)) tempIndex = 19;
+			
 		else tempIndex = JimmUI.getStatusImageIndex(getIntValue(ContactItem.CONTACTITEM_STATUS));
 		return tempIndex;
 	}
@@ -623,23 +644,21 @@ public class ContactItem implements ContactListItem, JimmScreen
 	
 	public void generateFormattedName ()
 	{
-		formattedName = getText(-1);
+//		formattedName = getText(-1);
 	}
 
-	public synchronized String getText()
-	{
-		return formattedName;
-	}
+	public String getText()
+//	{
+//		return formattedName;
+//	}
 
-	private String getText(int type)
+//	private String getText(int type)
 	{
 		if (tmpStringBuffer.length() != 0)
 			tmpStringBuffer.delete(0, tmpStringBuffer.length());
 		
 		synchronized (this)
 		{
-			if (getBooleanValue_(CONTACTITEM_NO_AUTH)) tmpStringBuffer.append("!");
-			
 			if (getBooleanValue_(CONTACTITEM_IS_PHANTOM))
 			{
 				if (tmpStringBuffer.length() != 0) tmpStringBuffer.append(',');

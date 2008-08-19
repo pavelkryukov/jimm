@@ -75,6 +75,8 @@ public class Util
 
 	public static void PrintCapabilities(String caption, byte[] caps)
 	{
+		if (caps == null)
+			return;
 		for (int n = 0; n < caps.length; n += 16)
 		{
 			if (caps.length - n < 15)
@@ -785,6 +787,9 @@ public class Util
 
 	public static boolean byteArrayIsEmpty(byte[] buf, int len)
 	{
+
+		if (buf == null)
+			return true;
 
 		// Length check
 		if (len > buf.length)

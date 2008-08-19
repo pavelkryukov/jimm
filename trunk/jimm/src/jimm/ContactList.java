@@ -1129,7 +1129,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	}
 
 	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-	static public synchronized void update(String uin, byte[] iconRaw, byte[] biHashOfDone)
+	static public synchronized void update(String uin, Image image, byte[] biHashOfDone)
 	{
 		ContactItem cItem = getItembyUIN(uin);
 
@@ -1138,7 +1138,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			return;
 		}
 
-		cItem.setBytesArray(ContactItem.CONTACTITEM_BUDDYICON, iconRaw);
+		cItem.setImage(ContactItem.CONTACTITEM_BUDDYICON, image);
 		cItem.setBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH_READY, biHashOfDone);
 
 	}
