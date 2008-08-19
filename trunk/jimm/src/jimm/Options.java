@@ -127,7 +127,7 @@ public class Options
 	public static final int OPTION_EXT_CLKEYPOUND     = 82;
 	public static final int OPTION_CONN_TYPE          = 83;
 	public static final int OPTION_VISIBILITY_ID      = 85;
-	public static final int OPTION_POPUP_WIN2         = 84;
+	public static final int OPTION_POPUP_WIN2         = 84; // This option is FREE
 	static final int        OPTION_CURR_ACCOUNT       = 86;
 	public static final int OPTION_GMT_OFFSET         = 87;
 	public static final int OPTION_TYPING_MODE        = 88;
@@ -401,7 +401,6 @@ public class Options
 		setInt(Options.OPTION_EXT_CLKEY6, 0);
 		setInt(Options.OPTION_EXT_CLKEYCALL, HOTKEY_NEWMSG);
 		setInt(Options.OPTION_EXT_CLKEYPOUND, HOTKEY_LOCK);
-		setInt(Options.OPTION_POPUP_WIN2, 0);
 
 		setString(Options.OPTION_UIN2, emptyString);
 		setString(Options.OPTION_PASSWORD2, emptyString);
@@ -909,7 +908,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private ChoiceGroup clSortByChoiceGroup;
 	private ChoiceGroup chrgChat;
 	private ChoiceGroup chrgMessFormat;
-	private ChoiceGroup chrgPopupWin;
 	private ChoiceGroup vibratorChoiceGroup;
 	private ChoiceGroup chsBringUp;
 	private ChoiceGroup chsFSMode;
@@ -1905,10 +1903,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			//#sijapp cond.end#
 
-			chrgPopupWin = createSelector("popup_win", "no" + "|"
-					+ "pw_forme" + "|" + "pw_all",
-					Options.OPTION_POPUP_WIN2);
-
 			//#sijapp cond.if target isnot "DEFAULT"#     
 			optionsForm.append(messageNotificationModeChoiceGroup);
 			optionsForm.append(messageNotificationSoundVolume);
@@ -1922,8 +1916,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			optionsForm.append(typingNotificationSoundfileTextField);
 			//#sijapp cond.end#
 			
-			optionsForm.append(chrgPopupWin);
-
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			chsBringUp = new ChoiceGroup(ResourceBundle.getString("misc"),
 					Choice.MULTIPLE);
@@ -2303,8 +2295,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setInt(Options.OPTION_TYPING_VOL,
 					typingNotificationSoundVolume.getValue() * 10);
 			//#sijapp cond.end# <===
-			Options.setInt(Options.OPTION_POPUP_WIN2, chrgPopupWin
-					.getSelectedIndex());
 
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			idx = 0;
