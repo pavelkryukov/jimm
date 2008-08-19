@@ -156,8 +156,6 @@ public class ActionListener
 						//DebugLog.addText("New caps");
 						capabilities_new = tlvData;
 					}
-					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
-					//#sijapp cond.if modules_FILES is "true"#
 
 					else if (tlvType == 0x001D)
 					{
@@ -171,14 +169,15 @@ public class ActionListener
 							int bart_len = Util.getByte(tlvData, marker1d);
 							marker1d ++;
 
+							//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 							if ((bart_id == 0x0001) && (bart_flg == 0x0001))	// ICON HASH
 							{
-								//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 								System.arraycopy(tlvData, marker1d, biHash, 0, (bart_len < 17) ? bart_len : 0x0010);
 								// Util.PrintCapabilities(uin + "[ << ]",biHash);
-								//#sijapp cond.end#
 							}
-							else if ((bart_id == 0x0002) && (bart_flg == 0x0004))
+							else
+							//#sijapp cond.end#
+							if ((bart_id == 0x0002) && (bart_flg == 0x0004))
 							{
 								int textLen = (int)Util.getWord(tlvData, marker1d);
 								xStatusMessage = Util.byteArrayToString(tlvData, marker1d+2, textLen, true);
@@ -191,6 +190,8 @@ public class ActionListener
 							marker1d += bart_len;
 						}
 					}
+					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
+					//#sijapp cond.if modules_FILES is "true"#
 					else if (tlvType == 0x000A) // External IP
 					{
 						System.arraycopy(tlvData, 0, externalIP, 0, 4);
