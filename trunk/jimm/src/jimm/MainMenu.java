@@ -435,10 +435,9 @@ public class MainMenu implements CommandListener, JimmScreen
 		case SELECT_STATUS:
 			int onlineStatus = statusList.getCurrTextIndex();
 			
-			if ((onlineStatus == ContactList.STATUS_AWAY)
-					|| (onlineStatus == ContactList.STATUS_DND)
-					|| (onlineStatus == ContactList.STATUS_OCCUPIED)	
-					|| (onlineStatus == ContactList.STATUS_NA))
+			if ((onlineStatus != ContactList.STATUS_INVISIBLE)
+				&& (onlineStatus != ContactList.STATUS_INVIS_ALL)
+				&& (onlineStatus != ContactList.STATUS_ONLINE))
 			{
 				String statusText = Options.getString(Options.OPTION_STATUS_MESSAGE);
 				

@@ -599,6 +599,11 @@ public class Icq implements Runnable
 		{
 			DebugLog.addText ("MainThread: Exception: " + e.toString());
 			e.printStackTrace();
+
+			if (c != null) {// Construct and handle exception
+				JimmException f = new JimmException(141, 0, true);
+				JimmException.handleException(f);
+			}
 		}
 
 		if (!Options.getBoolean(Options.OPTION_RECONNECT) && c != null)

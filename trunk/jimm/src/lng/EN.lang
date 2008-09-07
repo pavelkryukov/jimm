@@ -503,6 +503,7 @@
 
   // Action errors
   "error_140"                   "Requested action cannot be queued for execution at this time (#140.EXT)"
+  "error_141"                   "Some uncatched exception occured. Please reconnect to server (#141.EXT)"
 
   // Specific action errors
   "error_150"                   "Received message could not be understood (#150.EXT)"
