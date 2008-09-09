@@ -361,7 +361,7 @@
 "set_status"				"Статус"
 "set_xstatus"				"X-статус"
 "shadow_con"				"Доп. подключение"
-"show_clients"				"Иконки клиетов"
+"show_clients"				"Иконки клиентов"
 "show_mess_clrf"			"Перевод строки"
 "show_mess_date"			"Время"
 "show_mess_icon"			"Иконка"
