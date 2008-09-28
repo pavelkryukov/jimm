@@ -128,6 +128,7 @@ public class ConnectAction extends Action
     public ConnectAction(String uin, String password, String srvHost, String srvPort)
     {
     	super(true, false);
+    	System.out.println("conn. act. srvHost="+srvHost);
     	lastActivity = System.currentTimeMillis();
         this.uin = uin;
         this.password = password;
@@ -1061,6 +1062,7 @@ public class ConnectAction extends Action
 		case ON_COMPLETE:
 			RunnableImpl.resetLoginTimer();
 			RunnableImpl.activateContactListMT(null);
+			Options.safeSave(); // Save last server
 			break;
 		
 		case ON_CANCEL:

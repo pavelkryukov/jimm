@@ -220,6 +220,16 @@ public class JimmException extends Exception
 				Icq.reconnect_attempts--;
 				
 				DebugLog.addText("err_code="+e.getFullErrCode());
+				
+				switch (e._ErrCode)
+				{
+				case 113: case 114:
+				case 118: case 100:
+				case 121:
+					Icq.rotateServersList();
+					break;
+				}
+				
 				RunnableImpl.reconnect();
 			}
 			else

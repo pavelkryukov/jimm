@@ -1833,6 +1833,19 @@ public class Util
 		tmp.copyInto(result);
 		return result;
 	}
+	
+	static public String implode(String[] strings, char separator)
+	{
+		if ((strings == null) || (strings.length == 0)) return null;
+		if (strings.length == 1) return strings[0];
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < strings.length; i++)
+		{
+			if (i != 0) buffer.append(separator);
+			buffer.append(strings[i]);
+		}
+		return buffer.toString();
+	}
 
 	static public int strCountOccur(String source, String sub)
 	{

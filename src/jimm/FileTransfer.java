@@ -434,7 +434,7 @@ public class FileTransfer implements CommandListener, Runnable
 			case WEB_ASK_RESULT_YES:
 				Options.setInt(Options.OPTION_FT_MODE, (index == WEB_ASK_RESULT_NO) ? Options.FS_MODE_NET : Options.FS_MODE_WEB);
 				Options.setBoolean(Options.OPTION_ASK_FOR_WEB_FT, false);
-				Options.safe_save();
+				Options.safeSave();
 				startFtInternal();
 				return;
 				
