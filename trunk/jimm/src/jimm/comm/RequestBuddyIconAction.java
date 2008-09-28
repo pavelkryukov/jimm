@@ -31,6 +31,7 @@ import jimm.DebugLog;
 import jimm.JimmUI;
 import jimm.RunnableImpl;
 import jimm.util.ResourceBundle;
+import jimm.comm.connections.SOCKETConnection;
 
 public class RequestBuddyIconAction extends Action
 {
@@ -197,7 +198,7 @@ public class RequestBuddyIconAction extends Action
 					// Open connection
 					try
 					{
-						Icq.bartC = icq.new SOCKETConnection(JimmException.ICQ_BART);
+						Icq.bartC = new SOCKETConnection(JimmException.ICQ_BART);
 						Icq.bartC.connect(this.srvHost + ":" + this.srvPort);
 		            }
 					catch (JimmException e)

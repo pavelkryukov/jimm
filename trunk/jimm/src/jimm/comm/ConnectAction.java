@@ -34,8 +34,8 @@ import jimm.JimmUI;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.RunnableImpl;
-import jimm.comm.Icq.HTTPConnection;
 import jimm.util.ResourceBundle;
+import jimm.comm.connections.HTTPConnection;
 
 public class ConnectAction extends Action
 {

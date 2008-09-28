@@ -53,7 +53,7 @@ public class Packet
 	}
 
 	// Sets the FLAP sequence number
-	void setSequence(int sequence)
+	public void setSequence(int sequence)
 	{
 		this.sequence = sequence;
 	}

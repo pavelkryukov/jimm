@@ -93,7 +93,7 @@ public class ToIcqSrvPacket extends SnacPacket
 
 
 	// Sets the ICQ sequence number
-	void setIcqSequence(int icqSequence)
+	public void setIcqSequence(int icqSequence)
 	{
 		this.icqSequence = icqSequence;
 	}
