@@ -14,6 +14,7 @@ Implemented:
   * BUGFIX: Reconnect to server feature, cancel of connecting
   * BUGFIX: Channel-2 text messages contain wrong background color
   * BUGFIX: Many bugfixes for connect process
+  * ICQ servers enumerating possibility during connection
   * Settings for snapshots by build-in camera device, depend on phone model (JSR-135)
   * Messages delivery notification
   * Motorola backlight support
