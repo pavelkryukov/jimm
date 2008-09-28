@@ -38,6 +38,7 @@ import jimm.JimmException;
 import jimm.JimmUI;
 import jimm.Options;
 import jimm.RunnableImpl;
+import jimm.comm.connections.PeerConnection;
 import jimm.util.ResourceBundle;
 
 public class DirectConnectionAction extends Action
@@ -84,7 +85,7 @@ public class DirectConnectionAction extends Action
 	{
 
 		// Make a new peer connection and connect to the adress and port we got from the FileTransferRequest
-		Icq.peerC = icq.new PeerConnection();
+		Icq.peerC = new PeerConnection();
 		Icq.peerC.connect(Util.ipToString(ft.getRcvr().getBytesArray(
 				ContactItem.CONTACTITEM_INTERNAL_IP))
 				+ ":"
