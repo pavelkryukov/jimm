@@ -404,7 +404,7 @@ public class MainMenu implements CommandListener, JimmScreen
 		{
 			setStatus(false);
 			Options.setString(Options.OPTION_STATUS_MESSAGE, statusMessage.getString());
-			Options.safe_save(); 
+			Options.safeSave(); 
 			JimmUI.backToLastScreen();
 			statusList = null;
 		}
@@ -414,7 +414,7 @@ public class MainMenu implements CommandListener, JimmScreen
 	{
 		int onlineStatus = statusList.getCurrTextIndex();
 		Options.setLong(Options.OPTION_ONLINE_STATUS, onlineStatus);
-		if (save) Options.safe_save(); 
+		if (save) Options.safeSave(); 
 		if (Icq.isConnected())
 		{
 			try
@@ -478,7 +478,7 @@ public class MainMenu implements CommandListener, JimmScreen
 					if (e.isCritical()) return;
 				}
 			}
-			Options.safe_save();
+			Options.safeSave();
 			break;
 		}
 		

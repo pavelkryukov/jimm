@@ -834,7 +834,7 @@ public class JimmUI implements CommandListener
 
 			case Options.HOTKEY_USER_GROUPS:
 				Options.setBoolean(Options.OPTION_USER_GROUPS, !Options.getBoolean(Options.OPTION_USER_GROUPS));
-				Options.safe_save();
+				Options.safeSave();
 				ContactList.optionsChanged(true, false);
 				ContactList.activateList();
 				break;
@@ -844,7 +844,7 @@ public class JimmUI implements CommandListener
 					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
 				else
 					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, true);
-				Options.safe_save();
+				Options.safeSave();
 				ContactList.optionsChanged(true, false);
 				ContactList.activateList();
 				break;
@@ -873,7 +873,7 @@ public class JimmUI implements CommandListener
 						.getBoolean(Options.OPTION_FULL_SCREEN);
 				VirtualList.setFullScreenForCurrent(fsValue);
 				Options.setBoolean(Options.OPTION_FULL_SCREEN, fsValue);
-				Options.safe_save();
+				Options.safeSave();
 				//#sijapp cond.if target is "SIEMENS2"#
 				//#sijapp cond.if modules_TRAFFIC is "true" #
 				//#				ContactList.updateTitle(Traffic.getSessionTraffic());

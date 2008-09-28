@@ -1669,7 +1669,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		boolean newValue = !Options.getBoolean(Options.OPTION_SILENT_MODE);
 		Options.setBoolean(Options.OPTION_SILENT_MODE, newValue);
-		Options.safe_save();
+		Options.safeSave();
 		Alert alert = new Alert(null, ResourceBundle
 				.getString(newValue ? "#sound_is_off" : "#sound_is_on"), null,
 				null);

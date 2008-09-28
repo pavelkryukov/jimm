@@ -43,7 +43,7 @@ import jimm.RunnableImpl;
 import jimm.TimerTasks;
 
 //#sijapp cond.if modules_TRAFFIC is "true" #
-	import jimm.Traffic;
+import jimm.Traffic;
 //#sijapp cond.end#
 
 
@@ -176,11 +176,11 @@ public class Icq implements Runnable
 		}
 		//#sijapp cond.end#
 		// Connect
-		ConnectAction act = new ConnectAction(Options
-				.getString(Options.OPTION_UIN), Options
-				.getString(Options.OPTION_PASSWORD), Options
-				.getString(Options.OPTION_SRV_HOST), Options
-				.getString(Options.OPTION_SRV_PORT));
+		ConnectAction act = new ConnectAction(
+				Options.getString(Options.OPTION_UIN), 
+				Options.getString(Options.OPTION_PASSWORD), 
+				getFirstServerAddr(), 
+				Options.getString(Options.OPTION_SRV_PORT));
 		try
 		{
 			requestAction(act);
@@ -205,9 +205,10 @@ public class Icq implements Runnable
 		setDisconnected(true); // to prevent reconnect on error
 		
 		// Connect
-		RegisterNewUinAction act = new RegisterNewUinAction(newPassword, Options
-					.getString(Options.OPTION_SRV_HOST), Options
-					.getString(Options.OPTION_SRV_PORT));
+		RegisterNewUinAction act = new RegisterNewUinAction(
+				newPassword, 
+				getFirstServerAddr(), 
+				Options.getString(Options.OPTION_SRV_PORT));
 		try
 		{
 			requestAction(act);
@@ -1950,5 +1951,22 @@ public class Icq implements Runnable
 
 	//#sijapp cond.end#
 	
+	public static String getFirstServerAddr()
+	{
+		String[] servers = Util.explode(Options.getString(Options.OPTION_SRV_HOST), ',');
+		if (servers == null) return null;
+		return (servers.length == 0) ? null : servers[0]; 
+	}
+	
+	public static void rotateServersList()
+	{
+		String[] servers = Util.explode(Options.getString(Options.OPTION_SRV_HOST), ',');
+		if ((servers == null) || (servers.length < 2)) return;
+		String first = servers[0];
+		for (int i = 1; i < servers.length; i++) servers[i-1] = servers[i];
+		servers[servers.length-1] = first;
+		Options.setString(Options.OPTION_SRV_HOST, Util.implode(servers, ','));
+		System.out.println("Icq.rotateServersList()");
+	}
 	
 }

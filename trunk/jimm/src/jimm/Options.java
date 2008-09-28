@@ -304,7 +304,7 @@ public class Options
 	{
 		setString(Options.OPTION_UIN1, emptyString);
 		setString(Options.OPTION_PASSWORD1, emptyString);
-		setString (Options.OPTION_SRV_HOST, "login.icq.com");
+		setString (Options.OPTION_SRV_HOST, "login.icq.com,login.oscar.aol.com,ibucp-vip-d.blue.aol.com");
 		
 		setString(Options.OPTION_SRV_PORT, "5190");
 		setBoolean(Options.OPTION_KEEP_CONN_ALIVE, true);
@@ -613,7 +613,7 @@ public class Options
 		account.closeRecordStore();
 	}
 
-	static public void safe_save()
+	static public void safeSave()
 	{
 		try
 		{
@@ -1554,7 +1554,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			// Initialize elements (network section)
 			srvHostTextField = new TextField(ResourceBundle
 					.getString("server_host"), Options
-					.getString(Options.OPTION_SRV_HOST), 32, TextField.URL);
+					.getString(Options.OPTION_SRV_HOST), 512, TextField.ANY);
 			srvPortTextField = new TextField(ResourceBundle
 					.getString("server_port"), Options
 					.getString(Options.OPTION_SRV_PORT), 5,
@@ -2433,7 +2433,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				int theme = tlColorScheme.getCurrTextIndex();
 				if (theme == -1) return;
 				Options.setInt(Options.OPTION_COLOR_SCHEME, theme);
-				Options.safe_save();
+				Options.safeSave();
 			}
 			activate();
 			return;
@@ -2510,7 +2510,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			}
 			else if (c == JimmUI.cmdSave)
 			{
-				Options.safe_save();
+				Options.safeSave();
 				initOptionsList(TYPE_TOP_OPTIONS);
 			}
 		}
@@ -2593,7 +2593,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			boolean skipNextScreen = readDataFromForm();
 
 			/* Save options */
-			Options.safe_save();
+			Options.safeSave();
 
 			if (!skipNextScreen) activate();
 		}
