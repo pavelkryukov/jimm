@@ -118,11 +118,15 @@ public class ContactItem implements ContactListItem, JimmScreen
 	private Image buddyIcon; // buddy-icon raw data
 	//#sijapp cond.end #
 
-	private int COLOR_NORMAL;
-	private int COLOR_HASCHAT;
-	private int COLOR_FANTOM;
+	private static int clrNormal;
+	private static int clrHasChat;
+	private static int clrFantom;
+	
+	static
+	{
+		updateColorValues();
+	}
 
-	private String formattedName;
 	///////////////////////////////////////////////////////////////////////////
 
 	synchronized public void setStringValue(int key, String value)
@@ -528,12 +532,14 @@ public class ContactItem implements ContactListItem, JimmScreen
 			setIntValue_(ContactItem.CONTACTITEM_CLIENT, Icq.CLI_NONE);
 			setStringValue_(ContactItem.CONTACTITEM_CLIVERSION, "");
 			xStatusId = -1;
-
-			COLOR_NORMAL = Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
-			COLOR_HASCHAT = Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
-			COLOR_FANTOM = 0x808080;
-
 		}
+	}
+	
+	public static void updateColorValues()
+	{
+		clrNormal = Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
+		clrHasChat = Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
+		clrFantom = 0x808080;
 	}
 
 	/* Constructor for an existing contact item */
@@ -594,8 +600,8 @@ public class ContactItem implements ContactListItem, JimmScreen
 		synchronized (this)
 		{
 			if (getBooleanValue_(CONTACTITEM_IS_TEMP))
-				return COLOR_FANTOM;
-			return getBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT) ? COLOR_HASCHAT : COLOR_NORMAL;
+				return clrFantom;
+			return getBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT) ? clrHasChat : clrNormal;
 		}
 	}
 
