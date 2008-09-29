@@ -2434,6 +2434,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				if (theme == -1) return;
 				Options.setInt(Options.OPTION_COLOR_SCHEME, theme);
 				Options.safeSave();
+				ContactItem.updateColorValues();
 			}
 			activate();
 			return;
