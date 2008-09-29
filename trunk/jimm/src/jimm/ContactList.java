@@ -560,7 +560,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			if (i < cItemsCount)
 			{
 				cItem = getCItem(i);
-				cItem.generateFormattedName();
 				cItem.saveToStream(dos);
 			}
 			else
@@ -1102,7 +1101,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			playSoundNotification(SOUND_TYPE_ONLINE);
 //#sijapp cond.end#		
 
-		cItem.generateFormattedName();
 		// Update visual list
 		if (statusChanged)
 			contactChanged(cItem, false, (wasOnline && !nowOnline)
