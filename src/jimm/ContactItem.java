@@ -648,17 +648,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 	static private StringBuffer tmpStringBuffer = new StringBuffer();	
 	
-	public void generateFormattedName ()
-	{
-//		formattedName = getText(-1);
-	}
-
 	public String getText()
-//	{
-//		return formattedName;
-//	}
-
-//	private String getText(int type)
 	{
 		if (tmpStringBuffer.length() != 0)
 			tmpStringBuffer.delete(0, tmpStringBuffer.length());
