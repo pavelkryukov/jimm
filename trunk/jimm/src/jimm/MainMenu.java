@@ -30,6 +30,7 @@ import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
+import DrawControls.ImageList;
 
 public class MainMenu implements CommandListener, JimmScreen
 {
@@ -56,6 +57,8 @@ public class MainMenu implements CommandListener, JimmScreen
 	private static final int MENU_SOUND         = 12;
 	private static final int MENU_EXIT          = 14;
 
+	final public static ImageList menuIcons;
+
 	/* List for selecting a online status */
 	private static TextList statusList;
 
@@ -71,6 +74,12 @@ public class MainMenu implements CommandListener, JimmScreen
 	static
 	{
 		list.setMode(VirtualList.CURSOR_MODE_DISABLED);
+		menuIcons = new ImageList();
+		
+		try
+		{
+			menuIcons.load("/micons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
+		} catch (Exception e) {}
 	}
 	
 	public MainMenu()
@@ -101,36 +110,37 @@ public class MainMenu implements CommandListener, JimmScreen
 		
 		if (connected)
 		{
-			JimmUI.addTextListItem(list, "keylock_enable", null, MENU_KEYLOCK, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(list, "disconnect", null, MENU_DISCONNECT, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(list, "keylock_enable", menuIcons.elementAt(3), MENU_KEYLOCK, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(list, "disconnect", menuIcons.elementAt(1), MENU_DISCONNECT, true, -1, Font.STYLE_PLAIN);
 		}
 		else
 		{
-			JimmUI.addTextListItem(list, "connect", null, MENU_CONNECT, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(list, "connect", menuIcons.elementAt(0), MENU_CONNECT, true, -1, Font.STYLE_PLAIN);
 		}
 		
 		JimmUI.addTextListItem(list, "set_status", getStatusImage(), MENU_STATUS, true, -1, Font.STYLE_PLAIN);
 		JimmUI.addTextListItem(list, "set_xstatus", ContactList.xStatusImages.elementAt(Options.getInt(Options.OPTION_XSTATUS)), MENU_XSTATUS, true, -1, Font.STYLE_PLAIN);
 		
 		if (ContactList.getSize() != 0)
-			JimmUI.addTextListItem(list, "contact_list", null, MENU_LIST, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(list, "contact_list", menuIcons.elementAt(2), MENU_LIST, true, -1, Font.STYLE_PLAIN);
 		
-		JimmUI.addTextListItem(list, "options_lng",  null, MENU_OPTIONS, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "options_lng",  menuIcons.elementAt(4), MENU_OPTIONS, true, -1, Font.STYLE_PLAIN);
 		
 		//#sijapp cond.if target isnot "DEFAULT"#
-		JimmUI.addTextListItem(list, getSoundValue(Options.getBoolean(Options.OPTION_SILENT_MODE)), null, MENU_SOUND, true, -1, Font.STYLE_PLAIN);
+		boolean silentMode = Options.getBoolean(Options.OPTION_SILENT_MODE);
+		JimmUI.addTextListItem(list, getSoundValue(silentMode), silentMode ? menuIcons.elementAt(6) : menuIcons.elementAt(5), MENU_SOUND, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#    	
 			
 		//#sijapp cond.if modules_TRAFFIC is "true" #
-		JimmUI.addTextListItem(list, "traffic_lng", null, MENU_TRAFFIC, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "traffic_lng", menuIcons.elementAt(7), MENU_TRAFFIC, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
 			
-		JimmUI.addTextListItem(list, "about", null, MENU_ABOUT, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "about", menuIcons.elementAt(8), MENU_ABOUT, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.if target is "MIDP2" #
 		if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON) 
-			JimmUI.addTextListItem(list, "minimize", null, MENU_MINIMIZE, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(list, "minimize", menuIcons.elementAt(9), MENU_MINIMIZE, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
-		JimmUI.addTextListItem(list, "exit", null, MENU_EXIT, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "exit", menuIcons.elementAt(10), MENU_EXIT, true, -1, Font.STYLE_PLAIN);
 
 		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
 		if (ContactList.getSize() != 0)

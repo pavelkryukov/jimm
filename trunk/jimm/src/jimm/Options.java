@@ -1045,6 +1045,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		/*************************************************************************/
 
 		optionsMenu = new TextList(ResourceBundle.getString("options_lng"));
+		optionsMenu.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		
 		JimmUI.setColorScheme(optionsMenu, false, -1, true);
 
@@ -1076,49 +1077,49 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		switch (type)
 		{
 		case TYPE_TOP_OPTIONS:
-			JimmUI.addTextListItem(optionsMenu, "options_account", null, OPTIONS_ACCOUNT, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "options_network", null, OPTIONS_NETWORK, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "options_account", MainMenu.menuIcons.elementAt(11), OPTIONS_ACCOUNT, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "options_network", MainMenu.menuIcons.elementAt(12), OPTIONS_NETWORK, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.if modules_PROXY is "true"#
 			if (Options.getInt(Options.OPTION_CONN_TYPE) == Options.CONN_TYPE_PROXY)
-				JimmUI.addTextListItem(optionsMenu, "proxy", null, OPTIONS_PROXY, true, -1, Font.STYLE_PLAIN); 
+				JimmUI.addTextListItem(optionsMenu, "proxy", MainMenu.menuIcons.elementAt(13), OPTIONS_PROXY, true, -1, Font.STYLE_PLAIN); 
 //#sijapp cond.end#
-			JimmUI.addTextListItem(optionsMenu, "options_interface", null, OPTIONS_INTERFACE, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "color_scheme", null, OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "options_interface", MainMenu.menuIcons.elementAt(14), OPTIONS_INTERFACE, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "color_scheme", MainMenu.menuIcons.elementAt(15), OPTIONS_COLOR_THEME, true, -1, Font.STYLE_PLAIN); 
 //#sijapp cond.if target!="DEFAULT"#
 			if (Jimm.display.numAlphaLevels() > 2)
-				JimmUI.addTextListItem(optionsMenu, "transparency", null, OPTIONS_TRANSP, true, -1, Font.STYLE_PLAIN);
+				JimmUI.addTextListItem(optionsMenu, "transparency", MainMenu.menuIcons.elementAt(16), OPTIONS_TRANSP, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#			
 //#sijapp cond.if modules_FILES is "true"#
 			if (System.getProperty("video.snapshot.encodings") != null)
-				JimmUI.addTextListItem(optionsMenu, "options_camera", null, OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
+				JimmUI.addTextListItem(optionsMenu, "options_camera", MainMenu.menuIcons.elementAt(17), OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#
-			JimmUI.addTextListItem(optionsMenu, "options_hotkeys", null, OPTIONS_HOTKEYS, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "options_signaling", null, OPTIONS_SIGNALING, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "auto_away", null, OPTIONS_AUTOAWAY, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "options_hotkeys", MainMenu.menuIcons.elementAt(18), OPTIONS_HOTKEYS, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "options_signaling", MainMenu.menuIcons.elementAt(19), OPTIONS_SIGNALING, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "auto_away", MainMenu.menuIcons.elementAt(20), OPTIONS_AUTOAWAY, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.if modules_TRAFFIC is "true"#
-			JimmUI.addTextListItem(optionsMenu, "traffic_lng", null, OPTIONS_TRAFFIC, true, -1, Font.STYLE_PLAIN); 
+			JimmUI.addTextListItem(optionsMenu, "traffic_lng", MainMenu.menuIcons.elementAt(21), OPTIONS_TRAFFIC, true, -1, Font.STYLE_PLAIN); 
 //#sijapp cond.end#
-			JimmUI.addTextListItem(optionsMenu, "time_zone", null, OPTIONS_TIMEZONE, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "time_zone", MainMenu.menuIcons.elementAt(22), OPTIONS_TIMEZONE, true, -1, Font.STYLE_PLAIN);
 			
 			if (connected)
 			{
-				JimmUI.addTextListItem(optionsMenu, "myself", null, OPTIONS_MY_INFO, true, -1, Font.STYLE_PLAIN);
-				JimmUI.addTextListItem(optionsMenu, "manage_contact_list", null, OPTIONS_MANAGE_CL, true, -1, Font.STYLE_PLAIN);
+				JimmUI.addTextListItem(optionsMenu, "myself", MainMenu.menuIcons.elementAt(23), OPTIONS_MY_INFO, true, -1, Font.STYLE_PLAIN);
+				JimmUI.addTextListItem(optionsMenu, "manage_contact_list", MainMenu.menuIcons.elementAt(24), OPTIONS_MANAGE_CL, true, -1, Font.STYLE_PLAIN);
 			}
 //#sijapp cond.if modules_ANTISPAM="true"#			
-			JimmUI.addTextListItem(optionsMenu, "antispam", null, OPTIONS_ANTISPAM, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "antispam", MainMenu.menuIcons.elementAt(25), OPTIONS_ANTISPAM, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#			
 			
-			JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", null, OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", MainMenu.menuIcons.elementAt(26), OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
 			break;
 			
 		case TYPE_MCL_OPTIONS:
-			JimmUI.addTextListItem(optionsMenu, "add_user", null, OPTIONS_ADD_USER, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "add_group", null, OPTIONS_ADD_GROUP, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "search_user", null, OPTIONS_SEARCH_USER, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "del_group", null, OPTIONS_DELETE_GROUP, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "rename_group", null, OPTIONS_RENAME_GROUP, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "priv_lists", null, OPTIONS_PRIVATE_LISTS, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "add_user", MainMenu.menuIcons.elementAt(27), OPTIONS_ADD_USER, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "add_group", MainMenu.menuIcons.elementAt(28), OPTIONS_ADD_GROUP, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "search_user", MainMenu.menuIcons.elementAt(29), OPTIONS_SEARCH_USER, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "del_group", MainMenu.menuIcons.elementAt(30), OPTIONS_DELETE_GROUP, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "rename_group", MainMenu.menuIcons.elementAt(31), OPTIONS_RENAME_GROUP, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "priv_lists", MainMenu.menuIcons.elementAt(32), OPTIONS_PRIVATE_LISTS, true, -1, Font.STYLE_PLAIN);
 			break;
 		}
 
