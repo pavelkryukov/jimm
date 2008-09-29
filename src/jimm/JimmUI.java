@@ -1748,7 +1748,10 @@ public class JimmUI implements CommandListener
 					addTextListItem(tlContactMenu, "ft_link", null, USER_MENU_FILE_TRANS_LINK, true, -1, Font.STYLE_PLAIN); 
 				
 //#sijapp cond.if target isnot "MOTOROLA"#
-				addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS, true, -1, Font.STYLE_PLAIN);
+				if (System.getProperty("video.snapshot.encodings") != null)
+				{
+					addTextListItem(tlContactMenu, "ft_cam", null, USER_MENU_CAM_TRANS, true, -1, Font.STYLE_PLAIN);
+				}
 //#sijapp cond.end#
 			}
 //#sijapp cond.end#
