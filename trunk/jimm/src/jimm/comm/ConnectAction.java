@@ -92,9 +92,9 @@ public class ConnectAction extends Action
     
     // Timeout
     // #sijapp cond.if modules_PROXY is "true" #
-    public static final int TIME_OUT = 20 * 1000;
+    public static final int TIME_OUT = 30 * 1000;
     // #sijapp cond.end #
-    public int TIMEOUT = 20 * 1000; // milliseconds
+    public int TIMEOUT = 30 * 1000; // milliseconds
 
     /** *********************************************************************** */
 
