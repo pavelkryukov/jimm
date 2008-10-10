@@ -18,7 +18,7 @@
  ********************************************************************************
  File: src/jimm/MainMenu.java
  Version: ###VERSION###  Date: ###DATE###
- Author(s): Manuel Linsmayer, Andreas Rossbacher
+ Author(s): Manuel Linsmayer, Andreas Rossbacher, Denis Artemov
  *******************************************************************************/
 
 package jimm;
