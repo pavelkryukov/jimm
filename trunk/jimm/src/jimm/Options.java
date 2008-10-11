@@ -2054,7 +2054,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			return;
 			
 		case OPTIONS_RENAME_GROUP:
-			groupSelector = JimmUI.showGroupSelector("del_group", this, JimmUI.SHS_TYPE_ALL, -1);
+			groupSelector = JimmUI.showGroupSelector("rename_group", this, JimmUI.SHS_TYPE_ALL, -1);
 			return;
 			
 //#sijapp cond.if modules_ANTISPAM="true"#			
