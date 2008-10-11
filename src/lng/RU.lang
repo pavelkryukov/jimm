@@ -1,10 +1,4 @@
-// MOTOROLA target special strings
-"backlight_timeout"			"Время подсветки (сек)"
-"backlight_manual"			"Управлять подсветкой"
-"exit_button"				"Выход"
-"menu_button"				"Меню"
-"flash_backlight"			"Мигать светодиодами"
-
+// Labels
 // PROXY module strings
 //#sijapp cond.if modules_PROXY is "true" #
 "proxy"						"Прокси"
@@ -18,6 +12,16 @@
 "proxy_server_login"		"Логин прокси:"
 "proxy_server_pass"			"Пароль прокси:"
 "auto_retry_count"			"Попыток подключения:"
+//#sijapp cond.end#
+
+// ANTISPAM module strings
+//#sijapp cond.if modules_ANTISPAM is "true" #
+"antispam"					"Антиспам"
+"antispam_answer"			"Ответ"
+"antispam_good"				"Ваш ответ принят. Теперь я буду получать все ваши сообщения"
+"antispam_question"			"Вопрос"
+"antispam_mess"				"У меня на клиенте включен антиспам-фильтр. Чтобы его разблокировать ответьте на следующий вопрос: "
+"antispam_use"				"Использовать антиспам-фильтр"
 //#sijapp cond.end#
 
 // HISTORY module strings
@@ -62,15 +66,19 @@
 "error_191"					"Ошибка чтения файла. Возможно, данная функция не поддерживается (#191.EXT)"
 "error_192"					"Некорректный путь к файлу. Возможно, данная функция не поддерживается (#192.EXT)"
 "error_193"					"Ошибка доступа (#193.EXT)"
-"error_194"                 "Некорректный ответ файлового сервера файлов (#194.EXT)"
-"error_195"                 "Невозможно обработать ответ файлового сервера (#195.EXT)"
-"error_196"                 "Ошибка ввода/вывода при передаче файла (#196.EXT)"
-
+"error_194"					"Некорректный ответ файлового сервера файлов (#194.EXT)"
+"error_195"					"Невозможно обработать ответ файлового сервера (#195.EXT)"
+"error_196"					"Ошибка ввода/вывода при передаче файла (#196.EXT)"
 "background_ext"			"Из файла"
 "background_empty"			"не выбран"
 //#sijapp cond.end#
 
 // General strings
+"backlight_timeout"			"Время подсветки (сек)"
+"backlight_manual"			"Управлять подсветкой"
+"exit_button"				"Выход"
+"menu_button"				"Меню"
+"flash_backlight"			"Мигать светодиодами"
 "reply"						"Ответ"
 "close"						"Закрыть"
 "select"					"Выбрать"
@@ -103,12 +111,6 @@
 "age"						"Возраст"
 "all_contact_except_this"	"Всех кроме этого"
 "all_contacts"				"Всех контактов"
-"antispam"                  "Антиспам"
-"antispam_answer"           "Ответ"
-"antispam_good"             "Ваш ответ принят. Теперь я буду получать все ваши сообщения"
-"antispam_question"         "Вопрос"
-"antispam_mess"             "У меня на клиенте включен антиспам-фильтр. Чтобы его разблокировать ответьте на следующий вопрос: "
-"antispam_use"              "Использовать антиспам-фильтр"
 "async"						"Асинхронная передача"
 "attention"					"Внимание!"
 "auth"						"Авторизация"
@@ -342,8 +344,6 @@
 "remove"					"Удалить"
 "remove_me"					"Удалиться из его КЛ"
 "remove_me_from"			"Удалиться из контакт листа "
-"remove_group"				"Удалить группу"
-"remove_user"				"Удалить контакт"
 "rename"					"Переименовать"
 "rename_group"				"Переим. группу"
 "requauth"					"Запрос авторизации"

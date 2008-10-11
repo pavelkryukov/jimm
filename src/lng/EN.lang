@@ -21,12 +21,6 @@
   "age"                         "Age"
   "all_contact_except_this"     "Others"
   "all_contacts"                "All contacts"
-  "antispam"                    "Antispam"
-  "antispam_answer"              "Answer"
-  "antispam_good"               "You answer is accepted. Now you can send me messages"
-  "antispam_question"           "Question"
-  "antispam_mess"               "Antispam filter is now on. In order to turn off the filter, please answer this question: "
-  "antispam_use"                "Use antispam filter"
   "async"                       "Async"
   "attention"                   "Attention!"
   "auth"                        "Auth"
@@ -112,17 +106,6 @@
   "find"                        "Find"
   "firstname"                   "First name"
   "free_heap"                   "Free heap"
-  "ft_caption"                  "Filetransfer"
-  "ft_cam"                      "Send camera image"
-  "ft_link"                     "Last file link"
-  "ft_name"                     "Send file"  
-  "ft_transfer"                 "Transferring..."
-  "ft_type"                     "File transfer"
-  "ft_type_web"                 "Through web-server"
-  "ft_type_net"                 "Through net"
-  "ft_web_ask"                  "File will be uploaded into web server. Contact will receive link to the file. \n\nDo you want to continue?"
-  "ft_web_yes"                  "* Yes, continue with transfer through web"
-  "ft_web_no"                   "* No, use standard way"
   "reset_rms_caption"           "Reset"
   "reset_rms_ask"               "Are you want to permanently delete all record stores (accounts, chats history, settings etc)? Application will be closed!"
   "reset_rms_yes"               "* Yes"
@@ -267,8 +250,6 @@
   "remove"                      "Remove from List"
   "remove_me"                   "Remove me" 
   "remove_me_from"              "Remove yourself from contact list of "
-  "remove_group"                "Remove group"
-  "remove_user"                 "Remove user"
   "rename"                      "Rename"
   "rename_group"                "Rename group"
   "reply"                       "Reply"  
@@ -434,6 +415,16 @@
   "auto_retry_count"            "Retry count:"
   //#sijapp cond.end#
   
+  // ANTISPAM module strings
+  //#sijapp cond.if modules_ANTISPAM is "true" #
+  "antispam"                    "Antispam"
+  "antispam_answer"             "Answer"
+  "antispam_good"               "You answer is accepted. Now you can send me messages"
+  "antispam_question"           "Question"
+  "antispam_mess"               "Antispam filter is now on. In order to turn off the filter, please answer this question: "
+  "antispam_use"                "Use antispam filter"
+  //#sijapp cond.end#
+
   //#sijapp cond.if modules_HISTORY is "true" #
   "add_to_history"              "Add to history"
   "text_to_find"                "Text"
@@ -543,6 +534,17 @@
 
   "background_ext"		"External"
   "background_empty"		"not specified"
+  "ft_caption"                  "Filetransfer"
+  "ft_cam"                      "Send camera image"
+  "ft_link"                     "Last file link"
+  "ft_name"                     "Send file"  
+  "ft_transfer"                 "Transferring..."
+  "ft_type"                     "File transfer"
+  "ft_type_web"                 "Through web-server"
+  "ft_type_net"                 "Through net"
+  "ft_web_ask"                  "File will be uploaded into web server. Contact will receive link to the file. \n\nDo you want to continue?"
+  "ft_web_yes"                  "* Yes, continue with transfer through web"
+  "ft_web_no"                   "* No, use standard way"
   //#sijapp cond.end#
   
   // HTTP Connection errors
