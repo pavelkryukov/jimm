@@ -1966,7 +1966,7 @@ public class Icq implements Runnable
 		for (int i = 1; i < servers.length; i++) servers[i-1] = servers[i];
 		servers[servers.length-1] = first;
 		Options.setString(Options.OPTION_SRV_HOST, Util.implode(servers, ','));
-		System.out.println("Icq.rotateServersList()");
+		DebugLog.addText("Icq.rotateServersList(): " + servers[0]);
 	}
 	
 }
