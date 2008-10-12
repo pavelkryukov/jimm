@@ -790,7 +790,7 @@ public class Icq implements Runnable
 			//#sijapp cond.end#
 			
 			int xStatus = Options.getInt(Options.OPTION_XSTATUS);
-			capsStream.write(XSTATUS_CONSTS, xStatus*16, 16);
+			if (xStatus != -1) capsStream.write(XSTATUS_CONSTS, xStatus*16, 16);
 			
 			packet = capsStream.toByteArray();
 			Util.putWord(packet, 2, packet.length-4);
