@@ -92,23 +92,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	public static final int SOUND_TYPE_ONLINE = 2;
 	public static final int SOUND_TYPE_TYPING = 3;
 
-	public static Image statusEvilImg;
-	public static Image statusDepressionImg;
-	public static Image statusHomeImg;
-	public static Image statusWorkImg;
-	public static Image statusLunchImg;
-	public static Image statusAwayImg;
-	public static Image statusChatImg;
-	public static Image statusDndImg;
-	public static Image statusInvisibleImg;
-	public static Image statusNaImg;
-	public static Image statusOccupiedImg;
-	public static Image statusOfflineImg;
-	public static Image statusOnlineImg;
-	public static Image eventPlainMessageImg;
-	public static Image eventUrlMessageImg;
-	public static Image eventSystemNoticeImg;
-	public static Image eventSysActionImg;
 	
 	private static long lastLoginTime;
 	private static boolean needPlayMessNotif = false;
@@ -151,10 +134,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	private static VirtualTree tree;
 
 	/* Images for icons */
-	final public static ImageList imageList;
-	final public static ImageList smallIcons;
-	final public static ImageList cliImages;
-	final public static ImageList xStatusImages;
+	final public static ImageList smallIcons = new ImageList();
+	final public static ImageList cliImages = new ImageList();
 
 	//
 	private static int onlineCounter;
@@ -164,33 +145,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	/* Initializer */
 	static
 	{
-		/* Construct image objects */
-		smallIcons = new ImageList();
-		imageList = new ImageList();
-		cliImages = new ImageList();
-		xStatusImages = new ImageList();
-		
 		try
 		{
-			/* reads and divides image "icons.png" to several icons */
-			imageList.load("/icons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
-			ContactList.statusEvilImg = imageList.elementAt(8);
-			ContactList.statusDepressionImg = imageList.elementAt(9);
-			ContactList.statusHomeImg = imageList.elementAt(10);
-			ContactList.statusWorkImg = imageList.elementAt(11);
-			ContactList.statusLunchImg = imageList.elementAt(12);
-			ContactList.statusAwayImg = imageList.elementAt(0);
-			ContactList.statusChatImg = imageList.elementAt(1);
-			ContactList.statusDndImg = imageList.elementAt(2);
-			ContactList.statusInvisibleImg = imageList.elementAt(3);
-			ContactList.statusNaImg = imageList.elementAt(4);
-			ContactList.statusOccupiedImg = imageList.elementAt(5);
-			ContactList.statusOfflineImg = imageList.elementAt(6);
-			ContactList.statusOnlineImg = imageList.elementAt(7);
-			ContactList.eventPlainMessageImg = imageList.elementAt(13);
-			ContactList.eventUrlMessageImg = imageList.elementAt(14);
-			ContactList.eventSystemNoticeImg = imageList.elementAt(15);
-			ContactList.eventSysActionImg = imageList.elementAt(16);
 			smallIcons.load("/sicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (Exception e) {}
 		
@@ -198,11 +154,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		{
 			cliImages.load("/clicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (Exception e) {}
-		
-		try
-		{
-			xStatusImages.load("/xstatus.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
-		} catch (Exception e) {}
+
 	}
 
 	/* Constructor */
@@ -228,7 +180,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		tree.setVLCommands(this);
 		tree.setCyclingCursor(true);
 
-		tree.setFontSize((imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
+		tree.setFontSize((JimmUI.imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
 				: VirtualList.MEDIUM_FONT);
 		tree.setStepSize(0);
 
@@ -285,12 +237,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		return tree;
 	}
 
-	/* Returns image list with status icons and status icons with red letter "C" */
-	static public ImageList getImageList()
-	{
-		return imageList;
-	}
-
 	/* Returns the id number #1 which identifies (together with id number #2)
 	 the saved contact list version */
 	static public int getSsiListLastChangeTime()
@@ -339,10 +285,8 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	
 	static public void showStatusInCaption(int status)
 	{
-		tree.setCapImage(smallIcons.elementAt
-		(
-			JimmUI.getStatusImageIndex(status == -1 ? Icq.getCurrentStatus() : status)
-		));
+		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, status == -1 ? Icq.getCurrentStatus() : status);
+		tree.setCapImage((statInfo != null) ? statInfo.getImage() : null);
 	}
 	
 	public void activate()
@@ -1110,8 +1054,17 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		if (tree.isActive())
 		{
 			String text = null;
-			if (oldStatus != trueStatus) text = JimmUI.getStatusString(trueStatus);
-			if ((xStatus != oldXStatus) && (xStatus >= 0)) text = ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]);
+			if (oldStatus != trueStatus)
+			{
+				StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, trueStatus);
+				text = (statInfo != null) ? statInfo.getText() : null;
+			}
+			
+			if (xStatus != oldXStatus)
+			{
+				StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, xStatus);
+				if (statInfo != null) text = statInfo.getText();
+			}
 			if (text != null) JimmUI.showCapText(curScr, cItem.getStringValue(ContactItem.CONTACTITEM_NAME)+": "+text, TimerTasks.TYPE_FLASH);
 		}
 	}
@@ -1689,12 +1642,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	public void vtGetItemDrawData(TreeNode src, ListItem dst)
 	{
 		ContactListItem item = (ContactListItem) src.getData();
-		dst.text = item.getText();
-		dst.leftImage = imageList.elementAt(item.getLeftImageIndex(src.getExpanded()));
-		dst.rightImage = Params[0] ? cliImages.elementAt(item.getRightImageIndex()) : null;
-		dst.secondLeftImage = Params[1] ? xStatusImages.elementAt(item.getSecondLeftImageIndex()) : null;
-		dst.color = item.getTextColor();
-		dst.fontStyle = item.getFontStyle();
+		dst.text            = item.getText();
+		dst.leftImage       = item.getLeftImage(src.getExpanded());
+		dst.rightImage      = Params[0] ? item.getRightImage() : null;
+		dst.secondLeftImage = Params[1] ? item.getSecondLeftImage() : null;
+		dst.color           = item.getTextColor();
+		dst.fontStyle       = item.getFontStyle();
 	}
 
 	public void vlCursorMoved(VirtualList sender)  {}

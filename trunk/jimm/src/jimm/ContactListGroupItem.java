@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import jimm.comm.Util;
 import javax.microedition.lcdui.Font;
+import javax.microedition.lcdui.Image;
 
 public class ContactListGroupItem implements ContactListItem
 {
@@ -110,9 +111,9 @@ public class ContactListGroupItem implements ContactListItem
 		return result;
 	}
 
-	public int getLeftImageIndex(boolean expanded)
+	public Image getLeftImage(boolean expanded)
 	{
-		return (messCount == 0) ? -1 : (expanded ? -1 : 13);
+		return (messCount == 0) ? null : (expanded ? null : JimmUI.eventPlainMessageImg);
 	}
 
 	public int getTextColor()
@@ -171,14 +172,14 @@ public class ContactListGroupItem implements ContactListItem
 		name = stream.readUTF();
 	}
 	
-	public int getRightImageIndex()
+	public Image getRightImage()
 	{
-		return -1;
+		return null;
 	}
 	
-	public int getSecondLeftImageIndex()
+	public Image getSecondLeftImage()
 	{
-		return -1;
+		return null;
 	}
 	
 	public String getSortText()

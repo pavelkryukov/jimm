@@ -23,17 +23,16 @@
 
 package jimm;
 
+import javax.microedition.lcdui.Image;
+
 public interface ContactListItem
 {
 	// Checks whether some other object is equal to this one
 	public abstract boolean equals(Object obj);
 
-	// returns image index of tree node. Is used for visual tree
-	public int getLeftImageIndex(boolean expanded);
-	
-	public int getSecondLeftImageIndex();
-	
-	public int getRightImageIndex();
+	public Image getLeftImage(boolean expanded);
+	public Image getSecondLeftImage();
+	public Image getRightImage();
 
 	public String getText();
 	

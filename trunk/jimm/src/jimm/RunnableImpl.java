@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2005-06  Jimm Project
+ Copyright (C) 2005-08  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -22,8 +22,6 @@
  *******************************************************************************/
 
 package jimm;
-
-import java.util.TimerTask;
 
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.*;

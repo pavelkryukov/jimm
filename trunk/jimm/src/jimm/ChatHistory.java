@@ -451,7 +451,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 		
 		if (((Options.getBoolean(Options.OPTION_SHOW_MESS_ICON)) && (!shortMsg)) || deliveryReqOn)
 		{
-			textList.addImage(ContactList.imageList.elementAt(13), "", messTotalCounter);
+			textList.addImage(JimmUI.eventPlainMessageImg, "", messTotalCounter);
 			messHeader.append(' ');
 		}
 		
@@ -535,7 +535,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 			data = (MessData)messData.elementAt(i);
 			if (data.getMessId() == messId)
 			{
-				ok = textList.replaceImages(i, ContactList.imageList.elementAt(13), ContactList.imageList.elementAt(18));
+				ok = textList.replaceImages(i, JimmUI.eventPlainMessageImg, JimmUI.imgMessDeliv);
 				if (ok) textList.repaint();
 				break;
 			}

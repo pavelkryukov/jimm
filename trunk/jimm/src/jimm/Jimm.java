@@ -207,8 +207,6 @@ public class Jimm extends MIDlet
 
 		// Create ICQ object (and update progress indicator)
 		this.icq = new Icq();
-		SplashCanvas.setStatusToDraw(JimmUI.getStatusImageIndex(Icq
-				.getCurrentStatus()));
 		SplashCanvas.setProgress(20);
 
 		// Create object for text storage (and update progress indicator)

@@ -86,10 +86,8 @@ public class TimerTasks extends TimerTask
 				break;
 				
 			case SC_RESET_TEXT_AND_IMG:
-				SplashCanvas.setMessage(ResourceBundle
-						.getString("keylock_enabled"));
-				SplashCanvas.setStatusToDraw(JimmUI.getStatusImageIndex(Icq
-						.getCurrentStatus()));
+				SplashCanvas.setMessage(ResourceBundle.getString("keylock_enabled"));
+				SplashCanvas.setStatusToDraw(null);
 				SplashCanvas.Repaint();
 				break;
 
