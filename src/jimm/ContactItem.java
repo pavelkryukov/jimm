@@ -618,32 +618,36 @@ public class ContactItem implements ContactListItem, JimmScreen
 	}
 
 	/* Returns image index for contact */
-	public int getLeftImageIndex(boolean expanded)
+	public Image getLeftImage(boolean expanded)
 	{
-		int tempIndex = -1;
 		//#sijapp cond.if target isnot "DEFAULT"#		
-		if (typing)
-			return 17;
-		//#sijapp cond.end#			
-		if (getBooleanValue(CONTACTITEM_B_PLMESSAGES)) tempIndex = 13;
-		else if (getBooleanValue(CONTACTITEM_B_URLMESSAGES)) tempIndex = 14;
-		else if (getBooleanValue(CONTACTITEM_B_AUTREQUESTS)) tempIndex = 15;
-		else if (getBooleanValue(CONTACTITEM_B_SYSNOTICES)) tempIndex = 16;
-		else if (getBooleanValue(CONTACTITEM_NO_AUTH)) tempIndex = 19;
+		if (typing) return JimmUI.imgTyping;
+		//#sijapp cond.end#
+		Image result = null;
+		if (getBooleanValue(CONTACTITEM_B_PLMESSAGES)) result = JimmUI.eventPlainMessageImg;
+		else if (getBooleanValue(CONTACTITEM_B_URLMESSAGES)) result = JimmUI.eventUrlMessageImg;
+		else if (getBooleanValue(CONTACTITEM_B_AUTREQUESTS)) result = JimmUI.eventSysActionImg;
+		else if (getBooleanValue(CONTACTITEM_B_SYSNOTICES)) result = JimmUI.eventSystemNoticeImg;
+		else if (getBooleanValue(CONTACTITEM_NO_AUTH)) result = JimmUI.imgNoAuth;
 			
-		else tempIndex = JimmUI.getStatusImageIndex(getIntValue(ContactItem.CONTACTITEM_STATUS));
-		return tempIndex;
+		else
+		{
+			StatusInfo stInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, getIntValue(ContactItem.CONTACTITEM_STATUS));
+			result = (stInfo != null) ? stInfo.getImage() : null;
+		}
+		return result;
 	}
 	
-	public int getSecondLeftImageIndex()
+	public Image getSecondLeftImage()
 	{
-		return getIntValue(CONTACTITEM_XSTATUS); 
+		StatusInfo xStInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, getIntValue(ContactItem.CONTACTITEM_XSTATUS));
+		return (xStInfo != null) ? xStInfo.getImage() : null;
 	}
 	
 	/* Returns image index client */
-	public int getRightImageIndex()
+	public Image getRightImage()
 	{
-		return Icq.getClientImageID(getIntValue(CONTACTITEM_CLIENT)); 
+		return ContactList.cliImages.elementAt(Icq.getClientImageID(getIntValue(CONTACTITEM_CLIENT))); 
 	}
 
 	static private StringBuffer tmpStringBuffer = new StringBuffer();	
@@ -728,7 +732,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 
 	//#sijapp cond.if target isnot "DEFAULT"#
-	private boolean typing = false;
+	private boolean typing = false; // TODO: make as boolean flag
 
 	public void BeginTyping(boolean type)
 	{
@@ -814,27 +818,31 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 	public void setStatusImage()
 	{
-		int imgIndex;
+		Image image = null;
+		
 
-//#sijapp cond.if target isnot "DEFAULT"#		
-		imgIndex = typing ? 13 : JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
-//#sijapp cond.else#
-		imgIndex = JimmUI.getStatusImageIndex(getIntValue(CONTACTITEM_STATUS));
+//#sijapp cond.if target isnot "DEFAULT"#
+		if (typing) image = JimmUI.imgTyping;
+		else
+		{
+			StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, getIntValue(CONTACTITEM_STATUS));
+			if (statInfo != null) image = statInfo.getImage();  
+		}
 //#sijapp cond.end#
+		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, getIntValue(CONTACTITEM_STATUS));
+		if (statInfo != null) image = statInfo.getImage();  
 
 		if (SplashCanvas.locked())
 		{
-			SplashCanvas.setStatusToDraw(imgIndex);
+			SplashCanvas.setStatusToDraw(image);
 			SplashCanvas.setMessage(getStringValue(CONTACTITEM_NAME));
 			SplashCanvas.Repaint();
-			SplashCanvas.startTimer();
 			return;
 		}
 
 		ChatTextList chat = ChatHistory.getChatHistoryAt(getStringValue(CONTACTITEM_UIN));
 		
-		if (chat != null) 
-			chat.setImage(ContactList.smallIcons.elementAt(imgIndex));
+		if (chat != null) chat.setImage(image);
 	}
 }
 

@@ -36,6 +36,7 @@ import jimm.JimmUI;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
+import jimm.StatusInfo;
 import jimm.comm.connections.*;
 import jimm.util.ResourceBundle;
 import jimm.ContactList;
@@ -190,8 +191,9 @@ public class Icq implements Runnable
 			JimmException.handleException(e);
 		}
 
-		SplashCanvas.setStatusToDraw(jimm.JimmUI.getStatusImageIndex(Options
-				.getLong(Options.OPTION_ONLINE_STATUS)));
+		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, (int)Options.getLong(Options.OPTION_ONLINE_STATUS));
+		SplashCanvas.setStatusToDraw(statInfo != null ? statInfo.getImage() : null);
+		
 		// Start timer
 		SplashCanvas.addTimerTask("connecting", act, true);
 
@@ -712,14 +714,14 @@ public class Icq implements Runnable
 		}
 
 		/* xStatus */
-		if (xStatus != 255)
+		StatusInfo xStatInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, xStatus);
+		if (xStatInfo != null)
 		{
-			int icqXStatus = convertJimmXStatToIcqXStat(xStatus);
-			byte[] szMoodId = Util.stringToByteArray(ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]), true);
+			byte[] szMoodId = Util.stringToByteArray(xStatInfo.getText(), true);
 
 			Util.writeWord(statBuffer, 0x1D, true);  // TLV (0x1D)
 
-			String message = icqXStatus != -1 ? ("icqmood"+icqXStatus) : "";
+			String message = xStatus != -1 ? ("icqmood"+xStatus) : "";
 
 			Util.writeWord(statBuffer, 12+szMoodId.length+message.length(), true);   // TLV Length
 			Util.writeWord(statBuffer, 0x0002, true);   // Text Status
@@ -788,11 +790,7 @@ public class Icq implements Runnable
 			//#sijapp cond.end#
 			
 			int xStatus = Options.getInt(Options.OPTION_XSTATUS);
-			for (int i = 0; i < XSTATUS_CONSTS.length; i += 18)
-			{
-				if (XSTATUS_CONSTS[i] == xStatus)
-				capsStream.write(XSTATUS_CONSTS, i+2, 16);
-			}
+			capsStream.write(XSTATUS_CONSTS, xStatus*16, 16);
 			
 			packet = capsStream.toByteArray();
 			Util.putWord(packet, 2, packet.length-4);
@@ -868,52 +866,47 @@ public class Icq implements Runnable
 
 	
 	private static final byte[] XSTATUS_CONSTS = Util.explodeToBytes(
-		"00,17,01,D8,D7,EE,AC,3B,49,2A,A5,8D,D3,D8,77,E6,6B,92,"+ // ANGRY
-		"01,01,5A,58,1E,A1,E5,80,43,0C,A0,6F,61,22,98,B7,E4,C7,"+ // DUCK
-		"02,02,83,C9,B7,8E,77,E7,43,78,B2,C5,FB,6C,FC,C3,5B,EC,"+ // TIRED
-		"03,03,E6,01,E4,1C,33,73,4B,D1,BC,06,81,1D,6C,32,3D,81,"+ // PARTY
-		"04,04,8C,50,DB,AE,81,ED,47,86,AC,CA,16,CC,32,13,C7,B7,"+ // BEER
-		"05,05,3F,B0,BD,36,AF,3B,4A,60,9E,EF,CF,19,0F,6A,5A,7F,"+ // THINKING
-		"06,06,F8,E8,D7,B2,82,C4,41,42,90,F8,10,C6,CE,0A,89,A6,"+ // EATING
-		"07,07,80,53,7D,E2,A4,67,4A,76,B3,54,6D,FD,07,5F,5E,C6,"+ // TV
-		"08,08,F1,8A,B5,2E,DC,57,49,1D,99,DC,64,44,50,24,57,AF,"+ // FRIENDS
-		"09,09,1B,78,AE,31,FA,0B,4D,38,93,D1,99,7E,EE,AF,B2,18,"+ // COFFEE
-		"0A,0A,61,BE,E0,DD,8B,DD,47,5D,8D,EE,5F,4B,AA,CF,19,A7,"+ // MUSIC
-		"0B,0B,48,8E,14,89,8A,CA,4A,08,82,AA,77,CE,7A,16,52,08,"+ // BUSINESS
-		"0C,0C,10,7A,9A,18,12,32,4D,A4,B6,CD,08,79,DB,78,0F,09,"+ // CAMERA
-		"0D,0D,6F,49,30,98,4F,7C,4A,FF,A2,76,34,A0,3B,CE,AE,A7,"+ // FUNNY
-		"0E,0E,12,92,E5,50,1B,64,4F,66,B2,06,B2,9A,F3,78,E4,8D,"+ // PHONE
-		"0F,0F,D4,A6,11,D0,8F,01,4E,C0,92,23,C5,B6,BE,C6,CC,F0,"+ // GAMES
-		"10,10,60,9D,52,F8,A2,9A,49,A6,B2,A0,25,24,C5,E9,D2,60,"+ // COLLEGE
-		"11,00,63,62,73,37,A0,3F,49,FF,80,E5,F7,09,CD,E0,A4,EE,"+ // SHOPPING
-		"12,11,1F,7A,40,71,BF,3B,4E,60,BC,32,4C,57,87,B0,4C,F1,"+ // SICK
-		"13,12,78,5E,8C,48,40,D3,4C,65,88,6F,04,CF,3F,3F,43,DF,"+ // SLEEPING
-		"14,13,A6,ED,55,7E,6B,F7,44,D4,A5,D4,D2,E7,D9,5C,E8,1F,"+ // SURFING
-		"15,14,12,D0,7E,3E,F8,85,48,9E,8E,97,A7,2A,65,51,E5,8D,"+ // INTERNET
-		"16,15,BA,74,DB,3E,9E,24,43,4B,87,B6,2F,6B,8D,FE,E5,0F,"+ // ENGINEERING
-		"17,16,63,4F,6B,D8,AD,D2,4A,A1,AA,B9,11,5B,C2,6D,05,A1,"+ // TYPING
-		"18,FF,2C,E0,E4,E5,7C,64,43,70,9C,3A,7A,1C,E8,78,A7,DC,"+ // UNK
-		"19,FF,10,11,17,C9,A3,B0,40,F9,81,AC,49,E1,59,FB,D5,D4,"+ // PPC
-		"1A,FF,16,0C,60,BB,DD,44,43,F3,91,40,05,0F,00,E6,C0,09,"+ // MOBILE
-		"1B,FF,64,43,C6,AF,22,60,45,17,B5,8C,D7,DF,8E,29,03,52,"+ // MAN
-		"1C,FF,16,F5,B7,6F,A9,D2,40,35,8C,C5,C0,84,70,3C,98,FA,"+ // WC
-		"1D,FF,63,14,36,FF,3F,8A,40,D0,A5,CB,7B,66,E0,51,B3,64,"+ // QUESTION
-		"1E,FF,B7,08,67,F5,38,25,43,27,A1,FF,CF,4C,C1,93,97,97,"+ // WAY
-		"1F,FF,DD,CF,0E,A9,71,95,40,48,A9,C6,41,32,06,D6,F2,80,"+ // HEART
-		"20,FF,3F,B0,BD,36,AF,3B,4A,60,9E,EF,CF,19,0F,6A,5A,7E,"+ // CIGARETTE
-		"21,FF,E6,01,E4,1C,33,73,4B,D1,BC,06,81,1D,6C,32,3D,82,"+ // SEX
-		"22,FF,D4,E2,B0,BA,33,4E,4F,A5,98,D0,11,7D,BF,4D,3C,C8,"+ // SEARCH
-		"23,FF,00,72,D9,08,4A,D1,43,DD,91,99,6F,02,69,66,02,6F",  // DIARY
+		"63,62,73,37,A0,3F,49,FF,80,E5,F7,09,CD,E0,A4,EE,"+ // 00 SHOPPING
+		"5A,58,1E,A1,E5,80,43,0C,A0,6F,61,22,98,B7,E4,C7,"+ // 01 DUCK
+		"83,C9,B7,8E,77,E7,43,78,B2,C5,FB,6C,FC,C3,5B,EC,"+ // 02 TIRED
+		"E6,01,E4,1C,33,73,4B,D1,BC,06,81,1D,6C,32,3D,81,"+ // 03 PARTY
+		"8C,50,DB,AE,81,ED,47,86,AC,CA,16,CC,32,13,C7,B7,"+ // 04 BEER
+		"3F,B0,BD,36,AF,3B,4A,60,9E,EF,CF,19,0F,6A,5A,7F,"+ // 05 THINKING
+		"F8,E8,D7,B2,82,C4,41,42,90,F8,10,C6,CE,0A,89,A6,"+ // 06 EATING
+		"80,53,7D,E2,A4,67,4A,76,B3,54,6D,FD,07,5F,5E,C6,"+ // 07 TV
+		"F1,8A,B5,2E,DC,57,49,1D,99,DC,64,44,50,24,57,AF,"+ // 08 FRIENDS
+		"1B,78,AE,31,FA,0B,4D,38,93,D1,99,7E,EE,AF,B2,18,"+ // 09 COFFEE
+		"61,BE,E0,DD,8B,DD,47,5D,8D,EE,5F,4B,AA,CF,19,A7,"+ // 0A MUSIC
+		"48,8E,14,89,8A,CA,4A,08,82,AA,77,CE,7A,16,52,08,"+ // 0B BUSINESS
+		"10,7A,9A,18,12,32,4D,A4,B6,CD,08,79,DB,78,0F,09,"+ // 0C CAMERA
+		"6F,49,30,98,4F,7C,4A,FF,A2,76,34,A0,3B,CE,AE,A7,"+ // 0D FUNNY
+		"12,92,E5,50,1B,64,4F,66,B2,06,B2,9A,F3,78,E4,8D,"+ // 0E PHONE
+		"D4,A6,11,D0,8F,01,4E,C0,92,23,C5,B6,BE,C6,CC,F0,"+ // 0F GAMES
+		"60,9D,52,F8,A2,9A,49,A6,B2,A0,25,24,C5,E9,D2,60,"+ // 10 COLLEGE
+		"1F,7A,40,71,BF,3B,4E,60,BC,32,4C,57,87,B0,4C,F1,"+ // 11 SICK
+		"78,5E,8C,48,40,D3,4C,65,88,6F,04,CF,3F,3F,43,DF,"+ // 12 SLEEPING
+		"A6,ED,55,7E,6B,F7,44,D4,A5,D4,D2,E7,D9,5C,E8,1F,"+ // 13 SURFING
+		"12,D0,7E,3E,F8,85,48,9E,8E,97,A7,2A,65,51,E5,8D,"+ // 14 INTERNET
+		"BA,74,DB,3E,9E,24,43,4B,87,B6,2F,6B,8D,FE,E5,0F,"+ // 15 ENGINEERING
+		"63,4F,6B,D8,AD,D2,4A,A1,AA,B9,11,5B,C2,6D,05,A1,"+ // 16 TYPING
+		"01,D8,D7,EE,AC,3B,49,2A,A5,8D,D3,D8,77,E6,6B,92,"+ // 17 ANGRY
+		"2C,E0,E4,E5,7C,64,43,70,9C,3A,7A,1C,E8,78,A7,DC,"+ // 18 UNK
+		"10,11,17,C9,A3,B0,40,F9,81,AC,49,E1,59,FB,D5,D4,"+ // 19 PPC
+		"16,0C,60,BB,DD,44,43,F3,91,40,05,0F,00,E6,C0,09,"+ // 1A MOBILE
+		"64,43,C6,AF,22,60,45,17,B5,8C,D7,DF,8E,29,03,52,"+ // 1B MAN
+		"16,F5,B7,6F,A9,D2,40,35,8C,C5,C0,84,70,3C,98,FA,"+ // 1C WC
+		"63,14,36,FF,3F,8A,40,D0,A5,CB,7B,66,E0,51,B3,64,"+ // 1D QUESTION
+		"B7,08,67,F5,38,25,43,27,A1,FF,CF,4C,C1,93,97,97,"+ // 1E WAY
+		"DD,CF,0E,A9,71,95,40,48,A9,C6,41,32,06,D6,F2,80,"+ // 1F HEART
+		"3F,B0,BD,36,AF,3B,4A,60,9E,EF,CF,19,0F,6A,5A,7E,"+ // 20 CIGARETTE
+		"E6,01,E4,1C,33,73,4B,D1,BC,06,81,1D,6C,32,3D,82,"+ // 21 SEX
+		"D4,E2,B0,BA,33,4E,4F,A5,98,D0,11,7D,BF,4D,3C,C8,"+ // 22 SEARCH
+		"00,72,D9,08,4A,D1,43,DD,91,99,6F,02,69,66,02,6F",  // 23 DIARY
 		
-		/*"24,FF,64,43,c6,af,22,60,45,17,b5,8c,d7,df,8e,29,03,52,"+ // I'm hight (miranda)
-		"25,FF,63,14,36,ff,3f,8a,40,d0,a5,cb,7b,66,e0,51,b3,64,"+ // To be or not to be? (miranda)
-		"26,FF,10,11,17,c9,a3,b0,40,f9,81,ac,49,e1,59,fb,d5,d4",  // Cooking (miranda) */
+		/*"64,43,c6,af,22,60,45,17,b5,8c,d7,df,8e,29,03,52,"+ // I'm hight (miranda)
+		"63,14,36,ff,3f,8a,40,d0,a5,cb,7b,66,e0,51,b3,64,"+ // To be or not to be? (miranda)
+		"10,11,17,c9,a3,b0,40,f9,81,ac,49,e1,59,fb,d5,d4",  // Cooking (miranda) */
 		',', 16);
-
-	public static boolean isXStatusStd(int index)
-	{
-		return (index < 0) ? true : (XSTATUS_CONSTS[index*18+1] != -1);
-	}
 
 	/* Capabilities */
 	public static final int CAPF_NO_INTERNAL     = 0;      // No capability
@@ -1091,22 +1084,11 @@ public class Icq implements Runnable
 		vImg.addElement(new Integer(imageIndex-1));
 	}
 	
-	private static int convertJimmXStatToIcqXStat(int jimmValue)
-	{
-		for (int i = 0; i < XSTATUS_CONSTS.length; i += 18) 
-			if (XSTATUS_CONSTS[i] == (byte)jimmValue) 
-				return XSTATUS_CONSTS[i+1] == 255 ? -1 : XSTATUS_CONSTS[i+1]; 
-		return -1;
-	}
-	
 	public static int detectStandartXStatus(String data)
 	{
 		int idx = data.indexOf("icqmood");
 		if (idx < 2) return -1;
-		int stdStatusValue = Util.strToIntDef(data.substring(7), -1);
-		for (int i = 0; i < XSTATUS_CONSTS.length; i += 18)
-			if (XSTATUS_CONSTS[i+1] == stdStatusValue) return XSTATUS_CONSTS[i]; 
-		return -1;
+		return Util.strToIntDef(data.substring(7), -1);
 	}
 	
 	public static int detectXStatus(byte[] capabilities)
@@ -1117,12 +1099,12 @@ public class Icq implements Runnable
 			return -1;
 		for (int i = 0; i < capabilities.length; i += 16)
 		{
-			for (int j = 0; j < XSTATUS_CONSTS.length; j += 18)
+			for (int j = 0; j < XSTATUS_CONSTS.length; j += 16)
 			{
 				counter = 0;
 				for (int k = 0; k < 16; k++, counter++) 
-					if (capabilities[i+k] != XSTATUS_CONSTS[j+k+2]) break;
-				if (counter == 16) return XSTATUS_CONSTS[j];
+					if (capabilities[i+k] != XSTATUS_CONSTS[j+k]) break;
+				if (counter == 16) return j/16;
 			}
 		}
 		return -1;

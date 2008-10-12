@@ -262,7 +262,6 @@ public class Options
 	// Options form
 	static OptionsForm optionsForm;
 
-	/* Private constructor prevent to create instances of Options class */
 	public Options()
 	{
 		// Try to load option values from record store and construct options form
@@ -294,6 +293,10 @@ public class Options
 			setDefaults();
 			resetLangDependedOpts();
 		}
+		
+		setDefaultStatusStrings();
+		setDefaultXStatusStrings();
+		
 
 		ResourceBundle.setCurrUiLanguage(getString(Options.OPTION_UI_LANGUAGE));
 	}
@@ -803,6 +806,70 @@ public class Options
 		}
 	}
 //#sijapp cond.end#
+	
+	
+	
+	
+	/*************************************/
+	/*                                   */
+	/*   Working with statuses strings   */
+	/*                                   */
+	/*************************************/
+	
+	final private static Hashtable statusStrings = new Hashtable();
+	final private static Hashtable xSatusStrings = new Hashtable();
+	
+	public static String getStatusString(int status)
+	{
+		return (String)statusStrings.get(new Integer(status));
+	}
+	
+	public static String getXStatusString(int status)
+	{
+		return (String)xSatusStrings.get(new Integer(status));
+	}
+	
+	public static int[] getStatuses()
+	{
+		return getStatusesFromHashtable(statusStrings);
+	}
+	
+	private static int[] getStatusesFromHashtable(Hashtable tbl)
+	{
+		int[] result = new int[tbl.size()];
+		return result;
+	}
+
+	private static void setDefaultStatusStrings()
+	{
+		statusStrings.clear();
+		setStatusString(statusStrings, ContactList.STATUS_ONLINE,     "status_online"      );
+		setStatusString(statusStrings, ContactList.STATUS_OCCUPIED,   "status_occupied"    );
+		setStatusString(statusStrings, ContactList.STATUS_NA,         "status_message_text");
+		setStatusString(statusStrings, ContactList.STATUS_DND,        "status_message_text");
+		setStatusString(statusStrings, ContactList.STATUS_CHAT,       "status_chat"        );
+		setStatusString(statusStrings, ContactList.STATUS_AWAY,       "status_message_text");
+		setStatusString(statusStrings, ContactList.STATUS_LUNCH,      "status_lunch"       );
+		setStatusString(statusStrings, ContactList.STATUS_WORK,       "status_work"        );
+		setStatusString(statusStrings, ContactList.STATUS_HOME,       "status_home"        );
+		setStatusString(statusStrings, ContactList.STATUS_DEPRESSION, "status_depression"  );
+		setStatusString(statusStrings, ContactList.STATUS_EVIL,       "status_evil"        );
+	}
+	
+	static void setDefaultXStatusStrings()
+	{
+		/*
+		xSatusStrings.clear();
+		for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
+			setStatusString(xSatusStrings, i, JimmUI.xStatusStrings[i]);
+			*/
+	}
+	
+	static void setStatusString(Hashtable tbl, int status, String str)
+	{
+		tbl.put(new Integer(status), ResourceBundle.getString(str));
+	}
+	
 
 }
 
@@ -841,7 +908,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 	private boolean lastGroupsUsed, lastHideOffline, lastHideEmpty;
 
-	private int lastSortMethod, lastColorScheme;
+	private int lastSortMethod;
 
 	private int currentHour;
 	
@@ -1174,7 +1241,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 	private void InitColorThemeUI()
 	{
-		lastColorScheme = Options.getInt(Options.OPTION_COLOR_SCHEME);
 		tlColorScheme = new TextList(ResourceBundle.getString("color_scheme"));
 		JimmUI.setColorScheme(tlColorScheme, false, -1, true);
 		JimmUI.addTextListItem(tlColorScheme, "black_on_white",  null, 0, true, -1, Font.STYLE_PLAIN);

@@ -44,6 +44,7 @@ import javax.microedition.lcdui.TextField;
 
 import jimm.comm.*;
 import jimm.util.ResourceBundle;
+import DrawControls.ImageList;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 
@@ -1027,7 +1028,7 @@ public class JimmUI implements CommandListener
 				imgIndex = 3;
 			list.addBigText(ResourceBundle.getString("status") + ": ",
 					list.getTextColor(), Font.STYLE_PLAIN, uiBigTextIndex)
-					.addImage(ContactList.getImageList().elementAt(imgIndex),
+					.addImage(JimmUI.imageList.elementAt(imgIndex),
 							null, uiBigTextIndex).doCRLF(uiBigTextIndex);
 			uiBigTextIndex++;
 		}
@@ -1266,107 +1267,175 @@ public class JimmUI implements CommandListener
 		textList.doCRLF(messTotalCounter);
 	}
 
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////
-
-	private final static long[] statuses =
-	{ ContactList.STATUS_AWAY, ContactList.STATUS_CHAT, ContactList.STATUS_DND,
-			ContactList.STATUS_INVISIBLE, ContactList.STATUS_NA,
-			ContactList.STATUS_OCCUPIED, ContactList.STATUS_OFFLINE,
-			ContactList.STATUS_ONLINE, ContactList.STATUS_INVIS_ALL,
-                        ContactList.STATUS_EVIL, ContactList.STATUS_DEPRESSION,
-                        ContactList.STATUS_HOME, ContactList.STATUS_WORK, 
-                        ContactList.STATUS_LUNCH };
-
-	//#sijapp cond.if target="MOTOROLA"#
-	//#	public final static int[] st_colors =
-	//#	{
-	//#		0x00AACC,
-	//#		0xFFFF00,
-	//#		0xFF8888,
-	//#		0xBBBBBB,
-	//#		0xAA0088,
-	//#		0xFFCC66,
-	//#		0xFF0000,
-	//#		0x00FF00,
-	//#		0x888888,
-	//#		0x0000FF
-	//#	};
-	//#sijapp cond.end#
-
-	public final static int[] imageIndexes =
-	{ 0, 1, 2, 3, 4, 5, 6, 7, 3, 8, 9, 10, 11, 12 };
-
-	private final static String[] statusStrings = Util.explode("status_away"
-			+ "|" + "status_chat" + "|" + "status_dnd" + "|"
-			+ "status_invisible" + "|" + "status_na" + "|" + "status_occupied"
-			+ "|" + "status_offline" + "|" + "status_online" + "|"
-			+ "status_invis_all" + "|" + "status_evil" + "|" + "status_depression"
-                        + "|" + "status_home" + "|" + "status_work" + "|"
-                        + "status_lunch", '|');
-
-    public static final String[] xStatusStrings = {
-    	"xstatus_none",
-        "xstatus_angry",
-        "xstatus_duck",
-        "xstatus_tired",
-        "xstatus_party",
-        "xstatus_beer",
-        "xstatus_thinking",
-        "xstatus_eating",
-        "xstatus_tv",
-        "xstatus_friends",
-        "xstatus_coffee",
-        "xstatus_music",
-        "xstatus_business",
-        "xstatus_camera",
-        "xstatus_funny",
-        "xstatus_phone",
-        "xstatus_games",
-        "xstatus_college",
-        "xstatus_shopping",
-        "xstatus_sick",
-        "xstatus_sleeping",
-        "xstatus_surfing",
-        "xstatus_internet",
-        "xstatus_engineering",
-        "xstatus_typing",
-        "xstatus_unk",
-        "xstatus_ppc",
-        "xstatus_mobile",
-        "xstatus_man",
-        "xstatus_wc",
-        "xstatus_question",
-        "xstatus_way",
-        "xstatus_heart",
-        "xstatus_cigarette",
-        "xstatus_sex",
-        "xstatus_rambler_search",
-        "xstatus_rambler_journal"
-    };
-
-	public static int getStatusIndex(long status)
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+	
+	final public static ImageList imageList     = new ImageList();
+	final public static ImageList xStatusImages = new ImageList();
+	
+	final public static Image statusEvilImg;
+	final public static Image statusDepressionImg;
+	final public static Image statusHomeImg;
+	final public static Image statusWorkImg;
+	final public static Image statusLunchImg;
+	final public static Image statusAwayImg;
+	final public static Image statusChatImg;
+	final public static Image statusDndImg;
+	final public static Image statusInvisibleImg;
+	final public static Image statusNaImg;
+	final public static Image statusOccupiedImg;
+	final public static Image statusOfflineImg;
+	final public static Image statusOnlineImg;
+	final public static Image eventPlainMessageImg;
+	final public static Image eventUrlMessageImg;
+	final public static Image eventSystemNoticeImg;
+	final public static Image eventSysActionImg;
+	final public static Image imgTyping;
+	final public static Image imgMessDeliv;
+	final public static Image imgNoAuth;
+	
+	private static StatusInfo[] statusInfos;
+	
+	static
 	{
-		for (int i = 0; i < statuses.length; i++)
-			if (statuses[i] == status)
-				return i;
-		return -1;
+		try
+		{
+			/* reads and divides image "icons.png" to several icons */
+			imageList.load("/icons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
+		} 
+		catch (Exception e) {}
+		
+		statusEvilImg        = imageList.elementAt(8);
+		statusDepressionImg  = imageList.elementAt(9);
+		statusHomeImg        = imageList.elementAt(10);
+		statusWorkImg        = imageList.elementAt(11);
+		statusLunchImg       = imageList.elementAt(12);
+		statusAwayImg        = imageList.elementAt(0);
+		statusChatImg        = imageList.elementAt(1);
+		statusDndImg         = imageList.elementAt(2);
+		statusInvisibleImg   = imageList.elementAt(3);
+		statusNaImg          = imageList.elementAt(4);
+		statusOccupiedImg    = imageList.elementAt(5);
+		statusOfflineImg     = imageList.elementAt(6);
+		statusOnlineImg      = imageList.elementAt(7);
+		eventPlainMessageImg = imageList.elementAt(13);
+		eventUrlMessageImg   = imageList.elementAt(14);
+		eventSystemNoticeImg = imageList.elementAt(15);
+		eventSysActionImg    = imageList.elementAt(16);
+		imgTyping            = imageList.elementAt(17);
+		imgMessDeliv         = imageList.elementAt(18);
+		imgNoAuth            = imageList.elementAt(19);
+		
+		
+		try
+		{
+			xStatusImages.load("/xstatus.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
+		} catch (Exception e) {}
+		
+		
+		Vector data = new Vector(); 
+		
+		/* Normal statuses */
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_ONLINE,     "status_online",     statusOnlineImg,     StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_CHAT,       "status_chat",       statusChatImg,       StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_AWAY,       "status_away",       statusAwayImg,       StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_NA,         "status_na",         statusNaImg,         StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_OCCUPIED,   "status_occupied",   statusOccupiedImg,   StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_DND,        "status_dnd",        statusDndImg,        StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_INVISIBLE,  "status_invisible",  statusInvisibleImg,  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_INVIS_ALL,  "status_invis_all",  statusInvisibleImg,  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_EVIL,       "status_evil",       statusEvilImg,       StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_DEPRESSION, "status_depression", statusDepressionImg, StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_HOME,       "status_home",       statusHomeImg,       StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_WORK,       "status_work",       statusWorkImg,       StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_LUNCH,      "status_lunch",      statusLunchImg,      StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_OFFLINE,    "status_offline",    statusOfflineImg,    0);
+		
+		/* Extended statuses */
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS,   -2, "xstatus_none",            null,                        StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x17, "xstatus_angry",           xStatusImages.elementAt(0),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x01, "xstatus_duck",            xStatusImages.elementAt(1),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x02, "xstatus_tired",           xStatusImages.elementAt(2),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x03, "xstatus_party",           xStatusImages.elementAt(3),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x04, "xstatus_beer",            xStatusImages.elementAt(4),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x05, "xstatus_thinking",        xStatusImages.elementAt(5),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x06, "xstatus_eating",          xStatusImages.elementAt(6),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x07, "xstatus_tv",              xStatusImages.elementAt(7),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x08, "xstatus_friends",         xStatusImages.elementAt(8),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x09, "xstatus_coffee",          xStatusImages.elementAt(9),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x0A, "xstatus_music",           xStatusImages.elementAt(10), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x0B, "xstatus_business",        xStatusImages.elementAt(11), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x0C, "xstatus_camera",          xStatusImages.elementAt(12), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x0D, "xstatus_funny",           xStatusImages.elementAt(13), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x0E, "xstatus_phone",           xStatusImages.elementAt(14), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x0F, "xstatus_games",           xStatusImages.elementAt(15), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x10, "xstatus_college",         xStatusImages.elementAt(16), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x00, "xstatus_shopping",        xStatusImages.elementAt(17), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x11, "xstatus_sick",            xStatusImages.elementAt(18), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x12, "xstatus_sleeping",        xStatusImages.elementAt(19), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x13, "xstatus_surfing",         xStatusImages.elementAt(20), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x14, "xstatus_internet",        xStatusImages.elementAt(21), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x15, "xstatus_engineering",     xStatusImages.elementAt(22), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x16, "xstatus_typing",          xStatusImages.elementAt(23), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x18, "xstatus_unk",             xStatusImages.elementAt(24), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x19, "xstatus_ppc",             xStatusImages.elementAt(25), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x1A, "xstatus_mobile",          xStatusImages.elementAt(26), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x1B, "xstatus_man",             xStatusImages.elementAt(27), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x1C, "xstatus_wc",              xStatusImages.elementAt(28), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x1D, "xstatus_question",        xStatusImages.elementAt(29), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x1E, "xstatus_way",             xStatusImages.elementAt(30), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x1F, "xstatus_heart",           xStatusImages.elementAt(31), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x20, "xstatus_cigarette",       xStatusImages.elementAt(32), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x21, "xstatus_sex",             xStatusImages.elementAt(33), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x22, "xstatus_rambler_search",  xStatusImages.elementAt(34), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+        addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x23, "xstatus_rambler_journal", xStatusImages.elementAt(35), StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR);
+		
+		statusInfos = new StatusInfo[data.size()];
+		data.copyInto(statusInfos);
+	}
+	
+	public static StatusInfo findStatus(int type, int value)
+	{
+		for (int i = 0; i < statusInfos.length; i++)
+		{
+			StatusInfo info = statusInfos[i];
+			if (info.getType() == type && info.getValue() == value) return info; 
+		}
+		return null;
+	}
+	
+	private static void addStatusInfo(Vector vct, int type, int value, String text, Image image, int flags)
+	{
+		vct.addElement(new StatusInfo(type, value, ResourceBundle.getString(text), image, flags));
+	}
+	
+	public static void fillStatusesInList(TextList list, int type, int flags)
+	{
+		for (int i = 0; i < statusInfos.length; i++)
+		{
+			StatusInfo info = statusInfos[i];
+			if (info.getType() != type) continue;
+			if ((info.getFlags()&flags) == 0) continue;
+			addTextListItem
+			(
+				list, 
+				info.getText(), 
+				info.getImage(), 
+				info.getValue(), 
+				true, 
+				-1, 
+				(info.getFlags()&StatusInfo.FLAG_STD) != 0 ? Font.STYLE_BOLD : Font.STYLE_PLAIN
+			);
+		}
 	}
 
-	public static int getStatusImageIndex(long status)
-	{
-		int index = getStatusIndex(status);
-		return (index == -1) ? -1 : imageIndexes[index];
-	}
-
-	public static String getStatusString(long status)
-	{
-		int index = getStatusIndex(status);
-		return (index == -1) ? null : ResourceBundle
-				.getString(statusStrings[index]);
-	}
-
+	
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+	
+	
 	public static final int SHS_TYPE_ALL = 1;
 	public static final int SHS_TYPE_EMPTY = 2;
 	
@@ -1986,15 +2055,28 @@ public class JimmUI implements CommandListener
 	
 	public static void showClientInfo(ContactItem cItem)
 	{
+		StatusInfo statusInfo;
+		
 		TextList tlist = JimmUI.getInfoTextList(
 				cItem.getStringValue(ContactItem.CONTACTITEM_UIN), true);
 		String[] clInfoData = new String[JimmUI.UI_LAST_ID];
+
+		/* Status */
+		statusInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, cItem.getIntValue(ContactItem.CONTACTITEM_STATUS));
+		clInfoData[JimmUI.UI_ONLINE_STATUS] = (statusInfo != null) ? statusInfo.getText() : null;
 		
-		clInfoData[JimmUI.UI_ONLINE_STATUS] = JimmUI.getStatusString(cItem.getIntValue(ContactItem.CONTACTITEM_STATUS));
+		/* X-status */
 		int xStatus = cItem.getIntValue(ContactItem.CONTACTITEM_XSTATUS);
+		statusInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, xStatus);
 		String rcvdXMsg = cItem.getStringValue(ContactItem.CONTACTITEM_XSTATUSMSG);
-		clInfoData[JimmUI.UI_XSTATUS] = (xStatus < 0) ? null :
-				((rcvdXMsg.length() > 0) ? rcvdXMsg : ResourceBundle.getString(JimmUI.xStatusStrings[xStatus+1]));
+		if (statusInfo != null)
+		{
+			String stText = ResourceBundle.getString(statusInfo.getText());
+			clInfoData[JimmUI.UI_XSTATUS] = ((rcvdXMsg.length() > 0) ? stText+" ("+rcvdXMsg+")" : stText);
+		}
+		else
+			clInfoData[JimmUI.UI_XSTATUS] = null;
+		
 		/* sign on time */
 		long signonTime = cItem.getIntValue(ContactItem.CONTACTITEM_SIGNON);
 		if (signonTime > 0)
@@ -2247,8 +2329,11 @@ public class JimmUI implements CommandListener
 		tlStatusMessage.clear();
 		
 		addTextListItem(tlStatusMessage, statusMessCI.getStringValue(ContactItem.CONTACTITEM_NAME), null, -1, false, -1, Font.STYLE_BOLD);
-		addTextListItem(tlStatusMessage, getStatusString(statusMessCI.getIntValue(ContactItem.CONTACTITEM_STATUS)), null, -1, false, -1, Font.STYLE_PLAIN);
+		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, statusMessCI.getIntValue(ContactItem.CONTACTITEM_STATUS));
+		String status = (statInfo != null) ? statInfo.getText() : new String();
+		addTextListItem(tlStatusMessage, status, null, -1, false, -1, Font.STYLE_PLAIN);
 		addTextListItem(tlStatusMessage, message, null, -1, false, -2, Font.STYLE_PLAIN);
+		
 		tlStatusMessage.unlock();
 	}
 	

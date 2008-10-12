@@ -205,8 +205,7 @@ public class JimmException extends Exception
 
 			// Set offline status for all contacts and reset online counters 
 			ContactList.setStatusesOffline();
-			SplashCanvas.setStatusToDraw(JimmUI
-					.getStatusImageIndex(ContactList.STATUS_OFFLINE));
+			SplashCanvas.setStatusToDraw(JimmUI.statusOfflineImg);
 			SplashCanvas.setErrFlag(true);
 
 			Alert errorMsg = null;

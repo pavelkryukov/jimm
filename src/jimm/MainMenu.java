@@ -90,8 +90,8 @@ public class MainMenu implements CommandListener, JimmScreen
 	static private Image getStatusImage()
 	{
 		long cursStatus = Options.getLong(Options.OPTION_ONLINE_STATUS);
-		int imageIndex = JimmUI.getStatusImageIndex(cursStatus);
-		return ContactList.getImageList().elementAt(imageIndex);
+		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, (int)cursStatus);
+		return (statInfo != null) ? statInfo.getImage() : null; 
 	}
 
 	/* Builds the main menu (visual list) */
@@ -119,7 +119,7 @@ public class MainMenu implements CommandListener, JimmScreen
 		}
 		
 		JimmUI.addTextListItem(list, "set_status", getStatusImage(), MENU_STATUS, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(list, "set_xstatus", ContactList.xStatusImages.elementAt(Options.getInt(Options.OPTION_XSTATUS)), MENU_XSTATUS, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "set_xstatus", JimmUI.xStatusImages.elementAt(Options.getInt(Options.OPTION_XSTATUS)), MENU_XSTATUS, true, -1, Font.STYLE_PLAIN);
 		
 		if (ContactList.getSize() != 0)
 			JimmUI.addTextListItem(list, "contact_list", menuIcons.elementAt(2), MENU_LIST, true, -1, Font.STYLE_PLAIN);
@@ -221,59 +221,16 @@ public class MainMenu implements CommandListener, JimmScreen
 
 	//#sijapp cond.end#	
 	
-	private static void initStatusList()
+	private static void initStatusList(String caption, int type, int afterStatus)
 	{
-		statusList = new TextList(ResourceBundle.getString("set_status"));
+		statusList = new TextList(ResourceBundle.getString(caption));
 		statusList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.setColorScheme(statusList, false, -1, true);
-		JimmUI.addTextListItem(statusList, "status_online",     ContactList.statusOnlineImg,     ContactList.STATUS_ONLINE,     true, -1, Font.STYLE_BOLD);
-		JimmUI.addTextListItem(statusList, "status_chat",       ContactList.statusChatImg,       ContactList.STATUS_CHAT,       true, -1, Font.STYLE_BOLD);
-		JimmUI.addTextListItem(statusList, "status_away",       ContactList.statusAwayImg,       ContactList.STATUS_AWAY,       true, -1, Font.STYLE_BOLD);
-		JimmUI.addTextListItem(statusList, "status_na",         ContactList.statusNaImg,         ContactList.STATUS_NA,         true, -1, Font.STYLE_BOLD);
-		JimmUI.addTextListItem(statusList, "status_occupied",   ContactList.statusOccupiedImg,   ContactList.STATUS_OCCUPIED,   true, -1, Font.STYLE_BOLD);
-		JimmUI.addTextListItem(statusList, "status_dnd",        ContactList.statusDndImg,        ContactList.STATUS_DND,        true, -1, Font.STYLE_BOLD);
-		JimmUI.addTextListItem(statusList, "status_invisible",  ContactList.statusInvisibleImg,  ContactList.STATUS_INVISIBLE,  true, -1, Font.STYLE_BOLD);
-		JimmUI.addTextListItem(statusList, "status_invis_all",  ContactList.statusInvisibleImg,  ContactList.STATUS_INVIS_ALL,  true, -1, Font.STYLE_BOLD);
-		JimmUI.addTextListItem(statusList, "status_evil",       ContactList.statusEvilImg,	     ContactList.STATUS_EVIL,       true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_depression",	ContactList.statusDepressionImg, ContactList.STATUS_DEPRESSION, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_home",       ContactList.statusHomeImg,	     ContactList.STATUS_HOME,       true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_work",       ContactList.statusWorkImg,	     ContactList.STATUS_WORK,       true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(statusList, "status_lunch",      ContactList.statusLunchImg,	     ContactList.STATUS_LUNCH,      true, -1, Font.STYLE_PLAIN);
+		JimmUI.fillStatusesInList(statusList, type, StatusInfo.FLAG_IN_MENU);
 		statusList.unlock();
-		statusSelection = SELECT_STATUS;
-	}
-	
-	private static void initXStatusList()
-	{
-		statusList = new TextList(ResourceBundle.getString("set_xstatus"));
-		statusList.setMode(VirtualList.CURSOR_MODE_DISABLED);
-		statusList.setCyclingCursor(true);
-		statusList.lock();
-		JimmUI.setColorScheme(statusList, false, -1, true);
-		int xstatus;
-		boolean std;
-		for (int s = 0; s < 2; s++)
-		{
-			for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
-			{
-				xstatus = i-1;
-				std = Icq.isXStatusStd(xstatus);
-				if ((std ? 0 : 1) == s)
-					JimmUI.addTextListItem
-					(
-						statusList, 
-						JimmUI.xStatusStrings[i], 
-						ContactList.xStatusImages.elementAt(xstatus), 
-						i, true, -1, 
-						std ? Font.STYLE_BOLD : Font.STYLE_PLAIN
-					);
-			}
-		}
-		
-		statusList.unlock();
-		statusSelection = SELECT_XSTATUS;
+		statusSelection = afterStatus;
 	}
 	
 	/* Command listener */
@@ -351,13 +308,13 @@ public class MainMenu implements CommandListener, JimmScreen
 				
 				if (selectedIndex == MENU_STATUS)
 				{
-					initStatusList();
+					initStatusList("set_status", StatusInfo.TYPE_STATUS, SELECT_STATUS);
 					stValue = (int)Options.getLong(Options.OPTION_ONLINE_STATUS);
 				}
 				else
 				{
-					initXStatusList();
-					stValue = Options.getInt(Options.OPTION_XSTATUS)+1;
+					initStatusList("set_xstatus", StatusInfo.TYPE_X_STATUS, SELECT_XSTATUS);
+					stValue = Options.getInt(Options.OPTION_XSTATUS);
 				}
 				
 				MainMenu.statusList.selectTextByIndex(stValue);
@@ -443,11 +400,12 @@ public class MainMenu implements CommandListener, JimmScreen
 		switch (statusSelection)
 		{
 		case SELECT_STATUS:
+		{
 			int onlineStatus = statusList.getCurrTextIndex();
 			
-			if ((onlineStatus != ContactList.STATUS_INVISIBLE)
-				&& (onlineStatus != ContactList.STATUS_INVIS_ALL)
-				&& (onlineStatus != ContactList.STATUS_ONLINE))
+			StatusInfo info = JimmUI.findStatus(StatusInfo.TYPE_STATUS, onlineStatus);
+			
+			if (info != null && info.testFlag(StatusInfo.FLAG_HAVE_DESCR))
 			{
 				String statusText = Options.getString(Options.OPTION_STATUS_MESSAGE);
 				
@@ -471,10 +429,12 @@ public class MainMenu implements CommandListener, JimmScreen
 			{
 				setStatus(true);
 			}
+		}
 			break;
 	
 		case SELECT_XSTATUS:
-			int xStatus = statusList.getCurrTextIndex()-1;
+			int xStatus = statusList.getCurrTextIndex();
+			if (xStatus == -2) xStatus = -1;
 			Options.setInt(Options.OPTION_XSTATUS, xStatus);
 			if (Icq.isConnected())
 			{

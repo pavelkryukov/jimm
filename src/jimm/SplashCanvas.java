@@ -143,7 +143,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	// Should the keylock message be drawn to the screen?
 	static protected boolean showKeylock;
 
-	static private int status_index = -1;
+	static private Image statusImage = null;
 
 	// Constructor
 	public SplashCanvas(String message)
@@ -191,9 +191,14 @@ public class SplashCanvas extends Canvas implements CommandListener
 		SplashCanvas._this.repaint();
 	}
 
-	public static synchronized void setStatusToDraw(int st_index)
+	public static synchronized void setStatusToDraw(Image statusImage)
 	{
-		status_index = st_index;
+		if (statusImage == null)
+		{
+			StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, Icq.getCurrentStatus());
+			if (statInfo != null) statusImage = statInfo.getImage(); 
+		}
+		SplashCanvas.statusImage = statusImage;
 	}
 
 	// Returns the current progress in percent
@@ -275,7 +280,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 		Jimm.setBkltOn(false);
 		setProgress(0);
 		setMessage(ResourceBundle.getString("keylock_enabled"));
-		setStatusToDraw(JimmUI.getStatusImageIndex(Icq.getCurrentStatus()));
+		setStatusToDraw(statusImage);
 		Jimm.display.setCurrent(_this);
 		Jimm.setBkltOff();
 
@@ -423,14 +428,14 @@ public class SplashCanvas extends Canvas implements CommandListener
 			// Display message icon, if keylock is enabled
 			if (isLocked && availableMessages > 0)
 			{
-				g.drawImage(ContactList.eventPlainMessageImg, 1, this
+				g.drawImage(JimmUI.eventPlainMessageImg, 1, this
 						.getHeight()
 						- (2 * SplashCanvas.height) - 9, Graphics.LEFT
 						| Graphics.TOP);
 				g.setColor(255, 255, 255);
 				g.setFont(SplashCanvas.font);
 				g.drawString("# " + availableMessages,
-						ContactList.eventPlainMessageImg.getWidth() + 4, this
+						JimmUI.eventPlainMessageImg.getWidth() + 4, this
 								.getHeight()
 								- (2 * SplashCanvas.height) - 5, Graphics.LEFT
 								| Graphics.TOP);
@@ -509,9 +514,9 @@ public class SplashCanvas extends Canvas implements CommandListener
 
 		Image draw_img = null;
 		int im_width = 0;
-		if (status_index != -1)
+		if (statusImage != null)
 		{
-			draw_img = ContactList.smallIcons.elementAt(status_index);
+			draw_img = statusImage;
 			im_width = draw_img.getWidth();
 		}
 
@@ -560,15 +565,6 @@ public class SplashCanvas extends Canvas implements CommandListener
 	public static int getAreaWidth()
 	{
 		return _this.getWidth();
-	}
-
-	public static void startTimer()
-	{
-		if (status_index != 8)
-		{
-			new Timer().schedule(new TimerTasks(
-					TimerTasks.SC_RESET_TEXT_AND_IMG), 3000);
-		}
 	}
 
 	private static TimerTasks lastTimerTask;

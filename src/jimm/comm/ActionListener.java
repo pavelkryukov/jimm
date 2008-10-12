@@ -310,7 +310,7 @@ public class ActionListener
 				String uin = Util.byteArrayToString(buf, 11, uinLen);
 
 				// Get message type
-				int msgType = Util.getWord(buf, 58 + uinLen, false);
+				int msgType = Util.getWord(buf, 58 + uinLen, false); // TODO: fix java.lang.ArrayIndexOutOfBoundsException
 				boolean gotStausMsg = false;
 				int skip = 0;
 
