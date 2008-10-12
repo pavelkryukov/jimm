@@ -855,31 +855,22 @@ public class Util
 	// Get online status set value
 	public static int translateStatusSend(int status)
 	{
-		if (status == ContactList.STATUS_AWAY)
-			return (Util.SET_STATUS_AWAY);
-		if (status == ContactList.STATUS_CHAT)
-			return (Util.SET_STATUS_CHAT);
-		if (status == ContactList.STATUS_DND)
-			return (Util.SET_STATUS_DND);
-		if (status == ContactList.STATUS_INVISIBLE)
-			return (Util.SET_STATUS_INVISIBLE);
-		if (status == ContactList.STATUS_INVIS_ALL)
-			return (Util.SET_STATUS_INVISIBLE);
-		if (status == ContactList.STATUS_NA)
-			return (Util.SET_STATUS_NA);
-		if (status == ContactList.STATUS_OCCUPIED)
-			return (Util.SET_STATUS_OCCUPIED);
-		if (status == ContactList.STATUS_EVIL)
-			return (Util.SET_STATUS_EVIL);
-		if (status == ContactList.STATUS_DEPRESSION)
-			return (Util.SET_STATUS_DEPRESSION);
-		if (status == ContactList.STATUS_HOME)
-			return (Util.SET_STATUS_HOME);
-		if (status == ContactList.STATUS_WORK)
-			return (Util.SET_STATUS_WORK);
-		if (status == ContactList.STATUS_LUNCH)
-			return (Util.SET_STATUS_LUNCH);
-		return (Util.SET_STATUS_ONLINE);
+		switch (status)
+		{
+			case ContactList.STATUS_AWAY:		return (Util.SET_STATUS_AWAY);
+			case ContactList.STATUS_CHAT:		return (Util.SET_STATUS_CHAT);
+			case ContactList.STATUS_DND:		return (Util.SET_STATUS_DND);
+			case ContactList.STATUS_INVISIBLE:	return (Util.SET_STATUS_INVISIBLE);
+			case ContactList.STATUS_INVIS_ALL:	return (Util.SET_STATUS_INVISIBLE);
+			case ContactList.STATUS_NA:			return (Util.SET_STATUS_NA);
+			case ContactList.STATUS_OCCUPIED:	return (Util.SET_STATUS_OCCUPIED);
+			case ContactList.STATUS_EVIL:		return (Util.SET_STATUS_EVIL);
+			case ContactList.STATUS_DEPRESSION:	return (Util.SET_STATUS_DEPRESSION);
+			case ContactList.STATUS_HOME:		return (Util.SET_STATUS_HOME);
+			case ContactList.STATUS_WORK:		return (Util.SET_STATUS_WORK);
+			case ContactList.STATUS_LUNCH:		return (Util.SET_STATUS_LUNCH);
+			default:							return (Util.SET_STATUS_ONLINE);
+		}
 	}
 
 	//  If the numer has only one digit add a 0

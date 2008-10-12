@@ -173,7 +173,6 @@ public class ActionListener
 							if ((bart_id == 0x0001) && (bart_flg == 0x0001))	// ICON HASH
 							{
 								System.arraycopy(tlvData, marker1d, biHash, 0, (bart_len < 17) ? bart_len : 0x0010);
-								// Util.PrintCapabilities(uin + "[ << ]",biHash);
 							}
 							else
 							//#sijapp cond.end#
