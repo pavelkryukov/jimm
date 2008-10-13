@@ -1089,8 +1089,8 @@ public class Icq implements Runnable
 	public static int detectStandartXStatus(String data)
 	{
 		int idx = data.indexOf("icqmood");
-		if (idx < 2) return -1;
-		return Util.strToIntDef(data.substring(7), -1);
+		if (idx < 0) return -1;
+		return Util.strToIntDef(data.substring(idx+7), -1);
 	}
 	
 	public static int detectXStatus(byte[] capabilities)
