@@ -2078,7 +2078,12 @@ public class JimmUI implements CommandListener
 			clInfoData[JimmUI.UI_XSTATUS] = ((rcvdXMsg.length() > 0) ? stText+" ("+rcvdXMsg+")" : stText);
 		}
 		else
-			clInfoData[JimmUI.UI_XSTATUS] = null;
+		{
+			if (rcvdXMsg.length() > 0)
+				clInfoData[JimmUI.UI_XSTATUS] = rcvdXMsg;
+			else
+				clInfoData[JimmUI.UI_XSTATUS] = null;
+		}
 		
 		/* sign on time */
 		long signonTime = cItem.getIntValue(ContactItem.CONTACTITEM_SIGNON);
