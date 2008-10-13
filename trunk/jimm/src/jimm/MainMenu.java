@@ -94,6 +94,13 @@ public class MainMenu implements CommandListener, JimmScreen
 		return (statInfo != null) ? statInfo.getImage() : null; 
 	}
 
+	static private Image getXStatusImage()
+	{
+		long cursStatus = Options.getLong(Options.OPTION_XSTATUS);
+		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, (int)cursStatus);
+		return (statInfo != null) ? statInfo.getImage() : null; 
+	}
+
 	/* Builds the main menu (visual list) */
 	public static void build()
 	{
@@ -119,7 +126,7 @@ public class MainMenu implements CommandListener, JimmScreen
 		}
 		
 		JimmUI.addTextListItem(list, "set_status", getStatusImage(), MENU_STATUS, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(list, "set_xstatus", JimmUI.xStatusImages.elementAt(Options.getInt(Options.OPTION_XSTATUS)), MENU_XSTATUS, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "set_xstatus", getXStatusImage(), MENU_XSTATUS, true, -1, Font.STYLE_PLAIN);
 		
 		if (ContactList.getSize() != 0)
 			JimmUI.addTextListItem(list, "contact_list", menuIcons.elementAt(2), MENU_LIST, true, -1, Font.STYLE_PLAIN);
