@@ -1295,7 +1295,7 @@ public class JimmUI implements CommandListener
 	final public static Image imgMessDeliv;
 	final public static Image imgNoAuth;
 	
-	private static StatusInfo[] statusInfos;
+	final public static StatusInfo[] statusInfos;
 	
 	static
 	{
@@ -1337,7 +1337,7 @@ public class JimmUI implements CommandListener
 		Vector data = new Vector(); 
 		
 		/* Normal statuses */
-		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_ONLINE,     "status_online",     statusOnlineImg,     StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD);
+		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_ONLINE,     "status_online",     statusOnlineImg,     StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
 		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_CHAT,       "status_chat",       statusChatImg,       StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
 		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_AWAY,       "status_away",       statusAwayImg,       StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
 		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_NA,         "status_na",         statusNaImg,         StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_HAVE_DESCR|StatusInfo.FLAG_STD);
@@ -1353,7 +1353,7 @@ public class JimmUI implements CommandListener
 		addStatusInfo(data, StatusInfo.TYPE_STATUS, ContactList.STATUS_OFFLINE,    "status_offline",    statusOfflineImg,    0);
 		
 		/* Extended statuses */
-		addStatusInfo(data, StatusInfo.TYPE_X_STATUS,   -2, "xstatus_none",            null,                        StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
+		addStatusInfo(data, StatusInfo.TYPE_X_STATUS,   -2, "xstatus_none",            null,                        StatusInfo.FLAG_IN_MENU);
 		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x17, "xstatus_angry",           xStatusImages.elementAt(0),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
 		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x01, "xstatus_duck",            xStatusImages.elementAt(1),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
 		addStatusInfo(data, StatusInfo.TYPE_X_STATUS, 0x02, "xstatus_tired",           xStatusImages.elementAt(2),  StatusInfo.FLAG_IN_MENU|StatusInfo.FLAG_STD|StatusInfo.FLAG_HAVE_DESCR);
@@ -1410,7 +1410,7 @@ public class JimmUI implements CommandListener
 		vct.addElement(new StatusInfo(type, value, ResourceBundle.getString(text), image, flags));
 	}
 	
-	public static void fillStatusesInList(TextList list, int type, int flags)
+	public static void fillStatusesInList(TextList list, int type, int flags, boolean showDescr)
 	{
 		for (int i = 0; i < statusInfos.length; i++)
 		{
@@ -1425,8 +1425,11 @@ public class JimmUI implements CommandListener
 				info.getValue(), 
 				true, 
 				-1, 
-				(info.getFlags()&StatusInfo.FLAG_STD) != 0 ? Font.STYLE_BOLD : Font.STYLE_PLAIN
+				showDescr||((info.getFlags()&StatusInfo.FLAG_STD) != 0) ? Font.STYLE_BOLD : Font.STYLE_PLAIN
 			);
+			
+			if (showDescr)
+				addTextListItem(list, Options.getStatusString(type, info.getValue()), null, info.getValue(), true, -1, Font.STYLE_PLAIN);
 		}
 	}
 

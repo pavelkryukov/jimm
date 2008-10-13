@@ -264,6 +264,18 @@ public class Options
 
 	public Options()
 	{
+		/* Default values for status strings */
+		setDefaultStatusStrings(statusStrings, StatusInfo.TYPE_STATUS);
+		setDefaultStatusStrings(xStatusStrings, StatusInfo.TYPE_X_STATUS);
+		String awayStatStr = ResourceBundle.getString("status_message_text");
+		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_AWAY, awayStatStr);
+		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_DND, awayStatStr);
+		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_NA, awayStatStr);
+		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_OCCUPIED, awayStatStr);
+		
+		loadStatusStrings(statusStrings, statusRmsName);
+		loadStatusStrings(xStatusStrings, xStatusRmsName);
+		
 		// Try to load option values from record store and construct options form
 		try
 		{
@@ -293,10 +305,6 @@ public class Options
 			setDefaults();
 			resetLangDependedOpts();
 		}
-		
-		setDefaultStatusStrings();
-		setDefaultXStatusStrings();
-		
 
 		ResourceBundle.setCurrUiLanguage(getString(Options.OPTION_UI_LANGUAGE));
 	}
@@ -807,8 +815,7 @@ public class Options
 	}
 //#sijapp cond.end#
 	
-	
-	
+
 	
 	/*************************************/
 	/*                                   */
@@ -817,60 +824,131 @@ public class Options
 	/*************************************/
 	
 	final private static Hashtable statusStrings = new Hashtable();
-	final private static Hashtable xSatusStrings = new Hashtable();
+	final private static Hashtable xStatusStrings = new Hashtable();
 	
-	public static String getStatusString(int status)
+	final private static int STATUS_STRINGS_VER = 1;
+	final private static String statusRmsName = "JimmStatus";
+	final private static String xStatusRmsName = "JimmXStatus";
+	
+	public static String getStatusString(int mode, int status)
 	{
-		return (String)statusStrings.get(new Integer(status));
+		switch (mode)
+		{
+		case StatusInfo.TYPE_STATUS:
+			synchronized (statusStrings) { return (String)statusStrings.get(new Integer(status)); }
+			
+		case StatusInfo.TYPE_X_STATUS:
+			synchronized (xStatusStrings) { return (String)xStatusStrings.get(new Integer(status)); }
+		}
+		return null;
 	}
 	
-	public static String getXStatusString(int status)
+	public static void setStatusString(int mode, int status, String text)
 	{
-		return (String)xSatusStrings.get(new Integer(status));
-	}
-	
-	public static int[] getStatuses()
-	{
-		return getStatusesFromHashtable(statusStrings);
-	}
-	
-	private static int[] getStatusesFromHashtable(Hashtable tbl)
-	{
-		int[] result = new int[tbl.size()];
-		return result;
+		switch (mode)
+		{
+		case StatusInfo.TYPE_STATUS:
+			synchronized (statusStrings) { statusStrings.put(new Integer(status), text); }
+			break;
+			
+		case StatusInfo.TYPE_X_STATUS:
+			synchronized (xStatusStrings) { xStatusStrings.put(new Integer(status), text); }
+			break;
+		}
 	}
 
-	private static void setDefaultStatusStrings()
+	private static void setDefaultStatusStrings(Hashtable tbl, int type)
 	{
-		statusStrings.clear();
-		setStatusString(statusStrings, ContactList.STATUS_ONLINE,     "status_online"      );
-		setStatusString(statusStrings, ContactList.STATUS_OCCUPIED,   "status_occupied"    );
-		setStatusString(statusStrings, ContactList.STATUS_NA,         "status_message_text");
-		setStatusString(statusStrings, ContactList.STATUS_DND,        "status_message_text");
-		setStatusString(statusStrings, ContactList.STATUS_CHAT,       "status_chat"        );
-		setStatusString(statusStrings, ContactList.STATUS_AWAY,       "status_message_text");
-		setStatusString(statusStrings, ContactList.STATUS_LUNCH,      "status_lunch"       );
-		setStatusString(statusStrings, ContactList.STATUS_WORK,       "status_work"        );
-		setStatusString(statusStrings, ContactList.STATUS_HOME,       "status_home"        );
-		setStatusString(statusStrings, ContactList.STATUS_DEPRESSION, "status_depression"  );
-		setStatusString(statusStrings, ContactList.STATUS_EVIL,       "status_evil"        );
+		tbl.clear();
+		for (int i = 0; i < JimmUI.statusInfos.length; i++)
+		{
+			StatusInfo info = JimmUI.statusInfos[i];
+			if (info.getType() != type) continue;
+			if (!info.testFlag(StatusInfo.FLAG_HAVE_DESCR)) continue;
+			tbl.put(new Integer(info.getValue()), info.getText());
+		}
 	}
 	
-	static void setDefaultXStatusStrings()
+	private static void saveStatusStrings(Hashtable tbl, String rmsName)
 	{
-		/*
-		xSatusStrings.clear();
-		for (int i = 0; i < JimmUI.xStatusStrings.length; i++)
-			setStatusString(xSatusStrings, i, JimmUI.xStatusStrings[i]);
-			*/
-	}
-	
-	static void setStatusString(Hashtable tbl, int status, String str)
-	{
-		tbl.put(new Integer(status), ResourceBundle.getString(str));
-	}
-	
+		try
+		{
+			RecordStore rms = RecordStore.openRecordStore(rmsName, true);
+			while (rms.getNumRecords() < 1) rms.addRecord(null, 0, 0);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DataOutputStream dos = new DataOutputStream(baos);
+			
+			dos.writeInt(STATUS_STRINGS_VER);
+			dos.writeInt(tbl.size());
 
+			Enumeration keys = tbl.keys();
+			while (keys.hasMoreElements()) 
+			{
+				Integer statInt = (Integer)keys.nextElement(); 
+				int status = statInt.intValue();
+				String statDescr = (String)tbl.get(statInt);
+				if (statDescr == null || statDescr.length() == 0) continue;
+				dos.writeInt(status);
+				dos.writeUTF(statDescr);
+			}
+			
+			byte[] bytes = baos.toByteArray();
+			rms.setRecord(1, bytes, 0, bytes.length);
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+		}
+	}
+	
+	private static void loadStatusStrings(Hashtable tbl, String rmsName)
+	{
+		try
+		{
+			RecordStore rms = RecordStore.openRecordStore(rmsName, false);
+			tbl.clear();
+			
+			byte[] bytes = rms.getRecord(1);
+			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+			DataInputStream dis = new DataInputStream(bais);
+			
+			int version = dis.readInt();
+			
+			switch (version)
+			{
+			case 1:
+				{
+					int size = dis.readInt();
+					for (int i = 0; i < size; i++)
+					{
+						int status = dis.readInt();
+						String statDescr = dis.readUTF();
+						tbl.put(new Integer(status), statDescr);
+					}
+				}
+				break;
+			}
+			
+		}
+		catch (Exception e)
+		{
+			//e.printStackTrace();
+		}
+	}
+	
+	static void saveStatusStringsByType(int type)
+	{
+		switch (type)
+		{
+		case StatusInfo.TYPE_STATUS:
+			saveStatusStrings(statusStrings, statusRmsName);
+			break;
+			
+		case StatusInfo.TYPE_X_STATUS:
+			saveStatusStrings(xStatusStrings, xStatusRmsName);
+			break;
+		}
+	}
 }
 
 /**************************************************************************/
@@ -946,6 +1024,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private static final int OPTIONS_RESET_RMS   = 14;
 	private static final int OPTIONS_ANTISPAM    = 15;
 	private static final int OPTIONS_TRANSP      = 16;
+	private static final int OPTIONS_STAT_STR    = 17;
+	private static final int OPTIONS_XSTAT_STR   = 18;
 
 	// Constants for contact list menu
 	private static final int OPTIONS_ADD_USER      = 100;
@@ -1044,6 +1124,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private TextList tlColorScheme;
 	private TextList tlRmsAsk;
 	private TextList groupSelector;
+	private TextList statusStrings;
+	private TextBox  statusString;
 
 	//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
 	// For background selection
@@ -1175,7 +1257,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			}
 //#sijapp cond.if modules_ANTISPAM="true"#			
 			JimmUI.addTextListItem(optionsMenu, "antispam", MainMenu.menuIcons.elementAt(25), OPTIONS_ANTISPAM, true, -1, Font.STYLE_PLAIN);
-//#sijapp cond.end#			
+//#sijapp cond.end#
+			
+			JimmUI.addTextListItem(optionsMenu, "status", null, OPTIONS_STAT_STR, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "xstatus", null, OPTIONS_XSTAT_STR, true, -1, Font.STYLE_PLAIN);
 			
 			JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", MainMenu.menuIcons.elementAt(26), OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
 			break;
@@ -1298,6 +1383,39 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		
 		
 		keysMenu.activate(Jimm.display);
+	}
+	
+	private int statusStrMode;
+	private void initStatusMenu(int type, boolean restorePos)
+	{
+		String cap = null;
+		int lastPos = -1;
+		
+		switch (type)
+		{
+		case StatusInfo.TYPE_STATUS: cap = "status"; break;
+		case StatusInfo.TYPE_X_STATUS: cap = "xstatus"; break;
+		}
+		
+		if (statusStrings == null) statusStrings = new TextList(ResourceBundle.getString(cap));
+		if (restorePos) lastPos = statusStrings.getCurrTextIndex();
+		statusStrings.lock();
+		statusStrings.clear();
+		statusStrings.setMode(VirtualList.CURSOR_MODE_DISABLED);
+		JimmUI.setColorScheme(statusStrings, false, -1, true);
+		statusStrings.setCyclingCursor(true);
+		JimmUI.fillStatusesInList(statusStrings, type, StatusInfo.FLAG_HAVE_DESCR, true);
+		statusStrings.unlock();
+		
+		statusStrings.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
+		statusStrings.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+		statusStrings.setCommandListener(this);
+		
+		if (restorePos) statusStrings.selectTextByIndex(lastPos);
+		
+		statusStrings.activate(Jimm.display);
+		
+		statusStrMode = type;
 	}
 	
 	/* Show form for adding user */
@@ -2123,6 +2241,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			groupSelector = JimmUI.showGroupSelector("rename_group", this, JimmUI.SHS_TYPE_ALL, -1);
 			return;
 			
+		case OPTIONS_STAT_STR:
+			initStatusMenu(StatusInfo.TYPE_STATUS, false);
+			return;
+			
+		case OPTIONS_XSTAT_STR:
+			initStatusMenu(StatusInfo.TYPE_X_STATUS, false);
+			return;
+			
 //#sijapp cond.if modules_ANTISPAM="true"#			
 		case OPTIONS_ANTISPAM:
 			chsUseAntispam = new ChoiceGroup(ResourceBundle.getString("antispam_use"), Choice.MULTIPLE);
@@ -2463,7 +2589,34 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	{
 		Jimm.aaUserActivity();
 		
-		if (JimmUI.isControlActive(groupSelector))
+		if (statusString != null && statusString.isShown())
+		{
+			if (c == JimmUI.cmdCancel) statusStrings.activate(Jimm.display);
+			else if (c == JimmUI.cmdOk)
+			{
+				Options.setStatusString(statusStrMode, statusStrings.getCurrTextIndex(), statusString.getString());
+				Options.saveStatusStringsByType(statusStrMode);
+				initStatusMenu(statusStrMode, true);
+			}
+			statusString = null;
+		}
+		
+		else if (JimmUI.isControlActive(statusStrings))
+		{
+			if (c == JimmUI.cmdBack) initOptionsList(TYPE_TOP_OPTIONS);
+			else if (c == JimmUI.cmdSelect)
+			{
+				StatusInfo statInfo = JimmUI.findStatus(statusStrMode, statusStrings.getCurrTextIndex());
+				if (statInfo == null) return;
+				statusString = new TextBox(statInfo.getText(), Options.getStatusString(statusStrMode, statInfo.getValue()), 512, TextField.ANY);
+				statusString.addCommand(JimmUI.cmdOk);
+				statusString.addCommand(JimmUI.cmdCancel);
+				statusString.setCommandListener(this);
+				Jimm.display.setCurrent(statusString);
+			}
+		}
+			
+		else if (JimmUI.isControlActive(groupSelector))
 		{
 			if (c == JimmUI.cmdOk)
 			{

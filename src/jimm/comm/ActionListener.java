@@ -32,10 +32,12 @@ import jimm.ContactList;
 import jimm.ContactItem;
 import jimm.DebugLog;
 import jimm.Jimm;
+import jimm.JimmUI;
 import jimm.RunnableImpl;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
+import jimm.StatusInfo;
 import jimm.util.ResourceBundle;
 
 //#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
@@ -942,25 +944,20 @@ public class ActionListener
 					{
 						String statusMess;
 
-						long currStatus = Options
-								.getLong(Options.OPTION_ONLINE_STATUS);
-						if (((currStatus != ContactList.STATUS_ONLINE)
-								&& (currStatus != ContactList.STATUS_CHAT)
-								&& (currStatus != ContactList.STATUS_INVISIBLE)
-								&& (currStatus != ContactList.STATUS_INVIS_ALL))
-							|| (Jimm.aaGetMode() != Jimm.AA_MODE_NONE))
-							statusMess = Util.replaceStr(Options
-									.getString(Options.OPTION_STATUS_MESSAGE),
-									"%TIME%", Icq.getLastStatusChangeTime());
-						else
-							statusMess = "---";
+						int currStatus = (int)Options.getLong(Options.OPTION_ONLINE_STATUS);
+						StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, currStatus);
+						
+						if (statInfo.testFlag(StatusInfo.FLAG_HAVE_DESCR))
+						{
+							statusMess = Options.getStatusString(StatusInfo.TYPE_STATUS, currStatus);
+							statusMess = Util.replaceStr(statusMess, "%TIME%", Icq.getLastStatusChangeTime());
+						}
+						else statusMess = "---";
 
 						// Acknowledge message with away message
-						final byte[] statusMessBytes = Util.stringToByteArray(
-								statusMess, false);
+						final byte[] statusMessBytes = Util.stringToByteArray(statusMess, false);
 
-						if (statusMessBytes.length < 1)
-							return;
+						if (statusMessBytes.length < 1) return;
 
 						byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 2
 								+ statusMessBytes.length + 1];
