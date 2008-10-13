@@ -96,7 +96,7 @@ public class MainMenu implements CommandListener, JimmScreen
 
 	static private Image getXStatusImage()
 	{
-		long cursStatus = Options.getLong(Options.OPTION_XSTATUS);
+		int cursStatus = Options.getInt(Options.OPTION_XSTATUS);
 		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, (int)cursStatus);
 		return (statInfo != null) ? statInfo.getImage() : null; 
 	}
