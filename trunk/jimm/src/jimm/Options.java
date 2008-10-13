@@ -264,18 +264,6 @@ public class Options
 
 	public Options()
 	{
-		/* Default values for status strings */
-		setDefaultStatusStrings(statusStrings, StatusInfo.TYPE_STATUS);
-		setDefaultStatusStrings(xStatusStrings, StatusInfo.TYPE_X_STATUS);
-		String awayStatStr = ResourceBundle.getString("status_message_text");
-		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_AWAY, awayStatStr);
-		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_DND, awayStatStr);
-		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_NA, awayStatStr);
-		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_OCCUPIED, awayStatStr);
-		
-		loadStatusStrings(statusStrings, statusRmsName);
-		loadStatusStrings(xStatusStrings, xStatusRmsName);
-		
 		// Try to load option values from record store and construct options form
 		try
 		{
@@ -307,6 +295,19 @@ public class Options
 		}
 
 		ResourceBundle.setCurrUiLanguage(getString(Options.OPTION_UI_LANGUAGE));
+		
+		/* Default values for status strings */
+		setDefaultStatusStrings(statusStrings, StatusInfo.TYPE_STATUS);
+		setDefaultStatusStrings(xStatusStrings, StatusInfo.TYPE_X_STATUS);
+		String awayStatStr = ResourceBundle.getString("status_message_text");
+		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_AWAY, awayStatStr);
+		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_DND, awayStatStr);
+		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_NA, awayStatStr);
+		setStatusString(StatusInfo.TYPE_STATUS, ContactList.STATUS_OCCUPIED, awayStatStr);
+
+		/* Load values for status strings */
+		loadStatusStrings(statusStrings, statusRmsName);
+		loadStatusStrings(xStatusStrings, xStatusRmsName);
 	}
 
 	/* Set default values
