@@ -235,7 +235,7 @@ public class MainMenu implements CommandListener, JimmScreen
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.setColorScheme(statusList, false, -1, true);
-		JimmUI.fillStatusesInList(statusList, type, StatusInfo.FLAG_IN_MENU);
+		JimmUI.fillStatusesInList(statusList, type, StatusInfo.FLAG_IN_MENU, false);
 		statusList.unlock();
 		statusSelection = afterStatus;
 	}
@@ -376,10 +376,11 @@ public class MainMenu implements CommandListener, JimmScreen
 		} 
 		else if ((c == JimmUI.cmdSelect) && (d == statusMessage))
 		{
-			setStatus(false);
-			Options.setString(Options.OPTION_STATUS_MESSAGE, statusMessage.getString());
-			Options.safeSave(); 
+			int onlineStatus = statusList.getCurrTextIndex();
+			Options.setStatusString(StatusInfo.TYPE_STATUS, onlineStatus, statusMessage.getString());
+			Options.saveStatusStringsByType(StatusInfo.TYPE_STATUS);
 			JimmUI.backToLastScreen();
+			setStatus(false);
 			statusList = null;
 		}
 	}
@@ -414,15 +415,12 @@ public class MainMenu implements CommandListener, JimmScreen
 			
 			if (info != null && info.testFlag(StatusInfo.FLAG_HAVE_DESCR))
 			{
-				String statusText = Options.getString(Options.OPTION_STATUS_MESSAGE);
-				
-				if (statusText == null || statusText.length() == 0)
-					statusText = ResourceBundle.getString("status_message_text");
+				String statMessage = Options.getStatusString(StatusInfo.TYPE_STATUS, onlineStatus);
 				
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2" | target is "RIM"#
-				    statusMessage = new TextBox(ResourceBundle.getString("status_message"), statusText, 255, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
+				    statusMessage = new TextBox(info.getText(), statMessage, 255, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
 //#sijapp cond.else#
-				    statusMessage = new TextBox(ResourceBundle.getString("status_message"), statusText, 255, TextField.ANY);
+				    statusMessage = new TextBox(info.getText(), statMessage, 255, TextField.ANY);
 //#sijapp cond.end#
 
 			    statusMessage.addCommand(JimmUI.cmdCancel);

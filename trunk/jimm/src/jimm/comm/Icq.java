@@ -717,7 +717,9 @@ public class Icq implements Runnable
 		StatusInfo xStatInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, xStatus);
 		if (xStatInfo != null)
 		{
-			byte[] szMoodId = Util.stringToByteArray(xStatInfo.getText(), true);
+			String statDescr = Options.getStatusString(StatusInfo.TYPE_X_STATUS, xStatus);
+			if (statDescr == null) statDescr = Options.emptyString;
+			byte[] szMoodId = Util.stringToByteArray(statDescr, true);
 
 			Util.writeWord(statBuffer, 0x1D, true);  // TLV (0x1D)
 
