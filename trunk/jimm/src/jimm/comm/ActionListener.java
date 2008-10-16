@@ -130,6 +130,7 @@ public class ActionListener
 				int idle = -1;
 				int online = -1;
 				int signon = -1;
+				int regdate = -1;
 
 				// Get data
 				byte[] buf = snacPacket.getData();
@@ -245,6 +246,9 @@ public class ActionListener
 					} else if (tlvType == 0x000F) // Online time
 					{
 						online = (int) Util.byteArrayToLong(tlvData);
+					} else if (tlvType == 0x0005) // Date of registration
+					{
+						regdate = (int) Util.byteArrayToLong(tlvData);
 					}
 
 					marker += 2 + 2 + tlvData.length;
@@ -262,13 +266,13 @@ public class ActionListener
 					if (xStatus == -1)
 						xStatus = Icq.detectXStatus(capsArray);
 				}
-				RunnableImpl.updateContactList(uin, status, xStatus, xStatusMessage, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle
+				RunnableImpl.updateContactList(uin, status, xStatus, xStatusMessage, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle, regdate
 					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 					, biHash
 					//#sijapp cond.end#
 				);
 				//#sijapp cond.else#
-				RunnableImpl.updateContactList(uin, status, -1, null, null, null, 0, 0, 0, 0, signon, online, idle
+				RunnableImpl.updateContactList(uin, status, -1, null, null, null, 0, 0, 0, 0, signon, online, idle, regdate
 					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 					, null
 					//#sijapp cond.end#

@@ -165,6 +165,7 @@
   "latest_ver"                  "Latest version available"
   "loading"                     "Loading"
   "local_time"                  "Local time"
+  "li_reg_date"			"Registration date"
   "li_signon_time"				"Login"
   "li_online_time"				"Online"
   "li_idle_time"				"Idle"
