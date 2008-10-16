@@ -949,6 +949,7 @@ public class JimmUI implements CommandListener
 	final public static int UI_SIGNON = 27;
 	final public static int UI_ONLINETIME = 28;
 	final public static int UI_IDLE_TIME = 29;
+	final public static int UI_REG_DATE = 30;
 	final public static int UI_ICQ_VERS = 31;
 	final public static int UI_INT_IP = 32;
 	final public static int UI_EXT_IP = 33;
@@ -1057,6 +1058,7 @@ public class JimmUI implements CommandListener
 		uiSectName = "dc_info";
 		addToTextList(UI_ONLINE_STATUS, data, "status", list);
 		addToTextList(UI_XSTATUS, data, "xstatus", list);
+		addToTextList(UI_REG_DATE, data, "li_reg_date", list);
 		addToTextList(UI_SIGNON, data, "li_signon_time", list);
 		addToTextList(UI_ONLINETIME, data, "li_online_time", list);
 		addToTextList(UI_IDLE_TIME, data, "li_idle_time", list);
@@ -2085,6 +2087,12 @@ public class JimmUI implements CommandListener
 				clInfoData[JimmUI.UI_XSTATUS] = null;
 		}
 		
+		/* registration date */
+		long regDate = cItem.getIntValue(ContactItem.CONTACTITEM_REG);
+		if (regDate > 0)
+			clInfoData[JimmUI.UI_REG_DATE] = Util
+					.getDateString(false, regDate);
+
 		/* sign on time */
 		long signonTime = cItem.getIntValue(ContactItem.CONTACTITEM_SIGNON);
 		if (signonTime > 0)

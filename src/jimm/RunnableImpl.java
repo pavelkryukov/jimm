@@ -116,9 +116,9 @@ public class RunnableImpl implements Runnable
 			ContactList.update((String) data[0], getInt(data, 1), getInt(data, 2), (String) data[3],
 					(byte[]) data[4], (byte[]) data[5], getInt(data, 6),
 					getInt(data, 7), getInt(data, 8), getInt(data, 9), getInt(
-							data, 10), getInt(data, 11), getInt(data, 12)
+							data, 10), getInt(data, 11), getInt(data, 12), getInt(data, 13)
 							//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-							,(byte[]) data[13]
+							,(byte[]) data[14]
 							//  #sijapp cond.end#
 			);
 
@@ -235,16 +235,16 @@ public class RunnableImpl implements Runnable
 
 	static public void updateContactList(String uin, int status, int xStatus, String xStatusMessage,
 			byte[] internalIP, byte[] externalIP, int dcPort, int dcType,
-			int icqProt, int authCookie, int signon, int online, int idle
+			int icqProt, int authCookie, int signon, int online, int idle, int regdate
 			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 			, byte[] biHash
 			//#sijapp cond.end#
 	)
 	{
 		//# sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-		Object[] arguments = new Object[15];
+		Object[] arguments = new Object[16];
 		//# sijapp cond.else#
-		//# Object[] arguments = new Object[14];
+		//# Object[] arguments = new Object[15];
 		//# sijapp cond.end#
 
 		arguments[0] = uin;
@@ -260,8 +260,9 @@ public class RunnableImpl implements Runnable
 		setInt(arguments, 10, signon);
 		setInt(arguments, 11, online);
 		setInt(arguments, 12, idle);
+		setInt(arguments, 13, regdate);
 		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-		arguments[13] = biHash;
+		arguments[14] = biHash;
 		//#sijapp cond.end#
 
 		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);

@@ -60,6 +60,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 	public static final int CONTACTITEM_INV_ID        = 83;
 	public static final int CONTACTITEM_VIS_ID        = 84;
 	public static final int CONTACTITEM_IGN_ID        = 85;
+	public static final int CONTACTITEM_REG           = 86;
 
 	/* Boolean */
 	public static final int CONTACTITEM_ADDED         = 1 << 0; 
@@ -105,6 +106,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 	private int online;
 	private int signOn;
 	private int status;
+	private int regdate;
 	private byte xStatusId;
 
 	private String name;
@@ -263,6 +265,10 @@ public class ContactItem implements ContactListItem, JimmScreen
 			signOn = value;
 			return;
 			
+		case CONTACTITEM_REG:
+			regdate = value;
+			return;
+			
 		case CONTACTITEM_XSTATUS:
 			xStatusId = (byte)value;
 			return;
@@ -322,6 +328,8 @@ public class ContactItem implements ContactListItem, JimmScreen
 			return online;
 		case CONTACTITEM_SIGNON:
 			return signOn;
+		case CONTACTITEM_REG:
+			return regdate;
 		case CONTACTITEM_XSTATUS:
 			return xStatusId;
 			
@@ -527,6 +535,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 			//#sijapp cond.end#
 			//#sijapp cond.end#
 			setIntValue_(ContactItem.CONTACTITEM_SIGNON, -1);
+			setIntValue_(ContactItem.CONTACTITEM_REG, -1);
 			online = -1;
 			setIntValue_(ContactItem.CONTACTITEM_IDLE, -1);
 			setIntValue_(ContactItem.CONTACTITEM_CLIENT, Icq.CLI_NONE);
