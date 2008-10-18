@@ -236,7 +236,7 @@ public class Jimm extends MIDlet
 		SplashCanvas.setProgress(60);
 
 		//#sijapp cond.if modules_PIM is "true" #
-		this.phoneBook = new PhoneBook();
+		Jimm.phoneBook = new PhoneBook();
 		SplashCanvas.setProgress(65);
 
 		//#sijapp cond.end#
