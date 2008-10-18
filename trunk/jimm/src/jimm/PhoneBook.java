@@ -66,16 +66,21 @@ public class PhoneBook implements CommandListener {
 
 	public static void addContactToList(String name, String number, int value) {
 		synchronized (list) {
-			list.addBigText(name + ":", list.getTextColor(), Font.STYLE_BOLD, value);
-			list.doCRLF(value);
+			if (name != lastContact){
+				list.addBigText(name + ":", list.getTextColor(), Font.STYLE_BOLD, -1);
+				list.doCRLF(value);
+			}
 			list.addBigText(number, Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1), Font.STYLE_PLAIN, value);
 			list.doCRLF(value);
+			lastContact = name;
 		}
 	}
 
+	private static String lastContact;
 	private static void fillPhonesInList() {
 		list.lock();
 		list.clear();
+		lastContact = null;
 		for (int i = 0; i < allTelNum.length; i++) {
 			addContactToList(allTelNum[i].getName(), allTelNum[i].getTel(), allTelNum[i].getValue());
 		}
