@@ -41,7 +41,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
 	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar"/>
-	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar"/>
+	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar;${MIDP2/midp}/lib/wma20.jar"/>
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
 	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
 	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />
@@ -90,7 +90,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--      LOCATION   - module for location aware functionality              -->  
 	<!--      ANTISPAM   - module for prevention of receiving spam messages     -->  
 	<!--      AVATARS    - module for downloading buddy icon		    -->  
-	<property name="modules"           value="SMILES_ANI,TRAFFIC,HISTORY,PROXY,FILES,ANTISPAM,DEBUGLOG,AVATARS" />
+	<property name="modules"           value="SMILES_ANI,TRAFFIC,HISTORY,PROXY,FILES,ANTISPAM,DEBUGLOG,AVATARS,PIM" />
 	<!--  *******************************************************************   -->
 	<!--  This value is a comma separated list of languages packs which         -->
 	<!--  should be included in the build. Currently, the distribution          -->
@@ -236,6 +236,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="modules/AVATARS" value="true">
 			<contains string="${modules}" substring="AVATARS" />
 		</condition>
+		<condition property="modules/PIM" value="true">
+			<contains string="${modules}" substring="PIM" />
+		</condition>
 		<condition property="files_dir" value="res/MODULES/FILES">
 			<and>
 			<contains string="${modules}" substring="FILES" />
@@ -284,6 +287,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<define name="modules_LOCATION" value="${modules/LOCATION}" />
 			<define name="modules_ANTISPAM" value="${modules/ANTISPAM}" />
 			<define name="modules_AVATARS" value="${modules/AVATARS}" />
+			<define name="modules_PIM" value="${modules/PIM}" />
 		</sijapp>
 		<replace dir="${build}/init/src" encoding="UTF-8">
 			<replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" />
