@@ -28,9 +28,11 @@ import java.util.*;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 
+//#sijapp cond.if target!="DEFAULT"#
+import javax.microedition.pim.*;
+//#sijapp cond.end#
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.*;
-import javax.microedition.pim.*;
 
 import javax.wireless.messaging.*;
 
@@ -50,7 +52,9 @@ public class PhoneBook implements CommandListener {
     private static TelNum[] allTelNum;
     private static Vector data = new Vector();
     private static final Command backCommand = new Command(ResourceBundle.getString("back"), Jimm.cmdBack, 1);
+    //#sijapp cond.if target!="DEFAULT"#
     private static final Command cmdCall = new Command(ResourceBundle.getString("call"), Command.ITEM, 4);
+    //#sijapp cond.end#
     private static final Command cmdWriteSMS = new Command(ResourceBundle.getString("write_sms"), Command.ITEM, 5);
     private static final Command cmdSendSMS = new Command(ResourceBundle.getString("send_sms"), Command.ITEM, 1);
     private static final Command cmdEditNum = new Command(ResourceBundle.getString("edit_num"), Command.ITEM, 6);
@@ -100,7 +104,9 @@ public class PhoneBook implements CommandListener {
 	list.setCyclingCursor(true);
 	list.addCommandEx(backCommand, VirtualList.MENU_TYPE_LEFT_BAR);
 	list.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
+	//#sijapp cond.if target!="DEFAULT"#
 	list.addCommandEx(cmdCall, VirtualList.MENU_TYPE_RIGHT);
+	//#sijapp cond.end#
 	list.addCommandEx(cmdWriteSMS, VirtualList.MENU_TYPE_RIGHT);
 	list.addCommandEx(cmdEditNum, VirtualList.MENU_TYPE_RIGHT);
 	list.setCommandListener(_this);
@@ -170,6 +176,7 @@ public class PhoneBook implements CommandListener {
 	if (c == backCommand) {
 	    RunnableImpl.backToLastScreenMT();
 
+	//#sijapp cond.if target!="DEFAULT"#
 	} else if (c == cmdCall) {
 	    String number = getCurrPhoneNumber();
 	    if (number.length() > 0) {
@@ -179,6 +186,7 @@ public class PhoneBook implements CommandListener {
 
 		}
 	    }
+        //#sijapp cond.end#
 
 	} else if (c == cmdWriteSMS) {
 	    String number = getCurrPhoneNumber();
@@ -220,6 +228,7 @@ public class PhoneBook implements CommandListener {
 	}
     }
 
+    //#sijapp cond.if target!="DEFAULT"#
     private static void loadNames(String name)
 	    throws PIMException, SecurityException {
 	javax.microedition.pim.ContactList cl = null;
@@ -271,10 +280,12 @@ public class PhoneBook implements CommandListener {
 	    }
 	}
     }
+    //#sijapp cond.end#
 
     private static class LoadContacts implements Runnable {
 
 	public void run() {
+	    //#sijapp cond.if target!="DEFAULT"#
 	    try {
 		String[] allContactLists = PIM.getInstance().listPIMLists(PIM.CONTACT_LIST);
 		if (allContactLists.length != 0) {
@@ -287,6 +298,7 @@ public class PhoneBook implements CommandListener {
 	    } catch (SecurityException e) {
 		DebugLog.addText("PhoneBook: " + e.getMessage());
 	    }
+	    //#sijapp cond.end#
 	    allTelNum = new TelNum[data.size()];
 	    data.copyInto(allTelNum);
 	    data.removeAllElements();
