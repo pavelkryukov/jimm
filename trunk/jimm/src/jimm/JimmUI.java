@@ -345,10 +345,26 @@ public class JimmUI implements CommandListener
 		}
 		
 		// "About" -> "Back"
-		else if (JimmUI.isControlActive(aboutTextList) && (c == cmdBack))
+		else if (JimmUI.isControlActive(aboutTextList))
 		{
-			MainMenu.activateMenu();
-			aboutTextList = null;
+			if (c == cmdBack)
+			{
+				MainMenu.activateMenu();
+				aboutTextList = null;
+			}
+//#sijapp cond.if target isnot "DEFAULT"#			
+			else if (c == cmdSelect)
+			{
+				if (aboutTextList.getCurrTextIndex() == ABOUT_JIMM_WAP)
+				{
+					try
+					{					
+						Jimm.jimm.platformRequest("http://jimm.org/nightly/index.php?page=jimm_about");
+					}
+					catch (Exception e) {}
+				}
+			}
+//#sijapp cond.end#		
 		}
 
 		// "User info"
@@ -541,6 +557,8 @@ public class JimmUI implements CommandListener
 
 	// String for recent version
 	static private String version;
+	static private String betaVersion;
+	static private final int ABOUT_JIMM_WAP = 1000;
 
 	static public void about()
 	{
@@ -553,7 +571,8 @@ public class JimmUI implements CommandListener
 		aboutTextList.lock();
 		aboutTextList.clear();
 		aboutTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
-		setColorScheme(aboutTextList, false, -1, true);
+		setColorScheme(aboutTextList, false, -1, false);
+		aboutTextList.setFontSize(Font.SIZE_SMALL);
 		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1, 0xffffff, 0, 0, 0);
 
 		aboutTextList.setCaption(ResourceBundle.getString("about"));
@@ -561,30 +580,7 @@ public class JimmUI implements CommandListener
 		String commaAndSpace = ", ";
 
 		StringBuffer str = new StringBuffer();
-		str.append(" ").append(ResourceBundle.getString("about_info")).append(
-				"\n\n")
-
-		.append(ResourceBundle.getString("midp_info")).append(": ").append(
-				Jimm.microeditionPlatform);
-
-		if (Jimm.microeditionProfiles != null)
-			str.append(commaAndSpace).append(Jimm.microeditionProfiles);
-
-		String locale = System.getProperty("microedition.locale");
-		if (locale != null)
-			str.append(commaAndSpace).append(locale);
-
-		str.append("\n\n").append(ResourceBundle.getString("free_heap"))
-				.append(": ").append(freeMem).append("kb\n").append(
-						ResourceBundle.getString("total_mem")).append(": ")
-				.append(Runtime.getRuntime().totalMemory() / 1024).append(
-						"kb\n\n")
-				.append(ResourceBundle.getString("latest_ver")).append(':');
-
-		if (version != null)
-			str.append(' ').append(version);
-		else
-			str.append(" ...");
+		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n");
 
 		Image image = null;
 		try
@@ -594,7 +590,35 @@ public class JimmUI implements CommandListener
 		
 		aboutTextList.addBigText("\n", 0xffffff, Font.STYLE_PLAIN, -1);
 		if (image != null) aboutTextList.addImage(image, null, -1).doCRLF(-1);
+		
 		aboutTextList.addBigText(str.toString(), 0xffffff, Font.STYLE_PLAIN, -1);
+		aboutTextList.doCRLF(-1);
+		
+//#sijapp cond.if target isnot "DEFAULT"#
+		JimmUI.addTextListItem(aboutTextList, "about_visit_wap", JimmUI.eventUrlMessageImg, ABOUT_JIMM_WAP, true, -1, Font.STYLE_BOLD);
+		aboutTextList.doCRLF(-1);
+		aboutTextList.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
+//#sijapp cond.end#		
+		
+		str.setLength(0);
+		str	.append(ResourceBundle.getString("midp_info"))
+			.append(": ").append(Jimm.microeditionPlatform);
+
+		if (Jimm.microeditionProfiles != null)
+			str.append(commaAndSpace).append(Jimm.microeditionProfiles);
+		
+		String locale = System.getProperty("microedition.locale");
+		if (locale != null) str.append(commaAndSpace).append(locale);
+
+		str	.append("\n\n").append(ResourceBundle.getString("free_heap"))
+			.append(": ").append(freeMem).append("kb\n")
+			.append(ResourceBundle.getString("total_mem")).append(": ")
+			.append(Runtime.getRuntime().totalMemory() / 1024).append("kb\n\n")
+			.append(ResourceBundle.getString("latest_ver")).append(":\n");
+		
+		aboutTextList.addBigText(str.toString(), 0xffffff, Font.STYLE_PLAIN, -1);
+		
+		internalShowLastVers();
 
 		aboutTextList.addCommandEx(cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 		aboutTextList.setCommandListener(_this);
@@ -603,49 +627,74 @@ public class JimmUI implements CommandListener
 		aboutTextList.activate(Jimm.display);
 		
 		// request last jimm version
-		if (version == null) RunnableImpl.requestLastJimmVers();
+		if (version == null && betaVersion == null) RunnableImpl.requestLastJimmVers();
 	}
 	
-	static public void internalReqLastVersThread()
+	static private String readHttpContentFirstString(String url)
 	{
 		HttpConnection httemp = null;
 		InputStream istemp = null;
-		
-		Thread.yield();
-		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+		String result = null;
 		
 		try
 		{
-			httemp = (HttpConnection) Connector.open("http://www.jimm.org/en/current_ver");
-			if (httemp.getResponseCode() != HttpConnection.HTTP_OK)
-				throw new IOException();
+			httemp = (HttpConnection) Connector.open(url);
+			if (httemp.getResponseCode() != HttpConnection.HTTP_OK) throw new IOException();
 			istemp = httemp.openInputStream();
-			byte[] version_ = new byte[(int) httemp.getLength()];
-			istemp.read(version_, 0, version_.length);
-			version = new String(version_);
+			byte[] versRaw_ = new byte[(int) httemp.getLength()];
+			istemp.read(versRaw_, 0, versRaw_.length);
+			result = new String(versRaw_);
 		} catch (SecurityException e)
 		{
 			JimmException f = new JimmException(119, 1, true);
 			JimmException.handleException(f);
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			version = "Error: " + e.getMessage();
-		}
+		catch (Exception e) {}
 		finally
 		{
 			if (istemp != null) try {istemp.close();} catch (Exception e) {}
 			if (httemp != null) try {httemp.close();} catch (Exception e) {}
 		}
 		
+		if (result != null)
+		{
+			int pos = result.indexOf("\r");
+			if (pos != -1) pos = result.indexOf("\n");
+			if (pos != -1) result = result.substring(0, pos); 
+		}
+		return result;
+	}
+	
+	static public void internalReqLastVersThread()
+	{
+		Thread.yield();
+		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+		
+		if (version == null)
+			version = readHttpContentFirstString("http://www.jimm.org/en/current_ver");
+		
+		if (betaVersion == null)
+			betaVersion = readHttpContentFirstString("http://www.jimm.org/nightly/current-nightly");
+		
 		RunnableImpl.showLastJimmVers();
+	}
+	
+	static private void addVersString(String result, String name)
+	{
+		if (result == null) return;
+		aboutTextList.addBigText(ResourceBundle.getString(name), aboutTextList.getTextColor(), Font.STYLE_PLAIN, -1);
+		aboutTextList.addBigText(": ", aboutTextList.getTextColor(), Font.STYLE_PLAIN, -1);
+		aboutTextList.addBigText(result, aboutTextList.getTextColor(), Font.STYLE_BOLD, -1);
+		aboutTextList.doCRLF(-1);
 	}
 	
 	static public void internalShowLastVers()
 	{
 		if (aboutTextList != null)
-			aboutTextList.addBigText(version, aboutTextList.getTextColor(), Font.STYLE_PLAIN, -1);
+		{
+			addVersString(version,     "version_stable");
+			addVersString(betaVersion, "version_beta");
+		}
 	}
 
 	//////////////////////
