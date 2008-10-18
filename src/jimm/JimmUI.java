@@ -359,7 +359,7 @@ public class JimmUI implements CommandListener
 				{
 					try
 					{					
-						Jimm.jimm.platformRequest("http://jimm.org/nightly/index.php?page=jimm_about");
+						Jimm.jimm.platformRequest("http://jimm.org/wap/");
 					}
 					catch (Exception e) {}
 				}
