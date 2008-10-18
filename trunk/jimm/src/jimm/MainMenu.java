@@ -47,11 +47,12 @@ public class MainMenu implements CommandListener, JimmScreen
 	private static final int MENU_CONNECT       = 1;
 	private static final int MENU_DISCONNECT    = 2;
 	private static final int MENU_LIST          = 3;
-	private static final int MENU_OPTIONS       = 4;
-	private static final int MENU_TRAFFIC       = 5;
-	private static final int MENU_KEYLOCK       = 6;
-	private static final int MENU_STATUS        = 7;
-	private static final int MENU_XSTATUS       = 8;
+	private static final int MENU_PHONEBOOK     = 4;
+	private static final int MENU_OPTIONS       = 5;
+	private static final int MENU_TRAFFIC       = 6;
+	private static final int MENU_KEYLOCK       = 7;
+	private static final int MENU_STATUS        = 8;
+	private static final int MENU_XSTATUS       = 9;
 	private static final int MENU_ABOUT         = 10;
 	private static final int MENU_MINIMIZE      = 11;
 	private static final int MENU_SOUND         = 12;
@@ -131,6 +132,10 @@ public class MainMenu implements CommandListener, JimmScreen
 		if (ContactList.getSize() != 0)
 			JimmUI.addTextListItem(list, "contact_list", menuIcons.elementAt(2), MENU_LIST, true, -1, Font.STYLE_PLAIN);
 		
+		//#sijapp cond.if modules_PIM is "true" #
+		JimmUI.addTextListItem(list, "phone_book", null, MENU_PHONEBOOK, true, -1, Font.STYLE_PLAIN);
+		//#sijapp cond.end#    	
+
 		JimmUI.addTextListItem(list, "options_lng",  menuIcons.elementAt(4), MENU_OPTIONS, true, -1, Font.STYLE_PLAIN);
 		
 		//#sijapp cond.if target isnot "DEFAULT"#
@@ -303,6 +308,13 @@ public class MainMenu implements CommandListener, JimmScreen
 				/* ContactList */
 				ContactList.activateList();
 				break;
+
+			//#sijapp cond.if modules_PIM is "true" #
+			case MENU_PHONEBOOK:
+				/* PhoneBook */
+				PhoneBook.activate(false);
+				break;
+			//#sijapp cond.end#    	
 
 			case MENU_KEYLOCK:
 				/* Enable keylock */

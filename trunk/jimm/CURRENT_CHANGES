@@ -10,6 +10,7 @@ Implemented:
   * NEW FEATURE: Antispam filter
   * NEW FEATURE: Background image from jar or from file
   * NEW FEATURE: Loading buddy icons
+  * NEW FEATURE: Sending SMS and dialing 
   * BUGFIX: When invisible Jimm is no longer sending out typing notify
   * BUGFIX: Reconnect to server feature, cancel of connecting
   * BUGFIX: Channel-2 text messages contain wrong background color
@@ -40,4 +41,3 @@ Implemented:
 Planned:
   * Changes graphics and sounds directly from Jimm
   * Full extended status support
-  * Sending SMS and dialing 

@@ -419,6 +419,16 @@
   "auto_retry_count"            "Retry count:"
   //#sijapp cond.end#
   
+  // PIM module strings
+  //#sijapp cond.if modules_PIM is "true" #
+  "phone_book"			"Phonebook"
+  "call"			"Call"
+  "write_sms"			"Write SMS"
+  "send_sms"			"Send SMS"
+  "edit_num"			"Edit number"
+  "enter_phone_num"		"Enter phone number"
+  //#sijapp cond.end#
+  
   // ANTISPAM module strings
   //#sijapp cond.if modules_ANTISPAM is "true" #
   "antispam"                    "Antispam"

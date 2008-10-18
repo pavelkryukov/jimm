@@ -108,6 +108,11 @@ public class Jimm extends MIDlet
 
 	//#sijapp cond.end#
 
+	//#sijapp cond.if modules_PIM is "true" #
+	public static PhoneBook phoneBook;
+
+	//#sijapp cond.end#
+
 	private JimmUI ui;
 
 	public static final String microeditionPlatform = System.getProperty("microedition.platform");
@@ -229,6 +234,12 @@ public class Jimm extends MIDlet
 		this.cl = new ContactList();
 		ContactList.beforeConnect();
 		SplashCanvas.setProgress(60);
+
+		//#sijapp cond.if modules_PIM is "true" #
+		this.phoneBook = new PhoneBook();
+		SplashCanvas.setProgress(65);
+
+		//#sijapp cond.end#
 
 		// Create chat hisotry object (and update progress indicator)
 		this.ch = new ChatHistory();

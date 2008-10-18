@@ -30,7 +30,6 @@ import jimm.JimmException;
 import jimm.DebugLog;
 import jimm.JimmUI;
 import jimm.RunnableImpl;
-import jimm.util.ResourceBundle;
 import jimm.comm.connections.SOCKETConnection;
 
 public class RequestBuddyIconAction extends Action

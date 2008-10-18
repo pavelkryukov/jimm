@@ -14,6 +14,16 @@
 "auto_retry_count"			"Попыток подключения:"
 //#sijapp cond.end#
 
+// PIM module strings
+//#sijapp cond.if modules_PIM is "true" #
+"phone_book"				"Телефонная книга"
+"call"						"Позвонить"
+"write_sms"					"Написать смс"
+"send_sms"					"Отправить смс"
+"edit_num"				"Изменить номер"
+"enter_phone_num"			"Введите номер телефона"
+//#sijapp cond.end#
+
 // ANTISPAM module strings
 //#sijapp cond.if modules_ANTISPAM is "true" #
 "antispam"					"Антиспам"
