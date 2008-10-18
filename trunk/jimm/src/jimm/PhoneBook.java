@@ -228,59 +228,110 @@ public class PhoneBook implements CommandListener {
 		}
 	}
 
-	//#sijapp cond.if target!="DEFAULT"#
-	private static void loadNames(String name)
-			throws PIMException, SecurityException {
-		javax.microedition.pim.ContactList cl = null;
-		try {
-			cl = (javax.microedition.pim.ContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_ONLY, name);
+//#sijapp cond.if target!="DEFAULT"#
+	
+	private static String readPimName(Contact contact, int nameConstant)
+	{
+		switch (nameConstant)
+		{
+		case Contact.FORMATTED_NAME:
+			return contact.getString(nameConstant, 0);
 
-			if (cl.isSupportedField(Contact.FORMATTED_NAME) && cl.isSupportedField(Contact.TEL)) {
-				// TODO: Progress bar here
-				Enumeration items = cl.items();
-				Vector telNumbers = new Vector();
-				while (items.hasMoreElements()) {
-					Contact contact = (Contact) items.nextElement();
-					int telCount = contact.countValues(Contact.TEL);
-					int nameCount = contact.countValues(Contact.FORMATTED_NAME);
+		case Contact.NAME:
+			int nameNumbers = contact.countValues(Contact.NAME);
+			StringBuffer sb = new StringBuffer();
 
-					if (telCount > 0 && nameCount > 0) {
-						String contactName =
-								contact.getString(Contact.FORMATTED_NAME, 0);
-						for (int i = 0; i < telCount; i++) {
-							int telAttributes =
-									contact.getAttributes(Contact.TEL, i);
-							String telNumber =
-									contact.getString(Contact.TEL, i);
-							if (cl.isSupportedAttribute(Contact.TEL,
-									Contact.ATTR_MOBILE)) {
-								if ((telAttributes & Contact.ATTR_MOBILE) != 0) {
-									telNumbers.insertElementAt(telNumber, 0);
-								} else {
-									telNumbers.addElement(telNumber);
-								}
-							} else {
-								telNumbers.addElement(telNumber);
-							}
-						}
-						if (contactName.length() > 20) {
-							contactName = contactName.substring(0, 17) + "...";
-						}
-						for (int i = 0; i < telNumbers.size(); i++) {
-							addTelNumInfo(data, contactName, (String) telNumbers.elementAt(i), counter);
-							counter++;
-						}
-						telNumbers.removeAllElements();
+			for (int i = 0; i < nameNumbers; i++)
+			{
+
+				String[] nameData = contact.getStringArray(Contact.NAME, i);
+
+				if (nameData != null)
+				{
+
+					if (nameData[Contact.NAME_GIVEN] != null) sb.append(nameData[Contact.NAME_GIVEN]);
+
+					if (nameData[Contact.NAME_FAMILY] != null)
+					{
+						if (sb.length() > 0)
+							sb.append(" ");
+						sb.append(nameData[Contact.NAME_FAMILY]);
 					}
 				}
 			}
-		} finally {
-			if (cl != null) {
+			return sb.toString().trim();
+		}
+		return null;
+	}
+	
+	private static void loadNames(String name) throws PIMException, SecurityException
+	{
+		javax.microedition.pim.ContactList cl = null;
+		try
+		{
+			if (name != null)
+				cl = (javax.microedition.pim.ContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_ONLY, name);
+			else
+				cl = (javax.microedition.pim.ContactList) PIM.getInstance().openPIMList(PIM.CONTACT_LIST, PIM.READ_ONLY);
+			
+			int nameConstant;
+			
+			if (cl.isSupportedField(Contact.FORMATTED_NAME)) nameConstant = Contact.FORMATTED_NAME;
+			else if (cl.isSupportedField(Contact.NAME)) nameConstant = Contact.NAME;
+			else return;
+
+			// TODO: Progress bar here
+			Enumeration items = cl.items();
+			Vector telNumbers = new Vector();
+			while (items.hasMoreElements())
+			{
+				Contact contact = (Contact) items.nextElement();
+				int telCount = contact.countValues(Contact.TEL);
+				
+				int nameCount = contact.countValues(nameConstant);
+
+				if (telCount > 0 && nameCount > 0)
+				{
+					String contactName = readPimName(contact, nameConstant);
+					for (int i = 0; i < telCount; i++)
+					{
+						int telAttributes = contact.getAttributes(Contact.TEL, i);
+						String telNumber = contact.getString(Contact.TEL, i);
+						if (cl.isSupportedAttribute(Contact.TEL, Contact.ATTR_MOBILE))
+						{
+							if ((telAttributes & Contact.ATTR_MOBILE) != 0)
+							{
+								telNumbers.insertElementAt(telNumber, 0);
+							} else
+							{
+								telNumbers.addElement(telNumber);
+							}
+						}
+						else telNumbers.addElement(telNumber);
+					}
+					if (contactName.length() > 20)
+					{
+						contactName = contactName.substring(0, 17) + "...";
+					}
+					for (int i = 0; i < telNumbers.size(); i++)
+					{
+						addTelNumInfo(data, contactName, (String) telNumbers.elementAt(i), counter);
+						counter++;
+					}
+					telNumbers.removeAllElements();
+				}
+			}
+		} finally
+		{
+			if (cl != null)
+			{
 				cl.close();
 			}
 		}
 	}
+
 	//#sijapp cond.end#
+	
 	private static class LoadContacts implements Runnable {
 
 		public void run() {
@@ -292,6 +343,7 @@ public class PhoneBook implements CommandListener {
 						loadNames(allContactLists[i]);
 					}
 				}
+				else loadNames(null);
 			} catch (PIMException e) {
 				DebugLog.addText("PhoneBook: " + e.getMessage());
 			} catch (SecurityException e) {
