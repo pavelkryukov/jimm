@@ -237,6 +237,14 @@ public class ContactItem implements ContactListItem, JimmScreen
 				setBooleanValue_(CONTACTITEM_NO_AUTH, false);
 				ChatHistory.rebuildMenu(this);
 			}
+			else if (status == ContactList.STATUS_OFFLINE)
+			{
+				xStatusMessage = null;
+				setIntValue(CONTACTITEM_XSTATUS, -1);
+				//#sijapp cond.if target isnot "DEFAULT"#
+				typing = false;
+				//#sijapp cond.end#
+			}
 			return;
 			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 			//#sijapp cond.if modules_FILES is "true"#
@@ -753,15 +761,6 @@ public class ContactItem implements ContactListItem, JimmScreen
 	/** ************************************************************************* */
 	/** ************************************************************************* */
 	/** ************************************************************************* */
-
-	public void setOfflineStatus()
-	{
-		//#sijapp cond.if target isnot "DEFAULT"#
-		typing = false;
-		//#sijapp cond.end#
-		setIntValue(CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
-		setIntValue(CONTACTITEM_XSTATUS, -1);
-	}
 
 	/* Sets new contact name */
 	public void rename(String newName)

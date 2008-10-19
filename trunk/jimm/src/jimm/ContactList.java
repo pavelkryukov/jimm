@@ -535,13 +535,11 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	static public void setStatusesOffline()
 	{
 		onlineCounter = 0;
-		ContactItem item;
 		for (int i = cItems.size() - 1; i >= 0; i--)
 		{
-			item = getCItem(i);
-			item.setOfflineStatus();
+			ContactItem item = getCItem(i);
+			item.setIntValue(ContactItem.CONTACTITEM_STATUS, ContactList.STATUS_OFFLINE);
 		}
-		item = null;
 		for (int i = gItems.size() - 1; i >= 0; i--)
 			((ContactListGroupItem) gItems.elementAt(i)).setCounters(0, 0);
 	}
