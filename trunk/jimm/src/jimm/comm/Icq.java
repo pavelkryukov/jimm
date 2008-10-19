@@ -709,7 +709,7 @@ public class Icq implements Runnable
 				Util.writeDWord(statBuffer, 0xFFFFFFFE, true);
 				Util.writeDWord(statBuffer, 0x00010000, true);
 				Util.writeDWord(statBuffer, 0xFFFFFFFE, true);
-				Util.writeWord(statBuffer, 0x0000, true);		
+				Util.writeWord(statBuffer, 0x0000, true);
 			}
 		}
 

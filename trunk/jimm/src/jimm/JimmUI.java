@@ -1461,26 +1461,47 @@ public class JimmUI implements CommandListener
 		vct.addElement(new StatusInfo(type, value, ResourceBundle.getString(text), image, flags));
 	}
 	
-	public static void fillStatusesInList(TextList list, int type, int flags, boolean showDescr)
+	public static final int SHOW_STATUSES_NAME  = 1 << 0;
+	public static final int SHOW_STATUSES_DESCR = 1 << 1;
+	
+	public static void fillStatusesInList(TextList list, int type, int flags, int showFlags)
 	{
+		boolean showDescr = (showFlags&SHOW_STATUSES_DESCR) != 0;
+		boolean showName  = (showFlags&SHOW_STATUSES_NAME)  != 0;
+		
 		for (int i = 0; i < statusInfos.length; i++)
 		{
 			StatusInfo info = statusInfos[i];
 			if (info.getType() != type) continue;
 			if ((info.getFlags()&flags) == 0) continue;
-			addTextListItem
-			(
-				list, 
-				info.getText(), 
-				info.getImage(), 
-				info.getValue(), 
-				true, 
-				-1, 
-				showDescr||((info.getFlags()&StatusInfo.FLAG_STD) != 0) ? Font.STYLE_BOLD : Font.STYLE_PLAIN
-			);
+			
+			if (showName)
+			{
+				addTextListItem
+				(
+					list, 
+					info.getText(), 
+					info.getImage(), 
+					info.getValue(), 
+					true, 
+					-1, 
+					showDescr||((info.getFlags()&StatusInfo.FLAG_STD) != 0) ? Font.STYLE_BOLD : Font.STYLE_PLAIN
+				);
+			}
 			
 			if (showDescr)
-				addTextListItem(list, Options.getStatusString(type, info.getValue()), null, info.getValue(), true, -1, Font.STYLE_PLAIN);
+			{
+				addTextListItem
+				(
+					list, 
+					Options.getStatusString(type, info.getValue()), 
+					(!showName) ? info.getImage() : null, 
+					info.getValue(), 
+					true, 
+					-1, 
+					(!showName)&&((info.getFlags()&StatusInfo.FLAG_STD) != 0) ? Font.STYLE_BOLD : Font.STYLE_PLAIN
+				);
+			}
 		}
 	}
 
@@ -1854,9 +1875,8 @@ public class JimmUI implements CommandListener
 		
 		if (Icq.isConnected())
 		{
-			if ((status != ContactList.STATUS_ONLINE)
-					&& (status != ContactList.STATUS_OFFLINE)
-					&& (status != ContactList.STATUS_INVISIBLE))
+			StatusInfo si = JimmUI.findStatus(StatusInfo.TYPE_STATUS, (int)status);
+			if (si != null && si.testFlag(StatusInfo.FLAG_HAVE_DESCR))
 				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true, -1, Font.STYLE_PLAIN);		
 			
 //#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2"|target="RIM")&modules_FILES="true"#
@@ -2341,9 +2361,6 @@ public class JimmUI implements CommandListener
 	public static void requestContactStatusMess(ContactItem ci)
 	{
 		int status = ci.getIntValue(ContactItem.CONTACTITEM_STATUS);
-		if (status == ContactList.STATUS_ONLINE
-				|| status == ContactList.STATUS_OFFLINE 
-				|| status == ContactList.STATUS_INVISIBLE) return;		
 		
 		statusMessCI = ci;
 		tlStatusMessage = new TextList(ResourceBundle.getString("status_message"));

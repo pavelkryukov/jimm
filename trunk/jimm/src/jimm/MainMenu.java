@@ -233,14 +233,14 @@ public class MainMenu implements CommandListener, JimmScreen
 
 	//#sijapp cond.end#	
 	
-	private static void initStatusList(String caption, int type, int afterStatus)
+	private static void initStatusList(String caption, int type, int afterStatus, int showMode)
 	{
 		statusList = new TextList(ResourceBundle.getString(caption));
 		statusList.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		statusList.setCyclingCursor(true);
 		statusList.lock();
 		JimmUI.setColorScheme(statusList, false, -1, true);
-		JimmUI.fillStatusesInList(statusList, type, StatusInfo.FLAG_IN_MENU, false);
+		JimmUI.fillStatusesInList(statusList, type, StatusInfo.FLAG_IN_MENU, showMode);
 		statusList.unlock();
 		statusSelection = afterStatus;
 	}
@@ -327,12 +327,12 @@ public class MainMenu implements CommandListener, JimmScreen
 				
 				if (selectedIndex == MENU_STATUS)
 				{
-					initStatusList("set_status", StatusInfo.TYPE_STATUS, SELECT_STATUS);
+					initStatusList("set_status", StatusInfo.TYPE_STATUS, SELECT_STATUS, JimmUI.SHOW_STATUSES_NAME);
 					stValue = (int)Options.getLong(Options.OPTION_ONLINE_STATUS);
 				}
 				else
 				{
-					initStatusList("set_xstatus", StatusInfo.TYPE_X_STATUS, SELECT_XSTATUS);
+					initStatusList("set_xstatus", StatusInfo.TYPE_X_STATUS, SELECT_XSTATUS, JimmUI.SHOW_STATUSES_DESCR);
 					stValue = Options.getInt(Options.OPTION_XSTATUS);
 				}
 				
