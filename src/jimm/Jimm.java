@@ -458,7 +458,7 @@ public class Jimm extends MIDlet
 					Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS), 255);
 					Icq.setInactiveTime(0x00000000);
 				} catch (Exception e) {}
-				ContactList.showStatusInCaption(-1);
+				ContactList.showStatusInCaption(-1, -1);
 			}
 		}
 	}
@@ -497,7 +497,7 @@ public class Jimm extends MIDlet
 						Icq.setOnlineStatus(ContactList.STATUS_AWAY, 255);
 						Icq.setInactiveTime(time1 * 60);
 					} catch (Exception e) {}
-					ContactList.showStatusInCaption(ContactList.STATUS_AWAY);
+					ContactList.showStatusInCaption(ContactList.STATUS_AWAY, -1);
 					aaMode = AA_MODE_AWAY;
 				}
 				break;
@@ -506,7 +506,7 @@ public class Jimm extends MIDlet
 				if (aaInactivityCounter >= time2)
 				{
 					try { Icq.setOnlineStatus(ContactList.STATUS_NA, 255); } catch (Exception e) {}
-					ContactList.showStatusInCaption(ContactList.STATUS_NA);
+					ContactList.showStatusInCaption(ContactList.STATUS_NA, -1);
 					aaMode = AA_MODE_NA;
 				}
 				break;

@@ -382,9 +382,9 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 		}
 	}
 	
-	public void setImage(Image img)
+	public void setImages(Image[] images)
 	{
-		textList.setCapImage(img);
+		textList.setCapImage(images);
 	}
 
 	public void vlItemClicked(VirtualList sender)

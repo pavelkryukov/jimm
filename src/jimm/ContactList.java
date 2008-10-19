@@ -276,12 +276,16 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			return (gItems_);
 		}
 	}
-
 	
-	static public void showStatusInCaption(int status)
+	static public void showStatusInCaption(int status, int xStatus)
 	{
 		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, status == -1 ? Icq.getCurrentStatus() : status);
-		tree.setCapImage((statInfo != null) ? statInfo.getImage() : null);
+		StatusInfo xStatInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, xStatus == -1 ? Options.getInt(Options.OPTION_XSTATUS) : xStatus);
+		
+		tree.setCapImage(new Image[] {
+			statInfo != null ? statInfo.getImage() : null,
+			xStatInfo != null ? xStatInfo.getImage() : null
+		});
 	}
 	
 	public void activate()
@@ -306,7 +310,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		Params[0] = Options.getBoolean(Options.OPTION_CL_CLIENTS);
 		Params[1] = Options.getBoolean(Options.OPTION_XSTATUSES);
 
-		showStatusInCaption(-1);
+		showStatusInCaption(-1, -1);
 		
 		//#sijapp cond.if modules_TRAFFIC is "true" #
 		updateTitle(Traffic.getSessionTraffic());
