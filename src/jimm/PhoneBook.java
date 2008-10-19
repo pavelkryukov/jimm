@@ -131,7 +131,11 @@ public class PhoneBook implements CommandListener {
 	}
 
 	private String getCurrPhoneNumber() {
-		return allTelNum[list.getCurrTextIndex()].getTel();
+		int idx = list.getCurrTextIndex();
+		if ((idx > -1) && (idx < allTelNum.length))
+			return allTelNum[idx].getTel();
+		else
+			return "";
 	}
 
 	private void setCurrPhoneNumber(String number) {
