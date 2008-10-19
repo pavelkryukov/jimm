@@ -57,6 +57,7 @@ public class MainMenu implements CommandListener, JimmScreen
 	private static final int MENU_MINIMIZE      = 11;
 	private static final int MENU_SOUND         = 12;
 	private static final int MENU_EXIT          = 14;
+	private static final int MENU_DEBUG_LOG     = 15;
 
 	final public static ImageList menuIcons;
 
@@ -152,6 +153,11 @@ public class MainMenu implements CommandListener, JimmScreen
 		if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON) 
 			JimmUI.addTextListItem(list, "minimize", menuIcons.elementAt(9), MENU_MINIMIZE, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
+		
+		//#sijapp cond.if modules_DEBUGLOG is "true" #
+		JimmUI.addTextListItem(list, "** Debug Log **", null, MENU_DEBUG_LOG, true, -1, Font.STYLE_PLAIN);
+		//#sijapp cond.end#
+		
 		JimmUI.addTextListItem(list, "exit", menuIcons.elementAt(10), MENU_EXIT, true, -1, Font.STYLE_PLAIN);
 
 		list.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
@@ -378,6 +384,12 @@ public class MainMenu implements CommandListener, JimmScreen
 				/* Exit */
 				doExit(false);
 				break;
+				
+			//#sijapp cond.if modules_DEBUGLOG is "true" #
+			case MENU_DEBUG_LOG:
+				DebugLog.activate();
+				break;
+			//#sijapp cond.end#
 			}
 		}
 
