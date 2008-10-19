@@ -1661,7 +1661,8 @@ public class Util
 	public static String getCurrentDay()
 	{
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
+		Date cur = new Date(1000L*createCurrentDate(false));
+		cal.setTime(cur);
 		String day = "";
 
 		switch (cal.get(Calendar.DAY_OF_WEEK))
