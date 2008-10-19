@@ -714,29 +714,20 @@ public class Icq implements Runnable
 		}
 
 		/* xStatus */
-		StatusInfo xStatInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, xStatus);
-		if (xStatInfo != null)
-		{
-			String statDescr = Options.getStatusString(StatusInfo.TYPE_X_STATUS, xStatus);
-			if (statDescr == null) statDescr = Options.emptyString;
-			byte[] szMoodId = Util.stringToByteArray(statDescr, true);
-
-			Util.writeWord(statBuffer, 0x1D, true);  // TLV (0x1D)
-
-			String message = xStatus != -1 ? ("icqmood"+xStatus) : "";
-
-			Util.writeWord(statBuffer, 12+szMoodId.length+message.length(), true);   // TLV Length
-			Util.writeWord(statBuffer, 0x0002, true);   // Text Status
-			Util.writeByte(statBuffer, 0x04);
-			Util.writeByte(statBuffer, szMoodId.length + 0x04);
-
-			Util.writeWord(statBuffer, szMoodId.length, true);
-			Util.writeByteArray(statBuffer, szMoodId);
-			Util.writeWord(statBuffer, 0x0000, true);
-
-			Util.writeWord(statBuffer, 0x000E, true);
-			Util.writeLenAndString(statBuffer, message, false);
-		}
+		String statDescr = Options.getStatusString(StatusInfo.TYPE_X_STATUS, xStatus);
+		if (statDescr == null) statDescr = Options.emptyString;
+		byte[] szMoodId = Util.stringToByteArray(statDescr, true);
+		Util.writeWord(statBuffer, 0x1D, true); // TLV (0x1D)
+		String message = xStatus != -1 ? ("icqmood" + xStatus) : Options.emptyString;
+		Util.writeWord(statBuffer, 12 + szMoodId.length + message.length(), true); // TLV Length
+		Util.writeWord(statBuffer, 0x0002, true); // Text Status
+		Util.writeByte(statBuffer, 0x04);
+		Util.writeByte(statBuffer, szMoodId.length + 0x04);
+		Util.writeWord(statBuffer, szMoodId.length, true);
+		Util.writeByteArray(statBuffer, szMoodId);
+		Util.writeWord(statBuffer, 0x0000, true);
+		Util.writeWord(statBuffer, 0x000E, true);
+		Util.writeLenAndString(statBuffer, message, false);
 
 		if (statBuffer.size() != 0)
 		{
