@@ -1279,7 +1279,7 @@ public abstract class VirtualList
 			int alphaValue = alpha << 24;
 			int width = x2-x1;
 			int height = y2-y1;
-			if (width <= 0 || height <= 0) return; 
+			if (width <= 0 || height <= 1) return; 
 			
 			int spaceRequired = 32*height;
 			if (alphaBuffer == null || alphaBuffer.length < spaceRequired)
