@@ -1405,7 +1405,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		statusStrings.setMode(VirtualList.CURSOR_MODE_DISABLED);
 		JimmUI.setColorScheme(statusStrings, false, -1, true);
 		statusStrings.setCyclingCursor(true);
-		JimmUI.fillStatusesInList(statusStrings, type, StatusInfo.FLAG_HAVE_DESCR, true);
+		JimmUI.fillStatusesInList(statusStrings, type, StatusInfo.FLAG_HAVE_DESCR, JimmUI.SHOW_STATUSES_DESCR|JimmUI.SHOW_STATUSES_NAME);
 		statusStrings.unlock();
 		
 		statusStrings.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
