@@ -850,7 +850,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 		ChatTextList chat = ChatHistory.getChatHistoryAt(getStringValue(CONTACTITEM_UIN));
 		
-		if (chat != null) chat.setImage(image);
+		if (chat != null) chat.setImages(new Image[] {image});
 	}
 }
 

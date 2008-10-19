@@ -186,7 +186,7 @@ public abstract class VirtualList
 
 	// Individual UI stuff
 	protected int     currItem         = 0;
-	private   Image   capImage;
+	private   Image   capImages[];
 
 //#sijapp cond.if target!="DEFAULT"#
 	private   static  Image backImage;
@@ -384,10 +384,22 @@ public abstract class VirtualList
 		if (isActive()) virtualCanvas.repaint();
 	}
 
-	public void setCapImage(Image image)
+	int capImagesHeight = 0;
+	public void setCapImage(Image[] images)
 	{
-		if (capImage == image) return;
-		capImage = image;
+		if (capImages == images) return;
+		capImages = images;
+		if (images == null) capImagesHeight = 0;
+		else
+		{
+			capImagesHeight = 0;
+			for (int i = 0; i < images.length; i++)
+			{
+				if (images[i] == null) continue;
+				int ih = images[i].getHeight();
+				if (ih > capImagesHeight) capImagesHeight = ih; 
+			}
+		}
 		invalidate(0, 0, getWidth(), getCapHeight());
 	}
 
@@ -1050,9 +1062,9 @@ public abstract class VirtualList
 		//#sijapp cond.end#
 		int capHeight = 0;
 		if (caption != null) capHeight = capAndMenuFont.getHeight() + 2;
-		if (capImage != null)
+		if (capImages != null)
 		{
-			int imgHeight = capImage.getHeight() + 2;
+			int imgHeight = capImagesHeight + 2;
 			if (imgHeight > capHeight) capHeight = imgHeight;
 		}
 
@@ -1091,10 +1103,15 @@ public abstract class VirtualList
 
 		int x = 2+(capOffset*width-2)/100;
 
-		if (capImage != null)
+		if (capImages != null)
 		{
-			g.drawImage(capImage, x, (height - capImage.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
-			x += capImage.getWidth() + 1;
+			for (int i = 0; i < capImages.length; i++)
+			{
+				Image img = capImages[i];
+				if (img == null) continue;
+				g.drawImage(img, x, (height - img.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
+				x += img.getWidth() + 1;
+			}
 		}
 
 		g.setColor(capTxtColor);

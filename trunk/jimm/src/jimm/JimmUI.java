@@ -1491,10 +1491,13 @@ public class JimmUI implements CommandListener
 			
 			if (showDescr)
 			{
+				int value = info.getValue();
+				String descr = Options.getStatusString(type, value);
+				if (descr == null) descr = info.getText();
 				addTextListItem
 				(
 					list, 
-					Options.getStatusString(type, info.getValue()), 
+					descr, 
 					(!showName) ? info.getImage() : null, 
 					info.getValue(), 
 					true, 
