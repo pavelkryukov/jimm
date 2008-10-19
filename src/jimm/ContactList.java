@@ -103,11 +103,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	private static ContactList _this;
 
-	//#sijapp cond.if modules_DEBUGLOG is "true" #
-	private static Command debugListCommand = new Command("*Debug list*",
-			Command.ITEM, 2);
-
-	//#sijapp cond.end#
 
 	/** ************************************************************************* */
 
@@ -327,12 +322,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		
 		JimmUI.setColorScheme(tree, true, -1, true);
 		tree.removeAllCommands();
-		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_LEFT_BAR);
+		
 		tree.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
-
-		//#sijapp cond.if modules_DEBUGLOG is "true" #
-		tree.addCommandEx(debugListCommand, VirtualList.MENU_TYPE_RIGHT);
-		//#sijapp cond.end#
+		tree.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_LEFT_BAR);
 		
 		ContactList.tree.activate(Jimm.display);
 		JimmUI.setLastScreen(_this, true);
@@ -1737,13 +1729,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				tree.setExpandFlag(node, newExpanded);
 			}
 		}
-
-		//#sijapp cond.if modules_DEBUGLOG is "true" #
-		else if (c == debugListCommand)
-		{
-			DebugLog.activate();
-		}
-		//#sijapp cond.end#
 	}
 	
 	static private boolean checkIfIdExists(int id)

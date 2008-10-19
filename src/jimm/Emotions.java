@@ -293,7 +293,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		dos = null;
 		stream = null;
 		System.gc();
-		System.out.println("Emotions used: "+(mem - Runtime.getRuntime().freeMemory()));
+		DebugLog.addText("Emotions used: "+(mem - Runtime.getRuntime().freeMemory()));
 		//#sijapp cond.end#
 	}
 
