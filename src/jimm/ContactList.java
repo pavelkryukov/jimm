@@ -129,7 +129,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	private static VirtualTree tree;
 
 	/* Images for icons */
-	final public static ImageList smallIcons = new ImageList();
 	final public static ImageList cliImages = new ImageList();
 
 	//
@@ -142,14 +141,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		try
 		{
-			smallIcons.load("/sicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
-		} catch (Exception e) {}
-		
-		try
-		{
 			cliImages.load("/clicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
-		} catch (Exception e) {}
-
+		} 
+		catch (Exception e) {}
 	}
 
 	/* Constructor */
