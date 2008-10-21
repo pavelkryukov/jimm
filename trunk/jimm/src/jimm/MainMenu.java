@@ -134,7 +134,7 @@ public class MainMenu implements CommandListener, JimmScreen
 			JimmUI.addTextListItem(list, "contact_list", menuIcons.elementAt(2), MENU_LIST, true, -1, Font.STYLE_PLAIN);
 		
 		//#sijapp cond.if modules_PIM is "true" #
-		JimmUI.addTextListItem(list, "phone_book", null, MENU_PHONEBOOK, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "phone_book", menuIcons.elementAt(33), MENU_PHONEBOOK, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#    	
 
 		JimmUI.addTextListItem(list, "options_lng",  menuIcons.elementAt(4), MENU_OPTIONS, true, -1, Font.STYLE_PLAIN);
