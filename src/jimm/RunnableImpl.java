@@ -88,12 +88,18 @@ public class RunnableImpl implements Runnable
 //#sijapp cond.end#
 
 		case TYPE_ADD_MSG:
-//#sijapp cond.if target isnot "DEFAULT"#			
-			int vibraKind = Options.getInt(Options.OPTION_VIBRATOR);
-			if (vibraKind == 2) vibraKind = SplashCanvas.locked() ? 1 : 0;
-			if (vibraKind > 0) Jimm.display.vibrate(500);
+			boolean isChecked = ContactList.addMessage((Message) data[0]);
+//#sijapp cond.if target isnot "DEFAULT"#
+			if (isChecked) {
+				int vibraKind = Options.getInt(Options.OPTION_VIBRATOR);
+				if (vibraKind == 2) {
+					vibraKind = SplashCanvas.locked() ? 1 : 0;
+				}
+				if (vibraKind > 0) {
+					Jimm.display.vibrate(500);
+				}
+			}
 //#sijapp cond.end#			
-			ContactList.addMessage((Message) data[0]);
 			break;
 
 		case TYPE_USER_OFFLINE:

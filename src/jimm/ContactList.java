@@ -1283,7 +1283,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 	/* Adds the given message to the message queue of the contact item
 	 identified by the given UIN */
-	static public void addMessage(Message message)
+	static public boolean addMessage(Message message)
 	{
 		synchronized (_this)
 		{
@@ -1299,7 +1299,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				if (message.needCheckForSpam()) 
 				{
 					boolean checked = antiSpamCheckContactFor(uin, message.getText());
-					if (!checked) return;
+					if (!checked) return false;
 				}
 			}
 //#sijapp cond.end#
@@ -1333,6 +1333,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			/* Update tree */
 			contactChanged(cItem, true, false);
 		}
+		return true;
 	}
 
 //#sijapp cond.if target!="DEFAULT"#
