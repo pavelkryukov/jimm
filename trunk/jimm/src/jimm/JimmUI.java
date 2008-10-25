@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-07  Jimm Project
+ Copyright (C) 2003-08  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -2146,17 +2146,16 @@ public class JimmUI implements CommandListener
 		int xStatus = cItem.getIntValue(ContactItem.CONTACTITEM_XSTATUS);
 		statusInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, xStatus);
 		String rcvdXMsg = cItem.getStringValue(ContactItem.CONTACTITEM_XSTATUSMSG);
-		if (statusInfo != null)
+
+		String stText = (statusInfo != null) ? ResourceBundle.getString(statusInfo.getText()) : "";
+
+		if (rcvdXMsg != null)
 		{
-			String stText = ResourceBundle.getString(statusInfo.getText());
 			clInfoData[JimmUI.UI_XSTATUS] = ((rcvdXMsg.length() > 0) ? stText+" ("+rcvdXMsg+")" : stText);
 		}
 		else
 		{
-			if (rcvdXMsg.length() > 0)
-				clInfoData[JimmUI.UI_XSTATUS] = rcvdXMsg;
-			else
-				clInfoData[JimmUI.UI_XSTATUS] = null;
+			clInfoData[JimmUI.UI_XSTATUS] = stText;
 		}
 		
 		/* registration date */
