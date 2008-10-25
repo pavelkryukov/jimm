@@ -643,8 +643,8 @@ public class ContactItem implements ContactListItem, JimmScreen
 		Image result = null;
 		if (getBooleanValue(CONTACTITEM_B_PLMESSAGES)) result = JimmUI.eventPlainMessageImg;
 		else if (getBooleanValue(CONTACTITEM_B_URLMESSAGES)) result = JimmUI.eventUrlMessageImg;
-		else if (getBooleanValue(CONTACTITEM_B_AUTREQUESTS)) result = JimmUI.eventSysActionImg;
-		else if (getBooleanValue(CONTACTITEM_B_SYSNOTICES)) result = JimmUI.eventSystemNoticeImg;
+		else if (getBooleanValue(CONTACTITEM_B_AUTREQUESTS)) result = JimmUI.eventSystemNoticeImg;
+		else if (getBooleanValue(CONTACTITEM_B_SYSNOTICES)) result = JimmUI.eventSysActionImg;
 		else if (getBooleanValue(CONTACTITEM_NO_AUTH)) result = JimmUI.imgNoAuth;
 			
 		else
