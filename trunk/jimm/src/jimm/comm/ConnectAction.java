@@ -49,10 +49,9 @@ public class ConnectAction extends Action
     public static final int STATE_CLI_WANT_CAPS_SENT = 5;
     public static final int STATE_CLI_CHECKROSTER_SENT = 6;
     public static final int STATE_CLI_STATUS_INFO_SENT = 7;
-    public static final int STATE_CLI_REQOFFLINEMSGS_SENT = 8;
-    public static final int STATE_CLI_ACKOFFLINEMSGS_SENT = 9;
+    public static final int STATE_CONNECTED = 8;
     
-    public static final int STATE_MAX = 9;
+    public static final int STATE_MAX = 8;
 
     // CLI_SETICBM packet data
     public static final byte[] CLI_SETICBM_DATA = Util.explodeToBytes("0,0,0,0,0,0B,1F,40,3,E7,3,E7,0,0,0,0", ',', 16);
@@ -873,135 +872,11 @@ public class ConnectAction extends Action
 				ToIcqSrvPacket reply3 = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_REQOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
 				Icq.c.sendPacket(reply3);
 				
-				this.state = ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT;
+				// Move to STATE_CONNECTED
+				Icq.setConnected();
+				this.state = ConnectAction.STATE_CONNECTED;
 			}
             
-			// Watch out for STATE_CLI_REQOFFLINEMSGS_SENT
-			else if (this.state == ConnectAction.STATE_CLI_REQOFFLINEMSGS_SENT)
-			{
-				if (packet instanceof SnacPacket)
-				{
-					SnacPacket snPacket = (SnacPacket)packet;
-					
-					// Error after requesting offline messages?
-					if ((snPacket.getFamily() == 0x0015) && (snPacket.getCommand() == 0x0001))
-					{
-						System.out.println("Error after requesting offline messages");
-						
-						// Move to next state
-						this.state = ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT;
-
-						// Move to STATE_CONNECTED
-						Icq.setConnected();
-
-						// Packet has been consumed
-						consumed = true;
-					}
-				}
-
-				if ((packet instanceof FromIcqSrvPacket) && !consumed)
-				{
-					FromIcqSrvPacket fromIcqSrvPacket = (FromIcqSrvPacket) packet;
-					
-					if (fromIcqSrvPacket.getFamily() == 0x0015)
-					{
-						// Watch out for SRV_OFFLINEMSG
-						if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_OFFLINEMSG_SUBCMD)
-						{
-							// Get raw data
-							byte[] buf = fromIcqSrvPacket.getData();
-
-							// Check length
-							if (buf.length < 14) return false;
-								
-
-							// Extract UIN
-							long uinRaw = Util.getDWord(buf, 0, false);
-
-							String uin = String.valueOf(uinRaw);
-							
-							// Extract date of dispatch
-							long date = Util.createLongTime
-										  (
-												Util.getWord(buf, 4, false),
-												Util.getByte(buf, 6),
-												Util.getByte(buf, 7),
-												Util.getByte(buf, 8),
-												Util.getByte(buf, 9),
-												0
-										   );
-
-							// Get type
-							int type = Util.getWord(buf, 10, false);
-
-							// Get text length
-							int textLen = Util.getWord(buf, 12, false);
-
-							// Get text
-							String text = Util.removeCr(Util.byteArrayToString(buf, 14, textLen, Util.isDataUTF8(buf, 14, textLen)));
-
-							// Normal message
-							if (type == 0x0001)
-							{
-								// Check length
-								if (buf.length != 14 + textLen) { throw (new JimmException(116, 1)); }
-								
-								 // Forward message to contact list
-								PlainMessage message = new PlainMessage(uin, this.uin, Util.gmtTimeToLocalTime(date), text, true);
-								RunnableImpl.addMessageSerially(message);
-							}
-							// URL message
-							else if (type == 0x0004)
-							{
-								if (buf.length != 14 + textLen) { throw (new JimmException(116, 1)); }
-
-								// Search for delimiter
-								int delim = text.indexOf(0xFE);
-
-								// Split message, if delimiter could be found
-								String urlText;
-								String url;
-								if (delim != -1)
-								{
-									urlText = text.substring(0, delim);
-									url = text.substring(delim + 1);
-								}
-								else
-								{
-									urlText = text;
-									url = "";
-								}
-
-								// Forward message message to contact list
-								UrlMessage message = new UrlMessage(uin, this.uin, Util.gmtTimeToLocalTime(date), url, urlText);
-								RunnableImpl.addMessageSerially(message);
-							}
-
-							// Packet has been consumed
-							consumed = true;
-						}
-						
-						// Watch out for SRV_DONEOFFLINEMSGS
-						else if (fromIcqSrvPacket.getSubcommand() == FromIcqSrvPacket.SRV_DONEOFFLINEMSGS_SUBCMD)
-						{
-							// Send a CLI_TOICQSRV/CLI_ACKOFFLINEMSGS packet
-							ToIcqSrvPacket reply = new ToIcqSrvPacket(0x00000000, this.uin, ToIcqSrvPacket.CLI_ACKOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
-							Icq.c.sendPacket(reply);
-
-							// Move to next state
-							this.state = ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT;
-
-							// Move to STATE_CONNECTED
-							Icq.setConnected();
-
-							// Packet has been consumed
-							consumed = true;
-						}
-					}
-				}
-
-			}
-
             // Update activity timestamp and reset activity flag
             this.lastActivity = System.currentTimeMillis();
             this.active = false;
@@ -1031,7 +906,7 @@ public class ConnectAction extends Action
     // Returns true if the action is completed
     public boolean isCompleted()
     {
-        return (this.state == ConnectAction.STATE_CLI_ACKOFFLINEMSGS_SENT);
+        return (this.state == ConnectAction.STATE_CONNECTED);
     }
 
     // Returns true if an error has occured
