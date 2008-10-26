@@ -125,12 +125,21 @@ public class PhoneBook implements CommandListener {
 		list.setCaption(ResourceBundle.getString("phone_book"));
 		JimmUI.setColorScheme(list, false, -1, true);
 		list.setCyclingCursor(true);
-		list.addCommandEx(cmdCall, VirtualList.MENU_TYPE_RIGHT_BAR);
 		list.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_LEFT_BAR);
+		//#sijapp cond.if target!="DEFAULT"#
+		list.addCommandEx(cmdCall, VirtualList.MENU_TYPE_RIGHT_BAR);
 		if (SMS_API_Available) {
 			list.addCommandEx(cmdWriteSMS, VirtualList.MENU_TYPE_LEFT);
 		}
 		list.addCommandEx(cmdEditNum, VirtualList.MENU_TYPE_LEFT);
+		//#sijapp cond.else#
+		//#if (SMS_API_Available) {
+		//#	list.addCommandEx(cmdWriteSMS, VirtualList.MENU_TYPE_RIGHT_BAR);
+		//#	list.addCommandEx(cmdEditNum, VirtualList.MENU_TYPE_LEFT);
+		//#} else {
+		//#	list.addCommandEx(cmdEditNum, VirtualList.MENU_TYPE_RIGHT_BAR);
+		//#}
+		//#sijapp cond.end#
 		list.addCommandEx(backCommand, VirtualList.MENU_TYPE_LEFT);
 		list.setCommandListener(_this);
 
@@ -327,8 +336,8 @@ public class PhoneBook implements CommandListener {
 			} catch (SecurityException e) {
 				DebugLog.addText("PhoneBook: " + e.getMessage());
 			}
+			//#sijapp cond.end#
 			moveDataToList();
-		//#sijapp cond.end#
 		}
 	}
 
