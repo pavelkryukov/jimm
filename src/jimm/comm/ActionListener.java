@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-07  Jimm Project
+ Copyright (C) 2003-08  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -38,7 +38,6 @@ import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
 import jimm.StatusInfo;
-import jimm.util.ResourceBundle;
 
 //#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
 import jimm.FileTransfer;
@@ -70,8 +69,91 @@ public class ActionListener
 
 		/** *********************************************************************** */
 
+		// Watch out for requested offline messages
+		if (packet instanceof FromIcqSrvPacket) {
+			FromIcqSrvPacket fromIcqSrvPacket = (FromIcqSrvPacket) packet;
+			if (fromIcqSrvPacket.getFamily() == 0x0015) {
+				int subCommand = fromIcqSrvPacket.getSubcommand();
+				switch (subCommand) {
+					// Watch out for SRV_OFFLINEMSG
+					case FromIcqSrvPacket.SRV_OFFLINEMSG_SUBCMD:
+						// Get raw data
+						byte[] buf = fromIcqSrvPacket.getData();
+
+						// Check length
+						if (buf.length > 13) {
+							// Extract UIN
+							long uinRaw = Util.getDWord(buf, 0, false);
+
+							String uin = String.valueOf(uinRaw);
+
+							// Extract date of dispatch
+							long date = Util.createLongTime(
+									Util.getWord(buf, 4, false),
+									Util.getByte(buf, 6),
+									Util.getByte(buf, 7),
+									Util.getByte(buf, 8),
+									Util.getByte(buf, 9),
+									0);
+
+							// Get type
+							int type = Util.getWord(buf, 10, false);
+
+							// Get text length
+							int textLen = Util.getWord(buf, 12, false);
+
+							// Get text
+							String text = Util.removeCr(Util.byteArrayToString(buf, 14, textLen, Util.isDataUTF8(buf, 14, textLen)));
+
+							// Normal message
+							if (type == 0x0001) {
+								// Check length
+								if (buf.length != 14 + textLen) {
+									throw (new JimmException(116, 1));
+								}
+
+								// Forward message to contact list
+								PlainMessage message = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.gmtTimeToLocalTime(date), text, true);
+								RunnableImpl.addMessageSerially(message);
+							} // URL message
+							else if (type == 0x0004) {
+								if (buf.length != 14 + textLen) {
+									throw (new JimmException(116, 1));
+								}
+
+								// Search for delimiter
+								int delim = text.indexOf(0xFE);
+
+								// Split message, if delimiter could be found
+								String urlText;
+								String url;
+								if (delim != -1) {
+									urlText = text.substring(0, delim);
+									url = text.substring(delim + 1);
+								} else {
+									urlText = text;
+									url = "";
+								}
+
+								// Forward message message to contact list
+								UrlMessage message = new UrlMessage(uin, Options.getString(Options.OPTION_UIN), Util.gmtTimeToLocalTime(date), url, urlText);
+								RunnableImpl.addMessageSerially(message);
+							}
+						}
+						break;
+
+					// Watch out for SRV_DONEOFFLINEMSGS
+					case FromIcqSrvPacket.SRV_DONEOFFLINEMSGS_SUBCMD:
+						// Send a CLI_TOICQSRV/CLI_ACKOFFLINEMSGS packet
+						ToIcqSrvPacket reply = new ToIcqSrvPacket(0x00000000, Options.getString(Options.OPTION_UIN), ToIcqSrvPacket.CLI_ACKOFFLINEMSGS_SUBCMD, new byte[0], new byte[0]);
+						Icq.c.sendPacket(reply);
+						break;
+				}
+			}
+		}
+
 		// Watch out for channel 2 (SNAC) packets
-		if (packet instanceof SnacPacket)
+		else if (packet instanceof SnacPacket)
 		{
 			SnacPacket snacPacket = (SnacPacket) packet;
 
@@ -96,8 +178,20 @@ public class ActionListener
 			}
 			//#sijapp cond.end#
 
+			// Error after requesting offline messages?
+			if ((snacPacket.getFamily() == 0x0015) && (snacPacket.getCommand() == 0x0001))
+			{
+				// Get data
+				byte[] buf = snacPacket.getData();
+
+				// Read the error code from the packet
+				int errCode = Util.getWord(buf, 0);
+
+				DebugLog.addText("Error after requesting offline messages, error code: " + errCode);
+			}
+
 			// Watch out for SRV_USERONLINE packets
-			if ((snacPacket.getFamily() == SnacPacket.SRV_USERONLINE_FAMILY)
+			else if ((snacPacket.getFamily() == SnacPacket.SRV_USERONLINE_FAMILY)
 					&& (snacPacket.getCommand() == SnacPacket.SRV_USERONLINE_COMMAND))
 			{
 				int xStatus = -1;
