@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-04  Jimm Project
+ Copyright (C) 2003-08  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -54,6 +54,14 @@ public class SaveInfoAction extends Action
 
 	private static final int GENDER_TLV_ID = 0x017C;
 
+ 	// User cell phone number
+	private static final int cPHONE_TLV_ID = 0x028A;
+
+	// User home phone number
+	private static final int hPHONE_TLV_ID = 0x0276;
+
+ 	// User work phone number
+	private static final int wPHONE_TLV_ID = 0x02C6;
 	/****************************************************************************/
 
 	private String[] strData = new String[JimmUI.UI_LAST_ID];
@@ -93,7 +101,7 @@ public class SaveInfoAction extends Action
 		Util.writeAsciizTLV(LASTNAME_TLV_ID, stream,
 				strData[JimmUI.UI_LAST_NAME], false);
 
-		/* Sity */
+		/* City */
 		Util
 				.writeAsciizTLV(CITY_TLV_ID, stream, strData[JimmUI.UI_CITY],
 						false);
@@ -104,7 +112,7 @@ public class SaveInfoAction extends Action
 			Util.writeAsciizTLV(EMAIL_TLV_ID, stream, strData[JimmUI.UI_EMAIL],
 					false);
 
-		/* Birsday */
+		/* Birthday */
 		String birthday = strData[JimmUI.UI_BDAY];
 		if (birthday != null)
 		{
@@ -123,6 +131,18 @@ public class SaveInfoAction extends Action
 		Util.writeWord(stream, GENDER_TLV_ID, false);
 		Util.writeWord(stream, 1, false);
 		Util.writeByte(stream, Util.stringToGender(strData[JimmUI.UI_GENDER]));
+
+		/* Cell phone */
+		Util.writeAsciizTLV(cPHONE_TLV_ID, stream,
+				strData[JimmUI.UI_CPHONE], false);
+
+		/* Home phone */
+		Util.writeAsciizTLV(hPHONE_TLV_ID, stream,
+				strData[JimmUI.UI_PHONE], false);
+
+		/* Work phone */
+		Util.writeAsciizTLV(wPHONE_TLV_ID, stream,
+				strData[JimmUI.UI_W_PHONE], false);
 
 		/* Send packet */
 		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options

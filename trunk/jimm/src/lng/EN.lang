@@ -349,6 +349,9 @@
   "white_on_black"              "White on black"
   "white_on_blue"               "White on blue"
   "work_info"                   "Work"
+  "cell_phone"					"Mobile tel."
+  "home_phone"					"Home tel."
+  "work_phone"					"Work tel."
   
   "xstatus"                     "Ext. status"
   "xstatus_none"                "None"
