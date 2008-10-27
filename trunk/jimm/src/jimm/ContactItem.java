@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-07  Jimm Project
+ Copyright (C) 2003-08  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -827,7 +827,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 	public void setStatusImage()
 	{
 		Image image = null;
-		
+		Image xImage = null;
 
 //#sijapp cond.if target isnot "DEFAULT"#
 		if (typing) image = JimmUI.imgTyping;
@@ -835,10 +835,13 @@ public class ContactItem implements ContactListItem, JimmScreen
 		{
 			StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, getIntValue(CONTACTITEM_STATUS));
 			if (statInfo != null) image = statInfo.getImage();  
+			StatusInfo xStatInfo = JimmUI.findStatus(StatusInfo.TYPE_X_STATUS, getIntValue(CONTACTITEM_XSTATUS));
+			if (xStatInfo != null) xImage = xStatInfo.getImage();  
 		}
+//#sijapp cond.else#
+//#		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, getIntValue(CONTACTITEM_STATUS));
+//#		if (statInfo != null) image = statInfo.getImage();  
 //#sijapp cond.end#
-		StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, getIntValue(CONTACTITEM_STATUS));
-		if (statInfo != null) image = statInfo.getImage();  
 
 		if (SplashCanvas.locked())
 		{
@@ -850,7 +853,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 		ChatTextList chat = ChatHistory.getChatHistoryAt(getStringValue(CONTACTITEM_UIN));
 		
-		if (chat != null) chat.setImages(new Image[] {image});
+		if (chat != null) chat.setImages(new Image[] {image, xImage});
 	}
 }
 
