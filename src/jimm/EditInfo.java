@@ -1,6 +1,6 @@
 /*******************************************************************************
  Jimm - Mobile Messaging - J2ME ICQ clone
- Copyright (C) 2003-07  Jimm Project
+ Copyright (C) 2003-08  Jimm Project
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
@@ -54,6 +54,15 @@ public class EditInfo extends Form implements CommandListener
 	private ChoiceGroup _SexItem = new ChoiceGroup(ResourceBundle
 			.getString("gender"), Choice.EXCLUSIVE);
 
+	private TextField _cPhoneItem = new TextField(ResourceBundle
+			.getString("cell_phone"), null, 20, TextField.PHONENUMBER);
+
+	private TextField _hPhoneItem = new TextField(ResourceBundle
+			.getString("home_phone"), null, 20, TextField.PHONENUMBER);
+
+	private TextField _wPhoneItem = new TextField(ResourceBundle
+			.getString("work_phone"), null, 20, TextField.PHONENUMBER);
+
 	private Command _CmdCancel = new Command(
 			ResourceBundle.getString("cancel"), Command.CANCEL, 0);
 
@@ -75,6 +84,9 @@ public class EditInfo extends Form implements CommandListener
 		append(_EmailItem);
 		append(_BdayItem);
 		append(_CityItem);
+		append(_cPhoneItem);
+		append(_hPhoneItem);
+		append(_wPhoneItem);
 		addCommand(_CmdSave);
 		addCommand(_CmdCancel);
 		setCommandListener(this);
@@ -92,6 +104,9 @@ public class EditInfo extends Form implements CommandListener
 		editInfoForm._FirstNameItem.setString(userInfo[JimmUI.UI_FIRST_NAME]);
 		editInfoForm._LastNameItem.setString(userInfo[JimmUI.UI_LAST_NAME]);
 		editInfoForm._CityItem.setString(userInfo[JimmUI.UI_CITY]);
+		editInfoForm._cPhoneItem.setString(userInfo[JimmUI.UI_CPHONE]);
+		editInfoForm._hPhoneItem.setString(userInfo[JimmUI.UI_PHONE]);
+		editInfoForm._wPhoneItem.setString(userInfo[JimmUI.UI_W_PHONE]);
 
 		Jimm.display.setCurrent(editInfoForm);
 		Jimm.setBkltOn(true);
@@ -113,6 +128,9 @@ public class EditInfo extends Form implements CommandListener
 			userInfo[JimmUI.UI_FIRST_NAME] = _FirstNameItem.getString();
 			userInfo[JimmUI.UI_LAST_NAME] = _LastNameItem.getString();
 			userInfo[JimmUI.UI_CITY] = _CityItem.getString();
+			userInfo[JimmUI.UI_CPHONE] = _cPhoneItem.getString();
+			userInfo[JimmUI.UI_PHONE] = _hPhoneItem.getString();
+			userInfo[JimmUI.UI_W_PHONE] = _wPhoneItem.getString();
 			userInfo[JimmUI.UI_GENDER] = Util.genderToString(_SexItem
 					.getSelectedIndex());
 
