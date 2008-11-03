@@ -25,13 +25,14 @@ package jimmLangFileTool;
 
 import java.util.Vector;
 
-public class LGFileSubset extends Vector
+public class LGFileSubset extends Vector<LGString>
 {
 
 	private static final long serialVersionUID = 1L;
 	String id;
 	
 	boolean removed;
+	private boolean mNotInBase = false;
 	
 	public LGFileSubset(String _id)
 	{
@@ -50,16 +51,16 @@ public class LGFileSubset extends Vector
 		return this;
 	}
 	
-	public LGString containsKey(String key)
+	public Vector<LGString> containsKey(String key)
 	{
-		
+		Vector<LGString> lEntries = new Vector<LGString>();
 		for(int i=0;i<super.size();i++)
 		{
 			if(super.get(i) instanceof LGString)
-				if(((LGString)super.get(i)).getKey().equals(key))
-					return (LGString) super.get(i);
+				if(super.get(i).getKey().equals(key))
+					lEntries.add(super.get(i));
 		}
-		return null;
+		return lEntries;
 	}
 
 	
@@ -93,6 +94,13 @@ public class LGFileSubset extends Vector
 	{
 		return removed;
 	}
+	
+	/**
+	 * @return Returns if not in base
+	 */
+	public boolean isNotInBase(){
+		return mNotInBase;
+	}
 
 	
 	/**
@@ -101,6 +109,10 @@ public class LGFileSubset extends Vector
 	public void setRemoved(boolean removed)
 	{
 		this.removed = removed;
+	}
+
+	public void setNotInBase(boolean pNotInBase) {
+		this.mNotInBase  = pNotInBase;		
 	}
 
 }

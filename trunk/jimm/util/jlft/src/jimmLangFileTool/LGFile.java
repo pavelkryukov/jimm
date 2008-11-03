@@ -25,18 +25,21 @@ package jimmLangFileTool;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.Hashtable;
 import java.util.Vector;
 
-public class LGFile extends Vector
+public class LGFile extends Vector<LGFileSubset>
 {
 
 	
 	private static final long serialVersionUID = 1L;
+	public static String sBasePath = "src/lng/";
 	private String name;
 
 	// Array with error specific comments
@@ -69,27 +72,29 @@ public class LGFile extends Vector
 		for(int i=0;i<super.size();i++)
 		{
 			if(super.get(i) instanceof LGFileSubset)
-				if(((LGFileSubset)super.get(i)).getId().equals(key))
-					value = (LGFileSubset)super.get(i);
+				if(super.get(i).getId().equals(key))
+					value = super.get(i);
 		}
 		return value;
 	}
 	
 	public void printContent()
 	{
-		LGFileSubset subset;
-		LGString lgs;
-		for(int i=0;i<super.size();i++)
-		{
-			subset = (LGFileSubset)super.get(i);
-			System.out.println(subset.getId());
-			for(int j=0;j<subset.size();j++)
+		if(JimmLangFileTool.DEBUG){
+			LGFileSubset subset;
+			LGString lgs;
+			for(int i=0;i<super.size();i++)
 			{
-				lgs = (LGString)subset.get(j);
-				if(lgs.isTranslated() == LGString.NOT_TRANSLATED || lgs.isTranslated() == LGString.NOT_IN_BASE_FILE)
-					System.out.println(lgs.toString());
+				subset = super.get(i);
+				System.out.println(subset.getId());
+				for(int j=0;j<subset.size();j++)
+				{
+					lgs = subset.get(j);
+					if(lgs.isTranslated() == LGString.NOT_TRANSLATED || lgs.isTranslated() == LGString.NOT_IN_BASE_FILE)
+						System.out.println(lgs.toString());
+				}
+					
 			}
-				
 		}
 	}
 
@@ -107,13 +112,19 @@ public class LGFile extends Vector
 	public int getEntrysize()
 	{
 		int entries = super.size();
+		if(JimmLangFileTool.DEBUG){
+			System.out.println("Size LGFile "+name+": "+entries);
+		}
 		for(int i=0;i<super.size();i++)
 		{
-			entries += ((LGFileSubset)super.get(i)).size();
+			if(JimmLangFileTool.DEBUG){
+				System.out.println("    Size LGFileSubset "+super.get(i).getId()+": "+super.get(i).size());
+			}
+			entries += super.get(i).size();
 		}
 		return entries;
 	}
-	
+		
 	public void save(String path) throws Exception
 	{
 		BufferedWriter file = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), Charset.forName("UTF-8")));
@@ -158,7 +169,7 @@ public class LGFile extends Vector
 							file.write("// General strings\n");
 				for (int j = 0; j < subset.size(); j++)
 				{
-					lgs = (LGString) subset.get(j);
+					lgs = subset.get(j);
 					if (lgs.getTranslated() != LGString.REMOVED && lgs.getTranslated() != LGString.NOT_TRANSLATED)
 					{
 						if (lgs.getKey().startsWith("error_"))
@@ -179,7 +190,32 @@ public class LGFile extends Vector
 				}
 			}
 		}
+		sBasePath = new File(path).getParent();
 		file.close();
+	}
+	
+	public Hashtable<String,LGString> checkForDuplicates(){
+		Hashtable<String,LGString> lDuplicates = new Hashtable<String,LGString>();
+		for(int i=0;i<super.size();i++){
+			LGFileSubset lLGFileSubset = super.elementAt(i);
+			for(int j=0;j<lLGFileSubset.size();j++){
+				int lDupCount = 0;
+				for(int k=0;k<super.size();k++){
+					Vector<LGString> lDuplicatesInSubset = super.elementAt(k).containsKey(lLGFileSubset.elementAt(j).getKey());
+					lDupCount+=lDuplicatesInSubset.size();
+					if (lDupCount > 1){
+						if(JimmLangFileTool.DEBUG){
+							System.out.println("Found duplicate: "+lLGFileSubset.getId()+":"+lLGFileSubset.elementAt(j).getKey());
+						}
+						for(int l=0;l<lDuplicatesInSubset.size();l++){
+							lDuplicates.put(lDuplicatesInSubset.elementAt(l).getKey(),lDuplicatesInSubset.elementAt(l));
+						}
+					}
+				}
+			}
+			
+		}
+		return lDuplicates;
 	}
 	
 	static public LGFile load(String filename) throws Exception
@@ -240,6 +276,9 @@ public class LGFile extends Vector
 
 			}
 			temp.add(general);
+			
+			sBasePath = new File(filename).getParent();
+			
 			return temp;
 	}
 }

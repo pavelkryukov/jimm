@@ -31,6 +31,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.DefaultCellEditor;
@@ -53,7 +55,13 @@ import java.awt.GridLayout;
 
 public class GUI extends JFrame implements ActionListener
 {
-
+	private static final int BASE_SECTION = 0;
+	private static final int BASE_KEY = 0;	
+	private static final int BASE_VALUE = 1;	
+	private static final int COMPARE_SECTION = 2;
+	private static final int COMPARE_KEY = 2;
+	private static final int COMPARE_VALUE = 3;
+	
 	// Variables
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
@@ -75,6 +83,7 @@ public class GUI extends JFrame implements ActionListener
 	private JLabel orange = null;
 	private JLabel red = null;
 	private JButton removeGroup = null;
+	
 	
 	/**
 	 * This is the default constructor
@@ -106,67 +115,102 @@ public class GUI extends JFrame implements ActionListener
 	{
 		int rowCount;
 		
-		if(jlft.getBase().getEntrysize() > jlft.getCompare().getEntrysize())
-			rowCount = jlft.getBase().getEntrysize();
-		else
-			rowCount = jlft.getCompare().getEntrysize();
+		int lRowCountBase = 0;
+		int lRowCountCompare = 0;
+		
+		if(jlft.getBase() != null){
+			lRowCountBase = jlft.getBase().getEntrysize();
+		}
+		if(jlft.getCompare() != null){
+			lRowCountCompare = jlft.getCompare().getEntrysize();
+		}
+		
+		rowCount = lRowCountBase > lRowCountCompare ? lRowCountBase : lRowCountCompare;
 		
 		return rowCount;
 	}
 	
+	private void clearColum(int pColum){
+		for(int i=0;i<compareTable.getRowCount();i++){
+			compareTable.setValueAt(null, i, pColum);
+			compareTable.setValueAt(null, i, pColum+1);
+		}
+	}
+	
 	private void fillInValues()
 	{
-	    int i=0;
-	    int j=0;
-	    int k=0;
-	    int l=0;
-	    int m=0;
-		
-	    // Delete all old stuff
-	    compareTable.removeAll();
-	    compareTable.setModel(this.getDefaultTableModel(true));
-	    this.setTableProps();
-	    
-	    // Set base values
-		for (i = 0; i < jlft.getBase().size(); i++)
-		{
-			compareTable.setValueAt(((LGFileSubset) jlft.getBase().get(i)), i + k + l, 0);
-			for (j = 0; j < ((LGFileSubset) jlft.getBase().get(i)).size(); j++)
-			{
-				if (((LGString) ((LGFileSubset) jlft.getBase().get(i)).get(j)).getTranslated() != LGString.REMOVED)
-				{
-					compareTable.setValueAt(((LGFileSubset) jlft.getBase().get(i)).get(j), i + k + j + 1 + l, 0);
-					compareTable.setValueAt(((LGFileSubset) jlft.getBase().get(i)).get(j), i + k + j + 1 + l, 1);
-				}
-				else
-					l--;
-			}
-			k += j;
-		}
-	    
-	    k =0;
-	    l =0;
-	    
-	    // Set compare values
-	    for(i=0;i<jlft.getCompare().size();i++)
-	    {
-			if (!((LGFileSubset) jlft.getCompare().get(i)).isRemoved())
-			{
-				compareTable.setValueAt(((LGFileSubset) jlft.getCompare().get(i)), i + k + l + m, 2);
-				for (j = 0; j < ((LGFileSubset) jlft.getCompare().get(i)).size(); j++)
-				{
-					if (((LGString) ((LGFileSubset) jlft.getCompare().get(i)).get(j)).getTranslated() != LGString.REMOVED)
-					{
-						compareTable.setValueAt(((LGFileSubset) jlft.getCompare().get(i)).get(j), i + k + j + 1 + l + m, 2);
-						compareTable.setValueAt(((LGFileSubset) jlft.getCompare().get(i)).get(j), i + k + j + 1 + l + m, 3);
-					}
-					else
+		int i = 0;
+		int j = 0;
+		int k = 0;
+		int l = 0;
+
+		// Delete all old stuff
+		compareTable.removeAll();
+		compareTable.setModel(this.getDefaultTableModel(true));
+		this.setTableProps();
+
+		// Set base values
+		if (jlft.getBase() != null) {
+			for (i = 0; i < jlft.getBase().size(); i++) {
+				compareTable.setValueAt((jlft.getBase().get(i)), i + k + l, BASE_KEY);
+				for (j = 0; j < (jlft.getBase().get(i)).size(); j++) {
+					if (((jlft.getBase().get(i)).get(j)).getTranslated() != LGString.REMOVED) {
+						compareTable.setValueAt((jlft.getBase().get(i)).get(j), i + k + j + 1 + l, BASE_KEY);
+						compareTable.setValueAt((jlft.getBase().get(i)).get(j), i + k + j + 1 + l, BASE_VALUE);
+					} else {
 						l--;
+					}
 				}
 				k += j;
 			}
-			else
-				m--;
+		}
+		
+		int usedExtraLinesInCompage = 0;
+		// Set compare values
+		if (jlft.getCompare() != null) {
+			for (int lCompareCountLGFS =  0; lCompareCountLGFS < jlft.getCompare().size(); lCompareCountLGFS++){
+				if ((jlft.getCompare().get(lCompareCountLGFS)).isNotInBase() && !(jlft.getCompare().get(lCompareCountLGFS)).isRemoved() ) {
+					if(JimmLangFileTool.DEBUG){
+						System.out.println("Found Group in Compare which was not in Base: "+jlft.getCompare().get(lCompareCountLGFS).getId());
+					}
+					compareTable.setValueAt(jlft.getCompare().get(lCompareCountLGFS), jlft.getBase().getEntrysize()+usedExtraLinesInCompage, COMPARE_KEY);
+					usedExtraLinesInCompage++;
+				}
+				// First handle LGFileSubset entries 
+				// Find the key in the base object and place compare at the same row
+				for(int lBaseCount=0;lBaseCount<compareTable.getRowCount();lBaseCount++){
+					if(compareTable.getValueAt(lBaseCount, BASE_KEY) instanceof LGFileSubset){
+						if (((LGFileSubset)compareTable.getValueAt(lBaseCount, BASE_KEY)).getId().equals(jlft.getCompare().get(lCompareCountLGFS).getId())){
+							compareTable.setValueAt((jlft.getCompare().get(lCompareCountLGFS)), lBaseCount, COMPARE_KEY);
+							break;
+						}
+					}
+				}
+				
+				// Now handle the LGString entries in the LGFileSubset entries
+				// Find the key in the base object and place compare at the same row
+				for(int lCompareCountLGS=0;lCompareCountLGS<jlft.getCompare().get(lCompareCountLGFS).size();lCompareCountLGS++){
+					if ((jlft.getCompare().get(lCompareCountLGFS)).get(lCompareCountLGS).getTranslated() == LGString.NOT_IN_BASE_FILE) {
+						if(JimmLangFileTool.DEBUG){
+							System.out.println("Found String in Compare which was not in base. Group: "+jlft.getCompare().get(lCompareCountLGFS).getId()+" String: "+jlft.getCompare().get(lCompareCountLGFS).get(lCompareCountLGS).getKey());
+						}
+						compareTable.setValueAt(jlft.getCompare().get(lCompareCountLGFS).get(lCompareCountLGS), jlft.getBase().getEntrysize()+usedExtraLinesInCompage, COMPARE_KEY);
+						compareTable.setValueAt(jlft.getCompare().get(lCompareCountLGFS).get(lCompareCountLGS), jlft.getBase().getEntrysize()+usedExtraLinesInCompage, COMPARE_VALUE);
+						usedExtraLinesInCompage++;
+						continue;
+					}
+					for(int lBaseCount=0;lBaseCount<compareTable.getRowCount();lBaseCount++){
+						if(compareTable.getValueAt(lBaseCount, BASE_KEY) instanceof LGString){
+							if(((LGString)compareTable.getValueAt(lBaseCount, BASE_KEY)).getKey().equals(jlft.getCompare().get(lCompareCountLGFS).get(lCompareCountLGS).getKey())){
+								compareTable.setValueAt(jlft.getCompare().get(lCompareCountLGFS).get(lCompareCountLGS), lBaseCount, COMPARE_KEY);
+								compareTable.setValueAt(jlft.getCompare().get(lCompareCountLGFS).get(lCompareCountLGS), lBaseCount, COMPARE_VALUE);
+							}
+						}
+					}
+					
+				}
+				
+			}
 		}
 	}
 
@@ -272,14 +316,18 @@ public class GUI extends JFrame implements ActionListener
 	 */
 	private DefaultTableModel getDefaultTableModel(boolean refresh)
 	{
-		if (jlftTableModel == null || refresh)
-		{
+		if (jlftTableModel == null || refresh) {
 			jlftTableModel = new JlftTableModel();
-			Vector columIdent = new Vector();
-			columIdent.add("Base key "+jlft.getBase().getName());
-			columIdent.add("Base value "+jlft.getBase().getName());
-			columIdent.add("Compare key "+jlft.getCompare().getName());
-			columIdent.add("Compare value "+jlft.getCompare().getName());
+			Vector<String> columIdent = new Vector<String>();
+			LGFile lCompare = jlft.getCompare();
+			LGFile lBase = jlft.getBase();
+
+			columIdent.add("Base key " + (lBase != null ? lBase.getName() : ""));
+			columIdent.add("Base value " + (lBase != null ? lBase.getName() : ""));
+
+			columIdent.add("Compare key " + (lCompare != null ? lCompare.getName() : ""));
+			columIdent.add("Compare value " + (lCompare != null ? lCompare.getName() : ""));
+
 			jlftTableModel.setColumnIdentifiers(columIdent);
 			jlftTableModel.setColumnCount(4);
 			jlftTableModel.setRowCount(this.getSizeForTable());
@@ -398,80 +446,94 @@ public class GUI extends JFrame implements ActionListener
 		return about;
 	}
 
-	public void actionPerformed(ActionEvent act)
-	{
+	public void actionPerformed(ActionEvent act){
 		int answer = -1;
-		if (act.getSource() == this.openBase)
-		{
-			JFileChooser chooser = new JFileChooser("src/lng");
+		if (act.getSource() == this.openBase) {
+			JFileChooser chooser = new JFileChooser(LGFile.sBasePath);
 			int returnVal = chooser.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
-			;
+				;
 			{
+				jlft.setBase(null);
+				clearColum(BASE_SECTION);
 				File file = chooser.getSelectedFile();
-				try
-				{
-					jlft.setBase(LGFile.load(file.getCanonicalPath()));
-				} catch (Exception e)
-				{
-					System.out.println("Error loading file");
+
+				try {
+					LGFile lLGFile = LGFile.load(file.getCanonicalPath());
+					Hashtable<String,LGString> lDuplicates = lLGFile.checkForDuplicates();
+					if(lDuplicates.size() > 0){
+						String lDupString = "";
+						Enumeration<String> lDupKeys = lDuplicates.keys();
+						while(lDupKeys.hasMoreElements()){
+							lDupString+=lDuplicates.get(lDupKeys.nextElement()).getKey()+"\n";
+						}
+						JOptionPane.showMessageDialog(this, "Duplicate found in base file!\n"+lDupString+"\n Please remve these from the base file before continuing! ", "Error", JOptionPane.ERROR_MESSAGE);
+					} else {
+						jlft.setBase(lLGFile);
+					}
+				} catch (Exception e) {
+					if(JimmLangFileTool.DEBUG){
+						System.out.println("Error loading file");
+					}
 				}
 				jlft.compare();
 				this.fillInValues();
 			}
 		}
-		if (act.getSource() == this.openCompare)
-		{
-			JFileChooser chooser = new JFileChooser("src/lng/");
-			int returnVal = chooser.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION)
-			;
-			{
-				File file = chooser.getSelectedFile();
-				try
+		if (act.getSource() == this.openCompare) {
+			
+			if (jlft.getBase() != null) {
+				JFileChooser chooser = new JFileChooser(LGFile.sBasePath);
+				int returnVal = chooser.showOpenDialog(this);
+				if (returnVal == JFileChooser.APPROVE_OPTION);
 				{
-					jlft.setCompare(LGFile.load(file.getCanonicalPath()));
-				} catch (Exception e)
-				{
-					JOptionPane.showMessageDialog(this, "Error loading the file", "Error", JOptionPane.ERROR_MESSAGE);
+					jlft.setCompare(null);
+					clearColum(COMPARE_SECTION);
+					File file = chooser.getSelectedFile();
+
+					try {
+						jlft.setCompare(LGFile.load(file.getCanonicalPath()));
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(this, "Error loading the file", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+					jlft.compare();
+					this.fillInValues();
 				}
-				jlft.compare();
-				this.fillInValues();
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "You have to open a base file before you can open a compare file", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		if (act.getSource() == this.saveCompare) 
-		{
-			JFileChooser chooser = new JFileChooser("src/lng/");
+		if (act.getSource() == this.saveCompare) {
+			JFileChooser chooser = new JFileChooser(LGFile.sBasePath);
 			int returnVal = chooser.showSaveDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
-			;
+				;
 			{
 				File file = chooser.getSelectedFile();
-				try
-				{
+
+				try {
 					jlft.getCompare().save(file.getCanonicalPath());
-				} catch (Exception e)
-				{
+				} catch (Exception e) {
 					JOptionPane.showMessageDialog(this, "Error saving the file", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				jlft.compare();
 				this.fillInValues();
 			}
 		}
-		if (act.getSource() == this.remove) if ((compareTable.getSelectedColumn() == -1) || (compareTable.getSelectedRow() == -1))
-			JOptionPane.showMessageDialog(this, "You have to select an item first", "Select first", JOptionPane.ERROR_MESSAGE);
-		else
-			if (((compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn()) instanceof LGString)))
-			{
+		if (act.getSource() == this.remove)
+			if ((compareTable.getSelectedColumn() == -1) || (compareTable.getSelectedRow() == -1))
+				JOptionPane.showMessageDialog(this, "You have to select an item first", "Select first", JOptionPane.ERROR_MESSAGE);
+			else if (((compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn()) instanceof LGString))) {
 				if ((((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).isTranslated() != LGString.NOT_IN_BASE_FILE))
 					JOptionPane.showMessageDialog(this, "You can only delete items which are not in the base file(red).", "Cannot delete item", JOptionPane.ERROR_MESSAGE);
-				else
-				{
+				else {
 					answer = JOptionPane.showConfirmDialog(this, "Delete \"" + ((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).getKey() + "\"?", "Delete?", JOptionPane.YES_NO_OPTION);
-					switch (answer)
-					{
+					switch (answer) {
 					case JOptionPane.YES_OPTION:
-						System.out.println("YES");
+						if(JimmLangFileTool.DEBUG){
+							System.out.println("YES");
+						}
 						((LGString) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).setTranslated(LGString.REMOVED);
 						fillInValues();
 						break;
@@ -479,26 +541,33 @@ public class GUI extends JFrame implements ActionListener
 					}
 				}
 			}
-		
-		if (act.getSource() == this.removeGroup) if (compareTable.getSelectedColumn() > 1) if ((compareTable.getSelectedColumn() == -1) || (compareTable.getSelectedRow() == -1))
-			JOptionPane.showMessageDialog(this, "You have to select a group item first", "Select first", JOptionPane.ERROR_MESSAGE);
-		else
-			if ((compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn()) instanceof LGFileSubset))
-			{
-				answer = JOptionPane.showConfirmDialog(this, "Delete \"" + ((LGFileSubset) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).getId() + "\"?", "Delete?", JOptionPane.YES_NO_OPTION);
-				switch (answer)
-				{
-				case JOptionPane.YES_OPTION:
-					System.out.println("YES");
-					System.out.println("Delete it");					
-					((LGFileSubset) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).setRemoved(true);
-					fillInValues();
-					break;
-				default: // do nothing
-				}
-			}
 
-		if (act.getSource() == this.about) JOptionPane.showMessageDialog(this, "Jimm Lang File Tool - Tool for editing Jimm language Files\n\n (C) Jimm project 2005\n\nwww.jimm.org\n\n", "About Jimm Lang File Tool", JOptionPane.PLAIN_MESSAGE);
+		if (act.getSource() == this.removeGroup)
+			if (compareTable.getSelectedColumn() > 1)
+				if ((compareTable.getSelectedColumn() == -1) || (compareTable.getSelectedRow() == -1))
+					JOptionPane.showMessageDialog(this, "You have to select a group item first", "Select first", JOptionPane.ERROR_MESSAGE);
+				else if ((compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn()) instanceof LGFileSubset)) {
+					answer = JOptionPane.showConfirmDialog(this, "Delete \"" + ((LGFileSubset) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn())).getId() + "\"?", "Delete?", JOptionPane.YES_NO_OPTION);
+					switch (answer) {
+					case JOptionPane.YES_OPTION:
+						if(JimmLangFileTool.DEBUG){
+							System.out.println("YES");
+							System.out.println("Delete it");
+						}
+						LGFileSubset lRemoveSubset = ((LGFileSubset) compareTable.getValueAt(compareTable.getSelectedRow(), compareTable.getSelectedColumn()));
+						lRemoveSubset.setRemoved(true);
+						for(int i=0;i<lRemoveSubset.size();i++){
+							lRemoveSubset.get(i).setTranslated(LGString.REMOVED);
+						}
+						
+						fillInValues();
+						break;
+					default: // do nothing
+					}
+				}
+
+		if (act.getSource() == this.about)
+			JOptionPane.showMessageDialog(this, "Jimm Lang File Tool - Tool for editing Jimm language Files\n\n Version " + JimmLangFileTool.VERSION + "\n\n(c) Jimm project 2005-2008\n\nwww.jimm.org\n\n", "About Jimm Lang File Tool", JOptionPane.PLAIN_MESSAGE);
 
 	}
 
