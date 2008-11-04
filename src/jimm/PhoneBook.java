@@ -60,22 +60,18 @@ public class PhoneBook implements CommandListener {
 	private static final Command cmdEditNum = new Command(ResourceBundle.getString("edit_num"), Command.ITEM, 6);
 	static int counter = 0;
 
-	private static boolean PIM_API_Available;
-	private static boolean SMS_API_Available;
+	private static boolean PIM_API_Available = false;
+	private static boolean SMS_API_Available = false;
 
 	static {
 		String pimVersion = System.getProperty("microedition.pim.version");
 		if (pimVersion != null) {
 			PIM_API_Available = true;
-		} else {
-			PIM_API_Available = false;
 		}
-		String wmVersion = System.getProperty("wireless.messaging.version");
-		if (wmVersion != null) {
+		try {
+			Class testClass = Class.forName("javax.wireless.messaging.MessageConnection");
 			SMS_API_Available = true;
-		} else {
-			SMS_API_Available = false;
-		}
+		} catch ( Exception ignore ) {/* Do nothing */}			
 	}
 
 	public PhoneBook() {
@@ -212,7 +208,7 @@ public class PhoneBook implements CommandListener {
 				new Thread(new sms (smsText.getString(), number)).start();
 			}
 
-		} else if (c == cmdEditNum && list.getCurrTextIndex() == 0) {
+		} else if (c == cmdEditNum && list.getCurrTextIndex() > -1) {
 			String number = getCurrPhoneNumber();
 			numText = new TextBox(null, number, 20, TextField.PHONENUMBER);
 			numText.addCommand(JimmUI.cmdOk);
