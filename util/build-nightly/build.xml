@@ -51,6 +51,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	</tstamp>
 	<property name="version/jimm"      value="0.6.0${date}"            />
 	<property name="version/java"      value="0.6.0"                      />
+	<property name="midlet/name"       value="Jimm Nightly"                   />
 	<!-- ******************************************************************* -->
 	
 	<!-- ******************************************************************* -->
@@ -232,6 +233,7 @@ ${midp2-moduleslist-ani}
 			<property name="lang"              value="${lang}"/>
 			<property name="version/jimm"      value="${version/jimm}"/>
 			<property name="version/java"      value="${version/java}"/>
+			<property name="midlet/name"       value="${midlet/name}"/>
 		</ant>
 		<mkdir dir="${version/jimm}/${target}/${modules}"/>
 		<copy file="${cvsdir}/${package}/dist/bin/Jimm.jad"
@@ -265,6 +267,7 @@ ${midp2-moduleslist-ani}
 			<property name="lang"              value="${lang}"/>
 			<property name="version/jimm"      value="${version/jimm}"/>
 			<property name="version/java"      value="${version/java}"/>
+			<property name="midlet/name"       value="${midlet/name}"/>
 		</ant>
 	</target>
 
@@ -282,6 +285,8 @@ ${midp2-moduleslist-ani}
 		</copy>
 		<replace dir="${version/jimm}_src"
 			encoding="UTF-8">
+			<replacefilter token="${3ns}MIDLET-NAME${3ns}"
+				value="${midlet/name}"/>
 			<replacefilter token="${3ns}VERSION${3ns}"
 				value="${version/jimm}"/>
 			<replacefilter token="${3ns}VERSION-JAVA${3ns}"

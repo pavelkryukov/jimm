@@ -110,6 +110,9 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  correspond to the version property (see above).                       -->
 	<property name="version/java"      value="###VERSION-JAVA###"                />
 	<!--  *******************************************************************   -->
+	<!--  Midlet name											                -->
+	<property name="midlet/name"      value="###MIDLET-NAME###"                  />
+	<!--  *******************************************************************   -->
 	<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!--  *******************************************************************   -->
 	
@@ -355,6 +358,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<target name="preprocess-manifest" depends="init">
 		<copy file="${res}/MANIFEST.MF" todir="${build}" />
 		<replace file="${build}/MANIFEST.MF" encoding="UTF-8">
+			<replacefilter token="${3ns}MIDLET-NAME${3ns}" value="${midlet/name}" />
 			<replacefilter token="${3ns}VERSION${3ns}" value="${version/jimm}" />
 			<replacefilter token="${3ns}VERSION-JAVA${3ns}" value="${version/java}" />
 			<replacefilter token="${3ns}DATE${3ns}" value="${date}" />
