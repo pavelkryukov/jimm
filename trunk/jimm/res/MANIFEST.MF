@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Created-By: Jimm Project
-MIDlet-Name: Jimm
+MIDlet-Name: ###MIDLET-NAME###
 MIDlet-Version: ###VERSION-JAVA###
 MIDlet-Vendor: Jimm Project
 MIDlet-Jar-URL: Jimm.jar
