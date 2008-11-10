@@ -403,8 +403,8 @@ public class MainMenu implements CommandListener, JimmScreen
 			int onlineStatus = statusList.getCurrTextIndex();
 			Options.setStatusString(StatusInfo.TYPE_STATUS, onlineStatus, statusMessage.getString());
 			Options.saveStatusStringsByType(StatusInfo.TYPE_STATUS);
-			JimmUI.backToLastScreen();
 			setStatus(false);
+			JimmUI.backToLastScreen();
 			statusList = null;
 		}
 	}
