@@ -14,6 +14,26 @@
 "auto_retry_count"			"Počet pokusů:"
 //#sijapp cond.end#
 
+// PIM module strings
+//#sijapp cond.if modules_PIM is "true" #
+"phone_book"				"Telefonní seznam"
+"call"						"Zavolat"
+"write_sms"					"Napsat SMS"
+"send_sms"					"Poslat SMS"
+"edit_num"					"Upravit číslo"
+"enter_phone_num"			"Zadat tel. číslo"
+//#sijapp cond.end#
+
+// ANTISPAM module strings
+//#sijapp cond.if modules_ANTISPAM is "true" #
+"antispam"					"Antispam "
+"antispam_answer"			"Antispamová odpověď"
+"antispam_good"				"Vaše odpověď byla přijata. Nyní prosím pošlete vaší zprávu"
+"antispam_question"			"Antispamová otázka"
+"antispam_mess"				"Mám zapnutý antispamový filtr. Odpovězte prosím na následující otázku: "
+"antispam_use"				"Použít antispamový filtr"
+//#sijapp cond.end#
+
 // HISTORY module strings
 //#sijapp cond.if modules_HISTORY is "true" #
 "add_to_history"			"Přidat do historie"
@@ -61,6 +81,17 @@
 "error_196"					"I/O chyba při přenosu souborů (#196.EXT)"
 "background_ext"			"Ze souboru"
 "background_empty"			"Bez pozadí"
+"ft_caption"				"Přenos souborů"
+"ft_cam"					"Poslat fotku"
+"ft_link"					"Poslední odkaz na fotku"
+"ft_name"					"Poslat soubor"
+"ft_transfer"				"Přenáším..."
+"ft_type"					"Typ přenosu"
+"ft_type_web"				"Přes webserver"
+"ft_type_net"				"Přímé spojení"
+"ft_web_ask"				"Soubor bude nahrán na server a kontakt poté obdrží odkaz sloužící ke stažení. \n\nChcete pokračovat?"
+"ft_web_yes"				"* Ano, pokračovat s přenosem přes webserver"
+"ft_web_no"					"* Ne, použít standardní cestu"
 //#sijapp cond.end#
 
 // General strings
@@ -74,6 +105,7 @@
 "point"						"."
 "about"						"O programu"
 "about_info"				"\nICQ klient pro J2ME telefony\n\nVerze: ###VERSION###\nUrčeno pro: ###TARGET###\nModuly: ###MODULES###\n\nOficiální web: http://www.jimm.org/\nČeský web: http://www.jimm.cz/"
+"about_visit_wap"			"Navštívit WAP stránku Jimm"
 "account"					"Účet"
 "add_new"					"Nový"
 "add_group"					"Přidat skupinu"
@@ -83,12 +115,6 @@
 "age"						"Věk"
 "all_contact_except_this"	"Ostatní"
 "all_contacts"				"Všechny kontakty"
-"antispam"					"Antispam "
-"antispam_answer"			"Odpověď"
-"antispam_good"				"Vaše odpověď byla přijata. Nyní prosím pošlete vaší zprávu"
-"antispam_question"			"Otázka"
-"antispam_mess"				"Mám zapnutý antispamový filtr. Odpovězte prosím na následující otázku: "
-"antispam_use"				"Použít antispamový filtr"
 "async"						"Asynchronně"
 "attention"					"Pozor!"
 "auth"						"Požadovat autorizaci"
@@ -174,22 +200,11 @@
 "find"						"Hledat"
 "firstname"					"Jméno"
 "free_heap"					"Volná paměť"
-"ft_caption"				"Přenos souborů"
-"ft_name"					"Poslat soubor"
-"ft_link"					"Poslední odkaz na soubor"
 "full_screen"				"Celá obrazovka"
-"ft_transfer"				"Přenáším..."
-"ft_type"					"Typ přenosu"
-"ft_type_web"				"Přes webserver"
-"ft_type_net"				"Přímé spojení"
-"ft_web_ask"				"Soubor bude nahrán na server a kontakt poté obdrží odkaz sloužící ke stažení. \n\nChcete pokračovat?"
-"ft_web_yes"				"* Ano, pokračovat s přenosem přes webserver"
-"ft_web_no"					"* Ne, použít standardní cestu"
 "reset_rms_caption"			"Reset nastavení"
 "reset_rms_ask"				"Opravdu chcete smazat všechny uložené informace (účty, historii chatu, nastavení atd.)? Aplikace bude poté ukončena."
 "reset_rms_yes"				"* Ano"
 "reset_rms_no"				"* Ne"
-"ft_cam"					"Poslat fotku"
 "full_textbox"				"Maximalizovat okno psaní"
 "goto_url"					"Otevřít URL"
 "gender"					"Pohlaví"
@@ -227,6 +242,7 @@
 "lang_BA"					"Bosenština"
 "lang_BE"					"Běloruština"
 "lang_BG"					"Bulharština"
+"li_reg_date"				"Datum registrace účtu"
 "lang_BR"					"Portugalština (Brazílie)"
 "lang_CZ"					"Čeština"
 "lang_DE"					"Němčina"
@@ -332,8 +348,6 @@
 "rename_group"				"Přejmenovat skupinu"
 "reply"						"Odpovědět"
 "rename"					"Přejmenovat"
-"remove_group"				"Odstranit skupinu"
-"remove_user"				"Odstranit uživatele"
 "requauth"					"Požádat o autorizaci"
 "reset"						"Reset"
 "reqstatmsg"				"Požadovat zprávu stavu"
@@ -395,8 +409,10 @@
 "status_home"				"Doma"
 "status_work"				"V práci"
 "status_lunch"				"Na obědě"
+"version_beta"				"Betaverze"
+"version_stable"			"Stabilní"
 "timeout_interv"			"Interval udržovacích paketů"
-"title"						"Titulek"
+"title"						"Název"
 "total_mem"					"Celková paměť"
 "status_offline"			"Offline"
 "typing_notify"				"Upozornění na psaní"
@@ -426,7 +442,9 @@
 "white_on_black"			"Bílá na černém"
 "white_on_blue"				"Bílá na modrém"
 "yes"						"Ano"
-"xstatus"					"Rozš.stav"
+"xstatus"					"Rozšířený stav"
+"home_phone"				"Telefon domů"
+"work_phone"				"Telefon do práce"
 "xstatus_none"				"Žádný"
 "xstatus_angry"				"Zlost"
 "xstatus_duck"				"Koupání"
@@ -490,6 +508,7 @@
 "error_117"					"Prázdné UIN a/nebo heslo (#117.EXT)"
 "error_118"					"Server neodpověděl (#118.EXT)"
 "error_119"					"Vypršel časový limit spojení (#119.EXT)"
+"error_141"					"Nastala neznámá výjimka. Prosím připojte se znovu (#141.EXT)"
 
  // Network communication specific exceptions (first half main connection second half peer)
 "error_120"					"I/O chyba (#120.EXT)"
