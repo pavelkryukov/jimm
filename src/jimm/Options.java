@@ -146,6 +146,7 @@ public class Options
 	public static final int OPTION_BG_IMAGE_MODE      = 101;
 	public static final int OPTION_CURSOR_ALPHA       = 102;
 	public static final int OPTION_MENU_ALPHA         = 103;
+	public static final int OPTION_IMG_SCALE          = 104;
 	
 	
 	/* boolean */
@@ -487,6 +488,10 @@ public class Options
 		setInt (Options.OPTION_BG_IMAGE_MODE, 0);
 		setInt (Options.OPTION_CURSOR_ALPHA, 128);
 		setInt (Options.OPTION_MENU_ALPHA, 64);
+		//#sijapp cond.end#
+		
+		//#sijapp cond.if target="MIDP2"#
+		setInt (OPTION_IMG_SCALE, 100);
 		//#sijapp cond.end#
 
 	}
@@ -1087,6 +1092,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private int backImgFilenameIndex = 0;
 	//#sijapp cond.end#
 //#sijapp cond.end#
+	
+//#sijapp cond.if target="MIDP2"#	
+	private ChoiceGroup imagesScale;
+//#sijapp cond.end#	
 
 //#sijapp cond.if modules_TRAFFIC is "true" #
 	private TextField costPerPacketTextField;
@@ -1907,6 +1916,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 			setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
 			setChecked(chrgChat, "deliv_info", Options.OPTION_DELIV_MES_INFO);
+			
+//#sijapp cond.if target="MIDP2"#	
+			String[] imgScaleText = Util.explode(ResourceBundle.getString("no") + "|120%|140%|160%|180%|200%" , '|');
+			imagesScale = new ChoiceGroup(ResourceBundle.getString("images_scale"), ChoiceGroup.POPUP, imgScaleText, null);
+			int imgScale = Options.getInt(Options.OPTION_IMG_SCALE);
+			imagesScale.setSelectedIndex((imgScale-100)/20, true);
+//#sijapp cond.end#	
+			
 
 			//#sijapp cond.if target="MOTOROLA" | target="MIDP2" #
 			lightManual = new ChoiceGroup(ResourceBundle.getString("backlight_manual"), Choice.MULTIPLE);
@@ -1946,6 +1963,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 			if (chrgChat.size() != 0) optionsForm.append(chrgChat);
 			optionsForm.append(chrgMessFormat);
+			
+			//#sijapp cond.if target="MIDP2" #
+			optionsForm.append(imagesScale);
+			//#sijapp cond.end #
 
 			//#sijapp cond.if target="MOTOROLA" | target="MIDP2" #
 			optionsForm.append(lightTimeout);
@@ -2433,6 +2454,11 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setString (Options.OPTION_BG_IMAGE_URL, Options.emptyString);
 			Options.setBackgroundImage (backImgGroup.getSelectedIndex(), null);
 			//#sijapp cond.end#
+			//#sijapp cond.end#
+			
+			//#sijapp cond.if target="MIDP2"#
+			int imgScale = (imagesScale.getSelectedIndex()*20)+100; 
+			Options.setInt(Options.OPTION_IMG_SCALE, imgScale);
 			//#sijapp cond.end#
 			
 			

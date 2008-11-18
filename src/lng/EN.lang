@@ -131,6 +131,7 @@
   "http_user_agent"             "User-Agent String for HTTP-Connection"
   "http_wap_profile"			"WAP-Profile String for HTTP-Connection"
   "icq_client"                  "ICQ client"
+  "images_scale"                "Scale images (slow start)"
   "info"                        "Info"
   "init_ft"                     "Initializing"
   "insert_emotion"              "Insert emotion"
