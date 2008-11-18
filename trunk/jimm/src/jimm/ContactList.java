@@ -141,6 +141,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		try
 		{
+			cliImages.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 			cliImages.load("/clicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} 
 		catch (Exception e) {}

@@ -1353,6 +1353,7 @@ public class JimmUI implements CommandListener
 		try
 		{
 			/* reads and divides image "icons.png" to several icons */
+			imageList.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 			imageList.load("/icons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} 
 		catch (Exception e) {}
@@ -1381,6 +1382,7 @@ public class JimmUI implements CommandListener
 		
 		try
 		{
+			xStatusImages.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 			xStatusImages.load("/xstatus.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (Exception e) {}
 		
