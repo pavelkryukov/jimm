@@ -27,11 +27,7 @@ import java.util.Vector;
 import java.lang.String;
 import java.lang.Integer;
 import java.io.IOException;
-
 import javax.microedition.lcdui.*;
-//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
-import javax.microedition.lcdui.game.Sprite;
-//#sijapp cond.end#
 
 public class ImageList
 {
@@ -139,27 +135,24 @@ public class ImageList
 		this.height = height;
 
 		Image newImage;
-		Image imImage;
 		for (int y = 0; y < imgHeight; y += height)
 		{
 			for (int x = 0; x < imgWidth; x += width)
 			{
 //#sijapp cond.if target!="DEFAULT"#
-				newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
+				newImage = cutImage(resImage, x, y, width, height);
 //#sijapp cond.else#
 				newImage = Image.createImage(width, height);
 				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP| Graphics.LEFT);
+				newImage = Image.createImage(newImage); // make image immutable 
 //#sijapp cond.end#
 				
 //#sijapp cond.if target="MIDP2"#
 				if (fixAlphaCh) newImage = fixAlphaChannel(newImage);
-//#sijapp cond.end#
-				imImage = Image.createImage(newImage);
-//#sijapp cond.if target="MIDP2"#				
 				if ((scale != -1) && (scale != 100)) 
-					imImage = resizeImage(imImage, scale*imImage.getWidth()/100, scale*imImage.getHeight()/100, useAlpha);
+					newImage = resizeImage(newImage, scale*newImage.getWidth()/100, scale*newImage.getHeight()/100, useAlpha);
 //#sijapp cond.end#
-				images.addElement(imImage);
+				images.addElement(newImage);
 			}
 		}
 		items = new Image[images.size()];
@@ -197,8 +190,16 @@ public class ImageList
 		images = null;
 	}
 	
-//#sijapp cond.if target="MIDP2"#		
-	static private Image resizeImage(Image img, int newWidth, int newHeight, boolean useAlpha)
+//#sijapp cond.if target!="DEFAULT"#	
+
+	static public Image cutImage(Image img, int x, int y, int width, int height)
+	{
+		int[] tmp = new int[width*height];
+		img.getRGB(tmp, 0, width, x, y, width, height);
+		return Image.createRGBImage(tmp, width, height, true);
+	}
+		
+	static public Image resizeImage(Image img, int newWidth, int newHeight, boolean useAlpha)
 	{
 		int width = img.getWidth();
 		int width1 = width-1;
