@@ -32,6 +32,7 @@ import javax.microedition.lcdui.*;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+import DrawControls.ImageList;
 import DrawControls.VirtualList;
 
 //#sijapp cond.if target is "MOTOROLA"#
@@ -169,6 +170,8 @@ public class Jimm extends MIDlet
 			showWorkScreen();
 			return;
 		}
+		
+		ImageList.setUseAlpha(Display.getDisplay(this).numAlphaLevels() > 2);
 
 		// Save MIDlet reference
 		Jimm.jimm = this;
