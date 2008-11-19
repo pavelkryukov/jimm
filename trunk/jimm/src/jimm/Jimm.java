@@ -171,7 +171,9 @@ public class Jimm extends MIDlet
 			return;
 		}
 		
+//#sijapp cond.if target="MIDP2"#
 		ImageList.setUseAlpha(Display.getDisplay(this).numAlphaLevels() > 2);
+//#sijapp cond.end#		
 
 		// Save MIDlet reference
 		Jimm.jimm = this;

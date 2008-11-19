@@ -39,10 +39,13 @@ import jimm.ContactList;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.RunnableImpl;
-import jimm.Traffic;
 import jimm.comm.Icq;
 import jimm.comm.Packet;
 import jimm.comm.Util;
+
+//#sijapp cond.if modules_TRAFFIC is "true" #
+import jimm.Traffic;
+//#sijapp cond.end#
 
 // PeerConnection
 public class PeerConnection implements Runnable
