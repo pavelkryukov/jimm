@@ -37,6 +37,7 @@ public class ImageList
 {
 	private Image[] items;
 	private int scale = -1;
+	static private boolean useAlpha;
 
 	private int width = 0, height = 0;
 
@@ -50,6 +51,11 @@ public class ImageList
 	public void setScale(int value)
 	{
 		scale = value;
+	}
+	
+	static public void setUseAlpha(boolean value)
+	{
+		useAlpha = value;
 	}
 
 	public void setImage(Image image, int index)
@@ -151,7 +157,7 @@ public class ImageList
 				imImage = Image.createImage(newImage);
 //#sijapp cond.if target="MIDP2"#				
 				if ((scale != -1) && (scale != 100)) 
-					imImage = resizeImage(imImage, scale*imImage.getWidth()/100, scale*imImage.getHeight()/100);
+					imImage = resizeImage(imImage, scale*imImage.getWidth()/100, scale*imImage.getHeight()/100, useAlpha);
 //#sijapp cond.end#
 				images.addElement(imImage);
 			}
@@ -172,7 +178,7 @@ public class ImageList
 			image = Image.createImage(firstLine + Integer.toString(i) + "." + extention);
 //#sijapp cond.if target="MIDP2"#				
 			if ((scale != -1) && (scale != 100))
-				image = resizeImage(image, scale*image.getWidth()/100, scale*image.getHeight()/100);
+				image = resizeImage(image, scale*image.getWidth()/100, scale*image.getHeight()/100, useAlpha);
 //#sijapp cond.end#
 			
 			images.addElement(image);
@@ -192,7 +198,7 @@ public class ImageList
 	}
 	
 //#sijapp cond.if target="MIDP2"#		
-	static private Image resizeImage(Image img, int newWidth, int newHeight)
+	static private Image resizeImage(Image img, int newWidth, int newHeight, boolean useAlpha)
 	{
 		int width = img.getWidth();
 		int width1 = width-1;
@@ -277,6 +283,8 @@ public class ImageList
 				if (b < 0) b = 0;
 				if (a > 255) a = 255;
 				if (a < 0) a = 0;
+				
+				if (!useAlpha) a = (a < 64) ? 0 : 255;
 				
 				newImage[x+y*newWidth] = r | (g << 8) | (b << 16) | (a << 24);
 				
