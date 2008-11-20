@@ -751,7 +751,7 @@ public class Options
 		boolean ok;
 
 		/* Test existsing option */
-		ok = ContactList.testSoundFile(getString(option));
+		ok = Util.testSoundFile(getString(option));
 		if (ok)
 			return;
 
@@ -761,7 +761,7 @@ public class Options
 		for (int i = 0; i < exts.length; i++)
 		{
 			testFile = name + exts[i];
-			ok = ContactList.testSoundFile(testFile);
+			ok = Util.testSoundFile(testFile);
 			if (ok)
 			{
 				setString(option, testFile);

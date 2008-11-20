@@ -97,13 +97,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 				byte[] timeDataArray;
 				for (;;)
 				{
-					try
-					{
-						fileLine = readLineFromStream(dos);
-					} catch (EOFException eofExcept)
-					{
-						break;
-					}
+					fileLine = readLineFromStream(dos);
+					if (fileLine == null) break;
 					
 					lineItems = Util.explode(fileLine, ' ');
 					
@@ -189,13 +184,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 			String word;
 			for (;;)
 			{
-				try
-				{
-					fileLine = readLineFromStream(dos);
-				} catch (EOFException eofExcept)
-				{
-					break;
-				}
+				fileLine = readLineFromStream(dos);
+				if (fileLine == null) break;
 				
 				lineItems = Util.explode(fileLine, ' ');
 				
@@ -310,15 +300,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 		String[] pair;
 		for (;;)
 		{
-			line = null;
-			try
-			{
-				line = readLineFromStream(dos);
-			}
-			catch (EOFException eofExcept)
-			{
-				break;
-			}
+			line = readLineFromStream(dos);
+			if (line == null) break;
 			
 			pair = Util.explode(line, '=');
 			if (pair.length < 2) continue;
@@ -354,16 +337,23 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 	// Reads simple word from stream. Used in Emotions(). 
 	// Returns "true" if break was found after word
-	static String readLineFromStream(DataInputStream stream) throws IOException, EOFException
+	static String readLineFromStream(DataInputStream stream)
 	{
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream(); 
-		for (;;)
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		boolean wasRead = false;
+		try
 		{
-			int chr = stream.readByte();
-			if (chr == '\n' || chr == -1) break;
-			if (chr != '\r') bytes.write(chr);
+			for (;;)
+			{
+				int chr = stream.readByte();
+				if (chr == -1) break;
+				wasRead = true;
+				if (chr == '\n') break;
+				if (chr != '\r') bytes.write(chr);
+			}
 		}
-		return Util.byteArrayToString(bytes.toByteArray(), true);
+		catch (Exception e) {}
+		return wasRead ? Util.byteArrayToString(bytes.toByteArray(), true) : null;
 	}
 
 	static private void findEmotionInText(String text, String emotion,
