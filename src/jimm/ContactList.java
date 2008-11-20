@@ -23,8 +23,6 @@
 
 package jimm;
 
-import jimm.DebugLog;
-
 import jimm.Jimm;
 import jimm.comm.Message;
 import jimm.comm.PlainMessage;
@@ -144,7 +142,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			cliImages.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 			cliImages.load("/clicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} 
-		catch (Exception e) {}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
 	}
 
 	/* Constructor */
@@ -1419,16 +1420,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			soundQueue.addElement(new Integer(volume));
 		}
 	}
-	
-	public static boolean testSoundFile(String source)
-	{
-		playerFree = true;
-		Player player = createPlayer(source);
-		boolean ok = (player != null);
-		if (player != null) player.close();
-		playerFree = true;
-		return ok;
-	}
 
 	// Reaction to player events. (Thanks to Alexander Barannik for idea!)
 	public void playerUpdate(final Player player, final String event, Object eventData)
@@ -1460,41 +1451,17 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		if (!playerFree) return null;
 
-		String url, mediaType;
-		Player p;
-
-		url = source.toLowerCase();
-
-		/* What is media type? */
-		if (url.endsWith("mp3")) 
-			mediaType = "audio/mpeg";
-		else if (url.endsWith("amr"))
-			mediaType = "audio/amr";
-		else if (url.endsWith("jts"))
-			mediaType = "audio/x-tone-seq";
-		else if (url.endsWith("mid") || url.endsWith("midi"))
-			mediaType = "audio/midi";
-		else
-			mediaType = "audio/X-wav";
-
+		Player p = Util.createPlayer(source);
+		if (p == null) return null;
+	
 		try
 		{
-			Class cls = new Object().getClass();
-			InputStream is = cls.getResourceAsStream(source);
-			if (is == null)
-				is = cls.getResourceAsStream("/" + source);
-			if (is == null)
-				return null;
-			p = Manager.createPlayer(is, mediaType);
 			p.realize();
 			p.prefetch();
 			updateStopTime(p);
 			p.addPlayerListener(_this);
 			playerFree = false;
 		} catch (MediaException e)
-		{
-			return null;
-		} catch (IOException e)
 		{
 			return null;
 		}

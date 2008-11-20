@@ -30,9 +30,12 @@ import java.util.*;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
 
+//#sijapp cond.if target!="DEFAULT"#
+import javax.microedition.media.Manager;
+import javax.microedition.media.Player;
+//#sijapp cond.end#
+
 import jimm.DebugLog;
-import jimm.ContactItem;
-import jimm.ContactListGroupItem;
 import jimm.ContactList;
 import jimm.Options;
 import jimm.util.ResourceBundle;
@@ -1866,5 +1869,43 @@ public class Util
 			e.printStackTrace();
 		}
 	}
+	
+//#sijapp cond.if target!="DEFAULT"#	
+	
+	static public String getMediaType(String source)
+	{
+		String url = source.toLowerCase();
 
+		/* What is media type? */
+		if (url.endsWith("mp3")) return "audio/mpeg";
+		else if (url.endsWith("amr")) return "audio/amr";
+		else if (url.endsWith("jts")) return "audio/x-tone-seq";
+		else if (url.endsWith("mid") || url.endsWith("midi")) return "audio/midi";
+		return "audio/X-wav";
+	}
+	
+	static public Player createPlayer(String source)
+	{
+		try
+		{
+			Class cls = new Object().getClass();
+			InputStream is = cls.getResourceAsStream(source);
+			if (is == null)
+			is = cls.getResourceAsStream("/" + source);
+			if (is == null)return null;
+			return Manager.createPlayer(is, Util.getMediaType(source));
+		}
+		catch (Exception e) {}
+		return null;
+	}
+	
+	public static boolean testSoundFile(String source)
+	{
+		Player player = createPlayer(source);
+		boolean ok = (player != null);
+		if (player != null) player.close();
+		return ok;
+	}
+	
+//#sijapp cond.end#
 }
