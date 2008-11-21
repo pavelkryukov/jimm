@@ -95,11 +95,11 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  This value is a comma separated list of languages packs which         -->
 	<!--  should be included in the build. Currently, the distribution          -->
 	<!--  includes English (EN), Belarusian (BE), Bulgarian (BG),               -->
-	<!--  Brazilian Portuguese (BR), Czech (CZ), German (DE), Spanish (ES),     -->
-	<!--  Hewbrew (HE), Italian (IT), Lithuanian (LT), Polish (PL),             -->
-	<!--  Russian (RU), Swedish (SE), Slovak (SK), Serbian (SR), Ukrainian(UA)  -->
-	<!--  language packs.                                                       -->
-	<property name="lang"              value="EN,BE,BG,BR,CZ,DE,ES,HE,IT,LT,PL,RU,SE,SK,SR,UA"/>
+	<!--  Brazilian Portuguese (BR), Czech (CZ), German (DE), French (FR),      -->
+	<!--  Spanish (ES), Hewbrew (HE), Italian (IT), Lithuanian (LT),            -->
+	<!--  Polish (PL), Russian (RU), Swedish (SE), Slovak (SK), Serbian (SR),   -->
+	<!--  Ukrainian(UA) language packs.                                         -->
+	<property name="lang"              value="EN,BE,BG,BR,CZ,DE,ES,FR,HE,IT,LT,PL,RU,SE,SK,SR,UA"/>
 	<!--  *******************************************************************   -->
 	<!--  Version number of the build. The value can be in any format (e.g.     -->
 	<!--  0.2cvs).                                                              -->
