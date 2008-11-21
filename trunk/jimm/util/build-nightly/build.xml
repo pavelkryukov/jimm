@@ -86,7 +86,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="midp2-moduleslist-ani" value="TRAFFIC,HISTORY,FILES,SMILES_ANI,PROXY,ANTISPAM,AVATARS,PIM"/>
 	<property name="modulelist-light" value="NO_MODULES"/>
 
-	<property name="langlist" value="EN,DE,CZ,RU,BE,SK"/>
+	<property name="langlist" value="BE,CZ,DE,EN,FR,RU,SK"/>
 	
     <!-- Auxiliary property -->
 	<property name="3ns" value="###"/>
