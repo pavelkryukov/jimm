@@ -205,7 +205,9 @@ class FileSystem2 implements CommandListener, Runnable
 		imageList = new ImageList();
 		try
 		{
+//#sijapp cond.if target="MIDP2"#
 			imageList.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
+//#sijapp cond.end#
 			imageList.load("/fs.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (java.io.IOException e) {}		
 		

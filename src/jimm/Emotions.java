@@ -73,7 +73,9 @@ public class Emotions implements VirtualListCommands, CommandListener
 		DataInputStream dos;
 		Hashtable transl = new Hashtable();
 		
+//#sijapp cond.if target="MIDP2"#
 		imageList.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
+//#sijapp cond.end#
 		
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 		System.gc();

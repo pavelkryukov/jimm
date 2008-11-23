@@ -80,7 +80,9 @@ public class MainMenu implements CommandListener, JimmScreen
 		
 		try
 		{
+//#sijapp cond.if target="MIDP2"#
 			menuIcons.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
+//#sijapp cond.end#
 			menuIcons.load("/micons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (Exception e) {}
 	}
