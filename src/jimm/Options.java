@@ -2640,6 +2640,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				statusString.addCommand(JimmUI.cmdCancel);
 				statusString.setCommandListener(this);
 				Jimm.display.setCurrent(statusString);
+				Jimm.setBkltOn(true);
 			}
 		}
 			
