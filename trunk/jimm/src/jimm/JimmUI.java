@@ -598,7 +598,7 @@ public class JimmUI implements CommandListener
 		JimmUI.addTextListItem(aboutTextList, "about_visit_wap", JimmUI.eventUrlMessageImg, ABOUT_JIMM_WAP, true, -1, Font.STYLE_BOLD);
 		aboutTextList.doCRLF(-1);
 		aboutTextList.addCommandEx(cmdSelect, VirtualList.MENU_TYPE_RIGHT_BAR);
-//#sijapp cond.end#		
+//#sijapp cond.end#
 		
 		str.setLength(0);
 		str	.append(ResourceBundle.getString("midp_info"))
@@ -1353,7 +1353,9 @@ public class JimmUI implements CommandListener
 		try
 		{
 			/* reads and divides image "icons.png" to several icons */
+//#sijapp cond.if target="MIDP2"#
 			imageList.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
+//#sijapp cond.end#
 			imageList.load("/icons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} 
 		catch (Exception e) {}
@@ -1382,7 +1384,9 @@ public class JimmUI implements CommandListener
 		
 		try
 		{
+//#sijapp cond.if target="MIDP2"#
 			xStatusImages.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
+//#sijapp cond.end#
 			xStatusImages.load("/xstatus.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
 		} catch (Exception e) {}
 		
