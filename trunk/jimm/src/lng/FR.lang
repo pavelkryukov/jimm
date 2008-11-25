@@ -1,4 +1,4 @@
-﻿// Labels
+// Labels
 // PROXY module strings
 //#sijapp cond.if modules_PROXY is "true" #
 "proxy"						"Proxy"
