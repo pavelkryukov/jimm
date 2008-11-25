@@ -756,7 +756,7 @@ public class Options
 			return;
 
 		/* Test other extensions */
-		String[] exts = Util.explode("wav|mp3", '|');
+		String[] exts = Util.explode("wav|mp3|amr|mid|midi|mmf", '|');
 		String testFile;
 		for (int i = 0; i < exts.length; i++)
 		{

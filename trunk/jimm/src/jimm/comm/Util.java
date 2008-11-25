@@ -1877,10 +1877,11 @@ public class Util
 		String url = source.toLowerCase();
 
 		/* What is media type? */
-		if (url.endsWith("mp3")) return "audio/mpeg";
-		else if (url.endsWith("amr")) return "audio/amr";
-		else if (url.endsWith("jts")) return "audio/x-tone-seq";
-		else if (url.endsWith("mid") || url.endsWith("midi")) return "audio/midi";
+		if (url.endsWith(".mp3")) return "audio/mpeg";
+		else if (url.endsWith(".amr")) return "audio/amr";
+		else if (url.endsWith(".jts")) return "audio/x-tone-seq";
+		else if (url.endsWith(".mid") || url.endsWith(".midi")) return "audio/midi";
+		else if (url.endsWith(".mmf")) return "audio/mmf";
 		return "audio/X-wav";
 	}
 	
@@ -1890,9 +1891,8 @@ public class Util
 		{
 			Class cls = new Object().getClass();
 			InputStream is = cls.getResourceAsStream(source);
-			if (is == null)
-			is = cls.getResourceAsStream("/" + source);
-			if (is == null)return null;
+			if (is == null) is = cls.getResourceAsStream("/" + source);
+			if (is == null) return null;
 			return Manager.createPlayer(is, Util.getMediaType(source));
 		}
 		catch (Exception e) {}
