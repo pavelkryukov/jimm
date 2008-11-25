@@ -207,7 +207,7 @@ public class PeerConnection implements Runnable
 				//#sijapp cond.if modules_TRAFFIC is "true" #
 
 				// 51 is the overhead for each packet
-				Traffic.addTraffic(outpack.length + 51);
+				Traffic.addOutTraffic(outpack.length + 51);
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
 					RunnableImpl.updateContactListCaption();
@@ -307,7 +307,7 @@ public class PeerConnection implements Runnable
 					break;
 
 				//#sijapp cond.if modules_TRAFFIC is "true" #
-				Traffic.addTraffic(bReadSum + 53);
+				Traffic.addInTraffic(bReadSum + 53);
 
 				// 42 is the overhead for each packet (2 byte packet length)
 				if (ContactList.getVisibleContactListRef().isActive())

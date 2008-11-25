@@ -43,34 +43,32 @@ import DrawControls.TextList;
 import DrawControls.VirtualList;
 
 import jimm.util.ResourceBundle;
-import jimm.comm.Icq;
 import jimm.comm.Util;
 
 public class Traffic
 {
 
 	// Static final variables	
-	static final public int SESSION = 10;
+	static final public int BYTES			= 1 << 0;
+	static final public int KB				= 1 << 1;
+	static final public int COST			= 1 << 2;
+	static final public int SAVED_SINCE		= 1 << 3;
 
-	static final public int OVERALL = 20;
+	static final public int SESSION			= 1 << 4;
+	static final public int OUT_SESSION		= 1 << 5;
+	static final public int IN_SESSION		= 1 << 6;
+	static final public int OVERALL			= 1 << 7;
+	static final public int OUT_OVERALL		= 1 << 8;
+	static final public int IN_OVERALL		= 1 << 9;
+	static final public int SAVED			= 1 << 10;
 
-	static final public int SAVED = 30;
-
-	static final public int BYTES = 1;
-
-	static final public int KB = 2;
-
-	static final public int COST = 3;
-
-	static final public int SAVED_SINCE = 4;
-
-	// Persistent variables
-
-	// Traffic read form file
-	static private int all_traffic;
+	// Traffic read from file
+	static private int out_all_traffic;
+	static private int in_all_traffic;
 
 	// Traffic for this session
-	static private int session_traffic;
+	static private int out_session_traffic;
+	static private int in_session_traffic;
 
 	// Date of last reset of all_traffic
 	static private Date savedSince;
@@ -90,7 +88,8 @@ public class Traffic
 	// Constructor
 	public Traffic()
 	{
-		session_traffic = 0;
+		out_session_traffic = 0;
+		in_session_traffic = 0;
 		savedCost = 0;
 		lastTimeUsed = new Date(1);
 		costPerDaySum = 0;
@@ -101,7 +100,8 @@ public class Traffic
 		} catch (Exception e)
 		{
 			savedSince.setTime(new Date().getTime());
-			all_traffic = 0;
+			out_all_traffic = 0;
+			in_all_traffic = 0;
 		}
 		// Construct traffic scrren
 		trafficScreen = new TrafficScreen();
@@ -124,10 +124,13 @@ public class Traffic
 		buf = traffic.getRecord(2);
 		bais = new ByteArrayInputStream(buf);
 		dis = new DataInputStream(bais);
-		all_traffic = dis.readInt();
+		dis.readInt(); // skip old stored value "all_traffic"
 		savedSince.setTime(dis.readLong());
 		lastTimeUsed.setTime(dis.readLong());
 		savedCost = dis.readInt();
+		out_all_traffic = dis.readInt();
+		in_all_traffic = dis.readInt();
+
 		// Close record store
 		traffic.closeRecordStore();
 
@@ -163,10 +166,12 @@ public class Traffic
 		baos = new ByteArrayOutputStream();
 
 		dos = new DataOutputStream(baos);
-		dos.writeInt(all_traffic + session_traffic);
+		dos.writeInt(0);
 		dos.writeLong(savedSince.getTime());
 		dos.writeLong(lastTimeUsed.getTime());
 		dos.writeInt((int) generateCostSum(false));
+		dos.writeInt(out_all_traffic + out_session_traffic);
+		dos.writeInt(in_all_traffic + in_session_traffic);
 		buf = baos.toByteArray();
 		traffic.setRecord(2, buf, 0, buf.length);
 
@@ -176,35 +181,42 @@ public class Traffic
 	}
 
 	// Generates String for Traffic Info Screen
-	static protected String getTrafficString(int type)
-	{
+	static protected String getTrafficString(int type) {
 		Calendar time = Calendar.getInstance();
 		time.setTime(savedSince);
-		switch (type)
-		{
-		case SESSION + BYTES:
-			return (session_traffic + " " + ResourceBundle.getString("byte"));
-		case SESSION + KB:
-			return (session_traffic / 1024 + " " + ResourceBundle
-					.getString("kb"));
-		case SESSION + COST:
-			return (getString(generateCostSum(true)) + " " + Options
-					.getString(Options.OPTION_CURRENCY));
-		case SAVED_SINCE:
-			return (Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "."
-					+ Util.makeTwo(time.get(Calendar.MONTH) + 1) + "."
-					+ time.get(Calendar.YEAR) + " "
-					+ Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util
-					.makeTwo(time.get(Calendar.MINUTE)));
-		case OVERALL + BYTES:
-			return ((all_traffic + session_traffic) + " " + ResourceBundle
-					.getString("byte"));
-		case OVERALL + KB:
-			return (((all_traffic + session_traffic) / 1024) + " " + ResourceBundle
-					.getString("kb"));
-		case OVERALL + COST:
-			return (getString(generateCostSum(false)) + " " + Options
-					.getString(Options.OPTION_CURRENCY));
+
+		int value = 0;
+		switch (type) {
+			case SESSION:
+				value = out_session_traffic + in_session_traffic;
+				break;
+			case OUT_SESSION:
+				value = out_session_traffic;
+				break;
+			case IN_SESSION:
+				value = in_session_traffic;
+				break;
+			case SESSION + COST:
+				return (getString(generateCostSum(true)) + " " + Options.getString(Options.OPTION_CURRENCY));
+			case SAVED_SINCE:
+				return (Util.makeTwo(time.get(Calendar.DAY_OF_MONTH)) + "." + Util.makeTwo(time.get(Calendar.MONTH) + 1) + "." + time.get(Calendar.YEAR) + " " + Util.makeTwo(time.get(Calendar.HOUR_OF_DAY)) + ":" + Util.makeTwo(time.get(Calendar.MINUTE)));
+			case OVERALL:
+				value = out_all_traffic + in_all_traffic + out_session_traffic + in_session_traffic;
+				break;
+			case OUT_OVERALL:
+				value = out_all_traffic + out_session_traffic;
+				break;
+			case IN_OVERALL:
+				value = in_all_traffic + in_session_traffic;
+				break;
+			case OVERALL + COST:
+				return (getString(generateCostSum(false)) + " " + Options.getString(Options.OPTION_CURRENCY));
+		}
+
+		if (value != 0) {
+			int k = (value > 1023) ? 1024 : 1;
+			String tr = (value > 1023) ? ResourceBundle.getString("kb") : ResourceBundle.getString("byte");
+			return ((value / k) + " " + tr);
 		}
 		return ("");
 
@@ -262,29 +274,22 @@ public class Traffic
 	}
 
 	// Generates int of money amount spent on connection
-	static protected int generateCostSum(boolean thisSession)
-	{
+	static protected int generateCostSum(boolean thisSession) {
 
 		int cost;
 		int costPerPacket = Options.getInt(Options.OPTION_COST_PER_PACKET);
-		int costPacketLength = Options
-				.getInt(Options.OPTION_COST_PACKET_LENGTH);
+		int costPacketLength = Options.getInt(Options.OPTION_COST_PACKET_LENGTH);
 
-		if (thisSession)
-			if (session_traffic != 0)
-				cost = ((session_traffic / costPacketLength) + 1)
-						* costPerPacket;
-			else
-				cost = 0;
-		else if (session_traffic != 0)
-			cost = ((session_traffic / costPacketLength) + 1) * costPerPacket
-					+ savedCost;
-		else
-			cost = savedCost;
-		if ((!usedToday()) && (session_traffic != 0) && (costPerDaySum == 0))
-		{
-			costPerDaySum = costPerDaySum
-					+ Options.getInt(Options.OPTION_COST_PER_DAY);
+		if ((costPacketLength != 0) && ((out_session_traffic + in_session_traffic) != 0)) {
+			cost = (((out_session_traffic + in_session_traffic) / costPacketLength) + 1) * costPerPacket;
+		} else {
+			cost = 0;
+		}
+		if (!thisSession) {
+			cost += savedCost;
+		}
+		if ((!usedToday()) && (out_session_traffic != 0) && (in_session_traffic != 0) && (costPerDaySum == 0)) {
+			costPerDaySum = costPerDaySum + Options.getInt(Options.OPTION_COST_PER_DAY);
 			lastTimeUsed.setTime(new Date().getTime());
 		}
 		return (cost + costPerDaySum);
@@ -293,19 +298,26 @@ public class Traffic
 	//Returns value of  traffic
 	static public int getSessionTraffic()
 	{
-		return (session_traffic / 1024);
+		return ((out_session_traffic + in_session_traffic) / 1024);
 	}
 
-	// Adds to session traffic
-	static public void addTraffic(int bytes)
+	// Adds to "in" session traffic
+	static public void addInTraffic(int bytes)
 	{
-		session_traffic += bytes;
+		in_session_traffic += bytes;
+	}
+
+	// Adds to "out" session traffic
+	static public void addOutTraffic(int bytes)
+	{
+		out_session_traffic += bytes;
 	}
 
 	// Reset the saved value
 	static public void reset()
 	{
-		all_traffic = 0;
+		out_all_traffic = 0;
+		in_all_traffic = 0;
 		savedCost = 0;
 		savedSince.setTime(new Date().getTime());
 		try
@@ -384,20 +396,40 @@ public class Traffic
 				this.trafficTextList.addBigText(
 						ResourceBundle.getString("session") + ":\n", color,
 						Font.STYLE_BOLD, -1).addBigText(
-						Traffic.getTrafficString(SESSION + BYTES) + "\n",
+
+						ResourceBundle.getString("received") + ": " +
+						Traffic.getTrafficString(IN_SESSION) + "\n",
 						color, Font.STYLE_PLAIN, -1).addBigText(
-						Traffic.getTrafficString(SESSION + KB) + "\n", color,
+
+						ResourceBundle.getString("transmitted") + ": " +
+						Traffic.getTrafficString(OUT_SESSION) + "\n", color,
 						Font.STYLE_PLAIN, -1).addBigText(
+
+						ResourceBundle.getString("total") + ": " +
+						Traffic.getTrafficString(SESSION) + "\n", color,
+						Font.STYLE_PLAIN, -1).addBigText(
+
+						ResourceBundle.getString("cost") + ": " +
 						Traffic.getTrafficString(SESSION + COST) + "\n", color,
 						Font.STYLE_PLAIN, -1).addBigText(
 						ResourceBundle.getString("since") + " ", color,
 						Font.STYLE_BOLD, -1).addBigText(
 						Traffic.getTrafficString(Traffic.SAVED_SINCE) + "\n",
 						color, Font.STYLE_BOLD, -1).addBigText(
-						Traffic.getTrafficString(OVERALL + BYTES) + "\n",
+
+						ResourceBundle.getString("received") + ": " +
+						Traffic.getTrafficString(IN_OVERALL) + "\n",
 						color, Font.STYLE_PLAIN, -1).addBigText(
-						Traffic.getTrafficString(OVERALL + KB) + "\n", color,
+
+						ResourceBundle.getString("transmitted") + ": " +
+						Traffic.getTrafficString(OUT_OVERALL) + "\n", color,
 						Font.STYLE_PLAIN, -1).addBigText(
+
+						ResourceBundle.getString("total") + ": " +
+						Traffic.getTrafficString(OVERALL) + "\n", color,
+						Font.STYLE_PLAIN, -1).addBigText(
+
+						ResourceBundle.getString("cost") + ": " +
 						Traffic.getTrafficString(OVERALL + COST) + "\n", color,
 						Font.STYLE_PLAIN, -1);
 				compareTraffic = (byte) Traffic.getSessionTraffic();

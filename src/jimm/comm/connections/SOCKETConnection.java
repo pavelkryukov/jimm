@@ -147,7 +147,7 @@ public class SOCKETConnection extends Connection implements Runnable
 				os.write(outpack);
 				os.flush();
 				//#sijapp cond.if modules_TRAFFIC is "true" #
-				Traffic.addTraffic(outpack.length + 51); // 51 is the overhead for each packet
+				Traffic.addOutTraffic(outpack.length + 51); // 51 is the overhead for each packet
 				if (Traffic.trafficScreen.isActive()
 						|| ContactList.getVisibleContactListRef().isActive())
 				{
@@ -263,7 +263,7 @@ public class SOCKETConnection extends Connection implements Runnable
 				System.arraycopy(flapData, 0, rcvdPacket,
 						flapHeader.length, flapData.length);
 				//#sijapp cond.if modules_TRAFFIC is "true" #
-				Traffic.addTraffic(bReadSum + 57);
+				Traffic.addInTraffic(bReadSum + 57);
 				// 46 is the overhead for each packet (6 byte flap header)
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
