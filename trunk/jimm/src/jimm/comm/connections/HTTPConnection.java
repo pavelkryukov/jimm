@@ -244,7 +244,7 @@ public class HTTPConnection extends Connection implements Runnable
 				// 190 is the ca. overhead for the HTTP header
 				// 14 bytes is the overhead for ICQ HTTP data header
 				// 170 bytes is the ca. overhead of the HTTP/1.1 200 OK
-				Traffic.addTraffic(outpack.length + 40 + 190 + 14 + 170);
+				Traffic.addOutTraffic(outpack.length + 40 + 190 + 14 + 170);
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
 					RunnableImpl.updateContactListCaption();
@@ -436,7 +436,7 @@ public class HTTPConnection extends Connection implements Runnable
 				// 185 is the overhead for each monitor packet HTTP HEADER
 				// 175 is the overhead for each HTTP/1.1 200 OK answer header
 				// ICQ HTTP data header is counted in bReadSum
-				Traffic.addTraffic(bReadSumRequest + 42 + 185 + 175);
+				Traffic.addInTraffic(bReadSumRequest + 42 + 185 + 175);
 
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
