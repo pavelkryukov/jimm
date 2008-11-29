@@ -267,6 +267,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 		else
 			_this.repaint(0, _this.getHeight() - SplashCanvas.height - 2, _this
 					.getWidth(), SplashCanvas.height + 2);
+		_this.serviceRepaints();
 	}
 
 	// Enable keylock

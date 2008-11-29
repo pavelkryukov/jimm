@@ -671,7 +671,7 @@ public class JimmUI implements CommandListener
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		
 		if (version == null)
-			version = readHttpContentFirstString("http://www.jimm.org/en/current_ver");
+			version = readHttpContentFirstString("http://www.jimm.org/current_ver");
 		
 		if (betaVersion == null)
 			betaVersion = readHttpContentFirstString("http://www.jimm.org/nightly/current-nightly");
