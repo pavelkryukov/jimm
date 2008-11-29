@@ -50,7 +50,6 @@ import javax.microedition.rms.RecordStoreNotFoundException;
 //#sijapp cond.if target!="DEFAULT"#
 import javax.microedition.media.*;
 import javax.microedition.media.control.*;
-import java.io.InputStream;
 //#sijapp cond.end#
 
 //#sijapp cond.if target is "RIM"#

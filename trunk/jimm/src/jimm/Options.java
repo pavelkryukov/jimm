@@ -339,19 +339,19 @@ public class Options
 		setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
 		setBoolean(Options.OPTION_CL_HIDE_EMPTY, false);
 		//#sijapp cond.if target="MIDP2" | target="SIEMENS2" | target="RIM"#
-		setInt(Options.OPTION_MESS_NOTIF_MODE, 0);
+		setInt(Options.OPTION_MESS_NOTIF_MODE, 2);
 		setString(Options.OPTION_MESS_NOTIF_FILE, "message.wav");
 		setInt(Options.OPTION_MESS_NOTIF_VOL, 50);
-		setInt(Options.OPTION_ONLINE_NOTIF_MODE, 0);
+		setInt(Options.OPTION_ONLINE_NOTIF_MODE, 2);
 		setString(Options.OPTION_ONLINE_NOTIF_FILE, "online.wav");
 		setInt(Options.OPTION_ONLINE_NOTIF_VOL, 50);
 		setInt(Options.OPTION_TYPING_VOL, 50);
 		setString(Options.OPTION_TYPING_FILE, "typing.wav");
 		//#sijapp cond.elseif target is "MOTOROLA"#
-		setInt    (Options.OPTION_MESS_NOTIF_MODE,    0);
+		setInt    (Options.OPTION_MESS_NOTIF_MODE,    2);
 		setString (Options.OPTION_MESS_NOTIF_FILE,    "message.mp3");
 		setInt    (Options.OPTION_MESS_NOTIF_VOL,     50);
-		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  0);
+		setInt    (Options.OPTION_ONLINE_NOTIF_MODE,  2);
 		setString (Options.OPTION_ONLINE_NOTIF_FILE,  "online.mp3");
 		setInt    (Options.OPTION_ONLINE_NOTIF_VOL,   50);
 		setInt	  (Options.OPTION_TYPING_VOL,	 	  50);
@@ -360,7 +360,7 @@ public class Options
 		//#sijapp cond.end#
 		
 //#sijapp cond.if target!="DEFAULT"#
-		setInt(Options.OPTION_TYPING_MODE, 0);
+		setInt(Options.OPTION_TYPING_MODE, 2);
 //#sijapp cond.end#		
 
 		//#sijapp cond.if target="MIDP2"#
