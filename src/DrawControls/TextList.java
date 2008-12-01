@@ -24,6 +24,7 @@
 package DrawControls;
 
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -37,7 +38,8 @@ class TextItem
 	byte[] imgNumsAndTimes;
 	Image[] image;
 	String text;
-	int fontAndColor = 0;
+	int color = 0;
+	short font;
 	short aniStepOrWidth;
 	short timeCounterOrHeight;
 	
@@ -47,7 +49,7 @@ class TextItem
 		if (text == null) return 0;
 		if (timeCounterOrHeight == 0)
 		{
-			Font font = Font.getFont(Font.FACE_SYSTEM, (fontAndColor >> 24)&0xFF, fontSize);
+			Font font = Font.getFont(Font.FACE_SYSTEM, this.font, fontSize);
 			timeCounterOrHeight = (short)font.getHeight();
 		}
 		return timeCounterOrHeight;
@@ -59,7 +61,7 @@ class TextItem
 		if (text == null) return 0;
 		if (aniStepOrWidth == 0)
 		{
-			Font font = Font.getFont(Font.FACE_SYSTEM, (fontAndColor >> 24)&0xFF, fontSize);
+			Font font = Font.getFont(Font.FACE_SYSTEM, this.font, fontSize);
 			aniStepOrWidth = (short)font.stringWidth(text);
 		}
 		return aniStepOrWidth;
@@ -67,22 +69,23 @@ class TextItem
 	
 	int getColor()
 	{
-		return fontAndColor&0xFFFFFF;
+		return color&0x00FFFFFF;
 	}
-	
+
 	void setColor(int value)
 	{
-		fontAndColor = (fontAndColor&0xFF000000) | (value&0x00FFFFFF); 
+		if ((color&0xFF000000) == 0) color = value;
 	}
 	
 	int getFontStyle()
 	{
-		return (fontAndColor&0xFF000000) >> 24;
+		
+		return font;
 	}
 	
 	void setFontStyle(int value)
 	{
-		fontAndColor = (fontAndColor&0x00FFFFFF)|((value&0xFF) << 24);
+		font = (short)value;
 	}
 	
 	boolean replaceImage(Image from, Image to)
@@ -94,6 +97,11 @@ class TextItem
 			return true;
 		}
 		return false;
+	}
+	
+	void setIndexedColor(int color, int value)
+	{
+		if ((this.color&0xFF000000) == color) this.color = color|value;   
 	}
 }
 
@@ -142,13 +150,8 @@ class TextLine
 
 	void setItemColor(int value)
 	{
-		TextItem listItem;
 		for (int i = items.size() - 1; i >= 0; i--)
-		{
-			listItem = elementAt(i);
-			listItem.setColor(value);
-		}
-		listItem = null;
+			elementAt(i).setColor(value);
 	}
 
 	void paint(int xpos, int ypos, Graphics g, int fontSize, VirtualList vl, boolean nextAniStep)
@@ -212,6 +215,12 @@ class TextLine
 		return replaced;
 	}
 	
+	void setIndexedColor(int color, int value)
+	{
+		for (int i = items.size()-1; i >= 0; i--)
+			elementAt(i).setIndexedColor(color, value);
+	}
+	
 }
 
 //! Text list
@@ -224,6 +233,7 @@ public class TextList extends VirtualList implements Runnable
 	private static TimerTask aniTimerTask;
 	private static Timer aniTimer = new Timer();
 	private Vector lines = new Vector(); // Vector of lines. Each line contains cols. Col can be text or image
+	private Hashtable indexedColors = new Hashtable(); 
 	
 	
 	//! Construct new text list 
@@ -621,9 +631,16 @@ public class TextList extends VirtualList implements Runnable
 		char curChar;
 		boolean lineBreak, wordEnd, textEnd, divideLineToWords;
 		String testString = null;
-
+		
 		if (text == null)
 			return;
+		
+		if ((color&0xFF000000) != 0)
+		{
+			Integer indexedColor = (Integer)indexedColors.get(new Integer(color));
+			if (indexedColor != null) color = (0xFF000000&color)|indexedColor.intValue(); 
+		}
+		
 		// Replace '\r\n' charasters with '\n'
 		text = replace(text, "\r\n", "\n");
 
@@ -858,6 +875,18 @@ public class TextList extends VirtualList implements Runnable
 		int size = getSize();
 		if (size == 0) return -1;
 		return getLine(size-1).bigTextIndex; 
+	}
+	
+	public void setIndexedColor(int color, int value)
+	{
+		Integer colorInt = new Integer(color);
+		Integer lastValueInt = (Integer)indexedColors.get(colorInt);
+		int lastValue = (lastValueInt == null) ? -1 : lastValueInt.intValue();
+		if (value != lastValue)
+		{
+			for (int i = getSize()-1; i >= 0; i--) getLine(i).setIndexedColor(color, value);
+			indexedColors.put(colorInt, new Integer(value));
+		}
 	}
 	
 }
