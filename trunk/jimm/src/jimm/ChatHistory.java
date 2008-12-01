@@ -346,8 +346,8 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 	static int getInOutColor(boolean incoming)
 	{
 		return incoming 
-			? Options.getSchemeColor(Options.CLRSCHHEME_INCOMING, -1)
-			: Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
+			? JimmUI.INDEXED_COLOR_INCOMING
+			: JimmUI.INDEXED_COLOR_OUTGOING;
 	}
 
 	Vector getMessData()

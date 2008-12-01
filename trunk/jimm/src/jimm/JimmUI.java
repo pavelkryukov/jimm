@@ -756,6 +756,9 @@ public class JimmUI implements CommandListener
 	//                    //
 	////////////////////////
 
+	static public final int INDEXED_COLOR_INCOMING = 0x01000000;
+	static public final int INDEXED_COLOR_OUTGOING = 0x02000000;
+	
 	static public void setColorScheme(VirtualList vl, boolean setFullScreen, int theme, boolean changeFont)
 	{
 		if (vl == null) return;
@@ -785,6 +788,13 @@ public class JimmUI implements CommandListener
 			cursorAlpha,
 			menuAlpha
 		);
+		
+		if (vl instanceof TextList)
+		{
+			TextList tl = (TextList)vl;
+			tl.setIndexedColor(INDEXED_COLOR_INCOMING, Options.getSchemeColor(Options.CLRSCHHEME_INCOMING, theme));
+			tl.setIndexedColor(INDEXED_COLOR_OUTGOING, Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, theme));
+		}
 		
 		if (setFullScreen) 
 			vl.setFullScreen(Options.getBoolean(Options.OPTION_FULL_SCREEN));
