@@ -1,7 +1,8 @@
   // Labels
   "point"                       "."
   "about"                       "Om"
-  "about_info"                  "Jimm - Mobile Messaging\n\nICQ klient för J2ME\nVersion 0.3.1\nSe http://www.jimm.org/"
+  "about_cap"                   "Jimm - Mobile Messaging"
+  "about_info"                  "ICQ klient för J2ME\nVersion 0.3.1\nSe http://www.jimm.org/"
   "account"                     "Konto"
   "add_user"                    "Lägg till användare"
   "async"                       "Async"

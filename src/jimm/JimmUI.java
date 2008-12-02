@@ -571,27 +571,24 @@ public class JimmUI implements CommandListener
 		aboutTextList.lock();
 		aboutTextList.clear();
 		aboutTextList.setMode(VirtualList.CURSOR_MODE_DISABLED);
-		setColorScheme(aboutTextList, false, -1, false);
-		aboutTextList.setFontSize(Font.SIZE_SMALL);
-		aboutTextList.setColors(0xffffff, 0x006fb1, 0x006fb1, 0x006fb1, 0xffffff, 0, 0, 0);
+		setColorScheme(aboutTextList, false, -1, true);
 
 		aboutTextList.setCaption(ResourceBundle.getString("about"));
+		
+		aboutTextList.addBigText(
+				ResourceBundle.getString("about_cap"), 
+				Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1), 
+				Font.STYLE_BOLD, 
+				-1
+		);
+		aboutTextList.doCRLF(-1);
 
 		String commaAndSpace = ", ";
 
 		StringBuffer str = new StringBuffer();
 		str.append(" ").append(ResourceBundle.getString("about_info")).append("\n");
-
-		Image image = null;
-		try
-		{
-			image = SplashCanvas.getSplashImage();
-		} catch (Exception e){}
 		
-		aboutTextList.addBigText("\n", 0xffffff, Font.STYLE_PLAIN, -1);
-		if (image != null) aboutTextList.addImage(image, null, -1).doCRLF(-1);
-		
-		aboutTextList.addBigText(str.toString(), 0xffffff, Font.STYLE_PLAIN, -1);
+		aboutTextList.addBigText(str.toString(), -1, Font.STYLE_PLAIN, -1);
 		aboutTextList.doCRLF(-1);
 		
 //#sijapp cond.if target isnot "DEFAULT"#
@@ -616,7 +613,7 @@ public class JimmUI implements CommandListener
 			.append(Runtime.getRuntime().totalMemory() / 1024).append("kb\n\n")
 			.append(ResourceBundle.getString("latest_ver")).append(":\n");
 		
-		aboutTextList.addBigText(str.toString(), 0xffffff, Font.STYLE_PLAIN, -1);
+		aboutTextList.addBigText(str.toString(), -1, Font.STYLE_PLAIN, -1);
 		
 		internalShowLastVers();
 
