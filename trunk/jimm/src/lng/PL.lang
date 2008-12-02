@@ -1,4 +1,3 @@
-  // Labels
   // MOTOROLA formatted buttons
   // #sijapp cond.if target is "MOTOROLA"#
   "backlight_manual"            "W��czenie pod�wietlania"
@@ -30,7 +29,8 @@
 
   "point"                       "."
   "about"                       "O programie"
-  "about_info"                  "Jimm - Mobile Messaging\n\nKlient ICQ na platform� J2ME\n\nWersja: ###VERSION###\nObiekt: ###TARGET###\nModu�: ###MODULES###\n\nZobacz: http://www.jimm.org/"
+  "about_cap"                   "Jimm - Mobile Messaging"
+  "about_info"                  "Klient ICQ na platform� J2ME\n\nWersja: ###VERSION###\nObiekt: ###TARGET###\nModu�: ###MODULES###\n\nZobacz: http://www.jimm.org/"
   "account"                     "Konto"
   "add_group"                   "Dodaj grupę"
   "add_user"                    "Dodaj użytkownika"

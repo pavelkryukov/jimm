@@ -11,7 +11,8 @@
 
   "point"                       ","
   "about"                       "O programe"
-  "about_info"                  "\n\nICQ klient pre J2ME\n\nVerzia: ###VERSION###\nCieľ: ###TARGET###\nModuly: ###MODULES###\n\nWeb projektu: http://www.jimm.org/"
+  "about_cap"                   "ICQ klient pre J2ME"
+  "about_info"                  "Verzia: ###VERSION###\nCieľ: ###TARGET###\nModuly: ###MODULES###\n\nWeb projektu: http://www.jimm.org/"
   "about_visit_wap"             "Ísť na wap projektu"
   "account"                     "Účet"
   "add_new"                     "Nový"

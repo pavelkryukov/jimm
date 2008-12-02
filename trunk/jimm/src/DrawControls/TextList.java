@@ -635,7 +635,8 @@ public class TextList extends VirtualList implements Runnable
 		if (text == null)
 			return;
 		
-		if ((color&0xFF000000) != 0)
+		if (color == -1) color = getTextColor();
+		else if ((color&0xFF000000) != 0)
 		{
 			Integer indexedColor = (Integer)indexedColors.get(new Integer(color));
 			if (indexedColor != null) color = (0xFF000000&color)|indexedColor.intValue(); 

@@ -11,7 +11,8 @@
 
   "point"                       ","
   "about"                       "Пра ..."
-  "about_info"                  "\n\nСпажывец ICQ для J2ME\n\nПабудова: ###VERSION###\nДля: ###TARGET###\nМодулі: ###MODULES###\n\nГлядзі http://www.jimm.org/"
+  "about_cap"                   "Спажывец ICQ для J2ME"
+  "about_info"                  "Пабудова: ###VERSION###\nДля: ###TARGET###\nМодулі: ###MODULES###\n\nГлядзі http://www.jimm.org/"
   "about_visit_wap"		"Наведаць WAP-пляцоўку Jimm"
   "account"                     "Рахунак"
   "add_new"                     "Новы"
