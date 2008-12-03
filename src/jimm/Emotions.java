@@ -472,7 +472,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		if (animated)
 		{
 			aniTask = new TimerTasks(TimerTasks.TYPE_SMILES_SEL_ANI);
-			new Timer().schedule(aniTask, 100, 100);
+			new Timer().schedule(aniTask, 200, 200);
 		}
 	}
 
@@ -560,9 +560,10 @@ public class Emotions implements VirtualListCommands, CommandListener
 				if (h > itemHeight) itemHeight = h;
 			}
 			images = null;
-
-			itemWidth += 5;
-			itemHeight += 5;
+			
+			int layer = (itemWidth < 30) ? 5 : 0;
+			itemWidth += layer;
+			itemHeight += layer;
 
 			cols = drawWidth / itemWidth;
 			rows = (selEmotionsIndexes.length + cols - 1) / cols;
