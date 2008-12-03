@@ -850,7 +850,7 @@ public class Icq implements Runnable
 	private static final byte[] CAP_TYPING         = Util.explodeToBytes("56,3f,c8,09,0b,6f,41,bd,9f,79,42,26,09,df,a2,f3", ',', 16);
 	private static final byte[] CAP_MCHAT          = Util.explodeToBytes("*mChat icq", ',', 16);
 	private static final byte[] CAP_IMPLUS         = Util.explodeToBytes("8e,cd,90,e7,4f,18,28,f8,02,ec,d6,18,a4,e9,de,68", ',', 16);
-	private static final byte[] CAP_JIMM_SMAPER    = Util.explodeToBytes("*Smaper ", ',', 16);
+	private static final byte[] CAP_SMAPER         = Util.explodeToBytes("*Smaper ", ',', 16);
 	private static final byte[] CAP_JIMM_DICHAT    = Util.explodeToBytes("44,5B,69,5D,43,68,61,74,20", ',', 16);
 	
 	// Arrays for new capability blowup
@@ -945,7 +945,7 @@ public class Icq implements Runnable
 	private static final long CAPF_QIPPDASYM     = 1l << 55;
 	private static final long CAPF_QIPPDAWIN     = 1l << 56;
 	private static final long CAPF_IMPLUS        = 1l << 57;
-	private static final long CAPF_JIMM_SMAPER   = 1l << 58;
+	private static final long CAPF_SMAPER   = 1l << 58;
 	private static final long CAPF_JIMM_DICHAT   = 1l << 59;
 
 //	public static final int CAPF_QIPPLUGINS      = 1l << 60;
@@ -999,7 +999,7 @@ public class Icq implements Runnable
 	public static final byte CLI_QIPPDASYM = 42;
 	public static final byte CLI_QIPPDAWIN = 43;
 	public static final byte CLI_IMPLUS = 44;
-	public static final byte CLI_JIMM_SMAPER = 45;
+	public static final byte CLI_SMAPER = 45;
 	public static final byte CLI_JIMM_DICHAT = 46;
 	
 	private static int[] clientIndexes;
@@ -1057,7 +1057,7 @@ public class Icq implements Runnable
 		initClientIndDataItem("QIP Mobile (Symbian)",   CLI_QIPPDASYM,     13, vInd, vImg, vNames);
 		initClientIndDataItem("QIP PDA (Windows)",      CLI_QIPPDAWIN,     14, vInd, vImg, vNames);
 		initClientIndDataItem("IM+",                    CLI_IMPLUS,        30, vInd, vImg, vNames);
-		initClientIndDataItem("Smaper",                 CLI_JIMM_SMAPER,   31, vInd, vImg, vNames);
+		initClientIndDataItem("Smaper",                 CLI_SMAPER,        31, vInd, vImg, vNames);
 		initClientIndDataItem("D[i]Chat",               CLI_JIMM_DICHAT,   32, vInd, vImg, vNames);
 		
 		clientNames = new String[vNames.size()];
@@ -1111,153 +1111,153 @@ public class Icq implements Runnable
 
 		if (capabilities != null)
 		{
-			int j16;
+			int offset;
 			//Caps parsing
 			for (int j = 0; j < capabilities.length / 16; j++)
 			{
-				j16 = j * 16;
-				if (Util.byteArrayEquals(capabilities, j16, CAP_AIM_SERVERRELAY, 0, 16))
+				offset = j * 16;
+				if (Util.byteArrayEquals(capabilities, offset, CAP_AIM_SERVERRELAY, 0, 16))
 				{
 					caps |= CAPF_AIM_SERVERRELAY;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_UTF8, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_UTF8, 0, 16))
 				{
 					caps |= CAPF_UTF8_INTERNAL;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_MIRANDAIM, 0, 8))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_MIRANDAIM, 0, 8))
 				{
 					caps |= CAPF_MIRANDAIM;
 					szVersion = detectClientVersion(capabilities, CLI_MIRANDA, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_TRILLIAN, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_TRILLIAN, 0, 16))
 				{
 					caps |= CAPF_TRILLIAN;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_TRILCRYPT, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_TRILCRYPT, 0, 16))
 				{
 					caps |= CAPF_TRILCRYPT;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_SIM, 0, 0xC))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_SIM, 0, 0xC))
 				{
 					caps |= CAPF_SIM;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_SIMOLD, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_SIMOLD, 0, 16))
 				{
 					caps |= CAPF_SIMOLD;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_LICQ, 0, 0xC))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_LICQ, 0, 0xC))
 				{
 					caps |= CAPF_LICQ;
 					szVersion = detectClientVersion(capabilities, CLI_LICQ, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_KOPETE, 0, 0xC))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_KOPETE, 0, 0xC))
 				{
 					caps |= CAPF_KOPETE;
 					szVersion = detectClientVersion(capabilities, CLI_KOPETE, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_MICQ, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_MICQ, 0, 16))
 				{
 					caps |= CAPF_MICQ;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_ANDRQ, 0, 9))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_ANDRQ, 0, 9))
 				{
 					caps |= CAPF_ANDRQ;
 					szVersion = detectClientVersion(capabilities, CLI_ANDRQ, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDASYM, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_QIPPDASYM, 0, 16))
 				{
 					caps |= CAPF_QIPPDASYM;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPPDAWIN, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_QIPPDAWIN, 0, 16))
 				{
 					caps |= CAPF_QIPPDAWIN;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIP, 0, 11))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_QIP, 0, 11))
 				{
 					caps |= CAPF_QIP;
 					szVersion = detectClientVersion(capabilities, CLI_QIP, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_IM2, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_IM2, 0, 16))
 				{
 					caps |= CAPF_IM2;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_MACICQ, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_MACICQ, 0, 16))
 				{
 					caps |= CAPF_MACICQ;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_RICHTEXT, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_RICHTEXT, 0, 16))
 				{
 					caps |= CAPF_RICHTEXT;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_IS2001, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_IS2001, 0, 16))
 				{
 					caps |= CAPF_IS2001;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_IS2002, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_IS2002, 0, 16))
 				{
 					caps |= CAPF_IS2002;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_STR20012, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_STR20012, 0, 16))
 				{
 					caps |= CAPF_STR20012;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMICON, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_AIMICON, 0, 16))
 				{
 					caps |= CAPF_AIMICON;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMCHAT, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_AIMCHAT, 0, 16))
 				{
 					caps |= CAPF_AIMCHAT;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_UIM, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_UIM, 0, 16))
 				{
 					caps |= CAPF_UIM;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_RAMBLER, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_RAMBLER, 0, 16))
 				{
 					caps |= CAPF_RAMBLER;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_ABV, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_ABV, 0, 16))
 				{
 					caps |= CAPF_ABV;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_NETVIGATOR, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_NETVIGATOR, 0, 16))
 				{
 					caps |= CAPF_NETVIGATOR;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_XTRAZ, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_XTRAZ, 0, 16))
 				{
 					caps |= CAPF_XTRAZ;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMFILE, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_AIMFILE, 0, 16))
 				{
 					caps |= CAPF_AIMFILE;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_JIMM, 0, 5))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_JIMM, 0, 5))
 				{
 					caps |= CAPF_JIMM;
 					szVersion = detectClientVersion(capabilities, CLI_JIMM, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_JIMM_SMAPER, 0, CAP_JIMM_SMAPER.length))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_SMAPER, 0, CAP_SMAPER.length))
 				{
-					caps |= CAPF_JIMM_SMAPER;
-					szVersion = detectClientVersion(capabilities, CLI_JIMM_SMAPER, j);
+					caps |= CAPF_SMAPER;
+					szVersion = detectClientVersion(capabilities, CLI_SMAPER, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_JIMM_DICHAT, 0, CAP_JIMM_DICHAT.length))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_JIMM_DICHAT, 0, CAP_JIMM_DICHAT.length))
 				{
 					caps |= CAPF_JIMM_DICHAT;
 					szVersion = detectClientVersion(capabilities, CLI_JIMM_DICHAT, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_AIMIMIMAGE, 0, 16)) caps |= CAPF_AIMIMIMAGE;
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_AVATAR, 0, 16)) caps |= CAPF_AVATAR;
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_DIRECT, 0, 16)) caps |= CAPF_DIRECT;
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_TYPING, 0, 16)) caps |= CAPF_TYPING;
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_MCHAT, 0, 9))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_AIMIMIMAGE, 0, 16)) caps |= CAPF_AIMIMIMAGE;
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_AVATAR, 0, 16)) caps |= CAPF_AVATAR;
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_DIRECT, 0, 16)) caps |= CAPF_DIRECT;
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_TYPING, 0, 16)) caps |= CAPF_TYPING;
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_MCHAT, 0, 9))
 				{
 					caps |= CAPF_MCHAT;
 					szVersion = detectClientVersion(capabilities, CLI_MCHAT, j);
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_QIPINFIUM, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_QIPINFIUM, 0, 16))
 				{
 					caps |= CAPF_QIPINFIUM;
 				}
@@ -1269,7 +1269,7 @@ public class Icq implements Runnable
 //				{
 //					caps |= CAPF_VIDEO;
 //				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_HTMLMESSAGES, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_HTMLMESSAGES, 0, 16))
 				{
 					caps |= CAPF_HTMLMESSAGES;
 				}
@@ -1281,11 +1281,11 @@ public class Icq implements Runnable
 //				{
 //					caps |= CAPF_XtZers;
 //				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_IsICQLITE, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_IsICQLITE, 0, 16))
 				{
 					caps |= CAPF_IsICQLITE;
 				}
-				else if (Util.byteArrayEquals(capabilities, j16, CAP_IMPLUS, 0, 16))
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_IMPLUS, 0, 16))
 				{
 					caps |= CAPF_IMPLUS;
 				}
@@ -1314,13 +1314,15 @@ public class Icq implements Runnable
 					}
 					break;
 				}
-				if ((caps & CAPF_JIMM_SMAPER) != 0)
+				if ((caps & CAPF_SMAPER) != 0)
 				{
-					client = CLI_JIMM_SMAPER;
+					client = CLI_SMAPER;
+					break;
 				}
 				if ((caps & CAPF_JIMM_DICHAT) != 0)
 				{
 					client = CLI_JIMM_DICHAT;
+					break;
 				}
 				if ((caps & CAPF_QIPINFIUM) != 0)
 				{
@@ -1429,6 +1431,7 @@ public class Icq implements Runnable
 						}
 						break;
 					}
+					if (client != CLI_NONE) break;
 				}
 
 				if ((caps & CAPF_MACICQ) != 0)
@@ -1687,8 +1690,8 @@ public class Icq implements Runnable
 			ver = Util.byteArrayToString(buf, 0, 16);
 			break;
 			
-		case CLI_JIMM_SMAPER:
-			ver = Util.byteArrayToString(buf, CAP_JIMM_SMAPER.length, 16-CAP_JIMM_SMAPER.length);
+		case CLI_SMAPER:
+			ver = Util.byteArrayToString(buf, CAP_SMAPER.length, 16-CAP_SMAPER.length);
 			break;
 
 		case CLI_JIMM_DICHAT:
