@@ -29,6 +29,10 @@ import java.lang.Integer;
 import java.io.IOException;
 import javax.microedition.lcdui.*;
 
+//#sijapp cond.if target!="DEFAULT"#
+import javax.microedition.lcdui.game.Sprite;
+//#sijapp cond.end#
+
 public class ImageList
 {
 	private Image[] items;
@@ -140,7 +144,10 @@ public class ImageList
 			for (int x = 0; x < imgWidth; x += width)
 			{
 //#sijapp cond.if target!="DEFAULT"#
-				newImage = cutImage(resImage, x, y, width, height);
+				if (!fixAlphaCh)
+					newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
+				else
+					newImage = cutImage(resImage, x, y, width, height);
 //#sijapp cond.else#
 				newImage = Image.createImage(width, height);
 				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP| Graphics.LEFT);
