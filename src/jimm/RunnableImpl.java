@@ -242,16 +242,17 @@ public class RunnableImpl implements Runnable
 	static public void updateContactList(String uin, int status, int xStatus, String xStatusMessage,
 			byte[] internalIP, byte[] externalIP, int dcPort, int dcType,
 			int icqProt, int authCookie, int signon, int online, int idle, int regdate
-			//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 			, byte[] biHash
-			//#sijapp cond.end#
+//#sijapp cond.end#
 	)
 	{
-		//# sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-		Object[] arguments = new Object[16];
-		//# sijapp cond.else#
-		//# Object[] arguments = new Object[15];
-		//# sijapp cond.end#
+		Object[] arguments;
+//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+		arguments = new Object[16];
+//#sijapp cond.else#
+		arguments = new Object[15];
+//#sijapp cond.end#
 
 		arguments[0] = uin;
 		setInt(arguments, 1, status);
