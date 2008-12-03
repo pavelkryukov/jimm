@@ -241,6 +241,11 @@ public class Options
 		0xD5FDFD, 0x000000, 0x009090, 0xB0FFFF, 0x80FFFF, 0x0000FF, 0x000000, 0x00A0A0, // Aqua
 		0x8CB29C, 0x002250, 0x101080, 0xDBE1E7, 0x648C64, 0x801010, 0x8CFB6B, 0x5CCB3B, // Green Night
 		0xFFFFFF, 0x000000, 0x0000FF, 0xE8E8FF, 0xC00000, 0xFF0000, 0xFFFFFF, 0x9080C0, // A'la opera mini
+		
+	    0xCCCCCC, 0x000000, 0x336699, 0xC0C0C0, 0xA5AECC, 0x336633, 0x000000, 0x666666, // Ergonomic
+	    0xBAB190, 0x000000, 0x930a0a, 0xCCCC99, 0xCC9966, 0x336633, 0xFFFFFF, 0x666666, // Bronze golem
+	    0xFFFFFF, 0x175A85, 0x336699, 0xCCEBFF, 0x175A85, 0x336633, 0xFFFFFF, 0x97b7c7, // Snowy frost
+	    0x292e31, 0xcaa452, 0xc8c8c8, 0x313540, 0x636771, 0x336633, 0xFFFFFF, 0x21232b, // WA Bento		
 	};
 	
 
@@ -1338,16 +1343,27 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	{
 		tlColorScheme = new TextList(ResourceBundle.getString("color_scheme"));
 		JimmUI.setColorScheme(tlColorScheme, false, -1, true);
-		JimmUI.addTextListItem(tlColorScheme, "black_on_white",  null, 0, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "white_on_black",  null, 1, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "white_on_blue",   null, 2, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "pink_scheme",     null, 3, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "green_scheme",    null, 4, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "sand_scheme",     null, 5, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "hacker_scheme",   null, 6, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "aqua_scheme",     null, 7, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "green_night_scheme",null, 8, true, -1, Font.STYLE_PLAIN);
-		JimmUI.addTextListItem(tlColorScheme, "opera_mini_scheme", null, 9, true, -1, Font.STYLE_PLAIN);
+		
+		final String[] sceme_names = Util.explode(
+			"black_on_white" + "|" +
+			"white_on_black" + "|" +
+			"white_on_blue" + "|" +
+			"pink_scheme" + "|" +
+			"green_scheme" + "|" +
+			"sand_scheme" + "|" +
+			"hacker_scheme" + "|" +
+			"aqua_scheme" + "|" +
+			"green_night_scheme" + "|" +
+			"opera_mini_scheme" + "|" +
+			"ergonomic_scheme" + "|" +
+			"golem_scheme" + "|" +
+			"snowy_scheme" + "|" +
+			"bento_scheme",
+			'|'
+		);
+		
+		for (int i = 0; i < sceme_names.length; i++)
+			JimmUI.addTextListItem(tlColorScheme, sceme_names[i], null, i, true, -1, Font.STYLE_PLAIN);
 		
 		tlColorScheme.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
 		tlColorScheme.addCommandEx(JimmUI.cmdCancel, VirtualList.MENU_TYPE_LEFT_BAR);
