@@ -33,7 +33,7 @@ import jimm.ContactItem;
 import jimm.DebugLog;
 import jimm.Jimm;
 import jimm.JimmUI;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.SplashCanvas;
@@ -114,7 +114,7 @@ public class ActionListener
 
 								// Forward message to contact list
 								PlainMessage message = new PlainMessage(uin, Options.getString(Options.OPTION_UIN), Util.gmtTimeToLocalTime(date), text, true);
-								RunnableImpl.addMessageSerially(message);
+								MainThread.addMessageSerially(message);
 							} // URL message
 							else if (type == 0x0004) {
 								if (buf.length != 14 + textLen) {
@@ -137,7 +137,7 @@ public class ActionListener
 
 								// Forward message message to contact list
 								UrlMessage message = new UrlMessage(uin, Options.getString(Options.OPTION_UIN), Util.gmtTimeToLocalTime(date), url, urlText);
-								RunnableImpl.addMessageSerially(message);
+								MainThread.addMessageSerially(message);
 							}
 						}
 						break;
@@ -171,10 +171,10 @@ public class ActionListener
 
 				if (flag == 0x0002)
 					//Begin typing
-					RunnableImpl.BeginTyping(uin, true);
+					MainThread.BeginTyping(uin, true);
 				else
 					//End typing
-					RunnableImpl.BeginTyping(uin, false);
+					MainThread.BeginTyping(uin, false);
 			}
 			//#sijapp cond.end#
 
@@ -360,13 +360,13 @@ public class ActionListener
 					if (xStatus == -1)
 						xStatus = Icq.detectXStatus(capsArray);
 				}
-				RunnableImpl.updateContactList(uin, status, xStatus, xStatusMessage, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle, regdate
+				MainThread.updateContactList(uin, status, xStatus, xStatusMessage, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle, regdate
 					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 					, biHash
 					//#sijapp cond.end#
 				);
 				//#sijapp cond.else#
-				RunnableImpl.updateContactList(uin, status, -1, null, null, null, 0, 0, 0, 0, signon, online, idle, regdate
+				MainThread.updateContactList(uin, status, -1, null, null, null, 0, 0, 0, 0, signon, online, idle, regdate
 					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 					, null
 					//#sijapp cond.end#
@@ -389,7 +389,7 @@ public class ActionListener
 				String uin = Util.byteArrayToString(buf, 1, uinLen);
 
 				// Update contact list
-				RunnableImpl.callSerially(RunnableImpl.TYPE_USER_OFFLINE, uin);
+				MainThread.userOffline(uin);
 			}
 
 			/** ********************************************************************* */
@@ -417,7 +417,7 @@ public class ActionListener
 					&& (msgId2 == 0x0002) 
 					&& Options.getBoolean(Options.OPTION_DELIV_MES_INFO))
 				{
-					RunnableImpl.messageIsDelevered(uin, msgId1);
+					MainThread.messageIsDelevered(uin, msgId1);
 					return;
 				}
 				
@@ -448,7 +448,7 @@ public class ActionListener
 						lenSkip = 2;
 					}
 					
-					RunnableImpl.showStatusString(Util.byteArrayToString(buf, skip + lenSkip + uinLen, (int)textLen,false), uin);
+					MainThread.showStatusString(Util.byteArrayToString(buf, skip + lenSkip + uinLen, (int)textLen,false), uin);
 				}
 			}
 		
@@ -591,7 +591,7 @@ public class ActionListener
 						PlainMessage plainMsg = new PlainMessage(uin, Options
 								.getString(Options.OPTION_UIN), Util
 								.createCurrentDate(false), text, false);
-						RunnableImpl.addMessageSerially(plainMsg);
+						MainThread.addMessageSerially(plainMsg);
 					}
 
 				}
@@ -798,7 +798,7 @@ public class ActionListener
 						}
 
 						// Forward message object to contact list
-						RunnableImpl.addMessageSerially(message);
+						MainThread.addMessageSerially(message);
 
 						// Acknowledge message
 						byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51 + 3];
@@ -997,7 +997,7 @@ public class ActionListener
 							UrlMessage message = new UrlMessage(uin, Options
 									.getString(Options.OPTION_UIN), Util
 									.createCurrentDate(false), url, urlText);
-							RunnableImpl.addMessageSerially(message);
+							MainThread.addMessageSerially(message);
 
 							// Acknowledge message
 							byte[] ackBuf = new byte[10 + 1 + uinLen + 2 + 51
@@ -1134,7 +1134,7 @@ public class ActionListener
 						PlainMessage plainMsg = new PlainMessage(uin, Options
 								.getString(Options.OPTION_UIN), Util
 								.createCurrentDate(false), text, false);
-						RunnableImpl.addMessageSerially(plainMsg);
+						MainThread.addMessageSerially(plainMsg);
 					}
 					// URL message
 					else if (msgType == 0x0004)
@@ -1160,7 +1160,7 @@ public class ActionListener
 						UrlMessage urlMsg = new UrlMessage(uin, Options
 								.getString(Options.OPTION_UIN), Util
 								.createCurrentDate(false), url, urlText);
-						RunnableImpl.addMessageSerially(urlMsg);
+						MainThread.addMessageSerially(urlMsg);
 					}
 
 				}
@@ -1183,7 +1183,7 @@ public class ActionListener
 						SystemNotice.SYS_NOTICE_YOUWEREADDED, uin, false, null);
 
 				// Handle the new system notice
-				RunnableImpl.addMessageSerially(notice);
+				MainThread.addMessageSerially(notice);
 			}
 
 			//	  Watch out for SRV_AUTHREQ
@@ -1212,7 +1212,7 @@ public class ActionListener
 						SystemNotice.SYS_NOTICE_AUTHREQ, uin, false, reason);
 
 				// Handle the new system notice
-				RunnableImpl.addMessageSerially(notice);
+				MainThread.addMessageSerially(notice);
 			}
 
 			//	  Watch out for SRV_AUTHREPLY
@@ -1263,7 +1263,7 @@ public class ActionListener
 				}
 
 				// Handle the new system notice
-				RunnableImpl.addMessageSerially(notice);
+				MainThread.addMessageSerially(notice);
 			}
 			
 			else if ((snacPacket.getFamily() == SnacPacket.SRV_MSG_ACK_FAMILY)
@@ -1276,7 +1276,7 @@ public class ActionListener
 				if ((messId2 == 0x0001) && Options.getBoolean(Options.OPTION_DELIV_MES_INFO))
 				{
 					String uin = Util.getLenAndString(stream, 1);
-					RunnableImpl.messageIsDelevered(uin, messId1);
+					MainThread.messageIsDelevered(uin, messId1);
 				}
 			}
 

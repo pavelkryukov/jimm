@@ -29,7 +29,7 @@ import java.io.DataInputStream;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.JimmUI;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.ContactItem;
 import jimm.ContactList;
 
@@ -213,8 +213,7 @@ public class RequestInfoAction extends Action
 			{
 				if (!infoShown && showInfoText)
 				{
-					RunnableImpl.callSerially(RunnableImpl.TYPE_SHOW_USER_INFO,
-							(Object) strData);
+					MainThread.showUserInfo(strData);
 					tryToChangeName();
 					infoShown = true;
 				}

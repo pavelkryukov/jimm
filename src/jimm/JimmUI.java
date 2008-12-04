@@ -624,7 +624,7 @@ public class JimmUI implements CommandListener
 		aboutTextList.activate(Jimm.display);
 		
 		// request last jimm version
-		if (version == null && betaVersion == null) RunnableImpl.requestLastJimmVers();
+		if (version == null && betaVersion == null) Threads.requestLastJimmVers();
 	}
 	
 	static private String readHttpContentFirstString(String url)
@@ -673,7 +673,7 @@ public class JimmUI implements CommandListener
 		if (betaVersion == null)
 			betaVersion = readHttpContentFirstString("http://www.jimm.org/nightly/current-nightly");
 		
-		RunnableImpl.showLastJimmVers();
+		MainThread.showLastJimmVers();
 	}
 	
 	static private void addVersString(String result, String name)
@@ -2331,7 +2331,7 @@ public class JimmUI implements CommandListener
 		{
 			public void run()
 			{
-				RunnableImpl.showTime();
+				MainThread.showTime();
 			}
 		};
 		new Timer().schedule(task, 500, 10000);

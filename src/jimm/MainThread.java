@@ -23,6 +23,8 @@
 
 package jimm;
 
+import java.util.Vector;
+
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.*;
 
@@ -32,13 +34,10 @@ import jimm.comm.Message;
 import jimm.comm.Util;
 import jimm.ContactItem;
 
-public class RunnableImpl implements Runnable
+public class MainThread implements Runnable
 {
-	private int type;
-
-	private Object[] data;
-
-	private static MIDlet midlet;
+	private static Vector mainThreadTasks = new Vector();
+	private static MainThread _this;
 
 	final static private int TYPE_ADD_MSG            = 1;
 	final static public int TYPE_SET_CAPTION         = 3;
@@ -52,24 +51,34 @@ public class RunnableImpl implements Runnable
 	final static public int TYPE_ADD_CONTACT         = 12;
 	final static public int TYPE_MINUTE_TASK         = 14;
 	final static public int TYPE_MESS_DELIVERED      = 15;
-	final static public int TYPE_REQ_LAST_VESR       = 16;
 	final static public int TYPE_SHOW_LAST_VESR      = 17;
 	final static public int TYPE_SHOW_STATUS_STR     = 18;
 	final static public int TYPE_BACK_TO_LAST_SCR    = 19;
 	final static public int TYPE_ACTIVATE_CL         = 20;
 	final static public int TYPE_ACTIVATE_MM         = 21;
 	final static public int TYPE_RESET_LOGIN_TIMER   = 22;
-	final static public int TYPE_RECONNECT           = 23;
-	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-	final static public int TYPE_UPDATE_BUDDYICON    = 24;
-	//  #sijapp cond.end#
 
-	RunnableImpl(int type, Object[] data)
+//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+	final static public int TYPE_UPDATE_BUDDYICON    = 24;
+//  #sijapp cond.end#
+
+
+	MainThread()
 	{
-		this.type = type;
-		this.data = data;
+		_this = this;
+	}
+	
+	private static void addMainThreadTask(int taskId, Object[] data)
+	{
+		int dataLen = (data != null) ? data.length : 0;
+		Object[] packed = new Object[dataLen+1];
+		packed[0] = new Integer(taskId);
+		if (dataLen != 0) System.arraycopy(data, 0, packed, 1, data.length);
+		synchronized (mainThreadTasks) { mainThreadTasks.addElement(packed); }
+		Jimm.display.callSerially(_this);
 	}
 
+	
 	/* Method run contains operations which have to be synchronized
 	 with main events queue (in main thread)
 	 If you want your code run in main thread, make new constant 
@@ -77,7 +86,36 @@ public class RunnableImpl implements Runnable
 	 RunnableImpl.run method.
 	 To run you source call RunnableImpl.callSerially()
 	 Note RunnableImpl.callSerially NEVER blocks calling thread */
+	
 	public void run()
+	{
+		Object[][] tasksArray;
+		
+		synchronized (mainThreadTasks)
+		{
+			tasksArray = new Object[mainThreadTasks.size()][];
+			mainThreadTasks.copyInto(tasksArray);
+			mainThreadTasks.removeAllElements();
+		}
+		
+		for (int i = 0; i < tasksArray.length; i++)
+		{
+			Object[] task = tasksArray[i];
+			int mode = ((Integer)task[0]).intValue();
+			Object[] taskData = new Object[task.length-1];
+			System.arraycopy(task, 1, taskData, 0, taskData.length);
+			try
+			{
+				execureTask(mode, taskData);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private static void execureTask(int type, Object[] data)
 	{
 		switch (type)
 		{
@@ -158,10 +196,6 @@ public class RunnableImpl implements Runnable
 			ChatHistory.messageIsDelivered((String)data[0], getInt(data, 1));
 			break;
 			
-		case TYPE_REQ_LAST_VESR:
-			JimmUI.internalReqLastVersThread();
-			break;
-			
 		case TYPE_SHOW_LAST_VESR:
 			JimmUI.internalShowLastVers();
 			break;
@@ -187,53 +221,34 @@ public class RunnableImpl implements Runnable
 		case TYPE_RESET_LOGIN_TIMER:
 			ContactList.resetLoginTimer();
 			break;
-			
-		case TYPE_RECONNECT:
-			if (!Icq.isDisconnected())
-			{
-				try {Thread.sleep(5000);} catch (Exception e) {}
-				ContactList.beforeConnect();
-				Icq.connect();
-			}
-			break;
 		}
 	}
 
-	static public void setMidlet(MIDlet midlet_)
+	static public void addMainThreadTask(int type, Object obj1)
 	{
-		midlet = midlet_;
+		addMainThreadTask(type, new Object[] { obj1 });
 	}
 
-	synchronized static public void callSerially(int type, Object[] data)
+	static public void addMainThreadTask(int type)
 	{
-		Display.getDisplay(midlet).callSerially(new RunnableImpl(type, data));
+		addMainThreadTask(type, null);
 	}
 
-	static public void callSerially(int type, Object obj1)
+	static public void addMainThreadTask(int type, Object obj1, Object obj2)
 	{
-		callSerially(type, new Object[] { obj1 });
-	}
-
-	static public void callSerially(int type)
-	{
-		callSerially(type, null);
-	}
-
-	static public void callSerially(int type, Object obj1, Object obj2)
-	{
-		callSerially(type, new Object[] { obj1, obj2 });
+		addMainThreadTask(type, new Object[] { obj1, obj2 });
 	}
 
 	///////////////////////////////////////////////////////////////////////////
 
 	static public void updateContactListCaption()
 	{
-		callSerially(TYPE_UPDATE_CL_CAPTION);
+		addMainThreadTask(TYPE_UPDATE_CL_CAPTION);
 	}
 
 	static public void addMessageSerially(Object message)
 	{
-		callSerially(TYPE_ADD_MSG, message);
+		addMainThreadTask(TYPE_ADD_MSG, message);
 //#sijapp cond.if target is "MIDP2"#
 		if (Options.getBoolean(Options.OPTION_BRING_UP)) Jimm.setMinimized(false);
 //#sijapp cond.end #
@@ -272,7 +287,7 @@ public class RunnableImpl implements Runnable
 		arguments[14] = biHash;
 		//#sijapp cond.end#
 
-		callSerially(TYPE_UPDATE_CONTACT_LIST, arguments);
+		addMainThreadTask(TYPE_UPDATE_CONTACT_LIST, arguments);
 	}
 
 	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
@@ -284,7 +299,7 @@ public class RunnableImpl implements Runnable
 		arguments[1] = image;
 		arguments[2] = biHashOfDone;
 
-		callSerially(TYPE_UPDATE_BUDDYICON, arguments);
+		addMainThreadTask(TYPE_UPDATE_BUDDYICON, arguments);
 	}
 	//#sijapp cond.end#
 
@@ -294,76 +309,74 @@ public class RunnableImpl implements Runnable
 		Object[] args = new Object[2];
 		args[0] = uin;
 		setBoolean(args, 1, type);
-		callSerially(TYPE_USER_IS_TYPING, args);
+		addMainThreadTask(TYPE_USER_IS_TYPING, args);
 	}
 
 	//#sijapp cond.end#
 
 	static public void resetContactsOffline()
 	{
-		callSerially(TYPE_RESET_CONTACTS);
+		addMainThreadTask(TYPE_RESET_CONTACTS);
 	}
 	
 	static public void showTime()
 	{
-		callSerially(TYPE_SHOW_TIME, Util.getDateString(true));
+		addMainThreadTask(TYPE_SHOW_TIME, Util.getDateString(true));
 	}
 	
 	static public void addContact(ContactItem cItem)
 	{
-		callSerially(TYPE_ADD_CONTACT, cItem);
+		addMainThreadTask(TYPE_ADD_CONTACT, cItem);
 	}
 	
 	static public void minuteTask()
 	{
-		callSerially(TYPE_MINUTE_TASK);
+		addMainThreadTask(TYPE_MINUTE_TASK);
 	}
 	
 	static public void messageIsDelevered(String uin, int messId)
 	{
-		callSerially(TYPE_MESS_DELIVERED, uin, new Integer(messId));
-	}
-	
-	static public void requestLastJimmVers()
-	{
-		RunnableImpl ri = new RunnableImpl(TYPE_REQ_LAST_VESR, null);
-		new Thread(ri).start();
+		addMainThreadTask(TYPE_MESS_DELIVERED, uin, new Integer(messId));
 	}
 	
 	static public void showLastJimmVers()
 	{
-		callSerially(TYPE_SHOW_LAST_VESR);
+		addMainThreadTask(TYPE_SHOW_LAST_VESR);
 	}
 	
 	static public void showStatusString(String text, String uin)
 	{
-		callSerially(TYPE_SHOW_STATUS_STR, text, uin);
+		addMainThreadTask(TYPE_SHOW_STATUS_STR, text, uin);
 	}
 	
 	static public void backToLastScreenMT()
 	{
-		callSerially(TYPE_BACK_TO_LAST_SCR);
+		addMainThreadTask(TYPE_BACK_TO_LAST_SCR);
 	}
 	
 	static public void activateContactListMT(Alert alert)
 	{
-		callSerially(TYPE_ACTIVATE_CL, alert);
+		addMainThreadTask(TYPE_ACTIVATE_CL, alert);
 	}
 	
 	static public void activateMainMenu(Alert alert)
 	{
-		callSerially(TYPE_ACTIVATE_MM, alert);
+		addMainThreadTask(TYPE_ACTIVATE_MM, alert);
 	}
 	
 	static public void resetLoginTimer()
 	{
-		callSerially(TYPE_RESET_LOGIN_TIMER);
+		addMainThreadTask(TYPE_RESET_LOGIN_TIMER);
 	}
 	
-	static public void reconnect()
+	static public void showUserInfo(String[] strData)
 	{
-		RunnableImpl ri = new RunnableImpl(TYPE_RECONNECT, null);
-		new Thread(ri).start();
+		addMainThreadTask(TYPE_SHOW_USER_INFO, strData);
+	}
+	
+	static public void userOffline(String uin)
+	{
+		addMainThreadTask(TYPE_USER_OFFLINE, uin);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

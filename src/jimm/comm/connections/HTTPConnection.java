@@ -35,7 +35,7 @@ import javax.microedition.io.HttpConnection;
 import jimm.ContactList;
 import jimm.JimmException;
 import jimm.Options;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.comm.DisconnectPacket;
 import jimm.comm.Icq;
 import jimm.comm.Packet;
@@ -247,7 +247,7 @@ public class HTTPConnection extends Connection implements Runnable
 				Traffic.addOutTraffic(outpack.length + 40 + 190 + 14 + 170);
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
-					RunnableImpl.updateContactListCaption();
+					MainThread.updateContactListCaption();
 				}
 				//#sijapp cond.end#
 				// System.out.println(" ");
@@ -440,7 +440,7 @@ public class HTTPConnection extends Connection implements Runnable
 
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
-					RunnableImpl.updateContactListCaption();
+					MainThread.updateContactListCaption();
 					Traffic.trafficScreen.update(false);
 				}
 				//#sijapp cond.end#

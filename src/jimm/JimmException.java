@@ -229,7 +229,7 @@ public class JimmException extends Exception
 					break;
 				}
 				
-				RunnableImpl.reconnect();
+				Threads.reconnect();
 			}
 			else
 			{
@@ -240,7 +240,7 @@ public class JimmException extends Exception
 				// Display error message
 				errorMsg = new Alert(ResourceBundle.getString("error"), e.getMessage(), null, AlertType.ERROR);
 				errorMsg.setTimeout(Alert.FOREVER);
-				RunnableImpl.activateMainMenu(errorMsg);
+				MainThread.activateMainMenu(errorMsg);
 			}
 			return (errorMsg);
 		}
@@ -264,9 +264,9 @@ public class JimmException extends Exception
 				SplashCanvas.unlock(false);
 
 				if (Icq.isConnected())
-					RunnableImpl.activateContactListMT(errorMsg);
+					MainThread.activateContactListMT(errorMsg);
 				else
-					RunnableImpl.activateMainMenu(errorMsg);
+					MainThread.activateMainMenu(errorMsg);
 				return (errorMsg);
 			}
 			return (null);

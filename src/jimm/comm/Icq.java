@@ -40,7 +40,7 @@ import jimm.StatusInfo;
 import jimm.comm.connections.*;
 import jimm.util.ResourceBundle;
 import jimm.ContactList;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.TimerTasks;
 
 //#sijapp cond.if modules_TRAFFIC is "true" #
@@ -255,7 +255,7 @@ public class Icq implements Runnable
 		//#sijapp cond.end#
 
 		/* Reset all contacts offine */
-		RunnableImpl.resetContactsOffline();
+		MainThread.resetContactsOffline();
 		
 		setNotConnected();
 
@@ -615,7 +615,7 @@ public class Icq implements Runnable
 			resetServerCon();
 
 			/* Reset all contacts offine */
-			RunnableImpl.resetContactsOffline();
+			MainThread.resetContactsOffline();
 		}
 
 	}

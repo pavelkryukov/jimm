@@ -37,7 +37,7 @@ import jimm.FileTransfer;
 import jimm.JimmException;
 import jimm.JimmUI;
 import jimm.Options;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.comm.connections.PeerConnection;
 import jimm.util.ResourceBundle;
 
@@ -392,7 +392,7 @@ public class DirectConnectionAction extends Action
 		{
 		case ON_CANCEL:
 			cancel = true;
-			RunnableImpl.backToLastScreenMT();
+			MainThread.backToLastScreenMT();
 			break;
 
 		case ON_ERROR:
@@ -404,7 +404,7 @@ public class DirectConnectionAction extends Action
 					null, AlertType.WARNING);
 			
 			// TODO: show error here
-			RunnableImpl.backToLastScreenMT();
+			MainThread.backToLastScreenMT();
 			break;
 
 		case ON_COMPLETE:
@@ -418,7 +418,7 @@ public class DirectConnectionAction extends Action
 					AlertType.INFO);
 			ok.setTimeout(2000);
 			
-			RunnableImpl.activateContactListMT(ok);
+			MainThread.activateContactListMT(ok);
 			break;
 		}
 	}

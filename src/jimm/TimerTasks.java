@@ -129,7 +129,7 @@ public class TimerTasks extends TimerTask
 				break;
 				
 			case TYPE_MINUTE:
-				RunnableImpl.minuteTask();
+				MainThread.minuteTask();
 				break;
 				
 //#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #				

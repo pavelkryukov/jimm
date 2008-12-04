@@ -25,6 +25,7 @@ package jimm;
 
 import jimm.comm.Icq;
 import jimm.util.ResourceBundle;
+import jimm.MainThread;
 
 import java.util.Timer;
 
@@ -162,8 +163,6 @@ public class Jimm extends MIDlet
 	// Start Jimm
 	public void startApp() throws MIDletStateChangeException
 	{
-		RunnableImpl.setMidlet(this);
-
 		// Return if MIDlet has already been initialized
 		if (Jimm.jimm != null)
 		{
@@ -249,6 +248,11 @@ public class Jimm extends MIDlet
 		// Create chat hisotry object (and update progress indicator)
 		this.ch = new ChatHistory();
 		SplashCanvas.setProgress(70);
+		
+		new MainThread();
+		
+		
+		SplashCanvas.setProgress(80);
 
 		// Create and load emotion icons
 		//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
