@@ -24,12 +24,9 @@
 package jimm;
 
 import java.util.Vector;
-
-import javax.microedition.midlet.MIDlet;
 import javax.microedition.lcdui.*;
 
 import DrawControls.VirtualList;
-import jimm.comm.Icq;
 import jimm.comm.Message;
 import jimm.comm.Util;
 import jimm.ContactItem;
@@ -371,7 +368,7 @@ public class MainThread implements Runnable
 	
 	static public void showUserInfo(String[] strData)
 	{
-		addMainThreadTask(TYPE_SHOW_USER_INFO, strData);
+		addMainThreadTask(TYPE_SHOW_USER_INFO, (Object)strData);
 	}
 	
 	static public void userOffline(String uin)
