@@ -38,7 +38,7 @@ import javax.microedition.io.SocketConnection;
 import jimm.ContactList;
 import jimm.JimmException;
 import jimm.Options;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.comm.Icq;
 import jimm.comm.Packet;
 import jimm.comm.Util;
@@ -210,7 +210,7 @@ public class PeerConnection implements Runnable
 				Traffic.addOutTraffic(outpack.length + 51);
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
-					RunnableImpl.updateContactListCaption();
+					MainThread.updateContactListCaption();
 					Traffic.trafficScreen.update(false);
 				}
 				//#sijapp cond.end#
@@ -312,7 +312,7 @@ public class PeerConnection implements Runnable
 				// 42 is the overhead for each packet (2 byte packet length)
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
-					RunnableImpl.updateContactListCaption();
+					MainThread.updateContactListCaption();
 					Traffic.trafficScreen.update(false);
 				}
 				//#sijapp cond.end#

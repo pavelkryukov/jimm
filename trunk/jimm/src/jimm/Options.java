@@ -2800,7 +2800,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			}
 			else if (c == JimmUI.cmdBack)
 			{
-				if (currOptType == TYPE_TOP_OPTIONS) RunnableImpl.backToLastScreenMT();
+				if (currOptType == TYPE_TOP_OPTIONS) MainThread.backToLastScreenMT();
 				else initOptionsList(TYPE_TOP_OPTIONS);
 			}
 		}
@@ -2846,7 +2846,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			else
 			{
 				Options.optionsForm = null;
-				RunnableImpl.backToLastScreenMT();
+				MainThread.backToLastScreenMT();
 				return;
 			}
 		}

@@ -1123,7 +1123,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		}
 
 		if (changed)
-			RunnableImpl.updateContactListCaption();
+			MainThread.updateContactListCaption();
 	}
 
 	//Updates the title of the list

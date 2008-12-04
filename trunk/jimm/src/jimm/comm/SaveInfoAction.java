@@ -32,7 +32,7 @@ import jimm.JimmException;
 import jimm.Options;
 import jimm.JimmUI;
 import jimm.ContactList;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 
 public class SaveInfoAction extends Action
 {
@@ -222,7 +222,7 @@ public class SaveInfoAction extends Action
 		switch (eventTuype)
 		{
 		case ON_COMPLETE:
-			RunnableImpl.backToLastScreenMT();
+			MainThread.backToLastScreenMT();
 			break;
 		}
 	}

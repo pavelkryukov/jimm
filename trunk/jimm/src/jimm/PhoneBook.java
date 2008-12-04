@@ -181,7 +181,7 @@ public class PhoneBook implements CommandListener {
 		Jimm.aaUserActivity();
 
 		if (c == backCommand) {
-			RunnableImpl.backToLastScreenMT();
+			MainThread.backToLastScreenMT();
 
 		//#sijapp cond.if target!="DEFAULT"#
 		} else if (c == cmdCall) {
@@ -204,7 +204,7 @@ public class PhoneBook implements CommandListener {
 		} else if (c == cmdSendSMS) {
 			String number = getCurrPhoneNumber();
 			if (number.length() > 0) {
-				RunnableImpl.backToLastScreenMT();
+				MainThread.backToLastScreenMT();
 				new Thread(new sms (smsText.getString(), number)).start();
 			}
 

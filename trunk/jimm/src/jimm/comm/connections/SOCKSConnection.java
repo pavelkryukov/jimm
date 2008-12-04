@@ -44,7 +44,7 @@ import javax.microedition.io.Connector;
 import jimm.ContactList;
 import jimm.JimmException;
 import jimm.Options;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.comm.Icq;
 import jimm.comm.Packet;
 import jimm.comm.ToIcqSrvPacket;
@@ -514,7 +514,7 @@ public class SOCKSConnection extends Connection implements Runnable
 				if (Traffic.trafficScreen.isActive()
 						|| ContactList.getVisibleContactListRef().isActive())
 				{
-					RunnableImpl.updateContactListCaption();
+					MainThread.updateContactListCaption();
 					Traffic.trafficScreen.update(false);
 				}
 				//#sijapp cond.end#
@@ -697,7 +697,7 @@ public class SOCKSConnection extends Connection implements Runnable
 				if (Traffic.trafficScreen.isActive()
 						|| ContactList.getVisibleContactListRef().isActive())
 				{
-					RunnableImpl.updateContactListCaption();
+					MainThread.updateContactListCaption();
 					Traffic.trafficScreen.update(false);
 				}
 				//#sijapp cond.end#

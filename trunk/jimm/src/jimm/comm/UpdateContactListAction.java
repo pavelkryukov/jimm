@@ -28,7 +28,7 @@ import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
 import jimm.JimmException;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;
@@ -156,7 +156,7 @@ public class UpdateContactListAction extends Action
 						.getIntValue(ContactItem.CONTACTITEM_GROUP);
 				gItem = ContactList.getGroupById(groupId);
 				cItem.setIntValue(ContactItem.CONTACTITEM_ID, ContactList.generateNewIdForBuddy());
-				RunnableImpl.addContact(cItem);
+				MainThread.addContact(cItem);
 				buf = packRosterItem(cItem, groupId);
 				if (action == ACTION_REQ_AUTH)
 					state = STATE_ADD1;
@@ -433,7 +433,7 @@ public class UpdateContactListAction extends Action
 				ContactList.optionsChanged(true, true);
 				break;
 			}
-			RunnableImpl.activateContactListMT(null);
+			MainThread.activateContactListMT(null);
 			if ((action != ACTION_DEL) && (cItem != null))
 				ContactList.contactChanged(cItem, true, false);
 			break;

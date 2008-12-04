@@ -33,7 +33,7 @@ import jimm.ContactList;
 import jimm.JimmUI;
 import jimm.JimmException;
 import jimm.Options;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.util.ResourceBundle;
 import jimm.comm.connections.HTTPConnection;
 
@@ -856,7 +856,7 @@ public class ConnectAction extends Action
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_STATUS_INFO_SENT;
 						
-						RunnableImpl.resetLoginTimer();
+						MainThread.resetLoginTimer();
 					}
 				}
 			}
@@ -935,8 +935,8 @@ public class ConnectAction extends Action
 		switch (eventType)
 		{
 		case ON_COMPLETE:
-			RunnableImpl.resetLoginTimer();
-			RunnableImpl.activateContactListMT(null);
+			MainThread.resetLoginTimer();
+			MainThread.activateContactListMT(null);
 			Options.safeSave(); // Save last server
 			break;
 		
@@ -944,7 +944,7 @@ public class ConnectAction extends Action
 			Icq.disconnect(false);
 			canceled = true;
 			Icq.reconnect_attempts = 0;
-			RunnableImpl.backToLastScreenMT();
+			MainThread.backToLastScreenMT();
 			break;
 			
 		case ON_ERROR:

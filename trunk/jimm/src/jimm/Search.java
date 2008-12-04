@@ -427,7 +427,7 @@ public class Search
 					errorMsg.setTimeout(Alert.FOREVER);
 					
 					// TODO: show normal error here
-					RunnableImpl.activateContactListMT(errorMsg);
+					MainThread.activateContactListMT(errorMsg);
 				} else
 				{
 					/* Show list of groups to select which group to add to */

@@ -29,7 +29,7 @@ import javax.microedition.lcdui.Image;
 import jimm.JimmException;
 import jimm.DebugLog;
 import jimm.JimmUI;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.comm.connections.SOCKETConnection;
 
 public class RequestBuddyIconAction extends Action
@@ -287,7 +287,7 @@ public class RequestBuddyIconAction extends Action
 							av = Image.createImage (iconRaw, 0, iconRaw.length);
 					    } catch (Exception ignore) {/* Do nothing */}
 					    if (av != null) {
-							RunnableImpl.updateBuddyIcon (uin, av, biHash);
+							MainThread.updateBuddyIcon (uin, av, biHash);
 							av = null;
 					    }
 					    iconRaw = null;

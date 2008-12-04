@@ -562,7 +562,7 @@ public class ChatHistory
 	/* Adds a message to the message display */
 	static protected void addMessage(ContactItem contact, Message message)
 	{
-		RunnableImpl.showTime();
+		MainThread.showTime();
 		
 		synchronized (_this)
 		{

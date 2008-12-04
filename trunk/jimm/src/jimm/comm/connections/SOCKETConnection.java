@@ -42,7 +42,7 @@ import javax.microedition.io.Connector;
 import jimm.ContactList;
 import jimm.JimmException;
 import jimm.Options;
-import jimm.RunnableImpl;
+import jimm.MainThread;
 import jimm.comm.Icq;
 import jimm.comm.Packet;
 import jimm.comm.ToIcqSrvPacket;
@@ -151,7 +151,7 @@ public class SOCKETConnection extends Connection implements Runnable
 				if (Traffic.trafficScreen.isActive()
 						|| ContactList.getVisibleContactListRef().isActive())
 				{
-					RunnableImpl.updateContactListCaption();
+					MainThread.updateContactListCaption();
 				}
 				//#sijapp cond.end#
 			} catch (IOException e)
@@ -267,7 +267,7 @@ public class SOCKETConnection extends Connection implements Runnable
 				// 46 is the overhead for each packet (6 byte flap header)
 				if (ContactList.getVisibleContactListRef().isActive())
 				{
-					RunnableImpl.updateContactListCaption();
+					MainThread.updateContactListCaption();
 					Traffic.trafficScreen.update(false);
 				}
 				//#sijapp cond.end#
