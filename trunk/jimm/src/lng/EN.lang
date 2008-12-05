@@ -98,7 +98,7 @@
 "firstname"					"First name"
 "free_heap"					"Free heap"
 "reset_rms_caption"			"Reset"
-"reset_rms_ask"				"Are you want to permanently delete all record stores (accounts, chats history, settings etc)? Application will be closed!"
+"reset_rms_ask"				"Do you want to permanently delete all record stores (accounts, chats history, settings etc)? Application will be closed!"
 "reset_rms_yes"				"* Yes"
 "reset_rms_no"				"* No"
 "full_screen"				"Full screen"
