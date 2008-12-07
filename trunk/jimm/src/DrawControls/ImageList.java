@@ -144,7 +144,7 @@ public class ImageList
 			for (int x = 0; x < imgWidth; x += width)
 			{
 //#sijapp cond.if target!="DEFAULT"#
-				if (!fixAlphaCh)
+				if (fixAlphaCh)
 					newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
 				else
 					newImage = cutImage(resImage, x, y, width, height);
