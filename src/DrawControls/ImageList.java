@@ -137,6 +137,12 @@ public class ImageList
 
 		this.width = width;
 		this.height = height;
+		
+//#sijapp cond.if target!="DEFAULT"#
+		int[] imgRgbData = new int[imgHeight*imgWidth];
+		resImage.getRGB(imgRgbData, 0, imgWidth, 0, 0, imgWidth, imgHeight);
+		resImage = null;
+//#sijapp cond.end#		
 
 		Image newImage;
 		for (int y = 0; y < imgHeight; y += height)
@@ -147,7 +153,7 @@ public class ImageList
 				if (fixAlphaCh)
 					newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
 				else
-					newImage = cutImage(resImage, x, y, width, height);
+					newImage = cutImage(imgRgbData, x, y, width, height, imgWidth);
 //#sijapp cond.else#
 				newImage = Image.createImage(width, height);
 				newImage.getGraphics().drawImage(resImage, -x, -y, Graphics.TOP| Graphics.LEFT);
@@ -155,7 +161,7 @@ public class ImageList
 //#sijapp cond.end#
 				
 //#sijapp cond.if target="MIDP2"#
-				if (fixAlphaCh) newImage = fixAlphaChannel(newImage);
+				//if (fixAlphaCh) newImage = fixAlphaChannel(newImage);
 				if ((scale != -1) && (scale != 100)) 
 					newImage = resizeImage(newImage, scale*newImage.getWidth()/100, scale*newImage.getHeight()/100, useAlpha);
 //#sijapp cond.end#
@@ -199,10 +205,18 @@ public class ImageList
 	
 //#sijapp cond.if target!="DEFAULT"#	
 
-	static public Image cutImage(Image img, int x, int y, int width, int height)
+	static public Image cutImage(int[] imgRgbData, int x, int y, int width, int height, int origWidth)
 	{
 		int[] tmp = new int[width*height];
-		img.getRGB(tmp, 0, width, x, y, width, height);
+		//img.getRGB(tmp, 0, width, x, y, width, height);
+		int bottomY = y+height;
+		int dstPtr = 0;
+		for (int crd = y; crd < bottomY; crd++)
+		{
+			int srcPtr = x+crd*origWidth;
+			System.arraycopy(imgRgbData, srcPtr, tmp, dstPtr, width);
+			dstPtr += width;
+		}
 		return Image.createRGBImage(tmp, width, height, true);
 	}
 		
