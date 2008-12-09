@@ -150,9 +150,9 @@ public class ImageList
 			for (int x = 0; x < imgWidth; x += width)
 			{
 //#sijapp cond.if target!="DEFAULT"#
-				if (fixAlphaCh)
-					newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
-				else
+				//if (fixAlphaCh)
+				//	newImage = Image.createImage(Image.createImage(resImage, x, y, width, height, Sprite.TRANS_NONE));
+				//else
 					newImage = cutImage(imgRgbData, x, y, width, height, imgWidth);
 //#sijapp cond.else#
 				newImage = Image.createImage(width, height);
