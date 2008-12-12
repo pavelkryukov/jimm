@@ -36,24 +36,23 @@ public class MainThread implements Runnable
 	private static Vector mainThreadTasks = new Vector();
 	private static MainThread _this;
 
-	final static private int TYPE_ADD_MSG            = 1;
-	final static public int TYPE_SET_CAPTION         = 3;
-	final static public int TYPE_USER_OFFLINE        = 4;
-	final static public int TYPE_UPDATE_CONTACT_LIST = 5;
-	final static public int TYPE_SHOW_USER_INFO      = 6;
-	final static public int TYPE_UPDATE_CL_CAPTION   = 7;
-	final static public int TYPE_USER_IS_TYPING      = 9;
-	final static public int TYPE_RESET_CONTACTS      = 10;
-	final static public int TYPE_SHOW_TIME           = 11;
-	final static public int TYPE_ADD_CONTACT         = 12;
-	final static public int TYPE_MINUTE_TASK         = 14;
-	final static public int TYPE_MESS_DELIVERED      = 15;
-	final static public int TYPE_SHOW_LAST_VESR      = 17;
-	final static public int TYPE_SHOW_STATUS_STR     = 18;
-	final static public int TYPE_BACK_TO_LAST_SCR    = 19;
-	final static public int TYPE_ACTIVATE_CL         = 20;
-	final static public int TYPE_ACTIVATE_MM         = 21;
-	final static public int TYPE_RESET_LOGIN_TIMER   = 22;
+	final static private int TYPE_ADD_MSG             = 1;
+	final static private int TYPE_USER_OFFLINE        = 4;
+	final static private int TYPE_UPDATE_CONTACT_LIST = 5;
+	final static private int TYPE_SHOW_USER_INFO      = 6;
+	final static private int TYPE_UPDATE_CL_CAPTION   = 7;
+	final static private int TYPE_USER_IS_TYPING      = 9;
+	final static private int TYPE_RESET_CONTACTS      = 10;
+	final static private int TYPE_SHOW_TIME           = 11;
+	final static private int TYPE_ADD_CONTACT         = 12;
+	final static private int TYPE_MINUTE_TASK         = 14;
+	final static private int TYPE_MESS_DELIVERED      = 15;
+	final static private int TYPE_SHOW_LAST_VESR      = 17;
+	final static private int TYPE_SHOW_STATUS_STR     = 18;
+	final static private int TYPE_BACK_TO_LAST_SCR    = 19;
+	final static private int TYPE_ACTIVATE_CL         = 20;
+	final static private int TYPE_ACTIVATE_MM         = 21;
+	final static private int TYPE_RESET_LOGIN_TIMER   = 22;
 
 //#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 	final static public int TYPE_UPDATE_BUDDYICON    = 24;
