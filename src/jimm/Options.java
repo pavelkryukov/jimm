@@ -1937,6 +1937,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			String[] imgScaleText = Util.explode(ResourceBundle.getString("no") + "|120%|140%|160%|180%|200%" , '|');
 			imagesScale = new ChoiceGroup(ResourceBundle.getString("images_scale"), ChoiceGroup.POPUP, imgScaleText, null);
 			int imgScale = Options.getInt(Options.OPTION_IMG_SCALE);
+			imgScale = (imgScale > 200) ? 200 : ((imgScale < 100) ? 100 : imgScale);
 			imagesScale.setSelectedIndex((imgScale-100)/20, true);
 //#sijapp cond.end#	
 			
