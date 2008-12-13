@@ -852,7 +852,8 @@ public class Icq implements Runnable
 	private static final byte[] CAP_IMPLUS         = Util.explodeToBytes("8e,cd,90,e7,4f,18,28,f8,02,ec,d6,18,a4,e9,de,68", ',', 16);
 	private static final byte[] CAP_SMAPER         = Util.explodeToBytes("*Smaper ", ',', 16);
 	private static final byte[] CAP_JIMM_DICHAT    = Util.explodeToBytes("44,5B,69,5D,43,68,61,74,20", ',', 16);
-	
+	private static final byte[] CAP_QUTIM          = Util.explodeToBytes("*qutim", ',', 16);
+
 	// Arrays for new capability blowup
 	private static final byte[] CAP_OLD_HEAD = { (byte) 0x09, (byte) 0x46 };
 	private static final byte[] CAP_OLD_TAIL = Util.explodeToBytes("4C,7F,11,D1,82,22,44,45,53,54,00,00", ',', 16);
@@ -945,8 +946,9 @@ public class Icq implements Runnable
 	private static final long CAPF_QIPPDASYM     = 1l << 55;
 	private static final long CAPF_QIPPDAWIN     = 1l << 56;
 	private static final long CAPF_IMPLUS        = 1l << 57;
-	private static final long CAPF_SMAPER   = 1l << 58;
+	private static final long CAPF_SMAPER        = 1l << 58;
 	private static final long CAPF_JIMM_DICHAT   = 1l << 59;
+	private static final long CAPF_QUTIM         = 1l << 60;
 
 //	public static final int CAPF_QIPPLUGINS      = 1l << 60;
 //	public static final int CAPF_XMultiUserChat  = 1l << 61;
@@ -1001,6 +1003,7 @@ public class Icq implements Runnable
 	public static final byte CLI_IMPLUS = 44;
 	public static final byte CLI_SMAPER = 45;
 	public static final byte CLI_JIMM_DICHAT = 46;
+	public static final byte CLI_QUTIM = 47;
 	
 	private static int[] clientIndexes;
 	private static int[] clientImageIndexes;
@@ -1059,6 +1062,7 @@ public class Icq implements Runnable
 		initClientIndDataItem("IM+",                    CLI_IMPLUS,        30, vInd, vImg, vNames);
 		initClientIndDataItem("Smaper",                 CLI_SMAPER,        31, vInd, vImg, vNames);
 		initClientIndDataItem("D[i]Chat",               CLI_JIMM_DICHAT,   32, vInd, vImg, vNames);
+		initClientIndDataItem("qutIM",                  CLI_QUTIM,         33, vInd, vImg, vNames);
 		
 		clientNames = new String[vNames.size()];
 		vNames.copyInto(clientNames);
@@ -1238,6 +1242,11 @@ public class Icq implements Runnable
 					caps |= CAPF_JIMM;
 					szVersion = detectClientVersion(capabilities, CLI_JIMM, j);
 				}
+				else if (Util.byteArrayEquals(capabilities, offset, CAP_QUTIM, 0, CAP_QUTIM.length))
+				{
+					caps |= CAPF_QUTIM;
+					szVersion = detectClientVersion(capabilities, CLI_QUTIM, j);
+				}
 				else if (Util.byteArrayEquals(capabilities, offset, CAP_SMAPER, 0, CAP_SMAPER.length))
 				{
 					caps |= CAPF_SMAPER;
@@ -1312,6 +1321,11 @@ public class Icq implements Runnable
 								break;
 						}
 					}
+					break;
+				}
+				if ((caps & CAPF_QUTIM) != 0)
+				{
+					client = CLI_QUTIM;
 					break;
 				}
 				if ((caps & CAPF_SMAPER) != 0)
@@ -1692,6 +1706,38 @@ public class Icq implements Runnable
 			
 		case CLI_SMAPER:
 			ver = Util.byteArrayToString(buf, CAP_SMAPER.length, 16-CAP_SMAPER.length);
+			break;
+
+		case CLI_QUTIM:
+			if (buf[6] == 46) {
+			// old qutim id
+				int ver1 = buf[5] - 48;
+				int ver2 = buf[7] - 48;
+				ver = " v" + ver1 + "."+ver2;
+			} else {
+				// new qutim id
+				int ver1 = buf[6];
+				int ver2 = buf[7];
+				int ver3 = buf[8];
+				int svn = Util.getWord(buf, 9, true);
+				ver = " v" + ver1 + "." + ver2 + "." + ver3 + " svn" + svn;
+
+				switch (buf[5]) {
+					case 'l':
+						ver += " (Linux)";
+						break;
+					case 'w':
+						ver += " (Windows)";
+						break;
+					case 'm':
+						ver += " (MacOS)";
+						break;
+					case 'u':
+					default:
+						ver += " (Unknown OS)";
+						break;
+				}
+			}
 			break;
 
 		case CLI_JIMM_DICHAT:
