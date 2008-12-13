@@ -1881,7 +1881,7 @@ public class Util
 		else if (url.endsWith(".amr")) return "audio/amr";
 		else if (url.endsWith(".jts")) return "audio/x-tone-seq";
 		else if (url.endsWith(".mid") || url.endsWith(".midi")) return "audio/midi";
-		else if (url.endsWith(".mmf")) return "audio/mmf";
+		else if (url.endsWith(".mmf")) return "audio/x-smaf";
 		return "audio/X-wav";
 	}
 	
