@@ -1040,7 +1040,7 @@ public class ActionListener
 					// Status message requests
 					else if (((msgType >= 1000) && (msgType <= 1004)))
 					{
-						String statusMess;
+						String statusMess = "---";
 
 						int currStatus = (int)Options.getLong(Options.OPTION_ONLINE_STATUS);
 						StatusInfo statInfo = JimmUI.findStatus(StatusInfo.TYPE_STATUS, currStatus);
@@ -1048,9 +1048,8 @@ public class ActionListener
 						if (statInfo.testFlag(StatusInfo.FLAG_HAVE_DESCR))
 						{
 							statusMess = Options.getStatusString(StatusInfo.TYPE_STATUS, currStatus);
-							statusMess = Util.replaceStr(statusMess, "%TIME%", Icq.getLastStatusChangeTime());
+							statusMess = (statusMess != null) ? Util.replaceStr(statusMess, "%TIME%", Icq.getLastStatusChangeTime()) : "---";
 						}
-						else statusMess = "---";
 
 						// Acknowledge message with away message
 						final byte[] statusMessBytes = Util.stringToByteArray(statusMess, false);
