@@ -26,7 +26,6 @@ package jimm.comm.connections;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Random;
 import java.util.Vector;
 
 //#sijapp cond.if target!="DEFAULT"#
@@ -100,8 +99,7 @@ public class SOCKETConnection extends Connection implements Runnable
 			rcvThread = new Thread(this);
 			rcvThread.start();
 			// Set starting point for seq numbers (not bigger then 0x8000)
-			Random rand = new Random(System.currentTimeMillis());
-			flapSEQ = rand.nextInt() % 0x8000;
+			flapSEQ = getSeqValue();
 			nextIcqSequence = 2;
 			state = true;
 		} catch (ConnectionNotFoundException e)

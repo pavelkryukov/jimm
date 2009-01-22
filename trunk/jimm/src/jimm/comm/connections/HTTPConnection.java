@@ -26,7 +26,6 @@ package jimm.comm.connections;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Random;
 import java.util.Vector;
 
 import javax.microedition.io.Connector;
@@ -81,8 +80,7 @@ public class HTTPConnection extends Connection implements Runnable
 		connSeq = 0;
 		monitorURL = "http://http.proxy.icq.com/hello";
 		// Set starting point for seq numbers (not bigger then 0x8000)
-		Random rand = new Random(System.currentTimeMillis());
-		flapSEQ = rand.nextInt() % 0x8000;
+		flapSEQ = getSeqValue();
 	}
 
 	// Opens a connection to the specified host and starts the receiver thread
