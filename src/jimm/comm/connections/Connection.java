@@ -169,7 +169,9 @@ public abstract class Connection implements Runnable
 	protected int getSeqValue()
 	{
 		Random rand = new Random(System.currentTimeMillis());
-		return sequences[rand.nextInt() % sequences.length]-1;
+		int intRand = rand.nextInt();
+		if (intRand < 0) intRand = -intRand;
+		return sequences[intRand % sequences.length]-1;
 	}
 
 }
