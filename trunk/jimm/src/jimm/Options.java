@@ -155,7 +155,7 @@ public class Options
 	public static final int OPTION_CL_HIDE_OFFLINE   = 130;
 	public static final int OPTION_CP1251_HACK       = 133;
 	public static final int OPTION_CHAT_SMALL_FONT   = 135;
-	public static final int OPTION_USER_GROUPS       = 136;
+	public static final int OPTION_USE_GROUPS       = 136;
 	public static final int OPTION_HISTORY           = 137;
 	public static final int OPTION_AUTO_CONNECT      = 138;
 	public static final int OPTION_SHADOW_CON        = 139;
@@ -389,7 +389,7 @@ public class Options
 		//#sijapp cond.end #
 		setLong(Options.OPTION_ONLINE_STATUS, ContactList.STATUS_ONLINE);
 		setBoolean(Options.OPTION_CHAT_SMALL_FONT, true);
-		setBoolean(Options.OPTION_USER_GROUPS, false);
+		setBoolean(Options.OPTION_USE_GROUPS, false);
 		setBoolean(Options.OPTION_HISTORY, false);
 		setInt(Options.OPTION_COLOR_SCHEME, 0);
 		setBoolean(Options.OPTION_USE_SMILES, true);
@@ -1697,7 +1697,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		lastUILang      = Options.getString (Options.OPTION_UI_LANGUAGE);
 		lastHideOffline = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 		lastHideEmpty   = Options.getBoolean(Options.OPTION_CL_HIDE_EMPTY);
-		lastGroupsUsed  = Options.getBoolean(Options.OPTION_USER_GROUPS);
+		lastGroupsUsed  = Options.getBoolean(Options.OPTION_USE_GROUPS);
 		lastSortMethod  = Options.getInt    (Options.OPTION_CL_SORT_BY);
 
 		initOptionsList(TYPE_TOP_OPTIONS);
@@ -1916,7 +1916,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 					Options.OPTION_CL_SORT_BY);
 
 			choiceContactList = new ChoiceGroup(ResourceBundle.getString("contact_list"), Choice.MULTIPLE);
-			setChecked(choiceContactList, "show_user_groups", Options.OPTION_USER_GROUPS);
+			setChecked(choiceContactList, "show_user_groups", Options.OPTION_USE_GROUPS);
 			setChecked(choiceContactList, "hide_empty", Options.OPTION_CL_HIDE_EMPTY);
 			setChecked(choiceContactList, "hide_offline", Options.OPTION_CL_HIDE_OFFLINE);
 			setChecked(choiceContactList, "show_xstatuses", Options.OPTION_XSTATUSES);
@@ -2437,7 +2437,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setBoolean(Options.OPTION_MESS_COLORED_TEXT, chrgMessFormat.isSelected(idx++));
 			Options.setBoolean(Options.OPTION_FULL_TEXTBOX, chrgMessFormat.isSelected(idx++));
 
-			Options.setBoolean(Options.OPTION_USER_GROUPS, newUseGroups);
+			Options.setBoolean(Options.OPTION_USE_GROUPS, newUseGroups);
 
 			// Set UI options for existing controls
 			ContactList.optionsChanged

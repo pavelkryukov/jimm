@@ -661,9 +661,9 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		if (treeSorted) return;
 		sortType = Options.getInt(Options.OPTION_CL_SORT_BY);
-		if (Options.getBoolean(Options.OPTION_USER_GROUPS))
+		if (Options.getBoolean(Options.OPTION_USE_GROUPS))
 		{
-			boolean only_not_empty = Options.getBoolean(Options.OPTION_CL_HIDE_EMPTY);
+			
 			// Sort groups
 			tree.sortNode(null);
 			
@@ -676,8 +676,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				groupNode = (TreeNode) gNodes.get(new Integer(gItem.getId()));
 				tree.sortNode(groupNode);
 				calcGroupData(groupNode, gItem);
-				if (groupNode.size() == 0 && only_not_empty)
-					tree.removeNode(groupNode);
 			}
 			gItem = null;
 			groupNode = null;
@@ -685,12 +683,19 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			tree.sortNode(null);
 		treeSorted = true;
 	}
+	
+	static private TreeNode addGroupNodeInternal(ContactListGroupItem item)
+	{
+		TreeNode groupNode = tree.addNode(null, item);
+		gNodes.put(new Integer(item.getId()), groupNode);
+		return groupNode;
+	}
 
 	// Builds contacts tree (without sorting) 
 	static private void buildTree()
 	{
 		int i, gCount, cCount;
-		boolean use_groups = Options.getBoolean(Options.OPTION_USER_GROUPS);
+		boolean use_groups = Options.getBoolean(Options.OPTION_USE_GROUPS);
 		boolean only_online = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
 
 		cCount = cItems.size();
@@ -706,15 +711,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		if (use_groups)
 		{
 			ContactListGroupItem item;
-			TreeNode groupNode;
 			for (i = 0; i < gCount; i++)
 			{
 				item = (ContactListGroupItem) gItems.elementAt(i);
-				groupNode = tree.addNode(null, item);
-				gNodes.put(new Integer(item.getId()), groupNode);
+				addGroupNodeInternal(item);
 			}
 			item = null;
-			groupNode = null;
 		}
 
 		// add contacts
@@ -739,6 +741,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			}
 		}
 		cItem = null;
+		
+		// Delete empty groups
+		if (Options.getBoolean(Options.OPTION_CL_HIDE_EMPTY) && use_groups)
+			for (i = gItems.size()-1; i >= 0; i--)
+			{
+				ContactListGroupItem gItem = (ContactListGroupItem) gItems.elementAt(i);
+				Integer intGroup = new Integer(gItem.getId());
+				TreeNode groupNode = (TreeNode) gNodes.get(intGroup);
+				if (groupNode.size() == 0)
+				{
+					tree.removeNode(groupNode);
+					gNodes.remove(intGroup);
+				}
+			}
 
 		treeSorted = false;
 		treeBuilt = true;
@@ -829,25 +845,20 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		TreeNode cItemNode = null;
 		int i, count, groupId;
 
-		int status = item
-				.getIntValue(ContactItem.CONTACTITEM_STATUS);
+		int status = item.getIntValue(ContactItem.CONTACTITEM_STATUS);
 
-		String uin = item
-				.getStringValue(ContactItem.CONTACTITEM_UIN);
+		String uin = item.getStringValue(ContactItem.CONTACTITEM_UIN);
 
 		// which group id ?
 		groupId = item.getIntValue(ContactItem.CONTACTITEM_GROUP);
 
-		boolean only_online = Options
-				.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
-
-		boolean only_not_empty = Options
-				.getBoolean(Options.OPTION_CL_HIDE_EMPTY);
+		boolean only_online = Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE);
+		boolean showGroups = Options.getBoolean(Options.OPTION_USE_GROUPS);
+		boolean only_not_empty = Options.getBoolean(Options.OPTION_CL_HIDE_EMPTY);
 
 		// Whitch group node?
 		TreeNode groupNode = (TreeNode) gNodes.get(new Integer(groupId));
-		if (groupNode == null)
-			groupNode = tree.getRoot();
+		if (groupNode == null) groupNode = tree.getRoot();
 
 		// Does contact exists in tree?
 		count = groupNode.size();
@@ -882,14 +893,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 					.mustBeShownAnyWay());
 
 		// if have to add new contact
-		if (haveToAdd && !contactExistInTree)
+		if (haveToAdd)
 		{
-			if (only_not_empty)
+			if (only_not_empty && showGroups && !gNodes.containsKey(new Integer(groupId)))
 			{
-				if (tree.findNodeByData(null, groupNode.getData()) == null)
-				{
-					groupNode = (TreeNode) tree.addNode(tree.getRoot(), groupNode.getData());
-				}
+				ContactListGroupItem group = getGroupById(groupId);
+				groupNode = addGroupNodeInternal(group);
 			}
 			cItemNode = tree.addNode(groupNode, item);
 		}
@@ -898,11 +907,12 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		else if (haveToDelete)
 		{
 			tree.removeNode(cItemNode);
-			if (only_not_empty)
+			if (only_not_empty && showGroups)
 			{
 				if (groupNode.size() == 0)
 				{
 					tree.removeNode(groupNode);
+					gNodes.remove(new Integer(groupId));
 				}
 			}
 			wasDeleted = true;
@@ -1225,7 +1235,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		synchronized (_this)
 		{
 			gItems.addElement(gItem);
-			if (!Options.getBoolean(Options.OPTION_USER_GROUPS))
+			if (!Options.getBoolean(Options.OPTION_USE_GROUPS))
 				return;
 			TreeNode groupNode = tree.addNode(null, gItem);
 			gNodes.put(new Integer(gItem.getId()), groupNode);
@@ -1251,7 +1261,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			}
 			cItem = null;
 			Integer groupId = new Integer(gItem.getId());
-			if (Options.getBoolean(Options.OPTION_USER_GROUPS))
+			if (Options.getBoolean(Options.OPTION_USE_GROUPS))
 			{
 				TreeNode node = (TreeNode) gNodes.get(groupId);
 				tree.deleteChild(tree.getRoot(), tree.getIndexOfChild(tree.getRoot(), node));

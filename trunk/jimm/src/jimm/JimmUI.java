@@ -890,7 +890,7 @@ public class JimmUI implements CommandListener
 				break;
 
 			case Options.HOTKEY_USER_GROUPS:
-				Options.setBoolean(Options.OPTION_USER_GROUPS, !Options.getBoolean(Options.OPTION_USER_GROUPS));
+				Options.setBoolean(Options.OPTION_USE_GROUPS, !Options.getBoolean(Options.OPTION_USE_GROUPS));
 				Options.safeSave();
 				ContactList.optionsChanged(true, false);
 				ContactList.activateList();
