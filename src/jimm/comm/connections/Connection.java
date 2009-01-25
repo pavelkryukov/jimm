@@ -27,6 +27,9 @@ import java.util.Random;
 import java.util.Vector;
 import jimm.JimmException;
 import jimm.comm.Packet;
+//#sijapp cond.if modules_DEBUGLOG is "true"#
+import jimm.DebugLog;
+//#sijapp cond.end#
 
 
 public abstract class Connection implements Runnable
@@ -156,7 +159,7 @@ public abstract class Connection implements Runnable
 	}
 	
 	
-	/* 23 jan 2009: ICQ patch from Persey */
+	/* 23 jan 2009: ICQ patch from Persei */
 	
 	int sequences[] = {
 		5695, 23595, 23620, 23049, 0x2886, 0x2493, 23620, 23049, 2853, 17372, 1255, 
@@ -171,7 +174,11 @@ public abstract class Connection implements Runnable
 		Random rand = new Random(System.currentTimeMillis());
 		int intRand = rand.nextInt();
 		if (intRand < 0) intRand = -intRand;
-		return sequences[intRand % sequences.length]-1;
+		int res = sequences[intRand % sequences.length]-1;
+		//#sijapp cond.if modules_DEBUGLOG is "true"#
+		DebugLog.addText ("Flap sequence = " + res);
+		//#sijapp cond.end#
+		return res;
 	}
 
 }
