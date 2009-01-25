@@ -318,7 +318,14 @@ public class JimmUI implements CommandListener
 					if (messText.length() != 0)
 					{
 						sendMessage(messText, textMessReceiver);
-						messageTextbox = null;
+						if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON)
+						{
+							messageTextbox = null;
+						}
+						else
+						{
+							messageTextbox.setString(null);
+						}
 					}
 					boolean activated = ChatHistory.activateIfExists(textMessReceiver);
 					if (!activated) JimmUI.backToLastScreen();
