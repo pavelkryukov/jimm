@@ -277,7 +277,7 @@ public class Traffic
 	static protected int generateCostSum(boolean thisSession) {
 
 		int cost;
-		int costPerPacket = Options.getInt(Options.OPTION_COST_PER_PACKET);
+		int costPerPacket = Options.getInt(Options.OPTION_COST_PER_PACKET) / 100;
 		int costPacketLength = Options.getInt(Options.OPTION_COST_PACKET_LENGTH);
 
 		if ((costPacketLength != 0) && ((out_session_traffic + in_session_traffic) != 0)) {
