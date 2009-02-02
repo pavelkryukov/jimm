@@ -1012,7 +1012,7 @@ public class Util
 		}
 	}
 
-	// Extracts the number value form String
+	// Extracts the number value from String
 	public static int decimalToInt(String string)
 	{
 		int value = 0;
