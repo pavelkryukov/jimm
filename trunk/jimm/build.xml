@@ -1,7 +1,7 @@
 <!-- 
 ********************************************************************************
 Jimm - Mobile Messaging - J2ME ICQ clone
-Copyright (C) 2003-08  Jimm Project
+Copyright (C) 2003-09  Jimm Project
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -25,19 +25,13 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 
 <project name="Jimm" default="dist">
 
-	
 	<!--  *******************************************************************   -->
-	<!--  CONFIGURATION SECTION - CHANGE VALUES TO REFLECT YOUR ENVIRONMENT     -->
+	<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
 	<!--  *******************************************************************   -->
-	<!--  Change this to the directory where a MIDP SDK is installed. You can   -->
-	<!--  use both the slash and the backslash for separating path              -->
-	<!--  components.                                                           -->
-	<property name="DEFAULT/midp"      value="CHANGE ME"                         />
-	<property name="MIDP2/midp"        value="CHANGE ME"                         />
-	<property name="RIM/midp"          value="CHANGE ME"                         />
-	<property name="SIEMENS2/midp"     value="CHANGE ME"                         />
-	<property name="MOTOROLA/midp"     value="CHANGE ME"                         />
-	<!--  *******************************************************************   -->
+
+	<!--  Loading configurable properties from external file				    -->
+	<loadproperties srcFile="build.properties"/>
+
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
 	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar;${MIDP2/midp}/lib/wma11.jar"/>
@@ -45,77 +39,21 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
 	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
 	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />
-	<!--  *******************************************************************   -->
-	<!--  Change this to the directory where ProGuard is installed. You can     -->
-	<!--  use both the slash and the backslash for separating path components.  -->
-	<property name="proguard"          value="CHANGE ME"                         />
-	<!--  *******************************************************************   -->
+
 	<!--  This property must point at the ProGuard JAR file, normally found     -->
 	<!--  in the lib directory of the ProGuard distribution.                    -->
 	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"      />
-	<!--  *******************************************************************   -->	
-	<!--  Change this to the directory where Antenna is installed. You can      -->
-	<!--  use both the slash and the backslash for separating path components.  -->
-	<property name="antenna"           value="CHANGE ME"                         />
-	<!--  *******************************************************************   -->
+
 	<!--  This property must point at the Antenna JAR file, normally found      -->
 	<!--  directly in the directory where you installed Antenna.                -->
 	<!--  Please change if you are using a different version than 1.0.0         -->
 	<property name="antenna/lib"       value="${antenna}/antenna-bin-1.0.0.jar"  />
-	<!--  *******************************************************************   -->
+
 	<!--  This property is used for building binaries for RIM Blackberry.       -->
 	<!--  Set it to the location of the "rapc" binary which is part of the      -->
 	<!--  Blackberry JDE package which you need to have installed in order      -->
 	<!--  to generate Blackberry builds of Jimm .                               -->
 	<property name="bb.buildjars.home" location="${RIM/midp}\bin"                /> 
-	<!--  *******************************************************************   -->
-	<!--  CUSTOMIZATION SECTION - CHANGE VALUES TO GET YOUR CUSTOM BUILD        -->
-	<!--  *******************************************************************   -->
-	<!--  Build target. Currently there are the following build available:      -->
-	<!--      DEFAULT  - Standard MIDP1                                         -->
-	<!--      SIEMENS2 - For Siemens MIDP2-devices (like the x65 series         -->
-	<!--      MIDP2    - Standard MIDP2                                         -->
-	<!--      RIM      - For RIM Blackberry devices                             -->
-	<!--      MOTOROLA - For Motorola MIDP2 devices                             -->
-	<property name="target"            value="MIDP2"                           />
-	<!--  *******************************************************************   -->
-	<!--  This value is a comma separated list of modules which should be       -->
-	<!--  included in the build. Realised modules are:                          -->
-	<!--      TRAFFIC    - module for traffic calculation                       -->
-	<!--      HISTORY    - module for storing history of text messages          -->
-	<!--      FILES      - module for transferring files                        -->
-	<!--      SMILES_STD - module for using emotions int messages text          --> 
-	<!--      SMILES_ANI - module for using animated emotions int messages text --> 
-	<!--      PROXY      - module for connecting via a socks proxy              --> 
-	<!--      LOCATION   - module for location aware functionality              -->  
-	<!--      ANTISPAM   - module for prevention of receiving spam messages     -->  
-	<!--      AVATARS    - module for downloading buddy icon		    -->  
-	<property name="modules"           value="SMILES_ANI,TRAFFIC,HISTORY,PROXY,FILES,ANTISPAM,DEBUGLOG,AVATARS,PIM" />
-	<!--  *******************************************************************   -->
-	<!--  This value is a comma separated list of languages packs which         -->
-	<!--  should be included in the build. Currently, the distribution          -->
-	<!--  includes English (EN), Belarusian (BE), Bulgarian (BG),               -->
-	<!--  Brazilian Portuguese (BR), Czech (CZ), German (DE), French (FR),      -->
-	<!--  Spanish (ES), Hewbrew (HE), Italian (IT), Lithuanian (LT),            -->
-	<!--  Polish (PL), Russian (RU), Swedish (SE), Slovak (SK), Serbian (SR),   -->
-	<!--  Ukrainian(UA) language packs.                                         -->
-	<property name="lang"              value="EN,BE,BG,BR,CZ,DE,ES,FR,HE,IT,LT,PL,RU,SE,SK,SR,UA"/>
-	<!--  *******************************************************************   -->
-	<!--  Version number of the build. The value can be in any format (e.g.     -->
-	<!--  0.2cvs).                                                              -->
-	<property name="version/jimm"      value="###VERSION###"                     />
-	<!--  *******************************************************************   -->
-	<!--  Version number of the build in the standardized format                -->
-	<!--  <major>[.<minor>[.<micro>]] (e.g. 0.2). This value should             -->
-	<!--  correspond to the version property (see above).                       -->
-	<property name="version/java"      value="###VERSION-JAVA###"                />
-	<!--  *******************************************************************   -->
-	<!--  Midlet name											                -->
-	<property name="midlet/name"      value="###MIDLET-NAME###"                  />
-	<!--  *******************************************************************   -->
-	<!--  CHANGE NOTHING BELOW THIS LINE, UNLESS YOU KNOW WHAT YOU'RE DOING     -->
-	<!--  *******************************************************************   -->
-	
 
 	<!--  Buildfile description   -->
 	<description>This buildfile is used to build Jimm, a native ICQ clone for Java 2 Platform Micro Edition.</description>
