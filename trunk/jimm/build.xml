@@ -30,7 +30,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  *******************************************************************   -->
 
 	<!--  Loading configurable properties from external file				    -->
-	<loadproperties srcFile="build.properties"/>
+	<property file="build.properties" />
 
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
