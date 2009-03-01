@@ -898,7 +898,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			if (only_not_empty && showGroups && !gNodes.containsKey(new Integer(groupId)))
 			{
 				ContactListGroupItem group = getGroupById(groupId);
-				groupNode = addGroupNodeInternal(group);
+				groupNode = (group != null) ? addGroupNodeInternal(group) : tree.getRoot();
 			}
 			cItemNode = tree.addNode(groupNode, item);
 		}
