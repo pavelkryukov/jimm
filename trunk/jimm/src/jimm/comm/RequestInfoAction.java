@@ -179,12 +179,19 @@ public class RequestInfoAction extends Action
 					String item;
 					for (int i = 0; i < counter; i++)
 					{
-						Util.getWord(stream, false);
+						int intValue = Util.getWord(stream, false);
 						item = Util.readAsciiz(stream);
 						if (item.trim().length() == 0)
 							continue;
 						if (sb.length() != 0)
 							sb.append(", ");
+						
+						String interestType = (String)Icq.interests.get(new Integer(intValue));
+						if (interestType != null)
+						{
+							sb.append(interestType);
+							sb.append(": ");
+						}
 						sb.append(item);
 					}
 					strData[JimmUI.UI_INETRESTS] = sb.toString();

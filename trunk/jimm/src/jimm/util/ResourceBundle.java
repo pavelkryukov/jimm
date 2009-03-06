@@ -108,5 +108,12 @@ public class ResourceBundle {
 
 		return result;
 	}
+	
+	public static synchronized String remove(String key)
+	{
+		String result = getString(key);
+		resources.remove(key);
+		return result;
+	}
 
 }

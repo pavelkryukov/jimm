@@ -24,6 +24,7 @@
 package jimm.comm;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.microedition.io.Connector;
@@ -1993,4 +1994,30 @@ public class Icq implements Runnable
 		DebugLog.addText("Icq.rotateServersList(): " + servers[0]);
 	}
 	
+	
+	public static final Hashtable interests;
+	
+	static
+	{
+		interests = new Hashtable();
+		
+		String str = 
+			ResourceBundle.remove("interests1")+
+			ResourceBundle.remove("interests2")+
+			ResourceBundle.remove("interests3")+
+			ResourceBundle.remove("interests4")+
+			ResourceBundle.remove("interests5");
+		
+		String[] pairs = Util.explode(str, '|');
+		
+		if ((pairs.length%2) == 0)
+		{
+			for (int i = 0; i < pairs.length; i += 2)
+			{
+				int value = Util.strToIntDef(pairs[i], -1);
+				if (value == -1) continue;
+				interests.put(new Integer(value), pairs[i+1]);
+			}
+		}
+	}
 }

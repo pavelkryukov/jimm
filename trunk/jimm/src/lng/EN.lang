@@ -574,3 +574,10 @@
 "error_ext_22"				"Request ambiguous"
 "error_ext_23"				"Server queue full"
 "error_ext_24"				"Not while on AOL"
+
+// Interests
+"interests1" "100|Art|101|Cars|102|Celebrity Fans|103|Collections|104|Computers|105|Culture & Literature|106|Fitness|107|Games|108|Hobbies|109|ICQ - Providing Help|110|Internet|"
+"interests2" "111|Lifestyle|112|Movies/TV|113|Music|114|Outdoor Activities|115|Parenting|116|Pets/Animals|117|Religion|118|Science/Technology|119|Skills|"
+"interests3" "120|Sports|121|Web Design|122|Nature and Environment|123|News & Media|124|Government|125|Business & Economy|126|Mystics|127|Travel|128|Astronomy|129|Space|130|Clothing|"
+"interests4" "131|Parties|132|Women|133|Social science|134|60's|135|70's|136|80's|137|50's|138|Finance and corporate|139|Entertainment|140|Consumer electronics|141|Retail stores|"
+"interests5" "142|Health and beauty|143|Media|144|Household products|145|Mail order catalog|146|Business services|147|Audio and visual|148|Sporting and athletic|149|Publishing|150|Home automation"
