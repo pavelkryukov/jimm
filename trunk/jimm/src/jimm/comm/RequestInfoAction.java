@@ -174,27 +174,28 @@ public class RequestInfoAction extends Action
 
 				case 0x00F0: // user interests information
 				{
-					StringBuffer sb = new StringBuffer();
 					int counter = stream.readByte();
-					String item;
+					if (counter > 4) counter = 4;
+					
+					final int[] indexes = {
+						JimmUI.UI_INETRESTS1_T,
+						JimmUI.UI_INETRESTS1_V,
+						JimmUI.UI_INETRESTS2_T,
+						JimmUI.UI_INETRESTS2_V,
+						JimmUI.UI_INETRESTS3_T,
+						JimmUI.UI_INETRESTS3_V,
+						JimmUI.UI_INETRESTS4_T,
+						JimmUI.UI_INETRESTS4_V,
+					};
 					for (int i = 0; i < counter; i++)
 					{
 						int intValue = Util.getWord(stream, false);
-						item = Util.readAsciiz(stream);
-						if (item.trim().length() == 0)
-							continue;
-						if (sb.length() != 0)
-							sb.append(", ");
-						
-						String interestType = (String)Icq.interests.get(new Integer(intValue));
-						if (interestType != null)
-						{
-							sb.append(interestType);
-							sb.append(": ");
-						}
-						sb.append(item);
+						String item = Util.readAsciiz(stream);
+						if (item.trim().length() == 0) continue;
+						strData[indexes[2*i]] = Integer.toString(intValue);
+						strData[indexes[2*i+1]] = item; 
 					}
-					strData[JimmUI.UI_INETRESTS] = sb.toString();
+
 					packetCounter++;
 					consumed = true;
 					break;
