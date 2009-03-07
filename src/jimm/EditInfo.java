@@ -23,6 +23,8 @@
 package jimm;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Hashtable;
+
 import javax.microedition.lcdui.*;
 
 import jimm.comm.Icq;
@@ -70,6 +72,8 @@ public class EditInfo extends Form implements CommandListener
 			Command.OK, 1);
 
 	private static String[] userInfo;
+	
+	private Hashtable indexByName = new Hashtable(); 
 
 	public EditInfo()
 	{

@@ -2011,13 +2011,6 @@ public class Icq implements Runnable
 		String[] pairs = Util.explode(str, '|');
 		
 		if ((pairs.length%2) == 0)
-		{
-			for (int i = 0; i < pairs.length; i += 2)
-			{
-				int value = Util.strToIntDef(pairs[i], -1);
-				if (value == -1) continue;
-				interests.put(new Integer(value), pairs[i+1]);
-			}
-		}
+			for (int i = 0; i < pairs.length; i += 2) interests.put(pairs[i], pairs[i+1]);
 	}
 }

@@ -982,56 +982,63 @@ public class JimmUI implements CommandListener
 	///////////////////////////////////////////////////////////////////////////
 
 	// Information about the user
-	final public static int UI_UIN = 0;
-	final public static int UI_NICK = 1;
-	final public static int UI_NAME = 2;
-	final public static int UI_EMAIL = 3;
-	final public static int UI_CITY = 4;
-	final public static int UI_STATE = 5;
-	final public static int UI_PHONE = 6;
-	final public static int UI_FAX = 7;
-	final public static int UI_ADDR = 8;
-	final public static int UI_CPHONE = 9;
-	final public static int UI_AGE = 10;
-	final public static int UI_GENDER = 11;
-	final public static int UI_HOME_PAGE = 12;
-	final public static int UI_BDAY = 13;
-	final public static int UI_W_CITY = 14;
-	final public static int UI_W_STATE = 15;
-	final public static int UI_W_PHONE = 16;
-	final public static int UI_W_FAX = 17;
-	final public static int UI_W_ADDR = 18;
-	final public static int UI_W_NAME = 19;
-	final public static int UI_W_DEP = 20;
-	final public static int UI_W_POS = 21;
-	final public static int UI_ABOUT = 22;
-	final public static int UI_INETRESTS = 23;
-	final public static int UI_AUTH = 24;
-	final public static int UI_STATUS = 25;
-	final public static int UI_ICQ_CLIENT = 26;
-	final public static int UI_SIGNON = 27;
-	final public static int UI_ONLINETIME = 28;
-	final public static int UI_IDLE_TIME = 29;
-	final public static int UI_REG_DATE = 30;
-	final public static int UI_ICQ_VERS = 31;
-	final public static int UI_INT_IP = 32;
-	final public static int UI_EXT_IP = 33;
-	final public static int UI_PORT = 34;
-	final public static int UI_UIN_LIST = 35;
-	final public static int UI_FIRST_NAME = 36;
-	final public static int UI_LAST_NAME = 37;
-	final public static int UI_ONLINE_STATUS = 38;
-	final public static int UI_XSTATUS = 39;
-	final public static int UI_CAPS = 40;
+	final public static int UI_UIN           = 0;
+	final public static int UI_NICK          = 1;
+	final public static int UI_NAME          = 2;
+	final public static int UI_EMAIL         = 3;
+	final public static int UI_CITY          = 4;
+	final public static int UI_STATE         = 5;
+	final public static int UI_PHONE         = 6;
+	final public static int UI_FAX           = 7;
+	final public static int UI_ADDR          = 8;
+	final public static int UI_CPHONE        = 9;
+	final public static int UI_AGE           = 10;
+	final public static int UI_GENDER        = 11;
+	final public static int UI_HOME_PAGE     = 12;
+	final public static int UI_BDAY          = 13;
+	final public static int UI_W_CITY        = 14;
+	final public static int UI_W_STATE       = 15;
+	final public static int UI_W_PHONE       = 16;
+	final public static int UI_W_FAX         = 17;
+	final public static int UI_W_ADDR        = 18;
+	final public static int UI_W_NAME        = 19;
+	final public static int UI_W_DEP         = 20;
+	final public static int UI_W_POS         = 21;
+	final public static int UI_ABOUT         = 22;
+	final public static int UI_INETRESTS1_T  = 23;
+	final public static int UI_INETRESTS1_V  = 24;
+	final public static int UI_INETRESTS2_T  = 25;
+	final public static int UI_INETRESTS2_V  = 26;
+	final public static int UI_INETRESTS3_T  = 27;
+	final public static int UI_INETRESTS3_V  = 28;
+	final public static int UI_INETRESTS4_T  = 29;
+	final public static int UI_INETRESTS4_V  = 30;
+	final public static int UI_AUTH          = 31;
+	final public static int UI_STATUS        = 32;
+	final public static int UI_ICQ_CLIENT    = 33;
+	final public static int UI_SIGNON        = 34;
+	final public static int UI_ONLINETIME    = 35;
+	final public static int UI_IDLE_TIME     = 36;
+	final public static int UI_REG_DATE      = 37;
+	final public static int UI_ICQ_VERS      = 38;
+	final public static int UI_INT_IP        = 39;
+	final public static int UI_EXT_IP        = 40;
+	final public static int UI_PORT          = 41;
+	final public static int UI_UIN_LIST      = 42;
+	final public static int UI_FIRST_NAME    = 43;
+	final public static int UI_LAST_NAME     = 44;
+	final public static int UI_ONLINE_STATUS = 45;
+	final public static int UI_XSTATUS       = 46;
+	final public static int UI_CAPS          = 47;
 
 	//////
-	final public static int UI_LAST_ID = 41;
+	final public static int UI_LAST_ID = 48;
 
 	static private int uiBigTextIndex;
 
 	static private String uiSectName = null;
-
-	static private void addToTextList(String str, String langStr, TextList list)
+	
+	static private void addToTextList(String str, String langStr, TextList list, boolean translate)
 	{
 		if (uiSectName != null)
 		{
@@ -1040,45 +1047,52 @@ public class JimmUI implements CommandListener
 			uiSectName = null;
 		}
 
-		list.addBigText(ResourceBundle.getString(langStr) + ": ",
-				list.getTextColor(), Font.STYLE_PLAIN, uiBigTextIndex)
-				.addBigText(str,
-						Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1),
-						Font.STYLE_PLAIN, uiBigTextIndex)
-				.doCRLF(uiBigTextIndex);
+		list.addBigText(
+			(translate ? ResourceBundle.getString(langStr) : langStr) + ": ",
+			list.getTextColor(), Font.STYLE_PLAIN, uiBigTextIndex)
+		.addBigText(str,
+				Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1),
+				Font.STYLE_PLAIN, uiBigTextIndex)
+		.doCRLF(uiBigTextIndex);
 		uiBigTextIndex++;
 	}
 
 	static private void addToTextList(int index, String[] data, String langStr,
-			TextList list)
+			TextList list, boolean translate)
 	{
 		String str = data[index];
-		if (str == null)
-			return;
-		if (str.length() == 0)
-			return;
-
-		addToTextList(str, langStr, list);
+		if (str == null) return;
+		if (str.length() == 0) return;
+		addToTextList(str, langStr, list, translate);
+	}
+	
+	static private void fillInterests(int type, int value, String[] data, TextList list)
+	{
+		String strType = data[type];
+		String strValue = data[value];
+		if (strType == null || strValue == null) return;
+		String interestName = (String)Icq.interests.get(strType);
+		if (interestName == null) return;
+		addToTextList(strValue, interestName, list, false);
 	}
 
 	static public void fillUserInfo(String[] data, TextList list)
 	{
 		uiSectName = "main_info";
-		addToTextList(UI_UIN_LIST, data, "uin", list);
-		addToTextList(UI_NICK, data, "nick", list);
-		addToTextList(UI_NAME, data, "name", list);
-		addToTextList(UI_GENDER, data, "gender", list);
-		addToTextList(UI_AGE, data, "age", list);
-		addToTextList(UI_EMAIL, data, "email", list);
+		addToTextList(UI_UIN_LIST, data, "uin", list, true);
+		addToTextList(UI_NICK, data, "nick", list, true);
+		addToTextList(UI_NAME, data, "name", list, true);
+		addToTextList(UI_GENDER, data, "gender", list, true);
+		addToTextList(UI_AGE, data, "age", list, true);
+		addToTextList(UI_EMAIL, data, "email", list, true);
 		if (data[UI_AUTH] != null)
 			addToTextList(data[UI_AUTH].equals("1") ? ResourceBundle
 					.getString("yes") : ResourceBundle.getString("no"), "auth",
-					list);
-		addToTextList(UI_BDAY, data, "birth_day", list);
-		addToTextList(UI_CPHONE, data, "cell_phone", list);
-		addToTextList(UI_HOME_PAGE, data, "home_page", list);
-		addToTextList(UI_ABOUT, data, "notes", list);
-		addToTextList(UI_INETRESTS, data, "interests", list);
+					list, true);
+		addToTextList(UI_BDAY, data, "birth_day", list, true);
+		addToTextList(UI_CPHONE, data, "cell_phone", list, true);
+		addToTextList(UI_HOME_PAGE, data, "home_page", list, true);
+		addToTextList(UI_ABOUT, data, "notes", list, true);
 
 		if (data[UI_STATUS] != null)
 		{
@@ -1096,39 +1110,45 @@ public class JimmUI implements CommandListener
 							null, uiBigTextIndex).doCRLF(uiBigTextIndex);
 			uiBigTextIndex++;
 		}
+		
+		uiSectName = "interests";
+		fillInterests(UI_INETRESTS1_T, UI_INETRESTS1_V, data, list);
+		fillInterests(UI_INETRESTS2_T, UI_INETRESTS2_V, data, list);
+		fillInterests(UI_INETRESTS3_T, UI_INETRESTS3_V, data, list);
+		fillInterests(UI_INETRESTS4_T, UI_INETRESTS4_V, data, list);
 
 		uiSectName = "home_info";
-		addToTextList(UI_CITY, data, "city", list);
-		addToTextList(UI_STATE, data, "state", list);
-		addToTextList(UI_ADDR, data, "addr", list);
-		addToTextList(UI_PHONE, data, "phone", list);
-		addToTextList(UI_FAX, data, "fax", list);
+		addToTextList(UI_CITY, data, "city", list, true);
+		addToTextList(UI_STATE, data, "state", list, true);
+		addToTextList(UI_ADDR, data, "addr", list, true);
+		addToTextList(UI_PHONE, data, "phone", list, true);
+		addToTextList(UI_FAX, data, "fax", list, true);
 
 		uiSectName = "work_info";
-		addToTextList(UI_W_NAME, data, "title", list);
-		addToTextList(UI_W_DEP, data, "depart", list);
-		addToTextList(UI_W_POS, data, "position", list);
-		addToTextList(UI_W_CITY, data, "city", list);
-		addToTextList(UI_W_STATE, data, "state", list);
-		addToTextList(UI_W_ADDR, data, "addr", list);
-		addToTextList(UI_W_PHONE, data, "phone", list);
-		addToTextList(UI_W_FAX, data, "fax", list);
+		addToTextList(UI_W_NAME, data, "title", list, true);
+		addToTextList(UI_W_DEP, data, "depart", list, true);
+		addToTextList(UI_W_POS, data, "position", list, true);
+		addToTextList(UI_W_CITY, data, "city", list, true);
+		addToTextList(UI_W_STATE, data, "state", list, true);
+		addToTextList(UI_W_ADDR, data, "addr", list, true);
+		addToTextList(UI_W_PHONE, data, "phone", list, true);
+		addToTextList(UI_W_FAX, data, "fax", list, true);
 
 		uiSectName = "icq_client";
-		addToTextList(UI_ICQ_CLIENT, data, "icq_client", list);
-		addToTextList(UI_CAPS, data, "cli_caps", list);
+		addToTextList(UI_ICQ_CLIENT, data, "icq_client", list, true);
+		addToTextList(UI_CAPS, data, "cli_caps", list, true);
 		
 		uiSectName = "dc_info";
-		addToTextList(UI_ONLINE_STATUS, data, "status", list);
-		addToTextList(UI_XSTATUS, data, "xstatus", list);
-		addToTextList(UI_REG_DATE, data, "li_reg_date", list);
-		addToTextList(UI_SIGNON, data, "li_signon_time", list);
-		addToTextList(UI_ONLINETIME, data, "li_online_time", list);
-		addToTextList(UI_IDLE_TIME, data, "li_idle_time", list);
-		addToTextList(UI_ICQ_VERS, data, "ICQ version", list);
-		addToTextList(UI_INT_IP, data, "Int IP", list);
-		addToTextList(UI_EXT_IP, data, "Ext IP", list);
-		addToTextList(UI_PORT, data, "Port", list);
+		addToTextList(UI_ONLINE_STATUS, data, "status", list, true);
+		addToTextList(UI_XSTATUS, data, "xstatus", list, true);
+		addToTextList(UI_REG_DATE, data, "li_reg_date", list, true);
+		addToTextList(UI_SIGNON, data, "li_signon_time", list, true);
+		addToTextList(UI_ONLINETIME, data, "li_online_time", list, true);
+		addToTextList(UI_IDLE_TIME, data, "li_idle_time", list, true);
+		addToTextList(UI_ICQ_VERS, data, "ICQ version", list, true);
+		addToTextList(UI_INT_IP, data, "Int IP", list, true);
+		addToTextList(UI_EXT_IP, data, "Ext IP", list, true);
+		addToTextList(UI_PORT, data, "Port", list, true);
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -1637,6 +1657,7 @@ public class JimmUI implements CommandListener
 		String textToAdd = translate ? ResourceBundle.getString(text) : text;
 		if (textColor == -1) textColor = list.getTextColor();
 		else if (textColor == -2) textColor = Options.getSchemeColor(Options.CLRSCHHEME_OUTGOING, -1);
+		if (fontStyle == -1) fontStyle = Font.STYLE_PLAIN;
 		list.addBigText((image != null) ? (" "+textToAdd) : textToAdd, textColor, fontStyle, value);
 		list.doCRLF(value);
 	}
