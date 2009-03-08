@@ -22,65 +22,98 @@
  *******************************************************************************/
 package jimm;
 
-import java.io.ByteArrayOutputStream;
+import java.util.Enumeration;
 import java.util.Hashtable;
-
+import java.util.Vector;
 import javax.microedition.lcdui.*;
 
 import jimm.comm.Icq;
+import jimm.comm.RequestInfoAction;
 import jimm.comm.SaveInfoAction;
-import jimm.comm.ToIcqSrvPacket;
 import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 public class EditInfo extends Form implements CommandListener
 {
-	private TextField _NickNameItem = new TextField(ResourceBundle
-			.getString("nick"), null, 20, TextField.ANY);
+	private String[] userInfo;
+	private TextField _NickNameItem;
+	private TextField _FirstNameItem;
+	private TextField _LastNameItem;
+	private TextField _EmailItem;
+	private TextField _BdayItem;
+	private TextField _CityItem;
+	private TextField _cPhoneItem;
+	private TextField _hPhoneItem;
+	private TextField _wPhoneItem;
+	private ChoiceGroup _SexItem;
+	private ChoiceGroup[] chInterests = new ChoiceGroup[RequestInfoAction.INTERESTS_COUNT];
+	private TextField[] tfInteresrs = new TextField[RequestInfoAction.INTERESTS_COUNT];
+	private Hashtable indexByName = new Hashtable();
+	private Hashtable ctrlIndexByIndex = new Hashtable();
 
-	private TextField _FirstNameItem = new TextField(ResourceBundle
-			.getString("firstname"), null, 20, TextField.ANY);
-
-	private TextField _LastNameItem = new TextField(ResourceBundle
-			.getString("lastname"), null, 20, TextField.ANY);
-
-	private TextField _EmailItem = new TextField(ResourceBundle
-			.getString("email"), null, 50, TextField.EMAILADDR);
-
-	private TextField _BdayItem = new TextField(ResourceBundle
-			.getString("birth_day"), null, 15, TextField.ANY);
-
-	private TextField _CityItem = new TextField(ResourceBundle
-			.getString("city"), null, 50, TextField.ANY);
-
-	private ChoiceGroup _SexItem = new ChoiceGroup(ResourceBundle
-			.getString("gender"), Choice.EXCLUSIVE);
-
-	private TextField _cPhoneItem = new TextField(ResourceBundle
-			.getString("cell_phone"), null, 20, TextField.PHONENUMBER);
-
-	private TextField _hPhoneItem = new TextField(ResourceBundle
-			.getString("home_phone"), null, 20, TextField.PHONENUMBER);
-
-	private TextField _wPhoneItem = new TextField(ResourceBundle
-			.getString("work_phone"), null, 20, TextField.PHONENUMBER);
-
-	private Command _CmdCancel = new Command(
-			ResourceBundle.getString("cancel"), Command.CANCEL, 0);
-
-	private Command _CmdSave = new Command(ResourceBundle.getString("save"),
-			Command.OK, 1);
-
-	private static String[] userInfo;
-	
-	private Hashtable indexByName = new Hashtable(); 
-
-	public EditInfo()
+	public EditInfo(String[] userInfo)
 	{
 		super(ResourceBundle.getString("editform"));
+		
+		_NickNameItem  = new TextField(ResourceBundle.getString("nick"),       userInfo[JimmUI.UI_NICK],       20, TextField.ANY);
+		_FirstNameItem = new TextField(ResourceBundle.getString("firstname"),  userInfo[JimmUI.UI_FIRST_NAME], 20, TextField.ANY);
+		_LastNameItem  = new TextField(ResourceBundle.getString("lastname"),   userInfo[JimmUI.UI_LAST_NAME],  20, TextField.ANY);
+		_EmailItem     = new TextField(ResourceBundle.getString("email"),      userInfo[JimmUI.UI_EMAIL],      50, TextField.EMAILADDR);
+		_BdayItem      = new TextField(ResourceBundle.getString("birth_day"),  userInfo[JimmUI.UI_BDAY],       15, TextField.ANY);
+		_CityItem      = new TextField(ResourceBundle.getString("city"),       userInfo[JimmUI.UI_CITY],       50, TextField.ANY);
+		_cPhoneItem    = new TextField(ResourceBundle.getString("cell_phone"), userInfo[JimmUI.UI_CPHONE],     20, TextField.ANY);
+		_hPhoneItem    = new TextField(ResourceBundle.getString("home_phone"), userInfo[JimmUI.UI_PHONE],      20, TextField.ANY);
+		_wPhoneItem    = new TextField(ResourceBundle.getString("work_phone"), userInfo[JimmUI.UI_W_PHONE],    20, TextField.ANY);
+		
+		_SexItem = new ChoiceGroup(ResourceBundle.getString("gender"), Choice.EXCLUSIVE);
 		_SexItem.append(ResourceBundle.getString("none"), null);
 		_SexItem.append(ResourceBundle.getString("female"), null);
 		_SexItem.append(ResourceBundle.getString("male"), null);
+		_SexItem.setSelectedIndex(Util.stringToGender(userInfo[JimmUI.UI_GENDER]), true);
+		
+		// Interests
+		final String empryStr = new String();
+		Vector vctInter = new Vector(); 
+		Enumeration interKeys = Icq.interests.keys();
+		
+		while (interKeys.hasMoreElements())
+		{
+			String interKey = (String)interKeys.nextElement();
+			String interValue = (String)Icq.interests.get(interKey);
+			vctInter.addElement(interValue);
+			indexByName.put(interValue, interKey);
+		}
+		
+		Util.sortString(vctInter);
+		vctInter.insertElementAt(empryStr, 0);
+		for (int i = vctInter.size()-1; i >= 0; i--)
+		{
+			String str = (String)vctInter.elementAt(i);
+			String interIndex = (String)indexByName.get(str);
+			if (interIndex != null)
+			ctrlIndexByIndex.put(interIndex, Integer.toString(i));
+		}
+		
+		String[] interestsArray = new String[vctInter.size()];
+		vctInter.copyInto(interestsArray);
+		
+		for (int i = 0; i < RequestInfoAction.INTERESTS_COUNT; i++)
+		{
+			String cap = ResourceBundle.getString("interests")+" "+(i+1);
+			
+			chInterests[i] = new ChoiceGroup(cap, Choice.POPUP, interestsArray, null);
+			String interKey = userInfo[RequestInfoAction.indexes[2*i]];
+			if (interKey != null)
+			{
+				String InterKeyPos = (String)ctrlIndexByIndex.get(interKey);
+				int pos = Util.strToIntDef(InterKeyPos, -1);
+				if (pos != -1) chInterests[i].setSelectedIndex(pos, true);
+			}
+			String interValue = userInfo[RequestInfoAction.indexes[2*i+1]];
+			tfInteresrs[i] = new TextField(cap, (interValue == null) ? empryStr : interValue, 256, TextField.ANY); 
+		}
+		
+		// Add controls into form
 		append(_NickNameItem);
 		append(_FirstNameItem);
 		append(_LastNameItem);
@@ -91,59 +124,57 @@ public class EditInfo extends Form implements CommandListener
 		append(_cPhoneItem);
 		append(_hPhoneItem);
 		append(_wPhoneItem);
-		addCommand(_CmdSave);
-		addCommand(_CmdCancel);
+		
+		for (int i = 0; i < RequestInfoAction.INTERESTS_COUNT; i++)
+		{
+			append(chInterests[i]);
+			append(tfInteresrs[i]);
+		}
+		
+		addCommand(JimmUI.cmdSave);
+		addCommand(JimmUI.cmdCancel);
 		setCommandListener(this);
 	}
 
 	public static void showEditForm(String[] userInfo)
 	{
-		EditInfo.userInfo = userInfo;
-		EditInfo editInfoForm = new EditInfo();
-		editInfoForm._SexItem.setSelectedIndex(Util
-				.stringToGender(userInfo[JimmUI.UI_GENDER]), true);
-		editInfoForm._NickNameItem.setString(userInfo[JimmUI.UI_NICK]);
-		editInfoForm._EmailItem.setString(userInfo[JimmUI.UI_EMAIL]);
-		editInfoForm._BdayItem.setString(userInfo[JimmUI.UI_BDAY]);
-		editInfoForm._FirstNameItem.setString(userInfo[JimmUI.UI_FIRST_NAME]);
-		editInfoForm._LastNameItem.setString(userInfo[JimmUI.UI_LAST_NAME]);
-		editInfoForm._CityItem.setString(userInfo[JimmUI.UI_CITY]);
-		editInfoForm._cPhoneItem.setString(userInfo[JimmUI.UI_CPHONE]);
-		editInfoForm._hPhoneItem.setString(userInfo[JimmUI.UI_PHONE]);
-		editInfoForm._wPhoneItem.setString(userInfo[JimmUI.UI_W_PHONE]);
-
+		EditInfo editInfoForm = new EditInfo(userInfo);
+		editInfoForm.userInfo = userInfo;
 		Jimm.display.setCurrent(editInfoForm);
 		Jimm.setBkltOn(true);
 	}
 
 	public void commandAction(Command c, Displayable d)
 	{
-		if (c == _CmdCancel)
+		if (c == JimmUI.cmdCancel)
 		{
 			JimmUI.backToLastScreen();
 			Jimm.setBkltOn(true);
 		}
 
-		if (c == _CmdSave)
+		else if (c == JimmUI.cmdSave)
 		{
-			userInfo[JimmUI.UI_NICK] = _NickNameItem.getString();
-			userInfo[JimmUI.UI_EMAIL] = _EmailItem.getString();
-			userInfo[JimmUI.UI_BDAY] = _BdayItem.getString();
+			userInfo[JimmUI.UI_NICK]       = _NickNameItem.getString();
+			userInfo[JimmUI.UI_EMAIL]      = _EmailItem.getString();
+			userInfo[JimmUI.UI_BDAY]       = _BdayItem.getString();
 			userInfo[JimmUI.UI_FIRST_NAME] = _FirstNameItem.getString();
-			userInfo[JimmUI.UI_LAST_NAME] = _LastNameItem.getString();
-			userInfo[JimmUI.UI_CITY] = _CityItem.getString();
-			userInfo[JimmUI.UI_CPHONE] = _cPhoneItem.getString();
-			userInfo[JimmUI.UI_PHONE] = _hPhoneItem.getString();
-			userInfo[JimmUI.UI_W_PHONE] = _wPhoneItem.getString();
-			userInfo[JimmUI.UI_GENDER] = Util.genderToString(_SexItem
-					.getSelectedIndex());
-
-			//
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			Util.writeWord(stream, ToIcqSrvPacket.CLI_SET_FULLINFO, false);
-
-			Util.writeAsciizTLV(SaveInfoAction.FIRSTNAME_TLV_ID, stream,
-					userInfo[JimmUI.UI_FIRST_NAME], false);
+			userInfo[JimmUI.UI_LAST_NAME]  = _LastNameItem.getString();
+			userInfo[JimmUI.UI_CITY]       = _CityItem.getString();
+			userInfo[JimmUI.UI_CPHONE]     = _cPhoneItem.getString();
+			userInfo[JimmUI.UI_PHONE]      = _hPhoneItem.getString();
+			userInfo[JimmUI.UI_W_PHONE]    = _wPhoneItem.getString();
+			userInfo[JimmUI.UI_GENDER]     = Util.genderToString(_SexItem.getSelectedIndex());
+			
+			for (int i = 0; i < RequestInfoAction.INTERESTS_COUNT; i++)
+			{
+				ChoiceGroup ch = chInterests[i];
+				int selIndex = ch.getSelectedIndex();
+				String InterType = (selIndex == -1) ? null : ch.getString(selIndex);
+				userInfo[RequestInfoAction.indexes[2*i]] = (InterType != null) ? (String)indexByName.get(InterType) : null;
+				String interValue = tfInteresrs[i].getString();
+				if (interValue != null && interValue.length() == 0) interValue = null;
+				userInfo[RequestInfoAction.indexes[2*i+1]] = interValue;
+			}
 
 			SaveInfoAction action = new SaveInfoAction(userInfo);
 			try
@@ -152,8 +183,7 @@ public class EditInfo extends Form implements CommandListener
 			} catch (JimmException e)
 			{
 				JimmException.handleException(e);
-				if (e.isCritical())
-					return;
+				if (e.isCritical()) return;
 			}
 
 			SplashCanvas.addTimerTask("saveinfo", action, false);

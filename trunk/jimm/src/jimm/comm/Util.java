@@ -1767,15 +1767,9 @@ public class Util
 
 	static public int strToIntDef(String str, int defValue)
 	{
-		if (str == null)
-			return defValue;
+		if (str == null) return defValue;
 		int result = defValue;
-		try
-		{
-			result = Integer.parseInt(str);
-		} catch (Exception e)
-		{
-		}
+		try { result = Integer.parseInt(str); } catch (Exception e) {}
 		return result;
 	}
 
@@ -1869,6 +1863,40 @@ public class Util
 			e.printStackTrace();
 		}
 	}
+	
+	
+	private static int partition(Vector m, int a, int b)
+	{
+		int i = a;
+		for (int j = a; j <= b; j++)
+		{
+			String mj = (String)m.elementAt(j);
+			String mb = (String)m.elementAt(b);
+			String mi = (String)m.elementAt(i);
+			if (mj.compareTo(mb) <= 0)
+			{
+				String t = mi;
+				m.setElementAt(mj, i);
+				m.setElementAt(t, j);
+				i++;
+			}
+		}
+		return i - 1;
+	}
+
+	private static void quicksort(Vector m, int a, int b)
+	{
+		if (a >= b) return;
+		int c = partition(m, a, b);
+		quicksort(m, a, c - 1);
+		quicksort(m, c + 1, b);
+	}
+	
+	public static void sortString(Vector strings)
+	{
+		quicksort(strings, 0, strings.size()-1);
+	}
+	
 	
 //#sijapp cond.if target!="DEFAULT"#	
 	

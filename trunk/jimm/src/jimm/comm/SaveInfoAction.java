@@ -40,29 +40,17 @@ public class SaveInfoAction extends Action
 	private static final int TIMEOUT = 5 * 1000; // milliseconds
 
 	//TLVs
-	private static final int NICK_TLV_ID = 0x0154;
-
-	public static final int FIRSTNAME_TLV_ID = 0x0140;
-
-	private static final int LASTNAME_TLV_ID = 0x014A;
-
-	private static final int EMAIL_TLV_ID = 0x015E;
-
-	private static final int BDAY_TLV_ID = 0x023A;
-
-	private static final int CITY_TLV_ID = 0x0190;
-
-	private static final int GENDER_TLV_ID = 0x017C;
-
- 	// User cell phone number
-	private static final int cPHONE_TLV_ID = 0x028A;
-
-	// User home phone number
-	private static final int hPHONE_TLV_ID = 0x0276;
-
- 	// User work phone number
-	private static final int wPHONE_TLV_ID = 0x02C6;
-	/****************************************************************************/
+	private static final int NICK_TLV_ID      = 0x0154;
+	private static final int FIRSTNAME_TLV_ID = 0x0140;
+	private static final int LASTNAME_TLV_ID  = 0x014A;
+	private static final int EMAIL_TLV_ID     = 0x015E;
+	private static final int BDAY_TLV_ID      = 0x023A;
+	private static final int CITY_TLV_ID      = 0x0190;
+	private static final int GENDER_TLV_ID    = 0x017C;
+	private static final int C_PHONE_TLV_ID   = 0x028A; // User cell phone number
+	private static final int H_PHONE_TLV_ID   = 0x0276; // User home phone number
+	private static final int W_PHONE_TLV_ID   = 0x02C6; // User work phone number
+	private static final int INTERESTS_TLV_ID = 0x01EA; 
 
 	private String[] strData = new String[JimmUI.UI_LAST_ID];
 
@@ -89,28 +77,21 @@ public class SaveInfoAction extends Action
 		Util.writeWord(stream, ToIcqSrvPacket.CLI_SET_FULLINFO, false);
 
 		/* Nick */
-		Util
-				.writeAsciizTLV(NICK_TLV_ID, stream, strData[JimmUI.UI_NICK],
-						false);
+		Util.writeAsciizTLV(NICK_TLV_ID, stream, strData[JimmUI.UI_NICK], false);
 
 		/* First name */
-		Util.writeAsciizTLV(FIRSTNAME_TLV_ID, stream,
-				strData[JimmUI.UI_FIRST_NAME], false);
+		Util.writeAsciizTLV(FIRSTNAME_TLV_ID, stream, strData[JimmUI.UI_FIRST_NAME], false);
 
 		/* Last name */
-		Util.writeAsciizTLV(LASTNAME_TLV_ID, stream,
-				strData[JimmUI.UI_LAST_NAME], false);
+		Util.writeAsciizTLV(LASTNAME_TLV_ID, stream, strData[JimmUI.UI_LAST_NAME], false);
 
 		/* City */
-		Util
-				.writeAsciizTLV(CITY_TLV_ID, stream, strData[JimmUI.UI_CITY],
-						false);
+		Util.writeAsciizTLV(CITY_TLV_ID, stream, strData[JimmUI.UI_CITY], false);
 
 		/* Email */
 		String email = strData[JimmUI.UI_EMAIL];
 		if ((email != null) && (email.length() != 0))
-			Util.writeAsciizTLV(EMAIL_TLV_ID, stream, strData[JimmUI.UI_EMAIL],
-					false);
+			Util.writeAsciizTLV(EMAIL_TLV_ID, stream, strData[JimmUI.UI_EMAIL], false);
 
 		/* Birthday */
 		String birthday = strData[JimmUI.UI_BDAY];
@@ -133,21 +114,32 @@ public class SaveInfoAction extends Action
 		Util.writeByte(stream, Util.stringToGender(strData[JimmUI.UI_GENDER]));
 
 		/* Cell phone */
-		Util.writeAsciizTLV(cPHONE_TLV_ID, stream,
-				strData[JimmUI.UI_CPHONE], false);
+		Util.writeAsciizTLV(C_PHONE_TLV_ID, stream, strData[JimmUI.UI_CPHONE], false);
 
 		/* Home phone */
-		Util.writeAsciizTLV(hPHONE_TLV_ID, stream,
-				strData[JimmUI.UI_PHONE], false);
+		Util.writeAsciizTLV(H_PHONE_TLV_ID, stream, strData[JimmUI.UI_PHONE], false);
 
 		/* Work phone */
-		Util.writeAsciizTLV(wPHONE_TLV_ID, stream,
-				strData[JimmUI.UI_W_PHONE], false);
+		Util.writeAsciizTLV(W_PHONE_TLV_ID, stream, strData[JimmUI.UI_W_PHONE], false);
+		
+		/* Interests */
+		for (int i = 0; i < RequestInfoAction.INTERESTS_COUNT; i++)
+		{
+			String valueStr = strData[RequestInfoAction.indexes[2*i]];
+			String stringData = strData[RequestInfoAction.indexes[2*i+1]];
+			int value = Util.strToIntDef(valueStr, 0);
+			ByteArrayOutputStream istream = new ByteArrayOutputStream();
+			byte[] data = (stringData == null) ? new byte[0] : Util.stringToByteArray(stringData);
+			Util.writeWord(istream, value, false);
+			Util.writeWord(istream, data.length+1, false);
+			Util.writeByteArray(istream, data);
+			istream.write(0);
+			Util.writeTLV(stream, INTERESTS_TLV_ID, istream.toByteArray());
+		}
 
 		/* Send packet */
-		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options
-				.getString(Options.OPTION_UIN), ToIcqSrvPacket.CLI_META_SUBCMD,
-				new byte[0], stream.toByteArray());
+		ToIcqSrvPacket packet = new ToIcqSrvPacket(0, Options.getString(Options.OPTION_UIN), 
+				ToIcqSrvPacket.CLI_META_SUBCMD, new byte[0], stream.toByteArray());
 		Icq.sendPacket(packet);
 
 		/* Save date */
