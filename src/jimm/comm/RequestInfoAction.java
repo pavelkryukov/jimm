@@ -35,6 +35,13 @@ import jimm.ContactList;
 
 public class RequestInfoAction extends Action
 {
+	public static final int INTERESTS_COUNT = 4;
+	public static final int[] indexes = {
+		JimmUI.UI_INETRESTS1_T, JimmUI.UI_INETRESTS1_V,
+		JimmUI.UI_INETRESTS2_T, JimmUI.UI_INETRESTS2_V,
+		JimmUI.UI_INETRESTS3_T, JimmUI.UI_INETRESTS3_V,
+		JimmUI.UI_INETRESTS4_T, JimmUI.UI_INETRESTS4_V,
+	};
 
 	// Receive timeout
 	private static final int TIMEOUT = 10 * 1000; // milliseconds
@@ -177,16 +184,6 @@ public class RequestInfoAction extends Action
 					int counter = stream.readByte();
 					if (counter > 4) counter = 4;
 					
-					final int[] indexes = {
-						JimmUI.UI_INETRESTS1_T,
-						JimmUI.UI_INETRESTS1_V,
-						JimmUI.UI_INETRESTS2_T,
-						JimmUI.UI_INETRESTS2_V,
-						JimmUI.UI_INETRESTS3_T,
-						JimmUI.UI_INETRESTS3_V,
-						JimmUI.UI_INETRESTS4_T,
-						JimmUI.UI_INETRESTS4_V,
-					};
 					for (int i = 0; i < counter; i++)
 					{
 						int intValue = Util.getWord(stream, false);
