@@ -134,7 +134,7 @@ public class SaveInfoAction extends Action
 			Util.writeWord(istream, data.length+1, false);
 			Util.writeByteArray(istream, data);
 			istream.write(0);
-			Util.writeTLV(stream, INTERESTS_TLV_ID, istream.toByteArray());
+			Util.writeTLV(stream, INTERESTS_TLV_ID, istream.toByteArray(), false);
 		}
 
 		/* Send packet */

@@ -362,15 +362,15 @@ public class Util
 		writeAsciizTLV(type, stream, value, true);
 	}
 	
-	static public void writeTLV(ByteArrayOutputStream stream, int type, byte[] data)
+	static public void writeTLV(ByteArrayOutputStream stream, int type, byte[] data, boolean bigEndian)
 	{
-		writeWord(stream, type, true);
+		writeWord(stream, type, bigEndian);
 		if (data != null)
 		{
-			writeWord(stream, data.length, true);
+			writeWord(stream, data.length, bigEndian);
 			stream.write(data, 0, data.length);
 		}
-		else writeWord(stream, 0, true);
+		else writeWord(stream, 0, bigEndian);
 	}
 
 	// Extracts the word from the buffer (buf) at position off using big endian byte ordering

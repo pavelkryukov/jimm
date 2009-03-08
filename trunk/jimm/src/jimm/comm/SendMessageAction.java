@@ -190,13 +190,13 @@ public class SendMessageAction extends Action
 			// MESSAGE.ENCODING
 			Util.writeDWord(tlvBuffer, utf8 ? 0x00020000 : 0x00000000, true);
 			Util.writeByteArray(tlvBuffer, textRaw);
-			Util.writeTLV(buffer, 0x0002, tlvBuffer.toByteArray());
+			Util.writeTLV(buffer, 0x0002, tlvBuffer.toByteArray(), true);
 			
 			// ---------- Store offline TLV ------------- 
-			Util.writeTLV(buffer, 0x0006, null);
+			Util.writeTLV(buffer, 0x0006, null, true);
 			
 			// ---------- req. serv delivery TLV ----------
-			if (Options.getBoolean(Options.OPTION_DELIV_MES_INFO)) Util.writeTLV(buffer, 0x0003, null);
+			if (Options.getBoolean(Options.OPTION_DELIV_MES_INFO)) Util.writeTLV(buffer, 0x0003, null, true);
 			
 			// ----------- Send packet --------------
 			SnacPacket snacPkt = new SnacPacket(SnacPacket.CLI_SENDMSG_FAMILY,
