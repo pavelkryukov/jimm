@@ -73,29 +73,26 @@ public class EditInfo extends Form implements CommandListener
 		
 		// Interests
 		final String empryStr = new String();
-		Vector vctInter = new Vector(); 
-		Enumeration interKeys = Icq.interests.keys();
+		String[] interestsArray = new String[Icq.interests.size()+1];
 		
+		Enumeration interKeys = Icq.interests.keys();
+		int index = 0;
+		interestsArray[index++] = empryStr; 
 		while (interKeys.hasMoreElements())
 		{
 			String interKey = (String)interKeys.nextElement();
 			String interValue = (String)Icq.interests.get(interKey);
-			vctInter.addElement(interValue);
+			interestsArray[index++] = interValue; 
 			indexByName.put(interValue, interKey);
 		}
 		
-		Util.sortString(vctInter);
-		vctInter.insertElementAt(empryStr, 0);
-		for (int i = vctInter.size()-1; i >= 0; i--)
-		{
-			String str = (String)vctInter.elementAt(i);
-			String interIndex = (String)indexByName.get(str);
-			if (interIndex != null)
-			ctrlIndexByIndex.put(interIndex, Integer.toString(i));
-		}
+		Util.quicksort(interestsArray, 1, interestsArray.length-1);
 		
-		String[] interestsArray = new String[vctInter.size()];
-		vctInter.copyInto(interestsArray);
+		for (int i = 0; i < interestsArray.length; i++)
+		{
+			String interIndex = (String)indexByName.get(interestsArray[i]);
+			if (interIndex != null) ctrlIndexByIndex.put(interIndex, Integer.toString(i));
+		}
 		
 		for (int i = 0; i < RequestInfoAction.INTERESTS_COUNT; i++)
 		{
