@@ -24,7 +24,6 @@ package jimm;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 import javax.microedition.lcdui.*;
 
 import jimm.comm.Icq;
@@ -98,7 +97,11 @@ public class EditInfo extends Form implements CommandListener
 		{
 			String cap = ResourceBundle.getString("interests")+" "+(i+1);
 			
+//#sijapp cond.if target != "DEFAULT"#
 			chInterests[i] = new ChoiceGroup(cap, Choice.POPUP, interestsArray, null);
+//#sijapp cond.else#			
+			chInterests[i] = new ChoiceGroup(cap, Choice.EXCLUSIVE, interestsArray, null);
+//#sijapp cond.end#
 			String interKey = userInfo[RequestInfoAction.indexes[2*i]];
 			if (interKey != null)
 			{

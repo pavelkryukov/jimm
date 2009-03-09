@@ -1070,7 +1070,8 @@ public class JimmUI implements CommandListener
 	{
 		String strType = data[type];
 		String strValue = data[value];
-		if (strType == null || strValue == null) return;
+		if (strType == null) return;
+		if (strValue == null) strValue = new String();
 		String interestName = (String)Icq.interests.get(strType);
 		if (interestName == null) return;
 		addToTextList(strValue, interestName, list, false);
