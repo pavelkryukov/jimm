@@ -76,7 +76,7 @@ public class EditInfo extends Form implements CommandListener
 		
 		Enumeration interKeys = Icq.interests.keys();
 		int index = 0;
-		interestsArray[index++] = empryStr; 
+		interestsArray[index++] = " "; 
 		while (interKeys.hasMoreElements())
 		{
 			String interKey = (String)interKeys.nextElement();
