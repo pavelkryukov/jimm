@@ -1864,39 +1864,27 @@ public class Util
 		}
 	}
 	
-	
-	private static int partition(Vector m, int a, int b)
+	public static void quicksort(String[] a, int lo, int hi)
 	{
-		int i = a;
-		for (int j = a; j <= b; j++)
-		{
-			String mj = (String)m.elementAt(j);
-			String mb = (String)m.elementAt(b);
-			String mi = (String)m.elementAt(i);
-			if (mj.compareTo(mb) <= 0)
-			{
-				String t = mi;
-				m.setElementAt(mj, i);
-				m.setElementAt(t, j);
-				i++;
-			}
-		}
-		return i - 1;
-	}
+	    int i=lo, j=hi;
+	    String x=a[(lo+hi)/2];
 
-	private static void quicksort(Vector m, int a, int b)
-	{
-		if (a >= b) return;
-		int c = partition(m, a, b);
-		quicksort(m, a, c - 1);
-		quicksort(m, c + 1, b);
+	    do
+	    {    
+	        while (a[i].compareTo(x) < 0) i++; 
+	        while (a[j].compareTo(x) > 0) j--;
+	        if (i<=j)
+	        {
+	            String h=a[i]; 
+	            a[i]=a[j]; 
+	            a[j]=h;
+	            i++; j--;
+	        }
+	    } while (i<=j);
+
+	    if (lo<j) quicksort(a, lo, j);
+	    if (i<hi) quicksort(a, i, hi);
 	}
-	
-	public static void sortString(Vector strings)
-	{
-		quicksort(strings, 0, strings.size()-1);
-	}
-	
 	
 //#sijapp cond.if target!="DEFAULT"#	
 	
