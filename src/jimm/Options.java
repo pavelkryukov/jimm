@@ -245,7 +245,10 @@ public class Options
 	    0xCCCCCC, 0x000000, 0x336699, 0xC0C0C0, 0xA5AECC, 0x336633, 0x000000, 0x666666, // Ergonomic
 	    0xBAB190, 0x000000, 0x930a0a, 0xCCCC99, 0xCC9966, 0x336633, 0xFFFFFF, 0x666666, // Bronze golem
 	    0xFFFFFF, 0x175A85, 0x336699, 0xCCEBFF, 0x175A85, 0x336633, 0xFFFFFF, 0x97b7c7, // Snowy frost
-	    0x292e31, 0xcaa452, 0xc8c8c8, 0x616560, 0x636771, 0x448844, 0xFFFFFF, 0x31333b, // WA Bento		
+	    0x292e31, 0xcaa452, 0xc8c8c8, 0x616560, 0x636771, 0x448844, 0xFFFFFF, 0x31333b, // WA Bento
+	    0x000000, 0xFF0000, 0xFFF314, 0xFF5500, 0x000000, 0x448844, 0xFFFFFF, 0xFF0000, // Quake	
+	    0x003300, 0xDA6600, 0xFF0000, 0xFF5500, 0x003300, 0x448844, 0xFFFFFF, 0xFF0000, // Green2	
+	    0xCCCCCC, 0x000000, 0x000000, 0x425173, 0xCCCCCC, 0x336600, 0xFFFFFF, 0x425173, // Silver	
 	};
 	
 
@@ -495,7 +498,7 @@ public class Options
 		setInt (Options.OPTION_MENU_ALPHA, 64);
 		//#sijapp cond.end#
 		
-		//#sijapp cond.if target="MIDP2"#
+		//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 		setInt (OPTION_IMG_SCALE, 100);
 		//#sijapp cond.end#
 
@@ -1098,7 +1101,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	//#sijapp cond.end#
 //#sijapp cond.end#
 	
-//#sijapp cond.if target="MIDP2"#	
+//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 	private ChoiceGroup imagesScale;
 //#sijapp cond.end#	
 
@@ -1358,7 +1361,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			"ergonomic_scheme" + "|" +
 			"golem_scheme" + "|" +
 			"snowy_scheme" + "|" +
-			"bento_scheme",
+			"bento_scheme"  + "|" +
+			"quake_scheme"  + "|" +
+			"green2_scheme"  + "|" +
+			"silver_scheme" ,
 			'|'
 		);
 		
@@ -1933,7 +1939,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
 			setChecked(chrgChat, "deliv_info", Options.OPTION_DELIV_MES_INFO);
 			
-//#sijapp cond.if target="MIDP2"#	
+//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#	
 			String[] imgScaleText = Util.explode(ResourceBundle.getString("no") + "|120%|140%|160%|180%|200%" , '|');
 			imagesScale = new ChoiceGroup(ResourceBundle.getString("images_scale"), ChoiceGroup.POPUP, imgScaleText, null);
 			int imgScale = Options.getInt(Options.OPTION_IMG_SCALE);
@@ -1981,7 +1987,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (chrgChat.size() != 0) optionsForm.append(chrgChat);
 			optionsForm.append(chrgMessFormat);
 			
-			//#sijapp cond.if target="MIDP2" #
+			//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 			optionsForm.append(imagesScale);
 			//#sijapp cond.end #
 
@@ -2473,7 +2479,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 			//#sijapp cond.end#
 			
-			//#sijapp cond.if target="MIDP2"#
+			//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 			int imgScale = (imagesScale.getSelectedIndex()*20)+100; 
 			Options.setInt(Options.OPTION_IMG_SCALE, imgScale);
 			//#sijapp cond.end#

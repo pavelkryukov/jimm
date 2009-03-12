@@ -1388,7 +1388,7 @@ public class JimmUI implements CommandListener
 		try
 		{
 			/* reads and divides image "icons.png" to several icons */
-//#sijapp cond.if target="MIDP2"#
+//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 			imageList.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 //#sijapp cond.end#
 			imageList.load("/icons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
@@ -1419,7 +1419,7 @@ public class JimmUI implements CommandListener
 		
 		try
 		{
-//#sijapp cond.if target="MIDP2"#
+//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 			xStatusImages.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 //#sijapp cond.end#
 			xStatusImages.load("/xstatus.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);

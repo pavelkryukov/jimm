@@ -138,7 +138,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	{
 		try
 		{
-//#sijapp cond.if target="MIDP2"#	
+//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#	
 			cliImages.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 //#sijapp cond.end#
 			cliImages.load("/clicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);

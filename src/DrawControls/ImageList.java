@@ -154,8 +154,10 @@ public class ImageList
 				newImage = Image.createImage(newImage); // make image immutable 
 //#sijapp cond.end#
 				
-//#sijapp cond.if target="MIDP2"#
+//#sijapp cond.if target="MIDP2"#				
 				if (fixAlphaCh) newImage = fixAlphaChannel(newImage);
+//#sijapp cond.end#
+//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#				
 				if ((scale != -1) && (scale != 100)) 
 					newImage = resizeImage(newImage, scale*newImage.getWidth()/100, scale*newImage.getHeight()/100, useAlpha);
 //#sijapp cond.end#
@@ -176,7 +178,7 @@ public class ImageList
 		for (int i = from; i <= to; i++)
 		{
 			image = Image.createImage(firstLine + Integer.toString(i) + "." + extention);
-//#sijapp cond.if target="MIDP2"#				
+//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#				
 			if ((scale != -1) && (scale != 100))
 				image = resizeImage(image, scale*image.getWidth()/100, scale*image.getHeight()/100, useAlpha);
 //#sijapp cond.end#
