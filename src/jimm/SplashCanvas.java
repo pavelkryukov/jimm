@@ -261,6 +261,8 @@ public class SplashCanvas extends Canvas implements CommandListener
 		if (SplashCanvas.progress == progress)
 			return;
 		int previousProgress = SplashCanvas.progress;
+
+		VirtualList.setMpbPercent(progress);
 		SplashCanvas.progress = progress;
 		if (progress < previousProgress)
 			_this.repaint();
@@ -621,6 +623,9 @@ public class SplashCanvas extends Canvas implements CommandListener
 	public static void addTimerTask(Action action)
 	{
 		TimerTasks timerTask = new TimerTasks(action);
+
+		VirtualList.setMiniProgressBar(true);
+		VirtualList.setMpbPercent(0);
 
 		Jimm.getTimerRef().schedule(timerTask, 1000, 1000);
 		

@@ -221,6 +221,9 @@ public abstract class VirtualList
 	private   static String  bottomText = null;
 	protected static final int scrollerWidth;
 
+	private   static boolean	mpbEnable  = false;
+	private   static int		mpbPercent = 0;
+
 	static
 	{
 		capAndMenuFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
@@ -243,6 +246,25 @@ public abstract class VirtualList
 		capOffset = value;
 	}
 	
+	public static void setMiniProgressBar(boolean value)
+	{
+		mpbEnable = value;
+		System.out.println ("mpbEnable = " + value);
+	}
+
+	public static boolean getMpbState()
+	{
+		return mpbEnable;
+	}
+
+	public static void setMpbPercent(int value)
+	{
+		mpbPercent = value;
+		if (virtualCanvas.currentControl != null)
+			virtualCanvas.currentControl.repaint();
+		System.out.println ("mpbPercent = " + value + "%");
+	}
+
 	/**
 	 * Sets display reference for all VirtualList's instances. You have to set display
 	 * before usage of VirtualList objects
@@ -1114,8 +1136,21 @@ public abstract class VirtualList
 			}
 		}
 
-		g.setColor(capTxtColor);
-		g.drawString(caption, x, (height - capAndMenuFont.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
+		if (mpbEnable) {
+			int progressW = (width - x - 4);
+			int progressPx = (progressW - 2)  / 100 * mpbPercent;
+			if (progressPx > 0) {
+				g.setColor(0xffffff); g.fillRect(x, 2, progressW, height - 4);
+				g.setColor(0x00aa00); g.fillRect(x+1, 3, progressPx, height - 6);
+			}
+			if (mpbPercent > 99) {
+				mpbEnable = false;
+				mpbPercent = 0;
+			}
+		} else {
+			g.setColor(capTxtColor);
+			g.drawString(caption, x, (height - capAndMenuFont.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
+		}
 		
 		//#sijapp cond.if modules_DEBUGLOG is "true"#
 		int ram=(int)((Runtime.getRuntime().freeMemory()*32)/Runtime.getRuntime().totalMemory());

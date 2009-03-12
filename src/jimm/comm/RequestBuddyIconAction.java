@@ -86,8 +86,6 @@ public class RequestBuddyIconAction extends Action
 			if (Icq.bartC.getState())
 			{
 				this.sendBuddyIconRequest();
-		        // Set STATE_CLI_REQBUDDYICON_SENT
-		    	this.state = RequestBuddyIconAction.STATE_CLI_REQBUDDYICON_SENT;
 		        // Update activity timestamp
 		        this.lastActivity = new Date();
 				return;
@@ -141,6 +139,8 @@ public class RequestBuddyIconAction extends Action
 			this.state = RequestBuddyIconAction.STATE_ERROR;
 			throw (new JimmException (100, 53, true));
 		}
+		// Set STATE_CLI_REQBUDDYICON_SENT
+		this.state = RequestBuddyIconAction.STATE_CLI_REQBUDDYICON_SENT;
     }
 
     // Forwards received packet, returns true if packet has been consumed
