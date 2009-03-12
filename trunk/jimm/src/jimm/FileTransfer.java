@@ -255,6 +255,9 @@ public class FileTransfer implements CommandListener, Runnable
 		String host = "filetransfer.jimm.org";
 		String url = "http://"+host+"/__receive_file.php";
 		
+		VirtualList.setMiniProgressBar(true);
+		VirtualList.setMpbPercent(0);
+
 		try
 		{
 			sc = (HttpConnection) Connector.open(url, Connector.READ_WRITE);
@@ -287,10 +290,14 @@ public class FileTransfer implements CommandListener, Runnable
 				if (fsize != 0)
 				{
 					percent = 100*(fsize-counter)/fsize;
-					SplashCanvas.setProgress(percent);
-					SplashCanvas.setMessage(ResourceBundle.getString("ft_transfer")+" "+percent+"% / "+fsize/1024+"KB");
+					VirtualList.setMpbPercent(percent);
+//					SplashCanvas.setProgress(percent);
+//					SplashCanvas.setMessage(ResourceBundle.getString("ft_transfer")+" "+percent+"% / "+fsize/1024+"KB");
 				}
 			} while (counter > 0);
+
+//			VirtualList.setMiniProgressBar(false);
+//			VirtualList.setMpbPercent(0);
 			
 			// Send end of header
 			StringBuffer buffer3 = new StringBuffer();
@@ -473,12 +480,12 @@ public class FileTransfer implements CommandListener, Runnable
 						break;
 						
 					case Options.FS_MODE_WEB:
-				        SplashCanvas.setProgress(0);
-				        SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
-				        SplashCanvas.removeCmd(SplashCanvas.cancelCommand);
-				        SplashCanvas.setCmdListener(this);
-						SplashCanvas.show();
-						
+						JimmUI.backToLastScreen();						
+//				        SplashCanvas.setProgress(0);
+//				        SplashCanvas.setMessage(ResourceBundle.getString("init_ft"));
+//				        SplashCanvas.removeCmd(SplashCanvas.cancelCommand);
+//				        SplashCanvas.setCmdListener(this);
+//						SplashCanvas.show();
 						fileName = this.fileNameField.getString();
 						description = this.descriptionField.getString();
 						String[] fnItems = Util.explode(fileName, '/');

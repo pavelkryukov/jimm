@@ -142,17 +142,18 @@ public class TimerTasks extends TimerTask
 		}
 
 		SplashCanvas.setProgress(action.getProgress());
-		if (action.isCompleted())
-		{
-			cancel();
-			action.onEvent(Action.ON_COMPLETE);
-		} 
-		else if (action.isError() && !canceled)
-		{
+		if (action.isError() && !canceled) {
 			wasError = true;
-			cancel();
-			action.onEvent(Action.ON_ERROR);
 		}
+		if (action.isCompleted() || wasError)
+		{
+			cancel();
+			action.onEvent((wasError) ? Action.ON_ERROR : Action.ON_COMPLETE);
+			if (VirtualList.getMpbState()) {
+				VirtualList.setMiniProgressBar(false);
+				VirtualList.setMpbPercent(0);
+			}
+		} 
 	}
 	
 	private boolean checkFlashControlIsActive()
