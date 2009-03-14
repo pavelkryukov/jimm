@@ -1017,7 +1017,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		//#sijapp cond.end#
 
 		// Update DC values
-		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		if (dcType != -1)
 		{
 			cItem.setBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP,
@@ -1033,7 +1033,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			cItem.setIntValue(ContactItem.CONTACTITEM_AUTH_COOKIE,
 					authCookie);
 		}
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		// Update time values
 		cItem.setIntValue(ContactItem.CONTACTITEM_SIGNON, signon);

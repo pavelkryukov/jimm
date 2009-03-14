@@ -39,7 +39,7 @@ import jimm.Options;
 import jimm.SplashCanvas;
 import jimm.StatusInfo;
 
-//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 import jimm.FileTransfer;
 //#sijapp cond.end#
 
@@ -197,8 +197,7 @@ public class ActionListener
 				int xStatus = -1;
 				String xStatusMessage = new String("");
 
-				//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-				//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 				// DC variables
 				byte[] internalIP = new byte[4];
 				byte[] externalIP = new byte[4];
@@ -206,8 +205,7 @@ public class ActionListener
 				int dcType = -1;
 				int icqProt = 0;
 				int authCookie = 0;
-				//#sijapp cond.end#
-				//#sijapp cond.end#
+//#sijapp cond.end#
 
 				boolean statusChange = true;
 				int dwFT1 = 0, dwFT2 = 0, dwFT3 = 0;
@@ -286,8 +284,8 @@ public class ActionListener
 							marker1d += bart_len;
 						}
 					}
-					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"  | target is "SIEMENS2"#
-					//#sijapp cond.if modules_FILES is "true"#
+					
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 					else if (tlvType == 0x000A) // External IP
 					{
 						System.arraycopy(tlvData, 0, externalIP, 0, 4);
@@ -327,12 +325,11 @@ public class ActionListener
 						statusChange = false;
 
 					}
-					//#sijapp cond.end#
-					//#sijapp cond.end#
+//#sijapp cond.end#
+					
 					else if (tlvType == 0x0003) // Signon time
 					{
-						signon = (int) Util.gmtTimeToLocalTime(Util
-								.byteArrayToLong(tlvData));
+						signon = (int) Util.gmtTimeToLocalTime(Util.byteArrayToLong(tlvData));
 						//System.out.println(Util.getDateString(false,signon));
 					} else if (tlvType == 0x0004) // Idle time
 					{
@@ -349,9 +346,8 @@ public class ActionListener
 
 				}
 
-				// Update contact list
+//#sijapp cond.if (target!="DEFAULT") & (modules_FILES="true") #				
 				ContactItem item = ContactList.getItembyUIN(uin);
-				//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true" #
 
 				if (item != null)
 				{
@@ -361,17 +357,17 @@ public class ActionListener
 						xStatus = Icq.detectXStatus(capsArray);
 				}
 				MainThread.updateContactList(uin, status, xStatus, xStatusMessage, internalIP, externalIP, dcPort, dcType, icqProt, authCookie, signon, online, idle, regdate
-					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+					//#sijapp cond.if modules_AVATARS="true"#
 					, biHash
 					//#sijapp cond.end#
 				);
-				//#sijapp cond.else#
+//#sijapp cond.else#
 				MainThread.updateContactList(uin, status, -1, null, null, null, 0, 0, 0, 0, signon, online, idle, regdate
 					//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 					, null
 					//#sijapp cond.end#
 				);
-				//#sijapp cond.end#
+//#sijapp cond.end#
 			}
 
 			/** ********************************************************************* */
@@ -631,14 +627,12 @@ public class ActionListener
 
 					// Get message data and initialize marker
 					byte[] msg2Buf;
-					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-					//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 					int ackType = -1;
 					byte[] extIP = new byte[4];
 					byte[] ip = new byte[4];
 					String port = "0";
-					//#sijapp cond.end#
-					//#sijapp cond.end#
+//#sijapp cond.end#
 
 					do
 					{
@@ -648,8 +642,7 @@ public class ActionListener
 							throw (new JimmException(152, 2, false));
 						}
 						tlvType = Util.getWord(msgBuf, msgMarker);
-						//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-						//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 						switch (tlvType)
 						{
 						case 0x0003:
@@ -665,8 +658,7 @@ public class ActionListener
 							ackType = Util.getWord(msg2Buf, 0);
 							break;
 						}
-						//#sijapp cond.end#
-						//#sijapp cond.end#
+//#sijapp cond.end#
 						msgMarker += 4 + msg2Buf.length;
 					} while (tlvType != 0x2711);
 
@@ -690,11 +682,9 @@ public class ActionListener
 							|| (msgType == Message.MESSAGE_TYPE_EXTENDED) || ((msgType >= Message.MESSAGE_TYPE_AWAY) && (msgType <= Message.MESSAGE_TYPE_FFC))))
 						return;
 
-					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-					//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 					Util.getWord(msg2Buf, msg2Marker);
-					//#sijapp cond.end#
-					//#sijapp cond.end#
+//#sijapp cond.end#
 					msg2Marker += 2;
 
 					// Skip PRIORITY
@@ -878,8 +868,7 @@ public class ActionListener
 								msg2Buf, msg2Marker, textLen));
 						msg2Marker += textLen;
 
-						//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-						//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 						// File transfer message
 						if (plugin.equals("File")
 								&& Jimm.jimm.getSplashCanvasRef().isShown())
@@ -972,8 +961,8 @@ public class ActionListener
 						}
 						// URL message
 						else
-						//#sijapp cond.end#						
-						//#sijapp cond.end#
+						
+//#sijapp cond.end#
 						if (plugin.equals("Send Web Page Address (URL)"))
 						{
 

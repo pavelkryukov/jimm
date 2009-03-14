@@ -91,9 +91,9 @@ public class JimmException extends Exception
 		this._ExtErrCode = extErrCode;
 		this.critical = true;
 		this.displayMsg = true;
-		//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		this.peer = false;
-		//  #sijapp cond.end#
+//#sijapp cond.end#
 	}
 
 	// Constructs a JimmException for network connections

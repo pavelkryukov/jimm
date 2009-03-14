@@ -23,25 +23,17 @@
 
 package jimm;
 
-import DrawControls.TextList;
-import DrawControls.VirtualList;
-import jimm.comm.ConnectAction;
-//  #sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-//  #sijapp cond.if modules_FILES is "true"#
-import jimm.comm.DirectConnectionAction;
-//  #sijapp cond.end#
-//  #sijapp cond.end#
 import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.comm.Action;
 import jimm.util.ResourceBundle;
-
 import java.io.IOException;
 import javax.microedition.lcdui.*;
-import javax.microedition.midlet.MIDletStateChangeException;
-import java.util.Date;
-import java.util.TimerTask;
 import java.util.Timer;
+
+import DrawControls.TextList;
+import DrawControls.VirtualList;
+
 
 //#sijapp cond.if target is "RIM"#
 //# import net.rim.device.api.system.LED;

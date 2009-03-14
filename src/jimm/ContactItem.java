@@ -93,13 +93,13 @@ public class ContactItem implements ContactListItem, JimmScreen
 	private int idle;
 	private int booleanValues;
 
-	//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 	private int typeAndClientId;
 	private int portAndProt;
 	private int intIP;
 	private int extIP;
 	private int authCookie;
-	//#sijapp cond.end #
+//#sijapp cond.end #
 
 	private long privacyData;
 	private int uinLong;
@@ -246,8 +246,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 				//#sijapp cond.end#
 			}
 			return;
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 		case CONTACTITEM_DC_TYPE:
 			typeAndClientId = (typeAndClientId & 0xff) | ((value & 0xff) << 8);
 			return;
@@ -263,8 +262,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 		case CONTACTITEM_AUTH_COOKIE:
 			authCookie = value;
 			return;
-			//#sijapp cond.end #
-			//#sijapp cond.end #
+//#sijapp cond.end #
 
 		case CONTACTITEM_ONLINE:
 			online = value;
@@ -318,8 +316,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 			return caps;
 		case CONTACTITEM_STATUS:
 			return status;
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 		case CONTACTITEM_DC_TYPE:
 			return ((typeAndClientId & 0xff00) >> 8) & 0xFF;
 		case CONTACTITEM_ICQ_PROT:
@@ -330,8 +327,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 			return typeAndClientId & 0xff;
 		case CONTACTITEM_AUTH_COOKIE:
 			return authCookie;
-			//#sijapp cond.end #
-			//#sijapp cond.end #
+//#sijapp cond.end #
 		case CONTACTITEM_ONLINE:
 			return online;
 		case CONTACTITEM_SIGNON:
@@ -379,7 +375,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 
 	///////////////////////////////////////////////////////////////////////////
 
-	//#sijapp cond.if (target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2") & modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 	public static byte[] longIPToByteAray(int value)
 	{
 		if (value == 0)
@@ -399,7 +395,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 				| (((int) array[3] & 0xFF) << 24);
 	}
 
-	//#sijapp cond.end #
+//#sijapp cond.end #
 	
 	synchronized public void setImage(int key, Image value)
 	{
@@ -429,14 +425,14 @@ public class ContactItem implements ContactListItem, JimmScreen
 	{
 		switch (key)
 		{
-		//#sijapp cond.if (target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2") & modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 		case CONTACTITEM_INTERNAL_IP:
 			intIP = arrayToLongIP(value);
 			break;
 		case CONTACTITEM_EXTERNAL_IP:
 			extIP = arrayToLongIP(value);
 			break;
-		//#sijapp cond.end #
+//#sijapp cond.end #
 			
 		case CONTACTITEM_SS_DATA:
 			ssData = value;
@@ -456,12 +452,12 @@ public class ContactItem implements ContactListItem, JimmScreen
 	{
 		switch (key)
 		{
-		//#sijapp cond.if (target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2") & modules_FILES is "true"#
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 		case CONTACTITEM_INTERNAL_IP:
 			return longIPToByteAray(intIP);
 		case CONTACTITEM_EXTERNAL_IP:
 			return longIPToByteAray(extIP);
-		//#sijapp cond.end #
+//#sijapp cond.end #
 			
 		case CONTACTITEM_SS_DATA:
 			return ssData;
@@ -532,16 +528,16 @@ public class ContactItem implements ContactListItem, JimmScreen
 			setBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH, new byte[16]);
 			setBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH_READY, new byte[16]);
 			//#sijapp cond.end#
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			//#sijapp cond.if modules_FILES is "true"#
+
+//#sijapp cond.if (target != "DEFAULT") & (modules_FILES = "true")#
 			setBytesArray(ContactItem.CONTACTITEM_INTERNAL_IP, new byte[4]);
 			setBytesArray(ContactItem.CONTACTITEM_EXTERNAL_IP, new byte[4]);
 			setIntValue_(ContactItem.CONTACTITEM_DC_PORT, 0);
 			setIntValue_(ContactItem.CONTACTITEM_DC_TYPE, 0);
 			setIntValue_(ContactItem.CONTACTITEM_ICQ_PROT, 0);
 			setIntValue_(ContactItem.CONTACTITEM_AUTH_COOKIE, 0);
-			//#sijapp cond.end#
-			//#sijapp cond.end#
+//#sijapp cond.end#
+
 			setIntValue_(ContactItem.CONTACTITEM_SIGNON, -1);
 			setIntValue_(ContactItem.CONTACTITEM_REG, -1);
 			online = -1;

@@ -1924,7 +1924,7 @@ public class JimmUI implements CommandListener
 			if (si != null && si.testFlag(StatusInfo.FLAG_HAVE_DESCR))
 				addTextListItem(tlContactMenu, "reqstatmsg", null, USER_MENU_STATUS_MESSAGE, true, -1, Font.STYLE_PLAIN);		
 			
-//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2"|target="RIM")&modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			addTextListItem(tlContactMenu, "ft_caption", null, -1, true, -2, Font.STYLE_BOLD);
 			if (((status != ContactList.STATUS_OFFLINE) 
 					&& contact.getIntValue(ContactItem.CONTACTITEM_ICQ_PROT) >= 8) ||
@@ -1994,8 +1994,7 @@ public class JimmUI implements CommandListener
 			requestContactStatusMess(clciContactMenu);
 			break;
 
-			//#sijapp cond.if target="MIDP2" | target="MOTOROLA" | target="SIEMENS2" | target="RIM"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			case USER_MENU_FILE_TRANS:
 				/* Send a filetransfer with a file given by path */
 				{
@@ -2019,8 +2018,8 @@ public class JimmUI implements CommandListener
 				}
 				break;
 			//#sijapp cond.end#
-			//#sijapp cond.end#
-			//#sijapp cond.end#
+
+//#sijapp cond.end#
 			
 			case USER_MENU_USER_REMOVE:
 				removeContactMessageBox = showMessageBox
@@ -2223,7 +2222,7 @@ public class JimmUI implements CommandListener
 		if (idleTime > 0)
 			clInfoData[JimmUI.UI_IDLE_TIME] = Util.longitudeToString(idleTime);
 		
-		//#sijapp cond.if (target="MIDP2" | target="MOTOROLA" | target="SIEMENS2") & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 
 		/* Client version */
 		int clientVers = cItem.getIntValue(ContactItem.CONTACTITEM_CLIENT);
@@ -2266,7 +2265,7 @@ public class JimmUI implements CommandListener
 		if ((caps & Icq.CAPF_VIDEO)           != 0) capsStr.append("Video\n");
 		clInfoData[UI_CAPS] = capsStr.toString(); 
 		
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		JimmUI.fillUserInfo(clInfoData, tlist);
 		JimmUI.showInfoTextList(tlist);

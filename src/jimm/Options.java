@@ -458,11 +458,11 @@ public class Options
 		setBoolean(OPTION_ASK_FOR_WEB_FT, true);
 		setInt(OPTION_XSTATUS, -1);
 
-		//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 //		setInt(OPTION_CAMERA_LOCATOR, 0);
 		setInt(OPTION_CAMERA_RES, 0);
 		setInt(OPTION_CAMERA_ENCODING, 0);
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 //#sijapp cond.if target isnot "DEFAULT"#
 		selectSoundType("online.", OPTION_ONLINE_NOTIF_FILE);
@@ -973,7 +973,7 @@ public class Options
 class OptionsForm implements CommandListener, ItemStateListener, VirtualListCommands, JimmScreen
 {
 
-	//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 	private class OptionsItems implements ItemCommandListener
 	{
 		public OptionsItems()
@@ -995,7 +995,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			} 
 		}
 	}
-	//#sijapp cond.end#
+//#sijapp cond.end#
 
 
 	private boolean lastGroupsUsed, lastHideOffline, lastHideEmpty;
@@ -1076,7 +1076,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private ChoiceGroup chsTimeZone;
 	private ChoiceGroup chsCurrTime;
 	private ChoiceGroup chsDayLight;
-//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 	//	private ChoiceGroup clCamDevGroup;
 	private ChoiceGroup camRes;
 	private ChoiceGroup camEnc;
@@ -1145,10 +1145,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private TextList statusStrings;
 	private TextBox  statusString;
 
-	//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 	// For background selection
 	private FileSystem2 fileSystem;
-	//#sijapp cond.end#
+//#sijapp cond.end#
 
 	private static OptionsForm _this;
 
@@ -1256,7 +1256,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			if (Jimm.display.numAlphaLevels() > 2)
 				JimmUI.addTextListItem(optionsMenu, "transparency", MainMenu.menuIcons.elementAt(16), OPTIONS_TRANSP, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#			
-//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			if (System.getProperty("video.snapshot.encodings") != null)
 				JimmUI.addTextListItem(optionsMenu, "options_camera", MainMenu.menuIcons.elementAt(17), OPTIONS_CAMERA, true, -1, Font.STYLE_PLAIN);
 //#sijapp cond.end#
@@ -1478,10 +1478,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private Command cmdRequestRegistration = new Command(ResourceBundle.getString(
 			"register_request_send", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
 
-	//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 	private Command cmdSelectBackImg = new Command(ResourceBundle.getString(
 			"select_background", ResourceBundle.FLAG_ELLIPSIS), Command.ITEM, 3);
-	//#sijapp cond.end#
+//#sijapp cond.end#
 
 	private int currAccount;
 
@@ -1662,7 +1662,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 	public void itemStateChanged(Item item)
 	{
-		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		if ((backImgGroup != null) && (backImgGroup == item))
 		{
 			int selItem = backImgGroup.getSelectedIndex();
@@ -1676,7 +1676,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				backImgFilenameIndex = 0;
 			}
 		}
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		if (uinTextField != null)
 		{
@@ -1847,10 +1847,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			optionsForm.append(httpWAPProfileTextField);
 			optionsForm.append(reconnectNumberTextField);
 			
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			chsFSMode = createSelector("ft_type", "ft_type_web"+"|"+"ft_type_net", Options.OPTION_FT_MODE);
 			optionsForm.append(chsFSMode);
-			//#sijapp cond.end#
+//#sijapp cond.end#
 			
 			break;
 
@@ -2013,7 +2013,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end #
 			break;
 
-		//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		case OPTIONS_CAMERA:
 //			clCamDevGroup = new ChoiceGroup(ResourceBundle.getString("opt_camerauri"), Choice.EXCLUSIVE);
 //			addStr(clCamDevGroup, "camera://video" + "|" + "camera://image" + "|" + "camera://devcam0" +"|" + "camera://devcam1");
@@ -2064,7 +2064,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			optionsForm.append(camEnc);
 			optionsForm.append(camRes);
 			break;
-		//#sijapp cond.end #
+//#sijapp cond.end #
 
 		case OPTIONS_HOTKEYS:
 			InitHotkeyMenuUI();
@@ -2364,9 +2364,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setInt(Options.OPTION_RECONNECT_NUMBER, Integer
 					.parseInt(reconnectNumberTextField.getString()));
 			
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			Options.setInt(Options.OPTION_FT_MODE, chsFSMode.getSelectedIndex());
-			//#sijapp cond.end#
+//#sijapp cond.end#
 			break;
 		//#sijapp cond.if modules_PROXY is "true"#
 		case OPTIONS_PROXY:
@@ -2502,7 +2502,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 //#sijapp cond.end#			
 			
 
-		//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2")&modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		case OPTIONS_CAMERA:
 //			Options.setInt(Options.OPTION_CAMERA_LOCATOR, clCamDevGroup
 //					.getSelectedIndex());
@@ -2511,7 +2511,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setInt(Options.OPTION_CAMERA_RES, camRes
 					.getSelectedIndex());
 			break;
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		case OPTIONS_SIGNALING:
 			//#sijapp cond.if target isnot "DEFAULT"# ===>
@@ -2812,7 +2812,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			}
 		}
 
-		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		else if ((fileSystem != null) && fileSystem.isActive())
 		{
 			if (c == JimmUI.cmdOk)
@@ -2837,7 +2837,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			return;
 		} 
 
-		//#sijapp cond.end#
+//#sijapp cond.end#
 		/* Look for back command */
 		else if ((c == JimmUI.cmdBack) || (c == JimmUI.cmdCancel))
 		{

@@ -36,7 +36,7 @@ public class SendMessageAction extends Action
 	// Plain message
 	private PlainMessage plainMsg;
 
-//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 	// File transfer request message
 	private FileTransferMessage fileTrans;
 //#sijapp cond.end#
@@ -95,18 +95,16 @@ public class SendMessageAction extends Action
 		// Get receiver object
 		ContactItem rcvr;
 
-		//#sijapp cond.if target!="DEFAULT"#
-		//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
+
 		if (this.plainMsg != null)
 			rcvr = this.plainMsg.getRcvr();
 		else
 			rcvr = this.fileTrans.getRcvr();
-		//#sijapp cond.else#
-		//#        rcvr = this.plainMsg.getRcvr();
-		//#sijapp cond.end#
-		//#sijapp cond.else#
-		//#        rcvr = this.plainMsg.getRcvr();
-		//#sijapp cond.end#
+//#sijapp cond.else#
+//#        rcvr = this.plainMsg.getRcvr();
+//#sijapp cond.end#
+
 		// What message format/encoding should we use?
 		int type = 1;
 		boolean utf8;
@@ -114,14 +112,14 @@ public class SendMessageAction extends Action
 			ContactList.STATUS_OFFLINE) ? false : 
 			rcvr.hasCapability(Icq.CAPF_UTF8_INTERNAL);
 		
-		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		if ((this.fileTrans != null)
 				&& (rcvr.getIntValue(ContactItem.CONTACTITEM_STATUS) != ContactList.STATUS_OFFLINE)
 				&& rcvr.hasCapability(Icq.CAPF_AIM_SERVERRELAY))
 		{
 			type = 2;
 		}
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		if ((this.plainMsg != null)
 			&& ((this.plainMsg.getMessageType() >= Message.MESSAGE_TYPE_AWAY) 
@@ -221,8 +219,7 @@ public class SendMessageAction extends Action
 			// Get filename if file transfer
 			byte[] filenameRaw;
 
-			//#sijapp cond.if target!="DEFAULT"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			if (this.fileTrans == null)
 			{
 
@@ -236,14 +233,10 @@ public class SendMessageAction extends Action
 				filenameRaw = Util.stringToByteArray(this.fileTrans
 						.getFilename());
 			}
-			//#sijapp cond.else#
-			//#                textRaw = Util.stringToByteArray( Util.restoreCrLf(this.plainMsg.getText()) );
-			//#                filenameRaw = new byte[0];                
-			//#sijapp cond.end#
-			//#sijapp cond.else#
-			//#                textRaw = Util.stringToByteArray( Util.restoreCrLf(this.plainMsg.getText()) );
-			//#                filenameRaw = new byte[0];
-			//#sijapp cond.end#
+//#sijapp cond.else#
+//#			textRaw = Util.stringToByteArray( Util.restoreCrLf(this.plainMsg.getText()) );
+//#			filenameRaw = new byte[0];                
+//#sijapp cond.end#
 
 			// Set length
 			// file request: 192 + UIN len + file description (no null) +
@@ -252,8 +245,7 @@ public class SendMessageAction extends Action
 
 			int p_sz = 0;
 
-			//#sijapp cond.if target!="DEFAULT"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			if (this.fileTrans == null)
 			{
 				p_sz = 163 + uinRaw.length + textRaw.length;
@@ -262,12 +254,9 @@ public class SendMessageAction extends Action
 				p_sz = 192 + uinRaw.length + textRaw.length
 						+ filenameRaw.length + 1;
 			}
-			//#sijapp cond.else#
-			//#                p_sz = 163 + uinRaw.length + textRaw.length;                
-			//#sijapp cond.end#
-			//#sijapp cond.else#
-			//#				p_sz = 163 + uinRaw.length + textRaw.length;
-			//#sijapp cond.end#
+//#sijapp cond.else#
+//#			p_sz = 163 + uinRaw.length + textRaw.length;                
+//#sijapp cond.end#
 
 			//int tlv5len = 148;
 			//int tlv11len = 108;
@@ -290,8 +279,7 @@ public class SendMessageAction extends Action
 			marker += 2;
 
 			// Length of TLV5 differs betweeen normal message and file requst
-			//#sijapp cond.if target!="DEFAULT"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			if (this.fileTrans == null)
 			{
 				Util.putWord(buf, marker, 144 + textRaw.length, true);
@@ -300,12 +288,9 @@ public class SendMessageAction extends Action
 				Util.putWord(buf, marker, 173 + textRaw.length
 						+ filenameRaw.length + 1);
 			}
-			//#sijapp cond.else#
-			//#                Util.putWord(buf, marker, 144 + textRaw.length, true);
-			//#sijapp cond.end#
-			//#sijapp cond.else#
-			//#				Util.putWord(buf, marker, 144 + textRaw.length, true);
-			//#sijapp cond.end#
+//#sijapp cond.else#
+//#			Util.putWord(buf, marker, 144 + textRaw.length, true);
+//#sijapp cond.end#
 			marker += 2;
 
 			Util.putWord(buf, marker, 0x0000);
@@ -353,8 +338,7 @@ public class SendMessageAction extends Action
 			marker += 2;
 
 			// Length of TLV2711 differs betweeen normal message and file requst
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			if (this.fileTrans == null)
 			{
 				Util.putWord(buf, marker, 104 + textRaw.length, true);
@@ -363,12 +347,9 @@ public class SendMessageAction extends Action
 				Util.putWord(buf, marker, 119 + textRaw.length
 						+ filenameRaw.length + 1);
 			}
-			//#sijapp cond.else#
-			//#                Util.putWord(buf, marker, 104 + textRaw.length, true);                
-			//#sijapp cond.end#
-			//#sijapp cond.else#
-			//#				Util.putWord(buf, marker, 104 + textRaw.length, true);
-			//#sijapp cond.end#
+//#sijapp cond.else#
+//#			Util.putWord(buf, marker, 104 + textRaw.length, true);                
+//#sijapp cond.end#
 			marker += 2;
 			// Put 0x1b00 (unknown)
 			Util.putWord(buf, marker, 0x1B00);
@@ -395,19 +376,14 @@ public class SendMessageAction extends Action
 			marker += 1;
 
 			// Set the DC_TYPE to "normal" if we send a file transfer request
-			//#sijapp cond.if target!="DEFAULT"#
-			//#sijapp cond.if modules_FILES is "true"#
-
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			if (this.fileTrans == null)
 				Util.putDWord(buf, marker, 0x00000000);
 			else
 				Util.putDWord(buf, marker, 0x00000004);
-			//#sijapp cond.else#
-			//#             Util.putDWord(buf, marker, 0x00000000);
-			//#sijapp cond.end#
-			//#sijapp cond.else#
-			//#             Util.putDWord(buf, marker, 0x00000000);
-			//#sijapp cond.end#
+//#sijapp cond.else#
+//#			Util.putDWord(buf, marker, 0x00000000);
+//#sijapp cond.end#
 			marker += 4;
 			// Put cookie, unkown 0x0e00 and cookie again
 			Util.putWord(buf, marker, SEQ1, false);
@@ -426,21 +402,14 @@ public class SendMessageAction extends Action
 			marker += 4;
 
 			// Put message type 0x0001 if normal message else 0x001a for file request
-			//#sijapp cond.if target!="DEFAULT"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			if (this.fileTrans == null)
-				Util
-						.putWord(buf, marker, this.plainMsg.getMessageType(),
-								false);
+				Util.putWord(buf, marker, this.plainMsg.getMessageType(), false);
 			else
-				Util.putWord(buf, marker, this.fileTrans.getMessageType(),
-						false);
-			//#sijapp cond.else#
-			//#                Util.putWord(buf, marker, this.plainMsg.getMessageType(),false);                
-			//#sijapp cond.end#
-			//#sijapp cond.else#
-			//#                Util.putWord(buf, marker, this.plainMsg.getMessageType(),false);
-			//#sijapp cond.end#
+				Util.putWord(buf, marker, this.fileTrans.getMessageType(), false);
+//#sijapp cond.else#
+//#			Util.putWord(buf, marker, this.plainMsg.getMessageType(),false);                
+//#sijapp cond.end#
 			marker += 2;
 
 			// Put contact status
@@ -452,8 +421,7 @@ public class SendMessageAction extends Action
 			Util.putWord(buf, marker, 0x01, false);
 			marker += 2;
 			// Put message
-			//#sijapp cond.if target!="DEFAULT"#
-			//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 			if (this.fileTrans == null)
 			{
 
@@ -554,48 +522,28 @@ public class SendMessageAction extends Action
 				Util.putDWord(buf, marker, 0x00008c82, false);
 				marker += 4;
 			}
-			//#sijapp cond.else#
+
+//#sijapp cond.else#
 			// Put message length
-			//#                Util.putWord(buf, marker, textRaw.length + 1, false);
-			//#                marker += 2;
-			//#
+//#			Util.putWord(buf, marker, textRaw.length + 1, false);
+//#			marker += 2;
+//#
 			// Put message
-			//#                System.arraycopy(textRaw, 0, buf, marker, textRaw.length); // TLV.MESSAGE
-			//#                marker += textRaw.length;
-			//#                Util.putByte(buf, marker, 0x00);
-			//#                marker++;
+//#			System.arraycopy(textRaw, 0, buf, marker, textRaw.length); // TLV.MESSAGE
+//#			marker += textRaw.length;
+//#			Util.putByte(buf, marker, 0x00);
+//#			marker++;
 			// Put foreground, background color and guidlength
-			//#                Util.putDWord(buf, marker, 0x00000000);
-			//#                marker += 4;
-			//#                Util.putDWord(buf, marker, 0x00FFFFFF);
-			//#                marker += 4;
-			//#                Util.putDWord(buf, marker, 0x26000000);
-			//#                marker += 4;
-			//#                System.arraycopy(Icq.CAP_UTF8_GUID, 0, buf, marker, 38);
+//#			Util.putDWord(buf, marker, 0x00000000);
+//#			marker += 4;
+//#			Util.putDWord(buf, marker, 0x00FFFFFF);
+//#			marker += 4;
+//#			Util.putDWord(buf, marker, 0x26000000);
+//#			marker += 4;
+//#			System.arraycopy(Icq.CAP_UTF8_GUID, 0, buf, marker, 38);
 			// SUB_MSG_TYPE2.CAPABILITY
-			//#                marker += 38;                
-			//#sijapp cond.end#
-			//#sijapp cond.else#
-			// Put message length
-			//#                Util.putWord(buf, marker, textRaw.length + 1, false);
-			//#                marker += 2;
-			//#
-			// Put message
-			//#                System.arraycopy(textRaw, 0, buf, marker, textRaw.length); // TLV.MESSAGE
-			//#                marker += textRaw.length;
-			//#                Util.putByte(buf, marker, 0x00);
-			//#                marker++;
-			// Put foreground, background color and guidlength
-			//#                Util.putDWord(buf, marker, 0x00000000);
-			//#                marker += 4;
-			//#                Util.putDWord(buf, marker, 0x00FFFFFF);
-			//#                marker += 4;
-			//#                Util.putDWord(buf, marker, 0x26000000);
-			//#                marker += 4;
-			//#                System.arraycopy(Icq.CAP_UTF8_GUID, 0, buf, marker, 38);
-			// SUB_MSG_TYPE2.CAPABILITY
-			//#                marker += 38;
-			//#sijapp cond.end#
+//#			marker += 38;                
+//#sijapp cond.end#
 
 			// Put TLV 0x03
 			Util.putWord(buf, marker, 0x0003, true); // CLI_SENDMSG.UNKNOWN
