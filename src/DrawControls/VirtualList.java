@@ -667,7 +667,15 @@ public abstract class VirtualList
 	{
 		storelastItemIndexes();
 		if (moveTop && (cursorMode == CURSOR_MODE_DISABLED)) topItem += step;
-		currItem += step;
+		if (cyclingCursor)
+		{
+			int last = getSize()-1;
+			int newPos = currItem+step;
+			if (currItem != 0 && newPos < 0) newPos = 0;
+			if (currItem != last && newPos > last) newPos = last;
+			currItem = newPos;
+		}
+		else currItem += step;
 		checkCurrItem();
 		checkTopItem();
 		repaintIfLastIndexesChanged();
