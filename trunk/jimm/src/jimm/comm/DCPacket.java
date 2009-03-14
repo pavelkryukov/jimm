@@ -21,8 +21,7 @@
  Author(s): Andreas Rossbacher
  *******************************************************************************/
 
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-//#sijapp cond.if modules_FILES is "true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 package jimm.comm;
 
 import jimm.JimmException;
@@ -77,5 +76,5 @@ public class DCPacket extends Packet
 	}
 
 }
-//#sijapp cond.end#
+
 //#sijapp cond.end#

@@ -78,9 +78,9 @@ public class Icq implements Runnable
 	static private Object wait = new Object();
 	
 	// Connection to peer
-	//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//  #sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 	static PeerConnection peerC;
-	//  #sijapp cond.end#
+//  #sijapp cond.end#
 
 	// All currently active actions
 	static private Vector actAction;
@@ -232,9 +232,9 @@ public class Icq implements Runnable
 		disconnectBart(force);
 		//#sijapp cond.end#
 
-		//#sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		resetPeerCon();
-		//#sijapp cond.end#
+//#sijapp cond.end#
 
 		if (c == null) return;
 		
@@ -340,14 +340,14 @@ public class Icq implements Runnable
 
 	}
 
-	//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 	// Resets the comm. subsystem
 	static public synchronized void resetPeerCon()
 	{
 		// Close connection
 		peerC = null;
 	}
-	//  #sijapp cond.end#
+//#sijapp cond.end#
 
 	
 	static public Object getWaitObj()
@@ -381,10 +381,10 @@ public class Icq implements Runnable
 	// Main loop
 	public void run()
 	{
-		//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//  #sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 		// Is a DC packet Available
 		boolean dcPacketAvailable;
-		//  #sijapp cond.end#
+//  #sijapp cond.end#
 		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 		boolean biPacketAvailable;
 		//  #sijapp cond.end#
@@ -461,9 +461,9 @@ public class Icq implements Runnable
 
 				// Set dcPacketAvailable to true if the peerC is not null and
 				// there is an packet waiting
-				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 				dcPacketAvailable = (peerC != null) ? ((peerC.available() > 0) ? true : false ) : false;
-				//  #sijapp cond.end#
+//#sijapp cond.end#
 
 				// Set biPacketAvailable to true if the bartC is not null and
 				// there is an packet waiting
@@ -473,9 +473,9 @@ public class Icq implements Runnable
 
 				// Wait if a new action does not exist
 				if ((newAction == null) && (c.available() == 0)
-				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 					&& !dcPacketAvailable
-				//  #sijapp cond.end#
+//#sijapp cond.end#
 				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 					&& !biPacketAvailable
 				//  #sijapp cond.end#
@@ -508,9 +508,9 @@ public class Icq implements Runnable
 					}
 				}
 
-				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 				dcPacketAvailable = (peerC != null) ? ((peerC.available() > 0) ? true : false ) : false;
-				//  #sijapp cond.end#
+//#sijapp cond.end#
 				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 				biPacketAvailable = (bartC != null) ? ((bartC.available() > 0) ? true : false ) : false;
 				//  #sijapp cond.end#
@@ -520,9 +520,9 @@ public class Icq implements Runnable
 				boolean consumed;
 				while (
 					(c.available() > 0)
-				//  #sijapp cond.if target!="DEFAULT" & modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 					|| dcPacketAvailable
-				//  #sijapp cond.end#
+//#sijapp cond.end#
 				//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 					|| biPacketAvailable
 				//  #sijapp cond.end#

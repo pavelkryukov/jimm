@@ -583,11 +583,11 @@ public abstract class VirtualList
 		int imgHeight = 0;
 		get(itemIndex, paintedItem);
 		if (paintedItem.leftImage != null) 
-			imgHeight = Math.max(imgHeight, paintedItem.leftImage.getHeight());
+			imgHeight = Math.max(imgHeight, paintedItem.leftImage.getHeight()+1);
 		else if (paintedItem.secondLeftImage != null) 
-			imgHeight = Math.max(imgHeight, paintedItem.secondLeftImage.getHeight());
+			imgHeight = Math.max(imgHeight, paintedItem.secondLeftImage.getHeight()+1);
 		else if (paintedItem.rightImage != null) 
-			imgHeight = Math.max(imgHeight, paintedItem.secondLeftImage.getHeight());
+			imgHeight = Math.max(imgHeight, paintedItem.secondLeftImage.getHeight()+1);
 		else 
 			imgHeight = 0;
 		return (fontHeight > imgHeight) ? fontHeight : imgHeight;

@@ -21,7 +21,7 @@
  Author(s): Andreas Rossbacher, Dmitry Tunin, Denis Artyomov
  *******************************************************************************/
 
-//#sijapp cond.if (target="MIDP2"|target="MOTOROLA"|target="SIEMENS2"|target="RIM")&modules_FILES="true"#
+//#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 package jimm;
 
 import java.io.ByteArrayInputStream;
@@ -30,13 +30,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import javax.microedition.io.*;
 import javax.microedition.media.*;
-//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA"#
-import javax.microedition.io.file.FileSystemRegistry;
-import javax.microedition.io.file.FileConnection;
-//#sijapp cond.elseif target is "SIEMENS2"#
-//# import com.siemens.mp.io.file.FileConnection;
-//# import com.siemens.mp.io.file.FileSystemRegistry;
-//#sijapp cond.end#
 import javax.microedition.lcdui.*;
 //#sijapp cond.if target isnot "MOTOROLA"#
 import javax.microedition.media.control.VideoControl;
