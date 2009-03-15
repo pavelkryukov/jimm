@@ -924,13 +924,15 @@ public class HistoryStorage
 	// Shows history list on mobile phone screen
 	static public void showHistoryList(String uin, String nick)
 	{
+		clearCache();
+		
 		if (list == null)
 		{
 			String caption = ResourceBundle.getString("history");
 			list = new HistoryStorageList();
 			list.setCaption(caption);
 		}
-
+		
 		HistoryStorageList.setCurrUin(uin, nick);
 
 		list.lock();
