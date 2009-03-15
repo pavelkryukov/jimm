@@ -172,8 +172,10 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		tree.setVLCommands(this);
 		tree.setCyclingCursor(true);
 
-		tree.setFontSize((JimmUI.imageList.getHeight() < 16) ? VirtualList.SMALL_FONT
-				: VirtualList.MEDIUM_FONT);
+		tree.setFontSize(
+			  (JimmUI.statusOnlineImg != null & JimmUI.statusOnlineImg.getHeight() < 16) 
+			? VirtualList.SMALL_FONT
+			: VirtualList.MEDIUM_FONT);
 		tree.setStepSize(0);
 
 		//#sijapp cond.if modules_TRAFFIC is "true" #
