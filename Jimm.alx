@@ -13,7 +13,7 @@
             Jimm development team
         </vendor>
         <copyright >
-            Copyright (c) 2008 Jimm developers
+            Copyright (c) 2009 Jimm developers
         </copyright>
 
         <fileset Java="1.5">
