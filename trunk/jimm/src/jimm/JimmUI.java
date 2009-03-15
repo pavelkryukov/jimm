@@ -1107,7 +1107,7 @@ public class JimmUI implements CommandListener
 				imgIndex = 3;
 			list.addBigText(ResourceBundle.getString("status") + ": ",
 					list.getTextColor(), Font.STYLE_PLAIN, uiBigTextIndex)
-					.addImage(JimmUI.imageList.elementAt(imgIndex),
+					.addImage(JimmUI.statusImgList.elementAt(imgIndex),
 							null, uiBigTextIndex).doCRLF(uiBigTextIndex);
 			uiBigTextIndex++;
 		}
@@ -1357,8 +1357,9 @@ public class JimmUI implements CommandListener
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 	
-	final public static ImageList imageList     = new ImageList();
-	final public static ImageList xStatusImages = new ImageList();
+	final private static ImageList messImgList = new ImageList();
+	final private static ImageList statusImgList = new ImageList();
+	final public static ImageList xStatusImages  = new ImageList();
 	
 	final public static Image statusEvilImg;
 	final public static Image statusDepressionImg;
@@ -1385,46 +1386,41 @@ public class JimmUI implements CommandListener
 	
 	static
 	{
-		try
-		{
-			/* reads and divides image "icons.png" to several icons */
 //#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
-			imageList.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
+		int imgScale = Options.getInt(Options.OPTION_IMG_SCALE);
+		statusImgList.setScale(imgScale);
+		xStatusImages.setScale(imgScale);
+		messImgList.setScale(imgScale);
 //#sijapp cond.end#
-			imageList.load("/icons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
-		} 
-		catch (Exception e) {}
 		
-		statusEvilImg        = imageList.elementAt(8);
-		statusDepressionImg  = imageList.elementAt(9);
-		statusHomeImg        = imageList.elementAt(10);
-		statusWorkImg        = imageList.elementAt(11);
-		statusLunchImg       = imageList.elementAt(12);
-		statusAwayImg        = imageList.elementAt(0);
-		statusChatImg        = imageList.elementAt(1);
-		statusDndImg         = imageList.elementAt(2);
-		statusInvisibleImg   = imageList.elementAt(3);
-		statusNaImg          = imageList.elementAt(4);
-		statusOccupiedImg    = imageList.elementAt(5);
-		statusOfflineImg     = imageList.elementAt(6);
-		statusOnlineImg      = imageList.elementAt(7);
-		eventPlainMessageImg = imageList.elementAt(13);
-		eventUrlMessageImg   = imageList.elementAt(14);
-		eventSystemNoticeImg = imageList.elementAt(15);
-		eventSysActionImg    = imageList.elementAt(16);
-		imgTyping            = imageList.elementAt(17);
-		imgMessDeliv         = imageList.elementAt(18);
-		imgNoAuth            = imageList.elementAt(19);
+		boolean isNokia = Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA;
+		
+		try { statusImgList.load("/statuses.png", -1, -1, -1, isNokia); } catch (Exception e) {}
+		try { xStatusImages.load("/xstatus.png", -1, -1, -1, isNokia); } catch (Exception e) {}
+		try { messImgList.load("/messages.png", -1, -1, -1, isNokia); } catch (Exception e) {}
 		
 		
-		try
-		{
-//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
-			xStatusImages.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
-//#sijapp cond.end#
-			xStatusImages.load("/xstatus.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
-		} catch (Exception e) {}
+		statusAwayImg        = statusImgList.elementAt(0);
+		statusChatImg        = statusImgList.elementAt(1);
+		statusDndImg         = statusImgList.elementAt(2);
+		statusInvisibleImg   = statusImgList.elementAt(3);
+		statusNaImg          = statusImgList.elementAt(4);
+		statusOccupiedImg    = statusImgList.elementAt(5);
+		statusOfflineImg     = statusImgList.elementAt(6);
+		statusOnlineImg      = statusImgList.elementAt(7);
+		statusEvilImg        = statusImgList.elementAt(8);
+		statusDepressionImg  = statusImgList.elementAt(9);
+		statusHomeImg        = statusImgList.elementAt(10);
+		statusWorkImg        = statusImgList.elementAt(11);
+		statusLunchImg       = statusImgList.elementAt(12);
+		imgNoAuth            = statusImgList.elementAt(13);
 		
+		eventPlainMessageImg = messImgList.elementAt(0);
+		eventUrlMessageImg   = messImgList.elementAt(1);
+		eventSystemNoticeImg = messImgList.elementAt(2);
+		eventSysActionImg    = messImgList.elementAt(3);
+		imgTyping            = messImgList.elementAt(4);
+		imgMessDeliv         = messImgList.elementAt(5);
 		
 		Vector data = new Vector(); 
 		
