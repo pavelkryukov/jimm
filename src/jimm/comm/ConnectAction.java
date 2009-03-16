@@ -853,7 +853,7 @@ public class ConnectAction extends Action
 						// Send a client status packet
 						Icq.setOnlineStatus(
 							(int)Options.getLong(Options.OPTION_ONLINE_STATUS), 
-							Options.getInt(Options.OPTION_XSTATUS), 
+							Icq.XSTATUS_CURRENT, 
 							true
 						);
 
