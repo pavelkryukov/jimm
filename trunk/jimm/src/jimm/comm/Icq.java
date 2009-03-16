@@ -651,6 +651,8 @@ public class Icq implements Runnable
 		sendPacket(new SnacPacket(0x0001, 0x0011, 0x0011, new byte[0], buf));
 	}
 
+	public static final int XSTATUS_CURRENT = -10;
+	
 	static public void setOnlineStatus(int status, int xStatus, boolean dcInfo) throws JimmException
 	{
 		ByteArrayOutputStream statBuffer = new ByteArrayOutputStream();
@@ -716,6 +718,7 @@ public class Icq implements Runnable
 		}
 
 		/* xStatus */
+		if (xStatus == XSTATUS_CURRENT) xStatus = Options.getInt(Options.OPTION_XSTATUS);
 		String statDescr = Options.getStatusString(StatusInfo.TYPE_X_STATUS, xStatus);
 		if (statDescr == null) statDescr = Options.emptyString;
 		byte[] szMoodId = Util.stringToByteArray(statDescr, true);

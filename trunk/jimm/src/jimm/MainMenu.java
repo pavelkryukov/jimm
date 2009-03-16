@@ -422,7 +422,7 @@ public class MainMenu implements CommandListener, JimmScreen
 		{
 			try
 			{
-				Icq.setOnlineStatus(onlineStatus, -1, false);
+				Icq.setOnlineStatus(onlineStatus, Icq.XSTATUS_CURRENT, false);
 			} catch (JimmException e)
 			{
 				JimmException.handleException(e);
