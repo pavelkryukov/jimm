@@ -851,7 +851,11 @@ public class ConnectAction extends Action
 						Icq.c.sendPacket(reply);
 
 						// Send a client status packet
-						Icq.setOnlineStatus((int)Options.getLong(Options.OPTION_ONLINE_STATUS), Options.getInt(Options.OPTION_XSTATUS));
+						Icq.setOnlineStatus(
+							(int)Options.getLong(Options.OPTION_ONLINE_STATUS), 
+							Options.getInt(Options.OPTION_XSTATUS), 
+							true
+						);
 
 						// Move to next state
 						this.state = ConnectAction.STATE_CLI_STATUS_INFO_SENT;
