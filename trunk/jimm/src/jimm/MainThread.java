@@ -239,7 +239,8 @@ public class MainThread implements Runnable
 
 	static public void updateContactListCaption()
 	{
-		addMainThreadTask(TYPE_UPDATE_CL_CAPTION);
+		if (ContactList.getVisibleContactListRef().isActive())
+			addMainThreadTask(TYPE_UPDATE_CL_CAPTION);
 	}
 
 	static public void addMessageSerially(Object message)

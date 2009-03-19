@@ -361,7 +361,7 @@ public class MainMenu implements CommandListener, JimmScreen
 			//#sijapp cond.if modules_TRAFFIC is "true" #
 			case MENU_TRAFFIC:
 				/* Traffic */
-				Traffic.trafficScreen.activate();
+				Traffic.showScreen();
 				break;
 			//#sijapp cond.end #
 
