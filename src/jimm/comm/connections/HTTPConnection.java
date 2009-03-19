@@ -31,7 +31,6 @@ import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
-import jimm.ContactList;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.MainThread;

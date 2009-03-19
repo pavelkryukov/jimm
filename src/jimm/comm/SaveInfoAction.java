@@ -31,7 +31,6 @@ import jimm.comm.Util;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.JimmUI;
-import jimm.ContactList;
 import jimm.MainThread;
 
 public class SaveInfoAction extends Action

@@ -35,7 +35,6 @@ import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.SocketConnection;
 
-import jimm.ContactList;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.MainThread;

@@ -27,7 +27,6 @@ import java.io.ByteArrayOutputStream;
 
 import jimm.ContactList;
 import jimm.ContactItem;
-import jimm.Jimm;
 import jimm.JimmException;
 import jimm.Options;
 

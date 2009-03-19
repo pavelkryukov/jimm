@@ -43,6 +43,7 @@ public class Templates implements VirtualListCommands, CommandListener
 	private static Command newTemplateCommand = new Command(ResourceBundle
 			.getString("add_new"), Command.ITEM, 3);
 
+	// TODO: make deleting of template!!!
 	private static Command deleteTemplateCommand = new Command(ResourceBundle
 			.getString("delete"), Command.ITEM, 4);
 

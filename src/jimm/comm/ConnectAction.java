@@ -30,7 +30,6 @@ import jimm.ContactItem;
 import jimm.ContactListGroupItem;
 import jimm.ContactListItem;
 import jimm.ContactList;
-import jimm.JimmUI;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.MainThread;
@@ -115,7 +114,6 @@ public class ConnectAction extends Action
     // Last activity
     private long lastActivity;
     private boolean active;
-    private boolean canceled;
     private boolean canceled_by_timeout;
 
     // Temporary variables
@@ -946,7 +944,6 @@ public class ConnectAction extends Action
 		
 		case ON_CANCEL:
 			Icq.disconnect(false);
-			canceled = true;
 			Icq.reconnect_attempts = 0;
 			MainThread.backToLastScreenMT();
 			break;

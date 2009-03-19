@@ -25,7 +25,6 @@
 package jimm.comm;
 
 import java.util.*;
-import java.io.*;
 import javax.microedition.lcdui.Image;
 
 import jimm.Jimm;

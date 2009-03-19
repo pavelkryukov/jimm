@@ -705,7 +705,7 @@ public class HistoryStorage
 
 	static final public int CLEAR_EACH_MONTH = 2;
 
-	static final private int VERSION = 1;
+	//static final private int VERSION = 1;
 
 	static final private String prefix = "hist";
 

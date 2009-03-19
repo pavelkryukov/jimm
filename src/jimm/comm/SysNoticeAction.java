@@ -23,7 +23,6 @@
 
 package jimm.comm;
 
-import jimm.Jimm;
 import jimm.JimmException;
 
 public class SysNoticeAction extends Action
