@@ -507,15 +507,10 @@ public class SOCKSConnection extends Connection implements Runnable
 				byte[] outpack = packet.toByteArray();
 				os.write(outpack);
 				os.flush();
-				//#sijapp cond.if modules_TRAFFIC is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
 				Traffic.addOutTraffic(outpack.length + 51); // 51 is the overhead for each packet
-				if (Traffic.trafficScreen.isActive()
-						|| ContactList.getVisibleContactListRef().isActive())
-				{
-					MainThread.updateContactListCaption();
-					Traffic.trafficScreen.update(false);
-				}
-				//#sijapp cond.end#
+				MainThread.updateContactListCaption();
+//#sijapp cond.end#
 			} catch (IOException e)
 			{
 				notifyToDisconnect();
@@ -689,16 +684,10 @@ public class SOCKSConnection extends Connection implements Runnable
 						flapHeader.length);
 				System.arraycopy(flapData, 0, rcvdPacket,
 						flapHeader.length, flapData.length);
-				//#sijapp cond.if modules_TRAFFIC is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
 				Traffic.addInTraffic(bReadSum + 57);
-				// 46 is the overhead for each packet (6 byte flap header)
-				if (Traffic.trafficScreen.isActive()
-						|| ContactList.getVisibleContactListRef().isActive())
-				{
-					MainThread.updateContactListCaption();
-					Traffic.trafficScreen.update(false);
-				}
-				//#sijapp cond.end#
+				MainThread.updateContactListCaption();
+//#sijapp cond.end#
 
 				// Lock object and add rcvd packet to vector
 				synchronized (rcvdPackets)

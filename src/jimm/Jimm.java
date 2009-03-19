@@ -272,7 +272,7 @@ public class Jimm extends MIDlet
 		);
 		//#sijapp cond.end#
 		
-		DrawControls.VirtualList.setDisplay(Jimm.display);
+		VirtualList.setDisplay(Jimm.display);
 		VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
 		VirtualList.setCapOffset(Options.getInt(Options.OPTION_CAPTION_OFFSET));
 		//#sijapp cond.if target!="DEFAULT"#

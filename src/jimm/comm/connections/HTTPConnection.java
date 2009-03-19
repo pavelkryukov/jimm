@@ -236,19 +236,14 @@ public class HTTPConnection extends Connection implements Runnable
 					this.hcd = null;
 				}
 
-				//#sijapp cond.if modules_TRAFFIC is "true" #
-
+//#sijapp cond.if modules_TRAFFIC is "true" #
 				// 40 is the overhead for each packet (TCP/IP)
 				// 190 is the ca. overhead for the HTTP header
 				// 14 bytes is the overhead for ICQ HTTP data header
 				// 170 bytes is the ca. overhead of the HTTP/1.1 200 OK
 				Traffic.addOutTraffic(outpack.length + 40 + 190 + 14 + 170);
-				if (ContactList.getVisibleContactListRef().isActive())
-				{
-					MainThread.updateContactListCaption();
-				}
-				//#sijapp cond.end#
-				// System.out.println(" ");
+				MainThread.updateContactListCaption();
+//#sijapp cond.end#
 			} catch (IOException e)
 			{
 				this.notifyToDisconnect();
@@ -428,20 +423,15 @@ public class HTTPConnection extends Connection implements Runnable
 					}
 				} while (bReadSumRequest < hcm.getLength());
 
-				//#sijapp cond.if modules_TRAFFIC is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
 				// This is not accurate for http connection
 				// 42 is the overhead for each packet (2 byte packet length) (TCP IP)
 				// 185 is the overhead for each monitor packet HTTP HEADER
 				// 175 is the overhead for each HTTP/1.1 200 OK answer header
 				// ICQ HTTP data header is counted in bReadSum
 				Traffic.addInTraffic(bReadSumRequest + 42 + 185 + 175);
-
-				if (ContactList.getVisibleContactListRef().isActive())
-				{
-					MainThread.updateContactListCaption();
-					Traffic.trafficScreen.update(false);
-				}
-				//#sijapp cond.end#
+				MainThread.updateContactListCaption();
+//#sijapp cond.end#
 
 				try
 				{

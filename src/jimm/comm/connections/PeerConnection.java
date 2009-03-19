@@ -204,16 +204,12 @@ public class PeerConnection implements Runnable
 				this.os.write(outpack);
 				this.os.flush();
 				// System.out.println("Peer packet sent length: "+outpack.length);
-				//#sijapp cond.if modules_TRAFFIC is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
 
 				// 51 is the overhead for each packet
 				Traffic.addOutTraffic(outpack.length + 51);
-				if (ContactList.getVisibleContactListRef().isActive())
-				{
-					MainThread.updateContactListCaption();
-					Traffic.trafficScreen.update(false);
-				}
-				//#sijapp cond.end#
+				MainThread.updateContactListCaption();
+//#sijapp cond.end#
 			} catch (IOException e)
 			{
 				this.close();
@@ -306,16 +302,10 @@ public class PeerConnection implements Runnable
 				if (bRead == -1)
 					break;
 
-				//#sijapp cond.if modules_TRAFFIC is "true" #
+//#sijapp cond.if modules_TRAFFIC is "true" #
 				Traffic.addInTraffic(bReadSum + 53);
-
-				// 42 is the overhead for each packet (2 byte packet length)
-				if (ContactList.getVisibleContactListRef().isActive())
-				{
-					MainThread.updateContactListCaption();
-					Traffic.trafficScreen.update(false);
-				}
-				//#sijapp cond.end#
+				MainThread.updateContactListCaption();
+//#sijapp cond.end#
 
 				// Lock object and add rcvd packet to vector
 				synchronized (this.rcvdPackets)
