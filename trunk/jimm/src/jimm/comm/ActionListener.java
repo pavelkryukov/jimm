@@ -195,7 +195,7 @@ public class ActionListener
 					&& (snacPacket.getCommand() == SnacPacket.SRV_USERONLINE_COMMAND))
 			{
 				int xStatus = -1;
-				String xStatusMessage = new String("");
+				String xStatusMessage = null;
 
 //#sijapp cond.if (target!="DEFAULT")&(modules_FILES="true")#
 				// DC variables
@@ -275,6 +275,7 @@ public class ActionListener
 							{
 								int textLen = (int)Util.getWord(tlvData, marker1d);
 								xStatusMessage = Util.byteArrayToString(tlvData, marker1d+2, textLen, true);
+								if (xStatusMessage == null) xStatusMessage = new String();
 							}
 							else if ((bart_id == 0x000E) && (bart_flg == 0x0000))
 							{
