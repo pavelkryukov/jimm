@@ -25,9 +25,6 @@ package jimm.comm;
 
 import java.io.ByteArrayInputStream;
 
-import javax.microedition.lcdui.Alert;
-import javax.microedition.lcdui.AlertType;
-
 import jimm.ContactList;
 import jimm.ContactItem;
 import jimm.DebugLog;
@@ -897,13 +894,13 @@ public class ActionListener
 								}
 
 								// Get text
-								String filename = Util.removeCr(Util
+								/*String filename = */ Util.removeCr(Util
 										.byteArrayToString(msg2Buf, msg2Marker,
 												textLen));
 								msg2Marker += textLen;
 
 								// Get filesize
-								long filesize = Util.getDWord(msg2Buf,
+								/*long filesize = */ Util.getDWord(msg2Buf,
 										msg2Marker, false);
 								msg2Marker += 4;
 

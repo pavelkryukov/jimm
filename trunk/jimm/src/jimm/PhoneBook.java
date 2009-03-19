@@ -38,8 +38,6 @@ import javax.wireless.messaging.*;
 
 import DrawControls.TextList;
 import DrawControls.VirtualList;
-
-import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 public class PhoneBook implements CommandListener {
@@ -69,7 +67,7 @@ public class PhoneBook implements CommandListener {
 			PIM_API_Available = true;
 		}
 		try {
-			Class testClass = Class.forName("javax.wireless.messaging.MessageConnection");
+			Class.forName("javax.wireless.messaging.MessageConnection");
 			SMS_API_Available = true;
 		} catch ( Exception ignore ) {/* Do nothing */}			
 	}
@@ -194,7 +192,8 @@ public class PhoneBook implements CommandListener {
 		//#sijapp cond.end#
 
 		} else if (c == cmdWriteSMS) {
-			String number = getCurrPhoneNumber();
+			/*String number = */
+			getCurrPhoneNumber();
 			smsText = new TextBox(null, "", 500, TextField.ANY);
 			smsText.addCommand(cmdSendSMS);
 			smsText.addCommand(backCommand);

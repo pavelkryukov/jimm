@@ -34,13 +34,12 @@ import java.util.Vector;
 //#sijapp cond.if target!="DEFAULT"#
 	import javax.microedition.io.SocketConnection;
 //#sijapp cond.else#
-	import javax.microedition.io.StreamConnection;
+//#	import javax.microedition.io.StreamConnection;
 //#sijapp cond.end#
 
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
 
-import jimm.ContactList;
 import jimm.JimmException;
 import jimm.Options;
 import jimm.MainThread;

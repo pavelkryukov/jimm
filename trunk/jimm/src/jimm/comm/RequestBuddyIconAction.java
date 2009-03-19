@@ -243,8 +243,6 @@ public class RequestBuddyIconAction extends Action
 			    // Watch out for SNAC packet
 			    if (packet instanceof SnacPacket)
 			    {
-					SnacPacket snacPacket = (SnacPacket) packet;
-	
 					// Send a CLI_READY packet
 					SnacPacket reply = new SnacPacket(SnacPacket.CLI_READY_FAMILY, SnacPacket.CLI_READY_COMMAND, 0x00000000, new byte[0], ConnectAction.CLI_READY_DATA);
 					Icq.bartC.sendPacket(reply);

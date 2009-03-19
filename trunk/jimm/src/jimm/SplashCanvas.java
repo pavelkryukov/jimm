@@ -85,8 +85,8 @@ public class SplashCanvas extends Canvas implements CommandListener
 			Font.STYLE_BOLD, Font.SIZE_LARGE);
 
 	// Font used to display the version nr
-	private static Font versionFont = Font.getFont(Font.FACE_SYSTEM,
-			Font.STYLE_PLAIN, Font.SIZE_SMALL);
+	/*private static Font versionFont = Font.getFont(Font.FACE_SYSTEM,
+			Font.STYLE_PLAIN, Font.SIZE_SMALL); */
 
 	// Font (and font height in pixels) used to display informational messages
 	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,

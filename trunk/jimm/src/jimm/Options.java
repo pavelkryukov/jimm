@@ -1941,7 +1941,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			
 //#sijapp cond.if target="MIDP2" | target="SIEMENS2"#	
 			String[] imgScaleText = Util.explode(ResourceBundle.getString("no") + "|120%|140%|160%|180%|200%" , '|');
-			imagesScale = new ChoiceGroup(ResourceBundle.getString("images_scale"), ChoiceGroup.POPUP, imgScaleText, null);
+			imagesScale = new ChoiceGroup(ResourceBundle.getString("images_scale"), Choice.POPUP, imgScaleText, null);
 			int imgScale = Options.getInt(Options.OPTION_IMG_SCALE);
 			imgScale = (imgScale > 200) ? 200 : ((imgScale < 100) ? 100 : imgScale);
 			imagesScale.setSelectedIndex((imgScale-100)/20, true);
@@ -2077,9 +2077,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 //#sijapp cond.if target!="DEFAULT"#			
 		case OPTIONS_TRANSP:
 			String[] transpText = Util.explode(ResourceBundle.getString("no") + "|25%|50%|75%" , '|');
-			cursorAlpha = new ChoiceGroup(ResourceBundle.getString("cursor"), ChoiceGroup.POPUP, transpText, null);
+			cursorAlpha = new ChoiceGroup(ResourceBundle.getString("cursor"), Choice.POPUP, transpText, null);
 			cursorAlpha.setSelectedIndex(Options.getInt(Options.OPTION_CURSOR_ALPHA)/64, true);
-			menuAlpha = new ChoiceGroup(ResourceBundle.getString("menu"), ChoiceGroup.POPUP, transpText, null);
+			menuAlpha = new ChoiceGroup(ResourceBundle.getString("menu"), Choice.POPUP, transpText, null);
 			menuAlpha.setSelectedIndex(Options.getInt(Options.OPTION_MENU_ALPHA)/64, true);
 			
 			optionsForm.append(cursorAlpha);
@@ -2270,7 +2270,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			return;
 			
 		case OPTIONS_SEARCH_USER:
-			Search searchf = new Search(false);
+			Search searchf = new Search();
 			searchf.getSearchForm().activate(Search.SearchForm.ACTIV_JUST_SHOW);
 			return;
 			
@@ -2602,7 +2602,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			break;
 			
 		case OPTIONS_ADD_USER:
-			Search search = new Search(true);
+			Search search = new Search();
 			String data[] = new String[Search.LAST_INDEX];
 			data[Search.UIN] = txtUIN.getString();
 			return Icq.runActionAndProcessError(new SearchAction(search, data, SearchAction.CALLED_BY_ADDUSER));

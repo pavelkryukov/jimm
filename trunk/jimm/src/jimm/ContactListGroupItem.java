@@ -26,8 +26,6 @@ package jimm;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import jimm.comm.Util;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 

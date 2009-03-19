@@ -22,8 +22,6 @@
  *******************************************************************************/
 
 package jimm.comm;
-
-import jimm.Jimm;
 import jimm.JimmException;
 
 public class RemoveMeAction extends Action

@@ -266,7 +266,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 		/* Add temporary user to contact list */
 		else if (c == cmdAddUrs)
 		{
-			Search search = new Search(true);
+			Search search = new Search();
 			String data[] = new String[Search.LAST_INDEX];
 			data[Search.UIN] = contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 

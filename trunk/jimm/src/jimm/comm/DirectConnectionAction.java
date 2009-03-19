@@ -29,12 +29,9 @@ import java.util.Date;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 
-import jimm.ContactList;
 import jimm.ContactItem;
-import jimm.Jimm;
 import jimm.FileTransfer;
 import jimm.JimmException;
-import jimm.JimmUI;
 import jimm.Options;
 import jimm.MainThread;
 import jimm.comm.connections.PeerConnection;
@@ -395,12 +392,12 @@ public class DirectConnectionAction extends Action
 			break;
 
 		case ON_ERROR:
-			Alert err = new Alert(ResourceBundle.getString("filetransfer"),
+			/*Alert err = new Alert(ResourceBundle.getString("filetransfer"),
 					ResourceBundle.getString("filetransfer") + " "
 							+ ResourceBundle.getString("was") + " "
 							+ ResourceBundle.getString("not") + " "
 							+ ResourceBundle.getString("successful") + "!",
-					null, AlertType.WARNING);
+					null, AlertType.WARNING); */
 			
 			// TODO: show error here
 			MainThread.backToLastScreenMT();

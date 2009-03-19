@@ -23,14 +23,9 @@
 
 package jimm.comm;
 
-import javax.microedition.lcdui.Alert;
-
-import jimm.Jimm;
 import jimm.JimmException;
-import jimm.MainMenu;
 import jimm.Options;
 import jimm.Search;
-import jimm.util.ResourceBundle;
 
 import java.io.ByteArrayOutputStream;
 
@@ -259,7 +254,7 @@ public class SearchAction extends Action
 					if (this.state == STATE_LASTRESULT_RECEIVED)
 					{
 						marker += 2;
-						long foundleft = Util.getDWord(data, marker, false);
+						/*long foundleft =*/ Util.getDWord(data, marker, false);
 						// System.out.println("foundleft: "+foundleft);
 						this.state = STATE_SEARCH_FINISHED;
 					}

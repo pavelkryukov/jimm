@@ -36,8 +36,6 @@ public class Search
 {
 	SearchForm searchForm;
 
-	private boolean liteVersion;
-
 	final public static int UIN = 0;
 
 	final public static int NICK = 1;
@@ -64,10 +62,9 @@ public class Search
 	private Vector results;
 
 	/* Constructor */
-	public Search(boolean liteVersion)
+	public Search()
 	{
 		this.results = new Vector();
-		this.liteVersion = liteVersion;
 	}
 
 	/* Add a result to the results vector */
@@ -190,7 +187,7 @@ public class Search
 					.getString("keyword"), "", 32, TextField.ANY);
 
 			chgrAge = new ChoiceGroup(ResourceBundle.getString("age"),
-					ChoiceGroup.EXCLUSIVE, Util.explode(
+					Choice.EXCLUSIVE, Util.explode(
 							"-|18-22|23-29|30-39|40-49|50-59|>60", '|'), null);
 
 			/* Choice Groups */
@@ -226,7 +223,7 @@ public class Search
 			screen.addCommandEx(this.addCommand, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.cmdSendMessage, VirtualList.MENU_TYPE_RIGHT);
 			screen.addCommandEx(this.cmdShowInfo, VirtualList.MENU_TYPE_RIGHT);
-			screen.setMode(TextList.CURSOR_MODE_DISABLED);
+			screen.setMode(VirtualList.CURSOR_MODE_DISABLED);
 			JimmUI.setColorScheme(screen, false, -1, true);
 		}
 

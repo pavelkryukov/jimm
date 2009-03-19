@@ -26,7 +26,6 @@ package jimm;
 
 //#sijapp cond.if target="MIDP2"|target="MOTOROLA"|target="RIM"#
 import javax.microedition.io.file.*;
-import javax.microedition.io.*;
 //#sijapp cond.elseif target="SIEMENS2"#
 //#import com.siemens.mp.io.file.FileConnection;
 //#import com.siemens.mp.io.file.FileSystemRegistry;
@@ -34,11 +33,9 @@ import javax.microedition.io.*;
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
 
-import jimm.util.ResourceBundle;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.io.*;
