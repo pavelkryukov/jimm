@@ -285,7 +285,7 @@ public class JimmUI implements CommandListener
 		}
 		
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-		if (JimmUI.isControlActive(URLList))
+		else if (JimmUI.isControlActive(URLList))
 		{
 			if (c == cmdSelect)
 			{
@@ -402,28 +402,33 @@ public class JimmUI implements CommandListener
 			lastSelectedItemIndex = lstSelector.getCurrTextIndex();
 			
 			// User have selected new group for contact
-			if ((curScreenTag == GROUP_SELECTOR_MOVE_TAG) && ((c == cmdOk) || (c == List.SELECT_COMMAND)))
+			if (curScreenTag == GROUP_SELECTOR_MOVE_TAG)
 			{
-				int currGroupId = clciContactMenu.getIntValue(ContactItem.CONTACTITEM_GROUP);
-				int newGroupId = groupList[JimmUI.getLastSelIndex()];
-				ContactListGroupItem oldGroup = ContactList.getGroupById(currGroupId);
-				ContactListGroupItem newGroup = ContactList.getGroupById(newGroupId);
-
-				UpdateContactListAction act = new UpdateContactListAction(clciContactMenu, oldGroup, newGroup);
-
-				try
+				lstSelector = null;
+				if ((c == cmdOk) || (c == List.SELECT_COMMAND))
 				{
-					Icq.requestAction(act);
-					SplashCanvas.addTimerTask("wait", act, false);
+					int currGroupId = clciContactMenu.getIntValue(ContactItem.CONTACTITEM_GROUP);
+					int newGroupId = groupList[JimmUI.getLastSelIndex()];
+					ContactListGroupItem oldGroup = ContactList.getGroupById(currGroupId);
+					ContactListGroupItem newGroup = ContactList.getGroupById(newGroupId);
+
+					UpdateContactListAction act = new UpdateContactListAction(clciContactMenu, oldGroup, newGroup);
+
+					try
+					{
+						Icq.requestAction(act);
+						SplashCanvas.addTimerTask("wait", act, false);
+					}
+					catch (JimmException e)
+					{
+						JimmException.handleException(e);
+					}
 				}
-				catch (JimmException e)
-				{
-					JimmException.handleException(e);
-				}
+				else backToLastScreen();
 				return;
 			}
-			else listener.commandAction(c, d); 
-
+			else listener.commandAction(c, d);
+			
 			lstSelector = null;
 			listener = null;
 
