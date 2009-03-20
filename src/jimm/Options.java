@@ -1296,18 +1296,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		optionsMenu.selectTextByIndex(currOptMode);
 		optionsMenu.activate(Jimm.display);
 	}
-
-	private String getHotKeyActName(String langStr, int option)
-	{
-		int optionValue = Options.getInt(option);
-		for (int i = 0; i < hotkeyActionNames.length; i++)
-		{
-			if (hotkeyActions[i] == optionValue)
-				return ResourceBundle.getString(langStr) + ": "
-						+ ResourceBundle.getString(hotkeyActionNames[i]);
-		}
-		return ResourceBundle.getString(langStr) + ": <???>";
-	}
 	
 	public void vlKeyPress(VirtualList sender, int keyCode, int type) {}
 	public void vlItemClicked(VirtualList sender) {}
@@ -1382,28 +1370,54 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		tlColorScheme.activate(Jimm.display);
 	}
 
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/	
+	
+	private Object[] hotKeysOptCodes = {
+		new Integer(Options.OPTION_EXT_CLKEY0),     "ext_clhotkey0", null,
+		new Integer(Options.OPTION_EXT_CLKEY4),     "ext_clhotkey4", null,
+		new Integer(Options.OPTION_EXT_CLKEY6),     "ext_clhotkey6", null,
+//#sijapp cond.if target isnot "MOTOROLA"#		
+		new Integer(Options.OPTION_EXT_CLKEYSTAR),  "ext_clhotkeystar", null,
+//#sijapp cond.end#		
+		new Integer(Options.OPTION_EXT_CLKEYPOUND), "ext_clhotkeypound", null,
+//#sijapp cond.if target is "SIEMENS2"#		
+		new Integer(Options.OPTION_EXT_CLKEYCALL),  "ext_clhotkeycall", null,
+//#sijapp cond.end#		
+	};
+
+	static private final int hotKeysOptCodesSize = 3;
+
+	private String getHotKeyActName(String langStr, int index)
+	{
+		int optionValue = ((Integer)hotKeysOptCodes[index*hotKeysOptCodesSize+2]).intValue();
+		for (int i = 0; i < hotkeyActionNames.length; i++)
+		{
+			if (hotkeyActions[i] == optionValue)
+				return ResourceBundle.getString(langStr) + ": "
+						+ ResourceBundle.getString(hotkeyActionNames[i]);
+		}
+		return ResourceBundle.getString(langStr) + ": <???>";
+	}
+	
 	private void InitHotkeyMenuUI()
 	{
 		int lastItemIndex = keysMenu.getCurrTextIndex();
 		keysMenu.clear();
 		JimmUI.setColorScheme(keysMenu, false, -1, true);
 		
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey0", Options.OPTION_EXT_CLKEY0), null, Options.OPTION_EXT_CLKEY0, false, -1, Font.STYLE_PLAIN);
+		int index = 0;
+		for (int i = 0; i < hotKeysOptCodes.length; i += hotKeysOptCodesSize)
+		{
+			String lngStr = (String)hotKeysOptCodes[i+1];
+			JimmUI.addTextListItem(
+				keysMenu, getHotKeyActName(lngStr, index), 
+				null, index, false, -1, Font.STYLE_PLAIN
+			);
+			index++;
+		}
 		
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey4", Options.OPTION_EXT_CLKEY4), null, Options.OPTION_EXT_CLKEY4, false, -1, Font.STYLE_PLAIN);
-		
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkey6", Options.OPTION_EXT_CLKEY6), null, Options.OPTION_EXT_CLKEY6, false, -1, Font.STYLE_PLAIN);
-		
-		//#sijapp cond.if target isnot "MOTOROLA"#
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeystar", Options.OPTION_EXT_CLKEYSTAR), null, Options.OPTION_EXT_CLKEYSTAR, false, -1, Font.STYLE_PLAIN);
-		//#sijapp cond.end#
-		
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeypound", Options.OPTION_EXT_CLKEYPOUND), null, Options.OPTION_EXT_CLKEYPOUND, false, -1, Font.STYLE_PLAIN);
-		
-		// #sijapp cond.if target is "SIEMENS2"#
-		JimmUI.addTextListItem(keysMenu, getHotKeyActName("ext_clhotkeycall", Options.OPTION_EXT_CLKEYCALL), null, Options.OPTION_EXT_CLKEYCALL, false, -1, Font.STYLE_PLAIN);
-		// #sijapp cond.end#
-
 		keysMenu.selectTextByIndex(lastItemIndex);
 
 //#sijapp cond.if target!="RIM" & target!="DEFAULT"#
@@ -1412,10 +1426,16 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 		keysMenu.addCommandEx(JimmUI.cmdSave, VirtualList.MENU_TYPE_RIGHT);
 		keysMenu.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_RIGHT);
+		keysMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 		
 		
 		keysMenu.activate(Jimm.display);
 	}
+
+
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/	
 	
 	private int statusStrMode;
 	private void initStatusMenu(int type, boolean restorePos)
@@ -2067,6 +2087,12 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 //#sijapp cond.end #
 
 		case OPTIONS_HOTKEYS:
+			for (int i = 0; i < hotKeysOptCodes.length; i += hotKeysOptCodesSize)
+			{
+				int optKey = ((Integer)hotKeysOptCodes[i]).intValue();
+				hotKeysOptCodes[i+2] = new Integer(Options.getInt(optKey));
+			}
+			
 			InitHotkeyMenuUI();
 			return;
 			
@@ -2771,7 +2797,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 				actionMenu.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
 				actionMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);
 
-				int optValue = Options.getInt(keysMenu.getCurrTextIndex());
+				int optValue = ((Integer)hotKeysOptCodes[keysMenu.getCurrTextIndex()*hotKeysOptCodesSize+2]).intValue();
 				actionMenu.selectTextByIndex(optValue);
 				JimmUI.setColorScheme(actionMenu, false, -1, true);
 				
@@ -2781,7 +2807,18 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			}
 			else if (c == JimmUI.cmdSave)
 			{
+				for (int i = 0; i < hotKeysOptCodes.length; i += hotKeysOptCodesSize)
+				{
+					int optKey = ((Integer)hotKeysOptCodes[i]).intValue();
+					int optValue = ((Integer)hotKeysOptCodes[i+2]).intValue(); 
+					Options.setInt(optKey, optValue);
+				}
+				
 				Options.safeSave();
+				initOptionsList(TYPE_TOP_OPTIONS);
+			}
+			else if (c == JimmUI.cmdBack)
+			{
 				initOptionsList(TYPE_TOP_OPTIONS);
 			}
 		}
@@ -2791,7 +2828,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		{
 			if (c == JimmUI.cmdOk)
 			{
-				Options.setInt(keysMenu.getCurrTextIndex(), actionMenu.getCurrTextIndex());
+				hotKeysOptCodes[keysMenu.getCurrTextIndex()*hotKeysOptCodesSize+2] = new Integer(actionMenu.getCurrTextIndex());
 			}
 			InitHotkeyMenuUI();
 			return;
