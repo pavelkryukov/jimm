@@ -26,6 +26,8 @@ package jimm;
 import java.io.IOException;
 import javax.microedition.lcdui.*;
 
+import DrawControls.VirtualList;
+
 import java.io.DataOutputStream;
 import java.io.DataInputStream;
 
@@ -612,9 +614,10 @@ public class ContactItem implements ContactListItem, JimmScreen
 	{
 		synchronized (this)
 		{
-			if (getBooleanValue_(CONTACTITEM_IS_TEMP))
-				return clrFantom;
-			return getBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT) ? clrHasChat : clrNormal;
+			int color;
+			if (getBooleanValue_(CONTACTITEM_IS_TEMP)) color =  clrFantom;
+			else color = getBooleanValue_(ContactItem.CONTACTITEM_HAS_CHAT) ? clrHasChat : clrNormal; 
+			return VirtualList.checkTextColor(color);
 		}
 	}
 

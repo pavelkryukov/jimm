@@ -58,6 +58,7 @@ public class MainMenu implements CommandListener, JimmScreen
 	private static final int MENU_SOUND         = 12;
 	private static final int MENU_EXIT          = 14;
 	private static final int MENU_DEBUG_LOG     = 15;
+	private static final int MENU_DEBUG_ITEM    = 16;
 
 	final public static ImageList menuIcons;
 
@@ -154,7 +155,8 @@ public class MainMenu implements CommandListener, JimmScreen
 		JimmUI.addTextListItem(list, "about", menuIcons.elementAt(8), MENU_ABOUT, true, -1, Font.STYLE_PLAIN);
 
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
-		JimmUI.addTextListItem(list, "** Debug Log **", null, MENU_DEBUG_LOG, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "**Debug Log**", null, MENU_DEBUG_LOG, true, -1, Font.STYLE_PLAIN);
+		JimmUI.addTextListItem(list, "**Exec debug cmd**", null, MENU_DEBUG_ITEM, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
 		
 		//#sijapp cond.if target is "MIDP2" #
@@ -392,6 +394,10 @@ public class MainMenu implements CommandListener, JimmScreen
 			//#sijapp cond.if modules_DEBUGLOG is "true" #
 			case MENU_DEBUG_LOG:
 				DebugLog.activate();
+				break;
+				
+			case MENU_DEBUG_ITEM:
+				ContactList.playSoundNotification(ContactList.SOUND_TYPE_MESSAGE);
 				break;
 			//#sijapp cond.end#
 			}
