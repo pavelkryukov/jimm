@@ -430,8 +430,43 @@ public abstract class VirtualList
 	{
 		if (backImage == image) return;
 		backImage = image;
+		if (backImage == null) return;
+		int width = image.getWidth();
+		int height = image.getHeight();
+		int[] pixels = new int[width*height]; 
+		int size = (width < height) ? width : height;
+		if (size == 0) return;
+		image.getRGB(pixels, 0, width, 0, 0, width, height);
+		long total = 0;
+		for (int i = 0; i < size; i++)
+		{
+			int pixel = pixels[i*width+i];
+			int r = pixel&0xFF;
+			int g = (pixel >> 8)&0xFF;
+			int b = (pixel >> 16)&0xFF;
+			total += (r+g+b);  
+		}
+		total /= size;
+		backImageInvColor = (total > 300) ? 0x000000 : 0xFFFFFF; 
 	}
+	
+	public static Image getBackImage()
+	{
+		return backImage;
+	}
+	
+	static private int backImageInvColor; 
+	
+//#sijapp cond.end#
+	
+	static public int checkTextColor(int color)
+	{
+//#sijapp cond.if target!="DEFAULT"#		
+		if (backImage == null) return color;
+		if (getInverseColor(color) == backImageInvColor) return backImageInvColor;
 //#sijapp cond.end#		
+		return color;
+	}
 
 	public void setVLCommands(VirtualListCommands vlCommands)
 	{
@@ -1288,7 +1323,7 @@ public abstract class VirtualList
 	private static int lastRectColor2;
 	
 	
-	static protected void drawRect(Graphics gr, int color1, int color2, int x1, int y1, int x2, int y2, int alpha)
+	static public void drawRect(Graphics gr, int color1, int color2, int x1, int y1, int x2, int y2, int alpha)
 	{
 		int r1 = ((color1 & 0xFF0000) >> 16);
 		int g1 = ((color1 & 0x00FF00) >> 8);
@@ -1543,7 +1578,7 @@ public abstract class VirtualList
 	}
 
 	// change light of color 
-	static protected int transformColorLight(int color, int light)
+	static public int transformColorLight(int color, int light)
 	{
 		int r = (color & 0xFF) + light;
 		int g = ((color & 0xFF00) >> 8) + light;
@@ -1557,7 +1592,7 @@ public abstract class VirtualList
 		return r | (g << 8) | (b << 16);
 	}
 	
-	static protected int mergeColors(int color1, int color2, int value)
+	static public int mergeColors(int color1, int color2, int value)
 	{
 		int r1 = (color1 & 0xFF);
 		int g1 = ((color1 & 0xFF00) >> 8);
@@ -1590,6 +1625,15 @@ public abstract class VirtualList
 		paintAllOnGraphics(graphics, DMS_DRAW, -1, -1);
 	}
 	
+	public static void drawBgImage(Image backImage, int scrWidth, int scrHeight, Graphics graphics)
+	{
+		int imgWidth = backImage.getWidth();
+		int imgHeight = backImage.getHeight();
+		for (int xx = 0; xx < scrWidth; xx += imgWidth)
+			for (int yy = 0; yy < scrHeight; yy += imgHeight)
+				graphics.drawImage(backImage, xx, yy, Graphics.LEFT|Graphics.TOP);
+	}
+	
 	public void paintAllOnGraphics(Graphics graphics, int mode, int mouseX, int mouseY)
 	{
 		int y;
@@ -1600,16 +1644,7 @@ public abstract class VirtualList
 		boolean clicked;
 
 //#sijapp cond.if target!="DEFAULT"#
-		if (backImage != null)
-		{
-			int scrWidth = getWidth();
-			int scrHeight = getHeight();
-			int imgWidth = backImage.getWidth();
-			int imgHeight = backImage.getHeight();
-			for (int xx = 0; xx < scrWidth; xx += imgWidth)
-				for (int yy = 0; yy < scrHeight; yy += imgHeight)
-					graphics.drawImage(backImage, xx, yy, Graphics.LEFT|Graphics.TOP);
-		}
+		if (backImage != null) drawBgImage(backImage, getWidth(), getHeight(), graphics);
 //#sijapp cond.end#
 		
 //#sijapp cond.if target="RIM" | target="DEFAULT"#

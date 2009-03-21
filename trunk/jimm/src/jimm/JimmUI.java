@@ -792,7 +792,7 @@ public class JimmUI implements CommandListener
 			Options.getSchemeColor(Options.CLRSCHHEME_CAP, theme), 
 			Options.getSchemeColor(Options.CLRSCHHEME_BACK, theme), 
 			Options.getSchemeColor(Options.CLRSCHHEME_CURS, theme), 
-			Options.getSchemeColor(Options.CLRSCHHEME_TEXT, theme),
+			VirtualList.checkTextColor(Options.getSchemeColor(Options.CLRSCHHEME_TEXT, theme)),
 			Options.getSchemeColor(Options.CLRSCHHEME_CURS_FRAME, theme), 
 			cursorAlpha,
 			menuAlpha

@@ -213,6 +213,14 @@ public class Jimm extends MIDlet
 		// Get display object (and update progress indicator)
 		Jimm.display = Display.getDisplay(this);
 		SplashCanvas.setProgress(10);
+		
+		VirtualList.setDisplay(Jimm.display);
+		VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
+		VirtualList.setCapOffset(Options.getInt(Options.OPTION_CAPTION_OFFSET));
+//#sijapp cond.if target!="DEFAULT"#
+		Options.setBackgroundImage( Options.getInt(Options.OPTION_BG_IMAGE_MODE),
+						Options.getString(Options.OPTION_BG_IMAGE_URL));
+//#sijapp cond.end#
 
 		// Create ICQ object (and update progress indicator)
 		this.icq = new Icq();
@@ -270,14 +278,6 @@ public class Jimm extends MIDlet
 			Options.getBoolean(Options.OPTION_LIGHT_MANUAL),
 			Options.getInt(Options.OPTION_LIGHT_TIMEOUT)
 		);
-		//#sijapp cond.end#
-		
-		VirtualList.setDisplay(Jimm.display);
-		VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
-		VirtualList.setCapOffset(Options.getInt(Options.OPTION_CAPTION_OFFSET));
-		//#sijapp cond.if target!="DEFAULT"#
-		Options.setBackgroundImage( Options.getInt(Options.OPTION_BG_IMAGE_MODE),
-						Options.getString(Options.OPTION_BG_IMAGE_URL));
 		//#sijapp cond.end#
 
 		if (loadError.length() == 0)

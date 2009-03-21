@@ -27,7 +27,6 @@ import jimm.comm.Util;
 import jimm.comm.Icq;
 import jimm.comm.Action;
 import jimm.util.ResourceBundle;
-import java.io.IOException;
 import javax.microedition.lcdui.*;
 import java.util.Timer;
 
@@ -49,14 +48,14 @@ public class SplashCanvas extends Canvas implements CommandListener
 	//Timer for repaint
 	static private Timer t1, t2;
 
-	// Location of the splash image (inside the JAR file)
-	private static final String SPLASH_IMG = "/logo.png";
-
 	// Image object, holds the splash image
-	private static Image splash;
-
-	// Location of the notice image (inside the JAR file)
-	private static final String NOTICE_IMG = "/notice.png";
+	private static Image imgSplash;
+	
+	private static Image imgClientIcon;
+	
+	// Image object, holds the notice image
+	private static Image imgNotice;
+	
 
 	//#sijapp cond.if target is "SIEMENS2"#
 	//#	private static final String BATT_IMG = "/batt.png";
@@ -77,36 +76,29 @@ public class SplashCanvas extends Canvas implements CommandListener
 
 	//#sijapp cond.end#
 
-	// Image object, holds the notice image
-	private static Image notice;
 
 	// Font used to display the logo (if image is not available)
 	private static Font logoFont = Font.getFont(Font.FACE_SYSTEM,
 			Font.STYLE_BOLD, Font.SIZE_LARGE);
 
-	// Font used to display the version nr
-	/*private static Font versionFont = Font.getFont(Font.FACE_SYSTEM,
-			Font.STYLE_PLAIN, Font.SIZE_SMALL); */
-
 	// Font (and font height in pixels) used to display informational messages
 	private static Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
 			Font.SIZE_SMALL);
 
-	private static int height = font.getHeight();
+	private static int fontHeight = font.getHeight();
 
 	// Initializer block
 	static
 	{
-
-		// Construct splash image
-		try
-		{
-			SplashCanvas.notice = Image.createImage(SplashCanvas.NOTICE_IMG);
-		} catch (IOException e)
-		{
-			// Do nothing
-		}
-
+		try { imgNotice     = Image.createImage("/notice.png"); } catch (Exception e) {}
+		try { imgClientIcon = Image.createImage("/icon.png"); }   catch (Exception e) {}
+	}
+	
+	static private Image getSplashImage()
+	{
+		if (imgSplash == null)
+			try { imgSplash = Image.createImage("/logo.png"); }   catch (Exception e) {}
+		return imgSplash;
 	}
 
 	/*****************************************************************************/
@@ -199,22 +191,6 @@ public class SplashCanvas extends Canvas implements CommandListener
 		return (progress);
 	}
 
-	static public Image getSplashImage()
-	{
-		if (SplashCanvas.splash == null)
-		{
-			try
-			{
-				SplashCanvas.splash = Image
-						.createImage(SplashCanvas.SPLASH_IMG);
-			} catch (Exception e)
-			{
-				SplashCanvas.splash = null;
-			}
-		}
-		return SplashCanvas.splash;
-	}
-
 	static public void show()
 	{
 		if (t2 != null)
@@ -250,17 +226,10 @@ public class SplashCanvas extends Canvas implements CommandListener
 	// Sets the current progress in percent (and request screen refresh)
 	static public synchronized void setProgress(int progress)
 	{
-		if (SplashCanvas.progress == progress)
-			return;
-		int previousProgress = SplashCanvas.progress;
-
+		if (SplashCanvas.progress == progress) return;
 		VirtualList.setMpbPercent(progress);
 		SplashCanvas.progress = progress;
-		if (progress < previousProgress)
-			_this.repaint();
-		else
-			_this.repaint(0, _this.getHeight() - SplashCanvas.height - 2, _this
-					.getWidth(), SplashCanvas.height + 2);
+		_this.repaint();
 		_this.serviceRepaints();
 	}
 
@@ -268,8 +237,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	static public synchronized void lock()
 	{
 		SplashCanvas._this.removeCommand(SplashCanvas.cancelCommand);
-		if (isLocked)
-			return;
+		if (isLocked) return;
 
 		isLocked = true;
 		Jimm.setBkltOn(false);
@@ -319,7 +287,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 
 	protected void hideNotify()
 	{
-		SplashCanvas.splash = null;
+		imgSplash = null;
 //		resetLastTask();
 	}
 
@@ -391,170 +359,167 @@ public class SplashCanvas extends Canvas implements CommandListener
 	protected void paint(Graphics g)
 	{
 		// Do we need to draw the splash image?
-		if (g.getClipY() < this.getHeight() - SplashCanvas.height - 2)
+		if (g.getClipY() >= this.getHeight() - SplashCanvas.fontHeight - 2) return;
+		
+		int bgColor = Options.getSchemeColor(Options.CLRSCHHEME_BACK, -1);
+		int txtColor = Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
+
+		int textColor = VirtualList.checkTextColor(txtColor);
+		int width = this.getWidth();
+		int height = this.getHeight();
+		
+		/* Prepares for bottom bar */
+		Image draw_img = statusImage != null ? statusImage : imgClientIcon;
+		int barColor = Options.getSchemeColor(Options.CLRSCHHEME_CURS, -1);
+		int barColor1 = VirtualList.transformColorLight(barColor, 16);
+		int barColor2 = VirtualList.transformColorLight(barColor, -16);
+		int barBackColor = VirtualList.mergeColors(barColor, 0x909090, 70);
+		if (errFlag) barColor = 0xFF4040;
+		int barHeight = fontHeight;
+		if (draw_img != null)
 		{
-			// Draw background
-			g.setColor(0, 111, 177);
-			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			int imgHeight = draw_img.getHeight();
+			if (imgHeight > barHeight) barHeight = imgHeight; 
+		}
+		barHeight += 4;
+		
+		
+		// Draw background
+		Image backImage = VirtualList.getBackImage();
+		if (backImage != null)
+			VirtualList.drawBgImage(backImage, width, height, g);
+		else
+		{
+			g.setColor(bgColor);
+			g.fillRect(0, 0, width, height);
+		}
 
-			// Display splash image (or text)
-			Image image = getSplashImage();
-			if (image != null)
-			{
-				g.drawImage(image, this.getWidth() / 2, this.getHeight() / 2,
-						Graphics.HCENTER | Graphics.VCENTER);
-			} else
-			{
-				g.setColor(255, 255, 255);
-				g.setFont(SplashCanvas.logoFont);
-				g.drawString("jimm", this.getWidth() / 2,
-						this.getHeight() / 2 + 5, Graphics.HCENTER
-								| Graphics.BASELINE);
-				g.setFont(SplashCanvas.font);
-			}
+		// Display splash image (or text)
+		Image imgSplash = getSplashImage();
+		if (imgSplash != null)
+		{
+			g.drawImage(imgSplash, width/2, height/2, Graphics.HCENTER | Graphics.VCENTER);
+		} 
+		else
+		{
+			g.setColor(textColor);
+			g.setFont(SplashCanvas.logoFont);
+			g.drawString("jimm", width/2, height/2+5, Graphics.HCENTER|Graphics.BASELINE);
+			g.setFont(SplashCanvas.font);
+		}
 
-			// Display notice image (or nothing)
-			if (SplashCanvas.notice != null)
-			{
-				g.drawImage(SplashCanvas.notice, this.getWidth() / 2, 2,
-						Graphics.HCENTER | Graphics.TOP);
-			}
+		// Display notice image (or nothing)
+		if (SplashCanvas.imgNotice != null)
+			g.drawImage(SplashCanvas.imgNotice, width/2, 2, Graphics.HCENTER|Graphics.TOP);
 
-			// Display message icon, if keylock is enabled
-			if (isLocked && availableMessages > 0)
-			{
-				g.drawImage(JimmUI.eventPlainMessageImg, 1, this
-						.getHeight()
-						- (2 * SplashCanvas.height) - 9, Graphics.LEFT
-						| Graphics.TOP);
-				g.setColor(255, 255, 255);
-				g.setFont(SplashCanvas.font);
-				g.drawString("# " + availableMessages,
-						JimmUI.eventPlainMessageImg.getWidth() + 4, this
-								.getHeight()
-								- (2 * SplashCanvas.height) - 5, Graphics.LEFT
-								| Graphics.TOP);
-			}
+		// Display message icon, if keylock is enabled
+		if (isLocked && availableMessages > 0 && JimmUI.eventPlainMessageImg != null)
+		{
+			g.drawImage(
+				JimmUI.eventPlainMessageImg, 
+				2, 
+				height-barHeight-JimmUI.eventPlainMessageImg.getHeight()-2, 
+				Graphics.LEFT|Graphics.TOP
+			);
+			g.setColor(textColor);
+			g.setFont(SplashCanvas.font);
+			g.drawString("# " + availableMessages,
+				JimmUI.eventPlainMessageImg.getWidth() + 4, 
+				height-barHeight-fontHeight-5, 
+				Graphics.LEFT | Graphics.TOP
+			);
+		}
 
-			if (lastErrCode != null) {
-			    g.setColor(255, 255, 255);
-			    g.setFont(SplashCanvas.font);
-			    g.drawString(lastErrCode, 4, this.getHeight() - (2 * SplashCanvas.height) - 5, Graphics.LEFT
-								    | Graphics.TOP);
-			}
-			
-			//#sijapp cond.if target is "SIEMENS2"#
-			//#			String accuLevel = System.getProperty("MPJC_CAP");
-			//#			if( accuLevel != null && isLocked )
-			//#			{
-			//#				accuLevel += "%";
-			//#				int fontX = getWidth() -  SplashCanvas.font.stringWidth(accuLevel) - 1;
-			//#				if( getBattImg() != null )
-			//#					g.drawImage(getBattImg(), fontX - getBattImg().getWidth() - 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
-			//#				g.setColor(255, 255, 255);
-			//#				g.setFont(SplashCanvas.font);
-			//#				g.drawString(accuLevel, fontX, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
-			//#			}
-			//#sijapp cond.end#
+		if (lastErrCode != null) 
+		{
+		    g.setColor(textColor);
+		    g.setFont(SplashCanvas.font);
+		    g.drawString(lastErrCode, 4, height-barHeight-fontHeight-5, Graphics.LEFT | Graphics.TOP);
+		}
+		
+		//#sijapp cond.if target is "SIEMENS2"#
+		//#			String accuLevel = System.getProperty("MPJC_CAP");
+		//#			if( accuLevel != null && isLocked )
+		//#			{
+		//#				accuLevel += "%";
+		//#				int fontX = getWidth() -  SplashCanvas.font.stringWidth(accuLevel) - 1;
+		//#				if( getBattImg() != null )
+		//#					g.drawImage(getBattImg(), fontX - getBattImg().getWidth() - 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
+		//#				g.setColor(255, 255, 255);
+		//#				g.setFont(SplashCanvas.font);
+		//#				g.drawString(accuLevel, fontX, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
+		//#			}
+		//#sijapp cond.end#
 
-			// Draw the date bellow notice if set up to do so
-			if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
-			{
-				g.setColor(255, 255, 255);
-				g.setFont(SplashCanvas.font);
-				g.drawString(Util.getDateString(false), this.getWidth() / 2,
-						12, Graphics.TOP | Graphics.HCENTER);
-				g.drawString(Util.getCurrentDay(), this.getWidth() / 2,
-						13 + SplashCanvas.font.getHeight(), Graphics.TOP
-								| Graphics.HCENTER);
-			}
-			// Display the keylock message if someone hit the wrong key
-			if (showKeylock)
-			{
+		// Draw the date bellow notice if set up to do so
+		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
+		{
+			g.setColor(textColor);
+			g.setFont(SplashCanvas.font);
+			g.drawString(Util.getDateString(false), width / 2, 12, Graphics.TOP | Graphics.HCENTER);
+			g.drawString(Util.getCurrentDay(), width / 2,
+					13 + SplashCanvas.font.getHeight(), Graphics.TOP
+							| Graphics.HCENTER);
+		}
+		// Display the keylock message if someone hit the wrong key
+		if (showKeylock)
+		{
 
-				// Init the dimensions
-				int x, y, size_x, size_y;
-				size_x = this.getWidth() / 10 * 8;
-				size_y = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
-						Font.SIZE_MEDIUM).getHeight()
-						* TextList.getLineNumbers(ResourceBundle
-								.getString("keylock_message"), size_x - 8, 0,
-								0, 0) + 8;
-				x = this.getWidth() / 2 - (this.getWidth() / 10 * 4);
-				y = this.getHeight() / 2 - (size_y / 2);
+			// Init the dimensions
+			int x, y, size_x, size_y;
+			size_x = this.getWidth() / 10 * 8;
+			size_y = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
+					Font.SIZE_MEDIUM).getHeight()
+					* TextList.getLineNumbers(ResourceBundle
+							.getString("keylock_message"), size_x - 8, 0,
+							0, 0) + 8;
+			x = width / 2 - (this.getWidth() / 10 * 4);
+			y = this.getHeight() / 2 - (size_y / 2);
 
-				g.setColor(255, 255, 255);
-				g.fillRect(x, y, size_x, size_y);
-				g.setColor(0, 0, 0);
-				g.drawRect(x + 2, y + 2, size_x - 5, size_y - 5);
-				TextList.showText(g, ResourceBundle
-						.getString("keylock_message"), x + 4, y + 4,
-						size_x - 8, size_y - 8, VirtualList.MEDIUM_FONT, 0, 0);
+			g.setColor(textColor);
+			g.fillRect(x, y, size_x, size_y);
+			g.setColor(0, 0, 0);
+			g.drawRect(x + 2, y + 2, size_x - 5, size_y - 5);
+			TextList.showText(g, ResourceBundle
+					.getString("keylock_message"), x + 4, y + 4,
+					size_x - 8, size_y - 8, VirtualList.MEDIUM_FONT, 0, 0);
 
-				(t1 = new Timer()).schedule(new TimerTasks(
-						TimerTasks.SC_HIDE_KEYLOCK), 2000);
-
-			}
+			(t1 = new Timer()).schedule(new TimerTasks(
+					TimerTasks.SC_HIDE_KEYLOCK), 2000);
 
 		}
 
-		// Draw white bottom bar
-		g.setColor(255, 255, 255);
-		g.setStrokeStyle(Graphics.DOTTED);
-		g.drawLine(0, this.getHeight() - SplashCanvas.height - 3, this
-				.getWidth(), this.getHeight() - SplashCanvas.height - 3);
-
-		g.setColor(255, 255, 255);
+		
+		// Draws bottom bar
 		g.setFont(SplashCanvas.font);
-
-		Image draw_img = null;
-		int im_width = 0;
-		if (statusImage != null)
+		int xDelimPos = progress*width/100;
+		g.setColor(barBackColor);
+		g.fillRect(xDelimPos, height-barHeight, width-xDelimPos, barHeight);
+		
+		if (progress != 0)
 		{
-			draw_img = statusImage;
-			im_width = draw_img.getWidth();
+			VirtualList.drawRect(g, barColor1, barColor2, 0, height-barHeight, xDelimPos, height, 255);
+			g.setColor(VirtualList.getInverseColor(barColor));
+			g.drawRect(0, height-barHeight, xDelimPos, height-barHeight);
 		}
-
-		// Draw the progressbar message
-		g.drawString(message, (this.getWidth() / 2) + (im_width / 2), this
-				.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
-
+		
+		int msgWidth = 0;
+		if (draw_img != null) msgWidth += fontHeight/2+draw_img.getWidth();
+		if (message != null) msgWidth += font.stringWidth(message);
+		
+		int x = (width-msgWidth)/2;
 		if (draw_img != null)
 		{
-			g.drawImage(draw_img, (this.getWidth() / 2)
-					- (font.stringWidth(message) / 2) + (im_width / 2), this
-					.getHeight()
-					- (height / 2), Graphics.VCENTER | Graphics.RIGHT);
+			g.drawImage(draw_img, x, height-barHeight/2, Graphics.LEFT|Graphics.VCENTER);
+			x += draw_img.getWidth()+fontHeight/2; 
 		}
-
-		// Draw current progress
-		int progressPx = this.getWidth() * progress / 100;
-		if (progressPx < 1)
-			return;
-
-		g.setClip(0, this.getHeight() - SplashCanvas.height - 2, progressPx,
-				SplashCanvas.height + 2);
-		if (errFlag) {
-			g.setColor(255, 0, 0);
-		} else {
-			g.setColor(255, 255, 255);
-		}
-		g.fillRect(0, this.getHeight() - SplashCanvas.height - 2, progressPx,
-				SplashCanvas.height + 2);
-
-		g.setColor(0, 0, 0);
-
-		// Draw the progressbar message
-		g.drawString(message, (this.getWidth() / 2) + (im_width / 2), this
-				.getHeight(), Graphics.BOTTOM | Graphics.HCENTER);
-
-		if (draw_img != null)
+		
+		if (message != null)
 		{
-			g.drawImage(draw_img, (this.getWidth() / 2)
-					- (font.stringWidth(message) / 2) + (im_width / 2), this
-					.getHeight()
-					- (height / 2), Graphics.VCENTER | Graphics.RIGHT);
+			g.setColor(VirtualList.getInverseColor(barColor));
+			g.drawString(message, x, height-(barHeight+fontHeight)/2, Graphics.LEFT|Graphics.TOP);
 		}
+
 	}
 	
 	public static int getAreaWidth()
