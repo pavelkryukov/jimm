@@ -1703,16 +1703,23 @@ public class JimmUI implements CommandListener
 		String formCap = Options.getBoolean(Options.OPTION_FULL_TEXTBOX) ? null
 				 : receiver.getStringValue(ContactItem.CONTACTITEM_NAME)+" - "+ResourceBundle.getString("message");
 		
+		int mode = TextField.ANY;
 //#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		if (messageTextbox == null)
-			messageTextbox = new TextBox(formCap, null, MAX_EDITOR_TEXT_SIZE, TextField.ANY | TextField.INITIAL_CAPS_SENTENCE);
+			messageTextbox = new TextBox(formCap, null, MAX_EDITOR_TEXT_SIZE, mode);
 		else
 			messageTextbox.setTitle(formCap);
 
 //#sijapp cond.else#
-		messageTextbox = new TextBox(formCap, null, MAX_EDITOR_TEXT_SIZE, TextField.ANY);
+		messageTextbox = new TextBox(formCap, null, MAX_EDITOR_TEXT_SIZE, mode);
 //#sijapp cond.end#
 		
+		try {
+			if (Options.getBoolean(Options.OPTION_INIT_CAPS))
+					mode |= TextField.INITIAL_CAPS_SENTENCE;
+			messageTextbox.setConstraints(mode);
+		} catch (Exception ignore) { /* Do nothing */ }
+
 		textMessReceiver = receiver;
 		textMessCurMode = EDITOR_MODE_MESSAGE;
 		

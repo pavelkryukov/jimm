@@ -185,6 +185,7 @@ public class Options
 	public static final int OPTION_ANTI_SPAM         = 166;
 	public static final int OPTION_FULL_TEXTBOX      = 167;
 	public static final int OPTION_CL_HIDE_EMPTY     = 168;
+	public static final int OPTION_INIT_CAPS	     = 169;
 	
 	/* long */
 	public static final int OPTION_ONLINE_STATUS = 192; 
@@ -381,6 +382,7 @@ public class Options
 
 		setBoolean(Options.OPTION_CP1251_HACK, ResourceBundle.langAvailable[0]
 				.equals("RU") || ResourceBundle.langAvailable[0].equals("BE") );
+		setBoolean(Options.OPTION_INIT_CAPS, true);
 		//#sijapp cond.if target isnot "DEFAULT"#
 		setInt(Options.OPTION_VIBRATOR, 0);
 		//#sijapp cond.end#		
@@ -1957,6 +1959,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			setChecked(chrgChat, "show_prev_mess", Options.OPTION_SHOW_LAST_MESS);
 			//#sijapp cond.end#
 			setChecked(chrgChat, "cp1251", Options.OPTION_CP1251_HACK);
+			setChecked(chrgChat, "initcaps", Options.OPTION_INIT_CAPS);
 			setChecked(chrgChat, "deliv_info", Options.OPTION_DELIV_MES_INFO);
 			
 //#sijapp cond.if target="MIDP2" | target="SIEMENS2"#	
@@ -2455,6 +2458,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			//#sijapp cond.end#
 
 			Options.setBoolean(Options.OPTION_CP1251_HACK, chrgChat.isSelected(idx++));
+			Options.setBoolean(Options.OPTION_INIT_CAPS, chrgChat.isSelected(idx++));
 			Options.setBoolean(Options.OPTION_DELIV_MES_INFO, chrgChat.isSelected(idx++));
 			
 			idx = 0;
