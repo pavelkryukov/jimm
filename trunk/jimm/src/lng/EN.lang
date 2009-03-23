@@ -103,6 +103,7 @@
 "reset_rms_no"				"* No"
 "full_screen"				"Full screen"
 "full_textbox"				"Input textbox w/out caption"
+"initcaps"					"Initial caps sentence"
 "gender"					"Gender"
 "goto_url"					"Open URL"
 "grant"						"Grant Auth"
