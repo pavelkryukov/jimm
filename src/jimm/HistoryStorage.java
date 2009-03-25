@@ -925,6 +925,7 @@ public class HistoryStorage
 	static public void showHistoryList(String uin, String nick)
 	{
 		clearCache();
+		openUINRecords(uin);
 		
 		if (list == null)
 		{

@@ -29,6 +29,8 @@ import java.io.IOException;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Image;
 
+import DrawControls.VirtualList;
+
 public class ContactListGroupItem implements ContactListItem
 {
 	// Persistent variables
@@ -116,7 +118,8 @@ public class ContactListGroupItem implements ContactListItem
 
 	public int getTextColor()
 	{
-		return Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
+		int color = Options.getSchemeColor(Options.CLRSCHHEME_TEXT, -1);
+		return VirtualList.checkTextColor(color);
 	}
 
 	// Returns the group item id
