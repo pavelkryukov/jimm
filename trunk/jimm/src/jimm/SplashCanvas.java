@@ -22,6 +22,9 @@
  *******************************************************************************/
 
 package jimm;
+//#sijapp cond.if target is "SIEMENS2"#
+//# import java.io.IOException;
+//#sijapp cond.end#
 
 import jimm.comm.Util;
 import jimm.comm.Icq;
@@ -444,10 +447,10 @@ public class SplashCanvas extends Canvas implements CommandListener
 		//#				accuLevel += "%";
 		//#				int fontX = getWidth() -  SplashCanvas.font.stringWidth(accuLevel) - 1;
 		//#				if( getBattImg() != null )
-		//#					g.drawImage(getBattImg(), fontX - getBattImg().getWidth() - 1, this.getHeight()-(2*SplashCanvas.height)-9, Graphics.LEFT | Graphics.TOP);
+		//#					g.drawImage(getBattImg(), fontX - getBattImg().getWidth() - 1, this.getHeight()-(2*SplashCanvas.fontHeight)-9, Graphics.LEFT | Graphics.TOP);
 		//#				g.setColor(255, 255, 255);
 		//#				g.setFont(SplashCanvas.font);
-		//#				g.drawString(accuLevel, fontX, this.getHeight()-(2*SplashCanvas.height)-5, Graphics.LEFT | Graphics.TOP);
+		//#				g.drawString(accuLevel, fontX, height-(2*SplashCanvas.fontHeight)-5, Graphics.LEFT | Graphics.TOP);
 		//#			}
 		//#sijapp cond.end#
 
@@ -482,7 +485,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 			g.drawRect(x + 2, y + 2, size_x - 5, size_y - 5);
 			TextList.showText(g, ResourceBundle
 					.getString("keylock_message"), x + 4, y + 4,
-					size_x - 8, size_y - 8, VirtualList.MEDIUM_FONT, 0, 0);
+					size_x - 8, size_y - 8, VirtualList.MEDIUM_FONT, 0, textColor);
 
 			(t1 = new Timer()).schedule(new TimerTasks(
 					TimerTasks.SC_HIDE_KEYLOCK), 2000);
@@ -500,7 +503,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 		{
 			VirtualList.drawRect(g, barColor1, barColor2, 0, height-barHeight, xDelimPos, height, 255);
 			g.setColor(VirtualList.getInverseColor(barColor));
-			g.drawRect(0, height-barHeight, xDelimPos, height-barHeight);
+			g.drawRect(0, height-barHeight, xDelimPos, barHeight-1);
 		}
 		
 		int msgWidth = 0;
