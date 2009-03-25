@@ -616,6 +616,7 @@ public abstract class VirtualList
 	public int getItemHeight(int itemIndex)
 	{
 		int imgHeight = 0;
+		paintedItem.clear();
 		get(itemIndex, paintedItem);
 		if (paintedItem.leftImage != null) 
 			imgHeight = Math.max(imgHeight, paintedItem.leftImage.getHeight()+1);
