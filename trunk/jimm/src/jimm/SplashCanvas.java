@@ -476,9 +476,9 @@ public class SplashCanvas extends Canvas implements CommandListener
 			x = width / 2 - (this.getWidth() / 10 * 4);
 			y = this.getHeight() / 2 - (size_y / 2);
 
-			g.setColor(textColor);
+			g.setColor(VirtualList.getInverseColor(textColor));
 			g.fillRect(x, y, size_x, size_y);
-			g.setColor(0, 0, 0);
+			g.setColor(textColor);
 			g.drawRect(x + 2, y + 2, size_x - 5, size_y - 5);
 			TextList.showText(g, ResourceBundle
 					.getString("keylock_message"), x + 4, y + 4,
