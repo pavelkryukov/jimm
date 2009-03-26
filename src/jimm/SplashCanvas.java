@@ -387,15 +387,19 @@ public class SplashCanvas extends Canvas implements CommandListener
 		barHeight += 4;
 		
 		
+//#sijapp cond.if target!="DEFAULT"#		
 		// Draw background
 		Image backImage = VirtualList.getBackImage();
 		if (backImage != null)
 			VirtualList.drawBgImage(backImage, width, height, g);
 		else
 		{
+//#sijapp cond.end#			
 			g.setColor(bgColor);
 			g.fillRect(0, 0, width, height);
+//#sijapp cond.if target!="DEFAULT"#			
 		}
+//#sijapp cond.end#		
 
 		// Display splash image (or text)
 		Image imgSplash = getSplashImage();
