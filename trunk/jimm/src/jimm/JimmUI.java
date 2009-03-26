@@ -1714,12 +1714,15 @@ public class JimmUI implements CommandListener
 		messageTextbox = new TextBox(formCap, null, MAX_EDITOR_TEXT_SIZE, mode);
 //#sijapp cond.end#
 		
+//#sijapp cond.if target!="DEFAULT"#		
 		try {
 			if (Options.getBoolean(Options.OPTION_INIT_CAPS))
 					mode |= TextField.INITIAL_CAPS_SENTENCE;
 			messageTextbox.setConstraints(mode);
 		} catch (Exception ignore) { /* Do nothing */ }
 
+//#sijapp cond.end#
+		
 		textMessReceiver = receiver;
 		textMessCurMode = EDITOR_MODE_MESSAGE;
 		
