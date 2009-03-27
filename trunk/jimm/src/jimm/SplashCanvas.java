@@ -451,10 +451,15 @@ public class SplashCanvas extends Canvas implements CommandListener
 		//#			}
 		//#sijapp cond.end#
 
-		// Display notice
 		int y = 2;
 		g.setColor(textColor);
 		g.setFont(SplashCanvas.font);
+		
+		// Jimm version
+		g.drawString("Jimm "+Jimm.VERSION, width/2, y, Graphics.HCENTER|Graphics.TOP);
+		y += fontHeight+2;
+		
+		// Display notice
 		g.drawString("Not affiliated with ICQ inc.", width/2, y, Graphics.HCENTER|Graphics.TOP);
 		y += fontHeight+2;
 		
