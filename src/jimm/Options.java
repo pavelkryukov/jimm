@@ -2617,17 +2617,13 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			Options.setInt(Options.OPTION_DAYLIGHT_SAVING, dayLight);
 			/* Translate selected time to GMT */
 			int selHour = chsCurrTime.getSelectedIndex() - timeZone;
-			if (selHour < 0)
-				selHour += 24;
-			if (selHour >= 24)
-				selHour -= 24;
+			if (selHour < 0) selHour += 24;
+			if (selHour >= 24) selHour -= 24;
 
 			/* Calculate diff. between selected GMT time and phone time */
 			int localOffset = selHour - currentHour;
-			while (localOffset >= 12)
-				localOffset -= 24;
-			while (localOffset < -12)
-				localOffset += 24;
+			while (localOffset >= 12) localOffset -= 24;
+			while (localOffset < -12) localOffset += 24;
 			Options.setInt(Options.OPTION_LOCAL_OFFSET, localOffset);
 			break;
 			

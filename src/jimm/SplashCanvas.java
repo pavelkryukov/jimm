@@ -415,10 +415,6 @@ public class SplashCanvas extends Canvas implements CommandListener
 			g.setFont(SplashCanvas.font);
 		}
 
-		// Display notice image (or nothing)
-		if (SplashCanvas.imgNotice != null)
-			g.drawImage(SplashCanvas.imgNotice, width/2, 2, Graphics.HCENTER|Graphics.TOP);
-
 		// Display message icon, if keylock is enabled
 		if (isLocked && availableMessages > 0 && JimmUI.eventPlainMessageImg != null)
 		{
@@ -458,22 +454,27 @@ public class SplashCanvas extends Canvas implements CommandListener
 		//#			}
 		//#sijapp cond.end#
 
+		// Display notice
+		int y = 2;
+		g.setColor(textColor);
+		g.setFont(SplashCanvas.font);
+		g.drawString("Not affiliated with ICQ inc.", width/2, y, Graphics.HCENTER|Graphics.TOP);
+		y += fontHeight+2;
+		
 		// Draw the date bellow notice if set up to do so
 		if (Options.getBoolean(Options.OPTION_DISPLAY_DATE))
 		{
-			g.setColor(textColor);
 			g.setFont(SplashCanvas.font);
-			g.drawString(Util.getDateString(false), width / 2, 12, Graphics.TOP | Graphics.HCENTER);
-			g.drawString(Util.getCurrentDay(), width / 2,
-					13 + SplashCanvas.font.getHeight(), Graphics.TOP
-							| Graphics.HCENTER);
+			g.drawString(Util.getDateString(false), width / 2, y, Graphics.TOP|Graphics.HCENTER);
+			y += fontHeight;
+			g.drawString(Util.getCurrentDay(), width / 2, y, Graphics.TOP|Graphics.HCENTER);
 		}
 		// Display the keylock message if someone hit the wrong key
 		if (showKeylock)
 		{
 
 			// Init the dimensions
-			int x, y, size_x, size_y;
+			int x, size_x, size_y;
 			size_x = this.getWidth() / 10 * 8;
 			size_y = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN,
 					Font.SIZE_MEDIUM).getHeight()

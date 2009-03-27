@@ -1232,9 +1232,9 @@ public class Util
 	    long result = new Date().getTime() / 1000;
 
 	    /* convert result to GMT time */
-//	    long diff = Options.getInt(Options.OPTIONS_LOCAL_OFFSET);
-//	    long dl = Options.getInt(Options.OPTIONS_DAYLIGHT_SAVING);
-//	    result += ((diff + dl) * 3600);
+	    long diff = Options.getInt(Options.OPTION_LOCAL_OFFSET);
+	    long dl = Options.getInt(Options.OPTION_DAYLIGHT_SAVING);
+	    result += ((diff + dl) * 3600);
 
 	    /* returns GMT or local time */
 	    return gmt ? result : gmtTimeToLocalTime(result);
