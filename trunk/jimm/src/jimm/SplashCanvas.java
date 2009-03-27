@@ -45,8 +45,8 @@ public class SplashCanvas extends Canvas implements CommandListener
 {
 	static private SplashCanvas _this;
 
-	public final static Command cancelCommand = new Command(ResourceBundle
-			.getString("cancel"), Jimm.cmdBack, 1);
+	public final static Command 
+		cancelCommand = new Command(ResourceBundle.getString("cancel"), Jimm.cmdBack, 1);
 
 	//Timer for repaint
 	static private Timer t1, t2;
@@ -55,10 +55,6 @@ public class SplashCanvas extends Canvas implements CommandListener
 	private static Image imgSplash;
 	
 	private static Image imgClientIcon;
-	
-	// Image object, holds the notice image
-	private static Image imgNotice;
-	
 
 	//#sijapp cond.if target is "SIEMENS2"#
 	//#	private static final String BATT_IMG = "/batt.png";
@@ -93,7 +89,6 @@ public class SplashCanvas extends Canvas implements CommandListener
 	// Initializer block
 	static
 	{
-		try { imgNotice     = Image.createImage("/notice.png"); } catch (Exception e) {}
 		try { imgClientIcon = Image.createImage("/icon.png"); }   catch (Exception e) {}
 	}
 	
@@ -246,7 +241,9 @@ public class SplashCanvas extends Canvas implements CommandListener
 		Jimm.setBkltOn(false);
 		setProgress(0);
 		setMessage(ResourceBundle.getString("keylock_enabled"));
-		setStatusToDraw(statusImage);
+
+		setStatusToDraw(null);
+		
 		Jimm.display.setCurrent(_this);
 		Jimm.setBkltOff();
 
