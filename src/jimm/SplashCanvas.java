@@ -370,9 +370,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 		
 		/* Prepares for bottom bar */
 		Image draw_img = statusImage != null ? statusImage : imgClientIcon;
-		int barColor = Options.getSchemeColor(Options.CLRSCHHEME_CURS, -1);
-		int barColor1 = VirtualList.transformColorLight(barColor, 16);
-		int barColor2 = VirtualList.transformColorLight(barColor, -16);
+		int barColor = Options.getSchemeColor(Options.CLRSCHHEME_CAP, -1);
 		int barBackColor = VirtualList.mergeColors(barColor, 0x909090, 70);
 		if (errFlag) barColor = 0xFF4040;
 		int barHeight = fontHeight;
@@ -509,8 +507,10 @@ public class SplashCanvas extends Canvas implements CommandListener
 		
 		if (progress != 0)
 		{
+			int barColor1 = VirtualList.transformColorLight(barColor, 32);
+			int barColor2 = VirtualList.transformColorLight(barColor, -32);
 			VirtualList.drawRect(g, barColor1, barColor2, 0, height-barHeight, xDelimPos, height, 255);
-			g.setColor(VirtualList.getInverseColor(barColor));
+			g.setColor(VirtualList.mergeColors(barColor, 0x404040, 50));
 			g.drawRect(0, height-barHeight, xDelimPos, barHeight-1);
 		}
 		

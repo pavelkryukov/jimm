@@ -1434,7 +1434,6 @@ public abstract class VirtualList
 		int clipY2
 	)
 	{
-		int grCursorY1 = -1, grCursorY2 = -1;
 		int height = getDrawHeight();
 		int size = getSize();
 		int i, y;
@@ -1442,75 +1441,6 @@ public abstract class VirtualList
 		int bottomY = topY+height;
 		
 		if ((mode == DMS_DRAW) && (!crdIntersect(topY, bottomY, clipY1, clipY2))) return false;
-		
-		if (mode == DMS_DRAW)
-		{
-			//System.out.println("VirtualList.drawItems");
-			
-			getCurXVals(curXVals);
-			int curX1 = curXVals[0];
-			int curX2 = curXVals[1];
-			
-			// Fill background
-//#sijapp cond.if target!="DEFAULT"#
-			if (backImage == null || !caveBgImage) 
-			{
-//#sijapp cond.end#		
-			g.setColor(bkgrndColor);
-			int realY1 = Math.max(topY, clipY1);
-			int realY2 = Math.min(bottomY, clipY2); 
-			g.fillRect(0, realY1, itemWidth, realY2-realY1);
-//#sijapp cond.if target!="DEFAULT"#
-			}
-			
-			if (backImage != null && mode == DMS_DRAW)
-				drawBgImage(backImage, getWidth(), getHeight(), g, caveBgImage);
-//#sijapp cond.end#
-
-			// Draw cursor
-			y = topY;
-			int itemHeight = 0;
-			for (i = topItem; i < size; i++)
-			{
-				itemHeight = getItemHeight(i);
-				if (isItemSelected(i))
-				{
-					if (grCursorY1 == -1) grCursorY1 = y;
-					grCursorY2 = y + itemHeight;
-				}
-				y += itemHeight;
-				if (y >= bottomY) break;
-			}
-
-			if ((grCursorY1 != -1) && crdIntersect(grCursorY1-3, grCursorY2+2, clipY1, clipY2))
-			{
-				grCursorY1--;
-				
-				drawRect(g, cursorColor, cursorColor, curX1, grCursorY1, curX2, grCursorY2, cursorAlpha);
-
-				g.setColor(cursorFrameColor);
-				boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1) : false;
-				
-				if (!isCursorUpper)
-					g.fillRect(curX1-curFrameWidth+1, grCursorY1-curFrameWidth+1, curX2-curX1+2*curFrameWidth-2, curFrameWidth);
-				
-				g.fillRect(curX1-curFrameWidth, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
-				
-				g.fillRect(curX2, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
-				
-				g.fillRect(curX1-curFrameWidth+1, grCursorY2, curX2-curX1+2*curFrameWidth-2, curFrameWidth);
-				
-				g.setColor(mergeColors(cursorFrameColor, cursorColor, 50));
-				if (!isCursorUpper)
-				{
-					g.fillRect(curX1, grCursorY1+1, 1, 1);
-					g.fillRect(curX1, grCursorY2-1, 1, 1);
-				}
-				
-				g.fillRect(curX2-1, grCursorY1+1, 1, 1);
-				g.fillRect(curX2-1, grCursorY2-1, 1, 1);
-			}
-		}
 
 		// Draw items
 		paintedItem.clear();
@@ -1567,6 +1497,62 @@ public abstract class VirtualList
 		}
 
 		return false;
+	}
+
+	private void drawCursor(Graphics g, int topY, int clipY1, int clipY2,  int size, int bottomY)
+	{
+		int i;
+		int y;
+		int grCursorY1 = -1;
+		int grCursorY2 = -1;
+		
+		getCurXVals(curXVals);
+		int curX1 = curXVals[0];
+		int curX2 = curXVals[1];
+		
+		// Draw cursor
+		y = topY;
+		int itemHeight = 0;
+		for (i = topItem; i < size; i++)
+		{
+			itemHeight = getItemHeight(i);
+			if (isItemSelected(i))
+			{
+				if (grCursorY1 == -1) grCursorY1 = y;
+				grCursorY2 = y + itemHeight;
+			}
+			y += itemHeight;
+			if (y >= bottomY) break;
+		}
+
+		if ((grCursorY1 != -1) && crdIntersect(grCursorY1-3, grCursorY2+2, clipY1, clipY2))
+		{
+			grCursorY1--;
+			
+			drawRect(g, cursorColor, cursorColor, curX1, grCursorY1, curX2, grCursorY2, cursorAlpha);
+
+			g.setColor(cursorFrameColor);
+			boolean isCursorUpper = (topItem >= 1) ? isItemSelected(topItem - 1) : false;
+			
+			if (!isCursorUpper)
+				g.fillRect(curX1-curFrameWidth+1, grCursorY1-curFrameWidth+1, curX2-curX1+2*curFrameWidth-2, curFrameWidth);
+			
+			g.fillRect(curX1-curFrameWidth, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
+			
+			g.fillRect(curX2, grCursorY1-curFrameWidth+2, curFrameWidth, grCursorY2-grCursorY1+2*curFrameWidth-3);
+			
+			g.fillRect(curX1-curFrameWidth+1, grCursorY2, curX2-curX1+2*curFrameWidth-2, curFrameWidth);
+			
+			g.setColor(mergeColors(cursorFrameColor, cursorColor, 50));
+			if (!isCursorUpper)
+			{
+				g.fillRect(curX1, grCursorY1+1, 1, 1);
+				g.fillRect(curX1, grCursorY2-1, 1, 1);
+			}
+			
+			g.fillRect(curX2-1, grCursorY1+1, 1, 1);
+			g.fillRect(curX2-1, grCursorY2-1, 1, 1);
+		}
 	}
 	
 	static protected boolean crdContains(int crd, int crd1, int crd2)
@@ -1669,8 +1655,26 @@ public abstract class VirtualList
 			int clipY1 = graphics.getClipY();
 			int clipY2 = clipY1+graphics.getClipHeight();
 			y = capHeight;
-			drawItems(graphics, y, menuBarHeight, mode, mouseX, mouseY, clipY1, clipY2);
+			
+			// Fill background
+			//#sijapp cond.if target!="DEFAULT"#
+			if (backImage == null || !caveBgImage) 
+			{
+			//#sijapp cond.end#		
+				graphics.setColor(bkgrndColor);
+				int realY1 = Math.max(y, clipY1);
+				int realY2 = Math.min(y+getDrawHeight(), clipY2); 
+				graphics.fillRect(0, realY1, getWidthInternal()-scrollerWidth, realY2-realY1);
+			//#sijapp cond.if target!="DEFAULT"#
+			}
+						
+			if (backImage != null && mode == DMS_DRAW)
+				drawBgImage(backImage, getWidth(), getHeight(), graphics, caveBgImage);
+			//#sijapp cond.end#
+			
 			drawCaption(graphics, mode, mouseX, mouseY);
+			if (mode == DMS_DRAW) drawCursor(graphics, y, clipY1, clipY2, getSize(), y+getDrawHeight());
+			drawItems(graphics, y, menuBarHeight, mode, mouseX, mouseY, clipY1, clipY2);
 			drawScroller(graphics, y, visCount, menuBarHeight);
 //#sijapp cond.if target!="RIM" & target!="DEFAULT"#			
 			if (menuBarHeight != 0)
