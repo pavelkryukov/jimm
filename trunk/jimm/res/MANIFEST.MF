@@ -14,3 +14,4 @@ MIDlet-1: Jimm,icon.png,jimm.Jimm
 Jimm-Version: ###VERSION###
 Background: True
 FlipInsensitive: True
+Nokia-MIDlet-No-Exit: true
