@@ -388,7 +388,8 @@ public class SplashCanvas extends Canvas implements CommandListener
 		// Draw background
 		Image backImage = VirtualList.getBackImage();
 		if (backImage != null)
-			VirtualList.drawBgImage(backImage, width, height, g);
+			VirtualList.drawBgImage(backImage, width, height, g, 
+					Options.getInt(Options.OPTION_BG_IMAGE_MODE) == Options.BG_IMAGE_PAVE);
 		else
 		{
 //#sijapp cond.end#			

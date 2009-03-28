@@ -135,7 +135,7 @@
 "auto_connect"				"Připojit při startu"
 "back"						"Zpět"
 "select_background"			"Výběr pozadí"
-"background_mode"			"Obrázek na pozadí"
+"background_image"			"Obrázek na pozadí"
 "background_int"			"Interní z .JAR"
 "beep"						"Pípnutí"
 "birth_day"					"Narozeniny"

@@ -32,7 +32,7 @@
   "auto_connect"                "Auto.pripojenie pri štarte"
   "back"                        "Späť"
   "select_background"			      "Nájsť"
-  "background_mode"			      	"Obrázok na pozadí"
+  "background_image"			      	"Obrázok na pozadí"
   "background_int"			       	"Základný"
   "beep"                        "Píp"
   "birth_day"                   "Narodeniny"

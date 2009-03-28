@@ -31,7 +31,7 @@
   "auto_connect"                "Злучацца пры запуску"
   "back"                        "Назад"  
   "select_background"		"Выбраць фон"
-  "background_mode"		"Малюнак фону"
+  "background_image"		"Малюнак фону"
   "background_int"		"Змоўчны"
   "beep"                        "Піск"
   "birth_day"                   "Дзень нараджэння"
