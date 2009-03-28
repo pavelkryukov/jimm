@@ -119,7 +119,7 @@
 "about_info"				"Version: ###VERSION###\nZiel: ###TARGET###\nModule: ###MODULES###\n\nSiehe http://www.jimm.org/"
 "account"					"Konto"
 "select_background"			"Hintergrund wählen"
-"background_mode"			"Hintergrundbild"
+"background_image"			"Hintergrundbild"
 "background_int"			"Standard"
 "add_group"					"Gruppe hinzufügen"
 "auto_away"					"Auto-Away-Status"

@@ -148,7 +148,7 @@
 "auto_away_time2"			"Afficher 'S/O' lorsque je suis inactif (inactive) (minutes)"
 "auto_connect"				"Connexion automatique"
 "select_background"			"Sélect. fond d'écran"
-"background_mode"			"Image du fond"
+"background_image"			"Image du fond"
 "background_int"			"Par défaut"
 "beep"						"Sonnerie"
 "birth_day"					"Anniversaire"

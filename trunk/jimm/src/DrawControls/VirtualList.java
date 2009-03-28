@@ -159,10 +159,11 @@ public abstract class VirtualList
 
 	// Key event type
 	public final static int KEY_PRESSED = 1;
-
 	public final static int KEY_REPEATED = 2;
-
 	public final static int KEY_RELEASED = 3;
+	
+	// Mode for background image
+	private static boolean caveBgImage = true;
 	
 	// Commands to react to VL events
 	private VirtualListCommands vlCommands;
@@ -426,10 +427,11 @@ public abstract class VirtualList
 	}
 
 //#sijapp cond.if target!="DEFAULT"#
-	public static void setBackImage(Image image)
+	public static void setBackImage(Image image, boolean cave)
 	{
 		if (backImage == image) return;
 		backImage = image;
+		caveBgImage = cave;
 		if (backImage == null) return;
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -1451,7 +1453,8 @@ public abstract class VirtualList
 			
 			// Fill background
 //#sijapp cond.if target!="DEFAULT"#
-			if (backImage == null) {
+			if (backImage == null || !caveBgImage) 
+			{
 //#sijapp cond.end#		
 			g.setColor(bkgrndColor);
 			int realY1 = Math.max(topY, clipY1);
@@ -1459,7 +1462,10 @@ public abstract class VirtualList
 			g.fillRect(0, realY1, itemWidth, realY2-realY1);
 //#sijapp cond.if target!="DEFAULT"#
 			}
-//#sijapp cond.end#		
+			
+			if (backImage != null && mode == DMS_DRAW)
+				drawBgImage(backImage, getWidth(), getHeight(), g, caveBgImage);
+//#sijapp cond.end#
 
 			// Draw cursor
 			y = topY;
@@ -1626,13 +1632,20 @@ public abstract class VirtualList
 		paintAllOnGraphics(graphics, DMS_DRAW, -1, -1);
 	}
 	
-	public static void drawBgImage(Image backImage, int scrWidth, int scrHeight, Graphics graphics)
+	public static void drawBgImage(Image backImage, int scrWidth, int scrHeight, Graphics graphics, boolean cave)
 	{
-		int imgWidth = backImage.getWidth();
-		int imgHeight = backImage.getHeight();
-		for (int xx = 0; xx < scrWidth; xx += imgWidth)
-			for (int yy = 0; yy < scrHeight; yy += imgHeight)
-				graphics.drawImage(backImage, xx, yy, Graphics.LEFT|Graphics.TOP);
+		if (cave)
+		{
+			int imgWidth = backImage.getWidth();
+			int imgHeight = backImage.getHeight();
+			for (int xx = 0; xx < scrWidth; xx += imgWidth)
+				for (int yy = 0; yy < scrHeight; yy += imgHeight)
+					graphics.drawImage(backImage, xx, yy, Graphics.LEFT|Graphics.TOP);
+		}
+		else
+		{
+			graphics.drawImage(backImage, scrWidth/2, scrHeight/2, Graphics.HCENTER|Graphics.VCENTER);
+		}
 	}
 	
 	public void paintAllOnGraphics(Graphics graphics, int mode, int mouseX, int mouseY)
@@ -1643,10 +1656,6 @@ public abstract class VirtualList
 		int visCount = getVisCount();
 		int menuBarHeight;
 		boolean clicked;
-
-//#sijapp cond.if target!="DEFAULT"#
-		if (backImage != null) drawBgImage(backImage, getWidth(), getHeight(), graphics);
-//#sijapp cond.end#
 		
 //#sijapp cond.if target="RIM" | target="DEFAULT"#
 		menuBarHeight = 0;
@@ -1659,8 +1668,9 @@ public abstract class VirtualList
 		case DMS_DRAW:
 			int clipY1 = graphics.getClipY();
 			int clipY2 = clipY1+graphics.getClipHeight();
-			y = (clipY1 <= capHeight) ? drawCaption(graphics, mode, mouseX, mouseY) : capHeight;
+			y = capHeight;
 			drawItems(graphics, y, menuBarHeight, mode, mouseX, mouseY, clipY1, clipY2);
+			drawCaption(graphics, mode, mouseX, mouseY);
 			drawScroller(graphics, y, visCount, menuBarHeight);
 //#sijapp cond.if target!="RIM" & target!="DEFAULT"#			
 			if (menuBarHeight != 0)
@@ -2410,4 +2420,15 @@ public abstract class VirtualList
 	}
 	
 //#sijapp cond.end #
+	
+	public static int getCanvasWidth()
+	{
+		return virtualCanvas.getWidth();
+	}
+	
+	public static int getCanvasHeight()
+	{
+		return virtualCanvas.getHeight();
+	}
+	
 }
