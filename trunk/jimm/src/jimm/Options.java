@@ -257,6 +257,8 @@ public class Options
 	    0x000000, 0xFF0000, 0xFFF314, 0xFF5500, 0x000000, 0x448844, 0xFFFFFF, 0xFF0000, // Quake	
 	    0x003300, 0xDA6600, 0xFF0000, 0xFF5500, 0x003300, 0x448844, 0xFFFFFF, 0xFF0000, // Green2	
 	    0xCCCCCC, 0x000000, 0x000000, 0x425173, 0xCCCCCC, 0x336600, 0xFFFFFF, 0x425173, // Silver	
+	    
+	    0x2d2d00, 0xffc549, 0x00FFFF, 0x86006e, 0x00560a, 0x00ff1b, 0x30ff47, 0xff00d2, // Neon
 	};
 	
 
@@ -458,10 +460,10 @@ public class Options
 		setBoolean(OPTION_LANG_CHANGED, false);
 		setBoolean(OPTION_CREEPING_LINE, false);
 		setBoolean(OPTION_SHOW_MESS_ICON, true);
-		setBoolean(OPTION_SHOW_NICK, true);
+		setBoolean(OPTION_SHOW_NICK, false);
 		setBoolean(OPTION_SHOW_MESS_DATE, true);
-		setBoolean(OPTION_SHOW_MESS_CLRF, true);
-		setBoolean(OPTION_MESS_COLORED_TEXT, false);
+		setBoolean(OPTION_SHOW_MESS_CLRF, false);
+		setBoolean(OPTION_MESS_COLORED_TEXT, true);
 		setBoolean(OPTION_CL_CLIENTS, true);
 		setBoolean(OPTION_XSTATUSES, true);
 		setBoolean(OPTION_ASK_FOR_WEB_FT, true);
@@ -1380,7 +1382,8 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			"bento_scheme"  + "|" +
 			"quake_scheme"  + "|" +
 			"green2_scheme"  + "|" +
-			"silver_scheme" ,
+			"silver_scheme"  + "|" + 
+			"neon_theme",
 			'|'
 		);
 		
