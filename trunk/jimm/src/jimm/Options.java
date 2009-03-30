@@ -2237,13 +2237,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		for (int i = -12; i <= 13; i++)
 			chsTimeZone.append("GMT" + (i < 0 ? "" : "+") + i + ":00",
 					null);
-		chsTimeZone.setSelectedIndex(Options
-				.getInt(Options.OPTION_GMT_OFFSET) + 12, true);
+		chsTimeZone.setSelectedIndex(Options.getInt(Options.OPTION_GMT_OFFSET) + 12, true);
 
-		int[] currDateTime = Util.createDate(Util
-				.createCurrentDate(false));
-		chsCurrTime = new ChoiceGroup(ResourceBundle
-				.getString("local_time"), choiceType);
+		int[] currDateTime = Util.createDate(Util.createCurrentDate(false));
+		chsCurrTime = new ChoiceGroup(ResourceBundle.getString("local_time"), choiceType);
 		int minutes = currDateTime[Util.TIME_MINUTE];
 		int hour = currDateTime[Util.TIME_HOUR];
 		for (int i = 0; i < 24; i++)
@@ -2549,12 +2546,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		int dayLight = chsDayLight.getSelectedIndex();
 		Options.setInt(Options.OPTION_DAYLIGHT_SAVING, dayLight);
 		/* Translate selected time to GMT */
-		int selHour = chsCurrTime.getSelectedIndex() - timeZone;
-		if (selHour < 0) selHour += 24;
-		if (selHour >= 24) selHour -= 24;
+		int gmtHour = chsCurrTime.getSelectedIndex() - timeZone;
+		gmtHour -= dayLight; 
+		if (gmtHour < 0) gmtHour += 24;
+		if (gmtHour >= 24) gmtHour -= 24;
 
 		/* Calculate diff. between selected GMT time and phone time */
-		int localOffset = selHour - currentHour;
+		int localOffset = gmtHour - currentHour;
+		
 		while (localOffset >= 12) localOffset -= 24;
 		while (localOffset < -12) localOffset += 24;
 		Options.setInt(Options.OPTION_LOCAL_OFFSET, localOffset);
