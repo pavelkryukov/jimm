@@ -1233,8 +1233,7 @@ public class Util
 
 	    /* convert result to GMT time */
 	    long diff = Options.getInt(Options.OPTION_LOCAL_OFFSET);
-	    long dl = Options.getInt(Options.OPTION_DAYLIGHT_SAVING);
-	    result += ((diff + dl) * 3600);
+	    result += (diff * 3600);
 
 	    /* returns GMT or local time */
 	    return gmt ? result : gmtTimeToLocalTime(result);
