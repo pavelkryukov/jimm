@@ -1607,10 +1607,10 @@ public abstract class VirtualList
 	
 	static public int getInverseColor(int color)
 	{
-		int r = (color & 0xFF);
-		int g = ((color & 0xFF00) >> 8);
-		int b = ((color & 0xFF0000) >> 16);
-		return ((r+g+b) > 3*127) ? 0 : 0xFFFFFF;
+		int r = color & 0xFF;
+		int g = (color >> 8) & 0xFF;
+		int b = (color >> 16) & 0xFF;
+		return ((r+g+b) > 300) ? 0 : 0xFFFFFF;
 	}
 
 	public void paintAllOnGraphics(Graphics graphics)
@@ -2199,7 +2199,6 @@ public abstract class VirtualList
 				textY, 
 				Graphics.TOP|Graphics.LEFT,
 				capTxtColor, getInverseColor(capTxtColor)
-
 			);
 		}
 		
