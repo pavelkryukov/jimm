@@ -547,24 +547,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 			((ContactListGroupItem) gItems.elementAt(i)).setCounters(0, 0);
 	}
 
-	// Returns array of uins of unuthorized and temporary contacts
-	public static String[] getUnauthAndTempContacts()
-	{
-		Vector data = new Vector();
-		for (int i = cItems.size() - 1; i >= 0; i--)
-		{
-			if (getCItem(i).getBooleanValue(
-					ContactItem.CONTACTITEM_NO_AUTH)
-					|| getCItem(i).getBooleanValue(
-							ContactItem.CONTACTITEM_IS_TEMP))
-				data.addElement(getCItem(i).getStringValue(
-						ContactItem.CONTACTITEM_UIN));
-		}
-		String result[] = new String[data.size()];
-		data.copyInto(result);
-		return result;
-	}
-
 	// Updates the client-side contact list (called when a new roster has been
 	// received)
 	static public void update(int versionId1_, int versionId2_, ContactListItem[] items, Vector privData)
