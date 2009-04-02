@@ -28,7 +28,6 @@ import javax.microedition.lcdui.*;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 import jimm.Jimm;
-import jimm.comm.Util;
 
 public class DebugLog
 //#sijapp cond.if modules_DEBUGLOG is "true" #
@@ -84,7 +83,7 @@ public class DebugLog
 		}
 		else if (c == cmdCopyText)
 		{
-			JimmUI.setClipBoardText("[DebugLog]\n" + list.getCurrText(0, false));
+			JimmUI.setClipBoardText("[DebugLog]\n" + list.getTextByIndex(0, true, -1));
 		}
 	}
 
@@ -95,9 +94,7 @@ public class DebugLog
 		//#sijapp cond.if modules_DEBUGLOG is "true" #
 		synchronized (list)
 		{
-			list.addBigText("(" + Util.getTimeString() +"): ", 0xFF,
-					Font.STYLE_PLAIN, counter);
-			list.addBigText(text, 0, Font.STYLE_PLAIN, counter);
+			list.addBigText("(" +counter+") "+text, list.getTextColor(), Font.STYLE_PLAIN, counter);
 			list.doCRLF(counter);
 			counter++;
 		}
