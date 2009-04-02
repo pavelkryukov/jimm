@@ -535,118 +535,132 @@ public class Options
 	static public void load() throws IOException, RecordStoreException
 	{
 		/* Open record store */
-		RecordStore account = RecordStore.openRecordStore("opt"+"ions"/*to avoid lang. preprocessor*/, false);
-
-		/* Temporary variables */
-		byte[] buf;
-		ByteArrayInputStream bais;
-		DataInputStream dis;
-
-		/* Get version info from record store */
-		buf = account.getRecord(1);
-		bais = new ByteArrayInputStream(buf);
-		dis = new DataInputStream(bais);
-		Options.setDefaults();
-
-		/* Read all option key-value pairs */
-		buf = account.getRecord(2);
-		bais = new ByteArrayInputStream(buf);
-		dis = new DataInputStream(bais);
-		int optionKey;
-		byte[] optionValue;
-		while (dis.available() > 0)
+		RecordStore account = null;
+		
+		try
 		{
-			optionKey = dis.readUnsignedByte();
-			if (optionKey < 64) /* 0-63 = String */
-			{
-				setString(optionKey, dis.readUTF());
-			} else if (optionKey < 128) /* 64-127 = int */
-			{
-				setInt(optionKey, dis.readInt());
-			} else if (optionKey < 192) /* 128-191 = boolean */
-			{
-				setBoolean(optionKey, dis.readBoolean());
-			} else if (optionKey < 224) /* 192-223 = long */
-			{
-				setLong(optionKey, dis.readLong());
-			} else
-			/* 226-255 = Scrambled String */
-			{
-				optionValue = new byte[dis.readUnsignedShort()];
-				dis.readFully(optionValue);
-				optionValue = Util.decipherPassword(optionValue);
-				setString(optionKey, Util.byteArrayToString(optionValue, 0,
-						optionValue.length, true));
-			}
-		}
-		optionValue = null;
+			account = RecordStore.openRecordStore("opt"+"ions"/*to avoid lang. preprocessor*/, false);
 
-		/* Close record store */
-		account.closeRecordStore();
+			/* Temporary variables */
+			byte[] buf;
+			ByteArrayInputStream bais;
+			DataInputStream dis;
+
+			/* Get version info from record store */
+			buf = account.getRecord(1);
+			bais = new ByteArrayInputStream(buf);
+			dis = new DataInputStream(bais);
+			Options.setDefaults();
+
+			/* Read all option key-value pairs */
+			buf = account.getRecord(2);
+			bais = new ByteArrayInputStream(buf);
+			dis = new DataInputStream(bais);
+			int optionKey;
+			byte[] optionValue;
+			while (dis.available() > 0)
+			{
+				optionKey = dis.readUnsignedByte();
+				if (optionKey < 64) /* 0-63 = String */
+				{
+					setString(optionKey, dis.readUTF());
+				} else if (optionKey < 128) /* 64-127 = int */
+				{
+					setInt(optionKey, dis.readInt());
+				} else if (optionKey < 192) /* 128-191 = boolean */
+				{
+					setBoolean(optionKey, dis.readBoolean());
+				} else if (optionKey < 224) /* 192-223 = long */
+				{
+					setLong(optionKey, dis.readLong());
+				} else
+				/* 226-255 = Scrambled String */
+				{
+					optionValue = new byte[dis.readUnsignedShort()];
+					dis.readFully(optionValue);
+					optionValue = Util.decipherPassword(optionValue);
+					setString(optionKey, Util.byteArrayToString(optionValue, 0,
+							optionValue.length, true));
+				}
+			}
+			optionValue = null;
+		}
+		finally
+		{
+			/* Close record store */
+			if (account != null) account.closeRecordStore();
+		}
 	}
 
 	/* Save option values to record store */
 	static public void save() throws IOException, RecordStoreException
 	{
 		/* Open record store */
-		RecordStore account = RecordStore.openRecordStore("opt"+"ions"/*to avoid lang. preprocessor*/, true);
-
-		/* Add empty records if necessary */
-		while (account.getNumRecords() < 3)
+		RecordStore account = null;
+		
+		try
 		{
-			account.addRecord(null, 0, 0);
-		}
+			account = RecordStore.openRecordStore("opt"+"ions"/*to avoid lang. preprocessor*/, true);
 
-		/* Temporary variables */
-		byte[] buf;
-		ByteArrayOutputStream baos;
-		DataOutputStream dos;
-
-		/* Add version info to record store */
-		baos = new ByteArrayOutputStream();
-		dos = new DataOutputStream(baos);
-		dos.writeUTF(Jimm.VERSION);
-		buf = baos.toByteArray();
-		account.setRecord(1, buf, 0, buf.length);
-
-		/* Save all option key-value pairs */
-		baos = new ByteArrayOutputStream();
-		dos = new DataOutputStream(baos);
-		Enumeration optionKeys = options.keys();
-		int optionKey;
-		byte[] optionValue;
-		while (optionKeys.hasMoreElements())
-		{
-			optionKey = ((Integer) optionKeys.nextElement()).intValue();
-			dos.writeByte(optionKey);
-			if (optionKey < 64) /* 0-63 = String */
+			/* Add empty records if necessary */
+			while (account.getNumRecords() < 3)
 			{
-				dos.writeUTF(getString(optionKey));
-			} else if (optionKey < 128) /* 64-127 = int */
-			{
-				dos.writeInt(getInt(optionKey));
-			} else if (optionKey < 192) /* 128-191 = boolean */
-			{
-				dos.writeBoolean(getBoolean(optionKey));
-			} else if (optionKey < 224) /* 192-223 = long */
-			{
-				dos.writeLong(getLong(optionKey));
-			} else
-			/* 226-255 = Scrambled String */
-			{
-				optionValue = Util.stringToByteArray(
-						getString(optionKey), true);
-				optionValue = Util.decipherPassword(optionValue);
-				dos.writeShort(optionValue.length);
-				dos.write(optionValue);
+				account.addRecord(null, 0, 0);
 			}
-		}
-		optionValue = null;
-		buf = baos.toByteArray();
-		account.setRecord(2, buf, 0, buf.length);
 
-		/* Close record store */
-		account.closeRecordStore();
+			/* Temporary variables */
+			byte[] buf;
+			ByteArrayOutputStream baos;
+			DataOutputStream dos;
+
+			/* Add version info to record store */
+			baos = new ByteArrayOutputStream();
+			dos = new DataOutputStream(baos);
+			dos.writeUTF(Jimm.VERSION);
+			buf = baos.toByteArray();
+			account.setRecord(1, buf, 0, buf.length);
+
+			/* Save all option key-value pairs */
+			baos = new ByteArrayOutputStream();
+			dos = new DataOutputStream(baos);
+			Enumeration optionKeys = options.keys();
+			int optionKey;
+			byte[] optionValue;
+			while (optionKeys.hasMoreElements())
+			{
+				optionKey = ((Integer) optionKeys.nextElement()).intValue();
+				dos.writeByte(optionKey);
+				if (optionKey < 64) /* 0-63 = String */
+				{
+					dos.writeUTF(getString(optionKey));
+				} else if (optionKey < 128) /* 64-127 = int */
+				{
+					dos.writeInt(getInt(optionKey));
+				} else if (optionKey < 192) /* 128-191 = boolean */
+				{
+					dos.writeBoolean(getBoolean(optionKey));
+				} else if (optionKey < 224) /* 192-223 = long */
+				{
+					dos.writeLong(getLong(optionKey));
+				} else
+				/* 226-255 = Scrambled String */
+				{
+					optionValue = Util.stringToByteArray(
+							getString(optionKey), true);
+					optionValue = Util.decipherPassword(optionValue);
+					dos.writeShort(optionValue.length);
+					dos.write(optionValue);
+				}
+			}
+			optionValue = null;
+			buf = baos.toByteArray();
+			account.setRecord(2, buf, 0, buf.length);
+		}
+		finally
+		{
+			/* Close record store */
+			if (account != null) account.closeRecordStore();
+		}
 	}
 
 	static public void safeSave()
@@ -2246,9 +2260,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		for (int i = 0; i < 24; i++)
 			chsCurrTime.append(i + ":" + minutes, null);
 		chsCurrTime.setSelectedIndex(hour, true);
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new Date());
-		currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+		
+		int[] phoneTime = Util.createDate(new Date().getTime()/1000);
+		currentHour = phoneTime[Util.TIME_HOUR];
 
 		chsDayLight = new ChoiceGroup(ResourceBundle
 				.getString("daylight_saving"), Choice.EXCLUSIVE);
