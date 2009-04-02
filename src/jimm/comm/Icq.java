@@ -1009,6 +1009,7 @@ public class Icq implements Runnable
 	public static final byte CLI_SMAPER = 45;
 	public static final byte CLI_JIMM_DICHAT = 46;
 	public static final byte CLI_QUTIM = 47;
+	public static final byte CLI_RANDQ = 48;
 	
 	private static int[] clientIndexes;
 	private static int[] clientImageIndexes;
@@ -1028,7 +1029,7 @@ public class Icq implements Runnable
 		initClientIndDataItem("SIM",                    CLI_SIM,           6,  vInd, vImg, vNames);
 		initClientIndDataItem("Kopete",                 CLI_KOPETE,        7,  vInd, vImg, vNames);
 		initClientIndDataItem("MICQ",                   CLI_MICQ,          -1, vInd, vImg, vNames);
-		initClientIndDataItem("&RQ",                    CLI_ANDRQ,         3,  vInd, vImg, vNames);
+		initClientIndDataItem("&RQ",                    CLI_ANDRQ,         4,  vInd, vImg, vNames);
 		initClientIndDataItem("IM2",                    CLI_IM2,           29, vInd, vImg, vNames);
 		initClientIndDataItem("ICQ for MAC",            CLI_MACICQ,        23, vInd, vImg, vNames);
 		initClientIndDataItem("AIM",                    CLI_AIM,           -1, vInd, vImg, vNames);
@@ -1068,6 +1069,7 @@ public class Icq implements Runnable
 		initClientIndDataItem("Smaper",                 CLI_SMAPER,        31, vInd, vImg, vNames);
 		initClientIndDataItem("D[i]Chat",               CLI_JIMM_DICHAT,   32, vInd, vImg, vNames);
 		initClientIndDataItem("qutIM",                  CLI_QUTIM,         33, vInd, vImg, vNames);
+		initClientIndDataItem("R&Q",                    CLI_RANDQ,         4,  vInd, vImg, vNames);
 		
 		clientNames = new String[vNames.size()];
 		vNames.copyInto(clientNames);
@@ -1568,8 +1570,11 @@ public class Icq implements Runnable
 				case 0x4201F414:
 					if (((dwFP2 & dwFP3) == dwFP1) && (wVersion == 8)) client = CLI_SPAM;
 					break;
-				default:
-					break;
+					
+				case 0xFFFFF666:
+					client = CLI_RANDQ;
+	                szVersion = Integer.toString(dwFP2);
+	                break;
 				}
 
 				if (client != CLI_NONE) break;
