@@ -234,12 +234,7 @@ public class ContactItem implements ContactListItem, JimmScreen
 			return;
 		case CONTACTITEM_STATUS:
 			status = value;
-			if (status != ContactList.STATUS_OFFLINE && getBooleanValue_(CONTACTITEM_NO_AUTH)) 
-			{
-				setBooleanValue_(CONTACTITEM_NO_AUTH, false);
-				ChatHistory.rebuildMenu(this);
-			}
-			else if (status == ContactList.STATUS_OFFLINE)
+			if (status == ContactList.STATUS_OFFLINE)
 			{
 				xStatusMessage = null;
 				setIntValue(CONTACTITEM_XSTATUS, -1);

@@ -43,8 +43,9 @@ public class UpdateContactListAction extends Action
 	private static final int STATE_COMPLETED = 2;
 	private static final int STATE_MOVE1 = 3;
 	private static final int STATE_MOVE2 = 4;
-	private static final int STATE_ADD1 = 5;
-	private static final int STATE_ADD2 = 6;
+	private static final int STATE_REQ_AUTH1 = 5;
+	private static final int STATE_ADD_CONTACT1 = 6;
+	private static final int STATE_ADD_CONTACT2 = 14;
 	private static final int STATE_DELETE_CONTACT1 = 7;
 	private static final int STATE_DELETE_CONTACT2 = 8;
 	private static final int STATE_DELETE_GROUP1 = 9;
@@ -152,16 +153,13 @@ public class UpdateContactListAction extends Action
 		case ACTION_REQ_AUTH:
 			if (cItem != null)
 			{
-				int groupId = cItem
-						.getIntValue(ContactItem.CONTACTITEM_GROUP);
+				int groupId = cItem.getIntValue(ContactItem.CONTACTITEM_GROUP);
 				gItem = ContactList.getGroupById(groupId);
 				cItem.setIntValue(ContactItem.CONTACTITEM_ID, ContactList.generateNewIdForBuddy());
 				MainThread.addContact(cItem);
 				buf = packRosterItem(cItem, groupId);
-				if (action == ACTION_REQ_AUTH)
-					state = STATE_ADD1;
-				else
-					state = STATE_ADD2;
+				if (action == ACTION_REQ_AUTH) state = STATE_REQ_AUTH1;
+				else state = STATE_ADD_CONTACT1;
 			} else if (gItem != null)
 			{
 				buf = packRosterItem(gItem);
@@ -304,24 +302,28 @@ public class UpdateContactListAction extends Action
 					break;
 
 				/* STATE_ADD */
-				case STATE_ADD1:
+				case STATE_REQ_AUTH1:
 					sendGroup(gItem);
 					Icq.sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
 
-				case STATE_ADD2:
-					if (retCode == 0)
+				case STATE_ADD_CONTACT1:
+					sendGroup(gItem);
+					cItem.setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, false);
+					if (cItem.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH) == false)
 					{
-						sendGroup(gItem);
-						cItem.setBooleanValue(
-								ContactItem.CONTACTITEM_IS_TEMP,
-								false);
-						cItem.setBooleanValue(
-								ContactItem.CONTACTITEM_NO_AUTH,
-								false);
+						this.state = STATE_COMPLETED;
+						Icq.sendCLI_ADDEND();
 					}
-
+					else
+					{
+						this.state = STATE_ADD_CONTACT2;
+					}
+					
+					break;
+					
+				case STATE_ADD_CONTACT2:
 					Icq.sendCLI_ADDEND();
 					this.state = STATE_COMPLETED;
 					break;
@@ -468,8 +470,7 @@ public class UpdateContactListAction extends Action
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 		if (groupID == 0)
-			groupID = cItem
-					.getIntValue(ContactItem.CONTACTITEM_GROUP);
+			groupID = cItem.getIntValue(ContactItem.CONTACTITEM_GROUP);
 
 		/* Name */
 		Util.writeLenAndString(stream, cItem
@@ -487,8 +488,16 @@ public class UpdateContactListAction extends Action
 
 		/* Additional data */
 		ByteArrayOutputStream addData = new ByteArrayOutputStream();
+		
+		/* TLV(0x0066) - you are awaiting authorization for this buddy */
+		if (cItem.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH))
+		{
+			Util.writeWord(addData, 0x0066, true);
+			Util.writeWord(addData, 0x0000, true);
+		}
 
-		if (groupID != 0x0000) {
+		if (groupID != 0x0000) 
+		{
 			/* TLV(0x0131) - name */
 			if (action != ACTION_DEL)
 			{
@@ -501,13 +510,8 @@ public class UpdateContactListAction extends Action
 			if (ssData != null)
 				Util.writeByteArray(addData, ssData);
 
-			/* TLV(0x0066) - you are awaiting authorization for this buddy */
-			if (action == ACTION_REQ_AUTH)
-			{
-				Util.writeWord(addData, 0x0066, true);
-				Util.writeWord(addData, 0x0000, true);
-			}
 		}
+		
 		/* Append additional data to stream */
 		Util.writeWord(stream, addData.size(), true);
 		stream.write(addData.toByteArray(), 0, addData.size());

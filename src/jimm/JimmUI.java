@@ -251,18 +251,11 @@ public class JimmUI implements CommandListener
 				
 				/* Assemble the sysNotAction and request it */
 				SysNoticeAction sysNotAct = new SysNoticeAction(notice);
-				UpdateContactListAction updateAct = new UpdateContactListAction(
-						authContactItem, UpdateContactListAction.ACTION_REQ_AUTH);
 
 				try
 				{
 					Icq.requestAction(sysNotAct);
-					
-					if (authContactItem.getBooleanValue(ContactItem.CONTACTITEM_IS_TEMP))
-						Icq.requestAction(updateAct);
-					
 					ChatHistory.rebuildMenu(authContactItem);
-					
 					if (authRequested) 
 						authContactItem.setBooleanValue(ContactItem.CONTACTITEM_IS_TEMP, false);
 					
