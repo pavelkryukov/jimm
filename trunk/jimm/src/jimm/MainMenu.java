@@ -413,17 +413,17 @@ public class MainMenu implements CommandListener, JimmScreen
 			int onlineStatus = statusList.getCurrTextIndex();
 			Options.setStatusString(StatusInfo.TYPE_STATUS, onlineStatus, statusMessage.getString());
 			Options.saveStatusStringsByType(StatusInfo.TYPE_STATUS);
-			setStatus(false);
+			setStatus();
 			JimmUI.backToLastScreen();
 			statusList = null;
 		}
 	}
 	
-	private static void setStatus(boolean save)
+	private static void setStatus()
 	{
 		int onlineStatus = statusList.getCurrTextIndex();
 		Options.setLong(Options.OPTION_ONLINE_STATUS, onlineStatus);
-		if (save) Options.safeSave(); 
+		Options.safeSave(); 
 		if (Icq.isConnected())
 		{
 			try
@@ -442,7 +442,6 @@ public class MainMenu implements CommandListener, JimmScreen
 		switch (statusSelection)
 		{
 		case SELECT_STATUS:
-		{
 			int onlineStatus = statusList.getCurrTextIndex();
 			
 			StatusInfo info = JimmUI.findStatus(StatusInfo.TYPE_STATUS, onlineStatus);
@@ -464,11 +463,7 @@ public class MainMenu implements CommandListener, JimmScreen
 				Jimm.setBkltOn(true);
 				return;
 			}
-			else
-			{
-				setStatus(true);
-			}
-		}
+			else setStatus();
 			break;
 	
 		case SELECT_XSTATUS:
