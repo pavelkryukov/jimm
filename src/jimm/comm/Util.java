@@ -1660,44 +1660,15 @@ public class Util
 		return b < 0 ? b & 0x7F + 128 : b;
 	}
 
-	public static String getCurrentDay()
+	private final static String[] daysStr = {
+		"monday", "tuesday", "wednesday", "thursday", 
+		"friday", "saturday", "sunday"
+	}; 
+	public static String getCurrentDayString()
 	{
-		Calendar cal = Calendar.getInstance();
-		Date cur = new Date(1000L*createCurrentDate(false));
-		cal.setTime(cur);
-		String day = "";
-
-		switch (cal.get(Calendar.DAY_OF_WEEK))
-		{
-		case Calendar.MONDAY:
-			day = "monday";
-			break;
-
-		case Calendar.TUESDAY:
-			day = "tuesday";
-			break;
-
-		case Calendar.WEDNESDAY:
-			day = "wednesday";
-			break;
-
-		case Calendar.THURSDAY:
-			day = "thursday";
-			break;
-
-		case Calendar.FRIDAY:
-			day = "friday";
-			break;
-
-		case Calendar.SATURDAY:
-			day = "saturday";
-			break;
-
-		case Calendar.SUNDAY:
-			day = "sunday";
-			break;
-		}
-		return ResourceBundle.getString(day);
+		long time = createCurrentDate(false);
+		int dayOfWeek = (int)((time/(3600L*24L)-3L)%7L);
+		return ResourceBundle.getString(daysStr[dayOfWeek]);
 	}
 
 	private static boolean isURLChar(char chr, boolean before)

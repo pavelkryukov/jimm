@@ -468,7 +468,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 			g.setFont(SplashCanvas.font);
 			g.drawString(Util.getDateString(false), width / 2, y, Graphics.TOP|Graphics.HCENTER);
 			y += fontHeight;
-			g.drawString(Util.getCurrentDay(), width / 2, y, Graphics.TOP|Graphics.HCENTER);
+			g.drawString(Util.getCurrentDayString(), width / 2, y, Graphics.TOP|Graphics.HCENTER);
 		}
 		// Display the keylock message if someone hit the wrong key
 		if (showKeylock)
