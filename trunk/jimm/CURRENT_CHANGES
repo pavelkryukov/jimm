@@ -39,7 +39,3 @@ Implemented:
   * Blackberry version builds with MIDP2 profile now 
   * RIM builds are .cod files now and work on BlackBerry 88XX and 81XX series
   * Images (icons, imoticons etc) can be magnified for better visual perception
-
-Planned:
-  * Changes graphics and sounds directly from Jimm
-  * Full extended status support
