@@ -47,6 +47,7 @@ import jimm.util.ResourceBundle;
 import DrawControls.ImageList;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
+import DrawControls.device.Device;
 
 public class JimmUI implements CommandListener
 {
@@ -311,7 +312,7 @@ public class JimmUI implements CommandListener
 					if (messText.length() != 0)
 					{
 						sendMessage(messText, textMessReceiver);
-						if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON)
+						if (Jimm.getPhoneVendor() == Device.PHONE_SONYERICSSON)
 						{
 							messageTextbox = null;
 						}
@@ -949,8 +950,20 @@ public class JimmUI implements CommandListener
 			//#sijapp cond.if target isnot "DEFAULT" #
 			case Options.HOTKEY_SOUNDOFF:
 				ContactList.changeSoundMode(false);
-				MainMenu.build();
 				break;
+				
+			case Options.HOTKEY_LIGHT_ONOFF:
+				Jimm.device.inverseBackLight();
+				break;
+				
+			case Options.HOTKEY_INC_LIGHT:
+				Jimm.device.changeBackLightIntensity(true);
+				break;
+
+			case Options.HOTKEY_DEC_LIGHT:
+				Jimm.device.changeBackLightIntensity(false);
+				break;
+				
 			//#sijapp cond.end#
 				
 			case Options.HOTKEY_REQ_SM:
@@ -1384,6 +1397,7 @@ public class JimmUI implements CommandListener
 	
 	static
 	{
+		boolean isNokia;
 //#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 		int imgScale = Options.getInt(Options.OPTION_IMG_SCALE);
 		statusImgList.setScale(imgScale);
@@ -1391,7 +1405,12 @@ public class JimmUI implements CommandListener
 		messImgList.setScale(imgScale);
 //#sijapp cond.end#
 		
-		boolean isNokia = Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA;
+//#sijapp cond.if target="MIDP2"#		
+		isNokia = Jimm.getPhoneVendor() == Device.PHONE_NOKIA;
+//#sijapp cond.else#		
+		isNokia = false;
+//#sijapp cond.end#		
+		
 		
 		try { statusImgList.load("/statuses.png", -1, -1, -1, isNokia); } catch (Exception e) {}
 		try { xStatusImages.load("/xstatus.png", -1, -1, -1, isNokia); } catch (Exception e) {}

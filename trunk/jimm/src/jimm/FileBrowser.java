@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.io.*;
 import DrawControls.*;
+import DrawControls.device.Device;
 
 //#sijapp cond.if target="MOTOROLA"#
 
@@ -205,7 +206,7 @@ class FileSystem2 implements CommandListener, Runnable
 //#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 			imageList.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 //#sijapp cond.end#
-			imageList.load("/fs.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
+			imageList.load("/fs.png", -1, -1, -1, Jimm.getPhoneVendor() == Device.PHONE_NOKIA);
 		} catch (java.io.IOException e) {}		
 		
 		items = new Vector();

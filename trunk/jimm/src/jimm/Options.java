@@ -69,6 +69,8 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 
 import DrawControls.VirtualList;
+import DrawControls.device.Device;
+
 
 public class Options
 {
@@ -210,6 +212,9 @@ public class Options
 	public static final int HOTKEY_SOUNDOFF	   = 12;
 	public static final int HOTKEY_USER_GROUPS = 13;
 	public static final int HOTKEY_REQ_SM      = 14;
+	public static final int HOTKEY_INC_LIGHT   = 15;
+	public static final int HOTKEY_DEC_LIGHT   = 16;
+	public static final int HOTKEY_LIGHT_ONOFF = 17;
 	
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
@@ -500,7 +505,7 @@ public class Options
 //#sijapp cond.end#		
 		setBoolean(OPTION_FULL_TEXTBOX, false);
 		
-		setInt(OPTION_CAPTION_OFFSET, (Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA) ? 8 : 0);
+		setInt(OPTION_CAPTION_OFFSET, (Jimm.getPhoneVendor() == Device.PHONE_NOKIA) ? 8 : 0);
 
 //#sijapp cond.if target!="DEFAULT"#
 		setString(OPTION_BG_IMAGE_URL,  emptyString);
@@ -1194,49 +1199,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 
 	private static OptionsForm _this;
 
-	final private String[] hotkeyActionNames = Util.explode(
-			"ext_hotkey_action_none" + "|" + "info" + "|" + "send_message" + "|" + "status_message"
-					//#sijapp cond.if modules_HISTORY is "true"#
-					+ "|" + "history"
-					//#sijapp cond.end#
-					+ "|" + "ext_hotkey_action_groups" + "|" + "ext_hotkey_action_onoff" + "|" + "options_lng"
-					+ "|" + "menu" + "|" + "keylock"
-					//#sijapp cond.if target is "MIDP2"#
-					+ "|" + "minimize"
-					//#sijapp cond.end#,
-					+ "|" + "dc_info"
-
-					//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-					+ "|" + "full_screen"
-					//#sijapp cond.end#
-
-					//#sijapp cond.if target isnot "DEFAULT" #
-					+ "|" + "#sound_off"
-					//#sijapp cond.end#
-
-			, '|');
-
-	final private int[] hotkeyActions =
-	{ Options.HOTKEY_NONE, Options.HOTKEY_INFO, Options.HOTKEY_NEWMSG, Options.HOTKEY_REQ_SM,
-			//#sijapp cond.if modules_HISTORY is "true"#
-			Options.HOTKEY_HISTORY,
-			//#sijapp cond.end#
-			Options.HOTKEY_USER_GROUPS, Options.HOTKEY_ONOFF, Options.HOTKEY_OPTIONS, Options.HOTKEY_MENU,
-			Options.HOTKEY_LOCK,
-			//#sijapp cond.if target is "MIDP2"#
-			Options.HOTKEY_MINIMIZE,
-			//#sijapp cond.end#
-			Options.HOTKEY_CLI_INFO,
-
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			Options.HOTKEY_FULLSCR,
-			//#sijapp cond.end#
-
-			//#sijapp cond.if target isnot "DEFAULT" #
-			Options.HOTKEY_SOUNDOFF,
-			//#sijapp cond.end#
-	};
-
 	// Constructor
 	public OptionsForm() throws NullPointerException
 	{
@@ -1267,6 +1229,9 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		optionsForm = new Form(ResourceBundle.getString("options_lng"));
 		optionsForm.setCommandListener(this);
 		optionsForm.setItemStateListener(this);
+		
+		
+		fillHotkeysActions(true);
 
 		//System.out.println("OPTIONS_GMT_OFFSET="+Options.getInt(Options.OPTIONS_GMT_OFFSET));
 		//System.out.println("OPTIONS_LOCAL_OFFSET="+Options.getInt(Options.OPTIONS_LOCAL_OFFSET));
@@ -1429,19 +1394,68 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		new Integer(Options.OPTION_EXT_CLKEYPOUND), "ext_clhotkeypound", null,
 //#sijapp cond.if target is "SIEMENS2"#		
 		new Integer(Options.OPTION_EXT_CLKEYCALL),  "ext_clhotkeycall", null,
-//#sijapp cond.end#		
+//#sijapp cond.end#
 	};
 
 	static private final int hotKeysOptCodesSize = 3;
+	static private int HOTKEYS_COL_VALUE = 0;
+	static private int HOTKEYS_COL_NAME  = 1;
+	
+	private Vector hotKeysNames = new Vector();
+	
+	private void fillHotkeysActions(boolean toArray)
+	{
+		if (toArray) hotKeysNames.removeAllElements();
+		else actionMenu.clear();
+		showHotkeyAction(Options.HOTKEY_NONE, "ext_hotkey_action_none", toArray);
+		showHotkeyAction(Options.HOTKEY_INFO, "info", toArray);
+		showHotkeyAction(Options.HOTKEY_NEWMSG, "send_message", toArray);
+		showHotkeyAction(Options.HOTKEY_REQ_SM, "status_message", toArray);
+//#sijapp cond.if modules_HISTORY is "true"#		
+		showHotkeyAction(Options.HOTKEY_HISTORY, "history", toArray);
+//#sijapp cond.end#		
+		showHotkeyAction(Options.HOTKEY_USER_GROUPS, "ext_hotkey_action_groups", toArray);
+		showHotkeyAction(Options.HOTKEY_ONOFF, "ext_hotkey_action_onoff", toArray);
+		showHotkeyAction(Options.HOTKEY_OPTIONS, "options_lng", toArray);
+		showHotkeyAction(Options.HOTKEY_MENU, "menu", toArray);
+		showHotkeyAction(Options.HOTKEY_LOCK, "keylock", toArray);
+//#sijapp cond.if target is "MIDP2"#
+		if (Jimm.device.featureSupported(Device.FEATURE_MINIMIZE))
+			showHotkeyAction(Options.HOTKEY_MINIMIZE, "minimize", toArray);
+//#sijapp cond.end#
+		showHotkeyAction(Options.HOTKEY_CLI_INFO, "dc_info", toArray);
+//#sijapp cond.if target != "DEFAULT"#		
+		showHotkeyAction(Options.HOTKEY_FULLSCR, "full_screen", toArray);
+		showHotkeyAction(Options.HOTKEY_SOUNDOFF, "#sound_off", toArray);
+		if (Jimm.device.featureSupported(Device.FEATURE_LIGHT_OFF))
+			showHotkeyAction(Options.HOTKEY_LIGHT_ONOFF, "light_onoff", toArray);
+		if (Jimm.device.featureSupported(Device.FEATURE_LIGHT_INTENSITY))
+		{
+			showHotkeyAction(Options.HOTKEY_INC_LIGHT, "light_inc", toArray);
+			showHotkeyAction(Options.HOTKEY_DEC_LIGHT, "light_dec", toArray);
+		}
+//#sijapp cond.end#		
+	}
+	
+	private void showHotkeyAction(int value, String name, boolean toArray)
+	{
+		if (toArray)
+			hotKeysNames.addElement(new Object[] {new Integer(value), name});
+		else
+			JimmUI.addTextListItem(actionMenu, name, null, value, true, -1, Font.STYLE_PLAIN);
+			
+	}
 
 	private String getHotKeyActName(String langStr, int index)
 	{
 		int optionValue = ((Integer)hotKeysOptCodes[index*hotKeysOptCodesSize+2]).intValue();
-		for (int i = 0; i < hotkeyActionNames.length; i++)
+		for (int i = 0; i < hotKeysNames.size(); i++)
 		{
-			if (hotkeyActions[i] == optionValue)
-				return ResourceBundle.getString(langStr) + ": "
-						+ ResourceBundle.getString(hotkeyActionNames[i]);
+			Object[] array = (Object[])hotKeysNames.elementAt(i);
+			Integer value = (Integer)array[HOTKEYS_COL_VALUE];
+			String name = (String)array[HOTKEYS_COL_NAME];
+			if (value.intValue() == optionValue)
+				return ResourceBundle.getString(langStr) + ": " + ResourceBundle.getString(name);
 		}
 		return ResourceBundle.getString(langStr) + ": <???>";
 	}
@@ -2442,7 +2456,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		chsBringUp = new ChoiceGroup(ResourceBundle.getString("misc"),
 				Choice.MULTIPLE);
 		//#sijapp cond.if target is "MIDP2"#
-		if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON)
+		if (Jimm.getPhoneVendor() == Device.PHONE_SONYERICSSON)
 			setChecked(chsBringUp, "bring_up", Options.OPTION_BRING_UP);
 		//#sijapp cond.end#
 		
@@ -2629,7 +2643,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
 		int idx = 0;
 		//#sijapp cond.if target is "MIDP2"#
-		if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON) 
+		if (Jimm.getPhoneVendor() == Device.PHONE_SONYERICSSON) 
 			Options.setBoolean(Options.OPTION_BRING_UP, chsBringUp.isSelected(idx++));
 		//#sijapp cond.end#
 		Options.setBoolean(Options.OPTION_CREEPING_LINE, chsBringUp.isSelected(idx++));
@@ -2743,7 +2757,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		boolean useBackLight = lightManual.isSelected(0);
 		Options.setInt(Options.OPTION_LIGHT_TIMEOUT, Integer.parseInt(lightTimeout.getString()));
 		Options.setBoolean(Options.OPTION_LIGHT_MANUAL, useBackLight);
-		VirtualList.setBackLightData(useBackLight, Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
+		Jimm.device.setBackLightOnTime(useBackLight, Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
 		
 		//#sijapp cond.if target="MOTOROLA"#
 		if (!useBackLight) Jimm.display.flashBacklight(1);
@@ -2953,11 +2967,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		{
 			if (c == JimmUI.cmdSelect)
 			{
-				if (actionMenu.getSize() == 0)
-				{
-					for (int i = 0; i < hotkeyActionNames.length; i++)
-						JimmUI.addTextListItem(actionMenu, hotkeyActionNames[i], null, hotkeyActions[i], true, -1, Font.STYLE_PLAIN);
-				}
+				fillHotkeysActions(false);
 				
 				actionMenu.addCommandEx(JimmUI.cmdOk, VirtualList.MENU_TYPE_RIGHT_BAR);
 				actionMenu.addCommandEx(JimmUI.cmdBack, VirtualList.MENU_TYPE_LEFT_BAR);

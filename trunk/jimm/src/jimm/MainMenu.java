@@ -31,6 +31,8 @@ import jimm.util.ResourceBundle;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 import DrawControls.ImageList;
+import DrawControls.device.Device;
+
 
 public class MainMenu implements CommandListener, JimmScreen
 {
@@ -84,7 +86,7 @@ public class MainMenu implements CommandListener, JimmScreen
 //#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
 			menuIcons.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 //#sijapp cond.end#
-			menuIcons.load("/micons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
+			menuIcons.load("/micons.png", -1, -1, -1, Jimm.getPhoneVendor() == Device.PHONE_NOKIA);
 		} catch (Exception e) {}
 	}
 	
@@ -160,7 +162,7 @@ public class MainMenu implements CommandListener, JimmScreen
 		//#sijapp cond.end#
 		
 		//#sijapp cond.if target is "MIDP2" #
-		if (Jimm.getPhoneVendor() == Jimm.PHONE_SONYERICSSON) 
+		if (Jimm.getPhoneVendor() == Device.PHONE_SONYERICSSON) 
 			JimmUI.addTextListItem(list, "minimize", menuIcons.elementAt(9), MENU_MINIMIZE, true, -1, Font.STYLE_PLAIN);
 		//#sijapp cond.end#
 		
@@ -397,7 +399,9 @@ public class MainMenu implements CommandListener, JimmScreen
 				break;
 				
 			case MENU_DEBUG_ITEM:
+				//#sijapp cond.if target isnot "DEFAULT" #
 				ContactList.playSoundNotification(ContactList.SOUND_TYPE_MESSAGE);
+				//#sijapp cond.end#
 				break;
 			//#sijapp cond.end#
 			}
