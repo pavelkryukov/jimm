@@ -59,6 +59,7 @@ import javax.microedition.media.control.*;
 
 import DrawControls.*;
 import jimm.Options;
+import DrawControls.device.Device;
 
 //////////////////////////////////////////////////////////////////////////////////
 public class ContactList implements CommandListener, VirtualTreeCommands,
@@ -141,7 +142,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 //#sijapp cond.if target="MIDP2" | target="SIEMENS2"#	
 			cliImages.setScale(Options.getInt(Options.OPTION_IMG_SCALE));
 //#sijapp cond.end#
-			cliImages.load("/clicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Jimm.PHONE_NOKIA);
+			cliImages.load("/clicons.png", -1, -1, -1, Jimm.getPhoneVendor() == Device.PHONE_NOKIA);
 		} 
 		catch (Exception e) 
 		{

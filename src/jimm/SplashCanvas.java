@@ -36,6 +36,9 @@ import java.util.Timer;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 
+//#sijapp cond.if target!="DEFAULT"#
+import DrawControls.device.Device;
+//#sijapp cond.end#
 
 //#sijapp cond.if target is "RIM"#
 //# import net.rim.device.api.system.LED;
@@ -132,7 +135,7 @@ public class SplashCanvas extends Canvas implements CommandListener
 	{
 		_this = this;
 //#sijapp cond.if target is "MIDP2"#
-		setFullScreenMode(Jimm.getPhoneVendor() != Jimm.PHONE_SONYERICSSON);
+		setFullScreenMode(Jimm.getPhoneVendor() != Device.PHONE_SONYERICSSON);
 //#sijapp cond.elseif target is "MOTOROLA" | target is "SIEMENS2"#
 		setFullScreenMode(true);
 //#sijapp cond.end#

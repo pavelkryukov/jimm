@@ -33,6 +33,10 @@ import java.util.Vector;
 import DrawControls.ListItem;
 import DrawControls.VirtualListCommands;
 
+//#sijapp cond.if target!="DEFAULT"#
+import DrawControls.device.Device;
+//#sijapp cond.end#
+
 class VirtualCanvas extends Canvas implements Runnable
 {
 	VirtualList currentControl;
@@ -225,6 +229,10 @@ public abstract class VirtualList
 	private   static boolean	mpbEnable  = false;
 	private   static int		mpbPercent = 0;
 
+//#sijapp cond.if target!="DEFAULT"#	
+	private static Device device;
+//#sijapp cond.end#	
+	
 	static
 	{
 		capAndMenuFont = Font.getFont(Font.FACE_PROPORTIONAL, Font.STYLE_BOLD, Font.SIZE_SMALL);
@@ -275,6 +283,13 @@ public abstract class VirtualList
 	{
 		virtualCanvas.setDisplay(display);
 	}
+
+//#sijapp cond.if target!="DEFAULT"#	
+	static public void setDevice(Device device)
+	{
+		VirtualList.device = device; 
+	}
+//#sijapp cond.end#	
 	
 	public void setFullScreen(boolean value)
 	{
@@ -589,8 +604,8 @@ public abstract class VirtualList
 
 		repaint();
 		onShow();
-//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		setBackLightOn();
+//#sijapp cond.if target!="DEFAULT"#
+		if (device != null) device.setBackLightOn();
 //#sijapp cond.end#
 	}
 	
@@ -859,13 +874,6 @@ public abstract class VirtualList
 			case Canvas.KEY_NUM9:
 				moveCursor(getVisCount(), false);
 				break;
-
-//#sijapp cond.if target="MOTOROLA"#
-			case Canvas.KEY_STAR:
-				getDisplay().flashBacklight(backLightIsOn ? 1 : Integer.MAX_VALUE);
-				backLightIsOn = !backLightIsOn;
-				break;
-//#sijapp cond.end#
 			}
 		}
 	}
@@ -885,8 +893,8 @@ public abstract class VirtualList
 		switch (type)
 		{
 		case KEY_PRESSED:
-//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-			setBackLightOn();
+//#sijapp cond.if target!="DEFAULT"#
+			if (device != null) device.setBackLightOn();
 //#sijapp cond.end#
 			keyReaction(keyCode, type);
 			break;
@@ -2403,26 +2411,6 @@ public abstract class VirtualList
 	}
 	
 //#sijapp cond.end#	
-	
-//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-	private static boolean manualBackLight = false;
-	private static int backLightTimeOut = 5;
-	private static boolean backLightIsOn = false;
-	
-	public static void setBackLightData(boolean manualBackLight, int backLightTimeOut)
-	{
-		VirtualList.manualBackLight = manualBackLight;
-		VirtualList.backLightTimeOut = backLightTimeOut;
-	}
-	
-	private static void setBackLightOn()
-	{
-		if (!manualBackLight) return;
-		virtualCanvas.getDisplay().flashBacklight(1000*backLightTimeOut);
-		//System.out.println("VirtualList.setBackLightOn()");
-	}
-	
-//#sijapp cond.end #
 	
 	public static int getCanvasWidth()
 	{

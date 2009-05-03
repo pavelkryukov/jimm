@@ -36,11 +36,8 @@ import javax.microedition.midlet.MIDletStateChangeException;
 import DrawControls.ImageList;
 import DrawControls.VirtualList;
 
-//#sijapp cond.if target is "MOTOROLA"#
-//# import jimm.TimerTasks;
-//# import jimm.Jimm;
-//# import jimm.Options;
-//# import com.motorola.funlight.*;
+//#sijapp cond.if target!="DEFAULT"#
+import DrawControls.device.Device;
 //#sijapp cond.end#
 
 public class Jimm extends MIDlet
@@ -54,6 +51,10 @@ public class Jimm extends MIDlet
 
 	// Display object
 	public static Display display;
+	
+//#sijapp cond.if target!="DEFAULT"#
+	public static Device device;
+//#sijapp cond.end#
 
 	/****************************************************************************/
 	
@@ -64,8 +65,6 @@ public class Jimm extends MIDlet
 		loadError.append(value).append("\n\n");
 	}
 	
-	static public final int PHONE_SONYERICSSON = 1000;
-	static public final int PHONE_NOKIA        = 1001;
 	static private int phoneType;
 	
 	static public int getPhoneVendor()
@@ -88,9 +87,9 @@ public class Jimm extends MIDlet
 	// Chat history object
 	private ChatHistory ch;
 
-	//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
-	//#	static public final boolean supports_JSR75;
-	//#sijapp cond.end#
+//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
+	static public final boolean supports_JSR75;
+//#sijapp cond.end#
 
 	// Timer object
 	private static Timer timer = new Timer();
@@ -123,14 +122,14 @@ public class Jimm extends MIDlet
 
 	public static int cmdBack = Command.BACK;
 
-	//#sijapp cond.if target="MOTOROLA"|target="MIDP2"#
 	static
 	{
+//#sijapp cond.if target="MIDP2"#
 		if (microeditionPlatform != null)
 		{
 			String melc = microeditionPlatform.toLowerCase();
 			if (melc.indexOf("ericsson") != -1) {
-				phoneType = PHONE_SONYERICSSON;
+				phoneType = Device.PHONE_SONYERICSSON;
 				try
 				{
 				String jp = System.getProperty("com.sonyericsson.java.platform").toLowerCase();
@@ -139,26 +138,29 @@ public class Jimm extends MIDlet
 				} catch (Exception e) {} //Do nothing
 			}
 			else if (melc.indexOf("nokia") != -1)
-				phoneType = PHONE_NOKIA;
+				phoneType = Device.PHONE_NOKIA;
 		}
+//#sijapp cond.end#
+		
+//#sijapp cond.if target="MOTOROLA"#
+		phoneType = Device.PHONE_MOTOROLA;
+//#sijapp cond.end#				
 
-		//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
-		//#		boolean jsr75 = false;
-		//#		try
-		//#		{
-		//#			jsr75 = Class.forName("javax.microedition.io.file.FileConnection") != null;
-		//#		}
-		//#		catch (ClassNotFoundException cnfe)
-		//#		{
-		//#		}
-		//#		finally
-		//#		{
-		//#			supports_JSR75 = jsr75;
-		//#		}
-		//#sijapp cond.end#
+//#sijapp cond.if target is "MOTOROLA" & (modules_FILES="true"|modules_HISTORY="true")#
+		boolean jsr75 = false;
+		try
+		{
+			jsr75 = Class.forName("javax.microedition.io.file.FileConnection") != null;
+		}
+		catch (ClassNotFoundException cnfe)
+		{
+		}
+		finally
+		{
+			supports_JSR75 = jsr75;
+		}
+//#sijapp cond.end#
 	}
-
-	//#sijapp cond.end#
 
 	// Start Jimm
 	public void startApp() throws MIDletStateChangeException
@@ -176,6 +178,32 @@ public class Jimm extends MIDlet
 
 		// Save MIDlet reference
 		Jimm.jimm = this;
+		
+		Jimm.display = Display.getDisplay(this);
+		
+//#sijapp cond.if target!="DEFAULT"#
+		try
+		{
+			switch (phoneType)
+			{
+//#sijapp cond.if target="MIDP2"#			
+			case Device.PHONE_NOKIA:
+				device = new DrawControls.device.NokiaDevice();
+				break;
+//#sijapp cond.end#				
+			default:
+				device = new DrawControls.device.StdDevice(display);
+				break;
+			}
+			
+			VirtualList.setDevice(device);
+		}
+		catch (Exception e) 
+		{
+			device = new DrawControls.device.StdDevice(display);
+		}
+//#sijapp cond.end#		
+		
 
 		// Get Jimm version
 		Jimm.VERSION = this.getAppProperty("Jimm-Version");
@@ -209,10 +237,9 @@ public class Jimm extends MIDlet
 		{
 			Display.getDisplay(this).setCurrent(this.sc);
 		}
-
-		// Get display object (and update progress indicator)
-		Jimm.display = Display.getDisplay(this);
+		
 		SplashCanvas.setProgress(10);
+		
 		
 		VirtualList.setDisplay(Jimm.display);
 		VirtualList.setMirrorMenu(Options.getBoolean(Options.OPTION_MIRROR_MENU));
@@ -276,8 +303,7 @@ public class Jimm extends MIDlet
 		ui = new JimmUI();
 		
 		//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		DrawControls.VirtualList.setBackLightData
-		(
+		device.setBackLightOnTime(
 			Options.getBoolean(Options.OPTION_LIGHT_MANUAL),
 			Options.getInt(Options.OPTION_LIGHT_TIMEOUT)
 		);
