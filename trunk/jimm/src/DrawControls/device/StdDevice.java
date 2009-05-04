@@ -12,9 +12,10 @@ public class StdDevice implements Device
 	private Display display;
 	private boolean isLight;
 	
-	public StdDevice(Display display)
+	public StdDevice(int type, Display display)
 	{
 		this.display = display;
+		this.type = type;
 	}
 	
 	public void changeBackLightIntensity(boolean increase)
