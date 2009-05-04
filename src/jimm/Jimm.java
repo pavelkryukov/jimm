@@ -192,7 +192,7 @@ public class Jimm extends MIDlet
 				break;
 //#sijapp cond.end#				
 			default:
-				device = new DrawControls.device.StdDevice(display);
+				device = new DrawControls.device.StdDevice(phoneType, display);
 				break;
 			}
 			
@@ -200,7 +200,7 @@ public class Jimm extends MIDlet
 		}
 		catch (Exception e) 
 		{
-			device = new DrawControls.device.StdDevice(display);
+			device = new DrawControls.device.StdDevice(Device.PHONE_STANDART, display);
 		}
 //#sijapp cond.end#		
 		

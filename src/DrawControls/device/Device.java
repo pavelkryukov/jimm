@@ -2,9 +2,10 @@ package DrawControls.device;
 
 public interface Device
 {
-	static public final int PHONE_SONYERICSSON = 1000;
-	static public final int PHONE_NOKIA        = 1001;
-	static public final int PHONE_MOTOROLA     = 1002;
+	static public final int PHONE_STANDART     = 1000;
+	static public final int PHONE_SONYERICSSON = 1001;
+	static public final int PHONE_NOKIA        = 1002;
+	static public final int PHONE_MOTOROLA     = 1003;
 	
 	static public final int FEATURE_LIGHT_INTENSITY = 2000;
 	static public final int FEATURE_MINIMIZE        = 2001;
