@@ -47,9 +47,10 @@ import jimm.util.ResourceBundle;
 import DrawControls.ImageList;
 import DrawControls.TextList;
 import DrawControls.VirtualList;
+import DrawControls.VirtualListCommands;
 import DrawControls.device.Device;
 
-public class JimmUI implements CommandListener
+public class JimmUI implements CommandListener, VirtualListCommands
 {
 	static private Vector lastScreens = new Vector();
 	static private TextList msgBoxList;
@@ -155,6 +156,7 @@ public class JimmUI implements CommandListener
 	JimmUI()
 	{
 		_this = this;
+		VirtualList.setGlobalVLCommands(_this);
 	}
 
 	// Returns commands index of command
@@ -808,183 +810,6 @@ public class JimmUI implements CommandListener
 			vl.setFontSize(Options.getBoolean(Options.OPTION_SMALL_FONT) ? Font.SIZE_SMALL : Font.SIZE_MEDIUM);
 	}
 
-
-	/************************************************************************/
-	/************************************************************************/
-	/************************************************************************/
-
-	///////////////////
-	//               //
-	//    Hotkeys    //
-	//               //
-	///////////////////
-	static public void execHotKey(ContactItem cItem, int keyCode,
-			int type)
-	{
-		switch (keyCode)
-		{
-		case Canvas.KEY_NUM0:
-			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEY0), cItem,
-					type);
-			break;
-		case Canvas.KEY_NUM4:
-			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEY4), cItem,
-					type);
-			break;
-
-		case Canvas.KEY_NUM6:
-			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEY6), cItem,
-					type);
-			break;
-
-		case Canvas.KEY_STAR:
-			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEYSTAR),
-					cItem, type);
-			break;
-
-		case Canvas.KEY_POUND:
-			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEYPOUND),
-					cItem, type);
-			break;
-
-		//#sijapp cond.if target is "SIEMENS2"#
-		//#		case -11:
-		//#			// This means the CALL button was pressed...
-		//#			execHotKeyAction(Options.getInt(Options.OPTION_EXT_CLKEYCALL), cItem, type);
-		//#			break;
-		//#sijapp cond.end#
-
-		}
-	}
-
-	private static long lockPressedTime = -1;
-
-	static private void execHotKeyAction(int actionNum,
-			ContactItem item, int keyType)
-	{
-		if (keyType == VirtualList.KEY_PRESSED)
-		{
-			lockPressedTime = System.currentTimeMillis();
-
-			switch (actionNum)
-			{
-
-			//#sijapp cond.if modules_HISTORY is "true" #
-			case Options.HOTKEY_HISTORY:
-				if (item != null)
-					item.showHistory();
-				break;
-			//#sijapp cond.end#
-
-			case Options.HOTKEY_INFO:
-				if (item != null)
-				{
-					requiestUserInfo
-					(
-						item.getStringValue(ContactItem.CONTACTITEM_UIN),
-						item.getStringValue(ContactItem.CONTACTITEM_NAME),
-						false
-						//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
-						,item.getBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH)
-						//  #sijapp cond.end#
-					);
-				}
-				break;
-
-			case Options.HOTKEY_NEWMSG:
-				if (item != null) writeMessage(item, null);
-				break;
-
-			case Options.HOTKEY_USER_GROUPS:
-				Options.setBoolean(Options.OPTION_USE_GROUPS, !Options.getBoolean(Options.OPTION_USE_GROUPS));
-				Options.safeSave();
-				ContactList.optionsChanged(true, false);
-				ContactList.activateList();
-				break;
-
-			case Options.HOTKEY_ONOFF:
-				if (Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE))
-					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
-				else
-					Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, true);
-				Options.safeSave();
-				ContactList.optionsChanged(true, false);
-				ContactList.activateList();
-				break;
-
-			case Options.HOTKEY_OPTIONS:
-				Options.editOptions();
-				break;
-
-			case Options.HOTKEY_MENU:
-				MainMenu.activateMenu();
-				break;
-
-			//#sijapp cond.if target is "MIDP2"#
-			case Options.HOTKEY_MINIMIZE:
-				Jimm.setMinimized(true);
-				break;
-			//#sijapp cond.end#
-
-			case Options.HOTKEY_CLI_INFO:
-				if (item != null) showClientInfo(item);
-				break;
-
-			//#sijapp cond.if target is "MIDP2" | target is "MOTOROLA" | target is "SIEMENS2"#
-			case Options.HOTKEY_FULLSCR:
-				boolean fsValue = !Options
-						.getBoolean(Options.OPTION_FULL_SCREEN);
-				VirtualList.setFullScreenForCurrent(fsValue);
-				Options.setBoolean(Options.OPTION_FULL_SCREEN, fsValue);
-				Options.safeSave();
-				//#sijapp cond.if target is "SIEMENS2"#
-				//#sijapp cond.if modules_TRAFFIC is "true" #
-				//#				ContactList.updateTitle(Traffic.getSessionTraffic());
-				//#sijapp cond.else #
-				//#				ContactList.updateTitle(0);
-				//#sijapp cond.end#
-				//#sijapp cond.end#
-				break;
-			//#sijapp cond.end#
-
-			//#sijapp cond.if target isnot "DEFAULT" #
-			case Options.HOTKEY_SOUNDOFF:
-				ContactList.changeSoundMode(false);
-				break;
-				
-			case Options.HOTKEY_LIGHT_ONOFF:
-				Jimm.device.inverseBackLight();
-				break;
-				
-			case Options.HOTKEY_INC_LIGHT:
-				Jimm.device.changeBackLightIntensity(true);
-				break;
-
-			case Options.HOTKEY_DEC_LIGHT:
-				Jimm.device.changeBackLightIntensity(false);
-				break;
-				
-			//#sijapp cond.end#
-				
-			case Options.HOTKEY_REQ_SM:
-				requestContactStatusMess(item);
-				break;
-			}
-		}
-
-		else if ((keyType == VirtualList.KEY_REPEATED)
-				|| (keyType == VirtualList.KEY_RELEASED))
-		{
-			if (lockPressedTime == -1)
-				return;
-			long diff = System.currentTimeMillis() - lockPressedTime;
-			if ((actionNum == Options.HOTKEY_LOCK) && (diff > 900))
-			{
-				lockPressedTime = -1;
-				SplashCanvas.lock();
-			}
-		}
-	}
 
 	///////////////////////////////////////////////////////////////////////////
 	//                                                                       //
@@ -2484,5 +2309,189 @@ public class JimmUI implements CommandListener
 		
 		tlStatusMessage.unlock();
 	}
+
+	public void vlCursorMoved(VirtualList sender) {}
+
+	public void vlItemClicked(VirtualList sender) {}
+
+	private static long lockPressedTime = -1;
 	
+	public void vlKeyPress(VirtualList sender, int keyCode, int type)
+	{
+		Jimm.aaUserActivity();
+		
+		if (type == VirtualList.KEY_PRESSED)
+				lockPressedTime = System.currentTimeMillis();
+		
+		int hotKeyOption = -1;
+		switch (keyCode)
+		{
+		case Canvas.KEY_NUM0: hotKeyOption = Options.OPTION_EXT_CLKEY0; break;
+		case Canvas.KEY_NUM1: hotKeyOption = Options.OPTION_EXT_CLKEY1; break;
+		case Canvas.KEY_NUM2: hotKeyOption = Options.OPTION_EXT_CLKEY2; break;
+		case Canvas.KEY_NUM3: hotKeyOption = Options.OPTION_EXT_CLKEY3; break;
+		case Canvas.KEY_NUM4: hotKeyOption = Options.OPTION_EXT_CLKEY4; break;
+		case Canvas.KEY_NUM5: hotKeyOption = Options.OPTION_EXT_CLKEY5; break;
+		case Canvas.KEY_NUM6: hotKeyOption = Options.OPTION_EXT_CLKEY6; break;
+		case Canvas.KEY_NUM7: hotKeyOption = Options.OPTION_EXT_CLKEY7; break;
+		case Canvas.KEY_NUM8: hotKeyOption = Options.OPTION_EXT_CLKEY8; break;
+		case Canvas.KEY_NUM9: hotKeyOption = Options.OPTION_EXT_CLKEY9; break;
+		case Canvas.KEY_STAR: hotKeyOption = Options.OPTION_EXT_CLKEYSTAR; break;
+		case Canvas.KEY_POUND: hotKeyOption = Options.OPTION_EXT_CLKEYPOUND; break;
+//#sijapp cond.if target is "SIEMENS2"#
+		case -11: hotKeyOption = Options.OPTION_EXT_CLKEYCALL; break;
+//#sijapp cond.end#
+		}
+		
+		if (hotKeyOption == -1) return;
+		int hotKeyAction = Options.getInt(hotKeyOption);
+		
+		if ((type == VirtualList.KEY_REPEATED)
+				|| (type == VirtualList.KEY_RELEASED))
+		{
+			if (lockPressedTime == -1) return;
+			long diff = System.currentTimeMillis() - lockPressedTime;
+			if ((hotKeyAction == Options.HOTKEY_LOCK) && (diff > 900))
+			{
+				lockPressedTime = -1;
+				SplashCanvas.lock();
+			}
+		}
+		
+		if (type != VirtualList.KEY_PRESSED) return;
+		
+		VirtualList currList = VirtualList.getCurrent();
+		if (currList == null) return;
+		
+		ContactItem cItem = null;
+		if (isControlActive(ContactList.getVisibleContactListRef()))
+			cItem = ContactList.getSelectedContact();
+		else if (ChatHistory.getCurrent() != null && ChatHistory.getCurrent().isVisible())
+			cItem = ChatHistory.getCurrent().getContact();
+		
+		// Actions for selected contact item:
+		if (cItem != null) switch (hotKeyAction)
+		{
+//#sijapp cond.if modules_HISTORY is "true" #		
+		case Options.HOTKEY_HISTORY:
+			cItem.showHistory();
+			break;
+//#sijapp cond.end#
+			
+		case Options.HOTKEY_INFO:
+			requiestUserInfo
+			(
+				cItem.getStringValue(ContactItem.CONTACTITEM_UIN),
+				cItem.getStringValue(ContactItem.CONTACTITEM_NAME),
+				false
+//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
+				,cItem.getBytesArray(ContactItem.CONTACTITEM_BUDDYICON_HASH)
+//#sijapp cond.end#
+			);
+			break;
+			
+		case Options.HOTKEY_NEWMSG:
+			writeMessage(cItem, null);
+			break;
+			
+		case Options.HOTKEY_CLI_INFO:
+			showClientInfo(cItem);
+			break;
+
+		case Options.HOTKEY_REQ_SM:
+			requestContactStatusMess(cItem);
+			break;
+		}
+		
+		// Actions for others
+		switch (hotKeyAction)
+		{
+		case Options.HOTKEY_USER_GROUPS:
+			Options.setBoolean(Options.OPTION_USE_GROUPS, 
+					!Options.getBoolean(Options.OPTION_USE_GROUPS));
+			Options.safeSave();
+			ContactList.optionsChanged(true, false);
+			ContactList.activateList();
+			break;
+
+		case Options.HOTKEY_ONOFF:
+			if (Options.getBoolean(Options.OPTION_CL_HIDE_OFFLINE))
+				Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, false);
+			else
+				Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, true);
+			Options.safeSave();
+			ContactList.optionsChanged(true, false);
+			ContactList.activateList();
+			break;
+
+		case Options.HOTKEY_OPTIONS:
+			Options.editOptions();
+			break;
+
+		case Options.HOTKEY_MENU:
+			MainMenu.activateMenu();
+			break;
+
+//#sijapp cond.if target is "MIDP2"#
+		case Options.HOTKEY_MINIMIZE:
+			Jimm.setMinimized(true);
+			break;
+//#sijapp cond.end#
+
+//#sijapp cond.if target != "DEFAULT"#
+		case Options.HOTKEY_FULLSCR:
+			boolean fsValue = !Options.getBoolean(Options.OPTION_FULL_SCREEN);
+			VirtualList.setFullScreenForCurrent(fsValue);
+			Options.setBoolean(Options.OPTION_FULL_SCREEN, fsValue);
+			Options.safeSave();
+//#sijapp cond.if modules_TRAFFIC="true"#
+			ContactList.updateTitle(Traffic.getSessionTraffic());
+//#sijapp cond.else #
+			ContactList.updateTitle(0);
+//#sijapp cond.end#
+			break;
+//#sijapp cond.end#
+
+//#sijapp cond.if target isnot "DEFAULT" #
+		case Options.HOTKEY_SOUNDOFF:
+			ContactList.changeSoundMode(false);
+			break;
+			
+		case Options.HOTKEY_LIGHT_ONOFF:
+			Jimm.device.inverseBackLight();
+			break;
+			
+		case Options.HOTKEY_INC_LIGHT:
+			Jimm.device.changeBackLightIntensity(true);
+			break;
+
+		case Options.HOTKEY_DEC_LIGHT:
+			Jimm.device.changeBackLightIntensity(false);
+			break;
+//#sijapp cond.end#
+		case Options.HOTKEY_GOTO_TOP:
+			currList.changeCursorPos(VirtualList.CURSOR_POS_TOP);
+			break;
+			
+		case Options.HOTKEY_GOTO_BOTTOM:
+			currList.changeCursorPos(VirtualList.CURSOR_POS_BOTTOM);
+			break;
+		
+		case Options.HOTKEY_PAGE_UP:
+			currList.changeCursorPos(VirtualList.CURSOR_POS_PAGE_UP);
+			break;
+			
+		case Options.HOTKEY_PAGE_DOWN:
+			currList.changeCursorPos(VirtualList.CURSOR_POS_PAGE_DOWN);
+			break;
+			
+		case Options.HOTKEY_NEXT_CHAT:
+			ChatHistory.selectNextChat(true);
+			break;
+			
+		case Options.HOTKEY_PREV_CHAT:
+			ChatHistory.selectNextChat(false);
+			break;
+		}
+	}
 }

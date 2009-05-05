@@ -14,7 +14,8 @@ public interface Device
 //#sijapp cond.if target!="DEFAULT"#	
 	boolean featureSupported(int feature);
 	void changeBackLightIntensity(boolean increase);
-	void setBackLightOn();
+	void setBackLightOn(boolean forever);
+	void setBackLightOff();
 	void setBackLightOnTime(boolean use, int value);
 	void inverseBackLight();
 //#sijapp cond.end#	

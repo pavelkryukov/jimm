@@ -151,6 +151,13 @@ public class Options
 	public static final int OPTION_IMG_SCALE          = 104;
 	public static final int OPTION_BG_IMAGE_MODE      = 105;
 	
+	public static final int OPTION_EXT_CLKEY1         = 106;
+	public static final int OPTION_EXT_CLKEY2         = 107;
+	public static final int OPTION_EXT_CLKEY3         = 108;
+	public static final int OPTION_EXT_CLKEY5         = 109;
+	public static final int OPTION_EXT_CLKEY7         = 110;
+	public static final int OPTION_EXT_CLKEY8         = 111;
+	public static final int OPTION_EXT_CLKEY9         = 112;
 	
 	/* boolean */
 	public static final int OPTION_KEEP_CONN_ALIVE   = 128; 
@@ -215,6 +222,12 @@ public class Options
 	public static final int HOTKEY_INC_LIGHT   = 15;
 	public static final int HOTKEY_DEC_LIGHT   = 16;
 	public static final int HOTKEY_LIGHT_ONOFF = 17;
+	public static final int HOTKEY_GOTO_TOP    = 18;
+	public static final int HOTKEY_GOTO_BOTTOM = 19;
+	public static final int HOTKEY_PAGE_UP     = 20;
+	public static final int HOTKEY_PAGE_DOWN   = 21;
+	public static final int HOTKEY_NEXT_CHAT   = 22;
+	public static final int HOTKEY_PREV_CHAT   = 23;
 	
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
@@ -422,23 +435,30 @@ public class Options
 		setString(Options.OPTION_PRX_PASS, emptyString);
 		//#sijapp cond.end #
 		setInt(Options.OPTION_VISIBILITY_ID, 0);
-		setInt(Options.OPTION_EXT_CLKEY0, 0);
 
-//#sijapp cond.if target="MIDP2" | target="SIEMENS2"#
-		setInt(Options.OPTION_EXT_CLKEYSTAR, HOTKEY_FULLSCR);
+//#sijapp cond.if target="MOTOROLA"#
+		setInt(Options.OPTION_EXT_CLKEYSTAR, HOTKEY_LIGHT_ONOFF);
 //#sijapp cond.else#
-		setInt    (Options.OPTION_EXT_CLKEYSTAR,      0);
+		setInt(Options.OPTION_EXT_CLKEYSTAR, HOTKEY_FULLSCR);
 //#sijapp cond.end #
+		
+		setInt(Options.OPTION_EXT_CLKEY0, HOTKEY_INFO);
+		setInt(Options.OPTION_EXT_CLKEY1, HOTKEY_GOTO_TOP);
+		setInt(Options.OPTION_EXT_CLKEY2, 0);
+		setInt(Options.OPTION_EXT_CLKEY3, HOTKEY_PAGE_UP);
+		setInt(Options.OPTION_EXT_CLKEY4, HOTKEY_PREV_CHAT);
+		setInt(Options.OPTION_EXT_CLKEY5, 0);
+		setInt(Options.OPTION_EXT_CLKEY6, HOTKEY_NEXT_CHAT);
+		setInt(Options.OPTION_EXT_CLKEY7, HOTKEY_GOTO_BOTTOM);
+		setInt(Options.OPTION_EXT_CLKEY8, 0);
+		setInt(Options.OPTION_EXT_CLKEY9, HOTKEY_PAGE_DOWN);
+		setInt(Options.OPTION_EXT_CLKEYCALL, HOTKEY_NEWMSG);
+		setInt(Options.OPTION_EXT_CLKEYPOUND, HOTKEY_LOCK);
 
 //#sijapp cond.if target isnot "DEFAULT" #
 		setBoolean(Options.OPTION_SILENT_MODE, false);
 //#sijapp cond.end #
-
-		setInt(Options.OPTION_EXT_CLKEY4, 0);
-		setInt(Options.OPTION_EXT_CLKEY6, 0);
-		setInt(Options.OPTION_EXT_CLKEYCALL, HOTKEY_NEWMSG);
-		setInt(Options.OPTION_EXT_CLKEYPOUND, HOTKEY_LOCK);
-
+		
 		setString(Options.OPTION_UIN2, emptyString);
 		setString(Options.OPTION_PASSWORD2, emptyString);
 		setString(Options.OPTION_UIN3, emptyString);
@@ -1386,11 +1406,16 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	
 	private Object[] hotKeysOptCodes = {
 		new Integer(Options.OPTION_EXT_CLKEY0),     "ext_clhotkey0", null,
+		new Integer(Options.OPTION_EXT_CLKEY1),     "ext_clhotkey1", null,
+		new Integer(Options.OPTION_EXT_CLKEY2),     "ext_clhotkey2", null,
+		new Integer(Options.OPTION_EXT_CLKEY3),     "ext_clhotkey3", null,
 		new Integer(Options.OPTION_EXT_CLKEY4),     "ext_clhotkey4", null,
+		new Integer(Options.OPTION_EXT_CLKEY5),     "ext_clhotkey5", null,
 		new Integer(Options.OPTION_EXT_CLKEY6),     "ext_clhotkey6", null,
-//#sijapp cond.if target isnot "MOTOROLA"#		
+		new Integer(Options.OPTION_EXT_CLKEY7),     "ext_clhotkey7", null,
+		new Integer(Options.OPTION_EXT_CLKEY8),     "ext_clhotkey8", null,
+		new Integer(Options.OPTION_EXT_CLKEY9),     "ext_clhotkey9", null,
 		new Integer(Options.OPTION_EXT_CLKEYSTAR),  "ext_clhotkeystar", null,
-//#sijapp cond.end#		
 		new Integer(Options.OPTION_EXT_CLKEYPOUND), "ext_clhotkeypound", null,
 //#sijapp cond.if target is "SIEMENS2"#		
 		new Integer(Options.OPTION_EXT_CLKEYCALL),  "ext_clhotkeycall", null,
@@ -1434,7 +1459,14 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			showHotkeyAction(Options.HOTKEY_INC_LIGHT, "light_inc", toArray);
 			showHotkeyAction(Options.HOTKEY_DEC_LIGHT, "light_dec", toArray);
 		}
-//#sijapp cond.end#		
+//#sijapp cond.end#
+		
+		showHotkeyAction(Options.HOTKEY_GOTO_TOP, "goto_top", toArray);
+		showHotkeyAction(Options.HOTKEY_GOTO_BOTTOM, "goto_bottom", toArray);
+		showHotkeyAction(Options.HOTKEY_PAGE_UP, "page_up", toArray);
+		showHotkeyAction(Options.HOTKEY_PAGE_DOWN, "page_down", toArray);
+		showHotkeyAction(Options.HOTKEY_NEXT_CHAT, "next_chat", toArray);
+		showHotkeyAction(Options.HOTKEY_PREV_CHAT, "prev_chat", toArray);
 	}
 	
 	private void showHotkeyAction(int value, String name, boolean toArray)
@@ -1443,7 +1475,6 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			hotKeysNames.addElement(new Object[] {new Integer(value), name});
 		else
 			JimmUI.addTextListItem(actionMenu, name, null, value, true, -1, Font.STYLE_PLAIN);
-			
 	}
 
 	private String getHotKeyActName(String langStr, int index)

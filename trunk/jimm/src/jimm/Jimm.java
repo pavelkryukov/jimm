@@ -556,19 +556,15 @@ public class Jimm extends MIDlet
 	
 	public static void setBkltOn(boolean forever)
 	{
-//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		if ( !Options.getBoolean(Options.OPTION_LIGHT_MANUAL) ) return;
-		Jimm.display.flashBacklight(forever ? Integer.MAX_VALUE : Options.getInt(Options.OPTION_LIGHT_TIMEOUT));
-		//System.out.println("setBkltOn, ferever="+ferever);
+//#sijapp cond.if target != "DEFAULT"#
+		Jimm.device.setBackLightOn(forever);
 //#sijapp cond.end#
 	}
 	
 	public static void setBkltOff()
 	{
-//#sijapp cond.if target="MOTOROLA" | target="MIDP2"#
-		if ( !Options.getBoolean(Options.OPTION_LIGHT_MANUAL) ) return;
-		Jimm.display.flashBacklight(1);
-		//System.out.println("setBkltOff");
+//#sijapp cond.if target != "DEFAULT"#
+		device.setBackLightOff();
 //#sijapp cond.end#
 	}
 	

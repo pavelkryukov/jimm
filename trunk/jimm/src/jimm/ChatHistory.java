@@ -360,9 +360,30 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 		checkTextForURL();
 	}
 	
+	public void vlItemClicked(VirtualList sender) {}
+	
+	public void vlKeyPress(VirtualList sender, int keyCode, int type) 
+	{
+		if (VirtualList.isNumpadKey(keyCode) || type != VirtualList.KEY_PRESSED) return;
+		
+		try
+		{
+			switch (sender.getGameAction(keyCode))
+			{
+			case Canvas.LEFT:
+				ChatHistory.selectNextChat(false);
+				break;
+			case Canvas.RIGHT:
+				ChatHistory.selectNextChat(true);
+				break;
+			}
+		} 
+		catch (Exception e) { /* do nothing */ }		
+	}
+	
 	void checkTextForURL()
 	{
-		//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
+//#sijapp cond.if target != "DEFAULT"#
 		textList.removeCommandEx(JimmUI.cmdGotoURL);
 		int messIndex = textList.getCurrTextIndex();
 		if (messIndex != -1)
@@ -370,7 +391,7 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 			MessData md = (MessData) getMessData().elementAt(messIndex);
 			if (md.isURL()) textList.addCommandEx(JimmUI.cmdGotoURL, VirtualList.MENU_TYPE_RIGHT);
 		}
-		//#sijapp cond.end#
+//#sijapp cond.end#
 	}
 	
 	void checkForAuthReply()
@@ -387,45 +408,12 @@ class ChatTextList implements VirtualListCommands, CommandListener, JimmScreen
 		textList.setCapImage(images);
 	}
 
-	public void vlItemClicked(VirtualList sender)
-	{
-	}
-
-	public void vlKeyPress(VirtualList sender, int keyCode, int type)
-	{
-		boolean keyWasProcessed = false;
-		
-		Jimm.aaUserActivity();
-		
-		try // getGameAction can raise exception
-		{
-			if (type == VirtualList.KEY_PRESSED)
-			{
-				switch (sender.getGameAction(keyCode))
-				{
-				case Canvas.LEFT:
-					keyWasProcessed = ChatHistory.selectNextChat_Internal(this, false);
-					return;
-
-				case Canvas.RIGHT:
-					keyWasProcessed = ChatHistory.selectNextChat_Internal(this, true);
-					return;
-				}
-			}
-
-			if (!keyWasProcessed) JimmUI.execHotKey(contact, keyCode, type);
-		} 
-		catch (Exception e) { /* do nothing */ }
-	}
-
-	//#sijapp cond.if target isnot "DEFAULT"#
+//#sijapp cond.if target != "DEFAULT"#
 	public void BeginTyping(boolean type)
 	{
-		System.out.println("ChatHistory.BeginTyping");
 		textList.repaint();
 	}
-
-	//#sijapp cond.end#
+//#sijapp cond.end#
 
 	boolean inOneMinute (long time1, long time2) {
 
@@ -877,10 +865,13 @@ public class ChatHistory
 		temp.textList.setCaption(title);
 	}		
 	
-	static protected boolean selectNextChat_Internal(ChatTextList current, boolean next)
+	static public boolean selectNextChat(boolean next)
 	{
+		if (currentChat == null) return false;
+		if (!currentChat.isVisible()) return false;
+		
 		if (historyTable.size() <= 1) return false;
-		String curUin = current.contact.getStringValue(ContactItem.CONTACTITEM_UIN);
+		String curUin = currentChat.contact.getStringValue(ContactItem.CONTACTITEM_UIN);
 		Enumeration keys = historyTable.keys();
 		Vector uins = new Vector(); 
 		while (keys.hasMoreElements()) uins.addElement(keys.nextElement());
@@ -889,7 +880,7 @@ public class ChatHistory
 		else curIndex--;
 		if (curIndex < 0) curIndex = uins.size()-1;
 		if (curIndex >= uins.size()) curIndex = 0;
-		JimmUI.removeScreen(current);
+		JimmUI.removeScreen(currentChat);
 		ChatTextList newChat = (ChatTextList)historyTable.get(uins.elementAt(curIndex));
 		newChat.activate();
 		return true;
