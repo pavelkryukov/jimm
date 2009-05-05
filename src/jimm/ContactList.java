@@ -63,7 +63,7 @@ import DrawControls.device.Device;
 
 //////////////////////////////////////////////////////////////////////////////////
 public class ContactList implements CommandListener, VirtualTreeCommands,
-		VirtualListCommands, JimmScreen
+		JimmScreen
 //#sijapp cond.if target!="DEFAULT"#
 		, PlayerListener
 //#sijapp cond.end#
@@ -170,7 +170,6 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 
 		tree = new VirtualTree(null, false);
 		tree.setVTCommands(this);
-		tree.setVLCommands(this);
 		tree.setCyclingCursor(true);
 
 		tree.setFontSize(
@@ -1604,18 +1603,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 		dst.fontStyle       = item.getFontStyle();
 	}
 
-	public void vlCursorMoved(VirtualList sender)  {}
-	public void vlItemClicked(VirtualList sender)  {}
-
-	public void vlKeyPress(VirtualList sender, int keyCode, int type)
+	public static ContactItem getSelectedContact()
 	{
 		TreeNode node = tree.getCurrentItem();
-		ContactItem item = ((node != null) && (node.getData() instanceof ContactItem)) ? (ContactItem) node
-				.getData()
-				: null;
-		JimmUI.execHotKey(item, keyCode, type);
-		
-		if (type == VirtualList.KEY_PRESSED) Jimm.aaUserActivity();
+		return
+			  ((node != null) && (node.getData() instanceof ContactItem)) 
+			? (ContactItem) node.getData()
+			: null;
 	}
 
 	// Returns number of unread messages 

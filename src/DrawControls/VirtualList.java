@@ -24,6 +24,7 @@
 package DrawControls;
 
 import javax.microedition.lcdui.*;
+
 import java.lang.Math;
 
 import java.util.Timer;
@@ -171,6 +172,9 @@ public abstract class VirtualList
 	
 	// Commands to react to VL events
 	private VirtualListCommands vlCommands;
+	
+	// Global commands
+	private static VirtualListCommands globalVlCommands;
 
 	// Used by "Invalidate" method to prevent invalidate when locked 
 	private boolean dontRepaint = false;
@@ -490,6 +494,12 @@ public abstract class VirtualList
 		this.vlCommands = vlCommands;
 	}
 	
+	public static void setGlobalVLCommands(VirtualListCommands vlCommands)
+	{
+		globalVlCommands = vlCommands;
+	}
+	
+	
 	public static VirtualList getCurrent()
 	{
 		return virtualCanvas.isShown() ? virtualCanvas.currentControl : null; 
@@ -605,7 +615,7 @@ public abstract class VirtualList
 		repaint();
 		onShow();
 //#sijapp cond.if target!="DEFAULT"#
-		if (device != null) device.setBackLightOn();
+		if (device != null) device.setBackLightOn(false);
 //#sijapp cond.end#
 	}
 	
@@ -712,7 +722,11 @@ public abstract class VirtualList
 	protected void repaintIfLastIndexesChanged()
 	{
 		if ((lastCurrItem != currItem) || (lastTopItem != topItem)) invalidate();
-		if ((lastCurrItem != currItem) && (vlCommands != null)) vlCommands.vlCursorMoved(this);
+		if (lastCurrItem != currItem)
+		{
+			if (vlCommands != null) vlCommands.vlCursorMoved(this);
+			if (globalVlCommands != null) globalVlCommands.vlCursorMoved(this);
+		}
 	}
 
 	// protected void moveCursor(int step)
@@ -739,6 +753,14 @@ public abstract class VirtualList
 		return executeCommand(findMenuByType(Command.OK));
 	}
 	
+	public static boolean isNumpadKey(int keyCode)
+	{
+		 return 
+		 	   ((keyCode >= Canvas.KEY_NUM0) && (keyCode <= Canvas.KEY_NUM9))
+			|| (keyCode == Canvas.KEY_STAR)
+			|| (keyCode == Canvas.KEY_POUND);		
+	}
+	
 	// private keyReaction(int keyCode)
 	private void keyReaction(int keyCode, int type)
 	{
@@ -760,9 +782,11 @@ public abstract class VirtualList
 		}
 				
 		int lastUIState = uiState;
-//#sijapp cond.end#		
+//#sijapp cond.end#
 		
-		switch (getExtendedGameAction(keyCode))
+		boolean isNumpadKey = isNumpadKey(keyCode);
+		
+		if (!isNumpadKey) switch (getExtendedGameAction(keyCode))
 		{
 //#sijapp cond.if target!="RIM" & target!="DEFAULT"#		
 		case KEY_CODE_LEFT_MENU:
@@ -829,11 +853,19 @@ public abstract class VirtualList
 				else
 				{
 					boolean executed = itemSelected();
-					if (!executed && (vlCommands != null)) vlCommands.vlItemClicked(this);
+					if (!executed)
+					{
+						if (vlCommands != null) vlCommands.vlItemClicked(this);
+						if (globalVlCommands != null) globalVlCommands.vlItemClicked(this);
+					}
 				}
 //#sijapp cond.else#
 				boolean executed = itemSelected();
-				if (!executed && (vlCommands != null)) vlCommands.vlItemClicked(this);
+				if (!executed)
+				{
+					if (vlCommands != null) vlCommands.vlItemClicked(this);
+					if (globalVlCommands != null) globalVlCommands.vlItemClicked(this);
+				}
 //#sijapp cond.end#				
 			}
 			break;
@@ -849,32 +881,46 @@ public abstract class VirtualList
 		}
 //#sijapp cond.end#
 		
-		if (type == KEY_PRESSED)
+		if (!menuItemsVisible)
 		{
-			switch (keyCode)
-			{
-			case Canvas.KEY_NUM1:
-				storelastItemIndexes();
-				currItem = topItem = 0;
-				repaintIfLastIndexesChanged();
-				break;
-
-			case Canvas.KEY_NUM7:
-				storelastItemIndexes();
-				int endIndex = getSize() - 1;
-				currItem = endIndex;
-				checkTopItem();
-				repaintIfLastIndexesChanged();
-				break;
-
-			case Canvas.KEY_NUM3:
-				moveCursor(-getVisCount(), false);
-				break;
-
-			case Canvas.KEY_NUM9:
-				moveCursor(getVisCount(), false);
-				break;
-			}
+			if (vlCommands != null) vlCommands.vlKeyPress(this, keyCode, type);
+			if (globalVlCommands != null) globalVlCommands.vlKeyPress(this, keyCode, type);
+		}
+	}
+	
+	public static final int CURSOR_POS_TOP       = 10000;
+	public static final int CURSOR_POS_BOTTOM    = 10001;
+	public static final int CURSOR_POS_PAGE_UP   = 10002;
+	public static final int CURSOR_POS_PAGE_DOWN = 10003;
+	
+	public void changeCursorPos(int mode)
+	{
+		switch(mode)
+		{
+		case CURSOR_POS_TOP:
+			storelastItemIndexes();
+			currItem = topItem = 0;
+			repaintIfLastIndexesChanged();
+			break;
+			
+		case CURSOR_POS_BOTTOM:
+			storelastItemIndexes();
+			int endIndex = getSize() - 1;
+			currItem = endIndex;
+			checkTopItem();
+			repaintIfLastIndexesChanged();
+			break;
+			
+		case CURSOR_POS_PAGE_UP:
+			moveCursor(-getVisCount(), false);
+			break;
+			
+		case CURSOR_POS_PAGE_DOWN:
+			moveCursor(getVisCount(), false);
+			break;
+			
+		default:
+			throw new IllegalArgumentException();
 		}
 	}
 	
@@ -894,7 +940,7 @@ public abstract class VirtualList
 		{
 		case KEY_PRESSED:
 //#sijapp cond.if target!="DEFAULT"#
-			if (device != null) device.setBackLightOn();
+			if (device != null) device.setBackLightOn(false);
 //#sijapp cond.end#
 			keyReaction(keyCode, type);
 			break;
@@ -902,8 +948,6 @@ public abstract class VirtualList
 			keyReaction(keyCode, type);
 			break;
 		}
-
-		if (vlCommands != null) vlCommands.vlKeyPress(this, keyCode, type);
 	}
 	
 	// Return game action or extended codes
@@ -1485,6 +1529,7 @@ public abstract class VirtualList
 						{
 							currItem = i;
 							if (vlCommands != null) vlCommands.vlCursorMoved(this);
+							if (globalVlCommands != null) globalVlCommands.vlCursorMoved(this);
 							invalidate();
 						}
 						break;

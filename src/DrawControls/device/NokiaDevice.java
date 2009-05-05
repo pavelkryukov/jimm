@@ -26,10 +26,19 @@ public class NokiaDevice implements Device
 		DeviceControl.setLights(0, lightIntensity);
 	}
 
-	public void setBackLightOn()
+	public void setBackLightOn(boolean forever)
 	{
 		if (useBackLightControl)
 			DeviceControl.setLights(0, lightIntensity);
+	}
+	
+	public void setBackLightOff()
+	{
+		if (useBackLightControl)
+		{
+			DeviceControl.setLights(0, 0);
+			isLight = false;
+		}
 	}
 
 	public void setBackLightOnTime(boolean use, int value)
@@ -39,7 +48,7 @@ public class NokiaDevice implements Device
 
 	public void inverseBackLight()
 	{
-		DeviceControl.setLights(0, isLight ? lightIntensity : 0);
+		DeviceControl.setLights(0, !isLight ? lightIntensity : 0);
 		isLight = !isLight;
 	}
 

@@ -22,12 +22,16 @@ public class StdDevice implements Device
 	{
 	}
 
-	public void setBackLightOn()
+	public void setBackLightOn(boolean forever)
 	{
 		if (type == Device.PHONE_MOTOROLA && useBackLightControl)
-		{
-			display.flashBacklight(1000*backLightOnTime);
-		}
+			display.flashBacklight(forever ? Integer.MAX_VALUE : 1000*backLightOnTime);
+	}
+	
+	public void setBackLightOff()
+	{
+		if (type == Device.PHONE_MOTOROLA && useBackLightControl)
+			display.flashBacklight(1);
 	}
 
 	public void setBackLightOnTime(boolean use, int value)
