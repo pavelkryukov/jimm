@@ -866,7 +866,7 @@ public abstract class VirtualList
 					if (vlCommands != null) vlCommands.vlItemClicked(this);
 					if (globalVlCommands != null) globalVlCommands.vlItemClicked(this);
 				}
-//#sijapp cond.end#				
+//#sijapp cond.end#
 			}
 			break;
 		}
@@ -879,9 +879,9 @@ public abstract class VirtualList
 			invalidate();
 			return;
 		}
-//#sijapp cond.end#
 		
 		if (!menuItemsVisible)
+//#sijapp cond.end#			
 		{
 			if (vlCommands != null) vlCommands.vlKeyPress(this, keyCode, type);
 			if (globalVlCommands != null) globalVlCommands.vlKeyPress(this, keyCode, type);

@@ -128,7 +128,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 	
 	public final static Command cmdInsTemplate = new Command(ResourceBundle.getString("templates"), Command.ITEM, 4);	
 	
-	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
+	//#sijapp cond.if target != "DEFAULT"#
 	public final static Command cmdGotoURL = new Command(ResourceBundle.getString("goto_url"), Command.ITEM, 9);
 	//#sijapp cond.end#
 	
