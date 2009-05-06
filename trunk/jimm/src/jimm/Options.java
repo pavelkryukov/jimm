@@ -786,7 +786,8 @@ public class Options
 	static public void editOptions()
 	{
 		// Construct option form
-		optionsForm = new OptionsForm();
+		if (optionsForm == null)
+			optionsForm = new OptionsForm();
 		optionsForm.activateForm();
 	}
 
