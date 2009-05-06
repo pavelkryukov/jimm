@@ -79,7 +79,7 @@ class MessData
 		return messId;
 	}
 
-	//#sijapp cond.if target is "MIDP2" | target is "SIEMENS2" | target is "MOTOROLA"#
+	//#sijapp cond.if target != "DEFAULT"#
 	public boolean isURL()
 	{
 		return (rowData & 0x8000000) != 0;
