@@ -2476,6 +2476,14 @@ public class JimmUI implements CommandListener, VirtualListCommands
 		case Options.HOTKEY_GOTO_BOTTOM:
 			currList.changeCursorPos(VirtualList.CURSOR_POS_BOTTOM);
 			break;
+			
+		case Options.HOTKEY_UP:
+			currList.changeCursorPos(VirtualList.CURSOR_POS_UP);
+			break;
+			
+		case Options.HOTKEY_DOWN:
+			currList.changeCursorPos(VirtualList.CURSOR_POS_DOWN);
+			break;
 		
 		case Options.HOTKEY_PAGE_UP:
 			currList.changeCursorPos(VirtualList.CURSOR_POS_PAGE_UP);

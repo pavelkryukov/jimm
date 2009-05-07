@@ -892,6 +892,8 @@ public abstract class VirtualList
 	public static final int CURSOR_POS_BOTTOM    = 10001;
 	public static final int CURSOR_POS_PAGE_UP   = 10002;
 	public static final int CURSOR_POS_PAGE_DOWN = 10003;
+	public static final int CURSOR_POS_UP        = 10004;
+	public static final int CURSOR_POS_DOWN      = 10005;
 	
 	public void changeCursorPos(int mode)
 	{
@@ -917,6 +919,14 @@ public abstract class VirtualList
 			
 		case CURSOR_POS_PAGE_DOWN:
 			moveCursor(getVisCount(), false);
+			break;
+			
+		case CURSOR_POS_UP:
+			moveCursor(-1, false);
+			break;
+
+		case CURSOR_POS_DOWN:
+			moveCursor(1, false);
 			break;
 			
 		default:
