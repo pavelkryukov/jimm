@@ -228,6 +228,8 @@ public class Options
 	public static final int HOTKEY_PAGE_DOWN   = 21;
 	public static final int HOTKEY_NEXT_CHAT   = 22;
 	public static final int HOTKEY_PREV_CHAT   = 23;
+	public static final int HOTKEY_UP          = 24;
+	public static final int HOTKEY_DOWN        = 25;
 	
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
@@ -444,13 +446,13 @@ public class Options
 		
 		setInt(Options.OPTION_EXT_CLKEY0, HOTKEY_INFO);
 		setInt(Options.OPTION_EXT_CLKEY1, HOTKEY_GOTO_TOP);
-		setInt(Options.OPTION_EXT_CLKEY2, 0);
+		setInt(Options.OPTION_EXT_CLKEY2, HOTKEY_UP);
 		setInt(Options.OPTION_EXT_CLKEY3, HOTKEY_PAGE_UP);
-		setInt(Options.OPTION_EXT_CLKEY4, HOTKEY_PREV_CHAT);
+		setInt(Options.OPTION_EXT_CLKEY4, 0);
 		setInt(Options.OPTION_EXT_CLKEY5, 0);
-		setInt(Options.OPTION_EXT_CLKEY6, HOTKEY_NEXT_CHAT);
+		setInt(Options.OPTION_EXT_CLKEY6, 0);
 		setInt(Options.OPTION_EXT_CLKEY7, HOTKEY_GOTO_BOTTOM);
-		setInt(Options.OPTION_EXT_CLKEY8, 0);
+		setInt(Options.OPTION_EXT_CLKEY8, HOTKEY_DOWN);
 		setInt(Options.OPTION_EXT_CLKEY9, HOTKEY_PAGE_DOWN);
 		setInt(Options.OPTION_EXT_CLKEYCALL, HOTKEY_NEWMSG);
 		setInt(Options.OPTION_EXT_CLKEYPOUND, HOTKEY_LOCK);
@@ -1462,12 +1464,15 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		}
 //#sijapp cond.end#
 		
+		showHotkeyAction(Options.HOTKEY_UP, "up", toArray);
+		showHotkeyAction(Options.HOTKEY_DOWN, "down", toArray);
 		showHotkeyAction(Options.HOTKEY_GOTO_TOP, "goto_top", toArray);
 		showHotkeyAction(Options.HOTKEY_GOTO_BOTTOM, "goto_bottom", toArray);
 		showHotkeyAction(Options.HOTKEY_PAGE_UP, "page_up", toArray);
 		showHotkeyAction(Options.HOTKEY_PAGE_DOWN, "page_down", toArray);
 		showHotkeyAction(Options.HOTKEY_NEXT_CHAT, "next_chat", toArray);
 		showHotkeyAction(Options.HOTKEY_PREV_CHAT, "prev_chat", toArray);
+		
 	}
 	
 	private void showHotkeyAction(int value, String name, boolean toArray)
