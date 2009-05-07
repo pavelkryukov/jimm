@@ -35,7 +35,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
 	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar;${MIDP2/midp}/lib/wma11.jar"/>
-	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar;${MIDP2/midp}/lib/wma20.jar;res/NOKIA/lib/nokiaui.jar"/>
+	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar;${MIDP2/midp}/lib/wma20.jar;res/NOKIA/lib/nokiaui.jar;res/SAMSUNG/lib/"/>
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
 	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
 	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />

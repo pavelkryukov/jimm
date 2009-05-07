@@ -139,6 +139,13 @@ public class Jimm extends MIDlet
 			}
 			else if (melc.indexOf("nokia") != -1)
 				phoneType = Device.PHONE_NOKIA;
+			else
+            {
+                try {
+                        Class.forName("com.samsung.util.Vibration");
+        				phoneType = Device.PHONE_SAMSUNG;
+                } catch (Throwable t0) {}
+            }
 		}
 //#sijapp cond.end#
 		
@@ -189,6 +196,9 @@ public class Jimm extends MIDlet
 //#sijapp cond.if target="MIDP2"#			
 			case Device.PHONE_NOKIA:
 				device = new DrawControls.device.NokiaDevice();
+				break;
+			case Device.PHONE_SAMSUNG:
+				device = new DrawControls.device.SamsungDevice();
 				break;
 //#sijapp cond.end#				
 			default:
