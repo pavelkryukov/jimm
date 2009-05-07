@@ -29,7 +29,10 @@ public class NokiaDevice implements Device
 	public void setBackLightOn(boolean forever)
 	{
 		if (useBackLightControl)
+        {
 			DeviceControl.setLights(0, lightIntensity);
+            isLight = true;
+        }
 	}
 	
 	public void setBackLightOff()

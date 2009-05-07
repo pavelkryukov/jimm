@@ -6,6 +6,7 @@ public interface Device
 	static public final int PHONE_SONYERICSSON = 1001;
 	static public final int PHONE_NOKIA        = 1002;
 	static public final int PHONE_MOTOROLA     = 1003;
+	static public final int PHONE_SAMSUNG      = 1004;
 	
 	static public final int FEATURE_LIGHT_INTENSITY = 2000;
 	static public final int FEATURE_MINIMIZE        = 2001;
