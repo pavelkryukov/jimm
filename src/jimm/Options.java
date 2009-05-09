@@ -558,50 +558,30 @@ public class Options
 	    }
 	}
 	
+	private static final String RMS_NAME = "opt"+"ions";
+	
 	/* Load option values from record store */
-	static public void load() throws IOException, RecordStoreException
+	static public void load() throws IOException
 	{
-		/* Open record store */
-		RecordStore account = null;
+		DataInputStream dis = Util.getRmsInputStream(RMS_NAME, null);
 		
-		try
+		if (dis == null) setDefaults();
+		else
 		{
-			account = RecordStore.openRecordStore("opt"+"ions"/*to avoid lang. preprocessor*/, false);
-
-			/* Temporary variables */
-			byte[] buf;
-			ByteArrayInputStream bais;
-			DataInputStream dis;
-
-			/* Get version info from record store */
-			buf = account.getRecord(1);
-			bais = new ByteArrayInputStream(buf);
-			dis = new DataInputStream(bais);
-			Options.setDefaults();
-
-			/* Read all option key-value pairs */
-			buf = account.getRecord(2);
-			bais = new ByteArrayInputStream(buf);
-			dis = new DataInputStream(bais);
 			int optionKey;
 			byte[] optionValue;
 			while (dis.available() > 0)
 			{
 				optionKey = dis.readUnsignedByte();
 				if (optionKey < 64) /* 0-63 = String */
-				{
 					setString(optionKey, dis.readUTF());
-				} else if (optionKey < 128) /* 64-127 = int */
-				{
+				else if (optionKey < 128) /* 64-127 = int */
 					setInt(optionKey, dis.readInt());
-				} else if (optionKey < 192) /* 128-191 = boolean */
-				{
+				else if (optionKey < 192) /* 128-191 = boolean */
 					setBoolean(optionKey, dis.readBoolean());
-				} else if (optionKey < 224) /* 192-223 = long */
-				{
+				else if (optionKey < 224) /* 192-223 = long */
 					setLong(optionKey, dis.readLong());
-				} else
-				/* 226-255 = Scrambled String */
+				else /* 226-255 = Scrambled String */
 				{
 					optionValue = new byte[dis.readUnsignedShort()];
 					dis.readFully(optionValue);
@@ -610,84 +590,40 @@ public class Options
 							optionValue.length, true));
 				}
 			}
-			optionValue = null;
-		}
-		finally
-		{
-			/* Close record store */
-			if (account != null) account.closeRecordStore();
 		}
 	}
 
 	/* Save option values to record store */
-	static public void save() throws IOException, RecordStoreException
+	static public void save() throws IOException
 	{
-		/* Open record store */
-		RecordStore account = null;
+		/* Save all option key-value pairs */
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(baos);
+		Enumeration optionKeys = options.keys();
+		int optionKey;
+		byte[] optionValue;
+		while (optionKeys.hasMoreElements())
+		{
+			optionKey = ((Integer) optionKeys.nextElement()).intValue();
+			dos.writeByte(optionKey);
+			if (optionKey < 64) /* 0-63 = String */
+				dos.writeUTF(getString(optionKey));
+			else if (optionKey < 128) /* 64-127 = int */
+				dos.writeInt(getInt(optionKey));
+			else if (optionKey < 192) /* 128-191 = boolean */
+				dos.writeBoolean(getBoolean(optionKey));
+			else if (optionKey < 224) /* 192-223 = long */
+				dos.writeLong(getLong(optionKey));
+			else /* 226-255 = Scrambled String */
+			{
+				optionValue = Util.stringToByteArray(getString(optionKey), true);
+				optionValue = Util.decipherPassword(optionValue);
+				dos.writeShort(optionValue.length);
+				dos.write(optionValue);
+			}
+		}
 		
-		try
-		{
-			account = RecordStore.openRecordStore("opt"+"ions"/*to avoid lang. preprocessor*/, true);
-
-			/* Add empty records if necessary */
-			while (account.getNumRecords() < 3)
-			{
-				account.addRecord(null, 0, 0);
-			}
-
-			/* Temporary variables */
-			byte[] buf;
-			ByteArrayOutputStream baos;
-			DataOutputStream dos;
-
-			/* Add version info to record store */
-			baos = new ByteArrayOutputStream();
-			dos = new DataOutputStream(baos);
-			dos.writeUTF(Jimm.VERSION);
-			buf = baos.toByteArray();
-			account.setRecord(1, buf, 0, buf.length);
-
-			/* Save all option key-value pairs */
-			baos = new ByteArrayOutputStream();
-			dos = new DataOutputStream(baos);
-			Enumeration optionKeys = options.keys();
-			int optionKey;
-			byte[] optionValue;
-			while (optionKeys.hasMoreElements())
-			{
-				optionKey = ((Integer) optionKeys.nextElement()).intValue();
-				dos.writeByte(optionKey);
-				if (optionKey < 64) /* 0-63 = String */
-				{
-					dos.writeUTF(getString(optionKey));
-				} else if (optionKey < 128) /* 64-127 = int */
-				{
-					dos.writeInt(getInt(optionKey));
-				} else if (optionKey < 192) /* 128-191 = boolean */
-				{
-					dos.writeBoolean(getBoolean(optionKey));
-				} else if (optionKey < 224) /* 192-223 = long */
-				{
-					dos.writeLong(getLong(optionKey));
-				} else
-				/* 226-255 = Scrambled String */
-				{
-					optionValue = Util.stringToByteArray(
-							getString(optionKey), true);
-					optionValue = Util.decipherPassword(optionValue);
-					dos.writeShort(optionValue.length);
-					dos.write(optionValue);
-				}
-			}
-			optionValue = null;
-			buf = baos.toByteArray();
-			account.setRecord(2, buf, 0, buf.length);
-		}
-		finally
-		{
-			/* Close record store */
-			if (account != null) account.closeRecordStore();
-		}
+		Util.saveStreamToRms(baos.toByteArray(), RMS_NAME, null);
 	}
 
 	static public void safeSave()
@@ -1109,6 +1045,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 	private static final int OPTIONS_TRANSP      = 16;
 	private static final int OPTIONS_STAT_STR    = 17;
 	private static final int OPTIONS_XSTAT_STR   = 18;
+	private static final int OPTIONS_TEMPLATES   = 19;
 
 	// Constants for contact list menu
 	private static final int OPTIONS_ADD_USER      = 100;
@@ -1311,6 +1248,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			
 			JimmUI.addTextListItem(optionsMenu, "status", JimmUI.statusAwayImg, OPTIONS_STAT_STR, true, -1, Font.STYLE_PLAIN);
 			JimmUI.addTextListItem(optionsMenu, "xstatus", JimmUI.xStatusImages.elementAt(1), OPTIONS_XSTAT_STR, true, -1, Font.STYLE_PLAIN);
+			JimmUI.addTextListItem(optionsMenu, "templates", null, OPTIONS_TEMPLATES, true, -1, Font.STYLE_PLAIN); 
 			
 			JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", MainMenu.menuIcons.elementAt(26), OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
 			break;
@@ -1995,6 +1933,10 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			
 		case OPTIONS_XSTAT_STR:
 			initStatusMenu(StatusInfo.TYPE_X_STATUS, false);
+			return;
+			
+		case OPTIONS_TEMPLATES:
+			Templates.showTemplates(null);
 			return;
 			
 //#sijapp cond.if modules_ANTISPAM="true"#			

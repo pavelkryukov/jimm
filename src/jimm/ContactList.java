@@ -1807,16 +1807,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 				if (antiSpamList.get(uin) == antiSpamTrue) dos.writeUTF(uin);
 			}
 			
-			RecordStore rs = RecordStore.openRecordStore(ANTISPAM_RMS_NAME, true);
-			while (rs.getNumRecords() < 1) rs.addRecord(null, 0, 0);
-			
-			dos.flush();
-			byte[] buf = baos.toByteArray();
-			rs.setRecord(1, buf, 0, buf.length);
-
-			dos.close();
-			baos.close();
-			rs.closeRecordStore();
+			Util.saveStreamToRms(baos.toByteArray(), ANTISPAM_RMS_NAME, null);
 		}
 		catch (Exception e)
 		{
@@ -1826,17 +1817,13 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	
 	static public void antiSpamLoadList()
 	{
+		antiSpamList.clear();
+		
+		DataInputStream dis = Util.getRmsInputStream(ANTISPAM_RMS_NAME, null);
+		if (dis == null) return;
+		
 		try
 		{
-			antiSpamList.clear();
-			
-			RecordStore account = RecordStore.openRecordStore(ANTISPAM_RMS_NAME, false);
-			byte[] buf = account.getRecord(1);
-			account.closeRecordStore();
-			
-			ByteArrayInputStream bais = new ByteArrayInputStream(buf);
-			DataInputStream dis = new DataInputStream(bais);
-			
 			int vers = dis.readInt();
 			
 			if (vers != ANTISPAM_RMS_VERS) return;
