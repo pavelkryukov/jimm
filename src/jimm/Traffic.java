@@ -24,7 +24,6 @@
 //#sijapp cond.if modules_TRAFFIC is "true" #
 package jimm;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -36,8 +35,6 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Font;
-import javax.microedition.rms.RecordStore;
-import javax.microedition.rms.RecordStoreException;
 
 import DrawControls.TextList;
 import DrawControls.VirtualList;
@@ -114,83 +111,36 @@ public class Traffic implements Runnable
 			trafficScreen = _this.new TrafficScreen();
 		trafficScreen.activate();
 	}
+	
+	private static final String RMS_NAME = "traffic";
+	private static final String RMS_VERS = "V1";
 
 	//Loads traffic from file
-	static public void load() throws IOException, RecordStoreException
+	static public void load() throws IOException
 	{
-		RecordStore traffic = null;
-		
-		try
-		{
-			// Open record store
-			traffic = RecordStore.openRecordStore("traffic", false);
-
-			// Temporary variables
-			byte[] buf;
-			ByteArrayInputStream bais;
-			DataInputStream dis;
-
-			// Get traffic amount and savedSince to record store
-			buf = traffic.getRecord(2);
-			bais = new ByteArrayInputStream(buf);
-			dis = new DataInputStream(bais);
-			dis.readInt(); // skip old stored value "all_traffic"
-			savedSince.setTime(dis.readLong());
-			lastTimeUsed.setTime(dis.readLong());
-			savedCost = dis.readInt();
-			out_all_traffic = dis.readInt();
-			in_all_traffic = dis.readInt();
-		}
-		finally
-		{
-			// Close record store
-			traffic.closeRecordStore();
-		}
+		DataInputStream dis = Util.getRmsInputStream(RMS_NAME, RMS_VERS);
+		if (dis == null) return;
+		dis.readInt(); // skip old stored value "all_traffic"
+		savedSince.setTime(dis.readLong());
+		lastTimeUsed.setTime(dis.readLong());
+		savedCost = dis.readInt();
+		out_all_traffic = dis.readInt();
+		in_all_traffic = dis.readInt();
 	}
 
 	// Saves traffic to file
-	static public void save() throws IOException, RecordStoreException
+	static public void save() throws IOException
 	{
-		// Open record store
-		RecordStore traffic = null;
-		
-		try
-		{
-			traffic = RecordStore.openRecordStore("traffic", true);
-
-			// Add empty records if necessary
-			while (traffic.getNumRecords() < 4) traffic.addRecord(null, 0, 0);
-
-			// Temporary variables
-			byte[] buf;
-			ByteArrayOutputStream baos;
-			DataOutputStream dos;
-
-			// Add version info to record store
-			baos = new ByteArrayOutputStream();
-			dos = new DataOutputStream(baos);
-			dos.writeUTF(Jimm.VERSION);
-			buf = baos.toByteArray();
-			traffic.setRecord(1, buf, 0, buf.length);
-
-			// Add traffic amount and savedSince to record store
-			baos = new ByteArrayOutputStream();
-
-			dos = new DataOutputStream(baos);
-			dos.writeInt(0);
-			dos.writeLong(savedSince.getTime());
-			dos.writeLong(lastTimeUsed.getTime());
-			dos.writeInt((int) generateCostSum(false));
-			dos.writeInt(out_all_traffic + out_session_traffic);
-			dos.writeInt(in_all_traffic + in_session_traffic);
-			buf = baos.toByteArray();
-			traffic.setRecord(2, buf, 0, buf.length);
-		}
-		finally
-		{
-			// Close record store
-			traffic.closeRecordStore();
-		}
+		// Add traffic amount and savedSince to record store
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(baos);
+		dos.writeInt(0);
+		dos.writeLong(savedSince.getTime());
+		dos.writeLong(lastTimeUsed.getTime());
+		dos.writeInt((int) generateCostSum(false));
+		dos.writeInt(out_all_traffic + out_session_traffic);
+		dos.writeInt(in_all_traffic + in_session_traffic);
+		Util.saveStreamToRms(baos.toByteArray(), RMS_NAME, RMS_VERS);
 	}
 
 	// Generates String for Traffic Info Screen

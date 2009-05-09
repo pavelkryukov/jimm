@@ -887,12 +887,12 @@ public class Options
 		}
 	}
 	
+	private static final String STATUS_RMS_VERS = "v1"; 
+	
 	private static void saveStatusStrings(Hashtable tbl, String rmsName)
 	{
 		try
 		{
-			RecordStore rms = RecordStore.openRecordStore(rmsName, true);
-			while (rms.getNumRecords() < 1) rms.addRecord(null, 0, 0);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			DataOutputStream dos = new DataOutputStream(baos);
 			
@@ -910,12 +910,11 @@ public class Options
 				dos.writeUTF(statDescr);
 			}
 			
-			byte[] bytes = baos.toByteArray();
-			rms.setRecord(1, bytes, 0, bytes.length);
+			Util.saveStreamToRms(baos.toByteArray(), rmsName, STATUS_RMS_VERS);
 		}
 		catch (Exception e)
 		{
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	
@@ -923,12 +922,8 @@ public class Options
 	{
 		try
 		{
-			RecordStore rms = RecordStore.openRecordStore(rmsName, false);
-			tbl.clear();
-			
-			byte[] bytes = rms.getRecord(1);
-			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-			DataInputStream dis = new DataInputStream(bais);
+			DataInputStream dis = Util.getRmsInputStream(rmsName, STATUS_RMS_VERS);
+			if (dis == null) return;
 			
 			int version = dis.readInt();
 			
@@ -946,11 +941,10 @@ public class Options
 				}
 				break;
 			}
-			
 		}
 		catch (Exception e)
 		{
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	
