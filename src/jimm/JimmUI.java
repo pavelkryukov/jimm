@@ -2358,7 +2358,14 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			}
 		}
 		
-		if (type != VirtualList.KEY_PRESSED) return;
+		boolean isNaviHotKey = 
+			(hotKeyAction==Options.HOTKEY_PAGE_UP) ||
+			(hotKeyAction==Options.HOTKEY_PAGE_UP) ||
+			(hotKeyAction==Options.HOTKEY_PAGE_DOWN) ||
+			(hotKeyAction==Options.HOTKEY_UP) ||
+			(hotKeyAction==Options.HOTKEY_DOWN);
+			
+		if (type != VirtualList.KEY_PRESSED && !isNaviHotKey) return;
 		
 		VirtualList currList = VirtualList.getCurrent();
 		if (currList == null) return;
