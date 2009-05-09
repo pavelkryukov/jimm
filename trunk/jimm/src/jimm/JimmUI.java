@@ -2477,27 +2477,27 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			break;
 //#sijapp cond.end#
 		case Options.HOTKEY_GOTO_TOP:
-			currList.changeCursorPos(VirtualList.CURSOR_POS_TOP);
+			currList.executeAction(VirtualList.ACTION_CURSOR_TOP);
 			break;
 			
 		case Options.HOTKEY_GOTO_BOTTOM:
-			currList.changeCursorPos(VirtualList.CURSOR_POS_BOTTOM);
+			currList.executeAction(VirtualList.ACTION_CURSOR_BOTTOM);
 			break;
 			
 		case Options.HOTKEY_UP:
-			currList.changeCursorPos(VirtualList.CURSOR_POS_UP);
+			currList.executeAction(VirtualList.ACTION_CURSOR_UP);
 			break;
 			
 		case Options.HOTKEY_DOWN:
-			currList.changeCursorPos(VirtualList.CURSOR_POS_DOWN);
+			currList.executeAction(VirtualList.ACTION_CURSOR_DOWN);
 			break;
 		
 		case Options.HOTKEY_PAGE_UP:
-			currList.changeCursorPos(VirtualList.CURSOR_POS_PAGE_UP);
+			currList.executeAction(VirtualList.ACTION_CURSOR_PAGE_UP);
 			break;
 			
 		case Options.HOTKEY_PAGE_DOWN:
-			currList.changeCursorPos(VirtualList.CURSOR_POS_PAGE_DOWN);
+			currList.executeAction(VirtualList.ACTION_CURSOR_PAGE_DOWN);
 			break;
 			
 		case Options.HOTKEY_NEXT_CHAT:
@@ -2506,6 +2506,10 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			
 		case Options.HOTKEY_PREV_CHAT:
 			ChatHistory.selectNextChat(false);
+			break;
+			
+		case Options.HOTKEY_SELECT:
+			currList.executeAction(VirtualList.ACTION_FIRE_PRESS);
 			break;
 		}
 	}

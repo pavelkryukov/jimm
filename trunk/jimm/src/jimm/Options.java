@@ -230,6 +230,7 @@ public class Options
 	public static final int HOTKEY_PREV_CHAT   = 23;
 	public static final int HOTKEY_UP          = 24;
 	public static final int HOTKEY_DOWN        = 25;
+	public static final int HOTKEY_SELECT      = 26;
 	
 	/* Constants for connection type */
 	public static final int CONN_TYPE_SOCKET = 0;
@@ -449,7 +450,7 @@ public class Options
 		setInt(Options.OPTION_EXT_CLKEY2, HOTKEY_UP);
 		setInt(Options.OPTION_EXT_CLKEY3, HOTKEY_PAGE_UP);
 		setInt(Options.OPTION_EXT_CLKEY4, 0);
-		setInt(Options.OPTION_EXT_CLKEY5, 0);
+		setInt(Options.OPTION_EXT_CLKEY5, HOTKEY_SELECT);
 		setInt(Options.OPTION_EXT_CLKEY6, 0);
 		setInt(Options.OPTION_EXT_CLKEY7, HOTKEY_GOTO_BOTTOM);
 		setInt(Options.OPTION_EXT_CLKEY8, HOTKEY_DOWN);
@@ -1404,6 +1405,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 		showHotkeyAction(Options.HOTKEY_PAGE_DOWN, "page_down", toArray);
 		showHotkeyAction(Options.HOTKEY_NEXT_CHAT, "next_chat", toArray);
 		showHotkeyAction(Options.HOTKEY_PREV_CHAT, "prev_chat", toArray);
+		showHotkeyAction(Options.HOTKEY_SELECT, "select", toArray);
 		
 	}
 	

@@ -852,21 +852,11 @@ public abstract class VirtualList
 				}
 				else
 				{
-					boolean executed = itemSelected();
-					if (!executed)
-					{
-						if (vlCommands != null) vlCommands.vlItemClicked(this);
-						if (globalVlCommands != null) globalVlCommands.vlItemClicked(this);
-					}
+					executeFirePressed();
 				}
-//#sijapp cond.else#
-				boolean executed = itemSelected();
-				if (!executed)
-				{
-					if (vlCommands != null) vlCommands.vlItemClicked(this);
-					if (globalVlCommands != null) globalVlCommands.vlItemClicked(this);
-				}
-//#sijapp cond.end#
+//#sijapp cond.else#				
+				executeFirePressed();
+//#sijapp cond.end#				
 			}
 			break;
 		}
@@ -887,25 +877,36 @@ public abstract class VirtualList
 			if (globalVlCommands != null) globalVlCommands.vlKeyPress(this, keyCode, type);
 		}
 	}
+
+	private void executeFirePressed()
+	{
+		boolean executed = itemSelected();
+		if (!executed)
+		{
+			if (vlCommands != null) vlCommands.vlItemClicked(this);
+			if (globalVlCommands != null) globalVlCommands.vlItemClicked(this);
+		}
+	}
 	
-	public static final int CURSOR_POS_TOP       = 10000;
-	public static final int CURSOR_POS_BOTTOM    = 10001;
-	public static final int CURSOR_POS_PAGE_UP   = 10002;
-	public static final int CURSOR_POS_PAGE_DOWN = 10003;
-	public static final int CURSOR_POS_UP        = 10004;
-	public static final int CURSOR_POS_DOWN      = 10005;
+	public static final int ACTION_CURSOR_TOP       = 10000;
+	public static final int ACTION_CURSOR_BOTTOM    = 10001;
+	public static final int ACTION_CURSOR_PAGE_UP   = 10002;
+	public static final int ACTION_CURSOR_PAGE_DOWN = 10003;
+	public static final int ACTION_CURSOR_UP        = 10004;
+	public static final int ACTION_CURSOR_DOWN      = 10005;
+	public static final int ACTION_FIRE_PRESS       = 10006;
 	
-	public void changeCursorPos(int mode)
+	public void executeAction(int mode)
 	{
 		switch(mode)
 		{
-		case CURSOR_POS_TOP:
+		case ACTION_CURSOR_TOP:
 			storelastItemIndexes();
 			currItem = topItem = 0;
 			repaintIfLastIndexesChanged();
 			break;
 			
-		case CURSOR_POS_BOTTOM:
+		case ACTION_CURSOR_BOTTOM:
 			storelastItemIndexes();
 			int endIndex = getSize() - 1;
 			currItem = endIndex;
@@ -913,20 +914,24 @@ public abstract class VirtualList
 			repaintIfLastIndexesChanged();
 			break;
 			
-		case CURSOR_POS_PAGE_UP:
+		case ACTION_CURSOR_PAGE_UP:
 			moveCursor(-getVisCount(), false);
 			break;
 			
-		case CURSOR_POS_PAGE_DOWN:
+		case ACTION_CURSOR_PAGE_DOWN:
 			moveCursor(getVisCount(), false);
 			break;
 			
-		case CURSOR_POS_UP:
+		case ACTION_CURSOR_UP:
 			moveCursor(-1, false);
 			break;
 
-		case CURSOR_POS_DOWN:
+		case ACTION_CURSOR_DOWN:
 			moveCursor(1, false);
+			break;
+			
+		case ACTION_FIRE_PRESS:
+			executeFirePressed();
 			break;
 			
 		default:
