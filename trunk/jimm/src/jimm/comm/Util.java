@@ -29,11 +29,11 @@ import java.util.*;
 
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.rms.RecordStore;
 
 //#sijapp cond.if target!="DEFAULT"#
 import javax.microedition.media.Manager;
 import javax.microedition.media.Player;
-import javax.microedition.rms.RecordStore;
 //#sijapp cond.end#
 
 import jimm.DebugLog;
