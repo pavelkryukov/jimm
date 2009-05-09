@@ -1946,7 +1946,7 @@ public class Util
 				DataOutputStream dos = new DataOutputStream(baos);
 				dos.writeUTF(vers);
 				byte[] buf = baos.toByteArray();
-				account.setRecord(1, buf, 0, buf.length);			
+				account.setRecord(1, buf, 0, buf.length);
 			}
 			
 			account.setRecord(2, data, 0, data.length);
