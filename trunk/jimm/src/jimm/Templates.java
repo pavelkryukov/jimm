@@ -24,27 +24,29 @@
 package jimm;
 
 import java.io.*;
+import java.util.Vector;
+
 import javax.microedition.lcdui.*;
-import javax.microedition.rms.RecordStore;
+
 import DrawControls.TextList;
 import DrawControls.VirtualList;
 import DrawControls.VirtualListCommands;
 
+import jimm.comm.Util;
 import jimm.util.ResourceBundle;
 
 public class Templates implements VirtualListCommands, CommandListener
 {
-	private static Command selectTemplateCommand = new Command(ResourceBundle
+	private static Command cmdSelectTemplate = new Command(ResourceBundle
 			.getString("select"), Command.OK, 1);
 
 	private static Command backCommand = new Command(ResourceBundle
 			.getString("back"), Jimm.cmdBack, 2);
 
-	private static Command newTemplateCommand = new Command(ResourceBundle
+	private static Command cmdNewTemplate = new Command(ResourceBundle
 			.getString("add_new"), Command.ITEM, 3);
 
-	// TODO: make deleting of template!!!
-	private static Command deleteTemplateCommand = new Command(ResourceBundle
+	private static Command cmdDelTemplate = new Command(ResourceBundle
 			.getString("delete"), Command.ITEM, 4);
 
 	private static Command clearCommand = new Command(ResourceBundle
@@ -60,26 +62,26 @@ public class Templates implements VirtualListCommands, CommandListener
 
 	private static Templates _this;
 
-	private static RecordStore rms = null;
-
 	private static TextBox templateTextbox;
 
 	private static final int TMPL_DEL = 1;
-
 	private static final int TMPL_CLALL = 2;
 	
 	private static TextBox textBox;
 	private static int caretPos;
+	private static Vector items = new Vector();
+	
+	private static String RMS_NAME = "templates2";
 
 	public Templates()
 	{
 		_this = this;
+		loadFromRMS();
 	}
 
-	public static void selectTemplate(TextBox textBox)
+	public static void showTemplates(TextBox textBox)
 	{
 		Templates.textBox = textBox;
-		caretPos = textBox.getCaretPosition();
 		
 		templateList = new TextList(null);
 		JimmUI.setColorScheme(templateList, false, -1, true);
@@ -89,9 +91,17 @@ public class Templates implements VirtualListCommands, CommandListener
 		templateList.addCommandEx(JimmUI.cmdMenu, VirtualList.MENU_TYPE_RIGHT_BAR);
 //#sijapp cond.end#
 
-		templateList.addCommandEx(selectTemplateCommand, VirtualList.MENU_TYPE_LEFT_BAR);
-		templateList.addCommandEx(backCommand, VirtualList.MENU_TYPE_RIGHT);
-		templateList.addCommandEx(newTemplateCommand, VirtualList.MENU_TYPE_RIGHT);
+		if (textBox != null)
+		{
+			caretPos = textBox.getCaretPosition();
+			templateList.addCommandEx(cmdSelectTemplate, VirtualList.MENU_TYPE_LEFT_BAR);
+		}
+		templateList.addCommandEx(
+			backCommand, 
+			textBox != null ? VirtualList.MENU_TYPE_RIGHT : VirtualList.MENU_TYPE_LEFT_BAR
+		);
+		templateList.addCommandEx(cmdNewTemplate, VirtualList.MENU_TYPE_RIGHT);
+		templateList.addCommandEx(cmdDelTemplate, VirtualList.MENU_TYPE_RIGHT);
 		templateList.addCommandEx(clearCommand, VirtualList.MENU_TYPE_RIGHT);
 		refreshList();
 		templateList.setCommandListener(_this);
@@ -101,17 +111,12 @@ public class Templates implements VirtualListCommands, CommandListener
 
 	public static boolean isMyOkCommand(Command c)
 	{
-		return (c == selectTemplateCommand);
+		return (c == cmdSelectTemplate);
 	}
 
-	public void vlKeyPress(VirtualList sender, int keyCode, int type)
-	{
-	}
+	public void vlKeyPress(VirtualList sender, int keyCode, int type){}
 
-	public void vlCursorMoved(VirtualList sender)
-	{
-		Jimm.aaUserActivity();
-	}
+	public void vlCursorMoved(VirtualList sender) {}
 
 	public void vlItemClicked(VirtualList sender)
 	{
@@ -124,63 +129,88 @@ public class Templates implements VirtualListCommands, CommandListener
 		
 		if (c == backCommand)
 		{
-			Jimm.display.setCurrent(textBox);
-			templateList = null;
+			if (textBox != null)
+			{
+				Jimm.display.setCurrent(textBox);
+				templateList = null;
+			}
+			else JimmUI.backToLastScreen();
 		}
 
-		if (c == selectTemplateCommand)
+		else if (c == cmdSelectTemplate)
 		{
 			select();
 		}
 
-		if (c == newTemplateCommand)
+		else if (c == cmdNewTemplate)
 		{
-			templateTextbox = new TextBox(ResourceBundle
-					.getString("new_template"), null, 1000, TextField.ANY);
+			templateTextbox = new TextBox(ResourceBundle.getString("new_template"), 
+					null, 1000, TextField.ANY);
 			templateTextbox.addCommand(addCommand);
 			templateTextbox.addCommand(cancelCommand);
 			templateTextbox.setCommandListener(_this);
 			Jimm.display.setCurrent(templateTextbox);
 			Jimm.setBkltOn(true);
 		}
-
-		if (c == addCommand)
+		
+		else if (c == cmdDelTemplate)
 		{
-			addRecord(templateTextbox.getString());
-			refreshList();
+			JimmUI.messageBox(ResourceBundle.getString("attention"),
+					ResourceBundle.getString("delete") + "?",
+					JimmUI.MESBOX_YESNO, _this, TMPL_DEL);			
+		}
+
+		else if (c == addCommand)
+		{
+			String text = templateTextbox.getString().trim();
+			if (text.length() != 0)
+			{
+				items.addElement(text);
+				saveToRMS();
+				refreshList();
+			}
 			templateList.activate(Jimm.display);
 			templateTextbox = null;
 		}
 
-		if (c == cancelCommand)
+		else if (c == cancelCommand)
 		{
 			templateList.activate(Jimm.display);
 			templateTextbox = null;
 		}
 
-		if (c == clearCommand)
+		else if (c == clearCommand)
 		{
 			JimmUI.messageBox(ResourceBundle.getString("attention"),
 					ResourceBundle.getString("clear") + "?",
 					JimmUI.MESBOX_YESNO, _this, TMPL_CLALL);
 		}
 
-		if (JimmUI.getCommandType(c, TMPL_CLALL) == JimmUI.CMD_YES)
+		else if (JimmUI.getCommandType(c, TMPL_CLALL) == JimmUI.CMD_YES)
 		{
-			try
-			{
-				rms.closeRecordStore();
-				rms = null;
-				System.gc();
-				RecordStore.deleteRecordStore("templates");
-			} catch (Exception e)
-			{
-			}
-			Jimm.display.setCurrent(textBox);
+			items.removeAllElements();
+			saveToRMS();
+			templateList.activate(Jimm.display);
 			templateList = null;
 		}
 
-		if (JimmUI.getCommandType(c, TMPL_CLALL) == JimmUI.CMD_NO)
+		else if (JimmUI.getCommandType(c, TMPL_CLALL) == JimmUI.CMD_NO)
+		{
+			templateList.activate(Jimm.display);
+		}
+		
+		else if (JimmUI.getCommandType(c, TMPL_DEL) == JimmUI.CMD_YES)
+		{
+			int index = templateList.getCurrTextIndex();
+			if (index != -1)
+			{
+				items.removeElementAt(index);
+				saveToRMS();
+			}
+			templateList.activate(Jimm.display);
+		}
+		
+		else if (JimmUI.getCommandType(c, TMPL_DEL) == JimmUI.CMD_NO)
 		{
 			templateList.activate(Jimm.display);
 		}
@@ -188,8 +218,9 @@ public class Templates implements VirtualListCommands, CommandListener
 
 	static private void select()
 	{
+		if (textBox == null) return;
 		String selectedTemplate = null;
-		if (templateList.getSize() != 0) selectedTemplate = getRecord(templateList.getCurrTextIndex());
+		if (templateList.getSize() != 0) selectedTemplate = (String)items.elementAt(templateList.getCurrTextIndex());
 		templateList = null;
 		Jimm.display.setCurrent(textBox);
 		if (selectedTemplate != null) textBox.insert(selectedTemplate, caretPos);
@@ -197,75 +228,57 @@ public class Templates implements VirtualListCommands, CommandListener
 
 	private static void refreshList()
 	{
+		if (templateList == null) return;
 		templateList.lock();
-		templateList.clear();
-		for (int i = 0; i < getRecordCount(); i++)
-			templateList.addBigText(getRecord(i), templateList.getTextColor(),
-					Font.STYLE_PLAIN, i).doCRLF(i);
-		templateList.unlock();
+		try
+		{
+			templateList.clear();
+			for (int i = 0; i < items.size(); i++)
+				templateList.addBigText((String)items.elementAt(i), 
+						templateList.getTextColor(), Font.STYLE_PLAIN, i).doCRLF(i);
+		}
+		finally
+		{
+			templateList.unlock();
+		}
 	}
-
-	private static void openRMS()
+	
+	public static void saveToRMS()
 	{
-		if (rms == null)
-			try
-			{
-				rms = RecordStore.openRecordStore("templates", true);
-			} catch (Exception e)
-			{
-			}
-		;
-	}
-
-	private static void addRecord(String s)
-	{
-		openRMS();
 		try
 		{
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			DataOutputStream das = new DataOutputStream(baos);
-			das.writeUTF(s);
-			byte[] buffer = baos.toByteArray();
-			rms.addRecord(buffer, 0, buffer.length);
-			rms.closeRecordStore();
-			rms = null;
-			System.gc();
-		} catch (Exception e)
-		{
+			DataOutputStream dos = new DataOutputStream(baos);
+			int count = items.size();
+			dos.writeInt(count);
+			for (int i = 0; i < count; i++)
+				dos.writeUTF((String)items.elementAt(i));
+			Util.saveStreamToRms(baos.toByteArray(), RMS_NAME, null);
 		}
-		;
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
-
-	private static int getRecordCount()
+	
+	private static void loadFromRMS()
 	{
-		openRMS();
-		int n = 0;
+		items.removeAllElements();
+		DataInputStream stream = Util.getRmsInputStream(RMS_NAME, null);
+		if (stream == null) return;
 		try
 		{
-			n = rms.getNumRecords();
-		} catch (Exception e)
-		{
+			int count = stream.readInt();
+			for (int i = 0; i < count; i++)
+			{
+				String text = stream.readUTF();
+				items.addElement(text);
+			}
 		}
-		return n;
-	}
-
-	private static String getRecord(int num)
-	{
-		byte[] data;
-		String s;
-		openRMS();
-		try
+		catch (Exception e)
 		{
-			data = rms.getRecord(++num);
-			ByteArrayInputStream bais = new ByteArrayInputStream(data, 0,
-					data.length);
-			DataInputStream dis = new DataInputStream(bais);
-			s = dis.readUTF();
-		} catch (Exception e)
-		{
-			return null;
+			e.printStackTrace();
+			items.removeAllElements();
 		}
-		return s;
 	}
-
 }

@@ -33,6 +33,7 @@ import javax.microedition.lcdui.Graphics;
 //#sijapp cond.if target!="DEFAULT"#
 import javax.microedition.media.Manager;
 import javax.microedition.media.Player;
+import javax.microedition.rms.RecordStore;
 //#sijapp cond.end#
 
 import jimm.DebugLog;
@@ -1894,4 +1895,69 @@ public class Util
 	}
 	
 //#sijapp cond.end#
+	
+	public static DataInputStream getRmsInputStream(String rmsName, String vers)
+	{
+		RecordStore rms = null;
+		
+		try
+		{
+			byte[] buf;
+			ByteArrayInputStream bais;
+			rms = RecordStore.openRecordStore(rmsName, false);
+			
+			if (vers != null)
+			{
+				buf = rms.getRecord(1);
+				bais = new ByteArrayInputStream(buf);
+				DataInputStream dis = new DataInputStream(bais);
+				String rmsVers = dis.readUTF();
+				if (!vers.equals(rmsVers)) return null;
+			}
+			
+			buf = rms.getRecord(2);
+			bais = new ByteArrayInputStream(buf);
+			return new DataInputStream(bais);
+		}
+		catch (Exception e) {}
+		finally
+		{
+			if (rms != null)
+				try {rms.closeRecordStore();} 
+				catch (Exception e) {}
+		}
+		return null;
+	}
+	
+	public static void saveStreamToRms(byte[] data, String rmsName, String vers)
+	{
+		RecordStore account = null;
+		
+		try
+		{
+			account = RecordStore.openRecordStore(rmsName, true);
+
+			while (account.getNumRecords() < 3)
+				account.addRecord(null, 0, 0);
+			
+			if (vers != null)
+			{
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				DataOutputStream dos = new DataOutputStream(baos);
+				dos.writeUTF(vers);
+				byte[] buf = baos.toByteArray();
+				account.setRecord(1, buf, 0, buf.length);			
+			}
+			
+			account.setRecord(2, data, 0, data.length);
+		}
+		catch (Exception e) {}
+		finally
+		{
+			if (account != null) 
+				try {account.closeRecordStore();}
+				catch (Exception e) {}
+		}
+	}
+	
 }

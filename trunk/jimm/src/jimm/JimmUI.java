@@ -338,7 +338,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			
 			else if (c == cmdInsTemplate)
 			{
-				Templates.selectTemplate(messageTextbox);
+				Templates.showTemplates(messageTextbox);
 			}
 			
 			else if (c == cmdClearText)
