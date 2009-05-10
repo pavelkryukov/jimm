@@ -847,7 +847,7 @@ public class Options
 	
 	final private static String statusRmsName = "JimmStatus";
 	final private static String xStatusRmsName = "JimmXStatus";
-	private static final String STATUS_RMS_VERS = "v1"; 
+	private static final String STATUS_RMS_VERS = "v2"; 
 	
 	public static String getStatusString(int mode, int status)
 	{
