@@ -845,9 +845,9 @@ public class Options
 	final private static Hashtable statusStrings = new Hashtable();
 	final private static Hashtable xStatusStrings = new Hashtable();
 	
-	final private static int STATUS_STRINGS_VER = 1;
 	final private static String statusRmsName = "JimmStatus";
 	final private static String xStatusRmsName = "JimmXStatus";
+	private static final String STATUS_RMS_VERS = "v1"; 
 	
 	public static String getStatusString(int mode, int status)
 	{
@@ -888,8 +888,6 @@ public class Options
 		}
 	}
 	
-	private static final String STATUS_RMS_VERS = "v1"; 
-	
 	private static void saveStatusStrings(Hashtable tbl, String rmsName)
 	{
 		try
@@ -897,7 +895,6 @@ public class Options
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			DataOutputStream dos = new DataOutputStream(baos);
 			
-			dos.writeInt(STATUS_STRINGS_VER);
 			dos.writeInt(tbl.size());
 
 			Enumeration keys = tbl.keys();
@@ -925,22 +922,12 @@ public class Options
 		{
 			DataInputStream dis = Util.getRmsInputStream(rmsName, STATUS_RMS_VERS);
 			if (dis == null) return;
-			
-			int version = dis.readInt();
-			
-			switch (version)
+			int size = dis.readInt();
+			for (int i = 0; i < size; i++)
 			{
-			case 1:
-				{
-					int size = dis.readInt();
-					for (int i = 0; i < size; i++)
-					{
-						int status = dis.readInt();
-						String statDescr = dis.readUTF();
-						tbl.put(new Integer(status), statDescr);
-					}
-				}
-				break;
+				int status = dis.readInt();
+				String statDescr = dis.readUTF();
+				tbl.put(new Integer(status), statDescr);
 			}
 		}
 		catch (Exception e)
