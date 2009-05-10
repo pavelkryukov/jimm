@@ -1672,53 +1672,81 @@ public class Util
 		return ResourceBundle.getString(daysStr[dayOfWeek]);
 	}
 
+//////////////////////////////////////////////////////////////////////////////
+
+	private static final String wwwStr = "www.";
+	private static final String ftpStr = "ftp.";
+	private static final String httpProtoStr = "http://";
+	private static final String urlString[] = {httpProtoStr, wwwStr, ftpStr, "mailto:"}; 
+	
 	private static boolean isURLChar(char chr, boolean before)
 	{
 		if (before)
 			return ((chr >= 'A') && (chr <= 'Z'))
 					|| ((chr >= 'a') && (chr <= 'z'))
-					|| ((chr >= '0') && (chr <= '9')) 
+					|| ((chr >= '0') && (chr <= '9'))
 					|| (chr == '-');
-		if ((chr <= ' ') || (chr == '\"'))
+		if ((chr <= ' ') || (chr == '\"') || (chr == ',')
+				|| (chr == 10) || (chr == 13))
 			return false;
 		return ((chr & 0xFF00) == 0);
 	}
-
+	
 	public static Vector parseMessageForURL(String msg)
 	{
-		if (msg.indexOf('.') == -1)
-			return null;
-
-		Vector result = new Vector();
-		int size = msg.length();
-		int findIndex = 0, beginIdx, endIdx;
-		int ptIndex;
+		Vector result = null;
+		int startPos = 0, len = msg.length();
+		int urlStartPos;
+		String findedString = null;
+		
 		for (;;)
 		{
-			if (findIndex >= size)
-				break;
-			ptIndex = msg.indexOf('.', findIndex);
-			if (ptIndex == -1)
-				break;
-
-			for (beginIdx = ptIndex - 1; beginIdx >= 0; beginIdx--)
-				if (!isURLChar(msg.charAt(beginIdx), true))
+			if (startPos >= len) break;
+			int pos = -1;
+			for (int i = 0; i < urlString.length; i++)
+			{
+				pos = msg.indexOf(urlString[i], startPos);
+				if (pos != -1) { findedString = urlString[i]; break; }
+			}
+			if (pos == -1) break;
+			urlStartPos = pos; 
+			pos += findedString.length();
+			if (pos >= len) break; 
+			
+			for (;pos < len; pos++)
+			{
+				if (!isURLChar(msg.charAt(pos), pos==urlStartPos) || (pos == len-1))
+				{
+					if (pos == len-1) pos++;
+					int urlLen = pos-urlStartPos-findedString.length();
+					if (urlLen >= 3)
+					{
+						String url = msg.substring(urlStartPos, pos);
+						if (findedString == wwwStr || findedString == ftpStr)
+							url = httpProtoStr+url;
+						if (result == null) result = new Vector();
+						boolean alreadAdded = false;
+						for (int i = result.size()-1; i >= 0; i--)
+						{
+							if (result.elementAt(i).equals(url))
+							{
+								alreadAdded = true;
+								break;
+							}
+						}
+						if (!alreadAdded) result.addElement(url);
+					}
 					break;
-			for (endIdx = ptIndex + 1; endIdx < size; endIdx++)
-				if (!isURLChar(msg.charAt(endIdx), false))
-					break;
-			if ((beginIdx == -1) || !isURLChar(msg.charAt(beginIdx), true))
-				beginIdx++;
-
-			findIndex = endIdx;
-			if ((ptIndex == beginIdx) || (endIdx - ptIndex < 2))
-				continue;
-
-			result.addElement("http:\57\57" + msg.substring(beginIdx, endIdx));
+				}
+			}
+			startPos = pos; 
 		}
-
-		return (result.size() == 0) ? null : result;
+		
+		return result;
 	}
+	
+	
+//////////////////////////////////////////////////////////////////////////////	
 	
 	static public int indexOf(byte[] array, byte[] elem)
 	{
