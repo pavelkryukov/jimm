@@ -16,7 +16,7 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  ********************************************************************************
- File: src/jimm/Emotions.java
+ File: src/jimm/Emoticons.java
  Version: ###VERSION###  Date: ###DATE###
  Author(s): Artyomov Denis
  *******************************************************************************/
@@ -38,9 +38,9 @@ import jimm.util.ResourceBundle;
 import DrawControls.*;
 import DrawControls.device.Device;
 
-public class Emotions implements VirtualListCommands, CommandListener
+public class Emoticons implements VirtualListCommands, CommandListener
 {
-	private static Emotions _this;
+	private static Emoticons _this;
 	private static Vector imagesData = new Vector();
 	private static Vector timeData = new Vector();
 	private static Vector findedEmotions = new Vector();
@@ -53,7 +53,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 	private static boolean[] emoFinded;
 	private static String setName;
 
-	public Emotions()
+	public Emoticons()
 	{
 		used = false;
 		_this = this;
@@ -288,7 +288,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		dos = null;
 		stream = null;
 		System.gc();
-		DebugLog.addText("Emotions used: "+(mem - Runtime.getRuntime().freeMemory()));
+		DebugLog.addText("Emoticons used: "+(mem - Runtime.getRuntime().freeMemory()));
 		//#sijapp cond.end#
 	}
 
@@ -338,7 +338,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		textCorr.addElement(data);
 	}
 
-	// Reads simple word from stream. Used in Emotions(). 
+	// Reads simple word from stream. Used in Emoticons(). 
 	// Returns "true" if break was found after word
 	static String readLineFromStream(DataInputStream stream)
 	{
@@ -459,8 +459,8 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 	static public void selectEmotion(TextBox textBox)
 	{
-		Emotions.caretPos = textBox.getCaretPosition();
-		Emotions.textBox = textBox;
+		Emoticons.caretPos = textBox.getCaretPosition();
+		Emoticons.textBox = textBox;
 
 		selector = new Selector();
 		JimmUI.setColorScheme(selector, false, -1, true);
@@ -503,7 +503,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 
 	static private void select()
 	{
-		textBox.insert(" " + Emotions.getSelectedEmotion() + " ", caretPos);
+		textBox.insert(" " + Emoticons.getSelectedEmotion() + " ", caretPos);
 		Jimm.display.setCurrent(textBox);
 		Jimm.setBkltOn(true);
 	}
@@ -641,7 +641,7 @@ public class Emotions implements VirtualListCommands, CommandListener
 		
 		protected void onHide() 
 		{
-			System.out.println("Emotions.onHide()");
+			System.out.println("Emoticons.onHide()");
 			if (aniTask != null)
 			{
 				aniTask.cancel();

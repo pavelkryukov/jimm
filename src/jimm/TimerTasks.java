@@ -134,7 +134,7 @@ public class TimerTasks extends TimerTask
 				
 //#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #				
 			case TYPE_SMILES_SEL_ANI:
-				Emotions.aniEmoTimer();
+				Emoticons.aniEmoTimer();
 				break;
 //#sijapp cond.end#
 			}
