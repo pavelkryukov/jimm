@@ -332,7 +332,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
 			else if (c == cmdInsertEmo)
 			{
-				Emotions.selectEmotion(messageTextbox);
+				Emoticons.selectEmotion(messageTextbox);
 			}
 			//#sijapp cond.end#
 			
@@ -1182,7 +1182,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			int messTotalCounter)
 	{
 		//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
-		Emotions.addTextWithEmotions(textList, text, Font.STYLE_PLAIN, color, messTotalCounter);
+		Emoticons.addTextWithEmotions(textList, text, Font.STYLE_PLAIN, color, messTotalCounter);
 		//#sijapp cond.else#
 		//#		textList.addBigText(text, textList.getTextColor(), Font.STYLE_PLAIN, messTotalCounter);
 		//#sijapp cond.end#
@@ -1745,9 +1745,15 @@ public class JimmUI implements CommandListener, VirtualListCommands
 		
 		addTextListItem(tlContactMenu, "group_message", null, -1, true, -2, Font.STYLE_BOLD);
 		
+//#sijapp cond.if modules_DEBUGLOG="true"#
+		addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE, true, -1, Font.STYLE_PLAIN);
+//#sijapp cond.end#
+		
 		if (Icq.isConnected())
 		{
+//#sijapp cond.if modules_DEBUGLOG!="true" #			
 			addTextListItem(tlContactMenu, "send_message", null, USER_MENU_MESSAGE, true, -1, Font.STYLE_PLAIN);
+//#sijapp cond.end#			
 			
 			if (JimmUI.getClipBoardText() != null)
 				addTextListItem(tlContactMenu, "quote", null, USER_MENU_QUOTA, true, -1, Font.STYLE_PLAIN);
@@ -1755,6 +1761,8 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			if (contact.getBooleanValue(ContactItem.CONTACTITEM_NO_AUTH))
 				addTextListItem(tlContactMenu, "requauth", null, USER_MENU_REQU_AUTH, true, -1, Font.STYLE_PLAIN);
 		}
+		
+		
 		
 		//#sijapp cond.if modules_HISTORY is "true" #
 		addTextListItem(tlContactMenu, "history", null, USER_MENU_HISTORY, true, -1, Font.STYLE_PLAIN);

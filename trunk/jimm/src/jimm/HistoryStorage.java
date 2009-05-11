@@ -641,7 +641,7 @@ class HistoryStorageList extends VirtualList implements CommandListener,
 		messText.doCRLF(-1);
 
 //#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
-		Emotions.addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN, messText.getTextColor(), -1);
+		Emoticons.addTextWithEmotions(messText, record.text, Font.STYLE_PLAIN, messText.getTextColor(), -1);
 //#sijapp cond.else#
 		messText.addBigText(record.text, messText.getTextColor(), Font.STYLE_PLAIN, -1);
 //#sijapp cond.end#

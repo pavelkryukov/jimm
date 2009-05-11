@@ -304,7 +304,7 @@ public class Jimm extends MIDlet
 
 		// Create and load emotion icons
 		//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
-		new Emotions();
+		new Emoticons();
 		SplashCanvas.setProgress(90);
 		//#sijapp cond.end#
 

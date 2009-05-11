@@ -829,7 +829,7 @@ public class ChatHistory
 				chatForm.textList.doCRLF(-1);
 
 				//#sijapp cond.if modules_SMILES_STD="true" | modules_SMILES_ANI="true" #
-				Emotions.addTextWithEmotions(chatForm.textList, rec.text,
+				Emoticons.addTextWithEmotions(chatForm.textList, rec.text,
 						Font.STYLE_PLAIN, 0x808080, -1);
 				//#sijapp cond.else#
 				chatForm.textList.addBigText(rec.text, 0x808080, Font.STYLE_PLAIN, -1);
