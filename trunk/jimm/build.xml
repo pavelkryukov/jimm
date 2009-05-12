@@ -30,7 +30,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!--  *******************************************************************   -->
 
 	<!--  Loading configurable properties from external file				    -->
-	<property file="build.properties" />
+	<property file="work_build.properties" />
 
 	<!--  This property must point at the MIDP API classes and all extension    -->
 	<!--  classes required by the chosen target.                                -->
@@ -63,7 +63,6 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="dist" location="dist" />
 	<property name="src" location="src" />
 	<property name="res" location="res" />
-	<property name="res/all" location ="res/ALL_TARGETS" />
 	<property name="res/target" location="${res}/${target}" />
 	<property name="util" location="util" />
 	<property name="util/sijapp" location="${util}/sijapp" />
@@ -87,6 +86,14 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<tstamp>
 			<format property="date" pattern="yyyy/MM/dd" timezone="GMT+00:00" />
 		</tstamp>
+		<condition property="graphics_dir" value="GRAPHICS_8BIT" else="GRAPHICS_32BIT">
+			<or>
+				<equals arg1="${target}" arg2="DEFAULT" />
+				<equals arg1="${target}" arg2="SIEMENS2" />
+				<equals arg1="${target}" arg2="MOTOROLA" />
+				<equals arg1="${target}" arg2="RIM" />
+			</or>
+		</condition>
 		<condition property="midp" value="${DEFAULT/midp}">
 			<equals arg1="${target}" arg2="DEFAULT" />
 		</condition>
@@ -180,7 +187,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<condition property="modules/PIM" value="true">
 			<contains string="${modules}" substring="PIM" />
 		</condition>
-		<condition property="files_dir" value="res/MODULES/FILES">
+		<condition property="files_dir" value="res/${graphics_dir}/MODULES/FILES">
 			<and>
 			<contains string="${modules}" substring="FILES" />
 				<OR>
@@ -199,11 +206,11 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<contains string="${modules}" substring="SMILES_ANI" />
 		</condition>
 
-		<condition property="smiles_dir" value="res/MODULES/SMILES_STD">
+		<condition property="smiles_dir" value="res/${graphics_dir}/MODULES/SMILES_STD">
 			<istrue value="${modules/SMILES_STD}" />
 		</condition>
 		
-		<condition property="smiles_dir" value="res/MODULES/SMILES_ANI">
+		<condition property="smiles_dir" value="res/${graphics_dir}/MODULES/SMILES_ANI">
 			<istrue value="${modules/SMILES_ANI}" />
 		</condition>
 
@@ -311,18 +318,14 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 			<fileset dir="${res}" includes="*" excludes="MANIFEST.MF" />
 		</copy>
 		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false">
-			<fileset dir="${res/all}" />
-		</copy>
-		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false" failonerror="false">
+			<fileset dir="${res}/${graphics_dir}/COMMON" />
 			<fileset dir="${res/target}">
 				<exclude name="lib/**" />
 			</fileset>
 		</copy>
-		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false" failonerror="false">
-			<fileset dir="${files_dir}" />
-		</copy>
 		<copy todir="${build}/res" flatten="false" includeEmptyDirs="false" failonerror="false">
 			<fileset dir="${smiles_dir}" />
+			<fileset dir="${files_dir}" />
 		</copy>
 	</target>
 	

@@ -1230,7 +1230,7 @@ class OptionsForm implements CommandListener, ItemStateListener, VirtualListComm
 			
 			JimmUI.addTextListItem(optionsMenu, "status", JimmUI.statusAwayImg, OPTIONS_STAT_STR, true, -1, Font.STYLE_PLAIN);
 			JimmUI.addTextListItem(optionsMenu, "xstatus", JimmUI.xStatusImages.elementAt(1), OPTIONS_XSTAT_STR, true, -1, Font.STYLE_PLAIN);
-			JimmUI.addTextListItem(optionsMenu, "templates", null, OPTIONS_TEMPLATES, true, -1, Font.STYLE_PLAIN); 
+			JimmUI.addTextListItem(optionsMenu, "templates", MainMenu.menuIcons.elementAt(35), OPTIONS_TEMPLATES, true, -1, Font.STYLE_PLAIN); 
 			
 			JimmUI.addTextListItem(optionsMenu, "reset_rms_caption", MainMenu.menuIcons.elementAt(26), OPTIONS_RESET_RMS, true, -1, Font.STYLE_PLAIN);
 			break;
