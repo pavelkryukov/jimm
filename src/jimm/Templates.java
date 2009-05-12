@@ -37,12 +37,6 @@ import jimm.util.ResourceBundle;
 
 public class Templates implements VirtualListCommands, CommandListener
 {
-	private static Command cmdSelectTemplate = new Command(ResourceBundle
-			.getString("select"), Command.OK, 1);
-
-	private static Command backCommand = new Command(ResourceBundle
-			.getString("back"), Jimm.cmdBack, 2);
-
 	private static Command cmdNewTemplate = new Command(ResourceBundle
 			.getString("add_new"), Command.ITEM, 3);
 
@@ -50,13 +44,10 @@ public class Templates implements VirtualListCommands, CommandListener
 			.getString("delete"), Command.ITEM, 4);
 
 	private static Command clearCommand = new Command(ResourceBundle
-			.getString("clear"), Command.ITEM, 5);
+			.getString("clear_all"), Command.ITEM, 5);
 
 	private static Command addCommand = new Command(ResourceBundle
 			.getString("add_new"), Command.OK, 1);
-
-	private static Command cancelCommand = new Command(ResourceBundle
-			.getString("back"), Jimm.cmdBack, 2);
 
 	private static TextList templateList;
 
@@ -94,10 +85,10 @@ public class Templates implements VirtualListCommands, CommandListener
 		if (textBox != null)
 		{
 			caretPos = textBox.getCaretPosition();
-			templateList.addCommandEx(cmdSelectTemplate, VirtualList.MENU_TYPE_LEFT_BAR);
+			templateList.addCommandEx(JimmUI.cmdSelect, VirtualList.MENU_TYPE_LEFT_BAR);
 		}
 		templateList.addCommandEx(
-			backCommand, 
+			JimmUI.cmdBack, 
 			textBox != null ? VirtualList.MENU_TYPE_RIGHT : VirtualList.MENU_TYPE_LEFT_BAR
 		);
 		templateList.addCommandEx(cmdNewTemplate, VirtualList.MENU_TYPE_RIGHT);
@@ -107,11 +98,6 @@ public class Templates implements VirtualListCommands, CommandListener
 		templateList.setCommandListener(_this);
 		templateList.setVLCommands(_this);
 		templateList.activate(Jimm.display);
-	}
-
-	public static boolean isMyOkCommand(Command c)
-	{
-		return (c == cmdSelectTemplate);
 	}
 
 	public void vlKeyPress(VirtualList sender, int keyCode, int type){}
@@ -127,7 +113,7 @@ public class Templates implements VirtualListCommands, CommandListener
 	{
 		Jimm.aaUserActivity();
 		
-		if (c == backCommand)
+		if (c == JimmUI.cmdBack && JimmUI.isControlActive(templateList))
 		{
 			if (textBox != null)
 			{
@@ -137,7 +123,7 @@ public class Templates implements VirtualListCommands, CommandListener
 			else JimmUI.backToLastScreen();
 		}
 
-		else if (c == cmdSelectTemplate)
+		else if (c == JimmUI.cmdSelect)
 		{
 			select();
 		}
@@ -147,7 +133,7 @@ public class Templates implements VirtualListCommands, CommandListener
 			templateTextbox = new TextBox(ResourceBundle.getString("new_template"), 
 					null, 1000, TextField.ANY);
 			templateTextbox.addCommand(addCommand);
-			templateTextbox.addCommand(cancelCommand);
+			templateTextbox.addCommand(JimmUI.cmdBack);
 			templateTextbox.setCommandListener(_this);
 			Jimm.display.setCurrent(templateTextbox);
 			Jimm.setBkltOn(true);
@@ -155,8 +141,11 @@ public class Templates implements VirtualListCommands, CommandListener
 		
 		else if (c == cmdDelTemplate)
 		{
+			int index = templateList.getCurrTextIndex();
+			if (index == -1) return;
+			String text = items.elementAt(index).toString();
 			JimmUI.messageBox(ResourceBundle.getString("attention"),
-					ResourceBundle.getString("delete") + "?",
+					ResourceBundle.getString("delete") + " '" + text+ "' ?",
 					JimmUI.MESBOX_YESNO, _this, TMPL_DEL);			
 		}
 
@@ -173,7 +162,7 @@ public class Templates implements VirtualListCommands, CommandListener
 			templateTextbox = null;
 		}
 
-		else if (c == cancelCommand)
+		else if (c == JimmUI.cmdBack && d == templateTextbox)
 		{
 			templateList.activate(Jimm.display);
 			templateTextbox = null;
@@ -182,7 +171,7 @@ public class Templates implements VirtualListCommands, CommandListener
 		else if (c == clearCommand)
 		{
 			JimmUI.messageBox(ResourceBundle.getString("attention"),
-					ResourceBundle.getString("clear") + "?",
+					ResourceBundle.getString("clear_all") + "?",
 					JimmUI.MESBOX_YESNO, _this, TMPL_CLALL);
 		}
 
@@ -190,8 +179,8 @@ public class Templates implements VirtualListCommands, CommandListener
 		{
 			items.removeAllElements();
 			saveToRMS();
+			refreshList();
 			templateList.activate(Jimm.display);
-			templateList = null;
 		}
 
 		else if (JimmUI.getCommandType(c, TMPL_CLALL) == JimmUI.CMD_NO)
@@ -206,6 +195,7 @@ public class Templates implements VirtualListCommands, CommandListener
 			{
 				items.removeElementAt(index);
 				saveToRMS();
+				refreshList();
 			}
 			templateList.activate(Jimm.display);
 		}

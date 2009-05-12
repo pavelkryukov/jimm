@@ -1,0 +1,33 @@
+16
+0 Smile :-) :) :-)) :))
+1 Sad :-( :( :(( :-(( =( =((
+2 Ironic ;-) ;)
+3 Amused :-P :P 
+4 Jokingly *JOKINGLY* :-] lol
+5 Crying :'( :"( :'-( ='( ;-( ;( :~( :cry:
+6 Kissed *KISSED*
+7 Very_happy :-D :D :-))) :))) *YAHOO* *BRAVO*
+8 Stop *STOP*
+9 In_love *IN_LOVE* *HEART*
+10 Angry >:o >:-O >:O *MAD*
+11 Sick :-! :! :-S *SUP*
+12 Beer *DRINK* *BEER*
+13 Suspirious :-\ :-/
+14 Tired *TIRED* :bored:
+15 Thumbs_up *THUMBS_UP* (y)
+16 Shut_up :-X :X :-x
+17 Headphones [:-} [:-)
+18 Bomb @= *BOMB*
+19 Angel O:-) O:)
+20 Boss 8-) B-) :-Q *COOLBOY*
+21 Rose @}->--
+22 Embrassed :-[ :[ :') :'-) :")
+23 Wow! =-O :-O 8-O wow
+24 Devil ]:-> >:-) >:) ]:-<
+25 Kiss :-*
+26 Indefinite :-$ :$ :-? (?) *?* *HELP*
+27 Kissing *KISSING* *KISS*
+28 Green ;-D ;D *G*
+29 Crazy %-) %) rofl (-: (:
+30 Spy X-) x->
+31 On_the_side =) =] =)) :^)

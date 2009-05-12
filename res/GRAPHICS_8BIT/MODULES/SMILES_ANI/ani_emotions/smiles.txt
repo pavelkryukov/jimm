@@ -1,0 +1,46 @@
+Kolobok|EN,Kolobok|RU,Колобки
+2 Angel O:-) O:) O+) O=) 0:-) 0:) 0+) 0=) (A)
+36 Smile :-) :) +) =) :smile:
+33 Sad :-( :( +( =( :-(( :(( +(( =(( :sad:
+41 Wink ;-) ;) ^_~ :wink:
+5 Blum :-P :P +P =P :-b :b +b =b :tongue:
+15 Cool 8-) 8) B) :COOL: COOL! COOL!! COOL!!!
+4 Biggrin :-D :D +D =D :biggrin:
+6 Blush :-[ :[ ;'> ;-. :blush:
+9 Shock =-O =O =0 O_O O_0 0_O
+21 Kiss :-* :* :-{} :{} +{} ={} ^.^ :kiss: *KISS* *KISSING* *KISSED*
+11 Cry :'( :'-(
+34 Secret :-X X: :-# :# :secret:
+1 Aggressive >:o >+O :-@ :angry:
+17 Fool :-| :| =|
+3 Beee :-\ :-/ :\", ":-\
+27 Jokingly *JOKINGLY* 8P
+14 Diablo ]:-> }:-> ]:> }:> >:-] >:] (6) :diablo: *DIABLO*
+28 Music [:-} [:}
+8 Bad :-! :! :-~ ;-~ :(~ +(~ =(~ :bad:
+#-1 boredom *TIRED* |-0 :boredom:
+#-1 stop *STOP* STOP! STOP!! STOP!!! :STOP:
+32 Rose @}->-- @}-:-- @>}--,-`--- (F)
+18 Good *THUMBS_UP* :GOOD: GOOD! *GOOD*
+16 Drinks *DRINK* DRINK :drink:
+26 Man_in_love *IN_LOVE* LOVE
+7 Bomb @=
+40 Wacko %) %-) :-$ :$ :WACKO:
+25 Mamba *WASSUP* *SUP* *MAMBA* :MAMBA:
+37 Sorry *SORRY*
+10 Clapping *BRAVO* :BRAVO: :clapping:
+31 Rofl *ROFL* :ROFL: ROFL! :-)))) :-))))) :-)))))) :)))) :))))) :)))))) =)))) =))))) =))))))
+30 Pardon *PARDON* =] :PARDON:
+29 No *NO*
+12 Crazy *CRAZY* :crazy:
+38 Don't_know *DONT_KNOW* *UNKNOWN* :HZ:
+13 Dance *DANCE* :dance:
+42 Yahoo *YAHOO* *YAHOO!* :YAHOO: YAHOO! YAHOO!! YAHOO!!!
+19 Happy *HAPPY* :HAPPY: ^^
+20 Heart *GIVE_HEART*
+#22 Laugh
+23 LOL *LOL* :-)) :)) =)) +)) :-))) :))) LOL LOL! :lol:
+#24 Mad 
+35 Shout *SHOUT*
+39 Black_eye *VAVA*
+#-1 pleasantry *db* :db:
