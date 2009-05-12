@@ -317,7 +317,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 		<copy todir="${build}/res" includeEmptyDirs="false">
 			<fileset dir="${res}" includes="*" excludes="MANIFEST.MF" />
 		</copy>
-		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false">
+		<copy todir="${build}/res" flatten="true" includeEmptyDirs="false" failonerror="false">
 			<fileset dir="${res}/${graphics_dir}/COMMON" />
 			<fileset dir="${res/target}">
 				<exclude name="lib/**" />
