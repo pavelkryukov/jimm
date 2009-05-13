@@ -37,17 +37,12 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<property name="DEFAULT/midp/lib"  value="${DEFAULT/midp}/lib/cldcapi10.jar;${DEFAULT/midp}/lib/midpapi10.jar;${MIDP2/midp}/lib/wma11.jar"/>
 	<property name="MIDP2/midp/lib"    value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar;${MIDP2/midp}/lib/wma20.jar;res/NOKIA/lib/nokiaui.jar;res/SAMSUNG/lib/"/>
 	<property name="RIM/midp/lib"      value="${RIM/midp}/lib/net_rim_api.jar" />
-	<property name="SIEMENS2/midp/lib" value="${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"     />
+	<property name="SIEMENS2/midp/lib" value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;${MIDP2/midp}/lib/jsr75.jar;${SIEMENS2/midp}/lib/api.jar;res/SIEMENS2/lib/fileaccess.jar"/>
 	<property name="MOTOROLA/midp/lib" value="${MIDP2/midp}/lib/cldcapi11.jar;${MIDP2/midp}/lib/midpapi20.jar;${MIDP2/midp}/lib/mmapi.jar;res/MOTOROLA/lib/fileaccess.jar;${MIDP2/midp}/lib/jsr75.jar" />
 
 	<!--  This property must point at the ProGuard JAR file, normally found     -->
 	<!--  in the lib directory of the ProGuard distribution.                    -->
 	<property name="proguard/lib"      value="${proguard}/lib/proguard.jar"      />
-
-	<!--  This property must point at the Antenna JAR file, normally found      -->
-	<!--  directly in the directory where you installed Antenna.                -->
-	<!--  Please change if you are using a different version than 1.0.0         -->
-	<property name="antenna/lib"       value="${antenna}/antenna-bin-1.0.0.jar"  />
 
 	<!--  This property is used for building binaries for RIM Blackberry.       -->
 	<!--  Set it to the location of the "rapc" binary which is part of the      -->
@@ -356,7 +351,7 @@ Author(s): Manuel Linsmayer, Andreas Rossbacher
 	<!-- Target: bb -->
 	<target name="dist_bb" if="is_bb_build">
 		<mkdir dir="${dist}/bin/cod"/>
-		<taskdef name="wtkrapc" classname="de.pleumann.antenna.WtkRapc" classpath="${antenna/lib}"/> 
+		<taskdef name="wtkrapc" classname="de.pleumann.antenna.WtkRapc" classpath="${antenna_jar}"/> 
 	    <wtkrapc jadfile="${dist}/bin/Jimm.jad" source="${dist}/bin/Jimm.jar" codename="Jimm" import="${RIM/midp/lib}" destdir="${dist}/bin/cod" quiet="false" midlet="true"/>
 	</target>
 	
