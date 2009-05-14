@@ -214,6 +214,9 @@ public class ImageList
 		int width1 = width-1;
 		int height = img.getHeight();
 		int height1 = height-1;
+		
+		if (newWidth < width || newHeight < height) return img; 
+		
 		int[] oldImage = new int[width*height];
 	
 		img.getRGB(oldImage, 0, width, 0, 0, width, height);
