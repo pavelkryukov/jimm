@@ -379,7 +379,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 				backToLastScreen();
 			}
 
-			if (c == cmdEdit)
+			else if (c == cmdEdit)
 			{
 				EditInfo.showEditForm(last_user_info);
 			}
@@ -387,7 +387,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			// "User info" -> "Copy text, Copy all"
 			else if ((c == cmdCopyText) || (c == cmdCopyAll))
 			{
-				JimmUI.setClipBoardText("[" + getCaption(infoTextList) + "]\n"
+				JimmUI.setClipBoardText("[" + origInfoListCaption + "]\n"
 						+ infoTextList.getCurrText(0, (c == cmdCopyAll)));
 			}
 		}
@@ -1107,6 +1107,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 		infoTextList.addCommandEx(cmdCopyAll, VirtualList.MENU_TYPE_RIGHT);
 	}
 
+	static private String origInfoListCaption; 
 	static public TextList getInfoTextList(String caption, boolean addCommands)
 	{
 		infoTextList = new TextList(null);
@@ -1117,6 +1118,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 		//#		infoTextList.setFontSize(Font.SIZE_SMALL);
 		//#sijapp cond.end#
 
+		origInfoListCaption = caption;
 		infoTextList.setCaption(caption);
 
 		JimmUI.setColorScheme(infoTextList, false, -1, true);
