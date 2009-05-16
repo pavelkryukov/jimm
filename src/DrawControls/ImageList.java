@@ -215,8 +215,6 @@ public class ImageList
 		int height = img.getHeight();
 		int height1 = height-1;
 		
-		if (newWidth < width || newHeight < height) return img; 
-		
 		int[] oldImage = new int[width*height];
 	
 		img.getRGB(oldImage, 0, width, 0, 0, width, height);
@@ -302,11 +300,11 @@ public class ImageList
 				newImage[x+y*newWidth] = r | (g << 8) | (b << 16) | (a << 24);
 				
 				ycnt += height;
-				if (ycnt > newHeight) { oy++; ycnt -= newHeight; }
+				while (ycnt > newHeight) { oy++; ycnt -= newHeight; }
 			}
 			
 			xcnt += width;
-			if (xcnt >= newWidth) { ox++; xcnt -= newWidth; }
+			while (xcnt >= newWidth) { ox++; xcnt -= newWidth; }
 		}
 
 		return Image.createRGBImage(newImage, newWidth, newHeight, true);
