@@ -1391,7 +1391,7 @@ public abstract class VirtualList
 	private static int lastRectHeight;
 	private static int lastRectColor1;
 	private static int lastRectColor2;
-	
+	private static int lastRectAlpha;
 	
 	static public void drawRect(Graphics gr, int color1, int color2, int x1, int y1, int x2, int y2, int alpha)
 	{
@@ -1436,7 +1436,7 @@ public abstract class VirtualList
 				alphaBuffer = new int[spaceRequired];
 			}
 			
-			if (lastRectHeight != height || lastRectColor1 != color1 || lastRectColor2 != color2)
+			if (lastRectHeight < height || lastRectColor1 != color1 || lastRectColor2 != color2 || lastRectAlpha != alpha)
 			{
 				int idx = 0;
 				int crd1 = 0;
@@ -1460,9 +1460,10 @@ public abstract class VirtualList
 					
 					for (int x = 0; x < 32; x++) alphaBuffer[idx++] = color;
 				}
-				lastRectHeight = height;
+				if (height > lastRectHeight) lastRectHeight = height;
 				lastRectColor1 = color1;
 				lastRectColor2 = color2;
+				lastRectAlpha = alpha;
 			}
 			
 			int totalWidth = width;
