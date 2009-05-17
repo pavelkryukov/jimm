@@ -1436,7 +1436,7 @@ public abstract class VirtualList
 				alphaBuffer = new int[spaceRequired];
 			}
 			
-			if (lastRectHeight < height || lastRectColor1 != color1 || lastRectColor2 != color2 || lastRectAlpha != alpha)
+			if (lastRectHeight != height || lastRectColor1 != color1 || lastRectColor2 != color2 || lastRectAlpha != alpha)
 			{
 				int idx = 0;
 				int crd1 = 0;
@@ -1460,7 +1460,7 @@ public abstract class VirtualList
 					
 					for (int x = 0; x < 32; x++) alphaBuffer[idx++] = color;
 				}
-				if (height > lastRectHeight) lastRectHeight = height;
+				lastRectHeight = height;
 				lastRectColor1 = color1;
 				lastRectColor2 = color2;
 				lastRectAlpha = alpha;
