@@ -1668,7 +1668,7 @@ public class Util
 	public static String getCurrentDayString()
 	{
 		long time = createCurrentDate(false);
-		int dayOfWeek = (int)((time/(3600L*24L)-3L)%7L);
+		int dayOfWeek = (int)((time/(3600L*24L)-4L)%7L);
 		return ResourceBundle.getString(daysStr[dayOfWeek]);
 	}
 
