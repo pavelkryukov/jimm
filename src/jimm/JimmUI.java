@@ -2428,7 +2428,8 @@ public class JimmUI implements CommandListener, VirtualListCommands
 					!Options.getBoolean(Options.OPTION_USE_GROUPS));
 			Options.safeSave();
 			ContactList.optionsChanged(true, false);
-			ContactList.activateList();
+			if (isControlActive(ContactList.getVisibleContactListRef()))
+				ContactList.activateList();
 			break;
 
 		case Options.HOTKEY_ONOFF:
@@ -2438,7 +2439,8 @@ public class JimmUI implements CommandListener, VirtualListCommands
 				Options.setBoolean(Options.OPTION_CL_HIDE_OFFLINE, true);
 			Options.safeSave();
 			ContactList.optionsChanged(true, false);
-			ContactList.activateList();
+			if (isControlActive(ContactList.getVisibleContactListRef()))
+				ContactList.activateList();
 			break;
 
 		case Options.HOTKEY_OPTIONS:
