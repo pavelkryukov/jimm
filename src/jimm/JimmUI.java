@@ -376,6 +376,8 @@ public class JimmUI implements CommandListener, VirtualListCommands
 			// "User info" -> "Cancel, Back"
 			if ((c == cmdCancel) || (c == cmdBack))
 			{
+				lastUserInfoContact = null;
+				infoTextList = null;
 				backToLastScreen();
 			}
 
@@ -997,22 +999,21 @@ public class JimmUI implements CommandListener, VirtualListCommands
 	//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 	static public void updateActiveUserInfo(String uin)
 	{
-		if (infoTextList != null)
+		if ((infoTextList != null) && (lastUserInfoContact != null)
+				&& infoTextList.isActive()
+				&& uin.equals(lastUserInfoContact.getStringValue(ContactItem.CONTACTITEM_UIN)))
 		{
-			if (infoTextList.isActive())
+			try
 			{
-				try
+				ContactItem cItem = ContactList.getItembyUIN(uin);
+				Image image = cItem.getImage(ContactItem.CONTACTITEM_BUDDYICON);
+				if (image != null)
 				{
-					ContactItem cItem = ContactList.getItembyUIN(uin);
-					Image image = cItem.getImage(ContactItem.CONTACTITEM_BUDDYICON);
-					if (image != null)
-					{
-						infoTextList.insertImage(image, null, -1, 0).doCRLF(-1);
-						infoTextList.repaint();
-					}
-					image = null;
-				} catch (Exception ignore) {/* Do nothing */}
-			}
+					infoTextList.insertImage(image, null, -1, 0).doCRLF(-1);
+					infoTextList.repaint();
+				}
+				image = null;
+			} catch (Exception ignore) {/* Do nothing */}
 		}
 	}
 	//  #sijapp cond.end#
@@ -1081,6 +1082,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 	}
 
 	static private String[] last_user_info;
+	static private ContactItem lastUserInfoContact;
 
 	static public void showUserInfo(String[] data)
 	{
@@ -1091,6 +1093,7 @@ public class JimmUI implements CommandListener, VirtualListCommands
 		try
 		{
 			ContactItem cItem = ContactList.getItembyUIN(data[JimmUI.UI_UIN]);
+			lastUserInfoContact = cItem;
 			Image image = cItem.getImage(ContactItem.CONTACTITEM_BUDDYICON);
 			if (image != null) infoTextList.insertImage(image, null, -1, 0).doCRLF(-1);
 			image = null;
