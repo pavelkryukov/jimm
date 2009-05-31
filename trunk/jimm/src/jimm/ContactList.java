@@ -1058,7 +1058,7 @@ public class ContactList implements CommandListener, VirtualTreeCommands,
 	// Updates the client-side contact list (called when a contact changes status)
 	static public synchronized void update(String uin, int status)
 	{
-		update(uin, status, -1, null, null, null, 0, 0, -1, 0, -1, -1, -1, -1
+		update(uin, status, -1, Options.emptyString, null, null, 0, 0, -1, 0, -1, -1, -1, -1
 		//#sijapp cond.if target!="DEFAULT" & modules_AVATARS="true"#
 		, null
 		//#sijapp cond.end#

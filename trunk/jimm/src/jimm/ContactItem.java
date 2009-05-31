@@ -156,7 +156,9 @@ public class ContactItem implements ContactListItem, JimmScreen
 			clientVersion = value;
 			return;
 		case CONTACTITEM_XSTATUSMSG:
-			xStatusMessage = (value == null) ? xStatusMessage : value;
+			if (value == null) return;
+			if (value.length() == 0) value = null;
+			xStatusMessage = value;
 			return;
 		}
 	}
