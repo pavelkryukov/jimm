@@ -755,7 +755,7 @@ public class ActionListener
 							int delim = -1;
 							for (int i = 0; i < rawText.length; i++)
 							{
-								if (rawText[i] == 0xFE)
+								if (rawText[i] == (byte)0xFE)
 								{
 									delim = i;
 									break;
