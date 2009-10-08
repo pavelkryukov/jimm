@@ -410,7 +410,7 @@ public class FileTransfer implements CommandListener, Runnable
 				ResourceBundle.getString("cost") + ": ",
 				Traffic.getString(((fsize / Options
 						.getInt(Options.OPTION_COST_PACKET_LENGTH)) + 1)
-						* Options.getInt(Options.OPTION_COST_PER_PACKET))
+						* (Options.getInt(Options.OPTION_COST_PER_PACKET) / 100))
 						+ " " + Options.getString(Options.OPTION_CURRENCY)));
 		//#sijapp cond.end #
 
