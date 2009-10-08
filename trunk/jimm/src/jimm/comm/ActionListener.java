@@ -270,8 +270,10 @@ public class ActionListener
 							//#sijapp cond.end#
 							if ((bart_id == 0x0002) && (bart_flg == 0x0004))
 							{
-								int textLen = (int)Util.getWord(tlvData, marker1d);
-								xStatusMessage = Util.byteArrayToString(tlvData, marker1d+2, textLen, true);
+								if (bart_len > 0) {
+									int textLen = (int)Util.getWord(tlvData, marker1d);
+									xStatusMessage = Util.byteArrayToString(tlvData, marker1d+2, textLen, true);
+								}
 								if (xStatusMessage == null) xStatusMessage = new String();
 							}
 							else if ((bart_id == 0x000E) && (bart_flg == 0x0000))
