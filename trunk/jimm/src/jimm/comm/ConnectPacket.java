@@ -323,7 +323,7 @@ public class ConnectPacket extends Packet
 					break;
 				//#sijapp cond.end#
 				default:
-					throw (new JimmException(132, 2));
+				//	throw (new JimmException(132, 2));
 			}
 
 		}
